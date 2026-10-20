@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -49,22 +49,22 @@ export const lookaheadAssertion = Object.freeze({
 	})
 }) as unknown as typeof B.lookaheadAssertion & {
 	eq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLookaheadAssertion>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildLookaheadAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildLookaheadAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildLookaheadAssertion>
 		) => ReturnType<typeof F.buildLookaheadAssertion>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLookaheadAssertion>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToLookaheadAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToLookaheadAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToLookaheadAssertion>
 		) => ReturnType<typeof C.coerceToLookaheadAssertion>;
 	};
 	bang: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLookaheadAssertion>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildLookaheadAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildLookaheadAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildLookaheadAssertion>
 		) => ReturnType<typeof F.buildLookaheadAssertion>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLookaheadAssertion>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToLookaheadAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToLookaheadAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToLookaheadAssertion>
 		) => ReturnType<typeof C.coerceToLookaheadAssertion>;
 	};
@@ -91,22 +91,22 @@ export const lookbehindAssertion = Object.freeze({
 	})
 }) as unknown as typeof B.lookbehindAssertion & {
 	eq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLookbehindAssertion>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildLookbehindAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildLookbehindAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildLookbehindAssertion>
 		) => ReturnType<typeof F.buildLookbehindAssertion>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLookbehindAssertion>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToLookbehindAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToLookbehindAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToLookbehindAssertion>
 		) => ReturnType<typeof C.coerceToLookbehindAssertion>;
 	};
 	bang: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLookbehindAssertion>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildLookbehindAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildLookbehindAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildLookbehindAssertion>
 		) => ReturnType<typeof F.buildLookbehindAssertion>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLookbehindAssertion>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToLookbehindAssertion>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToLookbehindAssertion>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToLookbehindAssertion>
 		) => ReturnType<typeof C.coerceToLookbehindAssertion>;
 	};
@@ -218,30 +218,50 @@ export const lookaroundAssertion = Object.freeze({
 	}
 }) as unknown as typeof B.lookaroundAssertion & {
 	lookaheadAssertion: {
-		strict: (...args: ArgsOf<typeof F.buildLookaheadAssertion>) => ReturnType<typeof F.buildLookaroundAssertion>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLookaheadAssertion>) => ReturnType<typeof F.buildLookaroundAssertion>;
+		strict: <const A extends ArgsOf<typeof F.buildLookaheadAssertion>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLookaheadAssertion>>
+		) => ReturnType<typeof F.buildLookaroundAssertion>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLookaheadAssertion>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLookaheadAssertion>>
+		) => ReturnType<typeof F.buildLookaroundAssertion>;
 		eq: {
-			strict: (...args: ArgsOf<typeof lookaheadAssertion.eq.strict>) => ReturnType<typeof F.buildLookaroundAssertion>;
-			coerce: (...args: ArgsOf<typeof lookaheadAssertion.eq.coerce>) => ReturnType<typeof F.buildLookaroundAssertion>;
+			strict: <const A extends ArgsOf<typeof lookaheadAssertion.eq.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookaheadAssertion.eq.strict>>
+			) => ReturnType<typeof F.buildLookaroundAssertion>;
+			coerce: <const A extends ArgsOf<typeof lookaheadAssertion.eq.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookaheadAssertion.eq.coerce>>
+			) => ReturnType<typeof F.buildLookaroundAssertion>;
 		};
 		bang: {
-			strict: (...args: ArgsOf<typeof lookaheadAssertion.bang.strict>) => ReturnType<typeof F.buildLookaroundAssertion>;
-			coerce: (...args: ArgsOf<typeof lookaheadAssertion.bang.coerce>) => ReturnType<typeof F.buildLookaroundAssertion>;
+			strict: <const A extends ArgsOf<typeof lookaheadAssertion.bang.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookaheadAssertion.bang.strict>>
+			) => ReturnType<typeof F.buildLookaroundAssertion>;
+			coerce: <const A extends ArgsOf<typeof lookaheadAssertion.bang.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookaheadAssertion.bang.coerce>>
+			) => ReturnType<typeof F.buildLookaroundAssertion>;
 		};
 	};
 	lookbehindAssertion: {
-		strict: (...args: ArgsOf<typeof F.buildLookbehindAssertion>) => ReturnType<typeof F.buildLookaroundAssertion>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLookbehindAssertion>) => ReturnType<typeof F.buildLookaroundAssertion>;
+		strict: <const A extends ArgsOf<typeof F.buildLookbehindAssertion>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLookbehindAssertion>>
+		) => ReturnType<typeof F.buildLookaroundAssertion>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLookbehindAssertion>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLookbehindAssertion>>
+		) => ReturnType<typeof F.buildLookaroundAssertion>;
 		eq: {
-			strict: (...args: ArgsOf<typeof lookbehindAssertion.eq.strict>) => ReturnType<typeof F.buildLookaroundAssertion>;
-			coerce: (...args: ArgsOf<typeof lookbehindAssertion.eq.coerce>) => ReturnType<typeof F.buildLookaroundAssertion>;
+			strict: <const A extends ArgsOf<typeof lookbehindAssertion.eq.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookbehindAssertion.eq.strict>>
+			) => ReturnType<typeof F.buildLookaroundAssertion>;
+			coerce: <const A extends ArgsOf<typeof lookbehindAssertion.eq.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookbehindAssertion.eq.coerce>>
+			) => ReturnType<typeof F.buildLookaroundAssertion>;
 		};
 		bang: {
-			strict: (
-				...args: ArgsOf<typeof lookbehindAssertion.bang.strict>
+			strict: <const A extends ArgsOf<typeof lookbehindAssertion.bang.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookbehindAssertion.bang.strict>>
 			) => ReturnType<typeof F.buildLookaroundAssertion>;
-			coerce: (
-				...args: ArgsOf<typeof lookbehindAssertion.bang.coerce>
+			coerce: <const A extends ArgsOf<typeof lookbehindAssertion.bang.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof lookbehindAssertion.bang.coerce>>
 			) => ReturnType<typeof F.buildLookaroundAssertion>;
 		};
 	};
@@ -284,15 +304,19 @@ export const characterClassEscape = Object.freeze({
 	)
 }) as unknown as typeof B.characterClassEscape & {
 	arm: {
-		strict: (...args: ArgsOf<typeof F.buildCharacterClassEscapeArm>) => ReturnType<typeof F.buildCharacterClassEscape>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToCharacterClassEscapeArm>
+		strict: <const A extends ArgsOf<typeof F.buildCharacterClassEscapeArm>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCharacterClassEscapeArm>>
+		) => ReturnType<typeof F.buildCharacterClassEscape>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToCharacterClassEscapeArm>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCharacterClassEscapeArm>>
 		) => ReturnType<typeof F.buildCharacterClassEscape>;
 	};
 	unicodeCharacterEscape: {
-		strict: (...args: ArgsOf<typeof F.buildUnicodeCharacterEscape>) => ReturnType<typeof F.buildCharacterClassEscape>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToUnicodeCharacterEscape>
+		strict: <const A extends ArgsOf<typeof F.buildUnicodeCharacterEscape>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildUnicodeCharacterEscape>>
+		) => ReturnType<typeof F.buildCharacterClassEscape>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToUnicodeCharacterEscape>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToUnicodeCharacterEscape>>
 		) => ReturnType<typeof F.buildCharacterClassEscape>;
 	};
 };
@@ -333,22 +357,22 @@ export const namedCapturingGroup = Object.freeze({
 	})
 }) as unknown as typeof B.namedCapturingGroup & {
 	lparenQmarkLt: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildNamedCapturingGroup>
 		) => ReturnType<typeof F.buildNamedCapturingGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedCapturingGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToNamedCapturingGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToNamedCapturingGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToNamedCapturingGroup>
 		) => ReturnType<typeof C.coerceToNamedCapturingGroup>;
 	};
 	lparenQmarkPLt: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildNamedCapturingGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildNamedCapturingGroup>
 		) => ReturnType<typeof F.buildNamedCapturingGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedCapturingGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToNamedCapturingGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToNamedCapturingGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToNamedCapturingGroup>
 		) => ReturnType<typeof C.coerceToNamedCapturingGroup>;
 	};
@@ -743,373 +767,740 @@ const termGroup$namedCapturingGroup$lparenQmarkPLt$coerce = termGroup$namedCaptu
 );
 const termGroup: {
 	startAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	endAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	boundaryAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	nonBoundaryAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	lookaroundAssertion: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildLookaroundAssertion>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildLookaroundAssertion>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToLookaroundAssertion>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToLookaroundAssertion>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 		lookaheadAssertion: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 			eq: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.eq.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.eq.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildTermGroup>
 				) => ReturnType<typeof F.buildTermGroup>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.eq.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.eq.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToTermGroup>
 				) => ReturnType<typeof C.coerceToTermGroup>;
 			};
 			bang: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.bang.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.bang.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildTermGroup>
 				) => ReturnType<typeof F.buildTermGroup>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.bang.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookaheadAssertion.bang.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToTermGroup>
 				) => ReturnType<typeof C.coerceToTermGroup>;
 			};
 		};
 		lookbehindAssertion: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 			eq: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.eq.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.eq.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildTermGroup>
 				) => ReturnType<typeof F.buildTermGroup>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.eq.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.eq.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToTermGroup>
 				) => ReturnType<typeof C.coerceToTermGroup>;
 			};
 			bang: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.bang.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.bang.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildTermGroup>
 				) => ReturnType<typeof F.buildTermGroup>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 						content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.bang.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+								content: ArgsOf<typeof lookaroundAssertion.lookbehindAssertion.bang.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToTermGroup>
 				) => ReturnType<typeof C.coerceToTermGroup>;
 			};
 		};
 	};
 	patternCharacter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildPatternCharacter>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & { content: ArgsOf<typeof F.buildPatternCharacter> }
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToPatternCharacter>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToPatternCharacter>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	characterClass: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildCharacterClass>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildCharacterClass>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildCharacterClass>[0]
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & ArgsOf<typeof C.coerceToCharacterClass>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+				ArgsOf<typeof C.coerceToCharacterClass>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & ArgsOf<typeof C.coerceToCharacterClass>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	posixCharacterClass: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildPosixCharacterClass>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildPosixCharacterClass>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToPosixCharacterClass>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToPosixCharacterClass>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	anyCharacter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	decimalEscape: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildDecimalEscape>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & { content: ArgsOf<typeof F.buildDecimalEscape> }
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToDecimalEscape>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToDecimalEscape>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	characterClassEscape: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildCharacterClassEscape>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildCharacterClassEscape>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToCharacterClassEscape>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToCharacterClassEscape>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 		arm: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof characterClassEscape.arm.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof characterClassEscape.arm.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof characterClassEscape.arm.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof characterClassEscape.arm.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 		};
 		unicodeCharacterEscape: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof characterClassEscape.unicodeCharacterEscape.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof characterClassEscape.unicodeCharacterEscape.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof characterClassEscape.unicodeCharacterEscape.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof characterClassEscape.unicodeCharacterEscape.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 		};
 	};
 	backreferenceEscape: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildBackreferenceEscape>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildBackreferenceEscape>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToBackreferenceEscape>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToBackreferenceEscape>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	namedGroupBackreference: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildNamedGroupBackreference>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildNamedGroupBackreference>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToNamedGroupBackreference>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToNamedGroupBackreference>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	anonymousCapturingGroup: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildAnonymousCapturingGroup>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildAnonymousCapturingGroup>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToAnonymousCapturingGroup>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToAnonymousCapturingGroup>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	namedCapturingGroup: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildNamedCapturingGroup>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> &
+				ArgsOf<typeof F.buildNamedCapturingGroup>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildNamedCapturingGroup>[0]
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
-				ArgsOf<typeof C.coerceToNamedCapturingGroup>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+				ArgsOf<typeof C.coerceToNamedCapturingGroup>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & ArgsOf<typeof C.coerceToNamedCapturingGroup>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 		lparenQmarkLt: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkLt.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof namedCapturingGroup.lparenQmarkLt.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkLt.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof namedCapturingGroup.lparenQmarkLt.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 		};
 		lparenQmarkPLt: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkPLt.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof namedCapturingGroup.lparenQmarkPLt.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildTermGroup>
 			) => ReturnType<typeof F.buildTermGroup>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 					content: ArgsOf<typeof namedCapturingGroup.lparenQmarkPLt.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+							content: ArgsOf<typeof namedCapturingGroup.lparenQmarkPLt.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToTermGroup>
 			) => ReturnType<typeof C.coerceToTermGroup>;
 		};
 	};
 	nonCapturingGroup: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildNonCapturingGroup>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildNonCapturingGroup>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToNonCapturingGroup>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToNonCapturingGroup>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	enable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildInlineFlagsGroupEnable>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> &
+				ArgsOf<typeof F.buildInlineFlagsGroupEnable>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildInlineFlagsGroupEnable>[0]
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInlineFlagsGroupEnable>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInlineFlagsGroupEnable>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+						ArgsOf<typeof C.coerceToInlineFlagsGroupEnable>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	toggle: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildInlineFlagsGroupToggle>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> &
+				ArgsOf<typeof F.buildInlineFlagsGroupToggle>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildInlineFlagsGroupToggle>[0]
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInlineFlagsGroupToggle>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInlineFlagsGroupToggle>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+						ArgsOf<typeof C.coerceToInlineFlagsGroupToggle>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
 	disable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> &
-				ArgsOf<typeof F.buildInlineFlagsGroupDisable>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> &
+				ArgsOf<typeof F.buildInlineFlagsGroupDisable>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildInlineFlagsGroupDisable>[0]
+				>,
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInlineFlagsGroupDisable>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInlineFlagsGroupDisable>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> &
+						ArgsOf<typeof C.coerceToInlineFlagsGroupDisable>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
@@ -1250,14 +1641,16 @@ const term$termGroup = <PF extends (...args: never[]) => unknown, CF extends (..
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const term$seated: (...args: T.Term.BuildArgs) => ReturnType<typeof F.buildTerm> = term$termGroup(
-	F.buildTerm,
-	F.buildTermGroup
-);
-const term$seatedCoerce: (...args: T.Term.LooseArgs) => ReturnType<typeof C.coerceToTerm> = term$termGroup(
-	C.coerceToTerm,
-	C.coerceToTermGroup
-);
+function term$seated<A extends T.Term.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildTerm>;
+function term$seated(...args: T.Term.BuildArgs): ReturnType<typeof F.buildTerm> {
+	return term$termGroup(F.buildTerm, F.buildTermGroup)(...args);
+}
+function term$seatedCoerce<const A extends T.Term.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.Term.LooseArgs>
+): ReturnType<typeof C.coerceToTerm>;
+function term$seatedCoerce(...args: T.Term.LooseArgs): ReturnType<typeof C.coerceToTerm> {
+	return term$termGroup(C.coerceToTerm, C.coerceToTermGroup)(...args);
+}
 export const term = Object.freeze({
 	...B.term,
 	...bundle(term$seated, term$seatedCoerce),
@@ -1289,12 +1682,20 @@ export const pattern = Object.freeze({
 	term: bundle(pattern$term$strict, pattern$term$coerce)
 }) as unknown as typeof B.pattern & {
 	alternation: {
-		strict: (...args: ArgsOf<typeof F.buildAlternation>) => ReturnType<typeof F.buildPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAlternation>) => ReturnType<typeof F.buildPattern>;
+		strict: <const A extends ArgsOf<typeof F.buildAlternation>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAlternation>>
+		) => ReturnType<typeof F.buildPattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAlternation>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAlternation>>
+		) => ReturnType<typeof F.buildPattern>;
 	};
 	term: {
-		strict: (...args: ArgsOf<typeof term.strict>) => ReturnType<typeof F.buildPattern>;
-		coerce: (...args: ArgsOf<typeof term.coerce>) => ReturnType<typeof F.buildPattern>;
+		strict: <const A extends ArgsOf<typeof term.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof term.strict>>
+		) => ReturnType<typeof F.buildPattern>;
+		coerce: <const A extends ArgsOf<typeof term.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof term.coerce>>
+		) => ReturnType<typeof F.buildPattern>;
 	};
 };
 
@@ -1316,14 +1717,27 @@ export const countQuantifier = Object.freeze({
 	arm: bundle(countQuantifier$arm$strict, countQuantifier$arm$coerce, { key: 'countQuantifier.arm', max: 2 })
 }) as unknown as typeof B.countQuantifier & {
 	arm: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> &
-				ArgsOf<typeof F.buildCountQuantifierArm>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> &
+				ArgsOf<typeof F.buildCountQuantifierArm>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> & ArgsOf<typeof F.buildCountQuantifierArm>[0]
+				>,
 			options?: OptionsArg<typeof F.buildCountQuantifier>
 		) => ReturnType<typeof F.buildCountQuantifier>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> &
-				ArgsOf<typeof C.coerceToCountQuantifierArm>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> &
+				ArgsOf<typeof C.coerceToCountQuantifierArm>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> &
+						ArgsOf<typeof C.coerceToCountQuantifierArm>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToCountQuantifier>
 		) => ReturnType<typeof C.coerceToCountQuantifier>;
 	};

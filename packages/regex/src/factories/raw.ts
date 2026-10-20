@@ -2,7 +2,7 @@
 
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../kinds.js';
-import type { Admit, NonEmptyArray, NumericLiteral } from '@sittir/types';
+import type { Admit, NonEmptyArray, NumericLiteral, RefuseUndeclared, RefusingConfig } from '@sittir/types';
 import {
 	currentHandle,
 	elementsWith,
@@ -38,6 +38,7 @@ export const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
 export const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
+export function buildPattern<V extends Admit<T.Alternation | T.Term>>(value: V & RefuseUndeclared<V>): T.Pattern.Bound;
 export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bound {
 	const _content = value;
 	const handle = currentHandle();
@@ -61,6 +62,9 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 	return node as unknown as T.Pattern.Bound;
 }
 
+export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
+	...children: A & RefuseUndeclared<A>
+): T.Alternation.Bound;
 export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
 	const _terms = children;
 	const handle = currentHandle();
@@ -85,6 +89,9 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 	return node as unknown as T.Alternation.Bound;
 }
 
+export function buildTerm<A extends NonEmptyArray<Admit<T.TermGroup>>>(
+	...children: A & RefuseUndeclared<A>
+): T.Term.Bound;
 export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Term.Bound {
 	const _term_group = children;
 	const handle = currentHandle();
@@ -125,6 +132,9 @@ export const buildBoundaryAssertion: TSKindId.BoundaryAssertion = TSKindId.Bound
 
 export const buildNonBoundaryAssertion: TSKindId.NonBoundaryAssertion = TSKindId.NonBoundaryAssertion;
 
+export function buildLookaroundAssertion<V extends Admit<T.LookaheadAssertion | T.LookbehindAssertion>>(
+	value: V & RefuseUndeclared<V>
+): T.LookaroundAssertion.Bound;
 export function buildLookaroundAssertion(
 	value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>
 ): T.LookaroundAssertion.Bound {
@@ -151,6 +161,9 @@ export function buildLookaroundAssertion(
 	return node as unknown as T.LookaroundAssertion.Bound;
 }
 
+export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion.Config['pattern']>(
+	config: RefusingConfig<T.LookaheadAssertion.Config, { pattern: PatternSlot }>
+): T.LookaheadAssertion.Bound;
 export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.LookaheadAssertion.Bound {
 	const _content = kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content);
 	const _pattern = config.pattern;
@@ -180,6 +193,9 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 	return node as unknown as T.LookaheadAssertion.Bound;
 }
 
+export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAssertion.Config['pattern']>(
+	config: RefusingConfig<T.LookbehindAssertion.Config, { pattern: PatternSlot }>
+): T.LookbehindAssertion.Bound;
 export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): T.LookbehindAssertion.Bound {
 	const _content = kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content);
 	const _pattern = config.pattern;
@@ -232,7 +248,9 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 }
 
 export function buildCharacterClass(): T.EmptyCharacterClass;
-export function buildCharacterClass(config?: Partial<T.CharacterClass.Config>): T.CharacterClass.Bound;
+export function buildCharacterClass<ClassAtomsSlot extends T.CharacterClass.Config['classAtoms']>(
+	config?: RefusingConfig<Partial<T.CharacterClass.Config>, { classAtoms: ClassAtomsSlot }>
+): T.CharacterClass.Bound;
 export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {}): T.CharacterClass.Bound {
 	const _negation = strictBooleanStorage(config.negation);
 	const _leading = strictBooleanStorage(config.leading);
@@ -276,6 +294,9 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 	return node as unknown as T.CharacterClass.Bound;
 }
 
+export function buildPosixCharacterClass<V extends Admit<T.PosixClassName>>(
+	value: V & RefuseUndeclared<V>
+): T.PosixCharacterClass.Bound;
 export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.PosixCharacterClass.Bound {
 	const _posix_class_name = value;
 	const handle = currentHandle();
@@ -321,6 +342,10 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 	return node as unknown as T.PosixClassName.Bound;
 }
 
+export function buildClassRange<
+	StartSlot extends T.ClassRange.Config['start'],
+	EndSlot extends T.ClassRange.Config['end']
+>(config: RefusingConfig<T.ClassRange.Config, { start: StartSlot; end: EndSlot }>): T.ClassRange.Bound;
 export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound {
 	const _start = kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start);
 	const _end = kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end);
@@ -372,9 +397,11 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 	return node as unknown as T.ClassCharacter.Bound;
 }
 
-export function buildAnonymousCapturingGroup(value: Admit<T.Pattern>): ReturnType<typeof _buildAnonymousCapturingGroup>;
-export function buildAnonymousCapturingGroup(
-	value: Admit<T.Alternation | T.Term>
+export function buildAnonymousCapturingGroup<V extends Admit<T.Pattern>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildAnonymousCapturingGroup>;
+export function buildAnonymousCapturingGroup<V extends Admit<T.Alternation | T.Term>>(
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildAnonymousCapturingGroup>;
 export function buildAnonymousCapturingGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -414,6 +441,12 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 	return node as unknown as T.AnonymousCapturingGroup.Bound;
 }
 
+export function buildNamedCapturingGroup<
+	GroupNameSlot extends T.NamedCapturingGroup.Config['groupName'],
+	PatternSlot extends T.NamedCapturingGroup.Config['pattern']
+>(
+	config: RefusingConfig<T.NamedCapturingGroup.Config, { groupName: GroupNameSlot; pattern: PatternSlot }>
+): T.NamedCapturingGroup.Bound;
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Bound {
 	const _content = kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content);
 	const _group_name = config.groupName;
@@ -448,9 +481,11 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 	return node as unknown as T.NamedCapturingGroup.Bound;
 }
 
-export function buildNonCapturingGroup(value: Admit<T.Pattern>): ReturnType<typeof _buildNonCapturingGroup>;
-export function buildNonCapturingGroup(
-	value: Admit<T.Alternation | T.Term>
+export function buildNonCapturingGroup<V extends Admit<T.Pattern>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildNonCapturingGroup>;
+export function buildNonCapturingGroup<V extends Admit<T.Alternation | T.Term>>(
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildNonCapturingGroup>;
 export function buildNonCapturingGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -583,6 +618,9 @@ export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Option
 	return node as unknown as T.Optional.Bound;
 }
 
+export function buildCountQuantifier<ContentSlot extends T.CountQuantifier.Config['content']>(
+	config: RefusingConfig<T.CountQuantifier.Config, { content: ContentSlot }>
+): T.CountQuantifier.Bound;
 export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQuantifier.Bound {
 	const _content = config.content;
 	const _lazy = strictBooleanStorage(config.lazy);
@@ -612,6 +650,9 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 	return node as unknown as T.CountQuantifier.Bound;
 }
 
+export function buildBackreferenceEscape<V extends Admit<T.GroupName>>(
+	value: V & RefuseUndeclared<V>
+): T.BackreferenceEscape.Bound;
 export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.BackreferenceEscape.Bound {
 	const _group_name = value;
 	const handle = currentHandle();
@@ -635,6 +676,9 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 	return node as unknown as T.BackreferenceEscape.Bound;
 }
 
+export function buildNamedGroupBackreference<V extends Admit<T.GroupName>>(
+	value: V & RefuseUndeclared<V>
+): T.NamedGroupBackreference.Bound;
 export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.NamedGroupBackreference.Bound {
 	const _group_name = value;
 	const handle = currentHandle();
@@ -680,6 +724,9 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 	return node as unknown as T.DecimalEscape.Bound;
 }
 
+export function buildCharacterClassEscape<
+	V extends Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>
+>(value: V & RefuseUndeclared<V>): T.CharacterClassEscape.Bound;
 export function buildCharacterClassEscape(
 	value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>
 ): T.CharacterClassEscape.Bound {
@@ -729,6 +776,19 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 	return node as unknown as T.UnicodeCharacterEscape.Bound;
 }
 
+export function buildUnicodePropertyValueExpression<
+	UnicodePropertyValueExpressionGroupSlot extends
+		T.UnicodePropertyValueExpression.Config['unicodePropertyValueExpressionGroup'],
+	UnicodePropertyValueSlot extends T.UnicodePropertyValueExpression.Config['unicodePropertyValue']
+>(
+	config: RefusingConfig<
+		T.UnicodePropertyValueExpression.Config,
+		{
+			unicodePropertyValueExpressionGroup: UnicodePropertyValueExpressionGroupSlot;
+			unicodePropertyValue: UnicodePropertyValueSlot;
+		}
+	>
+): T.UnicodePropertyValueExpression.Bound;
 export function buildUnicodePropertyValueExpression(
 	config: T.UnicodePropertyValueExpression.Config
 ): T.UnicodePropertyValueExpression.Bound {
@@ -912,6 +972,10 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 	return node as unknown as T.DecimalDigits.Bound;
 }
 
+export function buildTermGroup<
+	ContentSlot extends T.TermGroup.Config['content'],
+	QuantifierSlot extends T.TermGroup.Config['quantifier']
+>(config: RefusingConfig<T.TermGroup.Config, { content: ContentSlot; quantifier: QuantifierSlot }>): T.TermGroup.Bound;
 export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	const _content = kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content);
 	const _quantifier = config.quantifier;
@@ -941,6 +1005,9 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	return node as unknown as T.TermGroup.Bound;
 }
 
+export function buildCountQuantifierGroup<V extends Admit<T.DecimalDigits>>(
+	...value: [value?: V] & RefuseUndeclared<V>
+): T.CountQuantifierGroup.Bound;
 export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.CountQuantifierGroup.Bound {
 	const _decimal_digits = value;
 	const handle = currentHandle();
@@ -964,6 +1031,15 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 	return node as unknown as T.CountQuantifierGroup.Bound;
 }
 
+export function buildCountQuantifierArm<
+	DecimalDigitsSlot extends T.CountQuantifierArm.Config['decimalDigits'],
+	CountQuantifierGroupSlot extends T.CountQuantifierArm.Config['countQuantifierGroup']
+>(
+	config: RefusingConfig<
+		T.CountQuantifierArm.Config,
+		{ decimalDigits: DecimalDigitsSlot; countQuantifierGroup: CountQuantifierGroupSlot }
+	>
+): T.CountQuantifierArm.Bound;
 export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.CountQuantifierArm.Bound {
 	const _decimal_digits = config.decimalDigits;
 	const _count_quantifier_group = config.countQuantifierGroup;
@@ -993,6 +1069,18 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 	return node as unknown as T.CountQuantifierArm.Bound;
 }
 
+export function buildCharacterClassEscapeArm<
+	CharacterClassEscapeText2Slot extends T.CharacterClassEscapeArm.Config['characterClassEscapeText2'],
+	UnicodePropertyValueExpressionSlot extends T.CharacterClassEscapeArm.Config['unicodePropertyValueExpression']
+>(
+	config: RefusingConfig<
+		T.CharacterClassEscapeArm.Config,
+		{
+			characterClassEscapeText2: CharacterClassEscapeText2Slot;
+			unicodePropertyValueExpression: UnicodePropertyValueExpressionSlot;
+		}
+	>
+): T.CharacterClassEscapeArm.Bound;
 export function buildCharacterClassEscapeArm(
 	config: T.CharacterClassEscapeArm.Config
 ): T.CharacterClassEscapeArm.Bound {
@@ -1024,11 +1112,11 @@ export function buildCharacterClassEscapeArm(
 	return node as unknown as T.CharacterClassEscapeArm.Bound;
 }
 
-export function buildUnicodePropertyValueExpressionGroup(
-	value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
-): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
-export function buildUnicodePropertyValueExpressionGroup(
-	value: Admit<T.UnicodePropertyValue>
+export function buildUnicodePropertyValueExpressionGroup<
+	V extends Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
+>(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
+export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyValue>>(
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -1127,6 +1215,12 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 
 export const buildNegation: TSKindId.Negation = TSKindId.Negation;
 
+export function buildInlineFlagsGroupEnable<
+	EnabledSlot extends T.InlineFlagsGroupEnable.Config['enabled'],
+	PatternSlot extends T.InlineFlagsGroupEnable.Config['pattern']
+>(
+	config: RefusingConfig<T.InlineFlagsGroupEnable.Config, { enabled: EnabledSlot; pattern: PatternSlot }>
+): T.InlineFlagsGroupEnable.Bound;
 export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Config): T.InlineFlagsGroupEnable.Bound {
 	const _enabled = config.enabled;
 	const _pattern = config.pattern;
@@ -1156,6 +1250,16 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 	return node as unknown as T.InlineFlagsGroupEnable.Bound;
 }
 
+export function buildInlineFlagsGroupToggle<
+	EnabledSlot extends T.InlineFlagsGroupToggle.Config['enabled'],
+	DisabledSlot extends T.InlineFlagsGroupToggle.Config['disabled'],
+	PatternSlot extends T.InlineFlagsGroupToggle.Config['pattern']
+>(
+	config: RefusingConfig<
+		T.InlineFlagsGroupToggle.Config,
+		{ enabled: EnabledSlot; disabled: DisabledSlot; pattern: PatternSlot }
+	>
+): T.InlineFlagsGroupToggle.Bound;
 export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Config): T.InlineFlagsGroupToggle.Bound {
 	const _enabled = config.enabled;
 	const _disabled = config.disabled;
@@ -1190,6 +1294,12 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 	return node as unknown as T.InlineFlagsGroupToggle.Bound;
 }
 
+export function buildInlineFlagsGroupDisable<
+	DisabledSlot extends T.InlineFlagsGroupDisable.Config['disabled'],
+	PatternSlot extends T.InlineFlagsGroupDisable.Config['pattern']
+>(
+	config: RefusingConfig<T.InlineFlagsGroupDisable.Config, { disabled: DisabledSlot; pattern: PatternSlot }>
+): T.InlineFlagsGroupDisable.Bound;
 export function buildInlineFlagsGroupDisable(
 	config: T.InlineFlagsGroupDisable.Config
 ): T.InlineFlagsGroupDisable.Bound {
@@ -1229,6 +1339,7 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
+export function buildLazy<V extends Admit<TSKindId.Qmark>>(...value: [value?: V] & RefuseUndeclared<V>): T.Lazy.Bound;
 export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
 	const _content = kindIdStorage<NonNullable<T.Lazy['_content']>>(orDefault(value, () => TSKindId.Qmark as const));
 	const handle = currentHandle();
@@ -1252,6 +1363,9 @@ export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
 	return node as unknown as T.Lazy.Bound;
 }
 
+export function buildUnicodePropertyName<V extends Admit<T.UnicodePropertyValue>>(
+	value: V & RefuseUndeclared<V>
+): T.UnicodePropertyName.Bound;
 export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): T.UnicodePropertyName.Bound {
 	const _content = value;
 	const handle = currentHandle();

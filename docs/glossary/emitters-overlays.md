@@ -76,6 +76,8 @@ How many seats an entry carries, of every kind: flatten, elements, tuple and for
  */
 ```
 
+Each seated entry point is a function: one refusing overload, generic over its whole argument row (`refusingParam`), over a plain implementation that calls the composition. A constant typed by a generic rest signature could not take the composed function, whose parameters are fixed.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
 #### body
@@ -107,6 +109,14 @@ How many seats an entry carries, of every kind: flatten, elements, tuple and for
  * that slot is the seated form, anything else is the parent's own input.
  */
 ```
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::refusingConfig`
+
+A form builder's config parameter in its refusing form, followed by the parent's options (`optionsOf`). The config is generic as a whole, which loses TypeScript's excess-property check, so it passes its own type as the declared input: the walk then refuses an undeclared key as well as an untyped node. An optional config is the rest tuple `refusingParam` writes, with the options inside it.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::optionsOf`
+
+The trailing options parameter of a form builder, typed by its parent's options.
 
 ### `packages/codegen/src/emitters/overlays/portable/node-model.ts::emitPortableNodeModel`
 
@@ -254,4 +264,3 @@ What the portable surface is emitted from: the grammar's node union type name (`
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::q`
 
 A string as a quoted TypeScript literal.
-
