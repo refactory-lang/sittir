@@ -16,7 +16,8 @@ import {
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { KindParserMetadata, NodeMap } from '../../compiler/types.ts';
-import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
+import { ERROR_KIND_ROW, collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
+import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { GeneratedIdEntry, GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { queryRoutesOf } from '../../emitters/client-utils.ts';
@@ -40,6 +41,34 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 export interface NodeMapWithIdTables {
 	readonly nodeMap: NodeMap;
 	readonly generatedIdTables: GeneratedIdTables;
+}
+
+/**
+ * A node map whose `memberKinds` share one display (`display`) through their parser symbol. The display union is
+ * declared on the map only when `declared` is set, so the same sites can be built both as a family and as a
+ * coincidental duplicate.
+ */
+export function displayFamilyNodeMap<T extends { readonly kind: string; readonly seat?: { readonly kind: string } }>(
+	sites: readonly T[],
+	memberKinds: readonly string[],
+	display: string,
+	declared: boolean
+): NodeMapWithIdTables {
+	const build = (kindEntries: readonly GeneratedKindEntry[]) => makeSiteKindsNodeMap(sites, kindEntries);
+	const { generatedIdTables } = withGeneratedIdTables(build);
+	if (!(generatedIdTables.kindIds instanceof Map)) throw new Error('fixture kind IDs must be a map');
+	for (const kind of memberKinds) {
+		const row = generatedIdTables.kindIds.get(kind)!;
+		generatedIdTables.kindIds.set(kind, { ...row, parser: { ...row.parser!, symbolName: display } });
+	}
+	generatedIdTables.kindIds.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
+	const baseModel = build(collectGeneratedKindEntries(generatedIdTables));
+	const displayUnions = declared
+		? new Map([[display, memberKinds.map((storage) => ({ storage, literal: false }))]])
+		: undefined;
+	const nodeMap = { ...baseModel, displayUnions };
+	stampIrSurface(nodeMap, generatedIdTables);
+	return { nodeMap, generatedIdTables };
 }
 
 export function withGeneratedIdTables(

@@ -3,7 +3,8 @@ import { SEAM_DECLARED, edgeSitesOf, planRenderOptions, renderOptionsRs, seatTab
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
-import { makeSiteKindsNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeSiteKindsNodeMap, displayFamilyNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 const kindEntries = [
@@ -317,5 +318,39 @@ describe('a kind edge over a choice of tokens', () => {
 		const lost = [armSites[0]!, { ...armSites[1]!, spacing: { at: 'seam', token: 'unknown_token', side: 'before' } as const, edgeArm: {} }];
 		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost, entries), whitespaceText, undefined, 'rust');
 		expect(() => edgeSitesOf(lostPlan)).toThrow(/unknown_token/);
+	});
+});
+
+describe('an address shared by an alias-site family', () => {
+	function aliasFamily(declared: boolean) {
+		const sites: SitePreference[] = ['first_block', 'second_block'].map((kind) => ({
+			kind,
+			slot: 'statements',
+			address: 'statements_separator_space',
+			label: 'empty_separator_space',
+			arms: SPACING,
+			defaultArm: 'newline',
+			source: 'spacing'
+		}));
+		const { nodeMap, generatedIdTables } = displayFamilyNodeMap(
+			[...sites, ...SPACING.map((arm) => ({ kind: arm.kind }))],
+			['first_block', 'second_block'],
+			'block',
+			declared
+		);
+		const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+		const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), new Map());
+		return { plan, addresses, kindEntries };
+	}
+
+	it('is accepted when its sites are members of one display union', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(true);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).not.toThrow();
+	});
+
+	it('is still refused for a coincidental duplicate, when no display union names the sites', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(false);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
 	});
 });

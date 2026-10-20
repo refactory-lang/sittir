@@ -882,7 +882,8 @@ function spliceTextLeaves(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const symbols = catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries });
 	const spliceable = (name: string): boolean =>
 		raw.rules[name] !== undefined && (textTokens.has(name) || (symbols.isTerminal(name) && symbols.isHidden(name)));
-	const splice = (rule: Rule<'evaluate'>): Rule<'evaluate'> => (rule.type === SYMBOL && spliceable(rule.name) ? raw.rules[rule.name]! : rule);
+	const splice = (rule: Rule<'evaluate'>): Rule<'evaluate'> =>
+		rule.type === SYMBOL && spliceable(rule.name) ? raw.rules[rule.name]! : rule;
 	const rules = { ...raw.rules };
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		if (spliceable(name)) continue;
@@ -969,7 +970,12 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	if ((relaxedLiterals.size === 0 && relaxedDisplayLiterals.size === 0) || raw.word === null) return { ...raw, rules };
 	const isWordOnly = (name: string): boolean => {
 		const body = rules[name];
-		return name !== raw.word && (body?.hidden === true || raw.inline.includes(name)) && body?.type === SYMBOL && body.name === raw.word;
+		return (
+			name !== raw.word &&
+			(body?.hidden === true || raw.inline.includes(name)) &&
+			body?.type === SYMBOL &&
+			body.name === raw.word
+		);
 	};
 	const dissolved = new Set(Object.keys(rules).filter(isWordOnly));
 	const toWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> =>
@@ -1120,6 +1126,10 @@ function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKin
 			for (const arm of content.members) addStorage({ display, content: arm });
 			return;
 		}
+		if (content.type === OPTIONAL) {
+			addStorage({ display, content: content.content });
+			return;
+		}
 		if (content.type === SYMBOL) {
 			add(
 				content.literal === undefined
@@ -1143,8 +1153,21 @@ function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKin
 		else if ('content' in rule && rule.content !== undefined) visit((rule as { content: Rule<'link'> }).content);
 	};
 	for (const rule of Object.values(rules)) visit(rule);
-	for (const display of unions.keys())
+	for (const display of unions.keys()) {
 		if (rules[display] !== undefined) add({ display, storage: display, literal: false });
+		for (const entry of kindEntries) {
+			if (
+				entry.alias !== true &&
+				entry.anon !== true &&
+				entry.hidden !== true &&
+				entry.literalRule !== true &&
+				entry.symbolName === display &&
+				rules[entry.kind] !== undefined
+			) {
+				add({ display, storage: entry.kind, literal: false });
+			}
+		}
+	}
 	return unions;
 }
 
