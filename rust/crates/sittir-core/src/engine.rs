@@ -836,6 +836,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
         &self.source
     }
 
+    /// The text `span` covers in the source, or `None` when it is not a
+    /// span of the source: past its end, reversed, or splitting a character.
+    #[must_use]
+    pub fn text(&self, span: crate::types::Span) -> Option<&str> {
+        self.source.get(span.range())
+    }
+
     /// The siblings beside the node at `index` (`Siblings`): the items
     /// routed to its slot beside it where its parent's read routes its
     /// children, else `siblings`.

@@ -109,6 +109,14 @@ export declare class SittirEngine {
    */
   siblings(treeId: TreeId, index: NodeIndex): string
   /**
+   * The text `span` covers in the source of the live tree `treeId`:
+   * one string of that span's characters, so the source itself
+   * never crosses. Refuses a tree that is not live and a span that
+   * is not one of its source's: past its end, reversed, or
+   * splitting a character.
+   */
+  text(treeId: number, span: { start: number; end: number }): string
+  /**
    * Whether the node at `index` of the live tree `treeId` is empty:
    * no child of it has width. Refuses a tree that is not live and an
    * index naming no node of it.

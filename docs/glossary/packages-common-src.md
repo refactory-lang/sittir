@@ -721,7 +721,7 @@ The refusal of a raw factory given a list owner's storage that is a read stub, a
 
 ### `packages/common/src/node-data.ts::spanOf`
 
-The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. Tools that slice source or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
+The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. A node's text by its span is `spannedTextOf`, the tree's native text call. Tools that slice a source they hold or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
 
 ### `packages/common/src/utils.ts::groupField`
 
@@ -871,6 +871,10 @@ The `KindView` of data with no wrapper or list kinds: no for every kind.
 ### `packages/common/src/node-data.ts::DECIDED_LAYOUT_KEYS`
 
 The `$_layout` keys `toNodeValue` decides for itself: `at`, which a crossing never carries (an untouched node crosses as its coordinate, an edited one without it); `trivia`, `units`, `slots`, `separator` and `sides`, which it derives from the node; and `changed`, which its holder judges. Every other key crosses as the node holds it, so the walk names no copy of `NodeLayout`'s shape and a key the native side adds crosses without a change here. Pinned by a test that walks a snapshot through `toNodeData` and refuses any `$_layout` key it drops.
+
+### `packages/common/src/node-data.ts::spannedTextOf`
+
+The text a parsed node spans (`spanOf`), as its tree's native text call answers it (`TreeHandle.text`): one string of the node's characters. A parsed tree's source stays native and never crosses to JavaScript, so every reader that wants a node's source text and has no `$text` (the portable classifier's text tests, the validators' `readNodeText`) asks for that span's text here. `tree` defaults to the node's own; a caller that already holds the tree passes it. `undefined` for a built node, which has no span, and for a node whose tree is not registered.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 

@@ -1,8 +1,6 @@
 import type { PortableCondition, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { anchored, holds, slotItems } from '../query-holds.ts';
-import { spanSlicer, type ByteSpan } from '../span.ts';
-import { treeOf } from '../tree-token.ts';
-import { spanOf } from '../node-data.ts';
+import { spannedTextOf } from '../node-data.ts';
 
 type Node = { readonly $type: number; readonly $text?: string };
 
@@ -62,22 +60,13 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 		const items = slotItems(node, accessor);
 		return keyword === undefined ? items : items.flatMap((item) => (item === true ? [keyword] : []));
 	};
-	const slicers = new WeakMap<object, (span: ByteSpan) => string>();
-	const sliceOf = (node: Node): string | undefined => {
-		const tree = treeOf(node);
-		const span = spanOf(node);
-		if (tree?.source === undefined || span === undefined) return undefined;
-		let slice = slicers.get(tree);
-		if (slice === undefined) slicers.set(tree, (slice = spanSlicer(tree.source)));
-		return slice(span);
-	};
 	const textOf = (item: unknown): string | undefined =>
 		typeof item === 'string'
 			? item
 			: typeof item === 'number'
 				? table.fixedText[item]
 				: hasKind(item)
-					? (item.$text ?? sliceOf(item))
+					? (item.$text ?? spannedTextOf(item))
 					: undefined;
 	const typeOf = (item: unknown): readonly number[] =>
 		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];

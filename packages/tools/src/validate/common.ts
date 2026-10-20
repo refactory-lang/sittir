@@ -8,7 +8,6 @@ import {
 	detachCoordinates,
 	dumpMetrics,
 	hostTemplateFor,
-	sliceSpan,
 	type HostOptions,
 	type HostedText,
 	type ReparseHosts
@@ -22,6 +21,7 @@ import {
 	sideOf,
 	sidesOf,
 	spanOf,
+	spannedTextOf,
 	treeTokenOf,
 	type KindView
 } from '@sittir/common/utils';
@@ -1106,9 +1106,8 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	if (typeof node.$text === 'string') return node.$text;
-	const source = (opts.tree ?? treeOf(node as object))?.source;
-	const span = spanOf(node);
-	if (span !== undefined && source !== undefined) return sliceSpan(source, span);
+	const spanned = spannedTextOf(node as object, opts.tree ?? treeOf(node as object));
+	if (spanned !== undefined) return spanned;
 	const rec = node as unknown as Record<string, unknown>;
 	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
 	const wrapped = keys.length === 1 ? rec[keys[0]!] : undefined;

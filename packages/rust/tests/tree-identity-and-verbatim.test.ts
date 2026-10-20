@@ -88,11 +88,11 @@ describe('untouched parses render verbatim', () => {
 		const native = (await rust.load()).createNative();
 		const source = '\n\n  fn a() {}\n';
 		const { root, tree } = native.parseAndRead(source) as {
-			root: { $_layout: { at: { $span: unknown } } };
-			tree: { source: string };
+			root: { $_layout: { at: { $span: { start: number; end: number } } } };
+			tree: { text(span: { start: number; end: number }): string };
 		};
 
 		expect(root.$_layout.at.$span).toEqual({ start: 0, end: source.length });
-		expect(tree.source).toBe(source);
+		expect(tree.text(root.$_layout.at.$span)).toBe(source);
 	});
 });

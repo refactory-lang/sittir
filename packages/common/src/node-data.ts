@@ -22,6 +22,14 @@ export function spanOf(node: object): ByteSpan | undefined {
 	return span === undefined ? undefined : { start: span.start, end: span.end };
 }
 
+/**
+ * The text a parsed node spans in the source of `tree`, its own tree by default, as the tree's native text call answers it: one string of the node's characters, never the source. `undefined` for a built node, and for a node with no tree.
+ */
+export function spannedTextOf(node: object, tree: TreeHandle | undefined = treeOf(node)): string | undefined {
+	const span = spanOf(node);
+	return span === undefined ? undefined : tree?.text?.(span);
+}
+
 /** The trivia a node owns: its layout's, read or written. */
 export function triviaOf(node: object): NodeLayout['trivia'] {
 	return (node as { readonly $_layout?: NodeLayout }).$_layout?.trivia;

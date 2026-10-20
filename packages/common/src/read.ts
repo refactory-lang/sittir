@@ -1,13 +1,13 @@
-import type { NodeCoordinate } from '@sittir/types';
+import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
 export type TriviaSideName = 'leading' | 'trailing' | 'inner';
 
-/** A parsed tree: the source it was read from, and the read of any node in it. */
+/** A parsed tree: the read of any node in it, and the text of any span of the source it was read from, which stays native. */
 export interface TreeHandle {
-	/** Original source text. */
-	source?: string;
+	/** The text `span` covers in the source: one string of that span's characters, never the source. */
+	text?(span: ByteSpan): string;
 	/** The native tree `read` reads: the tree id every coordinate read from it packs. */
 	id?: number;
 	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */

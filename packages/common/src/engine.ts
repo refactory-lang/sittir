@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import type {
 	AnyUntypedNode,
+	ByteSpan,
 	EngineDiagnostics,
 	IndentOption,
 	LanguageAPI,
@@ -173,6 +174,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws when the tree is not live or `index` is past its last node.
 	 */
 	isEmpty(treeId: number, index: number): boolean;
+	/**
+	 * The text `span` covers in the source of tree `treeId`: one string of that span's characters, so the source itself never crosses.
+	 *
+	 * @throws when the tree is not live, or `span` is not a span of its source: past its end, reversed, or splitting a character.
+	 */
+	text(treeId: number, span: ByteSpan): string;
 	/**
 	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
 	 * `Siblings`.
@@ -437,8 +444,8 @@ export function createNativeEngine<
 						// root asked for at another depth is read once.
 						const roots = new Map<number, unknown>([[depthOf(parseOptions), root]]);
 						const tree: TreeHandle = {
-							source,
 							id: parsed.treeId,
+							text: (span) => engine.text(parsed.treeId, span),
 							read: (index, depth = 1) => {
 								if (index !== 0) return readAt(index, depth);
 								let cached = roots.get(depth);

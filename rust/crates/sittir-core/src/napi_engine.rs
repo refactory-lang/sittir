@@ -350,6 +350,22 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// The text `span` covers in the source of the live tree `treeId`:
+            /// one string of that span's characters, so the source itself
+            /// never crosses. Refuses a tree that is not live and a span that
+            /// is not one of its source's: past its end, reversed, or
+            /// splitting a character.
+            #[::napi_derive::napi(ts_args_type = "treeId: number, span: { start: number; end: number }")]
+            pub fn text(&self, tree_id: $crate::types::TreeId, span: $crate::types::Span) -> ::napi::Result<String> {
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    parsed.text(span).map(str::to_owned).ok_or_else(|| {
+                        ::napi::Error::from_reason(format!("{}..{} is not a span of tree {tree_id}'s source", span.start, span.end))
+                    })
+                })
+            }
+
             /// Whether the node at `index` of the live tree `treeId` is empty:
             /// no child of it has width. Refuses a tree that is not live and an
             /// index naming no node of it.
