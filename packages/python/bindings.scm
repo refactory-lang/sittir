@@ -16,8 +16,6 @@
 ((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
-(parameters (parameters_elements (identifier) @declaration.parameter))
-(lambda_parameters (parameters_elements (identifier) @declaration.parameter))
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
@@ -244,7 +242,6 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(type (identifier) @identifier.type)
 (dotted_name) @identifier.dotted
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
