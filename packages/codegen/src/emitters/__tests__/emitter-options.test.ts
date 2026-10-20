@@ -1,14 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { deriveAddressTables, hintEmitterOf, renderOptionsModule, type ArmTypeResolver } from '../options.ts';
 import type { PreferenceArm, SitePreference } from '../../compiler/model/site-preferences.ts';
-import { siteKey } from '../../dsl/primitives/spacing.ts';
+import { parseSpacingAddress, siteKey, spacingLabelOf } from '../../dsl/primitives/spacing.ts';
+import type { SpacingAddress } from '../../types/spacing.ts';
 import { makeSiteKindsNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 const armType: ArmTypeResolver = (arm) => (arm.kind === undefined ? arm.value : `TSKindId.${arm.kind}`);
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 
-function spacing(kind: string, slot: string, label: string, defaultArm = 'space'): SitePreference {
-	return { kind, slot, address: siteKey(slot, label), label, arms: SPACING, defaultArm, source: 'spacing' };
+function spacing(kind: string, slot: string, spacingAddress: SpacingAddress, defaultArm = 'space'): SitePreference {
+	return { kind, slot, address: siteKey(slot, spacingAddress), label: spacingLabelOf(spacingAddress), arms: SPACING, defaultArm, source: 'spacing', spacing: spacingAddress };
 }
 
 function terminator(kind: string): SitePreference {
@@ -46,7 +47,7 @@ describe('renderOptionsModule', () => {
 			defaultArm: 'Delimiter.None',
 			source: 'delimiter'
 		};
-		const sites = [terminator('return_statement'), spacing('formal_parameters', 'elements', 'comma_separator_space_after'), delimiter];
+		const sites = [terminator('return_statement'), spacing('formal_parameters', 'elements', { at: 'separator', token: 'comma', side: 'after' }), delimiter];
 		const aliases = { whitespaceType, layoutType: whitespaceType };
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), armType, new Map());
 		const hints = hintEmitterOf(addresses, kindEntries, aliases, new Set(['formal_parameters']));
@@ -67,7 +68,7 @@ describe('renderOptionsModule', () => {
 
 	it('spells every key camel-cased, including literal tokens and list kinds', () => {
 		const entries = [...kindEntries, { kind: 'colon_colon', member: 'ColonColon', symbolName: '::', literalText: '::', anon: true }];
-		const site: SitePreference = { kind: 'token_tree_punctuation', slot: 'colon_colon', address: 'colon_colon_after', label: 'colon_colon_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const site: SitePreference = { kind: 'token_tree_punctuation', slot: 'colon_colon', address: 'colon_colon_after', label: 'colon_colon_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', spacing: { at: 'seam', token: 'colon_colon', side: 'after' } };
 		const hints = hintEmitterOf(deriveAddressTables([site], entries, makeSiteKindsNodeMap([site]), armType, new Map()), entries, undefined, new Set());
 		expect(hints.roots.map((r) => [r.key, r.label])).toEqual([['tokenTreePunctuation', true]]);
 		expect(renderOptionsModule({ hints })).toContain('readonly tokenTreePunctuation?: { readonly colonColon?: { readonly after?: TSKindId.tight | TSKindId.space | TSKindId.newline } };');
@@ -77,7 +78,7 @@ describe('renderOptionsModule', () => {
 		const whitespaceType = 'TSKindId.tight | TSKindId.space | TSKindId.newline';
 		const layoutType = `${whitespaceType} | TSKindId.indent | TSKindId.dedent`;
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
-		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' };
+		const edge: SitePreference = { kind: 'block', slot: 'block', address: 'block_before', label: 'block_before', arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', spacing: { at: 'seam', token: 'block', side: 'before' } };
 		const hints = hintEmitterOf(deriveAddressTables([edge], kindEntries, makeSiteKindsNodeMap([edge]), armType, new Map()), kindEntries, { whitespaceType, layoutType }, new Set(['block']));
 		expect(hints.roots.map((r) => [r.key, r.hint])).toEqual([['block', '{ readonly before?: LayoutKindId }']]);
 	});
@@ -99,7 +100,7 @@ describe('deriveAddressTables', () => {
 		arms,
 		defaultArm: 'tight',
 		source: 'spacing',
-		side: 'seam'
+		spacing: parseSpacingAddress(address)!
 	});
 
 	it('splits an address into the branches above a site and the site itself', () => {

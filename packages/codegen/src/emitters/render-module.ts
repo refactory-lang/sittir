@@ -2,7 +2,8 @@ import { relaxedDisplayIds, relaxedKeywordIds } from './kind-id-rust.ts';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
-import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import type { SpacingAddress } from '../types/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
 import { CONTINUATION_KINDS, NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
@@ -61,7 +62,7 @@ import {
 import { listViewOwners } from './factories.ts';
 import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
-import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
+import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
 import { RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
@@ -164,12 +165,11 @@ export interface RenderOptionsInputs {
 	readonly kindEntries?: readonly KindEnumEntry[];
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
-	readonly boxedPayloads?: readonly string[];
 	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
 }
 
 export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
-	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
+	return { ...inputs, envelopePins: ENVELOPE_PINS[grammar] ?? {} };
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -196,8 +196,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		options,
 		kindEntries,
 		sites,
-		addresses,
-		boxedPayloads
+		addresses
 	} = config;
 	return {
 		emit: emitRenderModule(grammar, templates, nodeMap, generatedIdTables, {
@@ -206,8 +205,7 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 			options,
 			kindEntries,
 			sites,
-			addresses,
-			boxedPayloads
+			addresses
 		})
 	};
 }
@@ -228,8 +226,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 			options: config.options,
 			kindEntries: config.kindEntries,
 			sites: config.sites,
-			addresses: config.addresses,
-			boxedPayloads: config.boxedPayloads
+			addresses: config.addresses
 		};
 	}
 
@@ -922,7 +919,7 @@ function buildTypedTemplateBody(
 	}
 
 	const seamFieldNames = new Set(
-		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.side === 'seam')).map((site) =>
+		(node === undefined ? [] : synthesizedSpacingSites(plan, node).filter((s) => s.spacing.at === 'seam')).map((site) =>
 			rustFieldIdent(site.fieldIdent)
 		)
 	);
@@ -1098,7 +1095,8 @@ export function emitRenderModule(
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
-	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [], inputs.envelopePins);
+	const unboxed = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, [], inputs.envelopePins);
+	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins);
 
 	const nodeRs =
 		[
@@ -1271,7 +1269,7 @@ function renderNodeSupport(
 	plan: RenderPlan,
 	boxedPayloads: readonly string[],
 	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined
-): { readonly text: string; readonly records: ReadonlyMap<string, RecordLayout> } {
+): { readonly text: string; readonly records: ReadonlyMap<string, RecordLayout>; readonly choicePayloads: ReadonlySet<string> } {
 	const projection = getNodeProjection(nodeMap);
 	const nodes = projection.nodes;
 
@@ -1363,7 +1361,7 @@ function renderNodeSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
-	return { text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'), records: read.records };
+	return { text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'), records: read.records, choicePayloads: read.choicePayloads };
 }
 
 function grammarTriviaStatement(nodes: ReadonlySet<string>): string {
@@ -1519,12 +1517,12 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
 
 export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
 	const stale = pinned.find((name) => !payloads.has(name));
-	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+	if (stale !== undefined) throw new Error(`${stale} is boxed but no choice holds it`);
 	const n = PAYLOAD_CEILING_BYTES;
 	return [...payloads].sort().map((name) =>
 		pinned.includes(name)
-			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling: unpin it in boxed-payloads.ts");`
-			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling: pin it in boxed-payloads.ts");`
+			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");`
+			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");`
 	);
 }
 
@@ -2070,9 +2068,9 @@ function literalSeamsOf(
 	const sites: { before?: string; after?: string } = {};
 	const token = tokenNameOfText(literal.text, kindEntries);
 	for (const site of plan.spacingSites) {
-		if (site.source !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
-		const seam = parseSeamLabel(site.address);
-		if (token !== undefined && seam?.token === token) sites[seam.side] = site.constName;
+		const seam = site.spacing;
+		if (site.source !== owner || seam?.at !== 'seam' || site.seat !== undefined) continue;
+		if (token !== undefined && seam.token === token) sites[seam.side] = site.constName;
 	}
 	return sites.before !== undefined || sites.after !== undefined ? sites : undefined;
 }
@@ -2643,15 +2641,18 @@ function inertPrepareImpl(typeName: string): string[] {
 	];
 }
 
-function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
-	return plan.spacingSites.filter((site) => site.source === node.kind && site.side !== undefined && site.seat === undefined);
+function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly (SpacingSite & { readonly spacing: SpacingAddress })[] {
+	return plan.spacingSites.filter(
+		(site): site is SpacingSite & { readonly spacing: SpacingAddress } => site.source === node.kind && site.spacing !== undefined && site.seat === undefined
+	);
 }
 
 function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<string, 'before' | 'after'> {
 	const out = new Map<string, 'before' | 'after'>();
 	for (const site of synthesizedSpacingSites(plan, node)) {
-		if (site.side !== 'seam' || !isKindEdge(site)) continue;
-		out.set(rustFieldIdent(site.fieldIdent), parseSeamLabel(site.address)!.side);
+		const seam = site.spacing;
+		if (seam.at !== 'seam' || !isKindEdge(site)) continue;
+		out.set(rustFieldIdent(site.fieldIdent), seam.side);
 	}
 	return out;
 }
@@ -2774,10 +2775,8 @@ function listItemWireKey(node: AssembledList): string {
 	return slotWireKey(listItemField(node).storageName);
 }
 
-function separatorSideOf(site: SpacingSite): 'before' | 'after' | undefined {
-	if (site.side === 'before') return 'before';
-	if (site.side === 'after' || site.side === 'gap') return 'after';
-	return undefined;
+function separatorSideOf(site: ReturnType<typeof synthesizedSpacingSites>[number]): 'before' | 'after' | undefined {
+	return site.spacing.at === 'separator' ? (site.spacing.side ?? 'after') : undefined;
 }
 
 function spacingFieldExprs(
@@ -2786,7 +2785,7 @@ function spacingFieldExprs(
 	fieldName: string
 ): { readonly before?: string; readonly after?: string; readonly head?: string; readonly tail?: string } {
 	if (node === undefined) return {};
-	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName && site.side !== 'seam');
+	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}()`;
 	const flank = (site: SpacingSite | undefined): string | undefined =>
@@ -2794,8 +2793,8 @@ function spacingFieldExprs(
 	return {
 		before: expr(sites.find((site) => separatorSideOf(site) === 'before')),
 		after: expr(sites.find((site) => separatorSideOf(site) === 'after')),
-		head: flank(sites.find((site) => site.side === 'start')),
-		tail: flank(sites.find((site) => site.side === 'end'))
+		head: flank(sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'start')),
+		tail: flank(sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'end'))
 	};
 }
 
@@ -3052,7 +3051,7 @@ function defaultedSlots(plan: RenderPlan, node: AssembledNode): DefaultedSlot[] 
 				(candidate) =>
 					candidate.source === node.kind &&
 					candidate.slot === slot.name &&
-					candidate.side === undefined &&
+					candidate.spacing === undefined &&
 					candidate.seat === undefined
 			);
 			if (site === undefined) {
@@ -3074,7 +3073,8 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	if (!node.grammarRoot || fillFields.length === 0) return [];
 	const sites = new Map<'before' | 'after', SpacingSite>();
 	for (const site of synthesizedSpacingSites(plan, node)) {
-		if (site.side === 'seam' && isKindEdge(site)) sites.set(parseSeamLabel(site.address)!.side, site);
+		const seam = site.spacing;
+		if (seam.at === 'seam' && isKindEdge(site)) sites.set(seam.side, site);
 	}
 	const allowedOf = (side: 'before' | 'after'): string => {
 		const site = sites.get(side);
@@ -3542,7 +3542,7 @@ function wireKeyAttr(key: string): string {
 }
 
 function spaceAttr(
-	site: SpacingSite,
+	site: ReturnType<typeof synthesizedSpacingSites>[number],
 	node: AssembledNode,
 	printedSlots: readonly StructSlot[],
 	placeOf: ReadonlyMap<string, RecordPlace>
@@ -4049,9 +4049,8 @@ function armSeamPairsOf(
 ): Map<string, { before: string; after: string }> {
 	const bySlot = new Map<string, { before?: string; after?: string }>();
 	for (const site of plan.spacingSites) {
-		if (site.source !== node.kind || site.side !== 'seam' || site.seat !== undefined) continue;
-		const seam = parseSeamLabel(site.address);
-		if (seam === undefined) continue;
+		const seam = site.spacing;
+		if (site.source !== node.kind || seam?.at !== 'seam' || site.seat !== undefined) continue;
 		const entry = bySlot.get(site.slot) ?? {};
 		bySlot.set(site.slot, { ...entry, [seam.side]: site.constName });
 	}

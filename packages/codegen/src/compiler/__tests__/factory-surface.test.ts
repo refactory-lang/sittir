@@ -14,7 +14,7 @@ import {
 	soleSlotFacts
 } from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 let nodeMap: NodeMap;

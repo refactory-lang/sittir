@@ -15,11 +15,11 @@ import {
 	SYMBOL,
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
+import type { ChoiceRule, RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { attributeBuilder, buildOptional, carrySeqFacts } from '../dsl/builders.ts';
+import { attributeBuilder, buildOptional, carryNodeFacts } from '../dsl/builders.ts';
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
@@ -57,10 +57,13 @@ function construct(node: Input): Output {
 		case SEQ: {
 			const members = node.members.map(rebuild);
 			const rebuilt: SeqRule<'normalize'> = { ...node, members };
-			return carrySeqFacts(rebuilt, b.seq(...members));
+			return carryNodeFacts(rebuilt, b.seq(...members));
 		}
-		case CHOICE:
-			return { ...node, ...b.choice(...node.members.map(rebuild)) };
+		case CHOICE: {
+			const members = node.members.map(rebuild);
+			const rebuilt: ChoiceRule<'normalize'> = { ...node, members };
+			return carryNodeFacts(rebuilt, b.choice(...members));
+		}
 		case OPTIONAL:
 			return buildOptional(rebuild(node.content));
 		case REPEAT:

@@ -3,7 +3,7 @@ import { enrich, type EnrichAuthoredConfig } from '../enrich.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { collectCatalogKinds } from '../../emitters/kind-discriminant.ts';
 import { readFileSync } from 'node:fs';

@@ -392,15 +392,12 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 }
 
 describe('native node emission', () => {
-	it('boxes a pinned payload, asserts it over the ceiling, and refuses a pin no choice holds', () => {
+	it('boxes a payload a choice reaches again through what it holds by value, and asserts it over the ceiling', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap, MINIMAL_TOKENS);
-		const templates = emittedTemplates({ call_expression: slot('callee') });
-		const emitted = emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['CallExpressionNode'] }).nodeRs.contents;
+		const emitted = emitRenderModule('rust', emittedTemplates({ call_expression: slot('callee') }), nodeMap, generatedIdTables).nodeRs.contents;
+		expect(emitted).toContain('pub callee: ::sittir_core::SlotValue<ExpressionNode>,');
 		expect(emitted).toContain('    CallExpression(Box<CallExpressionNode>),');
 		expect(emitted).toMatch(new RegExp(`^const _: \\(\\) = assert!\\(::core::mem::size_of::<CallExpressionNode>\\(\\) > ${PAYLOAD_CEILING_BYTES}, "`, 'm'));
-		expect(() => emitRenderModule('rust', templates, nodeMap, generatedIdTables, { boxedPayloads: ['UnheldNode'] })).toThrow(
-			'UnheldNode is pinned in boxed-payloads.ts but no choice holds it'
-		);
 	});
 
 	it('emits node-oriented Rust render support', () => {
@@ -414,7 +411,7 @@ describe('native node emission', () => {
 
 		expect(emitted.nodeRs.contents).toContain('pub enum AnyNode');
 		expect(emitted.nodeRs.contents).toContain('#[node(choice, view = AnyNodeRecord)]\npub enum AnyNode {');
-		expect(emitted.nodeRs.contents).toContain('CallExpression(CallExpressionNode),');
+		expect(emitted.nodeRs.contents).toContain('CallExpression(Box<CallExpressionNode>),');
 		expect(emitted.nodeRs.contents).toContain('pub struct CallExpressionNode');
 		expect(emitted.nodeRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionNode>,');
 		expect(emitted.nodeRs.contents).toMatch(/pub enum AnyNode \{[^}]*\n    #\[kind\(kind::SEMI\)\]\n    Semi,/);

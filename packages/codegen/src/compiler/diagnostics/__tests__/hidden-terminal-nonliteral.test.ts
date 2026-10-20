@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { hiddenTerminalNonliteralSites } from '../grammar-diagnostics.ts';
 import type { RawGrammar } from '../../types.ts';
-import { evaluatePackage } from '../../evaluate-package.ts';
+import { evaluatePackage } from '../../../dsl/evaluate-package.ts';
 import { diagnoseEvaluationStages } from '../../stage.ts';
 import { allGrammars, grammarPackage } from '../../../grammars.ts';
 import type { Rule } from '../../../types/rule.ts';

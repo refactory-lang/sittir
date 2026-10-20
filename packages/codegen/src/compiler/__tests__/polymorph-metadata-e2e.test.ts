@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { link } from '../link.ts';
 import { deriveVariantChildren } from '../variant-structural.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;

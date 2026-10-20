@@ -25,9 +25,12 @@ import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnost
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
 import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
+import { eofPlacements } from '../../dsl/eof-placement.ts';
+import { rootRuleName } from '../../util/reachable-rules.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
+import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 
 export type { GrammarDiagnostic };
 
@@ -381,7 +384,10 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'conflict-unresolvable',
 	'conflict-resolutions-stale',
 	'conflict-dynamic-precedence-lost',
-	'lead-refused'
+	'lead-refused',
+	'eof-not-last',
+	'eof-in-token',
+	...Object.keys(ENRICH_SHAPES)
 ]);
 
 export function unexpectableExpectEntries(
@@ -524,12 +530,34 @@ export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds
 	}));
 }
 
+export function eofDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules' | 'textTokens'>): GrammarDiagnostic[] {
+	const start = rootRuleName(grammar.rules);
+	return [...eofPlacements(grammar.rules, grammar.textTokens ?? [])].map(([ownerKind, placement]) => {
+		const shared = { scope: 'grammar' as const, severity: 'fail' as const, grammar: grammar.name, ownerKind, canProceed: false, details: { kind: ownerKind, start, ...placement } };
+		return placement.inToken
+			? {
+					...shared,
+					code: 'eof-in-token',
+					message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
+					proposal: `Move eof() out of the token, to the end of the start rule '${start}'.`
+				}
+			: {
+					...shared,
+					code: 'eof-not-last',
+					message: `eof() in '${ownerKind}' is not the last step of the start rule '${start}'; eof() is legal only there, outside any repetition.`,
+					proposal: `Move eof() to the end of '${start}', or take it out of '${ownerKind}'.`
+				};
+	});
+}
+
 export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 	return withoutOrphanedGroups(raw, [
 		...predictionRecords(raw),
+		...eofDiagnostics(raw),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
-		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event))
+		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event)),
+		...(raw.layerDiagnostics ?? [])
 	]);
 }
 

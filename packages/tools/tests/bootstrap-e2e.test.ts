@@ -10,8 +10,8 @@ import { conflictResolutionsPath, ensureConflictResolutions } from '../../codege
 import type { ConflictResolutionsFile } from '../../codegen/src/dsl/conflict-resolutions.ts';
 import { loadPackageIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
-import { evaluatePackage } from '../../codegen/src/compiler/evaluate-package.ts';
-import { packageEntryPath } from '../../codegen/src/compiler/resolve-grammar.ts';
+import { evaluatePackage } from '../../codegen/src/dsl/evaluate-package.ts';
+import { packageEntryPath } from '../../codegen/src/dsl/resolve-grammar.ts';
 import { GrammarDiagnosticError } from '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import type { GeneratedIdTables } from '../../codegen/src/dsl/symbol-table.ts';

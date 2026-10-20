@@ -5,7 +5,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { soleSlotFacts } from '../../emitters/shared.ts';
 import type { NodeMap } from '../types.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 let nodeMap: NodeMap;

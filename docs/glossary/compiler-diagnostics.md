@@ -450,7 +450,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), and a receiver claim the lead derivation refuses (`lead-refused`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), a receiver claim the lead derivation refuses (`lead-refused`), an `eof()` anywhere but last in the start rule or inside a token (`eof-not-last`, `eof-in-token`), and a shape enrich rewrites that reaches the model as written (every code in `dsl/enrich-shapes.ts::ENRICH_SHAPES`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -491,9 +491,9 @@ throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is 
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
 
-The records answerable from the evaluated grammar alone, before link: the prediction records, the
-`expect-diagnostics-invalid` entries, and evaluate's own events (`body-pattern-zero-match`,
-`desugar-divergence-*`).
+The records answerable from the evaluated grammar alone, before link: the prediction records, `eof-in-token` and `eof-not-last`, the
+`expect-diagnostics-invalid` entries, evaluate's own events (`body-pattern-zero-match`,
+`desugar-divergence-*`), and the diagnostics recorded while the grammar was evaluated (`RawGrammar.layerDiagnostics`).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`
 
@@ -582,7 +582,7 @@ Whether a rule can produce a sequence of literal tokens and symbols. A string
 matches its literal; a symbol matches an item naming it, and a symbol the caller
 expands is also followed into its own body. By default only hidden symbols
 (leading underscore) expand, since they leave no node of its own. Sequences, choices, optionals and repeats are followed; fields,
-aliases and tokens are transparent. Recursion is solved as a least fixed
+aliases and tokens are transparent; `EOF` and `BLANK` match nothing and end where they start. Recursion is solved as a least fixed
 point. A rule re-entered at the same position yields what it has reached so
 far, and passes repeat until no rule reaches a new end. So a left-recursive rule
 is recognised in full, and the answer is exact in both directions. That matters
@@ -851,3 +851,7 @@ The grammar's `expectDiagnostics` with each kind listed under both its base name
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::writeDiagnostics`
 
 Prints diagnostics by severity: info goes to stdout, and warning, error and fail go to stderr, each side formatted once with the given formatter. A side with nothing to print writes nothing. A quiet regen keeps a successful child's stdout to itself, so this is the line between what it hides and what it shows.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics`
+
+One blocking record per rule `dsl/eof-placement.ts::eofPlacements` refuses, naming the rule as `ownerKind`, with `details` holding the rule (`kind`), the start rule (`start`) and both placements. A rule with an `eof()` in a token gets `eof-in-token`, the more specific mistake: a lexical token cannot match the end of input, and tree-sitter's DSL forbids the shape, so the record refuses it at evaluate (`evaluateRecords`) rather than leaving it to the parser generator. Any other refused rule gets `eof-not-last`: an `eof()` is legal only last in the start rule, where it changes nothing because the start rule always runs to the end of the input. Neither code can be expected (`UNEXPECTABLE_CODES`).
