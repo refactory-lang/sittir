@@ -623,7 +623,7 @@ describe('lookahead_assertion sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Eq);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Eq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bang builds the parent', () => {
@@ -660,7 +660,7 @@ describe('lookahead_assertion sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.LookaheadAssertion);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Bang);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Bang);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -775,7 +775,7 @@ describe('lookbehind_assertion sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Eq);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Eq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bang builds the parent', () => {
@@ -812,7 +812,7 @@ describe('lookbehind_assertion sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.LookbehindAssertion);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Bang);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Bang);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -822,7 +822,7 @@ describe('pattern_character', () => {
 		const node = ir.patternCharacter('a');
 		expect(node.$type).toBe(TSKindId.PatternCharacter);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('a');
+		expect(node.$text()).toBe('a');
 	});
 });
 
@@ -867,7 +867,7 @@ describe('posix_class_name', () => {
 		const node = ir.posixClassName('test');
 		expect(node.$type).toBe(TSKindId.PosixClassName);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -895,7 +895,7 @@ describe('class_character', () => {
 		const node = ir.classCharacter('a');
 		expect(node.$type).toBe(TSKindId.ClassCharacter);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('a');
+		expect(node.$text()).toBe('a');
 	});
 });
 
@@ -1082,7 +1082,7 @@ describe('named_capturing_group sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.LparenQmarkLt);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.LparenQmarkLt);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('lparenQmarkPLt builds the parent', () => {
@@ -1120,7 +1120,7 @@ describe('named_capturing_group sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.NamedCapturingGroup);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.LparenQmarkPLt);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.LparenQmarkPLt);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1200,7 +1200,7 @@ describe('flags', () => {
 		const node = ir.flags('test');
 		expect(node.$type).toBe(TSKindId.Flags);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1311,7 +1311,7 @@ describe('decimal_escape', () => {
 		const node = ir.decimalEscape('\\10');
 		expect(node.$type).toBe(TSKindId.DecimalEscape);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\10');
+		expect(node.$text()).toBe('\\10');
 	});
 });
 
@@ -1378,7 +1378,7 @@ describe('unicode_character_escape', () => {
 		const node = ir.unicodeCharacterEscape('\\u0000');
 		expect(node.$type).toBe(TSKindId.UnicodeCharacterEscape);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\u0000');
+		expect(node.$text()).toBe('\\u0000');
 	});
 });
 
@@ -1404,7 +1404,7 @@ describe('unicode_property_value', () => {
 		const node = ir.unicodePropertyValue('test');
 		expect(node.$type).toBe(TSKindId.UnicodePropertyValue);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1413,7 +1413,7 @@ describe('control_escape', () => {
 		const node = ir.controlEscape('\\n');
 		expect(node.$type).toBe(TSKindId.ControlEscape);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\n');
+		expect(node.$text()).toBe('\\n');
 	});
 });
 
@@ -1422,7 +1422,7 @@ describe('control_letter_escape', () => {
 		const node = ir.controlLetterEscape('\\ca');
 		expect(node.$type).toBe(TSKindId.ControlLetterEscape);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\ca');
+		expect(node.$text()).toBe('\\ca');
 	});
 });
 
@@ -1444,7 +1444,7 @@ describe('group_name', () => {
 		const node = ir.groupName('test');
 		expect(node.$type).toBe(TSKindId.GroupName);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -1453,7 +1453,7 @@ describe('decimal_digits', () => {
 		const node = ir.decimalDigits('1');
 		expect(node.$type).toBe(TSKindId.DecimalDigits);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('1');
+		expect(node.$text()).toBe('1');
 	});
 });
 
@@ -1462,7 +1462,7 @@ describe('character_class_escape_text1', () => {
 		const node = ir.characterClassEscapeText1('\\d');
 		expect(node.$type).toBe(TSKindId.CharacterClassEscapeText1);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\d');
+		expect(node.$text()).toBe('\\d');
 	});
 });
 
@@ -1471,7 +1471,7 @@ describe('character_class_escape_text2', () => {
 		const node = ir.characterClassEscapeText2('\\p');
 		expect(node.$type).toBe(TSKindId.CharacterClassEscapeText2);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\p');
+		expect(node.$text()).toBe('\\p');
 	});
 });
 

@@ -5,8 +5,13 @@ import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/utils';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
 import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
-import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference } from '../compiler/model/site-preferences.ts';
-import type { NodeMap } from '../compiler/types.ts';
+import {
+	BLANK_ARM,
+	BLANK_KIND_ID,
+	type PreferenceArm,
+	type SitePreference
+} from '../compiler/model/site-preferences.ts';
+import type { DisplayUnions, DisplayUnionMember, NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
 import { admitsDepth, type DepthAnchor, type DepthRegion, type EdgeArm } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, siteKey } from '../dsl/primitives/spacing.ts';
@@ -91,6 +96,7 @@ export interface PlannedDepthRegion {
 }
 
 export interface RenderOptionsPlan {
+	readonly displayUnions?: DisplayUnions;
 	readonly spacingSites: readonly SpacingSite[];
 	readonly sitePaths: readonly SitePath[];
 	readonly delimiterSites: readonly DelimiterSite[];
@@ -264,6 +270,7 @@ export function planRenderOptions(
 		return kind === undefined ? 0 : idOf(kindEntries, kind, 'visibleExternals');
 	};
 	return {
+		displayUnions: nodeMap.displayUnions,
 		spacingSites: spacing,
 		sitePaths: [
 			...spacing.map((site, index) => ({ path: paths.get(site)!, site: 'spacing' as const, index })),
@@ -299,26 +306,72 @@ export function planRenderOptions(
 
 const q = (s: string): string => JSON.stringify(s);
 
-type SiteIndex = ReadonlyMap<string, readonly SitePath[]>;
+type IndexedSite = SitePath & { readonly spacing?: SpacingSite; readonly displayUnion?: readonly DisplayUnionMember[] };
+type SiteIndex = ReadonlyMap<string, readonly IndexedSite[]>;
 
 function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
-	const index = new Map<string, SitePath[]>();
+	const index = new Map<string, IndexedSite[]>();
 	for (const p of plan.sitePaths) {
+		const spacing = p.site === 'spacing' ? plan.spacingSites[p.index] : undefined;
+		const indexed: IndexedSite =
+			spacing === undefined
+				? p
+				: { ...p, spacing, displayUnion: plan.displayUnions?.get(spacing.seat?.display ?? spacing.display) };
 		const key = formatPreferencePath(p.segments);
 		const bucket = index.get(key);
-		if (bucket === undefined) index.set(key, [p]);
-		else bucket.push(p);
+		if (bucket === undefined) index.set(key, [indexed]);
+		else bucket.push(indexed);
 	}
 	return index;
 }
 
+function isAliasSiteFamily(sites: readonly IndexedSite[]): boolean {
+	const first = sites[0]?.spacing;
+	const family = sites[0]?.displayUnion;
+	if (first === undefined || family === undefined) return false;
+	const sameSite = (site: IndexedSite): boolean => {
+		const spacing = site.spacing;
+		if (
+			spacing === undefined ||
+			site.displayUnion !== family ||
+			!family.some((member) => !member.literal && member.storage === (spacing.seat?.kind ?? spacing.source)) ||
+			spacing.defaultId !== first.defaultId ||
+			JSON.stringify(spacing.allowedIds) !== JSON.stringify(first.allowedIds)
+		)
+			return false;
+		if (first.seat === undefined)
+			return (
+				spacing.seat === undefined &&
+				spacing.display === first.display &&
+				spacing.kindId !== undefined &&
+				spacing.slot === first.slot &&
+				spacing.label === first.label
+			);
+		return (
+			spacing.seat !== undefined &&
+			spacing.source === first.source &&
+			spacing.slot === first.slot &&
+			spacing.seat.display === first.seat.display &&
+			spacing.label === first.label &&
+			spacing.seat.kindId !== undefined
+		);
+	};
+	return (
+		sites.every(sameSite) &&
+		new Set(sites.map((site) => (first.seat === undefined ? site.spacing?.kindId : site.spacing?.seat?.kindId)))
+			.size === sites.length
+	);
+}
+
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
-	const refs = leaf.canonical.map((segments) => {
+	const refs = leaf.canonical.flatMap((segments) => {
 		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
-		if (bucket.length !== 1) {
-			throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}`);
+		if (bucket.length !== 1 && (bucket.length === 0 || !isAliasSiteFamily(bucket))) {
+			throw new Error(
+				`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}: ${JSON.stringify(bucket.map(({ spacing, displayUnion }) => ({ source: spacing?.source, seat: spacing?.seat, displayUnion })))}`
+			);
 		}
-		return bucket[0]!;
+		return bucket;
 	});
 	if (new Set(refs.map((r) => r.site)).size > 1) throw new Error(`options.rs: address '${leaf.path}' mixes spacing and delimiter sites`);
 	return refs;

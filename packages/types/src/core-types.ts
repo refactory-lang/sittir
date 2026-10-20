@@ -71,8 +71,10 @@ export interface AnyUntypedNode {
 	 * The text of a text leaf: a read leaf carries the bytes it spans, a built
 	 * one the text it was built from. A node with slots has none; it renders
 	 * from its slots, or, untouched, from the bytes its `$_layout.at` names.
+	 * A node's is the method `$text()`; native node data carries the string.
+	 * `nodeText` reads either.
 	 */
-	$text?: string;
+	$text?: string | (() => string);
 	/**
 	 * A node's layout as the native node carries it: where a read node came
 	 * from (`at`), and the trivia it owns, whether read or written.
@@ -156,8 +158,8 @@ export interface TriviaFlanks {
 export interface ErrorNode extends AnyUntypedNode, TriviaFlanks {
 	readonly $type: ErrorKindId;
 	readonly $source: 0 | 1;
-	/** The region's own source text. */
-	readonly $text: string;
+	/** The region's own source text: one string, made by this call. */
+	$text(): string;
 }
 
 /** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */

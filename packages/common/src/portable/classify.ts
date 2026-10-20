@@ -2,10 +2,10 @@ import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, 
 import { anchored, holds, slotItems } from '../query-holds.ts';
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
-import { spanOf } from '../node-data.ts';
+import { nodeText, spanOf } from '../node-data.ts';
 import { portablePathHasFacts } from './facts.ts';
 
-type Node = { readonly $type: number; readonly $text?: string };
+type Node = { readonly $type: number };
 
 /** Reads a node or a bare kind id of a bound grammar as the vocabulary path of its kind's first read entry that holds, if any. */
 export type PortableClassifier = <T extends Node>(value: T | number) => string | undefined;
@@ -88,7 +88,7 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 			: typeof item === 'number'
 				? table.fixedText[item]
 				: hasKind(item)
-					? (item.$text ?? sliceOf(item))
+					? (nodeText(item) ?? sliceOf(item))
 					: undefined;
 	const typeOf = (item: unknown): readonly number[] =>
 		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];

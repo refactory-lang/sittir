@@ -15813,13 +15813,13 @@ export namespace ImportPrefix {
 		readonly $type: TSKindId.ImportPrefix;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ImportPrefix;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = ImportPrefixNs['Loose'];
 	export type LooseConfig = ImportPrefixNs['LooseConfig'];
@@ -15833,13 +15833,13 @@ export namespace TypeConversion {
 		readonly $type: TSKindId.TypeConversion;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TypeConversion;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = TypeConversionNs['Loose'];
 	export type LooseConfig = TypeConversionNs['LooseConfig'];
@@ -15853,13 +15853,13 @@ export namespace Identifier {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
@@ -15873,13 +15873,13 @@ export namespace FormatSpecifierText {
 		readonly $type: TSKindId.FormatSpecifierText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.FormatSpecifierText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = FormatSpecifierTextNs['Loose'];
 	export type LooseConfig = FormatSpecifierTextNs['LooseConfig'];
@@ -15893,13 +15893,13 @@ export namespace IntegerDecimalLong {
 		readonly $type: TSKindId.IntegerDecimalLong;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalLong;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = IntegerDecimalLongNs['Loose'];
 	export type LooseConfig = IntegerDecimalLongNs['LooseConfig'];
@@ -15913,13 +15913,13 @@ export namespace IntegerDecimalImaginary {
 		readonly $type: TSKindId.IntegerDecimalImaginary;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalImaginary;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = IntegerDecimalImaginaryNs['Loose'];
 	export type LooseConfig = IntegerDecimalImaginaryNs['LooseConfig'];
@@ -15933,13 +15933,13 @@ export namespace IntegerDecimalPlain {
 		readonly $type: TSKindId.IntegerDecimalPlain;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalPlain;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = IntegerDecimalPlainNs['Loose'];
 	export type LooseConfig = IntegerDecimalPlainNs['LooseConfig'];
@@ -15953,13 +15953,13 @@ export namespace LineContinuationNewline {
 		readonly $type: TSKindId.LineContinuationNewline;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.LineContinuationNewline;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = LineContinuationNewlineNs['Loose'];
 	export type LooseConfig = LineContinuationNewlineNs['LooseConfig'];
@@ -15973,13 +15973,13 @@ export namespace StringStart {
 		readonly $type: TSKindId.StringStart;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringStart;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = StringStartNs['Loose'];
 	export type LooseConfig = StringStartNs['LooseConfig'];
@@ -15993,13 +15993,13 @@ export namespace StringFragment {
 		readonly $type: TSKindId.StringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = StringFragmentNs['Loose'];
 	export type LooseConfig = StringFragmentNs['LooseConfig'];
@@ -16013,13 +16013,13 @@ export namespace EscapeInterpolation {
 		readonly $type: TSKindId.EscapeInterpolation;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.EscapeInterpolation;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = EscapeInterpolationNs['Loose'];
 	export type LooseConfig = EscapeInterpolationNs['LooseConfig'];
@@ -16033,13 +16033,13 @@ export namespace StringEnd {
 		readonly $type: TSKindId.StringEnd;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringEnd;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = StringEndNs['Loose'];
 	export type LooseConfig = StringEndNs['LooseConfig'];

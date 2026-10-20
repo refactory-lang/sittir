@@ -1256,6 +1256,29 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			expect(nodeMap.nodes.get('arm_eq')?.irKey).toBe('armEq');
 		});
 
+		it('gives a hoisted arm of a supertype the model makes of a hidden choice its own surface, as it does a parser supertype’s arm', () => {
+			const normalized = makeNormalized({
+				_arms: {
+					type: SUPERTYPE,
+					name: '_arms',
+					subtypes: [
+						{ type: SYMBOL, name: 'arm_eq' },
+						{ type: SYMBOL, name: 'parameters' }
+					]
+				},
+				arm_eq: {
+					type: SEQ,
+					members: [{ type: STRING, value: '=' }, { type: FIELD, name: 'params', content: { type: SYMBOL, name: 'parameters' } }],
+					annotations: { hoisted: true }
+				},
+				parameters: { type: PATTERN, value: '[a-z]+' }
+			});
+			const nodeMap = assemble(AssembleCtx.from(normalized, makeIdTables({})));
+			expect(nodeMap.nodes.get('arm_eq')?.seated).toBe(true);
+			expect(nodeMap.nodes.get('arm_eq')?.ownSurface).toBe(true);
+			expect(nodeMap.nodes.get('arm_eq')?.irKey).toBe('armEq');
+		});
+
 		it('does not seat a hoisted group the parser declares a supertype: it has no node', () => {
 			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(true) })));
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(false);

@@ -1451,7 +1451,10 @@ narrowing guard.
 `true` when the grammar's `supertypes` names this kind: upstream,
 enrich-minted, or added in `grammar.sittir.ts`. Link stamps it where it
 builds the rule (`classifyHiddenChoiceRule`); a hidden choice that is a
-supertype only by shape has none.
+supertype only by shape has none. A declared supertype that is the parent of
+a wire variant split is built as a visible polymorph instead, so it has no
+`SUPERTYPE` rule to carry the stamp (python's `match_block`);
+`compiler/normalize.ts::supertypeKindsOf` still counts it.
 
 ### `packages/codegen/src/types/rule.ts::SupertypeRule.subtypes`
 
@@ -1659,7 +1662,7 @@ The ref's own storage identity: the rule, or literal symbol, that parsed it.
 
 ### `packages/codegen/src/types/rule.ts::BlankRule`
 
-tree-sitter's empty rule, as tree-sitter's `blank()` builds it; sittir's `blank()` builds the empty choice. Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`).
+tree-sitter's empty rule, as tree-sitter's `blank()` builds it; sittir's `blank()` builds the empty choice. Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.
 
 ### `packages/codegen/src/types/spacing.ts::SpacingAddress`
 

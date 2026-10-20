@@ -383,7 +383,7 @@ export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly Fla
 		if (group === undefined || !group.seated) continue;
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
-		if (shape !== 'spread' && shape !== 'elements') continue;
+		if (shape !== 'spread' && shape !== 'elements' && !(shape === 'forwarded' && forwardsToSpreadTarget(group, nodeMap, true))) continue;
 		seats.push({ slot, group });
 	}
 	return seats;
@@ -440,14 +440,14 @@ export function seatOf(
 	return forwarded;
 }
 
-function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap): boolean {
+function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap, includeSeparated = false): boolean {
 	const targetKind = forwardedTargetKind(node, nodeMap);
 	if (targetKind === null) return false;
 	const target = nodeMap.nodes.get(targetKind);
 	if (target === undefined) return false;
 	const targetShape = classifyFactoryShape(target, nodeMap);
-	if (targetShape === 'spread') return true;
-	return targetShape === 'forwarded' && forwardsToSpreadTarget(target, nodeMap);
+	if (targetShape === 'spread' || (includeSeparated && targetShape === 'elements')) return true;
+	return targetShape === 'forwarded' && forwardsToSpreadTarget(target, nodeMap, includeSeparated);
 }
 
 export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {

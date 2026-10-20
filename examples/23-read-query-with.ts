@@ -14,14 +14,14 @@ export function outline(source: string) {
 		.parse(source)
 		.statements()
 		.flatMap((statement) => {
-			if (py.is.functionDefinition(statement)) return [`def ${statement.name().$text}`];
+			if (py.is.functionDefinition(statement)) return [`def ${statement.name().$text()}`];
 			if (!py.is.classDefinition(statement)) return [];
 			const body = statement.body();
 			const members = py.is.suite.block(body) ? body.block().statements() : [];
 			const methods = members.flatMap((member) =>
-				py.is.functionDefinition(member) ? [`  def ${member.name().$text}`] : []
+				py.is.functionDefinition(member) ? [`  def ${member.name().$text()}`] : []
 			);
-			return [`class ${statement.name().$text}`, ...methods];
+			return [`class ${statement.name().$text()}`, ...methods];
 		});
 }
 
@@ -52,7 +52,7 @@ export function privateHelpers(source: string) {
 			.$query()
 			.$descendants.ofType(kinds.FunctionDefinition)
 			.where((fn) => fn.name.match(/^_/).and(fn.name.match(/^__/).not()))
-			.map((fn) => fn.name().$text)
+			.map((fn) => fn.name().$text())
 	);
 }
 
@@ -73,7 +73,7 @@ export function methodsOf(source: string, className: string) {
 		cls
 			.$query()
 			.$descendants.ofType(kinds.FunctionDefinition)
-			.map((fn) => fn.name().$text)
+			.map((fn) => fn.name().$text())
 	);
 }
 
@@ -118,7 +118,7 @@ export function renameInFile(source: string, from: string, to: string) {
 	const statements = root
 		.statements()
 		.map((statement) =>
-			py.is.functionDefinition(statement) && statement.name().$text === from
+			py.is.functionDefinition(statement) && statement.name().$text() === from
 				? statement.$with.name(py.build.identifier(to))
 				: statement
 		);

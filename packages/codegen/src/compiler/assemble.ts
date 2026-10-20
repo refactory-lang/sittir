@@ -35,6 +35,7 @@ import { admitsWhitespaceMember } from '../dsl/whitespace.ts';
 import { isEnumChoiceRule, isHiddenRule, ruleListParts } from '../dsl/rule-patterns.ts';
 import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
+import { supertypeKindsOf } from './normalize.ts';
 import type { RuleId } from '../types/rule.ts';
 import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind, seatedOf, supertypeArmsOf } from '../dsl/symbol-table.ts';
 import type {
@@ -144,7 +145,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const wordMatcherRegex = normalized.wordMatcher;
 	const nodes = ctx.nodes;
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
-	const supertypeArms = supertypeArmsOf(normalized.supertypes, normalized.normalizedRules);
+	const supertypeArms = supertypeArmsOf(supertypeKindsOf(normalized), normalized.normalizedRules);
 	const facts: KindFacts = { kindEntries, supertypeArms, provenance: normalized.provenance };
 	const assembleDiagnostics = ctx.assembleDiagnostics;
 	const droppedKinds = new Set<string>();
