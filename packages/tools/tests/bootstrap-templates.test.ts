@@ -23,6 +23,12 @@ describe('bootstrap templates reproduce an existing grammar package', () => {
 			);
 		});
 	}
+	it('package.json dependencies', () => {
+		const pick = ({ dependencies, devDependencies }: Record<string, unknown>) => ({ dependencies, devDependencies });
+		expect(pick(JSON.parse(python.find((f) => f.path === 'package.json')!.contents))).toEqual(
+			pick(JSON.parse(readFileSync(join(grammarPackageDir('python'), 'package.json'), 'utf8')))
+		);
+	});
 });
 
 const COMPOSITION = /\bsittirGrammar\b[^}]*\} from '\.\.\/codegen\/src\/dsl\/(index|dsl-authoring)\.ts';[\s\S]*export default sittirGrammar\(base, \{[\s\S]*\}\);\s*$/;
