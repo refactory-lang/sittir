@@ -4,7 +4,7 @@ import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableRows, PortableSurface } from './portable.ts';
 
-export interface TriviaFacts<Kind extends number | string = number | string> {
+export interface TriviaFacts<Kind extends number = number> {
 	kindName(type: Kind): string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */

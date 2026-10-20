@@ -19,8 +19,7 @@ import type {
 	Rendered,
 	RenderArgument,
 	CreateEngineOptions,
-	StructureTable,
-	TriviaFacts
+	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf } from './language.ts';
@@ -174,7 +173,6 @@ function assembleEngine<API extends LanguageAPI>(
 	options: EngineOptions<API> | undefined
 ): Engine<API> {
 	const native = hooks.createNative(nativeEngineOptions(options));
-	const trivia: TriviaFacts = hooks.trivia;
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
@@ -195,7 +193,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
 		if (!metricsEnabled) return rendered.toString();
 		const kind =
-			typeof target === 'number' ? String(target) : (trivia.kindName(target.$type) ?? String(target.$type));
+			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
 		const before = performance.now();
 		const text = rendered.toString();
 		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
@@ -212,7 +210,7 @@ function assembleEngine<API extends LanguageAPI>(
 		queryFlags: hooks.queryFlags ?? {},
 		querySlotFlags: hooks.querySlotFlags ?? {},
 		membership: hooks.membership,
-		kindName: (kind) => trivia.kindName(kind),
+		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
 	};
 	const engine: Engine<API> = {
@@ -230,7 +228,7 @@ function assembleEngine<API extends LanguageAPI>(
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
-			const kind = trivia.kindName(node.$type);
+			const kind = hooks.trivia.kindName(node.$type);
 			return (
 				engine.isNode(node) &&
 				kind !== undefined &&

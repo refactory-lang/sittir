@@ -620,7 +620,7 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ShorthandFieldIdentifier };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement<T extends { readonly $type: string | number } | number>(
+	statement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -655,7 +655,7 @@ export interface IsGuards {
 		| TSKindId.StaticItem
 	>;
 	readonly declarationStatement: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -743,7 +743,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StaticItem };
 	};
 	readonly macroDefinition: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -760,7 +760,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
 	};
 	readonly tokenTreePattern: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -777,7 +777,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternBrace };
 	};
 	readonly tokenTree: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.TokenTreeParen | TSKindId.TokenTreeBracket | TSKindId.TokenTreeBrace>;
 		paren<T extends { readonly $type: number } | number>(
@@ -791,7 +791,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreeBrace };
 	};
 	readonly modItem: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.ModItemExternal | TSKindId.ModItemInline>;
 		external<T extends { readonly $type: number } | number>(
@@ -802,7 +802,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ModItemInline };
 	};
 	readonly foreignModItem: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.ForeignModItemSemi | TSKindId.ForeignModItemBody>;
 		semi<T extends { readonly $type: number } | number>(
@@ -813,7 +813,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForeignModItemBody };
 	};
 	readonly structItem: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit>;
 		brace<T extends { readonly $type: number } | number>(
@@ -827,7 +827,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemUnit };
 	};
 	readonly implItem: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.ImplItemBody | TSKindId.ImplItemSemi>;
 		body<T extends { readonly $type: number } | number>(
@@ -837,7 +837,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemSemi };
 	};
-	type<T extends { readonly $type: string | number } | number>(
+	type<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -861,7 +861,7 @@ export interface IsGuards {
 		| TSKindId.PrimitiveType
 	>;
 	readonly pointerType: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.PointerTypeConst | TSKindId.PointerTypeMut>;
 		const<T extends { readonly $type: number } | number>(
@@ -871,7 +871,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeMut };
 	};
-	expression<T extends { readonly $type: string | number } | number>(
+	expression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -938,7 +938,7 @@ export interface IsGuards {
 		| TSKindId.RangeExpressionBare
 	>;
 	readonly delimTokenTree: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.DelimTokenTreeParen | TSKindId.DelimTokenTreeBracket | TSKindId.DelimTokenTreeBrace>;
 		paren<T extends { readonly $type: number } | number>(
@@ -952,7 +952,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DelimTokenTreeBrace };
 	};
 	readonly rangeExpression: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -975,7 +975,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBare };
 	};
 	readonly referenceExpression: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -998,7 +998,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionBare };
 	};
 	readonly arrayExpression: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.ArrayExpressionSemi | TSKindId.ArrayExpressionList>;
 		semi<T extends { readonly $type: number } | number>(
@@ -1009,7 +1009,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionList };
 	};
 	readonly matchArm: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.MatchArmWithComma | TSKindId.MatchArmBlockEnding>;
 		withComma<T extends { readonly $type: number } | number>(
@@ -1020,7 +1020,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchArmBlockEnding };
 	};
 	readonly closureExpression: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr>;
 		block<T extends { readonly $type: number } | number>(
@@ -1030,7 +1030,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionExpr };
 	};
-	pattern<T extends { readonly $type: string | number } | number>(
+	pattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1070,7 +1070,7 @@ export interface IsGuards {
 		| TSKindId.WildcardPattern
 	>;
 	readonly fieldPattern: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.FieldPatternShorthand | TSKindId.FieldPatternNamed>;
 		shorthand<T extends { readonly $type: number } | number>(
@@ -1081,7 +1081,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldPatternNamed };
 	};
 	readonly rangePattern: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.RangePatternWithLeft | TSKindId.RangePatternPrefix>;
 		withLeft<T extends { readonly $type: number } | number>(
@@ -1092,7 +1092,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
 	};
 	readonly orPattern: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix>;
 		binary<T extends { readonly $type: number } | number>(
@@ -1102,7 +1102,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.OrPatternPrefix };
 	};
-	literal<T extends { readonly $type: string | number } | number>(
+	literal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1121,7 +1121,7 @@ export interface IsGuards {
 		| TSKindId.IntegerLiteralOctal
 		| TSKindId.FloatLiteral
 	>;
-	literalPattern<T extends { readonly $type: string | number } | number>(
+	literalPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1142,7 +1142,7 @@ export interface IsGuards {
 		| TSKindId.NegativeLiteral
 	>;
 	readonly integerLiteral: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -1165,7 +1165,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralOctal };
 	};
 	readonly charLiteral: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -1185,7 +1185,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEmpty };
 	};
 	readonly escapeSequence: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -1208,7 +1208,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceHex };
 	};
 	readonly comment: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.LineComment | TSKindId.BlockComment>;
 		lineComment<T extends { readonly $type: number } | number>(
@@ -1218,7 +1218,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1232,7 +1232,7 @@ export interface IsGuards {
 		| TSKindId.Dedent
 	>;
 	readonly charLiteralEscaped: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -1254,10 +1254,8 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedHex };
 	};
-	emptyStatement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.EmptyStatement>;
-	fragmentSpecifier<T extends { readonly $type: string | number } | number>(
+	emptyStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyStatement>;
+	fragmentSpecifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1277,33 +1275,29 @@ export interface IsGuards {
 		| TSKindId.TyKeyword
 		| TSKindId.VisKeyword
 	>;
-	unitType<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.UnitType>;
-	neverType<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.NeverType>;
-	mutableSpecifier<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.MutableSpecifier>;
-	unitExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.UnitExpression>;
-	remainingFieldPattern<T extends { readonly $type: string | number } | number>(
+	unitType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.UnitType>;
+	neverType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.NeverType>;
+	mutableSpecifier<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.MutableSpecifier>;
+	unitExpression<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.UnitExpression>;
+	remainingFieldPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.RemainingFieldPattern>;
-	booleanLiteral<T extends { readonly $type: string | number } | number>(
+	booleanLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.TrueKeyword | TSKindId.FalseKeyword>;
-	innerLineDocCommentMarker<T extends { readonly $type: string | number } | number>(
+	innerLineDocCommentMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.InnerLineDocCommentMarker>;
-	outerLineDocCommentMarker<T extends { readonly $type: string | number } | number>(
+	outerLineDocCommentMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.OuterLineDocCommentMarker>;
 	identifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
-	self<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Self>;
-	super_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Super>;
-	crate<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Crate>;
-	primitiveType<T extends { readonly $type: string | number } | number>(
+	self<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Self>;
+	super_<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Super>;
+	crate<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Crate>;
+	primitiveType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1331,7 +1325,7 @@ export interface IsGuards {
 	stringOpen<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringOpen };
-	tokenTreePunctuation<T extends { readonly $type: string | number } | number>(
+	tokenTreePunctuation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1380,7 +1374,7 @@ export interface IsGuards {
 		| TSKindId.Pound
 		| TSKindId.Qmark
 	>;
-	tokenKeywords<T extends { readonly $type: string | number } | number>(
+	tokenKeywords<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1414,7 +1408,7 @@ export interface IsGuards {
 		| TSKindId.WhereKeyword
 		| TSKindId.WhileKeyword
 	>;
-	implItemUnsafeMarker<T extends { readonly $type: string | number } | number>(
+	implItemUnsafeMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.ImplItemUnsafeMarker>;
 	charLiteralEmpty<T extends { readonly $type: number } | number>(
@@ -1429,12 +1423,10 @@ export interface IsGuards {
 	blockCommentRegular<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentRegular };
-	rangePatternWithLeftBare<T extends { readonly $type: string | number } | number>(
+	rangePatternWithLeftBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.RangePatternWithLeftBare>;
-	wildcardPattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.WildcardPattern>;
+	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
 	floatLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatLiteral };
@@ -1444,10 +1436,10 @@ export interface IsGuards {
 	rawStringLiteralContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralContent };
-	outerDocCommentMarker<T extends { readonly $type: string | number } | number>(
+	outerDocCommentMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.OuterDocCommentMarker>;
-	innerDocCommentMarker<T extends { readonly $type: string | number } | number>(
+	innerDocCommentMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.InnerDocCommentMarker>;
 	rawStringLiteralStart<T extends { readonly $type: number } | number>(

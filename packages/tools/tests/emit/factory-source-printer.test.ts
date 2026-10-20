@@ -27,7 +27,7 @@ const ctx: PrintContext = {
 		listElementKinds: {},
 		hoistedKinds: new Set(),
 		oneSurfaceKinds: new Set<string>(),
-		kindIdOfName: () => undefined
+		kindIdOfName: (kind) => ({ source_file: 1, function_item: 2, identifier: 3, comma: 4, arguments: 5 })[kind]
 	},
 	kindNameFromId: (id) =>
 		({ 1: 'source_file', 2: 'function_item', 3: 'identifier', 4: 'comma', 5: 'arguments' })[id],
@@ -47,6 +47,11 @@ describe('printValue', () => {
 		expect(printValue('a"b', ctx, 0)).toBe('"a\\"b"');
 		expect(printValue(true, ctx, 0)).toBe('true');
 		expect(printValue([4, 'x'], ctx, 0)).toBe('[rs.kinds.Comma, "x"]');
+	});
+	it('refuses to print a kind with no parser id, naming the kind', () => {
+		expect(() => printingFactoryMap({ function_item: 'config' }, () => undefined, ctx)).toThrow(
+			'emit-factory-source: function_item has no parser id'
+		);
 	});
 	it('prints a printed marker as its source', () => {
 		expect(printValue(new Printed(3, 'ir.identifier("f")'), ctx, 0)).toBe('ir.identifier("f")');
@@ -100,7 +105,6 @@ describe('printValue', () => {
 		);
 		const surface = printingIrSurface(
 			map,
-			(k) => ({ visibility_modifier: 6, visibility_modifier_pub: 7, identifier: 3 })[k],
 			{},
 			{
 				...ctx,

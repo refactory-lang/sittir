@@ -21,7 +21,7 @@ interface AccessorThrowRecord {
 }
 
 interface WalkNode {
-	readonly $type: string | number;
+	readonly $type: number;
 	readonly [key: string]: unknown;
 }
 
@@ -48,13 +48,12 @@ function isWalkNode(value: unknown): value is WalkNode {
 		value !== null &&
 		typeof value === 'object' &&
 		'$type' in value &&
-		(typeof (value as { $type?: unknown }).$type === 'string' ||
-			typeof (value as { $type?: unknown }).$type === 'number')
+		typeof (value as { $type?: unknown }).$type === 'number'
 	);
 }
 
 function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
-	return typeof node.$type === 'number' ? (kindNameFromId?.(node.$type) ?? String(node.$type)) : node.$type;
+	return kindNameFromId?.(node.$type) ?? String(node.$type);
 }
 
 export function collectChildren(node: WalkNode): unknown[] {
