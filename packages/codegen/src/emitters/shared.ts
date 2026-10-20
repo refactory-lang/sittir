@@ -1345,6 +1345,10 @@ export interface RefusingParams {
 	readonly params: string;
 }
 
+export function plainParams(params: string): RefusingParams {
+	return { typeParams: '', params };
+}
+
 export function refusingParam(
 	label: string,
 	type: string,
@@ -1386,6 +1390,10 @@ export function optionalRefusing(refusing: RefusingParams): RefusingParams {
 
 export function declaredOverload(head: string, refusing: RefusingParams, returnType: string): string {
 	return `${head}${refusing.typeParams}(${refusing.params}): ${returnType};`;
+}
+
+export function functionTypeOf(refusing: RefusingParams, returnType: string): string {
+	return `${refusing.typeParams}(${refusing.params}) => ${returnType}`;
 }
 
 export function withEmptyOverload(

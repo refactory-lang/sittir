@@ -110,6 +110,14 @@ Each seated entry point is a function: one refusing overload, generic over its w
  */
 ```
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::refusingConfig`
+
+A form builder's config parameter in its refusing form, followed by the parent's options (`optionsOf`). The config is generic as a whole, which loses TypeScript's excess-property check, so it passes its own type as the declared input: the walk then refuses an undeclared key as well as an untyped node. An optional config is the rest tuple `refusingParam` writes, with the options inside it.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::optionsOf`
+
+The trailing options parameter of a form builder, typed by its parent's options.
+
 ### `packages/codegen/src/emitters/overlays/portable/node-model.ts::emitPortableNodeModel`
 
 `node-model-portable.json5`: a bound grammar's routes (`bindings/routes.ts::GrammarRoutes`), written beside `node-model.json5` and kept out of it, since the low-level model never reads them. Per kind, in kind order: the vocabulary kind it reads as by default; its read entries, most specific first, each with its placement, pins, compiled test (`read-tests.ts::readTestOf`) and template; its members, each with its route and build path (`null` where a member cannot be built back), and `flag` and `spelled` where the route carries them (a spelled flag has no path, yet a build reaches it by picking the kind); and its container unwrap. A slot is written by name; the slot itself is in `node-model.json5`. After the kinds, the `namespaces` section (`namespaces.ts::namespaceSection`). The pins stay beside the test because a build reads them; the predicates do not, since the test is their only reader-side form.
@@ -256,4 +264,3 @@ What the portable surface is emitted from: the grammar's node union type name (`
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::q`
 
 A string as a quoted TypeScript literal.
-

@@ -11,7 +11,11 @@ import {
 	resolveFieldStorageInfo,
 	withEmptyOverload,
 	declaredOverload,
-	refusingParam
+	functionTypeOf,
+	plainParams,
+	refusingParam,
+	withTrailingParam,
+	type RefusingParams
 } from '../shared.ts';
 import { keywordLeafArity } from '../from.ts';
 import {
@@ -613,9 +617,14 @@ const ERASED_HELPERS = [
 	''
 ];
 
+const optionsOf = (parentRef: string): string => `options?: OptionsArg<typeof ${parentRef}>`;
+
+const refusingConfig = (type: string, parentRef: string, optional = false): RefusingParams =>
+	withTrailingParam(refusingParam('config', type, { optional, loose: true }), optionsOf(parentRef));
+
 interface WireShape {
 	readonly method: readonly string[];
-	readonly paramFor: (parentRef: string, childRef: string | undefined) => string;
+	readonly paramFor: (parentRef: string, childRef: string | undefined) => RefusingParams;
 	readonly max: number | 'child';
 }
 
@@ -645,7 +654,7 @@ function shape(
 								`const ${m} = <${PF}>(parent: PF, value: unknown) =>`,
 								`	(options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ${k}: value } as never, options as never);`
 							],
-				paramFor: (p) => `(options?: OptionsArg<typeof ${p}>)`,
+				paramFor: (p) => plainParams(optionsOf(p)),
 				max: 1
 			};
 		}
@@ -655,7 +664,7 @@ function shape(
 					`const ${m} = <${PFV}>(parent: PF, value: unknown) =>`,
 					`	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(arg as never, _m(options, { ${k}: value }) as never);`
 				],
-				paramFor: (p) => `(arg: ArgsOf<typeof ${p}>[0], options?: OptionsArg<typeof ${p}>)`,
+				paramFor: (p) => withTrailingParam(refusingParam('arg', `ArgsOf<typeof ${p}>[0]`, { loose: true }), optionsOf(p)),
 				max: 2
 			};
 		}
@@ -666,7 +675,7 @@ function shape(
 					? `	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(config as never, _m(options, { ${k}: value }) as never);`
 					: `	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: value } as never, options as never);`
 			],
-			paramFor: (p) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`,
+			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>`, p),
 			max: 2
 		};
 	}
@@ -681,7 +690,7 @@ function shape(
 						`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 						`	(...args: ArgsOf<CF>): ReturnType<PF> => ${CALL_P}({ ${k}: ${CALL_C}(...args) });`
 					],
-			paramFor: (_p, c) => `(...args: ArgsOf<typeof ${c}>)`,
+			paramFor: (_p, c) => refusingParam('args', `ArgsOf<typeof ${c}>`, { rest: true, loose: true }),
 			max: 'child'
 		};
 	}
@@ -693,8 +702,7 @@ function shape(
 					`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>`,
 					`		_s<ReturnType<PF>>(parent)(_m(config, { ${k}: ${CALL_C}({}) }) as never, options as never);`
 				],
-				paramFor: (p, c) =>
-					`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0], options?: OptionsArg<typeof ${p}>)`,
+				paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0]`, p),
 				max: 2
 			};
 		}
@@ -712,8 +720,7 @@ function shape(
 				`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(inner) } as never, options as never);`,
 				`	};`
 			],
-			paramFor: (p, c) =>
-				`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0], options?: OptionsArg<typeof ${p}>)`,
+			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0]`, p),
 			max: 2
 		};
 	}
@@ -724,7 +731,7 @@ function shape(
 				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 				`	(${config}: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: ${CALL_C}() } as never, options as never);`
 			],
-			paramFor: (p) => `(${config}: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`,
+			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>`, p, config === 'config?'),
 			max: 2
 		};
 	}
@@ -737,8 +744,7 @@ function shape(
 				`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(seated) } as never, options as never);`,
 				`	};`
 			],
-			paramFor: (p, c) =>
-				`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] }, options?: OptionsArg<typeof ${p}>)`,
+			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] }`, p),
 			max: 2
 		};
 	}
@@ -750,8 +756,7 @@ function shape(
 			`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(...seated) } as never, options as never);`,
 			`	};`
 		],
-		paramFor: (p, c) =>
-			`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}> }, options?: OptionsArg<typeof ${p}>)`,
+		paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}> }`, p),
 		max: 2
 	};
 }
@@ -981,7 +986,7 @@ function emitSub(
 	if (sub.arm.via === 'value') {
 		const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), wires.kindEntries);
 		const s = shape(sub, k, positional, undefined, m);
-		const typeFor = (ref: string): string => `${s.paramFor(ref, undefined)} => ReturnType<typeof ${ref}>`;
+		const typeFor = (ref: string): string => functionTypeOf(s.paramFor(ref, undefined), `ReturnType<typeof ${ref}>`);
 		return {
 			name: m,
 			method: s.method,
@@ -1000,7 +1005,7 @@ function emitSub(
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
 	const s = shape(sub, k, positional, mergeKeys, m, seatsConfigChild(sub, nodeMap));
-	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
+	const typeFor = (pRef: string, cRef: string): string => functionTypeOf(s.paramFor(pRef, cRef), `ReturnType<typeof ${pRef}>`);
 	const wrap: FlavorRefs = positional ? { strict: p.strict, coerce: p.coerce && p.strict } : p;
 	return {
 		name: m,

@@ -105,6 +105,7 @@ import {
 	type LeadingOptions,
 	declaredOverload,
 	optionalRefusing,
+	plainParams,
 	quoteKey,
 	refuseUndeclared,
 	refusingParam,
@@ -1208,7 +1209,7 @@ function refusingSlots(
 }
 
 function publicParams(surface: { readonly params: string; readonly generic?: RefusingParams }): RefusingParams {
-	return surface.generic ?? { typeParams: '', params: surface.params };
+	return surface.generic ?? plainParams(surface.params);
 }
 
 function declarationOf(declared: RefusingParams): RefusingParams {
@@ -1469,7 +1470,7 @@ function forwardedConstruction(
 		target,
 		targetParams,
 		overloads: ordered(
-			[publicParams(surface), ...(targetDeclarations ?? [{ typeParams: '', params: `...args: Parameters<typeof ${targetNode.rawFactoryName!}>` }])].map(declarationOf),
+			[publicParams(surface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
 			(declared) => declared.params
 		),
 		rows: ordered([surface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params).map(
@@ -1532,7 +1533,7 @@ export function constructorSurface(
 	| undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap, kindEntries));
 	if (target === undefined) return undefined;
-	const plain = (params: string): readonly RefusingParams[] => [{ typeParams: '', params }];
+	const plain = (params: string): readonly RefusingParams[] => [plainParams(params)];
 	switch (target.modelType) {
 		case 'list': {
 			const list = separatedListSurface(target, nodeMap, kindEntries);

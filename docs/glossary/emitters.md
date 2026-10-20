@@ -13244,6 +13244,8 @@ zero-argument factory; the overlay never re-derives it.
 
 Each shape also states the arity of the call it declares, `max`: 1 for a value arm that takes only options, 2 for every shape that takes its config (or positional argument) plus options, and `'child'` for a node arm that forwards the child's own arguments, whose bound is the child route's.
 
+`paramFor` is the form builder's public parameter list, as its declared type spells it. A list that holds a node is in its refusing form (`refusingParam`, `refusingConfig`), generic over the whole argument and passing its own type as the declared input, so a form builder refuses an untyped node and an undeclared key as a builder does. Its argument types are read through `ArgsOf`, which erases the parent's and the child's own generic checks, so without the refusing form a form builder admits what the builder it forwards to refuses. The method beside it stays erased: the declared type is the contract.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::flattenShape`
 
 The method behind a flatten seat. For a config parent: partition the
@@ -14987,6 +14989,14 @@ The optional form of a refusing parameter list, for a chain whose final construc
 ### `packages/codegen/src/emitters/shared.ts::declaredOverload`
 
 One overload declaration of a refusing signature, over a function's plain implementation. The implementation's own signature stays plain, so its body never reads a refused type.
+
+### `packages/codegen/src/emitters/shared.ts::plainParams`
+
+A parameter list with no type parameters, for a signature none of whose parameters holds a node, so it has nothing to refuse.
+
+### `packages/codegen/src/emitters/shared.ts::functionTypeOf`
+
+A refusing signature as a function type, for a declared type rather than a declaration (`declaredOverload`): a polymorph form builder's type is declared on the bundle it is seated in.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 

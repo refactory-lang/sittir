@@ -73,6 +73,15 @@ declare const recursiveUntyped: RecursiveUntyped;
 rs.build.block(recursiveUntyped);
 
 export const builtRecursive = rs.build.block(recursive);
+// @ts-expect-error a polymorph form builder refuses an untyped node
+rs.build.expressionStatement.withSemi(untyped);
+// @ts-expect-error a strict polymorph form builder refuses an untyped node
+rs.build.expressionStatement.withSemi.strict(untyped);
+// @ts-expect-error a polymorph form builder's config refuses an untyped node
+rs.build.attribute.input({ path: untyped });
+
+export const builtFormValue = rs.build.expressionStatement.withSemi(rs.build.identifier('a'));
+export const builtFormConfig = rs.build.attribute.input({ path: 'x', value: 'y' });
 export const builtFromLoose = rs.build.block(looseBlock);
 export const builtDeep = rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: rs.build.identifier('a') } } } });
 export const builtBody = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: block });

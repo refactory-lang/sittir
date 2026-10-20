@@ -34,6 +34,12 @@ rs.build.integerLiteralDecimal({ content: 1, sufix: 'u8' });
 // @ts-expect-error a strict numeric builder, whose config is generic as well, refuses a misspelled key
 rs.build.integerLiteralDecimal.strict({ content: 1, sufix: 'u8' });
 
+// @ts-expect-error a polymorph form builder refuses a misspelled key
+rs.build.attribute.input({ path: 'x', valu: 'y' });
+declare const misspelled: { readonly $type: typeof rs.kinds.Block; readonly statments: readonly [] };
+// @ts-expect-error a polymorph form builder refuses a misspelled key inside a declared value
+rs.build.expressionStatement.withSemi(misspelled);
+
 export const declaredKeys = rs.build.block({ statements: [], trailingExpression: 'a' });
 export const nestedKeys = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [] } });
 export const listItemKeys = rs.build.block({ statements: [{ $type: rs.kinds.ExpressionStatement, content: 'a' }] });
