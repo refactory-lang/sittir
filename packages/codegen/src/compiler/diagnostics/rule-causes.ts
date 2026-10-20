@@ -338,7 +338,7 @@ const NARROWING_JUSTIFICATIONS = {
 	'ruled-narrowing': { key: 'ruling', missing: 'it states no ruling', inWords: true }
 } as const;
 
-const PLANNING_REFERENCE = /#\d+|\b(?:PR|ADR|spec|plan|task)[\s#:-]*\d+/i;
+const PLANNING_REFERENCE = /#\d+|\b(?:PR|pull\s+request|ADR|spec(?:ification)?|plan|task)(?:\s+(?:no\.?|number))?[\s#:-]*\d+/i;
 
 const REQUIREMENT_ID = /\bR\d+\b/;
 

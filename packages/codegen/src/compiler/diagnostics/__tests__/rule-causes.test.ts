@@ -591,6 +591,24 @@ describe('a ruled-narrowing ruling is stated in words', () => {
 		expect(ds[0]!.message).toContain(reason);
 	});
 
+	it.each([
+		'See pull request 916',
+		'See specification 026',
+		'Per task no. 8',
+		'A backreference to capture group #1 is forbidden unless that group precedes it'
+	])('refuses a planning reference in words: %s', (ruling) => {
+		const ds = judge(ruling);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain(reason);
+	});
+
+	it.each([
+		'A backreference to capture group 1 is forbidden unless that group precedes it',
+		'the specification forbids 2 adjacent commas'
+	])('accepts a ruling that names no planning reference: %s', (ruling) => {
+		expect(judge(ruling)).toEqual([]);
+	});
+
 	it('refuses a ruling that is only code', () => {
 		const ds = judge('`R11`');
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
