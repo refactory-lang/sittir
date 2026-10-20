@@ -3080,26 +3080,6 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 // skip the choice wrapper (shape is already correct).
 ```
 
-### `packages/codegen/src/compiler/normalize.ts::dedupeSeqMembers`
-
-```text
-/**
- * Collapse adjacent duplicates inside a `seq`:
- *
- *   seq(x, x, y) → seq(x, y)
- *
- * Uses `rulesEqual` for structural equality. Only collapses
- * adjacent duplicates; non-adjacent duplicates are almost always
- * intentional repetition in the grammar.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// dedupeSeqMembers
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/compiler/normalize.ts::inlineSingleUseHidden`
 
 ```text
@@ -7891,27 +7871,7 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
 
 ### `packages/codegen/src/compiler/normalize.ts::module`
 
-```text
-/**
- * compiler/normalize.ts — Normalize phase.
- *
- * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
- * factoring, prefix/suffix extraction, wrapper collapsing, dedupe,
- * single-use hidden-rule inlining). Does NOT change named content.
- * Non-lossy.
- *
- * Variant tagging lives in Link — that is classification, not simplification.
- * Pipeline order is fixed in
- * `normalizeGrammar()` below: drop blanks → collapse → fan-out → factor →
- * dedupe → inline → re-collapse.
- */
-```
-
-```text
-// wrapVariants / deduplicateVariants / nameVariant / tokenToName all
-// moved to compiler/link.ts — they're classification, not simplification.
-// Re-export from there if test files or callers still need them.
-```
+The normalize phase. It restructures sequences, choices, optionals and repeats for simplification (fan-out, factoring, prefix and suffix extraction, wrapper collapsing, single-use hidden-rule inlining) without changing named content. `applyNormalizationPasses` fixes the order: drop blanks, collapse, fan out, factor, inline, collapse again. A sequence keeps every member it names: two equal adjacent members are two children (`seq("'", "'")` is `''`). Variant tagging is classification and lives in link.
 
 ### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.inlineKinds`
 
