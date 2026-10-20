@@ -11,7 +11,7 @@ describe('an ERROR root', () => {
 	it('reads as an ERROR node holding the whole source', () => {
 		const root = re.parse(')');
 		expect(isErrorNode(root)).toBe(true);
-		expect((root as unknown as { $text: string }).$text).toBe(')');
+		expect((root as unknown as { $text(): string }).$text()).toBe(')');
 		expect(re.render(root as never).toString()).toBe(')');
 	});
 });

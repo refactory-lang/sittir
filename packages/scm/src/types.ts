@@ -2250,13 +2250,13 @@ export namespace Identifier {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
@@ -2270,13 +2270,13 @@ export namespace ImmediateIdentifier {
 		readonly $type: TSKindId.ImmediateIdentifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ImmediateIdentifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = ImmediateIdentifierNs['Loose'];
 	export type LooseConfig = ImmediateIdentifierNs['LooseConfig'];
@@ -2290,13 +2290,13 @@ export namespace StringContentText {
 		readonly $type: TSKindId.StringContentText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.StringContentText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = StringContentTextNs['Loose'];
 	export type LooseConfig = StringContentTextNs['LooseConfig'];

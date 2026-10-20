@@ -12,7 +12,8 @@ pub struct ErrorRead {
 }
 
 /// `{ $type, $_layout: { at } or { span }, $text }`, the form of a read leaf,
-/// its `$type` the ERROR kind id.
+/// its `$type` the ERROR kind id. `$text` is a method, as every node's is: a
+/// native function that returns the region's text as one new string per call.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for ErrorRead {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
@@ -24,7 +25,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for ErrorRead {
                 Origin::Tree(at) => object_with(env, &[(c"at", crate::slot::coordinate_to_napi(env, &at)?)])?,
                 Origin::Snapshot(span) => object_with(env, &[(c"span", crate::points::PointSpan::to_napi_value(env, span)?)])?,
             };
-            object_with_present(env, &[present(env, c"$type", kind)?, Some((c"$_layout", layout)), present(env, c"$text", Some(val.text))?])
+            object_with_present(env, &[present(env, c"$type", kind)?, Some((c"$_layout", layout)), Some((c"$text", crate::boundary::text_method(env, val.text)?))])
         }
     }
 }

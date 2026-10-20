@@ -22,6 +22,16 @@ export function spanOf(node: object): ByteSpan | undefined {
 	return span === undefined ? undefined : { start: span.start, end: span.end };
 }
 
+/**
+ * The text a leaf holds: a node's `$text()`, or the `$text` of native node data, which carries it as a string. `undefined` for a value with neither.
+ */
+export function nodeText(value: unknown): string | undefined {
+	if (value === null || typeof value !== 'object') return undefined;
+	const text: unknown = (value as { readonly $text?: unknown }).$text;
+	const read = typeof text === 'function' ? (text as (this: object) => unknown).call(value) : text;
+	return typeof read === 'string' ? read : undefined;
+}
+
 /** The trivia a node owns: its layout's, read or written. */
 export function triviaOf(node: object): NodeLayout['trivia'] {
 	return (node as { readonly $_layout?: NodeLayout }).$_layout?.trivia;
@@ -589,6 +599,10 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_layout') continue;
+		if (key === '$text') {
+			out.$text = nodeText(value);
+			continue;
+		}
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
 		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;

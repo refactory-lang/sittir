@@ -17,7 +17,7 @@ describe('a kind whose body is only minted text tokens', () => {
 		it(`stores ${source} as a text leaf with no child key`, () => {
 			const escape = controlEscapeOf(source);
 			expect(escape.$type).toBe(TSKindId.ControlEscape);
-			expect(escape.$text).toBe(source);
+			expect((escape as unknown as { $text(): string }).$text()).toBe(source);
 			expect(Object.keys(escape).filter((key) => key.startsWith('_') || key === '$other')).toEqual([]);
 		});
 	}

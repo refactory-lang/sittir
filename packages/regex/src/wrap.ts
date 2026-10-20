@@ -1011,6 +1011,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	const handle = currentHandle();
 	const node = {
 		...data,
+		$text: () => data.$text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {

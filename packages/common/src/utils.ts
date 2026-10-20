@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { carryRead, carrySource, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, nodeText, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -523,7 +523,7 @@ export function isNode(v: unknown): v is AnyUntypedNode {
 	if (typeof o.$type !== 'number') return false;
 	return (
 		holdsSlots(o) ||
-		typeof o.$text === 'string' ||
+		nodeText(o) !== undefined ||
 		o.$_layout !== undefined ||
 		o.$source === Source.Ts ||
 		o.$source === Source.Sg ||
@@ -679,7 +679,7 @@ export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './eng
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {

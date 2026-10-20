@@ -856,6 +856,10 @@ A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an ed
 
 The `KindView` of data with no wrapper or list kinds: no for every kind.
 
+### `packages/common/src/node-data.ts::nodeText`
+
+The text a leaf holds, from either form a value takes: a node's `$text()` method, which makes the string when called, or the `$text` string native node data carries across the boundary. `undefined` for a value with neither. Code that may hold either form, such as the crossing (`toNodeValue`), builder input checks (`rejectKeywordText`, `rejectReservedText`), the delimited check, `isNode`, the portable classifier and the validators, reads text here and nowhere else. Typed code holds nodes only and calls `$text()`.
+
 ### `packages/common/src/interior.ts::interiorPattern`
 
 The compiled whole-token regex of a token interior, built once per interior object (flags `su`) and cached. `projectInterior` splits text with it, and the coercer's leaf registry row for a lexed kind holds it as its pattern, so the interior's `regex` string is compiled in one place on the client.

@@ -22,6 +22,46 @@ pub unsafe fn property<V: ::napi::bindgen_prelude::FromNapiValue>(
         .transpose()
 }
 
+/// A node's text as it crosses: the string native node data carries, or
+/// the result of calling the `$text()` method a JavaScript node carries,
+/// which takes no arguments and needs no receiver.
+#[cfg(feature = "napi-bindings")]
+pub struct NodeText(pub String);
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for NodeText {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, value: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let mut kind = 0;
+        // SAFETY: napi calls `from_napi_value` with `value` live in `env`.
+        ::napi::check_status!(unsafe { ::napi::sys::napi_typeof(env, value, &raw mut kind) })?;
+        if kind != ::napi::sys::ValueType::napi_function {
+            // SAFETY: `value` is live in `env`.
+            return unsafe { String::from_napi_value(env, value) }.map(NodeText);
+        }
+        let mut receiver = ::std::ptr::null_mut();
+        // SAFETY: `env` is live; the receiver is written by napi.
+        ::napi::check_status!(unsafe { ::napi::sys::napi_get_undefined(env, &raw mut receiver) })?;
+        let mut text = ::std::ptr::null_mut();
+        // SAFETY: `value` is a live function in `env`, called with no arguments.
+        ::napi::check_status!(unsafe { ::napi::sys::napi_call_function(env, receiver, value, 0, ::std::ptr::null(), &raw mut text) })?;
+        // SAFETY: `text` is the call's live result in `env`.
+        unsafe { String::from_napi_value(env, text) }.map(NodeText)
+    }
+}
+
+/// A node's `$text` as it crosses out: a method, a native function that
+/// returns `text` as one new string per call.
+///
+/// # Safety
+/// `env` must be live.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn text_method(env: ::napi::sys::napi_env, text: String) -> ::napi::Result<::napi::sys::napi_value> {
+    let js = ::napi::Env::from_raw(env);
+    let method = js.create_function_from_closure::<(), String, _>("$text", move |_| Ok(text.clone()))?;
+    // SAFETY: `method` was just created in `env`.
+    unsafe { ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, method) }
+}
+
 /// A required field, read as napi's object derive reads one: `undefined` is
 /// napi's missing-field error, and a value the field's type refuses is that
 /// type's error decorated with `owner` and the key.

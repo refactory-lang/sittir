@@ -467,7 +467,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'  const handle = currentHandle();',
 			'  const node = {',
 			'    ...data,',
-			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false } }).map((line) => line.slice(2)),
+			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false }, text: 'data.$text' }).map((line) => line.slice(2)),
 			'  };',
 			'  return node;',
 			'}',

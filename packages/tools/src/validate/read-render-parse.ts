@@ -13,6 +13,7 @@ import { writeSync } from 'node:fs';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
+	nodeText,
 	carrySource,
 	isCoordinate,
 	isDataKey,
@@ -527,7 +528,8 @@ export function selfContainedRenderInput(
 ): unknown {
 	const slice = spanSlicer(source);
 	const textOf = (record: Record<string, unknown>): string | undefined => {
-		if (typeof record.$text === 'string') return record.$text;
+		const own = nodeText(record);
+		if (own !== undefined) return own;
 		const span = spanOf(record);
 		return span === undefined ? undefined : slice(span);
 	};

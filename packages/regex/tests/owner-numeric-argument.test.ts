@@ -24,6 +24,6 @@ describe('a strict builder whose one slot holds a numeric leaf', () => {
 
 	it('leaves the number to the loose entry', () => {
 		expect(rx.build.countQuantifier.strict).toBeTypeOf('function');
-		expect(rx.build.decimalDigits(3).$text).toBe('3');
+		expect(rx.build.decimalDigits(3).$text()).toBe('3');
 	});
 });

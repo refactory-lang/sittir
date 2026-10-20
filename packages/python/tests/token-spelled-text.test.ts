@@ -4,7 +4,7 @@ import python from '../src/index.ts';
 
 const py = await createEngine(python);
 
-type Spelled = { readonly $text?: string; readonly $other?: unknown };
+type Spelled = { $text(): string; readonly $other?: unknown };
 
 function importPrefixOf(source: string): Spelled {
 	const root = py.parse(source) as unknown as {
@@ -19,7 +19,7 @@ function importPrefixOf(source: string): Spelled {
 describe('a named node spelled only by tokens', () => {
 	it('takes its text from the tokens that tile it', () => {
 		const prefix = importPrefixOf('from .. import x\n');
-		expect(prefix.$text).toBe('..');
+		expect(prefix.$text()).toBe('..');
 		expect(prefix.$other).toBeUndefined();
 	});
 

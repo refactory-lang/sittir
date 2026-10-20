@@ -24,6 +24,7 @@ export interface NodeMemberSpec {
 	readonly inner: InnerPositions;
 	readonly extra?: readonly string[];
 	readonly parsed?: true;
+	readonly text?: string;
 }
 
 export function innerPositionsOf(kind: string, nodeMap: NodeMap): InnerPositions {
@@ -50,6 +51,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		lines.push('    $with: {', ...spec.setters.map(withEntry), '    },');
 	}
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
+	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',
