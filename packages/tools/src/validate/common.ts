@@ -870,18 +870,18 @@ export function slotValuesOf(
 	node: TypedNode,
 	readers: SlotReaders,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): [storageKey: string, value: unknown][] {
-	return readers(node.$type).flatMap((reader): [string, unknown][] => {
+): [storageKey: string, value: unknown, reader: SlotReader][] {
+	return readers(node.$type).flatMap((reader): [string, unknown, SlotReader][] => {
 		const { storageKey } = reader;
 		if ('option' in reader) {
 			const value = node[reader.option];
-			return typeof value === 'number' ? [[storageKey, value]] : [];
+			return typeof value === 'number' ? [[storageKey, value, reader]] : [];
 		}
 		const { accessor } = reader;
 		const read = storedSlotReader(node, accessor);
 		if (typeof read !== 'function' || read.length !== 0) return [];
 		try {
-			return [[storageKey, (read as () => unknown).call(node)]];
+			return [[storageKey, (read as () => unknown).call(node), reader]];
 		} catch (e) {
 			const message = (e as Error).message;
 			process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessor} type=${node.$type} err=${message}\n`);

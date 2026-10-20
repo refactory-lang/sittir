@@ -4,7 +4,18 @@ import { sourceSpans, spanSlicer } from '@sittir/common';
 import { spanOf } from '@sittir/common/utils';
 import { computeRunCensus, renderRunCensus } from './gap-runs.ts';
 import { gapClassOf, type GapClass } from '../exercise/default-diff.ts';
-import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode } from './common.ts';
+import {
+	loadCorpusEntries,
+	type CorpusEntry,
+	loadKindNameFromId,
+	loadLanguageForGrammar,
+	loadNativeEngine,
+	loadSlotReaders,
+	slotValuesOf as storedValuesOf,
+	type SlotReaders,
+	type TSNode,
+	type TypedNode as ReadNode
+} from './common.ts';
 
 function adjacentPairs<T extends object>(items: readonly T[]): [T, T][] {
 	const pairs: [T, T][] = [];
@@ -167,8 +178,7 @@ function emptyByShape(): Record<LossyShape, number> {
 	return Object.fromEntries(LOSSY_SHAPES.map((shape) => [shape, 0])) as Record<LossyShape, number>;
 }
 
-interface TypedNode {
-	readonly $type: number;
+interface TypedNode extends ReadNode {
 	readonly $with?: Record<string, ((...items: unknown[]) => { $render(): string }) | undefined>;
 }
 
@@ -192,39 +202,24 @@ interface RebuiltList {
 	readonly rendered: string;
 }
 
-const camelOf = (slot: string): string => slot.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
-
 const isArrayLike = (value: unknown): value is ArrayLike<unknown> =>
 	typeof value === 'object' && value !== null && typeof (value as { length?: unknown }).length === 'number';
 
 const holdsMany = (owner: unknown, value: unknown): value is ArrayLike<unknown> =>
 	isArrayLike(value) && (spanOf(value) === undefined || isArrayLike(owner));
 
-function* slotValuesOf(node: TypedNode): Generator<{ camel: string; values: unknown[]; many: boolean }> {
-	const record = node as unknown as Record<string, unknown>;
-	const names = new Set([
-		...Object.getOwnPropertyNames(node)
-			.filter((key) => key.startsWith('_') && !key.startsWith('$'))
-			.map((key) => camelOf(key.slice(1))),
-		...Object.keys(node.$with ?? {})
-	]);
-	for (const camel of names) {
-		const read = record[camel];
-		if (typeof read !== 'function') continue;
-		let value: unknown;
-		try {
-			value = read.call(node);
-		} catch {
-			continue;
-		}
+function* slotValuesOf(node: TypedNode, readers: SlotReaders): Generator<{ camel: string; values: unknown[]; many: boolean }> {
+	for (const [, value, reader] of storedValuesOf(node, readers, () => {})) {
+		if (!('accessor' in reader)) continue;
+		const camel = reader.accessor;
 		yield holdsMany(node, value) ? { camel, values: Array.from(value), many: true } : { camel, values: [value], many: false };
 	}
 }
 
-function rebuiltLists(root: TypedNode, kindName: (id: number) => string, rebuildFailures: string[]): RebuiltList[] {
+function rebuiltLists(root: TypedNode, kindName: (id: number) => string, readers: SlotReaders, rebuildFailures: string[]): RebuiltList[] {
 	const lists: RebuiltList[] = [];
 	const visit = (node: TypedNode): void => {
-		for (const { camel, values, many } of slotValuesOf(node)) {
+		for (const { camel, values, many } of slotValuesOf(node, readers)) {
 			const items = values.filter(isTypedNode);
 			if (many && items.length >= 2) {
 				const rebuild = node.$with?.[camel];
@@ -265,6 +260,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	const engine = await loadNativeEngine(grammar);
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const nameOf = await loadKindNameFromId(grammar);
+	const readers = await loadSlotReaders(grammar);
 	const kindName = (id: number): string => nameOf?.(id) ?? String(id);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -287,7 +283,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		const rebuildFailures: string[] = [];
 		let lists: RebuiltList[];
 		try {
-			lists = rebuiltLists(engine.parse(source) as unknown as TypedNode, kindName, rebuildFailures);
+			lists = rebuiltLists(engine.parse(source) as unknown as TypedNode, kindName, readers, rebuildFailures);
 		} catch {
 			return { ...UNMEASURED, status: 'unrendered' };
 		}

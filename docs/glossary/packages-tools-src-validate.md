@@ -1702,7 +1702,7 @@ The run's node storage. `runCountsCli` records validation history only for objec
 
 ### `packages/tools/src/validate/common.ts::slotValuesOf`
 
-A wrapped node's stored values, one `[storageKey, value]` pair per reader its kind id has (`SlotReaders`), read through the node's public surface and never from its `_` storage. A slot reader calls the node's stamped accessor when the node has one (`storedSlotReader`); a list's delimiter reader takes its public `delimiter` value when it is a number. The same call reads a node on either wire, since an object node and a record view expose the same members.
+A wrapped node's stored values, one `[storageKey, value, reader]` entry per reader its kind id has (`SlotReaders`), the reader naming the accessor a caller rebuilds the slot through, read through the node's public surface and never from its `_` storage. A slot reader calls the node's stamped accessor when the node has one (`storedSlotReader`); a list's delimiter reader takes its public `delimiter` value when it is a number. The same call reads a node on either wire, since an object node and a record view expose the same members.
 
 An accessor that throws yields no pair for its slot, rather than a fall back to raw storage. The throw goes to stderr and to `onAccessorThrow` (`AccessorThrowRecord`), and `validateReadRenderParse` fails the entry on it.
 
