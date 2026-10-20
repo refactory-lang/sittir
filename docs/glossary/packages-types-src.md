@@ -50,7 +50,7 @@ The grammar facts `$trivia` checks against: each kind's name, the gaps an empty 
 
 Every member is `readonly`, `comment` included: the facts belong to the language and are frozen where the language module builds them, so an engine cannot change them for the others. The comment coercer is a per-language fact fixed when `hooks` is built; nothing per engine sets it.
 
-`Kind` types `kindName`'s argument by the language's kind ids. A language's hooks and engine identity carry `TriviaFacts<API['kindId']>`, so a generated language's `kindName` takes only its own `TSKindId`: another language's kind id, an unlisted literal or a kind name is a compile error, while a value typed as a plain `number` still compiles. `kindName` is a method, so a language's facts stay assignable to the widest `TriviaFacts`, the view the engine's language-agnostic plumbing reads through.
+`Kind` types `kindName`'s argument by the language's kind ids. A language's hooks and engine identity carry `TriviaFacts<API['kindId']>`, so a generated language's `kindName` takes only its own `TSKindId`: another language's kind id, an unlisted literal or a kind name is a compile error, while a value typed as a plain `number` still compiles. `kindName` is a method, so a language's facts stay assignable to `TriviaFacts` over any kind id (the default), the type the language-agnostic trivia helpers take.
 
 ### `packages/types/src/engine-api.ts::ParseOptions`
 

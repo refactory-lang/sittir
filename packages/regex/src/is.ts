@@ -88,7 +88,7 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly inlineFlagsGroup: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -104,18 +104,14 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupDisable };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
-	anyCharacter<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.AnyCharacter>;
-	startAssertion<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.StartAssertion>;
-	endAssertion<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.EndAssertion>;
-	boundaryAssertion<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.BoundaryAssertion>;
-	nonBoundaryAssertion<T extends { readonly $type: string | number } | number>(
+	anyCharacter<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.AnyCharacter>;
+	startAssertion<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.StartAssertion>;
+	endAssertion<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EndAssertion>;
+	boundaryAssertion<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.BoundaryAssertion>;
+	nonBoundaryAssertion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.NonBoundaryAssertion>;
 	patternCharacter<T extends { readonly $type: number } | number>(
@@ -157,7 +153,7 @@ export interface IsGuards {
 	characterClassEscapeText2<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText2 };
-	negation<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
+	negation<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
