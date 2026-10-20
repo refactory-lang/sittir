@@ -32,7 +32,6 @@ export const ifStatement: Hoisted<typeof O.ifStatement> = hoistAs<typeof O.ifSta
 export const elifClause: Hoisted<typeof O.elifClause> = hoistAs<typeof O.elifClause>(O.elifClause);
 export const elseClause: Hoisted<typeof O.elseClause> = hoistAs<typeof O.elseClause>(O.elseClause);
 export const matchStatement: Hoisted<typeof O.matchStatement> = hoistAs<typeof O.matchStatement>(O.matchStatement);
-export const matchBlock: Hoisted<typeof O.matchBlock> = hoistAs<typeof O.matchBlock>(O.matchBlock);
 export const caseClause: Hoisted<typeof O.caseClause> = hoistAs<typeof O.caseClause>(O.caseClause);
 export const forStatement: Hoisted<typeof O.forStatement> = hoistAs<typeof O.forStatement>(O.forStatement);
 export const whileStatement: Hoisted<typeof O.whileStatement> = hoistAs<typeof O.whileStatement>(O.whileStatement);
@@ -226,6 +225,8 @@ export const expressionStatementTuple: Hoisted<typeof O.expressionStatementTuple
 >(O.expressionStatementTuple);
 export const withClauseBare: Hoisted<typeof O.withClauseBare> = hoistAs<typeof O.withClauseBare>(O.withClauseBare);
 export const withClauseParen: Hoisted<typeof O.withClauseParen> = hoistAs<typeof O.withClauseParen>(O.withClauseParen);
+export const matchBlockBlock: Hoisted<typeof O.matchBlockBlock> = hoistAs<typeof O.matchBlockBlock>(O.matchBlockBlock);
+export const matchBlockEmpty: Hoisted<typeof O.matchBlockEmpty> = hoistAs<typeof O.matchBlockEmpty>(O.matchBlockEmpty);
 export const suiteInline: Hoisted<typeof O.suiteInline> = hoistAs<typeof O.suiteInline>(O.suiteInline);
 export const suiteBlock: Hoisted<typeof O.suiteBlock> = hoistAs<typeof O.suiteBlock>(O.suiteBlock);
 export const suiteEmpty: Hoisted<typeof O.suiteEmpty> = hoistAs<typeof O.suiteEmpty>(O.suiteEmpty);
@@ -233,6 +234,7 @@ export const simpleStatement: Hoisted<typeof O.simpleStatement> = hoistAs<typeof
 export const compoundStatement: Hoisted<typeof O.compoundStatement> = hoistAs<typeof O.compoundStatement>(
 	O.compoundStatement
 );
+export const matchBlock: Hoisted<typeof O.matchBlock> = hoistAs<typeof O.matchBlock>(O.matchBlock);
 export const withClause: Hoisted<typeof O.withClause> = hoistAs<typeof O.withClause>(O.withClause);
 export const suite: Hoisted<typeof O.suite> = hoistAs<typeof O.suite>(O.suite);
 export const parameter: Hoisted<typeof O.parameter> = hoistAs<typeof O.parameter>(O.parameter);

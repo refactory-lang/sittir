@@ -36,13 +36,14 @@ import {
 	emittedElementsSeats,
 	flattenSeatsOf,
 	tupleSeatOf,
+	type AliasWire,
 	type FlattenKey,
 	type FlattenSeat,
 	type FlattenedSeat,
 	type SubFactory
 } from '../../compiler/model/sub-factories.ts';
 import { bundleEntries, bundleExpr, overlayFrame, overlayImportPath } from './module.ts';
-import { armRoutesOf, flattenedVariantParents, hasOneSurface, isHoistedCompound, isNamespaceArm, type AliasWire, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
+import { armRoutesOf, flattenedVariantParents, hasOneSurface, isHoistedCompound, isNamespaceArm, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
 
 interface FlavorRefs {
 	readonly strict: string;
@@ -153,10 +154,12 @@ function routeArity(path: string, wires: PolymorphWires): number | undefined {
 	const [key, name, ...rest] = path.split('.');
 	const parent = [...wires.flattened.values()].find((candidate) => candidate.key === key);
 	const variant = parent?.variants.find((route) => route.name === name && route.leaf !== true);
-	if (variant === undefined) throw new Error(`[codegen] polymorph route ${path} is referenced before its arity is stamped`);
-	if (rest.length === 0) return entryArity(variant.child.kind, wires);
-	const childKey = variant.nestedParentKey ?? wires.keyByKind.get(variant.child.kind);
-	if (childKey === undefined) throw new Error(`[codegen] polymorph route ${path} reaches ${variant.child.kind}, which has no entry`);
+	const alias = [...wires.byKind.values()].find((set) => set.parentKey === key)?.aliases.find((candidate) => candidate.name === name);
+	const child = variant?.child ?? alias?.child;
+	if (child === undefined) throw new Error(`[codegen] polymorph route ${path} is referenced before its arity is stamped`);
+	if (rest.length === 0) return entryArity(child.kind, wires);
+	const childKey = variant?.nestedParentKey ?? wires.keyByKind.get(child.kind);
+	if (childKey === undefined) throw new Error(`[codegen] polymorph route ${path} reaches ${child.kind}, which has no entry`);
 	return routeArity([childKey, ...rest].join('.'), wires);
 }
 
@@ -548,7 +551,10 @@ export function emittedArmPath(kind: string, path: readonly string[], wires: Pol
 	const head = path[0];
 	if (set === undefined || head === undefined) return [...path];
 	const sub = set.subs.find((candidate) => candidate.name === head);
-	if (sub === undefined) return [...path];
+	if (sub === undefined) {
+		const alias = set.aliases.find((candidate) => candidate.name === head);
+		return alias === undefined ? [...path] : [head, ...emittedArmPath(alias.child.kind, path.slice(1), wires)];
+	}
 	const under = nestingArmOf(sub, set.subs, wires);
 	const spelled = under === undefined ? [sub.name] : [under.host, ...under.keys];
 	const rest = path.slice(1);
@@ -564,7 +570,7 @@ function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[], wires: Polym
 	if (host === undefined) return undefined;
 	const key = sub.arm.path[sub.arm.path.length - 1]!;
 	const inner = wires.byKind.get(child.kind)?.subs.find((candidate) => candidate.name === key);
-	if (inner !== undefined && inner.arm.via === 'node' && inner.arm.path.length > 0) {
+	if ((inner !== undefined && inner.arm.via === 'node' && inner.arm.path.length > 0) || sub.arm.path.length > 1) {
 		return { host: host.name, keys: emittedArmPath(child.kind, sub.arm.path, wires) };
 	}
 	const collides = subs.some(

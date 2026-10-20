@@ -12,6 +12,7 @@ import { emitAll } from '../emit.ts';
 import { TemplateEmitter } from '../templates.ts';
 import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { flatten } from '../../compiler/flatten.ts';
+import { resolveIrKeys } from '../../compiler/assemble.ts';
 
 function makeNodeMap(nodes: Map<string, AssembledNode> = new Map()): NodeMap {
 	const nodeMap = {
@@ -44,6 +45,7 @@ function makeHiddenHelperNodeMap(): NodeMap {
 	const helperRender = flatten(helperRule);
 	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	resolveIrKeys(nodes);
 	return makeNodeMap(nodes);
 }
 
@@ -71,6 +73,7 @@ function makeHiddenSupertypeNodeMap(): NodeMap {
 		'_export_statement_default_decl_arm',
 		new AssembledPattern('_export_statement_default_decl_arm', { type: PATTERN, value: 'decl' })
 	);
+	resolveIrKeys(nodes);
 	return makeNodeMap(nodes);
 }
 

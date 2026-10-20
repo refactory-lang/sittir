@@ -128,7 +128,6 @@ export const querySlots: QuerySlots = Object.freeze({
 		['subjects', 0],
 		['body', 1]
 	],
-	154: [['content', 0]],
 	155: [
 		['casePatterns', 0],
 		['guard', 1],
@@ -614,11 +613,6 @@ export const structure: StructureTable = Object.freeze({
 			['_subjects', 'MatchStatement.subjects', 'a built Subjects'],
 			['_body', 'MatchStatement.body', 'a built MatchBlock']
 		]
-	},
-	154: {
-		kind: 'match_block',
-		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'MatchBlock.content', 'a built MatchBlockBlock / MatchBlockEmpty']]
 	},
 	155: {
 		kind: 'case_clause',

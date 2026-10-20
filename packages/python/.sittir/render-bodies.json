@@ -2943,12 +2943,6 @@
 			"field": "list_splat_pattern_after"
 		}
 	],
-	"match_block": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"match_block_block": [
 		{
 			"kind": "seam",

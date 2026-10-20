@@ -342,7 +342,36 @@ export interface KindMembers {
 		| TSKindId.EqGt
 		| TSKindId.Pound
 		| TSKindId.Qmark;
-	[TSKindId.TokenKeywords]: TSKindId.TokenKeywords;
+	[TSKindId.TokenKeywords]:
+		| TSKindId.Squote
+		| TSKindId.AsKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.BreakKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.ContinueKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.EnumKeyword
+		| TSKindId.FnKeyword
+		| TSKindId.ForKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.IfKeyword
+		| TSKindId.ImplKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.LoopKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.ModKeyword
+		| TSKindId.PubKeyword
+		| TSKindId.ReturnKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.StructKeyword
+		| TSKindId.TraitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.UnsafeKeyword
+		| TSKindId.UseKeyword
+		| TSKindId.WhereKeyword
+		| TSKindId.WhileKeyword;
 }
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -350,9 +379,12 @@ export interface IsGuards {
 	sourceFile<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SourceFile };
-	expressionStatement<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+	readonly expressionStatement: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+		withSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+	};
 	macroRule<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroRule };
@@ -365,18 +397,28 @@ export interface IsGuards {
 	tokenRepetition<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenRepetition };
-	nonSpecialToken<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonSpecialToken };
+	readonly nonSpecialToken: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonSpecialToken };
+		identifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonSpecialToken };
+		mutableSpecifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonSpecialToken };
+		self<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonSpecialToken };
+		super<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonSpecialToken };
+		crate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonSpecialToken };
+	};
 	attributeItem<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeItem };
 	innerAttributeItem<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InnerAttributeItem };
-	attribute<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Attribute };
+	readonly attribute: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Attribute };
+		input<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Attribute };
+	};
 	declarationList<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DeclarationList };
@@ -488,9 +530,22 @@ export interface IsGuards {
 	externModifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExternModifier };
-	visibilityModifier<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifier };
+	readonly visibilityModifier: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifier };
+		crate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+		readonly pub: {
+			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+			readonly scope: {
+				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+				self<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+				super<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+				crate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+				inPath<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifier };
+			};
+		};
+	};
 	bracketedType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BracketedType };
@@ -506,9 +561,13 @@ export interface IsGuards {
 	forLifetimes<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForLifetimes };
-	functionType<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionType };
+	readonly functionType: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionType };
+		traitForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
+		fnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
+	};
 	tupleType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleType };
@@ -613,7 +672,7 @@ export interface IsGuards {
 	letCondition<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LetCondition };
-	LetChain<T extends { readonly $type: number } | number>(
+	letChain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LetChain };
 	elseClause<T extends { readonly $type: number } | number>(
@@ -715,12 +774,23 @@ export interface IsGuards {
 	rawStringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteral };
-	lineComment<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
-	blockComment<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
+	readonly lineComment: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
+		extraSlashes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+		docOuter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+		docInner<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+		regular<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+	};
+	readonly blockComment: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
+		docOuter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+		docInner<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+		regular<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+	};
 	shebang<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Shebang };
@@ -781,6 +851,9 @@ export interface IsGuards {
 	structPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructPatternElements };
+	useWildcardGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
 	integerLiteralDecimal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteralDecimal };
@@ -826,6 +899,9 @@ export interface IsGuards {
 	arrayExpressionList<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayExpressionList };
+	attributeInput<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeInput };
 	closureExpressionBlock<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureExpressionBlock };
@@ -844,12 +920,33 @@ export interface IsGuards {
 	referenceExpressionBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReferenceExpressionBare };
+	implItemPositiveClause<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemPositiveClause };
+	implItemNegativeClause<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemNegativeClause };
 	implItemBody<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemBody };
 	implItemSemi<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImplItemSemi };
+	visibilityModifierPubScopeInPath<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPubScopeInPath };
+	visibilityModifierPubScope<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPubScope };
+	visibilityModifierPub<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierPub };
+	functionTypeTraitForm<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeTraitForm };
+	functionTypeFnForm<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionTypeFnForm };
 	modItemExternal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ModItemExternal };
@@ -880,6 +977,9 @@ export interface IsGuards {
 	rangeExpressionBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBare };
+	expressionStatementWithSemi<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementWithSemi };
 	foreignModItemSemi<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForeignModItemSemi };
@@ -892,6 +992,18 @@ export interface IsGuards {
 	matchArmBlockEnding<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchArmBlockEnding };
+	lineCommentDocOuter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineCommentDocOuter };
+	lineCommentDocInner<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineCommentDocInner };
+	blockCommentDocOuter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentDocOuter };
+	blockCommentDocInner<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentDocInner };
 	tokenTreePatternParen<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenTreePatternParen };
@@ -937,9 +1049,16 @@ export interface IsGuards {
 	rangePatternPrefix<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
-	rangePatternWithLeft<T extends { readonly $type: number } | number>(
+	rangePatternWithLeftWithRight<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeftWithRight };
+	readonly rangePatternWithLeft: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
+		withRight<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
+		bare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
+	};
 	structItemBrace<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemBrace };
@@ -949,6 +1068,30 @@ export interface IsGuards {
 	structItemUnit<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemUnit };
+	attributedFieldDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedFieldDeclaration };
+	attributedEnumVariant<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedEnumVariant };
+	attributedParameter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedParameter };
+	attributedTypeParameter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedTypeParameter };
+	attributedArgument<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedArgument };
+	attributedOrderedField<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedOrderedField };
+	typeArgument<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeArgument };
+	matchBlockArms<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockArms };
 	typeIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeIdentifier };
@@ -1004,9 +1147,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroInvocation };
 		macro: IsGuards['macroDefinition'];
-		empty<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EmptyStatement };
+		empty<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyStatement>;
 		attribute<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeItem };
@@ -1218,9 +1359,13 @@ export interface IsGuards {
 	};
 	readonly rangePattern: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.RangePattern]>;
-		withLeft<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
+		readonly withLeft: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
+			withRight<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
+			bare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
+		};
 		prefix<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
@@ -1282,12 +1427,23 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.LineComment | TSKindId.BlockComment>;
-		lineComment<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
-		blockComment<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
+		readonly lineComment: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
+			extraSlashes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+			docOuter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+			docInner<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+			regular<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+		};
+		readonly blockComment: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
+			docOuter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+			docInner<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+			regular<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+		};
 	};
 	layout<T extends { readonly $type: number } | number>(
 		v: T
@@ -1341,7 +1497,7 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
 	self<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Self>;
-	super_<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Super>;
+	super<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Super>;
 	crate<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Crate>;
 	primitiveType<T extends { readonly $type: number } | number>(
 		v: T
@@ -1361,9 +1517,6 @@ export interface IsGuards {
 	implItemUnsafeMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.ImplItemUnsafeMarker>;
-	charLiteralEmpty<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEmpty };
 	lineCommentExtraSlashes<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineCommentExtraSlashes };
@@ -1501,7 +1654,13 @@ const _members = new Map<number, ReadonlySet<number>>([
 			83, 116, 136, 110, 101, 49, 137, 130, 2, 4, 47, 131, 3, 26, 10
 		])
 	],
-	[TSKindId.TokenKeywords, new Set<number>([362])]
+	[
+		TSKindId.TokenKeywords,
+		new Set<number>([
+			50, 48, 113, 111, 108, 35, 109, 51, 33, 39, 42, 52, 102, 56, 45, 106, 104, 138, 139, 99, 36, 140, 41, 37, 32, 112,
+			46, 40, 105
+		])
+	]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -1522,6 +1681,16 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
+function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+	const inner = guard as unknown as (v: unknown) => boolean;
+	const forms: Record<string, object> = {};
+	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	return _vg(
+		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		forms
+	) as unknown as G;
+}
+
 // Runtime: every guard holds through the one kind test it is built with; an engine's `ofType` reads the same test.
 export function guardsWith(test: KindTest): IsGuards {
 	const _g = (id: number) => {
@@ -1536,335 +1705,667 @@ export function guardsWith(test: KindTest): IsGuards {
 		(kinds: ReadonlySet<number>) =>
 		(v: unknown): boolean =>
 			test(v, kinds);
+	const _kind_ConstItem_guard = _g(TSKindId.ConstItem);
+	const _kind_MacroInvocation_guard = _g(TSKindId.MacroInvocation);
+	const _kind_EmptyStatement_guard = _mg(TSKindId.EmptyStatement);
+	const _kind_AttributeItem_guard = _g(TSKindId.AttributeItem);
+	const _kind_InnerAttributeItem_guard = _g(TSKindId.InnerAttributeItem);
+	const _kind_UnionItem_guard = _g(TSKindId.UnionItem);
+	const _kind_EnumItem_guard = _g(TSKindId.EnumItem);
+	const _kind_TypeItem_guard = _g(TSKindId.TypeItem);
+	const _kind_FunctionItem_guard = _g(TSKindId.FunctionItem);
+	const _kind_FunctionSignatureItem_guard = _g(TSKindId.FunctionSignatureItem);
+	const _kind_TraitItem_guard = _g(TSKindId.TraitItem);
+	const _kind_AssociatedType_guard = _g(TSKindId.AssociatedType);
+	const _kind_LetDeclaration_guard = _g(TSKindId.LetDeclaration);
+	const _kind_UseDeclaration_guard = _g(TSKindId.UseDeclaration);
+	const _kind_ExternCrateDeclaration_guard = _g(TSKindId.ExternCrateDeclaration);
+	const _kind_StaticItem_guard = _g(TSKindId.StaticItem);
+	const _kind_MacroDefinitionParen_guard = _g(TSKindId.MacroDefinitionParen);
+	const _kind_MacroDefinitionBracket_guard = _g(TSKindId.MacroDefinitionBracket);
+	const _kind_MacroDefinitionBrace_guard = _g(TSKindId.MacroDefinitionBrace);
+	const _kind_TokenTreePatternParen_guard = _g(TSKindId.TokenTreePatternParen);
+	const _kind_TokenTreePatternBracket_guard = _g(TSKindId.TokenTreePatternBracket);
+	const _kind_TokenTreePatternBrace_guard = _g(TSKindId.TokenTreePatternBrace);
+	const _kind_TokenTreeParen_guard = _g(TSKindId.TokenTreeParen);
+	const _kind_TokenTreeBracket_guard = _g(TSKindId.TokenTreeBracket);
+	const _kind_TokenTreeBrace_guard = _g(TSKindId.TokenTreeBrace);
+	const _kind_ModItemExternal_guard = _g(TSKindId.ModItemExternal);
+	const _kind_ModItemInline_guard = _g(TSKindId.ModItemInline);
+	const _kind_ForeignModItemSemi_guard = _g(TSKindId.ForeignModItemSemi);
+	const _kind_ForeignModItemBody_guard = _g(TSKindId.ForeignModItemBody);
+	const _kind_StructItemBrace_guard = _g(TSKindId.StructItemBrace);
+	const _kind_StructItemTuple_guard = _g(TSKindId.StructItemTuple);
+	const _kind_StructItemUnit_guard = _g(TSKindId.StructItemUnit);
+	const _kind_ImplItemBody_guard = _g(TSKindId.ImplItemBody);
+	const _kind_ImplItemSemi_guard = _g(TSKindId.ImplItemSemi);
+	const _kind_PointerTypeConst_guard = _g(TSKindId.PointerTypeConst);
+	const _kind_PointerTypeMut_guard = _g(TSKindId.PointerTypeMut);
+	const _kind_DelimTokenTreeParen_guard = _g(TSKindId.DelimTokenTreeParen);
+	const _kind_DelimTokenTreeBracket_guard = _g(TSKindId.DelimTokenTreeBracket);
+	const _kind_DelimTokenTreeBrace_guard = _g(TSKindId.DelimTokenTreeBrace);
+	const _kind_RangeExpressionBinary_guard = _g(TSKindId.RangeExpressionBinary);
+	const _kind_RangeExpressionPostfix_guard = _g(TSKindId.RangeExpressionPostfix);
+	const _kind_RangeExpressionPrefix_guard = _g(TSKindId.RangeExpressionPrefix);
+	const _kind_RangeExpressionBare_guard = _g(TSKindId.RangeExpressionBare);
+	const _kind_ReferenceExpressionRawConst_guard = _g(TSKindId.ReferenceExpressionRawConst);
+	const _kind_ReferenceExpressionRawMut_guard = _g(TSKindId.ReferenceExpressionRawMut);
+	const _kind_ReferenceExpressionMut_guard = _g(TSKindId.ReferenceExpressionMut);
+	const _kind_ReferenceExpressionBare_guard = _g(TSKindId.ReferenceExpressionBare);
+	const _kind_ArrayExpressionSemi_guard = _g(TSKindId.ArrayExpressionSemi);
+	const _kind_ArrayExpressionList_guard = _g(TSKindId.ArrayExpressionList);
+	const _kind_MatchArmWithComma_guard = _g(TSKindId.MatchArmWithComma);
+	const _kind_MatchArmBlockEnding_guard = _g(TSKindId.MatchArmBlockEnding);
+	const _kind_ClosureExpressionBlock_guard = _g(TSKindId.ClosureExpressionBlock);
+	const _kind_ClosureExpressionExpr_guard = _g(TSKindId.ClosureExpressionExpr);
+	const _kind_FieldPatternShorthand_guard = _g(TSKindId.FieldPatternShorthand);
+	const _kind_FieldPatternNamed_guard = _g(TSKindId.FieldPatternNamed);
+	const _kind_RangePatternWithLeftWithRight_guard = _g(TSKindId.RangePatternWithLeftWithRight);
+	const _kind_RangePatternWithLeft_guard = _g(TSKindId.RangePatternWithLeft);
+	const _kind_RangePatternWithLeftBare_guard = _mg(TSKindId.RangePatternWithLeftBare);
+	const _kind_RangePatternPrefix_guard = _g(TSKindId.RangePatternPrefix);
+	const _kind_OrPatternBinary_guard = _g(TSKindId.OrPatternBinary);
+	const _kind_OrPatternPrefix_guard = _g(TSKindId.OrPatternPrefix);
+	const _kind_IntegerLiteralDecimal_guard = _g(TSKindId.IntegerLiteralDecimal);
+	const _kind_IntegerLiteralHex_guard = _g(TSKindId.IntegerLiteralHex);
+	const _kind_IntegerLiteralBinary_guard = _g(TSKindId.IntegerLiteralBinary);
+	const _kind_IntegerLiteralOctal_guard = _g(TSKindId.IntegerLiteralOctal);
+	const _kind_CharLiteralPlain_guard = _g(TSKindId.CharLiteralPlain);
+	const _kind_CharLiteralEmpty_guard = _g(TSKindId.CharLiteralEmpty);
+	const _kind_EscapeSequenceSimple_guard = _g(TSKindId.EscapeSequenceSimple);
+	const _kind_EscapeSequenceUnicodeFixed_guard = _g(TSKindId.EscapeSequenceUnicodeFixed);
+	const _kind_EscapeSequenceUnicodeBraced_guard = _g(TSKindId.EscapeSequenceUnicodeBraced);
+	const _kind_EscapeSequenceHex_guard = _g(TSKindId.EscapeSequenceHex);
+	const _kind_LineCommentExtraSlashes_guard = _g(TSKindId.LineCommentExtraSlashes);
+	const _kind_LineComment_guard = _g(TSKindId.LineComment);
+	const _kind_LineCommentDocOuter_guard = _g(TSKindId.LineCommentDocOuter);
+	const _kind_LineCommentDocInner_guard = _g(TSKindId.LineCommentDocInner);
+	const _kind_LineCommentRegular_guard = _g(TSKindId.LineCommentRegular);
+	const _kind_BlockCommentDocOuter_guard = _g(TSKindId.BlockCommentDocOuter);
+	const _kind_BlockComment_guard = _g(TSKindId.BlockComment);
+	const _kind_BlockCommentDocInner_guard = _g(TSKindId.BlockCommentDocInner);
+	const _kind_BlockCommentRegular_guard = _g(TSKindId.BlockCommentRegular);
+	const _kind_CharLiteralEscapedSimple_guard = _g(TSKindId.CharLiteralEscapedSimple);
+	const _kind_CharLiteralEscapedUnicodeFixed_guard = _g(TSKindId.CharLiteralEscapedUnicodeFixed);
+	const _kind_CharLiteralEscapedUnicodeBraced_guard = _g(TSKindId.CharLiteralEscapedUnicodeBraced);
+	const _kind_CharLiteralEscapedHex_guard = _g(TSKindId.CharLiteralEscapedHex);
+	const _kind_SourceFile_guard = _g(TSKindId.SourceFile);
+	const _kind_ExpressionStatementWithSemi_guard = _g(TSKindId.ExpressionStatementWithSemi);
+	const _kind_ExpressionStatement_guard = _g(TSKindId.ExpressionStatement);
+	const _kind_MacroRule_guard = _g(TSKindId.MacroRule);
+	const _kind_TokenBindingPattern_guard = _g(TSKindId.TokenBindingPattern);
+	const _kind_TokenRepetitionPattern_guard = _g(TSKindId.TokenRepetitionPattern);
+	const _kind_TokenRepetition_guard = _g(TSKindId.TokenRepetition);
+	const _kind_Identifier_guard = _g(TSKindId.Identifier);
+	const _kind_NonSpecialToken_guard = _g(TSKindId.NonSpecialToken);
+	const _kind_MutableSpecifier_guard = _mg(TSKindId.MutableSpecifier);
+	const _kind_Self_guard = _mg(TSKindId.Self);
+	const _kind_Super_guard = _mg(TSKindId.Super);
+	const _kind_Crate_guard = _mg(TSKindId.Crate);
+	const _kind_AttributeInput_guard = _g(TSKindId.AttributeInput);
+	const _kind_Attribute_guard = _g(TSKindId.Attribute);
+	const _kind_DeclarationList_guard = _g(TSKindId.DeclarationList);
+	const _kind_EnumVariantList_guard = _g(TSKindId.EnumVariantList);
+	const _kind_EnumVariant_guard = _g(TSKindId.EnumVariant);
+	const _kind_FieldDeclarationList_guard = _g(TSKindId.FieldDeclarationList);
+	const _kind_FieldDeclaration_guard = _g(TSKindId.FieldDeclaration);
+	const _kind_OrderedFieldDeclarationList_guard = _g(TSKindId.OrderedFieldDeclarationList);
+	const _kind_FunctionModifiers_guard = _g(TSKindId.FunctionModifiers);
+	const _kind_WhereClause_guard = _g(TSKindId.WhereClause);
+	const _kind_WherePredicate_guard = _g(TSKindId.WherePredicate);
+	const _kind_TraitBounds_guard = _g(TSKindId.TraitBounds);
+	const _kind_HigherRankedTraitBound_guard = _g(TSKindId.HigherRankedTraitBound);
+	const _kind_RemovedTraitBound_guard = _g(TSKindId.RemovedTraitBound);
+	const _kind_TypeParameters_guard = _g(TSKindId.TypeParameters);
+	const _kind_ConstParameter_guard = _g(TSKindId.ConstParameter);
+	const _kind_TypeParameter_guard = _g(TSKindId.TypeParameter);
+	const _kind_LifetimeParameter_guard = _g(TSKindId.LifetimeParameter);
+	const _kind_ScopedUseList_guard = _g(TSKindId.ScopedUseList);
+	const _kind_UseList_guard = _g(TSKindId.UseList);
+	const _kind_UseAsClause_guard = _g(TSKindId.UseAsClause);
+	const _kind_UseWildcard_guard = _g(TSKindId.UseWildcard);
+	const _kind_Parameters_guard = _g(TSKindId.Parameters);
+	const _kind_SelfParameter_guard = _g(TSKindId.SelfParameter);
+	const _kind_VariadicParameter_guard = _g(TSKindId.VariadicParameter);
+	const _kind_Parameter_guard = _g(TSKindId.Parameter);
+	const _kind_ExternModifier_guard = _g(TSKindId.ExternModifier);
+	const _kind_CrateVisibilityModifier_guard = _g(TSKindId.CrateVisibilityModifier);
+	const _kind_VisibilityModifier_guard = _g(TSKindId.VisibilityModifier);
+	const _kind_VisibilityModifierPubScope_guard = _g(TSKindId.VisibilityModifierPubScope);
+	const _kind_VisibilityModifierPubScopeInPath_guard = _g(TSKindId.VisibilityModifierPubScopeInPath);
+	const _kind_VisibilityModifierPub_guard = _g(TSKindId.VisibilityModifierPub);
+	const _kind_BracketedType_guard = _g(TSKindId.BracketedType);
+	const _kind_QualifiedType_guard = _g(TSKindId.QualifiedType);
+	const _kind_Lifetime_guard = _g(TSKindId.Lifetime);
+	const _kind_ArrayType_guard = _g(TSKindId.ArrayType);
+	const _kind_ForLifetimes_guard = _g(TSKindId.ForLifetimes);
+	const _kind_FunctionTypeTraitForm_guard = _g(TSKindId.FunctionTypeTraitForm);
+	const _kind_FunctionType_guard = _g(TSKindId.FunctionType);
+	const _kind_FunctionTypeFnForm_guard = _g(TSKindId.FunctionTypeFnForm);
+	const _kind_TupleType_guard = _g(TSKindId.TupleType);
+	const _kind_GenericFunction_guard = _g(TSKindId.GenericFunction);
+	const _kind_GenericType_guard = _g(TSKindId.GenericType);
+	const _kind_GenericTypeWithTurbofish_guard = _g(TSKindId.GenericTypeWithTurbofish);
+	const _kind_BoundedType_guard = _g(TSKindId.BoundedType);
+	const _kind_UseBounds_guard = _g(TSKindId.UseBounds);
+	const _kind_TypeArguments_guard = _g(TSKindId.TypeArguments);
+	const _kind_TypeBinding_guard = _g(TSKindId.TypeBinding);
+	const _kind_ReferenceType_guard = _g(TSKindId.ReferenceType);
+	const _kind_AbstractType_guard = _g(TSKindId.AbstractType);
+	const _kind_DynamicType_guard = _g(TSKindId.DynamicType);
+	const _kind_ScopedIdentifier_guard = _g(TSKindId.ScopedIdentifier);
+	const _kind_ScopedTypeIdentifierInExpressionPosition_guard = _g(TSKindId.ScopedTypeIdentifierInExpressionPosition);
+	const _kind_ScopedTypeIdentifier_guard = _g(TSKindId.ScopedTypeIdentifier);
+	const _kind_UnaryExpression_guard = _g(TSKindId.UnaryExpression);
+	const _kind_TryExpression_guard = _g(TSKindId.TryExpression);
+	const _kind_BinaryExpression_guard = _g(TSKindId.BinaryExpression);
+	const _kind_AssignmentExpression_guard = _g(TSKindId.AssignmentExpression);
+	const _kind_CompoundAssignmentExpr_guard = _g(TSKindId.CompoundAssignmentExpr);
+	const _kind_TypeCastExpression_guard = _g(TSKindId.TypeCastExpression);
+	const _kind_ReturnExpression_guard = _g(TSKindId.ReturnExpression);
+	const _kind_YieldExpression_guard = _g(TSKindId.YieldExpression);
+	const _kind_CallExpression_guard = _g(TSKindId.CallExpression);
+	const _kind_Arguments_guard = _g(TSKindId.Arguments);
+	const _kind_ParenthesizedExpression_guard = _g(TSKindId.ParenthesizedExpression);
+	const _kind_TupleExpression_guard = _g(TSKindId.TupleExpression);
+	const _kind_StructExpression_guard = _g(TSKindId.StructExpression);
+	const _kind_FieldInitializerList_guard = _g(TSKindId.FieldInitializerList);
+	const _kind_ShorthandFieldInitializer_guard = _g(TSKindId.ShorthandFieldInitializer);
+	const _kind_FieldInitializer_guard = _g(TSKindId.FieldInitializer);
+	const _kind_BaseFieldInitializer_guard = _g(TSKindId.BaseFieldInitializer);
+	const _kind_IfExpression_guard = _g(TSKindId.IfExpression);
+	const _kind_LetCondition_guard = _g(TSKindId.LetCondition);
+	const _kind_LetChain_guard = _g(TSKindId.LetChain);
+	const _kind_ElseClause_guard = _g(TSKindId.ElseClause);
+	const _kind_MatchExpression_guard = _g(TSKindId.MatchExpression);
+	const _kind_MatchBlock_guard = _g(TSKindId.MatchBlock);
+	const _kind_LastMatchArm_guard = _g(TSKindId.LastMatchArm);
+	const _kind_MatchPattern_guard = _g(TSKindId.MatchPattern);
+	const _kind_WhileExpression_guard = _g(TSKindId.WhileExpression);
+	const _kind_LoopExpression_guard = _g(TSKindId.LoopExpression);
+	const _kind_ForExpression_guard = _g(TSKindId.ForExpression);
+	const _kind_ConstBlock_guard = _g(TSKindId.ConstBlock);
+	const _kind_ClosureParameters_guard = _g(TSKindId.ClosureParameters);
+	const _kind_Label_guard = _g(TSKindId.Label);
+	const _kind_BreakExpression_guard = _g(TSKindId.BreakExpression);
+	const _kind_ContinueExpression_guard = _g(TSKindId.ContinueExpression);
+	const _kind_IndexExpression_guard = _g(TSKindId.IndexExpression);
+	const _kind_AwaitExpression_guard = _g(TSKindId.AwaitExpression);
+	const _kind_FieldExpression_guard = _g(TSKindId.FieldExpression);
+	const _kind_UnsafeBlock_guard = _g(TSKindId.UnsafeBlock);
+	const _kind_AsyncBlock_guard = _g(TSKindId.AsyncBlock);
+	const _kind_GenBlock_guard = _g(TSKindId.GenBlock);
+	const _kind_TryBlock_guard = _g(TSKindId.TryBlock);
+	const _kind_Block_guard = _g(TSKindId.Block);
+	const _kind_GenericPattern_guard = _g(TSKindId.GenericPattern);
+	const _kind_TuplePattern_guard = _g(TSKindId.TuplePattern);
+	const _kind_SlicePattern_guard = _g(TSKindId.SlicePattern);
+	const _kind_TupleStructPattern_guard = _g(TSKindId.TupleStructPattern);
+	const _kind_StructPattern_guard = _g(TSKindId.StructPattern);
+	const _kind_MutPattern_guard = _g(TSKindId.MutPattern);
+	const _kind_RefPattern_guard = _g(TSKindId.RefPattern);
+	const _kind_CapturedPattern_guard = _g(TSKindId.CapturedPattern);
+	const _kind_ReferencePattern_guard = _g(TSKindId.ReferencePattern);
+	const _kind_NegativeLiteral_guard = _g(TSKindId.NegativeLiteral);
+	const _kind_StringLiteral_guard = _g(TSKindId.StringLiteral);
+	const _kind_RawStringLiteral_guard = _g(TSKindId.RawStringLiteral);
+	const _kind_Shebang_guard = _g(TSKindId.Shebang);
+	const _kind_Metavariable_guard = _g(TSKindId.Metavariable);
+	const _kind_MacroRules_guard = _g(TSKindId.MacroRules);
+	const _kind_EnumVariantListElements_guard = _g(TSKindId.EnumVariantListElements);
+	const _kind_FieldDeclarationListElements_guard = _g(TSKindId.FieldDeclarationListElements);
+	const _kind_OrderedFieldDeclarationListElements_guard = _g(TSKindId.OrderedFieldDeclarationListElements);
+	const _kind_WherePredicates_guard = _g(TSKindId.WherePredicates);
+	const _kind_TypeParametersElements_guard = _g(TSKindId.TypeParametersElements);
+	const _kind_UseClauses_guard = _g(TSKindId.UseClauses);
+	const _kind_ParametersElements_guard = _g(TSKindId.ParametersElements);
+	const _kind_Lifetimes_guard = _g(TSKindId.Lifetimes);
+	const _kind_Types_guard = _g(TSKindId.Types);
+	const _kind_UseBoundsElements_guard = _g(TSKindId.UseBoundsElements);
+	const _kind_TypeArgumentsElements_guard = _g(TSKindId.TypeArgumentsElements);
+	const _kind_ArgumentsElements_guard = _g(TSKindId.ArgumentsElements);
+	const _kind_Expressions_guard = _g(TSKindId.Expressions);
+	const _kind_FieldInitializerListElements_guard = _g(TSKindId.FieldInitializerListElements);
+	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
+	const _kind_Patterns_guard = _g(TSKindId.Patterns);
+	const _kind_StructPatternElements_guard = _g(TSKindId.StructPatternElements);
+	const _kind_UseWildcardGroup_guard = _g(TSKindId.UseWildcardGroup);
+	const _kind_ImplItemPositiveClause_guard = _g(TSKindId.ImplItemPositiveClause);
+	const _kind_ImplItemNegativeClause_guard = _g(TSKindId.ImplItemNegativeClause);
+	const _kind_AttributedFieldDeclaration_guard = _g(TSKindId.AttributedFieldDeclaration);
+	const _kind_AttributedEnumVariant_guard = _g(TSKindId.AttributedEnumVariant);
+	const _kind_AttributedParameter_guard = _g(TSKindId.AttributedParameter);
+	const _kind_AttributedTypeParameter_guard = _g(TSKindId.AttributedTypeParameter);
+	const _kind_AttributedArgument_guard = _g(TSKindId.AttributedArgument);
+	const _kind_AttributedOrderedField_guard = _g(TSKindId.AttributedOrderedField);
+	const _kind_TypeArgument_guard = _g(TSKindId.TypeArgument);
+	const _kind_MatchBlockArms_guard = _g(TSKindId.MatchBlockArms);
+	const _kind_TypeIdentifier_guard = _g(TSKindId.TypeIdentifier);
+	const _kind_FieldIdentifier_guard = _g(TSKindId.FieldIdentifier);
+	const _kind_ShorthandFieldIdentifier_guard = _g(TSKindId.ShorthandFieldIdentifier);
+	const _kind_FragmentSpecifier_guard = _mg(TSKindId.FragmentSpecifier);
+	const _kind_UnitType_guard = _mg(TSKindId.UnitType);
+	const _kind_NeverType_guard = _mg(TSKindId.NeverType);
+	const _kind_UnitExpression_guard = _mg(TSKindId.UnitExpression);
+	const _kind_RemainingFieldPattern_guard = _mg(TSKindId.RemainingFieldPattern);
+	const _kind_BooleanLiteral_guard = _mg(TSKindId.BooleanLiteral);
+	const _kind_InnerLineDocCommentMarker_guard = _mg(TSKindId.InnerLineDocCommentMarker);
+	const _kind_OuterLineDocCommentMarker_guard = _mg(TSKindId.OuterLineDocCommentMarker);
+	const _kind_PrimitiveType_guard = _mg(TSKindId.PrimitiveType);
+	const _kind_TokenRepetitionPatternText_guard = _g(TSKindId.TokenRepetitionPatternText);
+	const _kind_StringOpen_guard = _g(TSKindId.StringOpen);
+	const _kind_TokenTreePunctuation_guard = _mg(TSKindId.TokenTreePunctuation);
+	const _kind_TokenKeywords_guard = _mg(TSKindId.TokenKeywords);
+	const _kind_ImplItemUnsafeMarker_guard = _mg(TSKindId.ImplItemUnsafeMarker);
+	const _kind_WildcardPattern_guard = _mg(TSKindId.WildcardPattern);
+	const _kind_FloatLiteral_guard = _g(TSKindId.FloatLiteral);
+	const _kind_StringContent_guard = _g(TSKindId.StringContent);
+	const _kind_RawStringLiteralContent_guard = _g(TSKindId.RawStringLiteralContent);
+	const _kind_OuterDocCommentMarker_guard = _mg(TSKindId.OuterDocCommentMarker);
+	const _kind_InnerDocCommentMarker_guard = _mg(TSKindId.InnerDocCommentMarker);
+	const _kind_RawStringLiteralStart_guard = _g(TSKindId.RawStringLiteralStart);
+	const _kind_RawStringLiteralEnd_guard = _g(TSKindId.RawStringLiteralEnd);
+	const _kind_DocComment_guard = _g(TSKindId.DocComment);
+	const _kind_BlockCommentContent_guard = _g(TSKindId.BlockCommentContent);
+	const _kind_StringClose_guard = _g(TSKindId.StringClose);
+	const _kind_ErrorSentinel_guard = _g(TSKindId.ErrorSentinel);
+	const _form_RangePatternWithLeft_guard = _vg(_g(TSKindId.RangePatternWithLeft), {
+		withRight: _at(_kind_RangePatternWithLeft_guard, 'content', _kind_RangePatternWithLeftWithRight_guard),
+		bare: _at(_kind_RangePatternWithLeft_guard, 'content', _kind_RangePatternWithLeftBare_guard)
+	});
+	const _form_LineComment_guard = _vg(_g(TSKindId.LineComment), {
+		extraSlashes: _at(_kind_LineComment_guard, 'content', _kind_LineCommentExtraSlashes_guard),
+		docOuter: _at(_kind_LineComment_guard, 'content', _kind_LineCommentDocOuter_guard),
+		docInner: _at(_kind_LineComment_guard, 'content', _kind_LineCommentDocInner_guard),
+		regular: _at(_kind_LineComment_guard, 'content', _kind_LineCommentRegular_guard)
+	});
+	const _form_BlockComment_guard = _vg(_g(TSKindId.BlockComment), {
+		docOuter: _at(_kind_BlockComment_guard, 'content', _kind_BlockCommentDocOuter_guard),
+		docInner: _at(_kind_BlockComment_guard, 'content', _kind_BlockCommentDocInner_guard),
+		regular: _at(_kind_BlockComment_guard, 'content', _kind_BlockCommentRegular_guard)
+	});
+	const _form_ExpressionStatement_guard = _vg(_g(TSKindId.ExpressionStatement), {
+		withSemi: _at(_kind_ExpressionStatement_guard, 'content', _kind_ExpressionStatementWithSemi_guard)
+	});
+	const _form_NonSpecialToken_guard = _vg(_g(TSKindId.NonSpecialToken), {
+		identifier: _at(_kind_NonSpecialToken_guard, 'content', _kind_Identifier_guard),
+		mutableSpecifier: _at(_kind_NonSpecialToken_guard, 'content', _kind_MutableSpecifier_guard),
+		self: _at(_kind_NonSpecialToken_guard, 'content', _kind_Self_guard),
+		super: _at(_kind_NonSpecialToken_guard, 'content', _kind_Super_guard),
+		crate: _at(_kind_NonSpecialToken_guard, 'content', _kind_Crate_guard)
+	});
+	const _form_Attribute_guard = _vg(_g(TSKindId.Attribute), {
+		input: _at(_kind_Attribute_guard, 'input', _kind_AttributeInput_guard)
+	});
+	const _form_VisibilityModifierPubScope_guard = _vg(_g(TSKindId.VisibilityModifierPubScope), {
+		self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Self_guard),
+		super: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Super_guard),
+		crate: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Crate_guard),
+		inPath: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_VisibilityModifierPubScopeInPath_guard)
+	});
+	const _form_VisibilityModifierPub_guard = _vg(_g(TSKindId.VisibilityModifierPub), {
+		scope: _at(_kind_VisibilityModifierPub_guard, 'visibilityModifierPubScope', _form_VisibilityModifierPubScope_guard)
+	});
+	const _form_VisibilityModifier_guard = _vg(_g(TSKindId.VisibilityModifier), {
+		crate: _at(_kind_VisibilityModifier_guard, 'content', _kind_CrateVisibilityModifier_guard),
+		pub: _at(_kind_VisibilityModifier_guard, 'content', _form_VisibilityModifierPub_guard)
+	});
+	const _form_FunctionType_guard = _vg(_g(TSKindId.FunctionType), {
+		traitForm: _at(_kind_FunctionType_guard, 'content', _kind_FunctionTypeTraitForm_guard),
+		fnForm: _at(_kind_FunctionType_guard, 'content', _kind_FunctionTypeFnForm_guard)
+	});
 	const _supertype_macroDefinition_guard = _vg(_mg(180), {
-		paren: _g(TSKindId.MacroDefinitionParen),
-		bracket: _g(TSKindId.MacroDefinitionBracket),
-		brace: _g(TSKindId.MacroDefinitionBrace)
+		paren: _kind_MacroDefinitionParen_guard,
+		bracket: _kind_MacroDefinitionBracket_guard,
+		brace: _kind_MacroDefinitionBrace_guard
 	});
 	const _supertype_tokenTreePattern_guard = _vg(_mg(183), {
-		paren: _g(TSKindId.TokenTreePatternParen),
-		bracket: _g(TSKindId.TokenTreePatternBracket),
-		brace: _g(TSKindId.TokenTreePatternBrace)
+		paren: _kind_TokenTreePatternParen_guard,
+		bracket: _kind_TokenTreePatternBracket_guard,
+		brace: _kind_TokenTreePatternBrace_guard
 	});
 	const _supertype_tokenTree_guard = _vg(_mg(187), {
-		paren: _g(TSKindId.TokenTreeParen),
-		bracket: _g(TSKindId.TokenTreeBracket),
-		brace: _g(TSKindId.TokenTreeBrace)
+		paren: _kind_TokenTreeParen_guard,
+		bracket: _kind_TokenTreeBracket_guard,
+		brace: _kind_TokenTreeBrace_guard
 	});
 	const _supertype_modItem_guard = _vg(_mg(193), {
-		external: _g(TSKindId.ModItemExternal),
-		inline: _g(TSKindId.ModItemInline)
+		external: _kind_ModItemExternal_guard,
+		inline: _kind_ModItemInline_guard
 	});
 	const _supertype_foreignModItem_guard = _vg(_mg(194), {
-		semi: _g(TSKindId.ForeignModItemSemi),
-		body: _g(TSKindId.ForeignModItemBody)
+		semi: _kind_ForeignModItemSemi_guard,
+		body: _kind_ForeignModItemBody_guard
 	});
 	const _supertype_structItem_guard = _vg(_mg(196), {
-		brace: _g(TSKindId.StructItemBrace),
-		tuple: _g(TSKindId.StructItemTuple),
-		unit: _g(TSKindId.StructItemUnit)
+		brace: _kind_StructItemBrace_guard,
+		tuple: _kind_StructItemTuple_guard,
+		unit: _kind_StructItemUnit_guard
 	});
-	const _supertype_implItem_guard = _vg(_mg(213), { body: _g(TSKindId.ImplItemBody), semi: _g(TSKindId.ImplItemSemi) });
+	const _supertype_implItem_guard = _vg(_mg(213), { body: _kind_ImplItemBody_guard, semi: _kind_ImplItemSemi_guard });
 	const _supertype_pointerType_guard = _vg(_mg(253), {
-		const: _g(TSKindId.PointerTypeConst),
-		mut: _g(TSKindId.PointerTypeMut)
+		const: _kind_PointerTypeConst_guard,
+		mut: _kind_PointerTypeMut_guard
 	});
 	const _supertype_delimTokenTree_guard = _vg(_mg(260), {
-		paren: _g(TSKindId.DelimTokenTreeParen),
-		bracket: _g(TSKindId.DelimTokenTreeBracket),
-		brace: _g(TSKindId.DelimTokenTreeBrace)
+		paren: _kind_DelimTokenTreeParen_guard,
+		bracket: _kind_DelimTokenTreeBracket_guard,
+		brace: _kind_DelimTokenTreeBrace_guard
 	});
 	const _supertype_rangeExpression_guard = _vg(_mg(266), {
-		binary: _g(TSKindId.RangeExpressionBinary),
-		postfix: _g(TSKindId.RangeExpressionPostfix),
-		prefix: _g(TSKindId.RangeExpressionPrefix),
-		bare: _g(TSKindId.RangeExpressionBare)
+		binary: _kind_RangeExpressionBinary_guard,
+		postfix: _kind_RangeExpressionPostfix_guard,
+		prefix: _kind_RangeExpressionPrefix_guard,
+		bare: _kind_RangeExpressionBare_guard
 	});
 	const _supertype_referenceExpression_guard = _vg(_mg(269), {
-		rawConst: _g(TSKindId.ReferenceExpressionRawConst),
-		rawMut: _g(TSKindId.ReferenceExpressionRawMut),
-		mut: _g(TSKindId.ReferenceExpressionMut),
-		bare: _g(TSKindId.ReferenceExpressionBare)
+		rawConst: _kind_ReferenceExpressionRawConst_guard,
+		rawMut: _kind_ReferenceExpressionRawMut_guard,
+		mut: _kind_ReferenceExpressionMut_guard,
+		bare: _kind_ReferenceExpressionBare_guard
 	});
 	const _supertype_arrayExpression_guard = _vg(_mg(278), {
-		semi: _g(TSKindId.ArrayExpressionSemi),
-		list: _g(TSKindId.ArrayExpressionList)
+		semi: _kind_ArrayExpressionSemi_guard,
+		list: _kind_ArrayExpressionList_guard
 	});
 	const _supertype_matchArm_guard = _vg(_mg(294), {
-		withComma: _g(TSKindId.MatchArmWithComma),
-		blockEnding: _g(TSKindId.MatchArmBlockEnding)
+		withComma: _kind_MatchArmWithComma_guard,
+		blockEnding: _kind_MatchArmBlockEnding_guard
 	});
 	const _supertype_closureExpression_guard = _vg(_mg(301), {
-		block: _g(TSKindId.ClosureExpressionBlock),
-		expr: _g(TSKindId.ClosureExpressionExpr)
+		block: _kind_ClosureExpressionBlock_guard,
+		expr: _kind_ClosureExpressionExpr_guard
 	});
 	const _supertype_fieldPattern_guard = _vg(_mg(320), {
-		shorthand: _g(TSKindId.FieldPatternShorthand),
-		named: _g(TSKindId.FieldPatternNamed)
+		shorthand: _kind_FieldPatternShorthand_guard,
+		named: _kind_FieldPatternNamed_guard
 	});
 	const _supertype_rangePattern_guard = _vg(_mg(323), {
-		withLeft: _g(TSKindId.RangePatternWithLeft),
-		prefix: _g(TSKindId.RangePatternPrefix)
+		withLeft: _form_RangePatternWithLeft_guard,
+		prefix: _kind_RangePatternPrefix_guard
 	});
 	const _supertype_orPattern_guard = _vg(_mg(327), {
-		binary: _g(TSKindId.OrPatternBinary),
-		prefix: _g(TSKindId.OrPatternPrefix)
+		binary: _kind_OrPatternBinary_guard,
+		prefix: _kind_OrPatternPrefix_guard
 	});
 	const _supertype_integerLiteral_guard = _vg(_mg(331), {
-		decimal: _g(TSKindId.IntegerLiteralDecimal),
-		hex: _g(TSKindId.IntegerLiteralHex),
-		binary: _g(TSKindId.IntegerLiteralBinary),
-		octal: _g(TSKindId.IntegerLiteralOctal)
+		decimal: _kind_IntegerLiteralDecimal_guard,
+		hex: _kind_IntegerLiteralHex_guard,
+		binary: _kind_IntegerLiteralBinary_guard,
+		octal: _kind_IntegerLiteralOctal_guard
 	});
 	const _supertype_escapeSequence_guard = _vg(_mg(335), {
-		simple: _g(TSKindId.EscapeSequenceSimple),
-		unicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
-		unicodeBraced: _g(TSKindId.EscapeSequenceUnicodeBraced),
-		hex: _g(TSKindId.EscapeSequenceHex)
+		simple: _kind_EscapeSequenceSimple_guard,
+		unicodeFixed: _kind_EscapeSequenceUnicodeFixed_guard,
+		unicodeBraced: _kind_EscapeSequenceUnicodeBraced_guard,
+		hex: _kind_EscapeSequenceHex_guard
 	});
 	const _supertype_comment_guard = _vg(_sg(_supertype_comment_ids), {
-		lineComment: _g(TSKindId.LineComment),
-		blockComment: _g(TSKindId.BlockComment)
+		lineComment: _form_LineComment_guard,
+		blockComment: _form_BlockComment_guard
 	});
 	const _supertype_charLiteralEscaped_guard = _vg(_mg(365), {
-		simple: _g(TSKindId.CharLiteralEscapedSimple),
-		unicodeFixed: _g(TSKindId.CharLiteralEscapedUnicodeFixed),
-		unicodeBraced: _g(TSKindId.CharLiteralEscapedUnicodeBraced),
-		hex: _g(TSKindId.CharLiteralEscapedHex)
+		simple: _kind_CharLiteralEscapedSimple_guard,
+		unicodeFixed: _kind_CharLiteralEscapedUnicodeFixed_guard,
+		unicodeBraced: _kind_CharLiteralEscapedUnicodeBraced_guard,
+		hex: _kind_CharLiteralEscapedHex_guard
 	});
 	const _supertype_declarationStatement_guard = _vg(_sg(_supertype_declarationStatement_ids), {
-		const: _g(TSKindId.ConstItem),
-		macroInvocation: _g(TSKindId.MacroInvocation),
+		const: _kind_ConstItem_guard,
+		macroInvocation: _kind_MacroInvocation_guard,
 		macro: _supertype_macroDefinition_guard,
-		empty: _g(TSKindId.EmptyStatement),
-		attribute: _g(TSKindId.AttributeItem),
-		innerAttribute: _g(TSKindId.InnerAttributeItem),
+		empty: _kind_EmptyStatement_guard,
+		attribute: _kind_AttributeItem_guard,
+		innerAttribute: _kind_InnerAttributeItem_guard,
 		mod: _supertype_modItem_guard,
 		foreignMod: _supertype_foreignModItem_guard,
 		struct: _supertype_structItem_guard,
-		union: _g(TSKindId.UnionItem),
-		enum: _g(TSKindId.EnumItem),
-		type: _g(TSKindId.TypeItem),
-		function: _g(TSKindId.FunctionItem),
-		functionSignature: _g(TSKindId.FunctionSignatureItem),
+		union: _kind_UnionItem_guard,
+		enum: _kind_EnumItem_guard,
+		type: _kind_TypeItem_guard,
+		function: _kind_FunctionItem_guard,
+		functionSignature: _kind_FunctionSignatureItem_guard,
 		impl: _supertype_implItem_guard,
-		trait: _g(TSKindId.TraitItem),
-		associated: _g(TSKindId.AssociatedType),
-		let: _g(TSKindId.LetDeclaration),
-		use: _g(TSKindId.UseDeclaration),
-		externCrate: _g(TSKindId.ExternCrateDeclaration),
-		static: _g(TSKindId.StaticItem)
+		trait: _kind_TraitItem_guard,
+		associated: _kind_AssociatedType_guard,
+		let: _kind_LetDeclaration_guard,
+		use: _kind_UseDeclaration_guard,
+		externCrate: _kind_ExternCrateDeclaration_guard,
+		static: _kind_StaticItem_guard
 	});
 	const _supertype_charLiteral_guard = _vg(_mg(334), {
 		escaped: _supertype_charLiteralEscaped_guard,
-		plain: _g(TSKindId.CharLiteralPlain),
-		empty: _g(TSKindId.CharLiteralEmpty)
+		plain: _kind_CharLiteralPlain_guard,
+		empty: _kind_CharLiteralEmpty_guard
 	});
 	return Object.freeze({
-		sourceFile: _g(TSKindId.SourceFile),
-		expressionStatement: _g(TSKindId.ExpressionStatement),
-		macroRule: _g(TSKindId.MacroRule),
-		tokenBindingPattern: _g(TSKindId.TokenBindingPattern),
-		tokenRepetitionPattern: _g(TSKindId.TokenRepetitionPattern),
-		tokenRepetition: _g(TSKindId.TokenRepetition),
-		nonSpecialToken: _g(TSKindId.NonSpecialToken),
-		attributeItem: _g(TSKindId.AttributeItem),
-		innerAttributeItem: _g(TSKindId.InnerAttributeItem),
-		attribute: _g(TSKindId.Attribute),
-		declarationList: _g(TSKindId.DeclarationList),
-		unionItem: _g(TSKindId.UnionItem),
-		enumItem: _g(TSKindId.EnumItem),
-		enumVariantList: _g(TSKindId.EnumVariantList),
-		enumVariant: _g(TSKindId.EnumVariant),
-		fieldDeclarationList: _g(TSKindId.FieldDeclarationList),
-		fieldDeclaration: _g(TSKindId.FieldDeclaration),
-		orderedFieldDeclarationList: _g(TSKindId.OrderedFieldDeclarationList),
-		externCrateDeclaration: _g(TSKindId.ExternCrateDeclaration),
-		constItem: _g(TSKindId.ConstItem),
-		staticItem: _g(TSKindId.StaticItem),
-		typeItem: _g(TSKindId.TypeItem),
-		functionItem: _g(TSKindId.FunctionItem),
-		functionSignatureItem: _g(TSKindId.FunctionSignatureItem),
-		functionModifiers: _g(TSKindId.FunctionModifiers),
-		whereClause: _g(TSKindId.WhereClause),
-		wherePredicate: _g(TSKindId.WherePredicate),
-		traitItem: _g(TSKindId.TraitItem),
-		associatedType: _g(TSKindId.AssociatedType),
-		traitBounds: _g(TSKindId.TraitBounds),
-		higherRankedTraitBound: _g(TSKindId.HigherRankedTraitBound),
-		removedTraitBound: _g(TSKindId.RemovedTraitBound),
-		typeParameters: _g(TSKindId.TypeParameters),
-		constParameter: _g(TSKindId.ConstParameter),
-		typeParameter: _g(TSKindId.TypeParameter),
-		lifetimeParameter: _g(TSKindId.LifetimeParameter),
-		letDeclaration: _g(TSKindId.LetDeclaration),
-		useDeclaration: _g(TSKindId.UseDeclaration),
-		scopedUseList: _g(TSKindId.ScopedUseList),
-		useList: _g(TSKindId.UseList),
-		useAsClause: _g(TSKindId.UseAsClause),
-		useWildcard: _g(TSKindId.UseWildcard),
-		parameters: _g(TSKindId.Parameters),
-		selfParameter: _g(TSKindId.SelfParameter),
-		variadicParameter: _g(TSKindId.VariadicParameter),
-		parameter: _g(TSKindId.Parameter),
-		externModifier: _g(TSKindId.ExternModifier),
-		visibilityModifier: _g(TSKindId.VisibilityModifier),
-		bracketedType: _g(TSKindId.BracketedType),
-		qualifiedType: _g(TSKindId.QualifiedType),
-		lifetime: _g(TSKindId.Lifetime),
-		arrayType: _g(TSKindId.ArrayType),
-		forLifetimes: _g(TSKindId.ForLifetimes),
-		functionType: _g(TSKindId.FunctionType),
-		tupleType: _g(TSKindId.TupleType),
-		genericFunction: _g(TSKindId.GenericFunction),
-		genericType: _g(TSKindId.GenericType),
-		genericTypeWithTurbofish: _g(TSKindId.GenericTypeWithTurbofish),
-		boundedType: _g(TSKindId.BoundedType),
-		useBounds: _g(TSKindId.UseBounds),
-		typeArguments: _g(TSKindId.TypeArguments),
-		typeBinding: _g(TSKindId.TypeBinding),
-		referenceType: _g(TSKindId.ReferenceType),
-		abstractType: _g(TSKindId.AbstractType),
-		dynamicType: _g(TSKindId.DynamicType),
-		macroInvocation: _g(TSKindId.MacroInvocation),
-		scopedIdentifier: _g(TSKindId.ScopedIdentifier),
-		scopedTypeIdentifierInExpressionPosition: _g(TSKindId.ScopedTypeIdentifierInExpressionPosition),
-		scopedTypeIdentifier: _g(TSKindId.ScopedTypeIdentifier),
-		unaryExpression: _g(TSKindId.UnaryExpression),
-		tryExpression: _g(TSKindId.TryExpression),
-		binaryExpression: _g(TSKindId.BinaryExpression),
-		assignmentExpression: _g(TSKindId.AssignmentExpression),
-		compoundAssignmentExpr: _g(TSKindId.CompoundAssignmentExpr),
-		typeCastExpression: _g(TSKindId.TypeCastExpression),
-		returnExpression: _g(TSKindId.ReturnExpression),
-		yieldExpression: _g(TSKindId.YieldExpression),
-		callExpression: _g(TSKindId.CallExpression),
-		arguments: _g(TSKindId.Arguments),
-		parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
-		tupleExpression: _g(TSKindId.TupleExpression),
-		structExpression: _g(TSKindId.StructExpression),
-		fieldInitializerList: _g(TSKindId.FieldInitializerList),
-		shorthandFieldInitializer: _g(TSKindId.ShorthandFieldInitializer),
-		fieldInitializer: _g(TSKindId.FieldInitializer),
-		baseFieldInitializer: _g(TSKindId.BaseFieldInitializer),
-		ifExpression: _g(TSKindId.IfExpression),
-		letCondition: _g(TSKindId.LetCondition),
-		LetChain: _g(TSKindId.LetChain),
-		elseClause: _g(TSKindId.ElseClause),
-		matchExpression: _g(TSKindId.MatchExpression),
-		matchBlock: _g(TSKindId.MatchBlock),
-		lastMatchArm: _g(TSKindId.LastMatchArm),
-		matchPattern: _g(TSKindId.MatchPattern),
-		whileExpression: _g(TSKindId.WhileExpression),
-		loopExpression: _g(TSKindId.LoopExpression),
-		forExpression: _g(TSKindId.ForExpression),
-		constBlock: _g(TSKindId.ConstBlock),
-		closureParameters: _g(TSKindId.ClosureParameters),
-		label: _g(TSKindId.Label),
-		breakExpression: _g(TSKindId.BreakExpression),
-		continueExpression: _g(TSKindId.ContinueExpression),
-		indexExpression: _g(TSKindId.IndexExpression),
-		awaitExpression: _g(TSKindId.AwaitExpression),
-		fieldExpression: _g(TSKindId.FieldExpression),
-		unsafeBlock: _g(TSKindId.UnsafeBlock),
-		asyncBlock: _g(TSKindId.AsyncBlock),
-		genBlock: _g(TSKindId.GenBlock),
-		tryBlock: _g(TSKindId.TryBlock),
-		block: _g(TSKindId.Block),
-		genericPattern: _g(TSKindId.GenericPattern),
-		tuplePattern: _g(TSKindId.TuplePattern),
-		slicePattern: _g(TSKindId.SlicePattern),
-		tupleStructPattern: _g(TSKindId.TupleStructPattern),
-		structPattern: _g(TSKindId.StructPattern),
-		mutPattern: _g(TSKindId.MutPattern),
-		refPattern: _g(TSKindId.RefPattern),
-		capturedPattern: _g(TSKindId.CapturedPattern),
-		referencePattern: _g(TSKindId.ReferencePattern),
-		negativeLiteral: _g(TSKindId.NegativeLiteral),
-		stringLiteral: _g(TSKindId.StringLiteral),
-		rawStringLiteral: _g(TSKindId.RawStringLiteral),
-		lineComment: _g(TSKindId.LineComment),
-		blockComment: _g(TSKindId.BlockComment),
-		shebang: _g(TSKindId.Shebang),
-		metavariable: _g(TSKindId.Metavariable),
-		macroRules: _g(TSKindId.MacroRules),
-		enumVariantListElements: _g(TSKindId.EnumVariantListElements),
-		fieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
-		orderedFieldDeclarationListElements: _g(TSKindId.OrderedFieldDeclarationListElements),
-		wherePredicates: _g(TSKindId.WherePredicates),
-		typeParametersElements: _g(TSKindId.TypeParametersElements),
-		useClauses: _g(TSKindId.UseClauses),
-		parametersElements: _g(TSKindId.ParametersElements),
-		lifetimes: _g(TSKindId.Lifetimes),
-		types: _g(TSKindId.Types),
-		useBoundsElements: _g(TSKindId.UseBoundsElements),
-		typeArgumentsElements: _g(TSKindId.TypeArgumentsElements),
-		argumentsElements: _g(TSKindId.ArgumentsElements),
-		expressions: _g(TSKindId.Expressions),
-		fieldInitializerListElements: _g(TSKindId.FieldInitializerListElements),
-		tuplePatternElements: _g(TSKindId.TuplePatternElements),
-		patterns: _g(TSKindId.Patterns),
-		structPatternElements: _g(TSKindId.StructPatternElements),
-		integerLiteralDecimal: _g(TSKindId.IntegerLiteralDecimal),
-		integerLiteralHex: _g(TSKindId.IntegerLiteralHex),
-		integerLiteralBinary: _g(TSKindId.IntegerLiteralBinary),
-		integerLiteralOctal: _g(TSKindId.IntegerLiteralOctal),
-		charLiteralPlain: _g(TSKindId.CharLiteralPlain),
-		charLiteralEscapedSimple: _g(TSKindId.CharLiteralEscapedSimple),
-		charLiteralEscapedUnicodeFixed: _g(TSKindId.CharLiteralEscapedUnicodeFixed),
-		charLiteralEscapedUnicodeBraced: _g(TSKindId.CharLiteralEscapedUnicodeBraced),
-		charLiteralEscapedHex: _g(TSKindId.CharLiteralEscapedHex),
-		escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
-		escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
-		escapeSequenceUnicodeBraced: _g(TSKindId.EscapeSequenceUnicodeBraced),
-		escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
-		arrayExpressionSemi: _g(TSKindId.ArrayExpressionSemi),
-		arrayExpressionList: _g(TSKindId.ArrayExpressionList),
-		closureExpressionBlock: _g(TSKindId.ClosureExpressionBlock),
-		closureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
-		referenceExpressionRawConst: _g(TSKindId.ReferenceExpressionRawConst),
-		referenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
-		referenceExpressionMut: _g(TSKindId.ReferenceExpressionMut),
-		referenceExpressionBare: _g(TSKindId.ReferenceExpressionBare),
-		implItemBody: _g(TSKindId.ImplItemBody),
-		implItemSemi: _g(TSKindId.ImplItemSemi),
-		modItemExternal: _g(TSKindId.ModItemExternal),
-		modItemInline: _g(TSKindId.ModItemInline),
-		orPatternBinary: _g(TSKindId.OrPatternBinary),
-		orPatternPrefix: _g(TSKindId.OrPatternPrefix),
-		pointerTypeConst: _g(TSKindId.PointerTypeConst),
-		pointerTypeMut: _g(TSKindId.PointerTypeMut),
-		rangeExpressionBinary: _g(TSKindId.RangeExpressionBinary),
-		rangeExpressionPostfix: _g(TSKindId.RangeExpressionPostfix),
-		rangeExpressionPrefix: _g(TSKindId.RangeExpressionPrefix),
-		rangeExpressionBare: _g(TSKindId.RangeExpressionBare),
-		foreignModItemSemi: _g(TSKindId.ForeignModItemSemi),
-		foreignModItemBody: _g(TSKindId.ForeignModItemBody),
-		matchArmWithComma: _g(TSKindId.MatchArmWithComma),
-		matchArmBlockEnding: _g(TSKindId.MatchArmBlockEnding),
-		tokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
-		tokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
-		tokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
-		tokenTreeParen: _g(TSKindId.TokenTreeParen),
-		tokenTreeBracket: _g(TSKindId.TokenTreeBracket),
-		tokenTreeBrace: _g(TSKindId.TokenTreeBrace),
-		delimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
-		delimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
-		delimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
-		fieldPatternShorthand: _g(TSKindId.FieldPatternShorthand),
-		fieldPatternNamed: _g(TSKindId.FieldPatternNamed),
-		macroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
-		macroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
-		macroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
-		rangePatternPrefix: _g(TSKindId.RangePatternPrefix),
-		rangePatternWithLeft: _g(TSKindId.RangePatternWithLeft),
-		structItemBrace: _g(TSKindId.StructItemBrace),
-		structItemTuple: _g(TSKindId.StructItemTuple),
-		structItemUnit: _g(TSKindId.StructItemUnit),
-		typeIdentifier: _g(TSKindId.TypeIdentifier),
-		fieldIdentifier: _g(TSKindId.FieldIdentifier),
-		crateVisibilityModifier: _g(TSKindId.CrateVisibilityModifier),
-		shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),
+		sourceFile: _kind_SourceFile_guard,
+		expressionStatement: _form_ExpressionStatement_guard,
+		macroRule: _kind_MacroRule_guard,
+		tokenBindingPattern: _kind_TokenBindingPattern_guard,
+		tokenRepetitionPattern: _kind_TokenRepetitionPattern_guard,
+		tokenRepetition: _kind_TokenRepetition_guard,
+		nonSpecialToken: _form_NonSpecialToken_guard,
+		attributeItem: _kind_AttributeItem_guard,
+		innerAttributeItem: _kind_InnerAttributeItem_guard,
+		attribute: _form_Attribute_guard,
+		declarationList: _kind_DeclarationList_guard,
+		unionItem: _kind_UnionItem_guard,
+		enumItem: _kind_EnumItem_guard,
+		enumVariantList: _kind_EnumVariantList_guard,
+		enumVariant: _kind_EnumVariant_guard,
+		fieldDeclarationList: _kind_FieldDeclarationList_guard,
+		fieldDeclaration: _kind_FieldDeclaration_guard,
+		orderedFieldDeclarationList: _kind_OrderedFieldDeclarationList_guard,
+		externCrateDeclaration: _kind_ExternCrateDeclaration_guard,
+		constItem: _kind_ConstItem_guard,
+		staticItem: _kind_StaticItem_guard,
+		typeItem: _kind_TypeItem_guard,
+		functionItem: _kind_FunctionItem_guard,
+		functionSignatureItem: _kind_FunctionSignatureItem_guard,
+		functionModifiers: _kind_FunctionModifiers_guard,
+		whereClause: _kind_WhereClause_guard,
+		wherePredicate: _kind_WherePredicate_guard,
+		traitItem: _kind_TraitItem_guard,
+		associatedType: _kind_AssociatedType_guard,
+		traitBounds: _kind_TraitBounds_guard,
+		higherRankedTraitBound: _kind_HigherRankedTraitBound_guard,
+		removedTraitBound: _kind_RemovedTraitBound_guard,
+		typeParameters: _kind_TypeParameters_guard,
+		constParameter: _kind_ConstParameter_guard,
+		typeParameter: _kind_TypeParameter_guard,
+		lifetimeParameter: _kind_LifetimeParameter_guard,
+		letDeclaration: _kind_LetDeclaration_guard,
+		useDeclaration: _kind_UseDeclaration_guard,
+		scopedUseList: _kind_ScopedUseList_guard,
+		useList: _kind_UseList_guard,
+		useAsClause: _kind_UseAsClause_guard,
+		useWildcard: _kind_UseWildcard_guard,
+		parameters: _kind_Parameters_guard,
+		selfParameter: _kind_SelfParameter_guard,
+		variadicParameter: _kind_VariadicParameter_guard,
+		parameter: _kind_Parameter_guard,
+		externModifier: _kind_ExternModifier_guard,
+		visibilityModifier: _form_VisibilityModifier_guard,
+		bracketedType: _kind_BracketedType_guard,
+		qualifiedType: _kind_QualifiedType_guard,
+		lifetime: _kind_Lifetime_guard,
+		arrayType: _kind_ArrayType_guard,
+		forLifetimes: _kind_ForLifetimes_guard,
+		functionType: _form_FunctionType_guard,
+		tupleType: _kind_TupleType_guard,
+		genericFunction: _kind_GenericFunction_guard,
+		genericType: _kind_GenericType_guard,
+		genericTypeWithTurbofish: _kind_GenericTypeWithTurbofish_guard,
+		boundedType: _kind_BoundedType_guard,
+		useBounds: _kind_UseBounds_guard,
+		typeArguments: _kind_TypeArguments_guard,
+		typeBinding: _kind_TypeBinding_guard,
+		referenceType: _kind_ReferenceType_guard,
+		abstractType: _kind_AbstractType_guard,
+		dynamicType: _kind_DynamicType_guard,
+		macroInvocation: _kind_MacroInvocation_guard,
+		scopedIdentifier: _kind_ScopedIdentifier_guard,
+		scopedTypeIdentifierInExpressionPosition: _kind_ScopedTypeIdentifierInExpressionPosition_guard,
+		scopedTypeIdentifier: _kind_ScopedTypeIdentifier_guard,
+		unaryExpression: _kind_UnaryExpression_guard,
+		tryExpression: _kind_TryExpression_guard,
+		binaryExpression: _kind_BinaryExpression_guard,
+		assignmentExpression: _kind_AssignmentExpression_guard,
+		compoundAssignmentExpr: _kind_CompoundAssignmentExpr_guard,
+		typeCastExpression: _kind_TypeCastExpression_guard,
+		returnExpression: _kind_ReturnExpression_guard,
+		yieldExpression: _kind_YieldExpression_guard,
+		callExpression: _kind_CallExpression_guard,
+		arguments: _kind_Arguments_guard,
+		parenthesizedExpression: _kind_ParenthesizedExpression_guard,
+		tupleExpression: _kind_TupleExpression_guard,
+		structExpression: _kind_StructExpression_guard,
+		fieldInitializerList: _kind_FieldInitializerList_guard,
+		shorthandFieldInitializer: _kind_ShorthandFieldInitializer_guard,
+		fieldInitializer: _kind_FieldInitializer_guard,
+		baseFieldInitializer: _kind_BaseFieldInitializer_guard,
+		ifExpression: _kind_IfExpression_guard,
+		letCondition: _kind_LetCondition_guard,
+		letChain: _kind_LetChain_guard,
+		elseClause: _kind_ElseClause_guard,
+		matchExpression: _kind_MatchExpression_guard,
+		matchBlock: _kind_MatchBlock_guard,
+		lastMatchArm: _kind_LastMatchArm_guard,
+		matchPattern: _kind_MatchPattern_guard,
+		whileExpression: _kind_WhileExpression_guard,
+		loopExpression: _kind_LoopExpression_guard,
+		forExpression: _kind_ForExpression_guard,
+		constBlock: _kind_ConstBlock_guard,
+		closureParameters: _kind_ClosureParameters_guard,
+		label: _kind_Label_guard,
+		breakExpression: _kind_BreakExpression_guard,
+		continueExpression: _kind_ContinueExpression_guard,
+		indexExpression: _kind_IndexExpression_guard,
+		awaitExpression: _kind_AwaitExpression_guard,
+		fieldExpression: _kind_FieldExpression_guard,
+		unsafeBlock: _kind_UnsafeBlock_guard,
+		asyncBlock: _kind_AsyncBlock_guard,
+		genBlock: _kind_GenBlock_guard,
+		tryBlock: _kind_TryBlock_guard,
+		block: _kind_Block_guard,
+		genericPattern: _kind_GenericPattern_guard,
+		tuplePattern: _kind_TuplePattern_guard,
+		slicePattern: _kind_SlicePattern_guard,
+		tupleStructPattern: _kind_TupleStructPattern_guard,
+		structPattern: _kind_StructPattern_guard,
+		mutPattern: _kind_MutPattern_guard,
+		refPattern: _kind_RefPattern_guard,
+		capturedPattern: _kind_CapturedPattern_guard,
+		referencePattern: _kind_ReferencePattern_guard,
+		negativeLiteral: _kind_NegativeLiteral_guard,
+		stringLiteral: _kind_StringLiteral_guard,
+		rawStringLiteral: _kind_RawStringLiteral_guard,
+		lineComment: _form_LineComment_guard,
+		blockComment: _form_BlockComment_guard,
+		shebang: _kind_Shebang_guard,
+		metavariable: _kind_Metavariable_guard,
+		macroRules: _kind_MacroRules_guard,
+		enumVariantListElements: _kind_EnumVariantListElements_guard,
+		fieldDeclarationListElements: _kind_FieldDeclarationListElements_guard,
+		orderedFieldDeclarationListElements: _kind_OrderedFieldDeclarationListElements_guard,
+		wherePredicates: _kind_WherePredicates_guard,
+		typeParametersElements: _kind_TypeParametersElements_guard,
+		useClauses: _kind_UseClauses_guard,
+		parametersElements: _kind_ParametersElements_guard,
+		lifetimes: _kind_Lifetimes_guard,
+		types: _kind_Types_guard,
+		useBoundsElements: _kind_UseBoundsElements_guard,
+		typeArgumentsElements: _kind_TypeArgumentsElements_guard,
+		argumentsElements: _kind_ArgumentsElements_guard,
+		expressions: _kind_Expressions_guard,
+		fieldInitializerListElements: _kind_FieldInitializerListElements_guard,
+		tuplePatternElements: _kind_TuplePatternElements_guard,
+		patterns: _kind_Patterns_guard,
+		structPatternElements: _kind_StructPatternElements_guard,
+		useWildcardGroup: _kind_UseWildcardGroup_guard,
+		integerLiteralDecimal: _kind_IntegerLiteralDecimal_guard,
+		integerLiteralHex: _kind_IntegerLiteralHex_guard,
+		integerLiteralBinary: _kind_IntegerLiteralBinary_guard,
+		integerLiteralOctal: _kind_IntegerLiteralOctal_guard,
+		charLiteralPlain: _kind_CharLiteralPlain_guard,
+		charLiteralEscapedSimple: _kind_CharLiteralEscapedSimple_guard,
+		charLiteralEscapedUnicodeFixed: _kind_CharLiteralEscapedUnicodeFixed_guard,
+		charLiteralEscapedUnicodeBraced: _kind_CharLiteralEscapedUnicodeBraced_guard,
+		charLiteralEscapedHex: _kind_CharLiteralEscapedHex_guard,
+		escapeSequenceSimple: _kind_EscapeSequenceSimple_guard,
+		escapeSequenceUnicodeFixed: _kind_EscapeSequenceUnicodeFixed_guard,
+		escapeSequenceUnicodeBraced: _kind_EscapeSequenceUnicodeBraced_guard,
+		escapeSequenceHex: _kind_EscapeSequenceHex_guard,
+		arrayExpressionSemi: _kind_ArrayExpressionSemi_guard,
+		arrayExpressionList: _kind_ArrayExpressionList_guard,
+		attributeInput: _kind_AttributeInput_guard,
+		closureExpressionBlock: _kind_ClosureExpressionBlock_guard,
+		closureExpressionExpr: _kind_ClosureExpressionExpr_guard,
+		referenceExpressionRawConst: _kind_ReferenceExpressionRawConst_guard,
+		referenceExpressionRawMut: _kind_ReferenceExpressionRawMut_guard,
+		referenceExpressionMut: _kind_ReferenceExpressionMut_guard,
+		referenceExpressionBare: _kind_ReferenceExpressionBare_guard,
+		implItemPositiveClause: _kind_ImplItemPositiveClause_guard,
+		implItemNegativeClause: _kind_ImplItemNegativeClause_guard,
+		implItemBody: _kind_ImplItemBody_guard,
+		implItemSemi: _kind_ImplItemSemi_guard,
+		visibilityModifierPubScopeInPath: _kind_VisibilityModifierPubScopeInPath_guard,
+		visibilityModifierPubScope: _kind_VisibilityModifierPubScope_guard,
+		visibilityModifierPub: _kind_VisibilityModifierPub_guard,
+		functionTypeTraitForm: _kind_FunctionTypeTraitForm_guard,
+		functionTypeFnForm: _kind_FunctionTypeFnForm_guard,
+		modItemExternal: _kind_ModItemExternal_guard,
+		modItemInline: _kind_ModItemInline_guard,
+		orPatternBinary: _kind_OrPatternBinary_guard,
+		orPatternPrefix: _kind_OrPatternPrefix_guard,
+		pointerTypeConst: _kind_PointerTypeConst_guard,
+		pointerTypeMut: _kind_PointerTypeMut_guard,
+		rangeExpressionBinary: _kind_RangeExpressionBinary_guard,
+		rangeExpressionPostfix: _kind_RangeExpressionPostfix_guard,
+		rangeExpressionPrefix: _kind_RangeExpressionPrefix_guard,
+		rangeExpressionBare: _kind_RangeExpressionBare_guard,
+		expressionStatementWithSemi: _kind_ExpressionStatementWithSemi_guard,
+		foreignModItemSemi: _kind_ForeignModItemSemi_guard,
+		foreignModItemBody: _kind_ForeignModItemBody_guard,
+		matchArmWithComma: _kind_MatchArmWithComma_guard,
+		matchArmBlockEnding: _kind_MatchArmBlockEnding_guard,
+		lineCommentDocOuter: _kind_LineCommentDocOuter_guard,
+		lineCommentDocInner: _kind_LineCommentDocInner_guard,
+		blockCommentDocOuter: _kind_BlockCommentDocOuter_guard,
+		blockCommentDocInner: _kind_BlockCommentDocInner_guard,
+		tokenTreePatternParen: _kind_TokenTreePatternParen_guard,
+		tokenTreePatternBracket: _kind_TokenTreePatternBracket_guard,
+		tokenTreePatternBrace: _kind_TokenTreePatternBrace_guard,
+		tokenTreeParen: _kind_TokenTreeParen_guard,
+		tokenTreeBracket: _kind_TokenTreeBracket_guard,
+		tokenTreeBrace: _kind_TokenTreeBrace_guard,
+		delimTokenTreeParen: _kind_DelimTokenTreeParen_guard,
+		delimTokenTreeBracket: _kind_DelimTokenTreeBracket_guard,
+		delimTokenTreeBrace: _kind_DelimTokenTreeBrace_guard,
+		fieldPatternShorthand: _kind_FieldPatternShorthand_guard,
+		fieldPatternNamed: _kind_FieldPatternNamed_guard,
+		macroDefinitionParen: _kind_MacroDefinitionParen_guard,
+		macroDefinitionBracket: _kind_MacroDefinitionBracket_guard,
+		macroDefinitionBrace: _kind_MacroDefinitionBrace_guard,
+		rangePatternPrefix: _kind_RangePatternPrefix_guard,
+		rangePatternWithLeftWithRight: _kind_RangePatternWithLeftWithRight_guard,
+		rangePatternWithLeft: _form_RangePatternWithLeft_guard,
+		structItemBrace: _kind_StructItemBrace_guard,
+		structItemTuple: _kind_StructItemTuple_guard,
+		structItemUnit: _kind_StructItemUnit_guard,
+		attributedFieldDeclaration: _kind_AttributedFieldDeclaration_guard,
+		attributedEnumVariant: _kind_AttributedEnumVariant_guard,
+		attributedParameter: _kind_AttributedParameter_guard,
+		attributedTypeParameter: _kind_AttributedTypeParameter_guard,
+		attributedArgument: _kind_AttributedArgument_guard,
+		attributedOrderedField: _kind_AttributedOrderedField_guard,
+		typeArgument: _kind_TypeArgument_guard,
+		matchBlockArms: _kind_MatchBlockArms_guard,
+		typeIdentifier: _kind_TypeIdentifier_guard,
+		fieldIdentifier: _kind_FieldIdentifier_guard,
+		crateVisibilityModifier: _kind_CrateVisibilityModifier_guard,
+		shorthandFieldIdentifier: _kind_ShorthandFieldIdentifier_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		statement: _mg(177),
 		declarationStatement: _supertype_declarationStatement_guard,
@@ -1896,43 +2397,42 @@ export function guardsWith(test: KindTest): IsGuards {
 		comment: _supertype_comment_guard,
 		layout: _sg(_supertype_layout_ids),
 		charLiteralEscaped: _supertype_charLiteralEscaped_guard,
-		emptyStatement: _mg(TSKindId.EmptyStatement),
-		fragmentSpecifier: _mg(TSKindId.FragmentSpecifier),
-		unitType: _mg(TSKindId.UnitType),
-		neverType: _mg(TSKindId.NeverType),
-		mutableSpecifier: _mg(TSKindId.MutableSpecifier),
-		unitExpression: _mg(TSKindId.UnitExpression),
-		remainingFieldPattern: _mg(TSKindId.RemainingFieldPattern),
-		booleanLiteral: _mg(TSKindId.BooleanLiteral),
-		innerLineDocCommentMarker: _mg(TSKindId.InnerLineDocCommentMarker),
-		outerLineDocCommentMarker: _mg(TSKindId.OuterLineDocCommentMarker),
-		identifier: _g(TSKindId.Identifier),
-		self: _mg(TSKindId.Self),
-		super_: _mg(TSKindId.Super),
-		crate: _mg(TSKindId.Crate),
-		primitiveType: _mg(TSKindId.PrimitiveType),
-		tokenRepetitionPatternText: _g(TSKindId.TokenRepetitionPatternText),
-		stringOpen: _g(TSKindId.StringOpen),
-		tokenTreePunctuation: _mg(TSKindId.TokenTreePunctuation),
-		tokenKeywords: _mg(TSKindId.TokenKeywords),
-		implItemUnsafeMarker: _mg(TSKindId.ImplItemUnsafeMarker),
-		charLiteralEmpty: _g(TSKindId.CharLiteralEmpty),
-		lineCommentExtraSlashes: _g(TSKindId.LineCommentExtraSlashes),
-		lineCommentRegular: _g(TSKindId.LineCommentRegular),
-		blockCommentRegular: _g(TSKindId.BlockCommentRegular),
-		rangePatternWithLeftBare: _mg(TSKindId.RangePatternWithLeftBare),
-		wildcardPattern: _mg(TSKindId.WildcardPattern),
-		floatLiteral: _g(TSKindId.FloatLiteral),
-		stringContent: _g(TSKindId.StringContent),
-		rawStringLiteralContent: _g(TSKindId.RawStringLiteralContent),
-		outerDocCommentMarker: _mg(TSKindId.OuterDocCommentMarker),
-		innerDocCommentMarker: _mg(TSKindId.InnerDocCommentMarker),
-		rawStringLiteralStart: _g(TSKindId.RawStringLiteralStart),
-		rawStringLiteralEnd: _g(TSKindId.RawStringLiteralEnd),
-		docComment: _g(TSKindId.DocComment),
-		blockCommentContent: _g(TSKindId.BlockCommentContent),
-		stringClose: _g(TSKindId.StringClose),
-		errorSentinel: _g(TSKindId.ErrorSentinel)
+		emptyStatement: _kind_EmptyStatement_guard,
+		fragmentSpecifier: _kind_FragmentSpecifier_guard,
+		unitType: _kind_UnitType_guard,
+		neverType: _kind_NeverType_guard,
+		mutableSpecifier: _kind_MutableSpecifier_guard,
+		unitExpression: _kind_UnitExpression_guard,
+		remainingFieldPattern: _kind_RemainingFieldPattern_guard,
+		booleanLiteral: _kind_BooleanLiteral_guard,
+		innerLineDocCommentMarker: _kind_InnerLineDocCommentMarker_guard,
+		outerLineDocCommentMarker: _kind_OuterLineDocCommentMarker_guard,
+		identifier: _kind_Identifier_guard,
+		self: _kind_Self_guard,
+		super: _kind_Super_guard,
+		crate: _kind_Crate_guard,
+		primitiveType: _kind_PrimitiveType_guard,
+		tokenRepetitionPatternText: _kind_TokenRepetitionPatternText_guard,
+		stringOpen: _kind_StringOpen_guard,
+		tokenTreePunctuation: _kind_TokenTreePunctuation_guard,
+		tokenKeywords: _kind_TokenKeywords_guard,
+		implItemUnsafeMarker: _kind_ImplItemUnsafeMarker_guard,
+		lineCommentExtraSlashes: _kind_LineCommentExtraSlashes_guard,
+		lineCommentRegular: _kind_LineCommentRegular_guard,
+		blockCommentRegular: _kind_BlockCommentRegular_guard,
+		rangePatternWithLeftBare: _kind_RangePatternWithLeftBare_guard,
+		wildcardPattern: _kind_WildcardPattern_guard,
+		floatLiteral: _kind_FloatLiteral_guard,
+		stringContent: _kind_StringContent_guard,
+		rawStringLiteralContent: _kind_RawStringLiteralContent_guard,
+		outerDocCommentMarker: _kind_OuterDocCommentMarker_guard,
+		innerDocCommentMarker: _kind_InnerDocCommentMarker_guard,
+		rawStringLiteralStart: _kind_RawStringLiteralStart_guard,
+		rawStringLiteralEnd: _kind_RawStringLiteralEnd_guard,
+		docComment: _kind_DocComment_guard,
+		blockCommentContent: _kind_BlockCommentContent_guard,
+		stringClose: _kind_StringClose_guard,
+		errorSentinel: _kind_ErrorSentinel_guard
 	}) as unknown as IsGuards;
 }
 

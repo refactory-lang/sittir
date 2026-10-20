@@ -66,8 +66,6 @@ pub enum AnyNode {
     ElseClause(ElseClauseNode),
     #[kind(kind::MATCH_STATEMENT)]
     MatchStatement(MatchStatementNode),
-    #[kind(kind::_MATCH_BLOCK)]
-    MatchBlock(MatchBlockNode),
     #[kind(kind::CASE_CLAUSE)]
     CaseClause(Box<CaseClauseNode>),
     #[kind(kind::FOR_STATEMENT)]
@@ -631,7 +629,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.prepare(ctx),
             AnyNode::ElseClause(t) => t.prepare(ctx),
             AnyNode::MatchStatement(t) => t.prepare(ctx),
-            AnyNode::MatchBlock(t) => t.prepare(ctx),
             AnyNode::CaseClause(t) => t.prepare(ctx),
             AnyNode::ForStatement(t) => t.prepare(ctx),
             AnyNode::WhileStatement(t) => t.prepare(ctx),
@@ -921,7 +918,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.gap_edges(),
             AnyNode::ElseClause(t) => t.gap_edges(),
             AnyNode::MatchStatement(t) => t.gap_edges(),
-            AnyNode::MatchBlock(t) => t.gap_edges(),
             AnyNode::CaseClause(t) => t.gap_edges(),
             AnyNode::ForStatement(t) => t.gap_edges(),
             AnyNode::WhileStatement(t) => t.gap_edges(),
@@ -1211,7 +1207,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.snapshot_edge(),
             AnyNode::ElseClause(t) => t.snapshot_edge(),
             AnyNode::MatchStatement(t) => t.snapshot_edge(),
-            AnyNode::MatchBlock(t) => t.snapshot_edge(),
             AnyNode::CaseClause(t) => t.snapshot_edge(),
             AnyNode::ForStatement(t) => t.snapshot_edge(),
             AnyNode::WhileStatement(t) => t.snapshot_edge(),
@@ -1501,7 +1496,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ElifClause(t) => t.source_separator(ctx),
             AnyNode::ElseClause(t) => t.source_separator(ctx),
             AnyNode::MatchStatement(t) => t.source_separator(ctx),
-            AnyNode::MatchBlock(t) => t.source_separator(ctx),
             AnyNode::CaseClause(t) => t.source_separator(ctx),
             AnyNode::ForStatement(t) => t.source_separator(ctx),
             AnyNode::WhileStatement(t) => t.source_separator(ctx),
@@ -2328,6 +2322,60 @@ fn compound_statement_node_to_any(t: CompoundStatementNode) -> AnyNode {
 impl ::sittir_core::render::Render for CompoundStatementNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_compound_statement(self, w)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum MatchBlockNode {
+    #[kind(kind::MATCH_BLOCK_BLOCK)]
+    MatchBlockBlock(MatchBlockBlockNode),
+    #[kind(kind::MATCH_BLOCK_EMPTY)]
+    MatchBlockEmpty(MatchBlockEmptyNode),
+}
+
+impl ::sittir_core::prepare::Prepare for MatchBlockNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            MatchBlockNode::MatchBlockBlock(t) => t.prepare(ctx),
+            MatchBlockNode::MatchBlockEmpty(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            MatchBlockNode::MatchBlockBlock(t) => t.gap_edges(),
+            MatchBlockNode::MatchBlockEmpty(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MatchBlockNode::MatchBlockBlock(t) => t.snapshot_edge(),
+            MatchBlockNode::MatchBlockEmpty(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            MatchBlockNode::MatchBlockBlock(t) => t.source_separator(ctx),
+            MatchBlockNode::MatchBlockEmpty(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for MatchBlockNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
+            Self::MatchBlockEmpty(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for MatchBlockNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_match_block(self, w)
     }
 }
 
@@ -4376,63 +4424,6 @@ impl ::sittir_core::render::Render for IfStatementAlternativeNodeSlot {
         match self {
             IfStatementAlternativeNodeSlot::ElifClause(inner) => inner.render(w),
             IfStatementAlternativeNodeSlot::ElseClause(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
-pub enum MatchBlockContentNodeSlot {
-    #[kind(kind::MATCH_BLOCK_BLOCK)]
-    MatchBlockBlock(MatchBlockBlockNode),
-    #[kind(kind::MATCH_BLOCK_EMPTY)]
-    MatchBlockEmpty(MatchBlockEmptyNode),
-}
-
-impl ::sittir_core::prepare::Prepare for MatchBlockContentNodeSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            MatchBlockContentNodeSlot::MatchBlockBlock(t) => t.prepare(ctx),
-            MatchBlockContentNodeSlot::MatchBlockEmpty(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            MatchBlockContentNodeSlot::MatchBlockBlock(t) => t.gap_edges(),
-            MatchBlockContentNodeSlot::MatchBlockEmpty(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            MatchBlockContentNodeSlot::MatchBlockBlock(t) => t.snapshot_edge(),
-            MatchBlockContentNodeSlot::MatchBlockEmpty(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            MatchBlockContentNodeSlot::MatchBlockBlock(t) => t.source_separator(ctx),
-            MatchBlockContentNodeSlot::MatchBlockEmpty(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for MatchBlockContentNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
-            Self::MatchBlockEmpty(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for MatchBlockContentNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            MatchBlockContentNodeSlot::MatchBlockBlock(inner) => inner.render(w),
-            MatchBlockContentNodeSlot::MatchBlockEmpty(inner) => inner.render(w),
         }
     }
 }
@@ -11358,54 +11349,6 @@ impl ::sittir_core::prepare::Prepare for MatchStatementNode {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.subjects.prepare(ctx)?;
         self.body.prepare(ctx)?;
-        Ok(())
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_MATCH_BLOCK, words = 7)]
-pub struct MatchBlockNode {
-    #[wire(key = "$_layout")]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<MatchBlockContentNodeSlot>,
-}
-
-impl ::sittir_core::view::KindOf for MatchBlockNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(154)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for MatchBlockNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(154) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for MatchBlockNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(154)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_match_block(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for MatchBlockNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.layout.prepare(ctx)?;
-        self.content.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24485,7 +24428,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AssignmentType(t) => t.seat_target(table, ctx),
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
-            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::MatchBlock { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::DottedName { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Underscore { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Pipe { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::Verbatim { .. } => None,
+            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::DottedName { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Underscore { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Pipe { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -24776,12 +24719,6 @@ fn render_match_statement(node: &MatchStatementNode, w: &mut dyn ::sittir_core::
     w.site_at(options::SITE_MATCH_STATEMENT_COLON_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(153), ::sittir_core::options::Side::After, node.layout.edges().after);
-    Ok(())
-}
-
-fn render_match_block(node: &MatchBlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -27421,6 +27358,13 @@ fn render_compound_statement(t: &CompoundStatementNode, w: &mut dyn ::sittir_cor
     }
 }
 
+fn render_match_block(t: &MatchBlockNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        MatchBlockNode::MatchBlockBlock(inner) => inner.render(w),
+        MatchBlockNode::MatchBlockEmpty(inner) => inner.render(w),
+    }
+}
+
 fn render_with_clause(t: &WithClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         WithClauseNode::WithClauseBare(inner) => inner.render(w),
@@ -27582,7 +27526,6 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ElifClause(inner) => inner.kind_in(kinds),
             Self::ElseClause(inner) => inner.kind_in(kinds),
             Self::MatchStatement(inner) => inner.kind_in(kinds),
-            Self::MatchBlock(inner) => inner.kind_in(kinds),
             Self::CaseClause(inner) => inner.kind_in(kinds),
             Self::ForStatement(inner) => inner.kind_in(kinds),
             Self::WhileStatement(inner) => inner.kind_in(kinds),
@@ -27875,7 +27818,6 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ElifClause(t) => t.render(w),
             AnyNode::ElseClause(t) => t.render(w),
             AnyNode::MatchStatement(t) => t.render(w),
-            AnyNode::MatchBlock(t) => t.render(w),
             AnyNode::CaseClause(t) => t.render(w),
             AnyNode::ForStatement(t) => t.render(w),
             AnyNode::WhileStatement(t) => t.render(w),
@@ -28271,7 +28213,6 @@ const _: () = assert!(::core::mem::size_of::<ListSplatNode>() <= 256, "ListSplat
 const _: () = assert!(::core::mem::size_of::<ListSplatPatternNode>() <= 256, "ListSplatPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<MatchBlockBlockNode>() <= 256, "MatchBlockBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<MatchBlockEmptyNode>() <= 256, "MatchBlockEmptyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() <= 256, "MatchBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<MatchStatementNode>() <= 256, "MatchStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<MemberTypeNode>() <= 256, "MemberTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ModuleNode>() <= 256, "ModuleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -28342,4 +28283,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, MatchBlockContentNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, SplatPatternOperatorNodeSlot, SplatPatternNameNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternTargetNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, MatchBlockNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, SplatPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, NamesNode, AsPatternTargetNode, FormatExpressionNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, LbraceNode, RbraceNode, UnderscoreNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, PipeNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, SplatPatternOperatorNodeSlot, SplatPatternNameNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternTargetNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, SplatPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, NamesNode, AsPatternTargetNode, FormatExpressionNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, LbraceNode, RbraceNode, UnderscoreNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, PipeNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, TriviaNode);

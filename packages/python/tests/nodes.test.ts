@@ -983,13 +983,7 @@ describe('match_statement', () => {
 				$named: true,
 				_subject: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any,
-			body: {
-				$type: TSKindId.MatchBlock,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true, _alternative: [] } as any
-			} as any
+			body: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true, _alternative: [] } as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchStatement);
 		expect(node.$source).toBe(2);
@@ -1003,93 +997,10 @@ describe('match_statement', () => {
 				$named: true,
 				_subject: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any,
-			body: {
-				$type: TSKindId.MatchBlock,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true, _alternative: [] } as any
-			} as any
+			body: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true, _alternative: [] } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('match_block', () => {
-	it('factory produces correct type', () => {
-		const node = ir.matchBlock({
-			$type: TSKindId.MatchBlockBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_alternative: []
-		} as any);
-		expect(node.$type).toBe(TSKindId.MatchBlock);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlock({
-			$type: TSKindId.MatchBlockBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_alternative: []
-		} as any);
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
-describe('match_block sub-factories', () => {
-	it('block builds the parent', () => {
-		const node = ir.matchBlock.block({
-			$type: TSKindId.CaseClause,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_case_patterns: {
-				$type: TSKindId.CasePatterns,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_item: [
-					{
-						$type: TSKindId.CasePattern,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_content: {
-							$type: TSKindId.KeywordPattern,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-							_value: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-						} as any
-					} as any
-				]
-			} as any,
-			_consequence: {
-				$type: TSKindId.SuiteInline,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_elements: {
-					$type: TSKindId.SimpleStatementsElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-				} as any
-			} as any
-		} as any);
-		expect(node.$type).toBe(TSKindId.MatchBlock);
-		expect((node as any).content()?.$type).toBe(TSKindId.MatchBlockBlock);
-	});
-	it('empty builds the parent', () => {
-		const node = ir.matchBlock.empty({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
-		expect(node.$type).toBe(TSKindId.MatchBlock);
-		expect((node as any).content()?.$type).toBe(TSKindId.MatchBlockEmpty);
 	});
 });
 
@@ -5774,6 +5685,30 @@ describe('with_clause_paren', () => {
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 		expect(rendered).toContain('test');
+	});
+});
+
+describe('match_block_block', () => {
+	it('factory produces correct type', () => {
+		const node = ir.matchBlockBlock();
+		expect(node.$type).toBe(TSKindId.MatchBlockBlock);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.matchBlockBlock();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('match_block_empty', () => {
+	it('factory produces correct type', () => {
+		const node = ir.matchBlockEmpty({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.MatchBlockEmpty);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.matchBlockEmpty({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

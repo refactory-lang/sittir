@@ -525,41 +525,6 @@ export const matchStatement = Object.freeze({
 	coerce: typeof matchStatement$seatedCoerce;
 };
 
-const matchBlock$block =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const matchBlock$block$strict = matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock);
-const matchBlock$block$coerce = matchBlock$block(F.buildMatchBlock, C.coerceToMatchBlockBlock);
-const matchBlock$empty =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const matchBlock$empty$strict = matchBlock$empty(F.buildMatchBlock, F.buildMatchBlockEmpty);
-const matchBlock$empty$coerce = matchBlock$empty(F.buildMatchBlock, C.coerceToMatchBlockEmpty);
-export const matchBlock = Object.freeze({
-	...B.matchBlock,
-	block: bundle(matchBlock$block$strict, matchBlock$block$coerce),
-	empty: bundle(matchBlock$empty$strict, matchBlock$empty$coerce, { key: 'matchBlock.empty', max: 1 })
-}) as unknown as typeof B.matchBlock & {
-	block: {
-		strict: <const A extends ArgsOf<typeof F.buildMatchBlockBlock>>(
-			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildMatchBlockBlock>>
-		) => ReturnType<typeof F.buildMatchBlock>;
-		coerce: <const A extends ArgsOf<typeof C.coerceToMatchBlockBlock>>(
-			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToMatchBlockBlock>>
-		) => ReturnType<typeof F.buildMatchBlock>;
-	};
-	empty: {
-		strict: <const A extends ArgsOf<typeof F.buildMatchBlockEmpty>>(
-			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildMatchBlockEmpty>>
-		) => ReturnType<typeof F.buildMatchBlock>;
-		coerce: <const A extends ArgsOf<typeof C.coerceToMatchBlockEmpty>>(
-			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToMatchBlockEmpty>>
-		) => ReturnType<typeof F.buildMatchBlock>;
-	};
-};
-
 const caseClause$casePatterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
@@ -3055,6 +3020,17 @@ export const compoundStatement: {
 	class: B.classDefinition,
 	decorated: B.decoratedDefinition,
 	match: matchStatement
+});
+
+export const matchBlock: {
+	readonly strict: typeof B.matchBlockBlock.strict;
+	readonly coerce: typeof B.matchBlockBlock.coerce;
+	readonly block: typeof B.matchBlockBlock;
+	readonly empty: typeof B.matchBlockEmpty;
+} = Object.freeze({
+	...bundle(B.matchBlockBlock.strict, B.matchBlockBlock.coerce),
+	block: B.matchBlockBlock,
+	empty: B.matchBlockEmpty
 });
 
 export const withClause: {

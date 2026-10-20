@@ -53,6 +53,8 @@ export const simpleStatement: typeof F.simpleStatement = F.simpleStatement;
 
 export const compoundStatement: typeof F.compoundStatement = F.compoundStatement;
 
+export const matchBlock: typeof F.matchBlock = F.matchBlock;
+
 export const withClause: typeof F.withClause = F.withClause;
 
 export const suite: typeof F.suite = F.suite;
@@ -98,7 +100,6 @@ export const ir: {
 	readonly elifClause: typeof F.elifClause;
 	readonly elseClause: typeof F.elseClause;
 	readonly matchStatement: typeof F.matchStatement;
-	readonly matchBlock: typeof F.matchBlock;
 	readonly caseClause: typeof F.caseClause;
 	readonly forStatement: typeof F.forStatement;
 	readonly whileStatement: typeof F.whileStatement;
@@ -218,11 +219,14 @@ export const ir: {
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClauseParen: typeof F.withClauseParen;
+	readonly matchBlockBlock: typeof F.matchBlockBlock;
+	readonly matchBlockEmpty: typeof F.matchBlockEmpty;
 	readonly suiteInline: typeof F.suiteInline;
 	readonly suiteBlock: typeof F.suiteBlock;
 	readonly suiteEmpty: typeof F.suiteEmpty;
 	readonly simpleStatement: typeof F.simpleStatement;
 	readonly compoundStatement: typeof F.compoundStatement;
+	readonly matchBlock: typeof F.matchBlock;
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly parameter: typeof F.parameter;
@@ -288,7 +292,6 @@ export const ir: {
 	elifClause: F.elifClause,
 	elseClause: F.elseClause,
 	matchStatement: F.matchStatement,
-	matchBlock: F.matchBlock,
 	caseClause: F.caseClause,
 	forStatement: F.forStatement,
 	whileStatement: F.whileStatement,
@@ -408,11 +411,14 @@ export const ir: {
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClauseParen: F.withClauseParen,
+	matchBlockBlock: F.matchBlockBlock,
+	matchBlockEmpty: F.matchBlockEmpty,
 	suiteInline: F.suiteInline,
 	suiteBlock: F.suiteBlock,
 	suiteEmpty: F.suiteEmpty,
 	simpleStatement: F.simpleStatement,
 	compoundStatement: F.compoundStatement,
+	matchBlock: F.matchBlock,
 	withClause: F.withClause,
 	suite: F.suite,
 	parameter: F.parameter,

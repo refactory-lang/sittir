@@ -272,7 +272,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[151, 'elif_clause'],
 	[152, 'else_clause'],
 	[153, 'match_statement'],
-	[154, 'match_block'],
+	[154, '_match_block'],
 	[155, 'case_clause'],
 	[156, 'for_statement'],
 	[157, 'while_statement'],
@@ -615,7 +615,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[151, 'elif_clause'],
 	[152, 'else_clause'],
 	[153, 'match_statement'],
-	[154, 'match_block'],
+	[154, '_match_block'],
 	[155, 'case_clause'],
 	[156, 'for_statement'],
 	[157, 'while_statement'],
@@ -1113,7 +1113,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ElseClause;
 		case 'match_statement':
 			return TSKindId.MatchStatement;
-		case 'match_block':
+		case '_match_block':
 			return TSKindId.MatchBlock;
 		case 'case_clause':
 			return TSKindId.CaseClause;
@@ -1732,6 +1732,11 @@ export enum CompoundStatementKind {
 	MatchStatement = 'match_statement'
 }
 
+export enum MatchBlockKind {
+	MatchBlockBlock = 'match_block_block',
+	MatchBlockEmpty = 'match_block_empty'
+}
+
 export enum WithClauseKind {
 	WithClauseBare = 'with_clause_bare',
 	WithClauseParen = 'with_clause_paren'
@@ -2171,7 +2176,6 @@ export interface MatchStatement {
 	readonly _body: MatchBlock;
 	readonly __looseHints__?: {
 		readonly subjects: readonly Expression[];
-		readonly body: readonly (MatchBlockBlock | MatchBlockEmpty)[];
 	};
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<T.Subjects>;
@@ -2182,15 +2186,6 @@ export interface MatchStatement {
 	};
 	readonly subjects: () => Subjects;
 	readonly body: () => MatchBlock;
-}
-
-export interface MatchBlock {
-	readonly $type: TSKindId.MatchBlock;
-	readonly _content: MatchBlockBlock | MatchBlockEmpty;
-	readonly __slotHints__?: {
-		readonly content: SlotHint<T.MatchBlockBlock | T.MatchBlockEmpty>;
-	};
-	readonly content: () => MatchBlockBlock | MatchBlockEmpty;
 }
 
 export interface CaseClause {
@@ -4850,6 +4845,8 @@ export type CompoundStatement =
 	| DecoratedDefinition
 	| MatchStatement;
 
+export type MatchBlock = MatchBlockBlock | MatchBlockEmpty;
+
 export type WithClause = WithClauseBare | WithClauseParen;
 
 export type Suite = SuiteInline | SuiteBlock | SuiteEmpty;
@@ -4941,6 +4938,12 @@ export namespace CompoundStatement {
 	export type Kind = '_compound_statement';
 	export type Bound = SupertypeSurface<CompoundStatement, BoundByKindId>;
 	export type Parsed = SupertypeSurface<CompoundStatement, ParsedByKindId>;
+}
+
+export namespace MatchBlock {
+	export type Kind = '_match_block';
+	export type Bound = SupertypeSurface<MatchBlock, BoundByKindId>;
+	export type Parsed = SupertypeSurface<MatchBlock, ParsedByKindId>;
 }
 
 export namespace WithClause {
@@ -7511,20 +7514,6 @@ export interface MatchStatementNs extends NodeNs<
 	readonly BuildArgs: MatchStatement.BuildArgs;
 	readonly LooseArgs: MatchStatement.LooseArgs;
 }
-export interface MatchBlockNs extends NodeNs<
-	MatchBlock,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	MatchBlock.Bound,
-	'content',
-	TSKindId.MatchBlock,
-	MatchBlock.Parsed,
-	never
-> {
-	readonly BuildArgs: MatchBlock.BuildArgs;
-	readonly LooseArgs: MatchBlock.LooseArgs;
-}
 export interface CaseClauseNs extends NodeNs<
 	CaseClause,
 	LeafScalarMap,
@@ -9621,7 +9610,6 @@ export interface NamespaceMap {
 	[TSKindId.ElifClause]: ElifClauseNs;
 	[TSKindId.ElseClause]: ElseClauseNs;
 	[TSKindId.MatchStatement]: MatchStatementNs;
-	[TSKindId.MatchBlock]: MatchBlockNs;
 	[TSKindId.CaseClause]: CaseClauseNs;
 	[TSKindId.ForStatement]: ForStatementNs;
 	[TSKindId.WhileStatement]: WhileStatementNs;
@@ -9821,7 +9809,6 @@ export interface BoundByKindId {
 	[TSKindId.ElifClause]: ElifClause.Bound;
 	[TSKindId.ElseClause]: ElseClause.Bound;
 	[TSKindId.MatchStatement]: MatchStatement.Bound;
-	[TSKindId.MatchBlock]: MatchBlock.Bound;
 	[TSKindId.CaseClause]: CaseClause.Bound;
 	[TSKindId.ForStatement]: ForStatement.Bound;
 	[TSKindId.WhileStatement]: WhileStatement.Bound;
@@ -10000,7 +9987,6 @@ export interface ParsedByKindId {
 	[TSKindId.ElifClause]: ElifClause.Parsed;
 	[TSKindId.ElseClause]: ElseClause.Parsed;
 	[TSKindId.MatchStatement]: MatchStatement.Parsed;
-	[TSKindId.MatchBlock]: MatchBlock.Parsed;
 	[TSKindId.CaseClause]: CaseClause.Parsed;
 	[TSKindId.ForStatement]: ForStatement.Parsed;
 	[TSKindId.WhileStatement]: WhileStatement.Parsed;
@@ -10289,7 +10275,6 @@ export interface TypeKeyOf {
 	[TSKindId.ElifClause]: 'elifClause';
 	[TSKindId.ElseClause]: 'elseClause';
 	[TSKindId.MatchStatement]: 'matchStatement';
-	[TSKindId.MatchBlock]: 'matchBlock';
 	[TSKindId.CaseClause]: 'caseClause';
 	[TSKindId.ForStatement]: 'forStatement';
 	[TSKindId.WhileStatement]: 'whileStatement';
@@ -11034,30 +11019,6 @@ export namespace MatchStatement {
 			| (OmitEach<NonNullable<T.MatchStatement.Loose>, 'subjects'> & { subjects: T.Subjects.LooseArgs })
 	];
 	export type Kind = TSKindId.MatchStatement;
-}
-export namespace MatchBlock {
-	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	export interface Bound extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf {
-		readonly $type: T.MatchBlock['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf, HoldsTree {
-		readonly $type: T.MatchBlock['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.MatchBlock['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.MatchBlock>;
-	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>];
-	export type LooseArgs = [value: T.MatchBlock.Loose];
-	export type Kind = TSKindId.MatchBlock;
 }
 export namespace CaseClause {
 	export type Config = ConfigFor<TSKindId.CaseClause>;

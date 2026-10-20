@@ -6983,12 +6983,6 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 /** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
 ```
 
-### `packages/codegen/src/emitters/is.ts::numericId`
-
-```text
-/** Numeric TSKindId; undefined when kind has no parser symbol. */
-```
-
 ### `packages/codegen/src/emitters/is.ts::memberIds`
 
 The kind ids a supertype's or an enum kind's guard admits, its row in `_members` and, as kind-id types, its entry in `KindMembers`: the kinds `membershipKindsOf` gives for it, each by its kind id, once. Empty on the legacy path without id tables, whose guards compare names.
@@ -7632,18 +7626,6 @@ seat the child into a config or tuple take the value arguments only.
 	 */
 ```
 
-### `packages/codegen/src/emitters/is.ts::RESERVED`
-
-```text
-/** JS reserved words that need a trailing `_` when used as a guard key. */
-```
-
-#### body
-
-```text
-// Also reserve `is` method names so kind keys don't shadow them
-```
-
 ### `packages/codegen/src/emitters/is.ts::RESERVED_GUARD_NAMES`
 
 ```text
@@ -7918,8 +7900,9 @@ stamped `transitiveParseKinds` closure
 during assemble; this reads the stamp rather than
 re-walking the closure per call site, as the deleted `factory-map.ts::
 expandRuntimeDiscriminatorKinds`/`pushAliasMintedArmParseNames` did on every
-call). Dedupes by normalized (hidden-prefix-stripped) name across the whole
-input list.
+call). Dedupes by name across the whole input list. A name is never rewritten,
+so a hidden-named enum kind (rust's `_token_keywords`) reaches its own members,
+and two kinds that differ only by a leading underscore stay two kinds.
 
 ```text
 // Reads the stamp `compiler/supertype-closure.ts::stampSupertypeClosures`
@@ -8256,7 +8239,7 @@ The signature of a guard that narrows to a set of kinds by id, bare ids included
  * Emits is.ts — per-grammar type guards.
  *
  * One surface per grammar:
- *   - `is`     — per-kind guards keyed by camelCase kind name, a generic
+ *   - `is`     — per-kind guards keyed by each kind's stamped type key, a generic
  *                inverse `is.kind(v, k)`, and supertype guards
  *                (narrow the `type` discriminant). A slot or supertype
  *                union may contain keyword members stored as bare kind
@@ -8276,6 +8259,16 @@ The module exports `guardsWith(test)`, which builds the table with a kind test, 
 A supertype whose arms are all variants (the parents `flattenedVariantParents` lists, the same ones that give `ir.<parent>.<variant>`) has a guard per variant on its own guard: `is.suite(v)` tests every form, `is.suite.block(v)` one. A variant guard narrows like a per-kind guard; a leaf variant is tested by id like a supertype guard, and a variant that is itself a variant parent is that parent's guard. Variant ids resolve through the whole catalog, as the build surface's do, so a leaf alias with no node of its own still has its id.
 
 A supertype guard tests every kind the supertype reaches, through nested supertypes too (`expandToConcreteParseKinds`, the parse kinds of the stamped closure), so `is.integer` accepts a plain decimal although the decimal forms sit under a nested `integer_decimal`. Each parse kind resolves to its entry the way a kind discriminant does (`findKindEntry`), so an arm that aliases a hidden rule to a visible name keeps the hidden rule's id.
+
+Each guard sits at one key, the node's stamped type key, which is the key `ir` uses; `claimGuardKey` throws when two guards, or a guard and an `is` method, would share one. A read-side kind (not hidden, not a supertype, with a kind id of its own) has exactly one self-test, a guard that tests it as itself: at its builder path when the route there builds the kind, else flat at its type key. A kind with no builder path, a one-step path, or a path through a seat (`seatedFormKinds`) is guarded flat, and a kind whose nested path builds its own node (a flattened parent's variant) is guarded only there. A flat self-test is a plain kind test with no form members, since `ir` has no flat route for them.
+
+A kind with forms (`formRoutesOf`, read only for a kind with a builder path) carries a guard per form on its own guard, one per `ir.<kind>.<form>` route. A form guard narrows to its route's return type and is true exactly on what the route builds. A route that builds the form's own node (an alias wire) gives the form kind's guard. A route that seats the form in one of the host's arms builds the host, so its guard (`_at`) tests the host kind, then the form's guard on what the host's seat accessor returns, read through the arm's property name (`FormRoute.seat`). A chain lifts the same way at each step: `is.visibilityModifier.pub.scope.inPath` is true on a `visibility_modifier` whose seat holds a `pub` form whose seat holds a scope in the `in` form, and false on the sibling forms. Such a guard takes a node, since a bare id fails the host test, and it is typed as a node-only narrowing to the host kind, the kind of what the route builds. An arm that stores an anonymous token is an enum value of its host and has no guard (`armIsForm`).
+
+Each kind test and each form guard is built once, as a const (`_kind_<Type>_guard`, `_form_<Type>_guard`), and every route that reaches the kind references it. `_vg` attaches the form members to a fresh kind test, so the plain test stays usable as a host in `_at`. The consts are emitted kind tests first, then form guards, then supertype guards, then the table; `_vg` and `_at` are emitted only when a guard uses them.
+
+### `packages/codegen/src/emitters/is.ts::leafShapeOf`
+
+The leaf shape of a kind's guard. A pattern leaf is `'text'` and is tested like a node, by its kind (`_g`). An enum is `'enum'` and a fixed-text leaf is `'unit'`; both are tested by id (`_mg`), since either can sit in a slot as a bare kind id. Anything else is no leaf (`undefined`). The leaf guards and the guard of a form route's child both read it.
 
 ### `packages/codegen/src/emitters/shared.ts::module`
 
@@ -13212,7 +13205,7 @@ The arity of the pair at a kind's own entry, the call `<childKey>(…)` makes. A
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::routeArity`
 
-The arity of a route referenced by its dotted path. A wire arm's path is read from `PolymorphWires.routes`, filled as each arm renders; children render before their parents. A flattened parent's variant routes render after the wire chunks, so their paths are resolved structurally: the variant's entry arity, or, for a deeper path, the same lookup under the variant's own entry key. A path that resolves to neither throws, since a reference to an unstamped route is a codegen defect.
+The arity of a route referenced by its dotted path. A wire arm's path is read from `PolymorphWires.routes`, filled as each arm renders; children render before their parents. A flattened parent's variant routes render after the wire chunks, and a nested arm can step through an alias wire into the alias child's own arms, so those paths are resolved structurally: a step names a flattened variant or an alias wire of the entry it starts from, and the route's arity is that child's entry arity or, for a deeper path, the same lookup under the child's own entry key. A path that resolves to neither throws, since a reference to an unstamped route is a codegen defect.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatsOf`
 
@@ -13406,11 +13399,12 @@ Where a nested arm sits: under the direct arm reaching the same child, at
 the keys the child spells for the entry it forwards to. A variant minted
 inside another variant's rule is spelled inside it,
 `ir.visibilityModifier.pub.scope.inPath`, never a flat `inPath` that reads
-as its sibling. When the child's entry is itself nested, the keys are the
-child's emitted path to it (`emittedArmPath`), so the parent's namespace
-mirrors the child's at every depth; otherwise the key is the child's own
-arm name. A nested arm whose child no parent arm reaches stays flat, and a
-clash on the short key falls back to the flattened name.
+as its sibling. When the child's entry is itself nested, or the arm's path
+runs more than one step (through one of the child's alias wires), the keys
+are the child's emitted path to it (`emittedArmPath`), so the parent's
+namespace mirrors the child's at every depth; otherwise the key is the
+child's own arm name. A nested arm whose child no parent arm reaches stays
+flat, and a clash on the short key falls back to the flattened name.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::armTargetAt`
 
@@ -13428,9 +13422,11 @@ Whether a sub-factory with a path ends on a kind that is stored as a kind id (`t
 
 How an arm is spelled on its emitted entry: its own name at the top, or its
 host's name followed by the keys it nests under, one per level, however deep
-(`nestingArmOf`). Every reader of an arm's spelling goes through this — the
-child references inside the overlay, the seat stamps in the node model, and
-the generated per-kind tests — so no second derivation can drift from what was
+(`nestingArmOf`). A step that names one of the kind's alias wires is spelled
+as the wire's name, and the rest of the path is spelled on the alias child's
+entry. Every reader of an arm's spelling goes through this: the child
+references inside the overlay, the seat stamps in the node model, and the
+generated per-kind tests, so no second derivation can drift from what was
 emitted.
 
 The overlay's mount loop places arms in two passes — every emitted arm is

@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { findOwnKindEntry, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledAlias,
@@ -15,13 +15,14 @@ import {
 	isNodeRef,
 	isSurfaceHiddenIn,
 	storageKindOfRef,
-	type AssembledNode
+	type AssembledNode,
+	type TextValueStorage
 } from './node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 import { lowerCamelCase } from './casing.ts';
 import { supertypeMemberName } from '../../dsl/arm-names.ts';
 import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
-import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
+import { subFactoriesOf, variantAliasWires, variantArmsOf, type AliasWire, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
 
 type KindEntries = ReturnType<typeof collectKindEntries> | undefined;
 
@@ -188,35 +189,85 @@ export function isHoistedCompound(node: AssembledNode): boolean {
 	);
 }
 
-export interface AliasWire {
-	readonly name: string;
-	readonly child: AssembledNode;
-}
-
-export function variantAliasWires(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	isEmitted: (kind: string) => boolean,
-	subs: readonly SubFactory[]
-): readonly AliasWire[] {
-	if (!(node instanceof AbstractAssembledCompound)) return [];
-	const claimedNames = new Set(subs.map((s) => s.name));
-	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
-	const aliases: AliasWire[] = [];
-	for (const variantChild of node.variantChildKinds) {
-		const visible = variantChild.kind;
-		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
-		if (child === undefined || child.rawFactoryName === undefined) continue;
-		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
-		const name = lowerCamelCase(variantChild.name);
-		if (claimedNames.has(name)) continue;
-		aliases.push({ name, child });
-	}
-	return aliases;
-}
-
 export function isNamespaceArm(sub: SubFactory): boolean {
 	return sub.arm.via === 'node' && sub.arm.path.length === 0 && sub.arm.child instanceof AssembledSupertype && sub.arm.child.defaultVariantSubtype === undefined;
+}
+
+export interface FormRoute {
+	readonly name: string;
+	readonly child: AssembledNode;
+	readonly seat?: string;
+}
+
+interface HostRoute extends FormRoute {
+	readonly via: 'arm' | 'alias' | 'value';
+	readonly form: boolean;
+}
+
+function valueKindOf(host: AssembledNode, name: string, storage: TextValueStorage, nodeMap: NodeMap): AssembledNode {
+	const node = storage.via === 'kindId' ? nodeMap.nodes.get(storage.kind) : undefined;
+	if (node === undefined) throw new Error(`ir surface: the value form '${host.kind}.${name}' stores no kind of its own to test`);
+	return node;
+}
+
+export function armIsForm(host: AssembledNode, sub: SubFactory, kindEntries: ArmRoutes['kindEntries']): boolean {
+	if (sub.arm.variantOf !== host.kind) return false;
+	if (sub.arm.via !== 'value') return true;
+	const row = sub.arm.storage.via === 'kindId' && kindEntries !== undefined ? findOwnKindEntry(kindEntries, sub.arm.storage.kind) : undefined;
+	return row !== undefined && row.anon !== true;
+}
+
+function hostRoutesOf(set: ArmRouteSet, kindEntries: ArmRoutes['kindEntries'], nodeMap: NodeMap): readonly HostRoute[] {
+	const arms = set.subs.flatMap((sub): HostRoute[] => {
+		const form = armIsForm(set.node, sub, kindEntries);
+		const seat = sub.slot.propertyName;
+		if (sub.arm.via === 'value') return form ? [{ name: sub.name, child: valueKindOf(set.node, sub.name, sub.arm.storage, nodeMap), seat, via: 'value', form }] : [];
+		return sub.arm.path.length === 0 && !isNamespaceArm(sub) ? [{ name: sub.name, child: sub.arm.child, seat, via: 'arm', form }] : [];
+	});
+	return [...arms, ...set.aliases.map((alias): HostRoute => ({ name: alias.name, child: alias.child, via: 'alias', form: true }))];
+}
+
+function deriveFormRoutes(armRoutes: ArmRoutes, nodeMap: NodeMap): ReadonlyMap<string, readonly FormRoute[]> {
+	const routes = new Map<string, readonly FormRoute[]>();
+	for (const set of armRoutes.byKind.values()) {
+		const forms = hostRoutesOf(set, armRoutes.kindEntries, nodeMap).filter((route) => route.form);
+		if (forms.length > 0) routes.set(set.node.kind, forms.map(({ name, child, seat }) => ({ name, child, ...(seat === undefined ? {} : { seat }) })));
+	}
+	return routes;
+}
+
+export function formRoutesOf(nodeMap: NodeMap): ReadonlyMap<string, readonly FormRoute[]> {
+	return irSurfaceOf(nodeMap).formRoutes;
+}
+
+export function seatedFormKinds(nodeMap: NodeMap): ReadonlySet<string> {
+	const surface = irSurfaceOf(nodeMap);
+	const flattenedByKind = new Map(surface.flattened.map((parent) => [parent.node.kind, parent]));
+	const flattenedByKey = new Map(surface.flattened.map((parent) => [parent.key, parent]));
+	const roots = new Map<string, AssembledNode>();
+	for (const node of nodeMap.nodes.values()) if (node.builderPath?.length === 1) roots.set(node.builderPath[0]!, node);
+	const hopOf = (host: AssembledNode, name: string): { readonly child: AssembledNode; readonly seated: boolean } | undefined => {
+		const variant = flattenedByKind.get(host.kind)?.variants.find((route) => route.name === name);
+		if (variant !== undefined) return { child: variant.nestedParentKey === undefined ? variant.child : flattenedByKey.get(variant.nestedParentKey)!.node, seated: false };
+		const route = surface.formRoutes.get(host.kind)?.find((candidate) => candidate.name === name);
+		return route === undefined ? undefined : { child: route.child, seated: route.seat !== undefined };
+	};
+	const seated = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		const path = node.builderPath;
+		if (path === undefined || path.length < 2) continue;
+		let host = roots.get(path[0]!);
+		let throughSeat = false;
+		for (const name of path.slice(1)) {
+			const hop = host === undefined ? undefined : hopOf(host, name);
+			if (hop === undefined) throw new Error(`ir surface: '${node.kind}' has the builder path '${path.join('.')}', which no route reaches`);
+			throughSeat ||= hop.seated;
+			host = hop.child;
+		}
+		if (host !== node) throw new Error(`ir surface: the builder path '${path.join('.')}' of '${node.kind}' builds '${host?.kind}'`);
+		if (throughSeat) seated.add(node.kind);
+	}
+	return seated;
 }
 
 export interface ArmRouteSet {
@@ -440,6 +491,7 @@ export interface IrSurface {
 	readonly ownText: readonly IrKeyedNode[];
 	readonly flattened: readonly FlattenedVariantParent[];
 	readonly armRoutes: ArmRoutes;
+	readonly formRoutes: ReadonlyMap<string, readonly FormRoute[]>;
 	readonly plan: IrPlan;
 }
 
@@ -453,7 +505,7 @@ export function stampIrSurface(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 	const flattened = deriveFlattenedVariantParents(nodeMap, kindEntries, bundles);
 	const armRoutes = deriveArmRoutes(nodeMap, kindEntries, bundles, flattened);
 	const plan = deriveIrPlan(nodeMap, kindEntries, bundles, ownText, flattened);
-	nodeMap.irSurface = { bundles, ownText, flattened, armRoutes, plan };
+	nodeMap.irSurface = { bundles, ownText, flattened, armRoutes, formRoutes: deriveFormRoutes(armRoutes, nodeMap), plan };
 	const exported = exportedNodesOf(plan);
 	for (const node of nodeMap.nodes.values()) if (!exported.has(node)) node.irKey = undefined;
 	resolveBuilderPaths(nodeMap.name, nodeMap.nodes.values(), ownerRoutesOf(nodeMap, flattened, armRoutes, plan));
@@ -496,13 +548,11 @@ function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantPar
 		for (const route of parent.variants) offer(declared, route.child, { parent: parent.node, name: route.name });
 	}
 	for (const set of armRoutes.byKind.values()) {
-		for (const sub of set.subs) {
-			if (sub.arm.via !== 'node' || sub.arm.path.length > 0 || isNamespaceArm(sub)) continue;
-			offerArm(sub.arm.child, { parent: set.node, name: sub.name }, sub.arm.variantOf === set.node.kind);
-		}
-		for (const alias of set.aliases) {
-			offer(aliased, alias.child, { parent: set.node, name: alias.name });
-			offerArm(alias.child, { parent: set.node, name: alias.name }, true);
+		for (const route of hostRoutesOf(set, armRoutes.kindEntries, nodeMap)) {
+			if (route.via === 'value') continue;
+			const owner = { parent: set.node, name: route.name };
+			if (route.via === 'alias') offer(aliased, route.child, owner);
+			offerArm(route.child, owner, route.form);
 		}
 	}
 	for (const group of plan.groups) {

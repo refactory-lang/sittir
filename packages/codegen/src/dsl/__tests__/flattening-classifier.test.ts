@@ -59,13 +59,13 @@ describe('flattening classifier', () => {
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
 	});
 
-	it('does not add a parent that is referenced only under a named alias, since the alias is the rule\'s own name', () => {
+	it('adds a parent referenced only under a named alias, since the alias over a flattened parent is dropped afterwards', () => {
 		const wired = wire<GrammarJson>({
 			name: 'g',
 			rules: { other: (d: any) => (globalThis as any).alias(d.parent, d.shown) },
 			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
-		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
+		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
 	});
 
 	it('adds a parent that has one aliased reference and one bare reference, since the bare one keeps it a supertype', () => {

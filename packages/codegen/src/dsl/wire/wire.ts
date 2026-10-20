@@ -1056,13 +1056,26 @@ function wrapSupertypesCallback(userSupertypes: DollarFn<unknown[]> | undefined,
 	return function wiredSupertypes(this: unknown, $: unknown, previous?: unknown) {
 		const base = userSupertypes ? (userSupertypes as (d: unknown, p?: unknown) => unknown[]).call(this, $, previous) : ((previous as unknown[] | undefined) ?? []);
 		const listed = new Set(symbolNamesOf(base));
-		const bodies = [...context.evaluatedBodies.values()];
-		const shownAsNodes = new Set([...namedAliasValues(bodies), ...onlyAliasedSymbols(bodies)]);
+		const aliasValues = namedAliasValues([...context.evaluatedBodies.values()]);
 		const flattened = [...context.flattenedParents]
-			.filter((name) => !listed.has(name) && !shownAsNodes.has(name))
+			.filter((name) => !listed.has(name) && !aliasValues.has(name))
 			.map((name) => symbolizeRef($, name));
 		return [...base, ...flattened];
 	} as unknown as DollarFn<unknown[]>;
+}
+
+export function dropFlattenedParentAliases(grammar: { rules: Record<string, AnyRule>; supertypes?: unknown }, opts: WiredOpts): void {
+	const context = opts.__wireContext__;
+	if (context === undefined) return;
+	const listed = symbolNamesOf(grammar.supertypes);
+	const parents = new Set([...context.flattenedParents].filter((name) => listed.has(name)));
+	if (parents.size === 0) return;
+	const walker = new RuleWalker<AnyRule>();
+	const unaliased = (node: AnyRule): AnyRule => {
+		const alias = node as { type?: string; content?: { type?: string; name?: unknown } };
+		return alias.type === 'ALIAS' && alias.content?.type === 'SYMBOL' && typeof alias.content.name === 'string' && parents.has(alias.content.name) ? (alias.content as AnyRule) : node;
+	};
+	for (const [name, rule] of Object.entries(grammar.rules)) grammar.rules[name] = unaliased(walker.map(rule, unaliased));
 }
 
 function namedAliasValues(bodies: readonly AnyRule[]): ReadonlySet<string> {

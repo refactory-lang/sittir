@@ -676,31 +676,6 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 	return node as unknown as T.MatchStatement.Parsed;
 }
 
-export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.MatchBlock as const,
-		content() {
-			return hydrateSlot<T.MatchBlockBlock | T.MatchBlockEmpty>(this, '_content', tree);
-		},
-		$with: {
-			content: (v: NonNullable<T.MatchBlock['_content']>) =>
-				rebuilt(node, handle, () => wrapMatchBlock({ ...$edited(data), _content: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.MatchBlock.Parsed;
-}
-
 export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -5525,7 +5500,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ElifClause]: (d, t) => wrapElifClause(d as unknown as T.ElifClause, t),
 	[TSKindId.ElseClause]: (d, t) => wrapElseClause(d as unknown as T.ElseClause, t),
 	[TSKindId.MatchStatement]: (d, t) => wrapMatchStatement(d as unknown as T.MatchStatement, t),
-	[TSKindId.MatchBlock]: (d, t) => wrapMatchBlock(d as unknown as T.MatchBlock, t),
 	[TSKindId.CaseClause]: (d, t) => wrapCaseClause(d as unknown as T.CaseClause, t),
 	[TSKindId.ForStatement]: (d, t) => wrapForStatement(d as unknown as T.ForStatement, t),
 	[TSKindId.WhileStatement]: (d, t) => wrapWhileStatement(d as unknown as T.WhileStatement, t),

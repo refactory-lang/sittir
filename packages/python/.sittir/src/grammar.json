@@ -998,13 +998,8 @@
           "type": "FIELD",
           "name": "body",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_match_block"
-            },
-            "named": true,
-            "value": "match_block"
+            "type": "SYMBOL",
+            "name": "_match_block"
           }
         }
       ]
@@ -9245,6 +9240,7 @@
     "_statement",
     "assignment",
     "with_clause",
+    "_match_block",
     "_suite"
   ],
   "reserved": {

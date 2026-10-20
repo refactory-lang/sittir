@@ -58,7 +58,6 @@ export const matchStatement = bundle(F.buildMatchStatement, C.coerceToMatchState
 	key: 'matchStatement',
 	max: 1
 });
-export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock, { key: 'matchBlock', max: 1 });
 export const caseClause = bundle(F.buildCaseClause, C.coerceToCaseClause, { key: 'caseClause', max: 1 });
 export const forStatement = bundle(F.buildForStatement, C.coerceToForStatement, { key: 'forStatement', max: 1 });
 export const whileStatement = bundle(F.buildWhileStatement, C.coerceToWhileStatement, {
@@ -280,6 +279,11 @@ export const assignmentTyped = bundle(F.buildAssignmentTyped, C.coerceToAssignme
 export const expressionStatementTuple = bundle(F.buildExpressionStatementTuple, C.coerceToExpressionStatementTuple);
 export const withClauseBare = bundle(F.buildWithClauseBare, C.coerceToWithClauseBare);
 export const withClauseParen = bundle(F.buildWithClauseParen, C.coerceToWithClauseParen);
+export const matchBlockBlock = bundle(F.buildMatchBlockBlock, C.coerceToMatchBlockBlock);
+export const matchBlockEmpty = bundle(F.buildMatchBlockEmpty, C.coerceToMatchBlockEmpty, {
+	key: 'matchBlockEmpty',
+	max: 1
+});
 export const suiteInline = bundle(F.buildSuiteInline, C.coerceToSuiteInline);
 export const suiteBlock = bundle(F.buildSuiteBlock, C.coerceToSuiteBlock);
 export const suiteEmpty = bundle(F.buildSuiteEmpty, C.coerceToSuiteEmpty, { key: 'suiteEmpty', max: 1 });

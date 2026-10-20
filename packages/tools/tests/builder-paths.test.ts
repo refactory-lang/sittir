@@ -87,12 +87,14 @@ it('builds a seated arm through the envelope that declares it', async () => {
 	expect(model.builderPaths.simple_pattern_negative).toEqual(['simplePattern', 'negative']);
 });
 
-it('builds a seated form that has no flat entry through its owner route alone, with no alternate', async () => {
+it('builds a match block form through its flat key first, with its owner route as the alternate, as a suite block does', async () => {
 	const model = await loadNodeModel('python');
-	expect(model.builderPaths.match_block_block).toEqual(['matchBlock', 'block']);
-	expect(model.builderPaths.match_block_empty).toEqual(['matchBlock', 'empty']);
-	expect(model.builderPathAlternates.match_block_block).toBeUndefined();
-	expect(model.builderPathAlternates.match_block_empty).toBeUndefined();
+	expect(model.builderPaths.match_block_block).toEqual(['matchBlockBlock']);
+	expect(model.builderPathAlternates.match_block_block).toEqual([['matchBlock', 'block']]);
+	expect(model.builderPaths.match_block_empty).toEqual(['matchBlockEmpty']);
+	expect(model.builderPathAlternates.match_block_empty).toEqual([['matchBlock', 'empty']]);
+	expect(model.builderPaths.suite_block).toEqual(['suiteBlock']);
+	expect(model.builderPathAlternates.suite_block).toContainEqual(['suite', 'block']);
 });
 
 it('builds a kind through its own flat key first and keeps its owner route as an alternate', async () => {

@@ -1113,27 +1113,19 @@ export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonl
 }
 
 export function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
-	const expanded: string[] = [];
-	const seen = new Set<string>();
-	function add(name: string): void {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		if (seen.has(normalized)) return;
-		seen.add(normalized);
-		expanded.push(normalized);
-	}
+	const expanded = new Set<string>();
 	for (const name of names) {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
+		const node = nodeMap.nodes.get(name);
 		if (!(node instanceof AssembledSupertype)) {
-			add(name);
+			expanded.add(name);
 			continue;
 		}
 		for (const v of node.transitiveParseKinds ?? []) {
 			const parseName = v.parseKind?.name;
-			if (parseName !== undefined) add(parseName);
+			if (parseName !== undefined) expanded.add(parseName);
 		}
 	}
-	return expanded;
+	return [...expanded];
 }
 
 export interface WireRoutes {
