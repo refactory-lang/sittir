@@ -274,6 +274,16 @@ productions count. Early errors (context, labels, strict mode, duplicate names)
 are not parser work, and a body that clones a rule per enclosing context to
 enforce one is out of scope.
 
+`reauthored('ruled-narrowing', witnesses, body)` is the sixth: the upstream
+parser accepts a form the maintainer ruled out, where no production excludes it.
+It is judged as the fifth is, with the ruling's constraint stated in words in
+place of a production (`RuledNarrowingWitness`).
+
+A rule with more than one cause declares them together:
+`reauthored([[cause, witnesses], [cause, witnesses], ...], body)` takes two or
+more cause pairs (`CausePair`), and the gate judges each cause on its own. The
+one-cause forms record the same declaration with one cause (`DeclaredCause`).
+
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::OtherKindWitness`
 
 The evidence for `'accepts-other-kind'`: `text`, source the upstream parser
@@ -696,3 +706,31 @@ A patch placeholder carrying a replacement regex source for the pattern at the p
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::SemanticGapWitness`
 
 Evidence for `reauthored('semantic-gap', witnesses, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers the one-element tuple, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::RuledNarrowingWitness`
+
+The evidence for `'ruled-narrowing'`: the `InvalidSyntaxWitness` shape with `ruling` in place of `production`. The ruling's constraint is stated in words, never as a PR, spec or task number, so the witness cannot rot into a dangling pointer. The gate checks that upstream's `kind` derives the form and the authored `kind` does not, and the witness test checks that upstream's parser accepts the text and sittir's rejects it within the text.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::CauseWitnesses`
+
+The witness shape of each witnessed cause. `CauseWitness` reads it, so the `reauthored` overloads and the cause pairs take one table.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::CauseWitness`
+
+A witnessed cause's witness shape, read from `CauseWitnesses`.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::CausePair`
+
+One cause as the several-cause `reauthored` takes it: a witnessed cause with its non-empty witnesses, or an unwitnessed cause alone.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::DeclaredCause`
+
+One cause of a `reauthored` declaration as recorded: the cause, and its witnesses when it has them.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::RuleCauseDeclaration`
+
+What `reauthored` or `vocabulary` tags a rule function with (`ruleCauseOf`): a re-authoring with its causes (`DeclaredCause`), or a vocabulary rule. The cause list is typed as it can arrive: a grammar file's types do not gate it, so the list may be empty, and the rule-cause gate refuses an empty one (`rule-cause-missing`). `reauthored` records the list dense: a hole in the declared list declares nothing and is skipped, so a list of holes records as empty.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::declaredCause`
+
+The recorded form of a cause pair (`CausePair`).

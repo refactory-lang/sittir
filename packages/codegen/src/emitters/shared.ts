@@ -685,9 +685,23 @@ export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string
 	return out;
 }
 
+export function keywordAliasContent(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): { readonly ref: NodeBackedRef; readonly text: string } | undefined {
+	if (!(node instanceof AssembledAlias) || node.slots.length !== 1) return undefined;
+	const values = node.slots[0]!.values;
+	const only = values.length === 1 ? values[0]! : undefined;
+	if (only === undefined || !isNodeRef(only)) return undefined;
+	const resolved = nodeMap.nodes.get(storageKindOfRef(only.node));
+	return resolved !== undefined && resolved.modelType === 'keyword' && isFixedTextLeaf(resolved)
+		? { ref: only, text: resolved.text }
+		: undefined;
+}
+
 export function wordConstructibleText(node: AssembledNode, nodeMap: NodeMap): string | undefined {
 	if (!isAuthoredCompound(node)) return undefined;
-	const text = node.keywordConstructibleText;
+	const text = node.keywordConstructibleText ?? keywordAliasContent(node, nodeMap)?.text;
 	return text !== undefined && matchesWordShape(text, nodeMap.wordMatcher) ? text : undefined;
 }
 
@@ -901,7 +915,7 @@ function isKeywordKindIn(nodeMap: NodeMap, kind: string | undefined): boolean {
 	return kind !== undefined && nodeMap.nodes.get(kind)?.modelType === 'keyword';
 }
 
-function fixedTextEntryOf(
+export function fixedTextEntryOf(
 	value: NodeOrTerminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]

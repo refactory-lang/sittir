@@ -472,11 +472,12 @@ pub const PATTERNS_REPEAT1: KindId = KindId(461);
 pub const STRUCT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(462);
 pub const DELIM_TOKEN_TREE_PAREN_REPEAT1: KindId = KindId(463);
 pub const _MATCH_BLOCK_ARMS_REPEAT1: KindId = KindId(464);
-pub const _FIELD_IDENTIFIER: KindId = KindId(465);
-pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(467);
-pub const _TYPE_IDENTIFIER: KindId = KindId(468);
+pub const _CRATE_VISIBILITY_MODIFIER: KindId = KindId(465);
+pub const _FIELD_IDENTIFIER: KindId = KindId(466);
+pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(468);
+pub const _TYPE_IDENTIFIER: KindId = KindId(469);
 pub const ERROR: KindId = KindId(65535);
-pub const LET_CHAIN: KindId = KindId(466);
+pub const LET_CHAIN: KindId = KindId(467);
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
@@ -798,7 +799,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         287 => "if_expression", // "if_expression"
         288 => "let_condition", // "let_condition"
         289 => "_let_chain", // "_let_chain"
-        466 => "let_chain", // "_let_chain"
+        467 => "let_chain", // "_let_chain"
         290 => "_condition", // "_condition"
         291 => "else_clause", // "else_clause"
         292 => "match_expression", // "match_expression"
@@ -974,9 +975,10 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         462 => "struct_pattern_elements_repeat1", // "struct_pattern_elements_repeat1"
         463 => "delim_token_tree_paren_repeat1", // "delim_token_tree_paren_repeat1"
         464 => "_match_block_arms_repeat1", // "_match_block_arms_repeat1"
-        465 => "field_identifier", // "_field_identifier"
-        467 => "shorthand_field_identifier", // "_shorthand_field_identifier"
-        468 => "type_identifier", // "_type_identifier"
+        465 => "crate_visibility_modifier", // "_crate_visibility_modifier"
+        466 => "field_identifier", // "_field_identifier"
+        468 => "shorthand_field_identifier", // "_shorthand_field_identifier"
+        469 => "type_identifier", // "_type_identifier"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }

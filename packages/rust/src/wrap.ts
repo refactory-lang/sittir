@@ -2210,7 +2210,7 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 		...data,
 		$type: TSKindId.VisibilityModifier as const,
 		content() {
-			return hydrateSlot<TSKindId.Crate | T.VisibilityModifierPub>(this, '_content', tree);
+			return hydrateSlot<T.CrateVisibilityModifier | T.VisibilityModifierPub>(this, '_content', tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.VisibilityModifier['_content']>) =>
@@ -8546,6 +8546,34 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 	return node as unknown as T.FieldIdentifier.Parsed;
 }
 
+export function wrapCrateVisibilityModifier(
+	data: T.CrateVisibilityModifier,
+	tree: TreeHandle
+): T.CrateVisibilityModifier.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.CrateVisibilityModifier as const,
+		content() {
+			return this._content;
+		},
+		$with: {
+			content: (v: NonNullable<T.CrateVisibilityModifier['_content']>) =>
+				rebuilt(node, handle, () => wrapCrateVisibilityModifier({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CrateVisibilityModifier.Parsed;
+}
+
 export function wrapShorthandFieldIdentifier(
 	data: T.ShorthandFieldIdentifier,
 	tree: TreeHandle
@@ -8842,6 +8870,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.MatchBlockArms]: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
 	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(d as unknown as T.TypeIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(d as unknown as T.FieldIdentifier, t),
+	[TSKindId.CrateVisibilityModifier]: (d, t) =>
+		wrapCrateVisibilityModifier(d as unknown as T.CrateVisibilityModifier, t),
 	[TSKindId.ShorthandFieldIdentifier]: (d, t) =>
 		wrapShorthandFieldIdentifier(d as unknown as T.ShorthandFieldIdentifier, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),

@@ -578,6 +578,7 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | un
 	switch_default: () => F.buildSwitchDefault(),
 	yield_expression: () => F.buildYieldExpression()
 };
+const _KEYWORD_BRANCH_BY_KIND_ID: Record<number, string | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'_lhs_expression',
 	'rest_pattern',
@@ -870,7 +871,7 @@ function _resolveOne<T>(
 		)
 			return v as Admit<T>;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
-		const arm = arms.length <= 1 ? arms[0] : undefined;
+		const arm = arms.length <= 1 ? arms[0] : arms.find((b) => _KEYWORD_BRANCH_BY_KIND_ID[kindId] === b);
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
 		if (isNodeValue(v)) return v as Admit<T>;
 		if (arms.length > 1) {

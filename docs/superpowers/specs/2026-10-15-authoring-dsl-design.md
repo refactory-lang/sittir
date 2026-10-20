@@ -446,6 +446,7 @@ No layer uses it yet. The derived kind renames stay data (§2.4), and the genera
 
 - **`reauthored` and `vocabulary`.** `reauthored(cause, body)`, `reauthored(cause, witnesses, body)`, `reauthored([[cause, witnesses], …], body)` and `vocabulary(body)` declare why a `rules:` entry replaces or adds a rule.
   - They tag the callback and change nothing in it. Rule causes are judged against the enriched stage.
+  - A `reauthored` rule declares at least one cause. One that declares none is refused, is never witness-verified, and counts toward the hand-written rule ratchet.
   - A rule with two or more causes lists each with its own witnesses, and each cause is judged on its own. A rule is witness-verified when every one of its causes is a witnessed cause.
   - The witnessed causes take witness arrays. `accepts-invalid-syntax` and `ruled-narrowing` make the same claim: upstream derives each witness form and the authored rule does not. An `accepts-invalid-syntax` witness cites the production that excludes the form. A `ruled-narrowing` witness states, in words, the maintainer ruling's constraint that excludes it, never a PR, spec or task number.
   - A `vocabulary` entry is verified when every authored or upstream rule that reaches it is a witness-verified `reauthored` rule. The hand-written rule ratchet counts every other entry and every undeclared rule.

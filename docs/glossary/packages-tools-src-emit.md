@@ -459,7 +459,7 @@ A slot's kinds as the loose surface sees them: supertypes expand to their subtyp
 
 Each entry is a `PrintingEntry`: the printer, stamped with its kind's parser id (`kindId`, resolved once by `kindIdOf`). A hidden kind's entry is also registered under its public name, and carries the hidden kind's id there, the one the parser issues.
 
-An alias kind's entry returns its argument unchanged: the printed source is the content, which the parent's builder wraps.
+An alias kind's entry returns its argument unchanged: the printed source is the content, which the parent's builder wraps. Content that is a kind id stays a printed kind id (`kinds.WildcardPattern`); a bare source string would read as text and be wrapped in a text leaf.
 
 A `constant`-shaped kind, a keyword or punctuation kind with a build entry, prints as that entry (`build.passStatement`): the entry is the kind id, so there is no call to spell. A text-shaped keyword or punctuation kind (`PrintContext.keywordKinds`), one with no build entry, prints as its kind id (`kinds.Semi`). Every other text kind prints its text as the one argument.
 

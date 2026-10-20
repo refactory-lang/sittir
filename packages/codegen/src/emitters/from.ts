@@ -69,6 +69,8 @@ import {
 	leadingOptionsOf,
 	aliasPatternLeaf,
 	placedAlias,
+	keywordAliasContent,
+	fixedTextEntryOf,
 	type LeadingOptions
 } from './shared.ts';
 import {
@@ -1336,7 +1338,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 		'    if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName) || (_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e)))) return v as Admit<T>;'
 	);
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
-	lines.push('    const arm = arms.length <= 1 ? arms[0] : undefined;');
+	lines.push('    const arm = arms.length <= 1 ? arms[0] : arms.find((b) => _KEYWORD_BRANCH_BY_KIND_ID[kindId] === b);');
 	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;');
 	lines.push('    if (isNodeValue(v)) return v as Admit<T>;');
 	lines.push('    if (arms.length > 1) {');
@@ -1655,13 +1657,20 @@ function emitResolverHelpers(
 
 	const byText: [string, string][] = [];
 	const buildByKind: [string, string][] = [];
+	const byKeywordKindId: [string, string][] = [];
 	const stringCapable: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isAuthoredCompound(node)) continue;
 		const own = wordConstructibleText(node, nodeMap);
 		if (own !== undefined && node.rawFactoryName !== undefined) {
 			byText.push([own, kind]);
-			buildByKind.push([kind, node.rawFactoryName]);
+			const aliased = keywordAliasContent(node, nodeMap);
+			const content = aliased === undefined || kindEntries === undefined ? undefined : fixedTextEntryOf(aliased.ref, nodeMap, kindEntries)?.discriminant;
+			if (aliased !== undefined && content === undefined) {
+				throw new Error(`from: alias '${kind}' over keyword '${aliased.text}' has no kind catalog row to build it from`);
+			}
+			buildByKind.push([kind, `${node.rawFactoryName}(${content ?? ''})`]);
+			if (content !== undefined) byKeywordKindId.push([content, kind]);
 		} else if (node.fromFunctionName !== undefined && stringConstructibleTexts(kind, nodeMap).length > 0) {
 			stringCapable.push(kind);
 		}
@@ -1679,7 +1688,10 @@ function emitResolverHelpers(
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
 	lines.push('};');
 	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | undefined> = {');
-	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
+	for (const [k, call] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${call},`);
+	lines.push('};');
+	lines.push('const _KEYWORD_BRANCH_BY_KIND_ID: Record<number, string | undefined> = {');
+	for (const [id, k] of byKeywordKindId) lines.push(`  [${id}]: ${JSON.stringify(k)},`);
 	lines.push('};');
 	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);
 	emitBareRoutingTables(lines, nodeMap, kindEntries);

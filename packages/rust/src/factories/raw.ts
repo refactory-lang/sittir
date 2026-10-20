@@ -3146,13 +3146,15 @@ function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.
 	return node as unknown as T.ExternModifier.Bound;
 }
 
-export function buildVisibilityModifier<V extends Admit<TSKindId.Crate | T.VisibilityModifierPub>>(
-	value: V & RefuseUndeclared<V>
-): T.VisibilityModifier.Bound;
+export function buildVisibilityModifier<
+	V extends Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
+>(value: V & RefuseUndeclared<V>): T.VisibilityModifier.Bound;
 export function buildVisibilityModifier(
-	value: Admit<TSKindId.Crate | T.VisibilityModifierPub>
+	value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
 ): T.VisibilityModifier.Bound {
-	const _content = kindIdStorage<NonNullable<T.VisibilityModifier['_content']>>(value);
+	const _content = admitAliasContent<NonNullable<T.VisibilityModifier['_content']>>(value, [
+		[[127], (v: unknown) => buildCrateVisibilityModifier(v as never)]
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.VisibilityModifier as const,
@@ -3160,8 +3162,9 @@ export function buildVisibilityModifier(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: Admit<NonNullable<TSKindId.Crate | T.VisibilityModifierPub>>) =>
-				rebuilt(node, handle, () => buildVisibilityModifier(value))
+			content: (
+				value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
+			) => rebuilt(node, handle, () => buildVisibilityModifier(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
@@ -6446,8 +6449,9 @@ export function buildBlockComment(
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
+	if (typeof text !== 'string') throw new Error(`identifier: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
+	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6469,9 +6473,15 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 export function buildShebang(content: string, affix?: true): T.Shebang.Bound;
 export function buildShebang(text: `#!${string}\n`, affix: false): T.Shebang.Bound;
 export function buildShebang(input: string, affix: boolean = true): T.Shebang.Bound {
-	const value = affix ? input : unaffixed(input, '#!', '\n', 'shebang');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string') throw new Error(`shebang.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '#!', '\n', 'shebang');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildShebang_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`shebang.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildShebang_content.test(_content))
 		throw new Error(`shebang.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -6503,9 +6513,14 @@ export const buildCrate: TSKindId.Crate = TSKindId.Crate;
 export function buildMetavariable(content: string, affix?: true): T.Metavariable.Bound;
 export function buildMetavariable(text: `$${string}`, affix: false): T.Metavariable.Bound;
 export function buildMetavariable(input: string, affix: boolean = true): T.Metavariable.Bound {
-	const value = affix ? input : unaffixed(input, '$', '', 'metavariable');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string') throw new Error(`metavariable.name: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '$', '', 'metavariable');
+	}
 	const _name = value;
-	if (typeof _name !== 'string' || !_slotRe_buildMetavariable_name.test(_name))
+	if (typeof _name !== 'string') throw new Error(`metavariable.name: text must be a string: ${describeValue(_name)}`);
+	if (!_slotRe_buildMetavariable_name.test(_name))
 		throw new Error(`metavariable.name: text does not match pattern: ${describeValue(_name)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8023,8 +8038,10 @@ export function buildUseWildcardGroup(
 }
 
 export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`token_repetition_pattern_text: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildTokenRepetitionPatternText.test(text))
+	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
 		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8044,8 +8061,9 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 }
 
 export function buildStringOpen(text: string): T.StringOpen.Bound {
+	if (typeof text !== 'string') throw new Error(`string_open: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringOpen.test(text))
+	if (!_leafRe_buildStringOpen.test(text))
 		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8081,13 +8099,14 @@ export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
 	const _content = numberText(10, '', config.content);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_literal_decimal.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLiteralDecimal_content.test(_content))
 		throw new Error(`integer_literal_decimal.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
-	if (
-		_suffix !== undefined &&
-		(typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralDecimal_suffix.test(_suffix))
-	)
+	if (_suffix !== undefined && typeof _suffix !== 'string')
+		throw new Error(`integer_literal_decimal.suffix: text must be a string: ${describeValue(_suffix)}`);
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralDecimal_suffix.test(_suffix))
 		throw new Error(`integer_literal_decimal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8148,10 +8167,14 @@ export function buildIntegerLiteralHex(
 	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Bound {
 	const _content = numberText(16, '0x', config.content);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerLiteralHex_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_literal_hex.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLiteralHex_content.test(_content))
 		throw new Error(`integer_literal_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
-	if (_suffix !== undefined && (typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix)))
+	if (_suffix !== undefined && typeof _suffix !== 'string')
+		throw new Error(`integer_literal_hex.suffix: text must be a string: ${describeValue(_suffix)}`);
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix))
 		throw new Error(`integer_literal_hex.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8212,10 +8235,14 @@ export function buildIntegerLiteralBinary(
 	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Bound {
 	const _content = numberText(2, '0b', config.content);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerLiteralBinary_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_literal_binary.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLiteralBinary_content.test(_content))
 		throw new Error(`integer_literal_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
-	if (_suffix !== undefined && (typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix)))
+	if (_suffix !== undefined && typeof _suffix !== 'string')
+		throw new Error(`integer_literal_binary.suffix: text must be a string: ${describeValue(_suffix)}`);
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix))
 		throw new Error(`integer_literal_binary.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8276,10 +8303,14 @@ export function buildIntegerLiteralOctal(
 	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Bound {
 	const _content = numberText(8, '0o', config.content);
-	if (typeof _content !== 'string' || !_slotRe_buildIntegerLiteralOctal_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`integer_literal_octal.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIntegerLiteralOctal_content.test(_content))
 		throw new Error(`integer_literal_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
-	if (_suffix !== undefined && (typeof _suffix !== 'string' || !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix)))
+	if (_suffix !== undefined && typeof _suffix !== 'string')
+		throw new Error(`integer_literal_octal.suffix: text must be a string: ${describeValue(_suffix)}`);
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix))
 		throw new Error(`integer_literal_octal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8329,7 +8360,9 @@ export function buildCharLiteralPlain<ContentSlot extends T.CharLiteralPlain.Con
 export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.CharLiteralPlain.Bound {
 	const _byte = strictBooleanStorage(config.byte);
 	const _content = config.content;
-	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralPlain_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`char_literal_plain.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildCharLiteralPlain_content.test(_content))
 		throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8358,8 +8391,9 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 }
 
 export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
+	if (typeof text !== 'string') throw new Error(`char_literal_empty: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`char_literal_empty: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildCharLiteralEmpty.test(text))
+	if (!_leafRe_buildCharLiteralEmpty.test(text))
 		throw new Error(`char_literal_empty: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8386,7 +8420,9 @@ export function buildCharLiteralEscapedSimple(
 ): T.CharLiteralEscapedSimple.Bound {
 	const _byte = strictBooleanStorage(config.byte);
 	const _content = config.content;
-	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`char_literal_escaped_simple.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
 		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8424,7 +8460,9 @@ export function buildCharLiteralEscapedUnicodeFixed(
 ): T.CharLiteralEscapedUnicodeFixed.Bound {
 	const _byte = strictBooleanStorage(config.byte);
 	const _content = config.content;
-	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`char_literal_escaped_unicode_fixed.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
 		throw new Error(
 			`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`
 		);
@@ -8464,7 +8502,9 @@ export function buildCharLiteralEscapedUnicodeBraced(
 ): T.CharLiteralEscapedUnicodeBraced.Bound {
 	const _byte = strictBooleanStorage(config.byte);
 	const _content = config.content;
-	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`char_literal_escaped_unicode_braced.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
 		throw new Error(
 			`char_literal_escaped_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`
 		);
@@ -8500,7 +8540,9 @@ export function buildCharLiteralEscapedHex<ContentSlot extends T.CharLiteralEsca
 export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Bound {
 	const _byte = strictBooleanStorage(config.byte);
 	const _content = config.content;
-	if (typeof _content !== 'string' || !_slotRe_buildCharLiteralEscapedHex_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`char_literal_escaped_hex.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildCharLiteralEscapedHex_content.test(_content))
 		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8531,9 +8573,16 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
 export function buildEscapeSequenceSimple(text: `\\${string}`, affix: false): T.EscapeSequenceSimple.Bound;
 export function buildEscapeSequenceSimple(input: string, affix: boolean = true): T.EscapeSequenceSimple.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_simple');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_simple.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_simple');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceSimple_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_simple.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8562,9 +8611,16 @@ export function buildEscapeSequenceUnicodeFixed(
 	input: string,
 	affix: boolean = true
 ): T.EscapeSequenceUnicodeFixed.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_fixed');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_unicode_fixed.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_unicode_fixed');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_unicode_fixed.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8596,9 +8652,16 @@ export function buildEscapeSequenceUnicodeBraced(
 	input: string,
 	affix: boolean = true
 ): T.EscapeSequenceUnicodeBraced.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_unicode_braced');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_unicode_braced.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_unicode_braced');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_unicode_braced.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
 		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -8624,9 +8687,16 @@ export function buildEscapeSequenceUnicodeBraced(
 export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
 export function buildEscapeSequenceHex(text: `\\${string}`, affix: false): T.EscapeSequenceHex.Bound;
 export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.EscapeSequenceHex.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence_hex');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_hex.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_hex');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequenceHex_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_hex.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10030,8 +10100,10 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 }
 
 export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`line_comment_extra_slashes: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildLineCommentExtraSlashes.test(text))
+	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
 		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10103,7 +10175,8 @@ export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineComm
 }
 
 export function buildLineCommentRegular(text: string): T.LineCommentRegular.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildLineCommentRegular.test(text))
+	if (typeof text !== 'string') throw new Error(`line_comment_regular: text must be a string: ${describeValue(text)}`);
+	if (!_leafRe_buildLineCommentRegular.test(text))
 		throw new Error(`line_comment_regular: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -10175,7 +10248,8 @@ export function buildBlockCommentDocInner(value?: Admit<T.BlockCommentContent>):
 }
 
 export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildBlockCommentRegular.test(text))
+	if (typeof text !== 'string') throw new Error(`block_comment_regular: text must be a string: ${describeValue(text)}`);
+	if (!_leafRe_buildBlockCommentRegular.test(text))
 		throw new Error(`block_comment_regular: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11393,8 +11467,9 @@ export function buildFloatLiteral<const N extends string | number>(
 ): T.FloatLiteral.Bound;
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	text = numberText('float', '.0', text);
+	if (typeof text !== 'string') throw new Error(`float_literal: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildFloatLiteral.test(text))
+	if (!_leafRe_buildFloatLiteral.test(text))
 		throw new Error(`float_literal: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11414,8 +11489,9 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 }
 
 export function buildStringContent(text: string): T.StringContent.Bound {
+	if (typeof text !== 'string') throw new Error(`string_content: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringContent.test(text))
+	if (!_leafRe_buildStringContent.test(text))
 		throw new Error(`string_content: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11435,7 +11511,9 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 }
 
 export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildRawStringLiteralContent.test(text))
+	if (typeof text !== 'string')
+		throw new Error(`raw_string_literal_content: text must be a string: ${describeValue(text)}`);
+	if (!_leafRe_buildRawStringLiteralContent.test(text))
 		throw new Error(`raw_string_literal_content: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11459,8 +11537,10 @@ export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKind
 export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
 
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`raw_string_literal_start: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildRawStringLiteralStart.test(text))
+	if (!_leafRe_buildRawStringLiteralStart.test(text))
 		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11480,8 +11560,10 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 }
 
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`raw_string_literal_end: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildRawStringLiteralEnd.test(text))
+	if (!_leafRe_buildRawStringLiteralEnd.test(text))
 		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11501,7 +11583,8 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 }
 
 export function buildDocComment(text: string): T.DocComment.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildDocComment.test(text))
+	if (typeof text !== 'string') throw new Error(`doc_comment: text must be a string: ${describeValue(text)}`);
+	if (!_leafRe_buildDocComment.test(text))
 		throw new Error(`doc_comment: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11521,7 +11604,9 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 }
 
 export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bound {
-	if (typeof text !== 'string' || !_leafRe_buildBlockCommentContent.test(text))
+	if (typeof text !== 'string')
+		throw new Error(`_block_comment_content: text must be a string: ${describeValue(text)}`);
+	if (!_leafRe_buildBlockCommentContent.test(text))
 		throw new Error(`_block_comment_content: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -11557,6 +11642,7 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
 export function buildStringClose(text: string): T.StringClose.Bound {
+	if (typeof text !== 'string') throw new Error(`string_close: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
 	const handle = currentHandle();
 	const node = {
@@ -11576,6 +11662,7 @@ export function buildStringClose(text: string): T.StringClose.Bound {
 }
 
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
+	if (typeof text !== 'string') throw new Error(`_error_sentinel: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	const handle = currentHandle();
 	const node = {
@@ -11644,6 +11731,35 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.FieldIdentifier.Bound;
+}
+
+export function buildCrateVisibilityModifier<V extends Admit<TSKindId.Crate>>(
+	...value: [value?: V] & RefuseUndeclared<V>
+): T.CrateVisibilityModifier.Bound;
+export function buildCrateVisibilityModifier(value?: Admit<TSKindId.Crate>): T.CrateVisibilityModifier.Bound {
+	const _content = kindIdStorage<NonNullable<T.CrateVisibilityModifier['_content']>>(
+		orDefault(value, () => TSKindId.Crate as const)
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CrateVisibilityModifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: Admit<NonNullable<TSKindId.Crate>>) =>
+				rebuilt(node, handle, () => buildCrateVisibilityModifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CrateVisibilityModifier.Bound;
 }
 
 export function buildShorthandFieldIdentifier<V extends Admit<T.Identifier>>(
@@ -11937,6 +12053,7 @@ export type FluentKindMap = {
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
+	crate_visibility_modifier: T.CrateVisibilityModifier.Bound;
 	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
 };
 
@@ -12205,6 +12322,7 @@ export const _factoryMap = {
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
+	crate_visibility_modifier: buildCrateVisibilityModifier,
 	shorthand_field_identifier: buildShorthandFieldIdentifier
 } as const;
 export type _FactoryMap = typeof _factoryMap;

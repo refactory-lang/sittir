@@ -1749,7 +1749,7 @@ or a named ALIAS over a STRING or a symbol (`aliasesSymbol`).
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::flattenChoiceMembers`
 
-A choice's members with every nested CHOICE spread in place.
+A choice's members with every nested CHOICE spread in place, each member read through its precedence wrappers (`unwrapPrec`). The automatic stamp (`automatic-variants.ts::isSupertypeOwner`) classifies the DSL rule, where a member keeps the precedence wrapper tree-sitter sees (rust's `_expression_except_range` holds an arm under `prec.left`), and link (`compiler/link.ts::classifyHiddenChoiceRule`) classifies sittir's evaluated rule, where the wrapper is gone; reading through it is what lets the two classify one rule alike.
 
 ### `packages/codegen/src/dsl/group-classify.ts::isSupertypeLike`
 

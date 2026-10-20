@@ -613,7 +613,13 @@ export function printingFactoryMap(
 		const id = kindIdOf(kind, kindIdOfName);
 		const publicName = kind.replace(/^_+/, '');
 		const entry = (...args: unknown[]): Printed | string => {
-			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
+			if (ctx.aliasKinds?.has(kind)) {
+				const content = args[0];
+				if (content instanceof Printed) return content;
+				return typeof content === 'number'
+					? new Printed(content, printValue(content, ctx, 0), ctx.kindNameFromId(content))
+					: printValue(content, ctx, 0);
+			}
 			switch (shape) {
 				case 'constant':
 					return new Printed(id, spelled().path, kind);
