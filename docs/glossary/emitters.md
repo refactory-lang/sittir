@@ -13872,8 +13872,10 @@ gap a site may take.
 
 The site each of a leaf's `canonical` entries names, looked up in the
 `SiteIndex` by its canonical address. Exactly one site must answer each
-entry: none, or more than one at the same address, fails at codegen rather
-than silently taking the first. One entry for an ordinary site, every bound
+entry, unless the sites at that address are one alias-site family
+(`isAliasSiteFamily`), which the address reaches whole: none, or several
+that are not one family, fails at codegen rather than silently taking the
+first. One entry for an ordinary site, every bound
 site for a declaration reached through bindings. A leaf whose entries mix
 spacing and delimiter sites (its trie node would have to be two variants)
 also fails.

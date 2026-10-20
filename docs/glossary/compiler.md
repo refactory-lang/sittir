@@ -8213,6 +8213,11 @@ Tree-sitter can fold that default alias out of the rule reference, so the
 catalog supplies its identity beside the explicit aliases. This preserves both
 physical option sites instead of choosing one parser identity for the family.
 
+An optional content (`OPTIONAL`, which the compile boundary also makes of a
+choice with a blank arm) contributes its content, as a choice contributes its
+arms, so an alias over `optional(x)` or `choice(x, blank())` keeps `x` in
+its family.
+
 #### body
 
 ```text

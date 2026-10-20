@@ -1126,6 +1126,10 @@ function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKin
 			for (const arm of content.members) addStorage({ display, content: arm });
 			return;
 		}
+		if (content.type === OPTIONAL) {
+			addStorage({ display, content: content.content });
+			return;
+		}
 		if (content.type === SYMBOL) {
 			add(
 				content.literal === undefined
