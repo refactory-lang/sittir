@@ -299,6 +299,13 @@ describe('portable is: rust', async () => {
 		expect(at('declaration.variable.public')(local)).toBe(false);
 	});
 
+	it('reads a bare `crate` visibility as internal by its own kind, and the item it marks as internal, as `pub(crate)` is', () => {
+		const SOURCE = 'crate fn f() {}\npub(crate) fn g() {}\n';
+		const items = [0, 1].map((nth) => find(SOURCE, 'function_item', undefined, nth));
+		expect(at('modifier.visibility.public.internal')(find(SOURCE, 'crate_visibility_modifier'))).toBe(true);
+		expect(items.map((n) => at('declaration.function.public.internal')(n))).toEqual([true, true]);
+	});
+
 	it.skip('reads a static item\'s `mut` and `ref` as its flags (pending: `mutable` and `byReference` are flags of declaration.variable, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'static A: u8 = 1;\nstatic mut B: u8 = 2;\nstatic ref C: u8 = 3;\n';
 		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));

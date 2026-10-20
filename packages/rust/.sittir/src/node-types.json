@@ -7419,7 +7419,7 @@
       "required": true,
       "types": [
         {
-          "type": "crate",
+          "type": "crate_visibility_modifier",
           "named": true
         },
         {
@@ -7941,6 +7941,10 @@
   },
   {
     "type": "crate",
+    "named": true
+  },
+  {
+    "type": "crate_visibility_modifier",
     "named": true
   },
   {

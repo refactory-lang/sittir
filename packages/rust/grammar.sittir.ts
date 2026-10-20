@@ -357,7 +357,11 @@ export default sittirGrammar(base, {
 			{ '1/1/0/1/3/0': field('in') },
 			{ '1/1/0/1/3': variant('in_path') },
 			{ '1/1/0': variant('scope') },
-			{ '0': variant('crate'), '1': variant('pub') }
+			{ '0': variant('crate'), '1': variant('pub') },
+			// A bare `crate` is a visibility modifier only at this arm; the
+			// alias names that form, so a read decides it without its
+			// parent. `pub(crate)`'s `crate` is another site and stays.
+			{ '0': alias('crate_visibility_modifier') }
 		],
 
 		function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },

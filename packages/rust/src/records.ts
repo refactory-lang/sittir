@@ -539,5 +539,6 @@ export const records = {
 	ErrorSentinelNode: { words: 2 },
 	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
 	FieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
+	CrateVisibilityModifierNode: { words: 7, content: { word: 2, width: 5 } },
 	ShorthandFieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;
