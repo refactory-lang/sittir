@@ -309,14 +309,14 @@ A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isBlank`
 
-True for every spelling of an empty rule: `BLANK`, which `blank()` builds under both runtimes, and the empty
-`CHOICE` or `SEQ` the compile phases use (the boundary lowers a bare `BLANK` to the empty `CHOICE`, and normalize lowers `EOF` to it). The one blank test; nothing else
+True for every spelling of an empty rule: tree-sitter's `BLANK`, and the empty
+`CHOICE` or `SEQ` sittir's `blank()` builds and the compile phases use (the boundary lowers a bare `BLANK` to the empty `CHOICE`, and normalize lowers `EOF` to it). The one blank test; nothing else
 compares a rule type against `'BLANK'` or checks for zero members to mean
 "empty".
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::optionalContentOf`
 
-The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: the compile boundary (`compiler/canonical-rules.ts::canonicalChoiceRule`) and link's stamping (`compiler/link.ts::rewriteRuleForStamp`) build their `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
+The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: link's stamping (`compiler/link.ts::rewriteRuleForStamp`) builds its `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isArmChoice`
 
@@ -3381,7 +3381,7 @@ Each method builds the node tree-sitter's own DSL builds for the same call:
 `seq` and `choice` keep every member, a single one included; `optional`,
 `repeat`, `repeat1` and `field` wrap their content as given; `token` carries
 no `immediate` flag and `token.immediate` builds its own `IMMEDIATE_TOKEN`
-node; `blank` builds `BLANK`, not an empty choice. Nothing collapses at construction, so enrich and wire — which run
+node. Nothing collapses at construction, so enrich and wire — which run
 under both runtimes — read the same shape tree-sitter reads. The canonical
 shape the compiler phases read is produced once, at the compile boundary,
 by `compiler/canonical-rules.ts::canonicalRuleTree`. Evaluate's DSL wrappers
@@ -7069,7 +7069,7 @@ A symbol's kind in tree-sitter's variable tables: `named`, `hidden` (underscore-
 
 ### `packages/codegen/src/dsl/symbol-table.ts::Variable`
 
-One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place. A `_repeatN` that repeat expansion mints carries its `owner`, the rule it was expanded from, so a fact about it is reported on that rule (`eofNotLastSites`).
+One entry of a syntax, lexical or external variable table: its name, kind and interned rule. Token extraction and repeat expansion update it in place.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::ProductionStep`
 
@@ -7111,18 +7111,6 @@ Flattens an interned rule into its productions: a `CHOICE` contributes each memb
 
 A variable's productions as tree-sitter keeps them after `eof()`: a production with an end step anywhere but last is dropped, since it can never complete, and a trailing end step is removed (the production then needs end-of-input lookahead). It runs once per variable, on the whole rule, so an `EOF` that a later `SEQ` member follows is caught.
 
-### `packages/codegen/src/dsl/symbol-table.ts::alwaysEndingInput`
-
-The nonterminals every derivation of which ends the input: each of whose productions ends in an end step or in such a nonterminal. It is the greatest fixpoint, so a repetition of an input-ending item counts, while `choice('\n', eof())`, which can end without the input ending, does not.
-
-### `packages/codegen/src/dsl/symbol-table.ts::EofNotLast`
-
-A rule with a production the parser can never produce, because something follows the end of the input in it: `kind` is the authored rule holding the production. `ending` is the rule that always ends input and is followed, or none when an `eof()` itself is. `repetition` marks a repetition in `kind` whose item ends at `eof()`, so it can never repeat.
-
-### `packages/codegen/src/dsl/symbol-table.ts::eofNotLastSites`
-
-Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any: a step that is an end step, or a nonterminal in `alwaysEndingInput`, anywhere but last. A repeat helper is reported on its owner. A helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself.
-
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 
 The words tree-sitter spells punctuation with in a C symbol name.
@@ -7161,11 +7149,11 @@ Predicts the parser's symbol table from the evaluated grammar by porting tree-si
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported. `eofNotLast` lists the rules with a production that continues past the end of the input (`eofNotLastSites`).
+A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions and `eofNotLast` sites, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -7185,7 +7173,7 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names, key collisions and `eofNotLast` sites beside them.
+The rows `predictKindCatalog` predicts, with the grammar's undefined names and key collisions beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 
@@ -9255,7 +9243,7 @@ Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) 
 
 ### `packages/codegen/src/dsl/evaluate.ts::eof`
 
-tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`).
+tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics` refuses it anywhere but last in the start rule, and inside a token, and normalize lowers it to blank (`compiler/normalize.ts::blanksDropped`).
 
 ### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeInfo`
 
@@ -9264,3 +9252,13 @@ What a code in `ENRICH_SHAPES` records: the enrich pass that rewrites the shape 
 ### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES`
 
 The input shapes enrich rewrites, one code each, with the pass that rewrites it and the shape in words. A shape enrich rewrites never reaches the model as written, so no `expectDiagnostics` entry may name one of these codes (`compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`).
+
+### `packages/codegen/src/dsl/eof-placement.ts::eofPlacements`
+
+Each authored rule that holds a refused `eof()`, with where: `inToken` when one sits under a `token()` or `token.immediate()`, `notLast` when one sits anywhere but last in the start rule. The walk keeps the start rule's position through its choices and wrappers, and through the last step of each sequence, where a later member that derives only the empty string (`rule-patterns.ts::isBlank`, through wrappers, choices and sequences of blanks) adds no step; a symbol, a token or a repetition always does, since tree-sitter flattens a repetition to a helper symbol. It never keeps the position inside a repetition.
+
+Enrich's mints are judged where the author wrote them. A group-lift reference (`transform/transform-path.ts::isEnrichGroupLiftSymbol`) and a reference to a text token (`textTokens`) are walked into, as part of the rule that holds the reference, so a hoisted arm of the start rule keeps the start rule's position and a refusal names the authored rule. A group-lift mint is also walked on its own when an ordinary reference names it, since an authored layer that names a mint composes with it as a rule. A text token is walked into only while its body is still a token; one an authored layer redefines as another rule is judged on its own. Otherwise a text token is never judged alone, because enrich itself references it by an ordinary symbol, so an authored reference to one is judged as part of the referencing rule. A mint that reaches itself again is walked once on each path.
+
+### `packages/codegen/src/dsl/eof-placement.ts::EofPlacement`
+
+Where an authored rule holds a refused `eof()`: under a token (`inToken`), anywhere but last in the start rule (`notLast`), or both.

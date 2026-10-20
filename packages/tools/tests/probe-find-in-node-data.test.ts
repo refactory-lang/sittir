@@ -15,9 +15,7 @@ describe('findInUntypedNode', () => {
 		expect(findInUntypedNode(root, 'identifier', kindNameFromId)).toBe(leaf);
 	});
 
-	it('still matches string $type and finds nothing for an absent kind', () => {
-		const leaf = { $type: 'identifier' };
-		expect(findInUntypedNode({ $type: 'program', _x: leaf }, 'identifier', undefined)).toBe(leaf);
+	it('finds nothing for an absent kind', () => {
 		expect(findInUntypedNode({ $type: 1 }, 'identifier', kindNameFromId)).toBeNull();
 	});
 });

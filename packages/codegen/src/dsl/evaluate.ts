@@ -156,7 +156,7 @@ function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evalua
 }
 
 function blank(): Rule<'evaluate'> {
-	return structuralBuilder.blank();
+	return { type: CHOICE, members: [] };
 }
 
 function eof(): Rule<'evaluate'> {

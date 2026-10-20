@@ -18,18 +18,23 @@ function makeFactorySlots(
 	return { [kind]: slots };
 }
 
+const KINDS = ['identifier', 'single_field_parent', 'repeat_field_parent'];
+const id = (kind: string): number => KINDS.indexOf(kind) + 1;
+const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
+
 describe('nodeToConfig field promotion', () => {
 	it('uses named slot metadata instead of payload shape for singular and repeated config slots', () => {
-		const leaf = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
+		const leaf = { $type: id('identifier'), $source: 0, $named: true, $text: 'x' };
 
 		const singularConfig = nodeToConfig(
 			{
-				$type: 'single_field_parent',
+				$type: id('single_field_parent'),
 				$source: 0,
 				$named: true,
 				_value: [leaf]
 			} as never,
 			{
+				kindNameFromId,
 				factorySlots: makeFactorySlots('single_field_parent', {
 					value: {
 						unnamed: false,
@@ -44,12 +49,13 @@ describe('nodeToConfig field promotion', () => {
 
 		const repeatedConfig = nodeToConfig(
 			{
-				$type: 'repeat_field_parent',
+				$type: id('repeat_field_parent'),
 				$source: 0,
 				$named: true,
 				_items: leaf
 			} as never,
 			{
+				kindNameFromId,
 				factorySlots: makeFactorySlots('repeat_field_parent', {
 					items: {
 						unnamed: false,

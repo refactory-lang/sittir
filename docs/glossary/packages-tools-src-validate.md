@@ -1089,10 +1089,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ### `packages/tools/src/validate/common.ts::ReadNodeLike.$type`
 
-```text
-// $type is numeric (TSKindId) for parser.c-derived kinds; string for
-// hidden/synthetic kinds (e.g. "_suite") that have no parser.c entry.
-```
+The node's kind id (`TSKindId`); a reader resolves it to a kind name through the grammar's `kindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::isAnonTokenPassthrough`
 

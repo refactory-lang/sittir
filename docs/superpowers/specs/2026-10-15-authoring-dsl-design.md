@@ -53,6 +53,9 @@ Carried forward unchanged:
 - The enrich fixpoint check is strict and carries enrich's three sidecars.
 - Pipeline functions take `(target, ctx)`.
 
+Maintainer, 2026-10-19:
+- **`eof()`** is legal only as the last step of the start rule, outside any repetition. Last in the root it changes nothing, so the rule keeps `eof()` inert until a grammar needs more, and the terminator pattern is refused until then. Neither eof code can be expected (§13).
+
 ## 1. Layers
 
 ### 1.1 The chain
@@ -712,3 +715,14 @@ The rulings left these to the design. Each is stated in its section; this list i
 6. **Part copies carry their path in their name** (§4.1), so that a whole copy and a part copy of one source in one context never collide.
 7. **`rename` leaves the old rule blank and unreachable** (§3.3), because the runtime's `grammar()` cannot remove a base rule. The start rule cannot be renamed.
 8. **A copy's origin decides** whether it inherits options and which lead it belongs to (§1.7).
+
+## 13. `eof()`
+
+`eof()` is an authoring global, beside `blank()`. It builds `{ type: 'EOF' }`, which matches the end of the input and consumes nothing. Tree-sitter keeps a production that holds an `eof()` only when the `eof()` ends it: that production then needs end-of-input lookahead, and any other is dropped.
+
+- **Where it is legal.** Only as the last step of one of the start rule's own productions, over the grammar's flattened productions. A repetition's productions are its repeat helper's, not the start rule's, so an `eof()` inside a repetition is refused even when the start rule holds the repetition.
+- **Why so narrow.** The start rule always runs to the end of the input, so an `eof()` last in it changes nothing. The rule keeps `eof()` inert until a grammar has a use for it, and it widens when one does. The first candidate is the terminator pattern, `choice(';', '\n', eof())` ending each statement of a repetition, which is refused until then.
+- **What is refused.** Each refusal is a blocking diagnostic, one per authored rule that holds a refused `eof()`. A repetition's refusal is reported on the rule that holds the repetition. A rule enrich mints from an authored one, such as a hoisted choice arm or a token's text, counts as part of the rule it was minted from, so a hoisted arm of the start rule keeps the start rule's position. A mint that an authored layer references by name is a rule of the grammar that layer composes, and a refusal inside it names that mint, except a token's text, which enrich itself references by name, so a refusal inside one names the rule that references it. Neither code can be expected: `expectDiagnostics` may not name `eof-not-last` or `eof-in-token`, since the fix is always to move the `eof()` or remove it.
+  - `eof-not-last`: an `eof()` anywhere else: in a rule other than the start rule, inside a repetition, or followed by more steps in its production.
+  - `eof-in-token`: an `eof()` inside `token` or `token.immediate`, since a token cannot match the end of input.
+- **The compiler.** Normalize lowers `EOF` to blank, so `seq($.x, eof())` assembles as `seq($.x)` does.

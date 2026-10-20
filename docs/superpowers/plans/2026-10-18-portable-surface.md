@@ -71,7 +71,7 @@ The cost of keeping bare ids on grammar guards: a bare id carries no language, s
 | rust | `crate` within `visibility_modifier` reads as `modifier.visibility.public.internal` | 1 | an alias, `internal_public_visibility_modifier` (2026-10-10, P2) |
 | python | `function_definition` in a class body, directly or decorated, reads as `declaration.method` | 2 | the method alias, five clones (2026-10-10, P1) |
 | python | `staticmethod` read through the enclosing `decorated_definition` (within it, and the `up: 1` condition) | 1 | the envelope sets its element's flag (2026-10-10, P4) |
-| python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: an identifier is slotless and reads through its parent's member |
+| python | an `identifier` within `parameters` / `lambda_parameters` reads as `declaration.parameter` | 2 | the claims are deleted: a leaf has no slots, an identifier is a leaf, and it reads through its parent's member |
 | python | an `identifier` within `type` reads as `identifier.type` | 1 | deleted, as above |
 
 `grammar.bindings.ts` is generated from `bindings.scm` (`bindings-inventory --write`), so the restatement goes in `bindings.scm`, with the aliases in `grammar.sittir.ts`.
@@ -179,6 +179,8 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 
 ### Task 3b: Restate the placement residue in bindings
 
+Ruled (2026-10-19): two parts. **3b-1**, from master: the `crate` alias, the closure-parameter envelope, and the python identifier claims deleted after their parent members are added; the ratchet tightens to rust 19, python 3 plus 1 `up`. **3b-2** waits for the authoring-DSL PR to merge: the method aliases and the static flag as path edits (they need ancestor copies, which the DSL rewrite derives), the emitter diagnostic gated at 0, and the ratchet deleted.
+
 **Files:**
 - Modify: `packages/rust/bindings.scm`, `packages/python/bindings.scm`, `packages/rust/grammar.sittir.ts`, `packages/python/grammar.sittir.ts` (the seven claims of Q1, in their ruled forms; `grammar.bindings.ts` regenerates from them), the bindings emitter that writes read entries (it refuses `within` and `up > 0` with a generator diagnostic)
 - Test: the emitter test for the new diagnostic; `packages/rust/tests/portable-guards.test.ts` and `packages/python/tests/portable-guards.test.ts` for the restated classifications
@@ -246,6 +248,8 @@ The guard already reaches the node's engine through `engineOf(node)`, and that e
 - [ ] **Step 5:** Pathspec commit with the regenerated files.
 
 ### Task 6: `ofType` takes a vocabulary kind
+
+Ran ahead of 3b-2, by the user's ruling (2026-10-19). Until 3b-2 lands, `ofType` reads placed classifications the way `portable.is` does: an impl or class-body method reads as a function, not a method.
 
 **Files:**
 - Modify: `packages/common/src/query.ts` (`ofTypeStep`, the declarative compile at :349/:482/:544/:599), `packages/types/src/query.ts:168` (overload `ofType<P extends PortableKind>(kind: P): View<…>`)
