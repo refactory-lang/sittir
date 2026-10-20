@@ -32,8 +32,8 @@ import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
-import { resolveOverridesPath } from '../resolve-grammar.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { resolveOverridesPath } from '../../dsl/resolve-grammar.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {

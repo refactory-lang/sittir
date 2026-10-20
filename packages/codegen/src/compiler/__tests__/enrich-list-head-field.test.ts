@@ -4,7 +4,7 @@ import { FIELD, REPEAT, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule
 import { grammarPackage } from '../../grammars.ts';
 import { evaluateSittirGrammar } from './_sittir-grammar.ts';
 import type { RawGrammar } from '../types.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 
 const require = createRequire(import.meta.url);
 

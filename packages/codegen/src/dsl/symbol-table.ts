@@ -2,6 +2,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -792,6 +793,7 @@ interface MetaParams {
 
 type InternedRule =
 	| { readonly type: 'BLANK' }
+	| { readonly type: 'EOF' }
 	| { readonly type: 'STRING'; readonly value: string }
 	| { readonly type: 'PATTERN'; readonly value: string }
 	| { readonly type: 'SYM'; readonly key: string }
@@ -813,6 +815,8 @@ interface ProductionStep {
 }
 
 const BLANK_RULE: InternedRule = { type: 'BLANK' };
+
+const END_STEP_KEY = 'end';
 
 function sameShape(a: unknown, b: unknown): boolean {
 	return JSON.stringify(a) === JSON.stringify(b);
@@ -877,6 +881,8 @@ function internRule(rule: PredictorRule, resolve: (name: string) => string): Int
 			});
 		case 'RESERVED':
 			return internRule(rule.content, resolve);
+		case EOF:
+			return { type: 'EOF' };
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
@@ -957,6 +963,8 @@ function productionsOf(rule: InternedRule, alias?: AliasFact): ProductionStep[][
 	switch (rule.type) {
 		case 'BLANK':
 			return [[]];
+		case 'EOF':
+			return [[{ key: END_STEP_KEY }]];
 		case 'SYM':
 			return [[alias === undefined ? { key: rule.key } : { key: rule.key, alias }]];
 		case 'META':
@@ -981,6 +989,14 @@ function productionsOf(rule: InternedRule, alias?: AliasFact): ProductionStep[][
 		default:
 			throw new Error(`symbol-table: a ${rule.type} survived token extraction`);
 	}
+}
+
+function completedProductions(productions: readonly ProductionStep[][]): ProductionStep[][] {
+	return productions.flatMap((production) => {
+		const end = production.findIndex((step) => step.key === END_STEP_KEY);
+		if (end < 0) return [production];
+		return end === production.length - 1 ? [production.slice(0, end)] : [];
+	});
 }
 
 const C_SYMBOL_CHARACTER_NAMES: Readonly<Record<string, string>> = {
@@ -1225,7 +1241,7 @@ export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTa
 
 	const syntax = expandRepeats(variables);
 	const byKey = new Map(syntax.map((variable) => [`nt:${variable.name}`, variable]));
-	const productions = new Map(syntax.map((variable) => [`nt:${variable.name}`, productionsOf(variable.rule)]));
+	const productions = new Map(syntax.map((variable) => [`nt:${variable.name}`, completedProductions(productionsOf(variable.rule))]));
 	const inline = new Set(grammar.inline.filter((name) => live.has(name)).map((name) => replace(resolve(name))));
 	const reachable = new Set<string>();
 	const queue = [`nt:${variables[0]!.name}`, ...extraKeys];

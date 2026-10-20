@@ -1,4 +1,4 @@
-import { evaluateDsl, evaluateUnboundDsl } from '../compiler/evaluate.ts';
+import { evaluateDsl, evaluateUnboundDsl } from '../dsl/evaluate.ts';
 import { DERIVATION_INPUTS_MARKER, derivationInputsOf, type DerivationInputs } from './evaluate-for-derivation.ts';
 
 const entryPath = process.argv[2];

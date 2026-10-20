@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, it, expect } from 'vitest';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 interface CompiledGrammarJson {

@@ -1,7 +1,7 @@
 import { NO_FILE_TYPES } from './upstream-file-types.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
-import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
+import { isBlank, isSpliceableBareMember, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
 import { runToFixpoint } from './fixpoint.ts';
@@ -9,7 +9,7 @@ import { DedupedCollector } from './model/node-map.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
 import { withAttrsFrom, withKindFacts, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
-import { attributeBuilder, isSlotPromotedLiteral } from '../dsl/builders.ts';
+import { attributeBuilder, collapsedInto, isSlotPromotedLiteral, withWrapperMultiplicity } from '../dsl/builders.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
@@ -44,23 +44,14 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 		word: null
 	};
 }
-import { inlineRefs, fuseHeadRepeatLists, combineMultiplicity, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
+import { inlineRefs, fuseHeadRepeatLists, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { AssembledNode } from './model/node-map.ts';
 
 const seqOfLeavesWalker = new RuleWalker<RenderRule>();
 
 function collapseSingleMemberSeq(recursed: RenderRule): RenderRule {
-	if (recursed.type === SEQ && recursed.members.length === 1) {
-		const survivor = recursed.members[0]!;
-		const carried = withAttrsFrom(recursed, survivor);
-		if (recursed.multiplicity !== undefined) {
-			const combined = combineMultiplicity(recursed.multiplicity, survivor.multiplicity);
-			if (combined !== undefined) return { ...carried, multiplicity: combined };
-		}
-		return carried;
-	}
-	return recursed;
+	return recursed.type === SEQ && recursed.members.length === 1 ? collapsedInto(recursed, recursed.members[0]!) : recursed;
 }
 
 export function canonicalizeSeqOfLeaves(rule: RenderRule): RenderRule {
@@ -79,12 +70,6 @@ function isLeaf(rule: RenderRule): boolean {
 		default:
 			return false;
 	}
-}
-
-export function isEmptyMatchMember(rule: RenderRule): boolean {
-	if (rule.type === PATTERN && rule.value === '') return true;
-	if (rule.type === SEQ && rule.members.length === 0) return true;
-	return false;
 }
 
 function liftSharedArmAttrs(rule: ChoiceRule): ChoiceRule {
@@ -239,21 +224,18 @@ function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 }
 
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
-	const b = ctx.builder;
-	const nested = rule.members.filter((m) => m.type === CHOICE);
+	const nested = rule.members.filter(isSplicedChoice);
 	const host: ChoiceRule = nested.length > 0 ? absorbIds(rule, ...nested) : rule;
-	const members = rule.members.flatMap((m) =>
-		m.type === CHOICE ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]
-	);
-	const empty = members.findIndex(isEmptyMatchMember);
-	if (empty >= 0 && members.length > 1) {
-		const nonEmpty = members.filter((_, i) => i !== empty);
-		const inner: RenderRule =
-			nonEmpty.length === 1 ? absorbIds(nonEmpty[0]!, host) : { ...host, ...b.choice(...nonEmpty) };
-		return withAttrsFrom(host, b.optional(inner));
-	}
+	const members = rule.members.flatMap((m) => (isSplicedChoice(m) ? m.members.map((arm) => withAttrsFrom(m, arm)) : [m]));
 	if (members.length === 1) return withAttrsFrom(host, absorbIds(members[0]!, host));
-	return { ...host, ...mergeBranchesForChoice(b.choice(...members)) };
+	const built = ctx.builder.choice(...members);
+	if (built.type !== CHOICE) return collapsedInto(host, built);
+	if (built.members.length === members.length) return { ...host, ...mergeBranchesForChoice(built) };
+	return withWrapperMultiplicity(host, built, { ...host, ...built });
+}
+
+function isSplicedChoice(rule: RenderRule): rule is ChoiceRule {
+	return rule.type === CHOICE && !isBlank(rule);
 }
 
 export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {
@@ -339,14 +321,8 @@ function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): Re
 		if (m.type === SEQ && (m.members.length === 0 || isAllTextRender(m))) return false;
 		return true;
 	});
-	const members = filtered.flatMap((m) => (isSpliceableBareSeq(m) ? m.members : [m]));
+	const members = filtered.flatMap((m) => (isSpliceableBareMember(m) ? m.members : [m]));
 	if (members.length === 0) return withAttrsFrom(rule, { type: SEQ, members: [] });
-	if (members.length === 1) {
-		const survivor = members[0]!;
-		const carried = withAttrsFrom(rule, survivor);
-		const combined = combineMultiplicity(rule.multiplicity, survivor.multiplicity);
-		if (combined !== undefined) return { ...carried, multiplicity: combined };
-		return carried;
-	}
+	if (members.length === 1) return collapsedInto(rule, members[0]!);
 	return withAttrsFrom(rule, { type: SEQ, members });
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { allGrammars, grammarPackage } from '../../grammars.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { contentKeysOf, fieldContentsOf, judgeFields, type FieldContents } from '../../__tests__/helpers/reauthored-fields.ts';
 
 const symbolsOf = (rule: unknown, out = new Set<string>()): Set<string> => {

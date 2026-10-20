@@ -1,4 +1,5 @@
-import { EMPTY_SEPARATOR_TOKEN, SEPARATOR_LABEL, parseSeamLabel, parseSpacingLabel, parseFlankAddress } from '../../dsl/primitives/spacing.ts';
+import { EMPTY_SEPARATOR_TOKEN, SEPARATOR_LABEL } from '../../dsl/primitives/spacing.ts';
+import type { SpacingAddress } from '../../types/spacing.ts';
 import {
 	comparePreferencePaths,
 	parsePreferencePath,
@@ -17,6 +18,7 @@ export interface SiteAddressInput {
 	readonly slot: string;
 	readonly address: string;
 	readonly label: string;
+	readonly spacing?: SpacingAddress;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
 	readonly edgeArm?: EdgeArm;
@@ -50,8 +52,8 @@ export function cascadePathsOf(
 ): readonly (readonly PreferenceSegment[])[] | undefined {
 	if (site.edgeLiterals === undefined || site.edgeLiterals.length === 0) return undefined;
 	const own = displayNameOf(site.kind, nodeMap);
-	const seam = parseSeamLabel(site.address);
-	if (seam === undefined || seam.token !== own) return undefined;
+	const seam = site.spacing;
+	if (seam?.at !== 'seam' || seam.token !== own) return undefined;
 	return site.edgeLiterals.map((edgeLiteral) => {
 		const text = anonTokenText(kindEntries, edgeLiteral);
 		const literal: PreferenceSegment = text === undefined ? { kind: 'fieldName', name: edgeLiteral } : { kind: 'literal', text };
@@ -64,38 +66,36 @@ export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLi
 	const own = displayNameOf(site.kind, nodeMap);
 	const kind: PreferenceSegment = { kind: 'kind-match', name: own };
 
-	const seam = parseSeamLabel(site.address);
-	if (seam !== undefined) {
-		const side: PreferenceSegment = { kind: 'name', name: seam.side };
-		if (seam.token === own) return [kind, side];
-		const text = anonTokenText(kindEntries, seam.token);
+	const spacing = site.spacing;
+	if (spacing?.at === 'seam') {
+		const side: PreferenceSegment = { kind: 'name', name: spacing.side };
+		if (spacing.token === own) return [kind, side];
+		const text = anonTokenText(kindEntries, spacing.token);
 		return text === undefined
-			? [kind, { kind: 'fieldName', name: seam.token }, side]
+			? [kind, { kind: 'fieldName', name: spacing.token }, side]
 			: [kind, { kind: 'literal', text }, side];
 	}
 
-	const declared = parseSpacingLabel(site.label);
-	if (declared !== undefined) {
+	if (spacing?.at === 'separator') {
 		const text =
-			declared.token === EMPTY_SEPARATOR_TOKEN || declared.token === own ? undefined : anonTokenText(kindEntries, declared.token);
+			spacing.token === EMPTY_SEPARATOR_TOKEN || spacing.token === own ? undefined : anonTokenText(kindEntries, spacing.token);
 		const token: readonly PreferenceSegment[] = text === undefined ? [] : [{ kind: 'literal', text }];
 		const separator: readonly PreferenceSegment[] = [
 			{ kind: 'fieldName', name: site.slot },
 			{ kind: 'name', name: 'separator' },
 			...token
 		];
-		return declared.side === undefined ? [kind, ...separator] : [kind, ...separator, { kind: 'name', name: declared.side }];
+		return spacing.side === undefined ? [kind, ...separator] : [kind, ...separator, { kind: 'name', name: spacing.side }];
+	}
+
+	if (spacing?.at === 'flank') {
+		return [kind, { kind: 'fieldName', name: site.slot }, { kind: 'name', name: spacing.side }];
 	}
 
 	if (site.address === `${site.slot}_${site.label}`) {
 		const label: PreferenceSegment = { kind: 'name', name: site.label };
 		const slot: PreferenceSegment = { kind: 'fieldName', name: site.slot };
 		return site.label === SEPARATOR_LABEL ? [kind, slot, label, { kind: 'name', name: 'kind' }] : [kind, slot, label];
-	}
-
-	const flank = parseFlankAddress(site.address);
-	if (flank !== undefined) {
-		return [kind, { kind: 'fieldName', name: site.slot }, { kind: 'name', name: flank.side }];
 	}
 
 	return [kind, ...parsePreferencePath(site.address)];

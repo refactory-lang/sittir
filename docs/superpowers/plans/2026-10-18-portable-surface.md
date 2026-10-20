@@ -249,6 +249,8 @@ Ruled (2026-10-19): two parts. **3b-1**, from master: the `crate` alias, the clo
 
 ### Task 6: `ofType` takes a vocabulary kind
 
+Ran ahead of 3b-2, by the user's ruling (2026-10-19). Until 3b-2 lands, `ofType` reads placed classifications the way `portable.is` does: an impl or class-body method reads as a function, not a method.
+
 **Files:**
 - Modify: `packages/common/src/query.ts` (`ofTypeStep`, the declarative compile at :349/:482/:544/:599), `packages/types/src/query.ts:168` (overload `ofType<P extends PortableKind>(kind: P): View<…>`)
 - Test: `packages/common/tests/query-portable.test.ts`

@@ -13674,10 +13674,10 @@ residual table on the TypeScript options surface.
  * One spacing-table site of the render crate: the owning kind's visible
  * name and slot, the label that is its option key, the dense constant and
  * the node field it fills (the site key, wire `_<site key>`),
- * the default kind id and the ids it admits. `side` is present only for
- * synthesized separator spacing (before, after, or the single gap of an
- * unseparated repeat), which is what gives the site a node field; a
- * declared preference has none because its choice is already a slot.
+ * the default kind id and the ids it admits. `spacing`, the address of
+ * the gap, is present only for synthesized spacing (a separator gap, a
+ * token seam or an array flank); a declared preference has none because
+ * its choice is already a slot.
  */
 ```
 
@@ -13685,7 +13685,7 @@ A list whose separator is a choice of literal tokens has one more row:
 `role: 'separator'`, field `separator_kind`, wire key `_separator`, the
 declared default's kind id and the choice's literal kinds as `allowedIds`,
 and `defaultText` (the default token's text) for the render's fallback
-arm. It has no `side` and registers no top-level label, like the
+arm. It has no `spacing` and registers no top-level label, like the
 delimiter site.
 
 `strength` (`SeamStrength`, the name of a core `spacing::SeamStrength` variant) is the sixth column of the emitted
@@ -13768,9 +13768,9 @@ and `seatLoops` passes to `fill_seated_gaps`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seatEdgeSide`
 
-The side of a seated site's edge, read from the parsed label of the child's
-edge address the site carries (`seat.field`). A seat whose label is not the
-seated kind's own edge is a malformed site and fails generation.
+The side of a seated site's edge, read from the seam address the site
+carries: the seated child's own edge. A seat whose address is not the seated
+kind's edge is a malformed site and fails generation.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::separatorSitesOf`
 
@@ -14273,10 +14273,10 @@ slot's stored separator by. A list with no multiple slot is a compile error.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 
-```text
-/** The spacing sites of a kind that own a node field: the separator
- *  spacing sites, each `Option<u16>` named by the site key. */
-```
+A kind's own synthesized spacing sites, each with an address (`spacing`) and
+no seat, typed so the address is present for the render body's seam, edge,
+separator-gap and flank lookups. Its separator gaps are the sites that own a
+node field, an `Option<u16>` named by the site key.
 
 ### `packages/codegen/src/emitters/render-module.ts::kindEdgeSidesOf`
 
@@ -15136,6 +15136,12 @@ The text of `node-model.json5`, one node per line (`printRecordLines`). `generat
 ### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
 
 An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seamOf`
+
+A spacing row's seam address, for a row that must be a seam: a kind's edge
+or one of its edge arms. A row without one is malformed and fails generation,
+naming the site.
 
 ### `packages/codegen/src/emitters/render-module.ts::recordsTs`
 

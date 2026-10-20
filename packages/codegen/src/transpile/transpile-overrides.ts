@@ -1,7 +1,7 @@
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, posix } from 'node:path';
 import { GRAMMAR_ENTRY, grammarTypePrefix, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
-import { packageEntryPath } from '../compiler/resolve-grammar.ts';
+import { packageEntryPath } from '../dsl/resolve-grammar.ts';
 import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 

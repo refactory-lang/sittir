@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';

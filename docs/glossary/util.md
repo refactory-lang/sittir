@@ -195,7 +195,7 @@ A literal's text as a RegExp source that matches exactly that text: every RegExp
  * derivation behind pruning unreferenced hidden rules from BOTH pipelines'
  * final rule sets
  * (`transpile/prune-grammar-json.ts` for the tree-sitter CLI's grammar.json,
- * `compiler/evaluate.ts` for the sittir-evaluated rule map). The two prunes
+ * `dsl/evaluate.ts` for the sittir-evaluated rule map). The two prunes
  * MUST agree or the model diverges from the parser (the phantom-kind class),
  * which is why the traversal lives here once.
  *

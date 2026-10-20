@@ -28,6 +28,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -50,6 +51,7 @@ function withContent(node: object, content: Rule): Rule {
 }
 import {
 	isArmChoice,
+	isBlank,
 	separatorOf,
 	matchesEmpty,
 	isInlineSafe,
@@ -1363,7 +1365,7 @@ function detectSymbolTarget(member: Rule, isTextToken: TextTokenTest): SymbolTar
 			if (isTextToken(sn.name)) continue;
 			if (symIdx !== -1) return null;
 			symIdx = i;
-		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN') {
+		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN' && !isBlank(sn)) {
 			return null;
 		}
 	}
@@ -2528,6 +2530,7 @@ function fieldOwnerPrefixedLists(
 			case INDENT:
 			case DEDENT:
 			case NEWLINE:
+			case EOF:
 			case 'BLANK':
 				return node;
 			default:

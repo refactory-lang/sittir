@@ -21,6 +21,11 @@ export type HeldTemplate = Expect<
 >;
 export type HeldNone = Expect<Equals<FormsHolding<T.CallExpression.Parsed, 'arguments', string>, never>>;
 
+// An untyped node has no language, so no form's setter admits it, alone or among typed nodes.
+type Untyped = { readonly $type: number; $render: () => string };
+export type HeldNoneUntyped = Expect<Equals<FormsHolding<T.CallExpression.Parsed, 'arguments', Untyped>, never>>;
+export type HeldNoneTypedOrUntyped = Expect<Equals<FormsHolding<T.CallExpression.Parsed, 'arguments', T.Arguments.Parsed | Untyped>, never>>;
+
 if (is.callExpressionCall(call)) call.$with.arguments(args);
 
 declare const breakStatement: T.BreakStatement.Parsed;

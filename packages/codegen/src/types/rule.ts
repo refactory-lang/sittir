@@ -10,12 +10,14 @@ import {
 	PATTERN,
 	INDENT,
 	DEDENT,
+	EOF,
 	NEWLINE,
 	SYMBOL,
 	ALIAS,
 	TOKEN
 } from './rule-types.ts';
 import type { RuleMetadata } from './rule-metadata-brand.ts';
+import type { SpacingAddress } from './spacing.ts';
 
 export type RuleId = string;
 
@@ -37,7 +39,7 @@ export type RuleAnnotations = {
 	readonly variantOf?: string;
 	readonly definedBy?: LabelProvenance;
 	readonly default?: true;
-	readonly preference?: string;
+	readonly spacing?: SpacingAddress;
 	readonly arm?: string;
 	readonly hoisted?: true;
 	readonly flattened?: true;
@@ -97,6 +99,8 @@ export type Rule<Phase extends PhaseName = 'normalize'> =
 	| IndentRule<Phase>
 	| DedentRule<Phase>
 	| NewlineRule<Phase>
+	| EofRule<Phase>
+	| BlankRule<Phase>
 	| SymbolRule<Phase>
 	| OptionalRule<Phase>
 	| FieldRule<Phase>
@@ -283,6 +287,12 @@ export type DedentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof NEWLINE;
 };
+
+export type EofRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
+	readonly type: typeof EOF;
+};
+
+export type BlankRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate' ? RuleBase<Phase> & { readonly type: 'BLANK' } : never;
 
 export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;
