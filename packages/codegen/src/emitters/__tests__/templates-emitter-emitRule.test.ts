@@ -30,6 +30,7 @@ import type { RenderRule } from '../../types/rule.ts';
 
 const shown = (rule: RenderRule, ctx: EmitCtx): string => showBody(emitRule(rule, ctx));
 import { makeRuleMetadata } from '../../dsl/rule-metadata.ts';
+import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	return {
@@ -649,7 +650,7 @@ function seamChoice(label: string): ChoiceRule {
 			type: SYMBOL,
 			name,
 			nonterminal: true,
-			annotations: { preference: label, arm, ...(i === 0 ? { default: true } : {}) }
+			annotations: { spacing: parseSpacingAddress(label), arm, ...(i === 0 ? { default: true } : {}) }
 		}))
 	} as unknown as ChoiceRule;
 }

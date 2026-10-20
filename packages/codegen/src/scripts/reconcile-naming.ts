@@ -7,7 +7,7 @@ import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { assertGrammar, grammarPackage, stableGrammars, type GrammarName } from '../grammars.ts';
-import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../dsl/evaluate-package.ts';
 
 
 export interface Divergence {

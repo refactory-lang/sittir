@@ -22,6 +22,9 @@ export interface PatternRule<V extends string | RegExp | RustRegex = string> {
 export interface BlankRule {
 	readonly type: 'BLANK';
 }
+export interface EofRule {
+	readonly type: 'EOF';
+}
 export interface RepeatRule<C extends GrammarRule = GrammarRule> {
 	readonly type: 'REPEAT';
 	readonly content: C;
@@ -83,6 +86,7 @@ export type GrammarRule =
 	| StringRule<string>
 	| PatternRule<string>
 	| BlankRule
+	| EofRule
 	| RepeatRule<GrammarRule>
 	| Repeat1Rule<GrammarRule>
 	| FieldRule<string, GrammarRule>

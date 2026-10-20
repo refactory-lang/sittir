@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isWitnessVerified } from '../compiler/diagnostics/rule-causes.ts';
-import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../dsl/evaluate-package.ts';
 import { grammarPackage } from '../grammars.ts';
 
 const CEILINGS: Record<string, number> = { typescript: 5, rust: 8, python: 15, scm: 0, regex: 0 };

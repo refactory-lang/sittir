@@ -19,6 +19,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	IMMEDIATE_TOKEN,
 	INDENT,
@@ -59,6 +60,8 @@ export function classifyByType(
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
+		case EOF:
+		case 'BLANK':
 			return 'terminal';
 		case TOKEN:
 		case FIELD:
@@ -110,6 +113,8 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
+		case EOF:
+		case 'BLANK':
 			return [];
 		default:
 			return assertNever(anyRule);
@@ -126,9 +131,12 @@ export function isEnumChoiceRule<P extends PhaseName>(
 	);
 }
 
-export function isSpliceableBareSeq(rule: Rule<'normalize'>): rule is SeqRule<'normalize'> {
+export function isSpliceableBareMember(rule: Rule<'normalize'>): rule is SeqRule<'normalize'> | ChoiceRule<'normalize'> {
 	return (
-		rule.type === SEQ && rule.fieldName === undefined && rule.separator === undefined && rule.multiplicity === undefined
+		(rule.type === SEQ || isBlank(rule)) &&
+		rule.fieldName === undefined &&
+		rule.separator === undefined &&
+		rule.multiplicity === undefined
 	);
 }
 import type { DelimiterMode } from '../types/rule.ts';
@@ -153,14 +161,18 @@ export function isBlank(rule: unknown): boolean {
 	return (r.type === CHOICE || r.type === SEQ) && Array.isArray(r.members) && r.members.length === 0;
 }
 
+export function withoutBlankMembers<R extends RuleLike & { readonly members: readonly unknown[] }>(seq: R): R {
+	return seq.members.some(isBlank) ? { ...seq, members: seq.members.filter((member) => !isBlank(member)) } : seq;
+}
+
 export function optionalContentOf<R extends RuleLike>(rule: R): R | undefined {
 	if (rule.type === OPTIONAL) return (rule as unknown as { content: R }).content;
 	if (rule.type !== CHOICE) return undefined;
-	const members = (rule as unknown as { members?: readonly R[] }).members;
-	if (!Array.isArray(members) || members.length !== 2) return undefined;
-	const [first, second] = members as [R, R];
-	if (isBlank(first) === isBlank(second)) return undefined;
-	return isBlank(second) ? first : second;
+	const choice = rule as unknown as RuleLike & { readonly members?: readonly R[] };
+	if (!Array.isArray(choice.members)) return undefined;
+	const arms = withoutBlankMembers(choice as RuleLike & { readonly members: readonly R[] }).members;
+	if (arms === choice.members || arms.length === 0) return undefined;
+	return arms.length === 1 ? arms[0] : ({ type: CHOICE, members: arms } as unknown as R);
 }
 
 export function isArmChoice(rule: RuleLike): boolean {
@@ -272,7 +284,7 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 		const r = m as Record<string, unknown>;
 		const t = typeof r.type === 'string' ? r.type : '';
 
-		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlank(r)) continue;
+		if (isStringType(t) || typeEq(t, 'TOKEN') || typeEq(t, EOF) || isBlank(r)) continue;
 
 		if (rulesBag && isSymbolType(t)) {
 			const name = typeof r.name === 'string' ? r.name : undefined;
@@ -867,7 +879,8 @@ export function normalizeMember(m: unknown): {
 export function withOptionalContent<R extends RuleLike>(rule: R, content: R): R {
 	if (rule.type === OPTIONAL) return { ...rule, content };
 	const members = (rule as unknown as { members: readonly R[] }).members;
-	return { ...rule, members: members.map((m) => (isBlank(m) ? m : content)) };
+	const first = members.findIndex((m) => !isBlank(m));
+	return { ...rule, members: members.flatMap((m, i) => (i === first ? [content] : isBlank(m) ? [m] : [])) };
 }
 
 export function optionalSeqBodyOf<R extends RuleLike>(rule: R): R | undefined {

@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { evaluate } from '../evaluate.ts';
+import { evaluate } from '../../dsl/evaluate.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../../dsl/conflict-resolutions.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 

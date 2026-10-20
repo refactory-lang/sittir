@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { withDslGlobals } from '../compiler/evaluate.ts';
+import { withDslGlobals } from '../dsl/evaluate.ts';
 import type { Bindings, LeadMatch } from '../dsl/bind.ts';
 import { grammarPackageDir, type GrammarName } from '../grammars.ts';
 import { REGENERATE_BINDINGS_COMMAND } from './hash.ts';
