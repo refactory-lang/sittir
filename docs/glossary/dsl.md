@@ -316,7 +316,7 @@ compares a rule type against `'BLANK'` or checks for zero members to mean
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::optionalContentOf`
 
-The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: link's stamping (`compiler/link.ts::rewriteRuleForStamp`) builds its `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
+The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: the compile boundary (`compiler/canonical-rules.ts::canonicalChoiceRule`) and link's stamping (`compiler/link.ts::rewriteRuleForStamp`) build their `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isArmChoice`
 
