@@ -14,6 +14,7 @@ import {
 	inTreeEngine,
 	currentHandle,
 	listSlotWith,
+	elementsWith,
 	seatWith,
 	groupField,
 	STORED_SLOT_READERS,
@@ -50,6 +51,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptySourceFile } from './types.js';
+import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 import { records as R } from './records.js';
@@ -5884,7 +5886,17 @@ export function wrapMacroRules(data: T.MacroRules, tree: TreeHandle): T.MacroRul
 		items() {
 			return hydrateSlots<T.MacroRule>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.MacroRules['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapMacroRules(
+						{ ...$edited(data), _item: admitSlot(handle, 'macro_rules', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapMacroRules({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -5919,7 +5931,25 @@ export function wrapEnumVariantListElements(
 		items() {
 			return hydrateSlots<T.AttributedEnumVariant>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant },
+						(...v: NonEmptyArray<NonNullable<T.EnumVariantListElements['_item']>[number]>) =>
+							wrapEnumVariantListElements(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'enum_variant_list_elements', 'items', restItems('items', v))
+								},
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapEnumVariantListElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -5959,7 +5989,25 @@ export function wrapFieldDeclarationListElements(
 		items() {
 			return hydrateSlots<T.AttributedFieldDeclaration>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration },
+						(...v: NonEmptyArray<NonNullable<T.FieldDeclarationListElements['_item']>[number]>) =>
+							wrapFieldDeclarationListElements(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'field_declaration_list_elements', 'items', restItems('items', v))
+								},
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapFieldDeclarationListElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -5999,7 +6047,29 @@ export function wrapOrderedFieldDeclarationListElements(
 		items() {
 			return hydrateSlots<T.AttributedOrderedField>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{
+							slot: 'items',
+							keys: ['attributeItem', 'visibilityModifier', 'type'],
+							make: RAW.buildAttributedOrderedField
+						},
+						(...v: NonEmptyArray<NonNullable<T.OrderedFieldDeclarationListElements['_item']>[number]>) =>
+							wrapOrderedFieldDeclarationListElements(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'ordered_field_declaration_list_elements', 'items', restItems('items', v))
+								},
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapOrderedFieldDeclarationListElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -6036,7 +6106,17 @@ export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle): 
 		items() {
 			return hydrateSlots<T.WherePredicate>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.WherePredicates['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapWherePredicates(
+						{ ...$edited(data), _item: admitSlot(handle, 'where_predicates', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapWherePredicates({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6071,7 +6151,25 @@ export function wrapTypeParametersElements(
 		items() {
 			return hydrateSlots<T.AttributedTypeParameter>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter },
+						(...v: NonEmptyArray<NonNullable<T.TypeParametersElements['_item']>[number]>) =>
+							wrapTypeParametersElements(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'type_parameters_elements', 'items', restItems('items', v))
+								},
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTypeParametersElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -6119,7 +6217,17 @@ export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClaus
 				| T.UseWildcard
 			>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.UseClauses['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapUseClauses(
+						{ ...$edited(data), _item: admitSlot(handle, 'use_clauses', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapUseClauses({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6151,7 +6259,22 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		items() {
 			return hydrateSlots<T.AttributedParameter>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
+						(...v: NonEmptyArray<NonNullable<T.ParametersElements['_item']>[number]>) =>
+							wrapParametersElements(
+								{ ...$edited(data), _item: admitSlot(handle, 'parameters_elements', 'items', restItems('items', v)) },
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapParametersElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -6188,7 +6311,17 @@ export function wrapLifetimes(data: T.Lifetimes, tree: TreeHandle): T.Lifetimes.
 		items() {
 			return hydrateSlots<T.Lifetime>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.Lifetimes['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapLifetimes(
+						{ ...$edited(data), _item: admitSlot(handle, 'lifetimes', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapLifetimes({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6220,7 +6353,14 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		items() {
 			return hydrateSlots<T.Type>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTypes({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6252,7 +6392,17 @@ export function wrapUseBoundsElements(data: T.UseBoundsElements, tree: TreeHandl
 		items() {
 			return hydrateSlots<T.Lifetime | T.TypeIdentifier>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.UseBoundsElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapUseBoundsElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'use_bounds_elements', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapUseBoundsElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6287,7 +6437,25 @@ export function wrapTypeArgumentsElements(
 		items() {
 			return hydrateSlots<T.TypeArgument>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument },
+						(...v: NonEmptyArray<NonNullable<T.TypeArgumentsElements['_item']>[number]>) =>
+							wrapTypeArgumentsElements(
+								{
+									...$edited(data),
+									_item: admitSlot(handle, 'type_arguments_elements', 'items', restItems('items', v))
+								},
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTypeArgumentsElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -6324,7 +6492,22 @@ export function wrapArgumentsElements(data: T.ArgumentsElements, tree: TreeHandl
 		items() {
 			return hydrateSlots<T.AttributedArgument>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument },
+						(...v: NonEmptyArray<NonNullable<T.ArgumentsElements['_item']>[number]>) =>
+							wrapArgumentsElements(
+								{ ...$edited(data), _item: admitSlot(handle, 'arguments_elements', 'items', restItems('items', v)) },
+								tree
+							)
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapArgumentsElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -6361,7 +6544,17 @@ export function wrapExpressions(data: T.Expressions, tree: TreeHandle): T.Expres
 		items() {
 			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.Expressions['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapExpressions(
+						{ ...$edited(data), _item: admitSlot(handle, 'expressions', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapExpressions({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6400,7 +6593,20 @@ export function wrapFieldInitializerListElements(
 				tree
 			);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.FieldInitializerListElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapFieldInitializerListElements(
+						{
+							...$edited(data),
+							_item: admitSlot(handle, 'field_initializer_list_elements', 'items', restItems('items', v))
+						},
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapFieldInitializerListElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6435,7 +6641,17 @@ export function wrapTuplePatternElements(
 		items() {
 			return hydrateSlots<T.Pattern | T.ClosureExpression>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.TuplePatternElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapTuplePatternElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'tuple_pattern_elements', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTuplePatternElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6467,7 +6683,14 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		items() {
 			return hydrateSlots<T.Pattern>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.Patterns['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapPatterns({ ...$edited(data), _item: admitSlot(handle, 'patterns', 'items', restItems('items', v)) }, tree)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapPatterns({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -6502,7 +6725,17 @@ export function wrapStructPatternElements(
 		items() {
 			return hydrateSlots<T.FieldPattern | TSKindId.RemainingFieldPattern>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.StructPatternElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapStructPatternElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'struct_pattern_elements', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapStructPatternElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14245,7 +14478,10 @@ function viewMacroRules(data: RecordStub, tree: TreeHandle): T.MacroRules.Parsed
 		items() {
 			return viewSlots<T.MacroRule>(this, R.MacroRulesNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14277,7 +14513,10 @@ function viewEnumVariantListElements(data: RecordStub, tree: TreeHandle): T.Enum
 		items() {
 			return viewSlots<T.AttributedEnumVariant>(this, R.EnumVariantListElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14314,7 +14553,10 @@ function viewFieldDeclarationListElements(data: RecordStub, tree: TreeHandle): T
 		items() {
 			return viewSlots<T.AttributedFieldDeclaration>(this, R.FieldDeclarationListElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14354,7 +14596,10 @@ function viewOrderedFieldDeclarationListElements(
 		items() {
 			return viewSlots<T.AttributedOrderedField>(this, R.OrderedFieldDeclarationListElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14391,7 +14636,10 @@ function viewWherePredicates(data: RecordStub, tree: TreeHandle): T.WherePredica
 		items() {
 			return viewSlots<T.WherePredicate>(this, R.WherePredicatesNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14423,7 +14671,10 @@ function viewTypeParametersElements(data: RecordStub, tree: TreeHandle): T.TypeP
 		items() {
 			return viewSlots<T.AttributedTypeParameter>(this, R.TypeParametersElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14471,7 +14722,10 @@ function viewUseClauses(data: RecordStub, tree: TreeHandle): T.UseClauses.Parsed
 				| T.UseWildcard
 			>(this, R.UseClausesNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14503,7 +14757,10 @@ function viewParametersElements(data: RecordStub, tree: TreeHandle): T.Parameter
 		items() {
 			return viewSlots<T.AttributedParameter>(this, R.ParametersElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14540,7 +14797,10 @@ function viewLifetimes(data: RecordStub, tree: TreeHandle): T.Lifetimes.Parsed {
 		items() {
 			return viewSlots<T.Lifetime>(this, R.LifetimesNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14572,7 +14832,10 @@ function viewTypes(data: RecordStub, tree: TreeHandle): T.Types.Parsed {
 		items() {
 			return viewSlots<T.Type>(this, R.TypesNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14604,7 +14867,10 @@ function viewUseBoundsElements(data: RecordStub, tree: TreeHandle): T.UseBoundsE
 		items() {
 			return viewSlots<T.Lifetime | T.TypeIdentifier>(this, R.UseBoundsElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14636,7 +14902,10 @@ function viewTypeArgumentsElements(data: RecordStub, tree: TreeHandle): T.TypeAr
 		items() {
 			return viewSlots<T.TypeArgument>(this, R.TypeArgumentsElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14673,7 +14942,10 @@ function viewArgumentsElements(data: RecordStub, tree: TreeHandle): T.ArgumentsE
 		items() {
 			return viewSlots<T.AttributedArgument>(this, R.ArgumentsElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14710,7 +14982,10 @@ function viewExpressions(data: RecordStub, tree: TreeHandle): T.Expressions.Pars
 		items() {
 			return viewSlots<T.Expression>(this, R.ExpressionsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14746,7 +15021,10 @@ function viewFieldInitializerListElements(data: RecordStub, tree: TreeHandle): T
 				tree
 			);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14778,7 +15056,10 @@ function viewTuplePatternElements(data: RecordStub, tree: TreeHandle): T.TuplePa
 		items() {
 			return viewSlots<T.Pattern | T.ClosureExpression>(this, R.TuplePatternElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14810,7 +15091,10 @@ function viewPatterns(data: RecordStub, tree: TreeHandle): T.Patterns.Parsed {
 		items() {
 			return viewSlots<T.Pattern>(this, R.PatternsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14842,7 +15126,10 @@ function viewStructPatternElements(data: RecordStub, tree: TreeHandle): T.Struct
 		items() {
 			return viewSlots<T.FieldPattern | TSKindId.RemainingFieldPattern>(this, R.StructPatternElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),

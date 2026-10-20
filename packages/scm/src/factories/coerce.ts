@@ -293,21 +293,12 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
@@ -326,7 +317,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -521,14 +512,8 @@ const _K9: readonly string[] = ['immediate_string'];
 export function coerceToProgram(): T.EmptyProgram;
 export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram>;
 export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program)) {
-		const data = input[0];
-		const stored = (data as unknown as { _definitions?: unknown })._definitions;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildProgram(
-			...(_resolveMany<T.Definition>(children, _K0, _K1) as unknown as Parameters<typeof F.buildProgram>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program))
+		return input[0] as unknown as ReturnType<typeof F.buildProgram>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -636,16 +621,8 @@ export function coerceToImmediateString(...args: unknown[]): ReturnType<typeof F
 }
 
 export function coerceToStringContent(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildStringContent> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStringContent(
-			...(_resolveMany<T.StringContentText | T.EscapeSequence>(children, _K2, _K3) as unknown as Parameters<
-				typeof F.buildStringContent
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent))
+		return input[0] as unknown as ReturnType<typeof F.buildStringContent>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -662,18 +639,8 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 }
 
 export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType<typeof F.buildParameters> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildParameters(
-			...(_resolveMany<T.Capture | T.String | T.Identifier>(
-				children,
-				_super_node_identifier,
-				_K4
-			) as unknown as Parameters<typeof F.buildParameters>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters))
+		return input[0] as unknown as ReturnType<typeof F.buildParameters>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];

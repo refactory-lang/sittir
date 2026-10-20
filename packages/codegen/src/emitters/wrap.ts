@@ -22,7 +22,7 @@ import {
 	pruneUnusedImports,
 	blankFromInput
 } from './shared.ts';
-import { builtTypeSurfaceOf, fieldElementType, listSelfViewPlan, seatPlanOf } from './factories.ts';
+import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface } from './factories.ts';
 import { collectKindEntries, findKindEntry, collectCatalogKinds, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { nodeRecordLayout, rustNodeStructName } from './render-module.ts';
@@ -257,7 +257,7 @@ function emitSeparatedListWrap(
 	}
 	lines.push(
 		...nodeMemberLines({
-			setters: seatedSetters([], plan),
+			setters: seatedSetters([...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)], plan),
 			accessors: [],
 			extra: view.members,
 			inner: innerPositionsOf(node.kind, nodeMap),
@@ -336,7 +336,7 @@ function admittedSlot(kind: string, slot: string, value: string): string {
 	return `admitSlot(handle, ${JSON.stringify(kind)}, ${JSON.stringify(slot)}, ${value})`;
 }
 
-function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): SetterEntry[] {
+function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): SetterEntry[] {
 	const wrapFn = `wrap${node.typeName}`;
 	const restSlots = new Set(
 		(builtTypeSurfaceOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries)?.setters ?? [])
@@ -362,6 +362,15 @@ function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: re
 			body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, blankFromInput(hasBlankArm(f), 'v'))} }, tree)`
 		};
 	});
+}
+
+function listOptionSetters(node: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): SetterEntry[] {
+	const surface = separatedListSurface(node, nodeMap, kindEntries);
+	return listOptionKeys(surface).map((key) => ({
+		name: key,
+		params: `v: NonNullable<(${surface.optionsType})[${JSON.stringify(key)}]>`,
+		body: `wrap${node.typeName}({ ...$edited(data), _${key}: v }, tree)`
+	}));
 }
 
 export class WrapEmitter implements CodegenEmitter<string> {

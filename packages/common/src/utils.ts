@@ -559,6 +559,18 @@ export function isNodeOfKind(v: unknown, kind: number): boolean {
 	return isNodeValue(v) && v.$type === kind;
 }
 
+/** `node` with each defined option set through its `$with` setter; throws when the node has no setter for one. */
+export function withOptions<N>(node: N, options: object): N {
+	let out: unknown = node;
+	for (const [key, value] of Object.entries(options)) {
+		if (value === undefined) continue;
+		const set = (out as { readonly $with?: Readonly<Record<string, ((v: unknown) => unknown) | undefined>> }).$with?.[key];
+		if (set === undefined) throw new Error(`cannot set the option '${key}': the node has no $with setter for it`);
+		out = set(value);
+	}
+	return out as N;
+}
+
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
 }

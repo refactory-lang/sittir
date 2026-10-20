@@ -14,7 +14,8 @@ import {
 	configFieldOr,
 	isNodeOfKind,
 	isNodeValue,
-	listStorage
+	listStorage,
+	withOptions
 } from '@sittir/common/utils';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -946,21 +947,12 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
@@ -979,7 +971,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -2699,21 +2691,8 @@ export function coerceToVariableDeclaration(
 		Object.keys(input[0] as object).every((k) => ['terminator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as T.VariableDeclaration.Options;
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
-	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.VariableDeclaration)) {
-		const data = _rest[0];
-		const stored = (data as unknown as { _declarators?: unknown })._declarators;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		const held = data as unknown as Record<string, unknown>;
-		const kept = { terminator: held['_terminator'], ...options };
-		return (F.buildVariableDeclaration as (...args: unknown[]) => ReturnType<typeof F.buildVariableDeclaration>)(
-			kept,
-			...(_resolveMany<T.VariableDeclarator | '\n' | ';'>(
-				children,
-				_K2,
-				_super_variable_declarator
-			) as readonly unknown[])
-		);
-	}
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.VariableDeclaration))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildVariableDeclaration>;
 	const _elems: readonly unknown[] = (() => {
 		if (_rest.length !== 1) return _rest;
 		const head: unknown = _rest[0];
@@ -3250,16 +3229,8 @@ export function coerceToLabeledStatement(input: T.LabeledStatement.Loose): Retur
 export function coerceToSwitchBody(): T.EmptySwitchBody;
 export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType<typeof F.buildSwitchBody>;
 export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType<typeof F.buildSwitchBody> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchBody)) {
-		const data = input[0];
-		const stored = (data as unknown as { _cases?: unknown })._cases;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildSwitchBody(
-			...(_resolveMany<T.SwitchCase | T.SwitchDefault>(children, _K2, _K10) as unknown as Parameters<
-				typeof F.buildSwitchBody
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchBody))
+		return input[0] as unknown as ReturnType<typeof F.buildSwitchBody>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3298,17 +3269,8 @@ export function coerceToSwitchCase(input: T.SwitchCase.Loose): ReturnType<typeof
 }
 
 export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): ReturnType<typeof F.buildSwitchDefault> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchDefault)) {
-		const data = input[0];
-		const stored = (data as unknown as { _body?: unknown })._body;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildSwitchDefault(
-			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Statement>(children, _K0, _K1)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildSwitchDefault>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchDefault))
+		return input[0] as unknown as ReturnType<typeof F.buildSwitchDefault>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3397,18 +3359,8 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 export function coerceToObject(): T.EmptyObject;
 export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof F.buildObject>;
 export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof F.buildObject> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Object)) {
-		const data = input[0];
-		const stored = (data as unknown as { _properties?: unknown })._properties;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildObject(
-			...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
-				children,
-				_K2,
-				_K12
-			) as unknown as Parameters<typeof F.buildObject>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Object))
+		return input[0] as unknown as ReturnType<typeof F.buildObject>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3429,16 +3381,8 @@ export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof 
 export function coerceToObjectPattern(): T.EmptyObjectPattern;
 export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): ReturnType<typeof F.buildObjectPattern>;
 export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): ReturnType<typeof F.buildObjectPattern> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectPattern)) {
-		const data = input[0];
-		const stored = (data as unknown as { _properties?: unknown })._properties;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildObjectPattern(
-			...(_resolveMany<
-				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
-			>(children, _K2, _K13) as unknown as Parameters<typeof F.buildObjectPattern>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectPattern))
+		return input[0] as unknown as ReturnType<typeof F.buildObjectPattern>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3530,16 +3474,8 @@ export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.
 export function coerceToArrayPattern(): T.EmptyArrayPattern;
 export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): ReturnType<typeof F.buildArrayPattern>;
 export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): ReturnType<typeof F.buildArrayPattern> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArrayPattern)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArrayPattern(
-			...(_resolveMany<T.Pattern | T.AssignmentPattern>(children, _K2, _K17) as unknown as Parameters<
-				typeof F.buildArrayPattern
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArrayPattern))
+		return input[0] as unknown as ReturnType<typeof F.buildArrayPattern>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4394,17 +4330,8 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 export function coerceToSequenceExpression(
 	...input: T.SequenceExpression.LooseArgs
 ): ReturnType<typeof F.buildSequenceExpression> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SequenceExpression)) {
-		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildSequenceExpression(
-			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Expression>(children, _K6, _K14)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildSequenceExpression>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SequenceExpression))
+		return input[0] as unknown as ReturnType<typeof F.buildSequenceExpression>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4455,18 +4382,8 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 }
 
 export function coerceToTemplateString(...input: T.TemplateString.LooseArgs): ReturnType<typeof F.buildTemplateString> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateString)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTemplateString(
-			...(_resolveMany<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(
-				children,
-				_K29,
-				_K30
-			) as unknown as Parameters<typeof F.buildTemplateString>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateString))
+		return input[0] as unknown as ReturnType<typeof F.buildTemplateString>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4595,17 +4512,8 @@ export function coerceToUndefined(_input?: T.Undefined.Loose): typeof F.buildUnd
 export function coerceToArguments(): T.EmptyArguments;
 export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<typeof F.buildArguments>;
 export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<typeof F.buildArguments> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Arguments)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArguments(
-			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Expression | T.SpreadElement>(children, _K6, _K16)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildArguments>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Arguments))
+		return input[0] as unknown as ReturnType<typeof F.buildArguments>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4706,17 +4614,8 @@ export function coerceToDecoratorCallExpression(
 export function coerceToClassBody(): T.EmptyClassBody;
 export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<typeof F.buildClassBody>;
 export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<typeof F.buildClassBody> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClassBody)) {
-		const data = input[0];
-		const stored = (data as unknown as { _members?: unknown })._members;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildClassBody(
-			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.ClassBodyMember>(children, _K34, _K35)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildClassBody>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClassBody))
+		return input[0] as unknown as ReturnType<typeof F.buildClassBody>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -5543,16 +5442,8 @@ export function coerceToImportRequireClause(
 }
 
 export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): ReturnType<typeof F.buildExtendsClause> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsClause)) {
-		const data = input[0];
-		const stored = (data as unknown as { _types?: unknown })._types;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExtendsClause(
-			...(_resolveManyBranch<T.ExtendsClauseSingle>(children, 'extends_clause_single') as unknown as Parameters<
-				typeof F.buildExtendsClause
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsClause))
+		return input[0] as unknown as ReturnType<typeof F.buildExtendsClause>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -5597,17 +5488,8 @@ export function coerceToExtendsClauseSingle(
 export function coerceToImplementsClause(
 	...input: T.ImplementsClause.LooseArgs
 ): ReturnType<typeof F.buildImplementsClause> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImplementsClause)) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildImplementsClause(
-			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Type>(children, _K39, _K40)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildImplementsClause>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImplementsClause))
+		return input[0] as unknown as ReturnType<typeof F.buildImplementsClause>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -5809,18 +5691,8 @@ export function coerceToInterfaceDeclaration(
 export function coerceToExtendsTypeClause(
 	...input: T.ExtendsTypeClause.LooseArgs
 ): ReturnType<typeof F.buildExtendsTypeClause> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsTypeClause)) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExtendsTypeClause(
-			...(_resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(
-				children,
-				_K2,
-				_K43
-			) as unknown as Parameters<typeof F.buildExtendsTypeClause>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsTypeClause))
+		return input[0] as unknown as ReturnType<typeof F.buildExtendsTypeClause>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -6501,16 +6373,8 @@ export function coerceToTemplateType(input: T.TemplateType.Loose): ReturnType<ty
 export function coerceToTemplateLiteralType(
 	...input: T.TemplateLiteralType.LooseArgs
 ): ReturnType<typeof F.buildTemplateLiteralType> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateLiteralType)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTemplateLiteralType(
-			...(_resolveMany<T.TemplateChars | T.TemplateType>(children, _K29, _K52) as unknown as Parameters<
-				typeof F.buildTemplateLiteralType
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateLiteralType))
+		return input[0] as unknown as ReturnType<typeof F.buildTemplateLiteralType>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -7595,26 +7459,20 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 export function coerceToExportSpecifiers(
 	...input: T.ExportSpecifiers.LooseArgs
 ): ReturnType<typeof F.buildExportSpecifiers> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExportSpecifiers)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExportSpecifiers(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>
-			>)
-		);
-	}
-	return F.buildExportSpecifiers(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ExportSpecifiers))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildExportSpecifiers>;
+	return (F.buildExportSpecifiers as (...args: unknown[]) => ReturnType<typeof F.buildExportSpecifiers>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'export_specifier',
 			(els) => els,
 			['export_specifier', 'identifier', 'string_double', 'string_single'],
@@ -7626,52 +7484,44 @@ export function coerceToExportSpecifiers(
 export function coerceToImportSpecifiers(
 	...input: T.ImportSpecifiers.LooseArgs
 ): ReturnType<typeof F.buildImportSpecifiers> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImportSpecifiers)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildImportSpecifiers(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.ImportSpecifier>>)
-		);
-	}
-	return F.buildImportSpecifiers(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) => _resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier),
-			['import_specifier_name', 'import_specifier_as']
-		) as unknown as NonEmptyArray<Admit<T.ImportSpecifier>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ImportSpecifiers))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildImportSpecifiers>;
+	return (F.buildImportSpecifiers as (...args: unknown[]) => ReturnType<typeof F.buildImportSpecifiers>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier), [
+			'import_specifier_name',
+			'import_specifier_as'
+		]) as unknown as NonEmptyArray<Admit<T.ImportSpecifier>>)
 	);
 }
 
 export function coerceToFormalParametersElements(
 	...input: T.FormalParametersElements.LooseArgs
 ): ReturnType<typeof F.buildFormalParametersElements> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FormalParametersElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFormalParametersElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>)
-		);
-	}
-	return F.buildFormalParametersElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FormalParametersElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildFormalParametersElements>;
+	return (
+		F.buildFormalParametersElements as (...args: unknown[]) => ReturnType<typeof F.buildFormalParametersElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveMany<T.RequiredParameter | T.OptionalParameter>(els, _K2, _super_formal_parameter),
 			['required_parameter', 'optional_parameter']
@@ -7708,50 +7558,40 @@ export function coerceToEnumBodyElementName(
 export function coerceToEnumBodyElements(
 	...input: T.EnumBodyElements.LooseArgs
 ): ReturnType<typeof F.buildEnumBodyElements> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumBodyElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildEnumBodyElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.EnumBodyElement>>)
-		);
-	}
-	return F.buildEnumBodyElements(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) => _resolveMany<T.EnumBodyElement>(els, _K2, _super_enum_body_element),
-			['enum_body_element_name', 'enum_assignment']
-		) as unknown as NonEmptyArray<Admit<T.EnumBodyElement>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.EnumBodyElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildEnumBodyElements>;
+	return (F.buildEnumBodyElements as (...args: unknown[]) => ReturnType<typeof F.buildEnumBodyElements>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.EnumBodyElement>(els, _K2, _super_enum_body_element), [
+			'enum_body_element_name',
+			'enum_assignment'
+		]) as unknown as NonEmptyArray<Admit<T.EnumBodyElement>>)
 	);
 }
 
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypes(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildTypes(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Types))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypes>;
+	return (F.buildTypes as (...args: unknown[]) => ReturnType<typeof F.buildTypes>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -7792,24 +7632,20 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 export function coerceToTypeParametersElements(
 	...input: T.TypeParametersElements.LooseArgs
 ): ReturnType<typeof F.buildTypeParametersElements> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParametersElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildTypeParametersElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeParametersElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeParametersElements>;
+	return (F.buildTypeParametersElements as (...args: unknown[]) => ReturnType<typeof F.buildTypeParametersElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'type_parameter',
 			(els) => _resolveManyBranch<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>(els, 'type_identifier'),
 			['type_parameter', 'type_identifier'],
@@ -7821,28 +7657,20 @@ export function coerceToTypeParametersElements(
 export function coerceToTupleTypeMembers(
 	...input: T.TupleTypeMembers.LooseArgs
 ): ReturnType<typeof F.buildTupleTypeMembers> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleTypeMembers)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTupleTypeMembers(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
-				>
-			>)
-		);
-	}
-	return F.buildTupleTypeMembers(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TupleTypeMembers))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTupleTypeMembers>;
+	return (F.buildTupleTypeMembers as (...args: unknown[]) => ReturnType<typeof F.buildTupleTypeMembers>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8003,36 +7831,23 @@ export function coerceToAmbientDeclarationModule(
 export function coerceToObjectTypeContent(
 	...input: T.ObjectTypeContent.LooseArgs
 ): ReturnType<typeof F.buildObjectTypeContent> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectTypeContent)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildObjectTypeContent(
-			{
-				separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator,
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Leading || d === Delimiter.Trailing || d === Delimiter.Both
-						? d
-						: undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature
-				>
-			>)
-		);
-	}
-	return F.buildObjectTypeContent(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator', 'delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator?: TSKindId.Comma | TSKindId.Semi;
+		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ObjectTypeContent))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildObjectTypeContent>;
+	return (F.buildObjectTypeContent as (...args: unknown[]) => ReturnType<typeof F.buildObjectTypeContent>)(
+		options,
 		...(_listElements(
-			input,
-			['separator', 'delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				_resolveMany<
@@ -9015,18 +8830,8 @@ export function coerceToCallExpressionMember(
 }
 
 export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): ReturnType<typeof F.buildStringDouble> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringDouble)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStringDouble(
-			...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
-				children,
-				_K73,
-				_K74
-			) as unknown as Parameters<typeof F.buildStringDouble>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringDouble))
+		return input[0] as unknown as ReturnType<typeof F.buildStringDouble>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -9043,18 +8848,8 @@ export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): Return
 }
 
 export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): ReturnType<typeof F.buildStringSingle> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringSingle)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStringSingle(
-			...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(
-				children,
-				_K75,
-				_K74
-			) as unknown as Parameters<typeof F.buildStringSingle>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringSingle))
+		return input[0] as unknown as ReturnType<typeof F.buildStringSingle>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];

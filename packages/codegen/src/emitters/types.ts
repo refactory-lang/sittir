@@ -102,6 +102,7 @@ import {
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
+	listOptionStorageMembers,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
@@ -1022,6 +1023,7 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
+		if (node instanceof AssembledList) lines.push(...listOptionStorageMembers(separatedListSurface(node, nodeMap, kindEntries)));
 		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
 		emitSlotHints(lines, node, nodeMap, kindEntries);
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {

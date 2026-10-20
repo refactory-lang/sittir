@@ -54,7 +54,6 @@ import {
 	textStoragesOf,
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
-export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
 	DELIMITER_IMPORT,
@@ -2000,6 +1999,12 @@ export function listOptionKeys(surface: {
 	];
 }
 
+const LIST_OPTION_STORAGE_TYPE: Readonly<Record<string, string>> = { separator: 'number', delimiter: 'Delimiter' };
+
+export function listOptionStorageMembers(surface: Parameters<typeof listOptionKeys>[0]): readonly string[] {
+	return listOptionKeys(surface).map((key) => `  readonly _${key}?: ${LIST_OPTION_STORAGE_TYPE[key]};`);
+}
+
 export function listOptionDefaults(
 	node: AssembledList,
 	nodeMap: NodeMap,
@@ -2423,13 +2428,9 @@ function listBuiltTypeSurface(
 	const seated = emittedElementsSeats(node, nodeMap, kindEntries);
 	const element = (own: string, row: 'BuildArgs' | 'LooseArgs'): string =>
 		`(${[own, ...seated.map((seat) => `T.${seat.group.typeName}.${row}[0]`)].join(' | ')})`;
-	const extraMembers = [
-		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
-		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter | undefined;'] : [])
-	];
 	return {
 		mainType: `T.${node.typeName}`,
-		members: extraMembers,
+		members: [],
 		setters,
 		buildArgs: listRestParamType(node.nonEmpty, element(surface.strictElemType, 'BuildArgs'), surface.optionsType, surface.separatorRequired),
 		looseArgs: listRestParamType(node.nonEmpty, element(`T.${node.typeName}.Loose | ${looseValueOf(surface.looseElemTypeForArray)}`, 'LooseArgs'), surface.optionsType, surface.separatorRequired),
@@ -2487,7 +2488,7 @@ function emitSeparatedListFactory(
 		if (!surface.separatorRequired) lines.push(`export function ${fn}(...elements: ${elementsType}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(${withLeadingOptions(optionsType, `...elements: ${elementsType}`)}): ReturnType<typeof _${fn}>;`);
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
-		lines.push(...leadingOptionsSplit({ type: optionsType, keys: listOptionKeys(surface), storageKeys: [] }, 'elements', elementsType));
+		lines.push(...leadingOptionsSplit({ type: optionsType, keys: listOptionKeys(surface) }, 'elements', elementsType));
 		lines.push(`  return _${fn}(elements, options);`);
 		lines.push('}');
 		lines.push(`function _${fn}(elements: ${elementsType}, options: ${optionsType}): ${listBuiltName} {`);

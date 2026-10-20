@@ -4,7 +4,6 @@ import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { AssembledList } from '../../compiler/model/node-map.ts';
 import { elementConfigsOf, groupSeatHints, listSlotHints } from '../factories.ts';
 
 const read = (grammar: string, file: string): string => readFileSync(`packages/${grammar}/src/${file}`, 'utf8');
@@ -104,7 +103,7 @@ describe('an elements seat sets the element config objects its config surface ta
 			}
 			const seatCalls = (file: string): number => [...read(grammar, file).matchAll(/\b(?:withElementsSeat|elementsWith)\(/g)].length;
 			expect(seatCalls('factories/raw.ts')).toBe(seats.length);
-			expect(seatCalls('wrap.ts')).toBe(seats.filter(({ node }) => !(node instanceof AssembledList)).length);
+			expect(seatCalls('wrap.ts')).toBe(seats.length);
 		});
 
 		it(`${grammar}: every slot that holds a list carries its list's element config`, () => {

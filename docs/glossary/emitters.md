@@ -1607,15 +1607,11 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 ```text
 /**
- * Shared body for a rest-param (`...input`) from() resolver that reconstructs
- * either from a flat list of already-resolved elements or by unwrapping an
- * existing self-UntypedNode value's storage. Both `emitRepeatedChildrenFrom`
- * (container-shape branches — spreads the resolved elements into the
- * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
- * (`'list'` kinds — passes the resolved elements as the single `elements: T[]
- * | NonEmptyArray<T>` array argument) share this exact three-shape structure
- * (numeric-discriminant gate, self-UntypedNode unwrap, fresh-input fallback);
- * they differ ONLY in how the final call expression is built from a resolved
+ * Shared body for a rest-param (`...input`) from() resolver: a sole node of
+ * the resolver's own kind comes back as itself, and anything else is resolved
+ * element by element and handed to the builder. `emitRepeatedChildrenFrom`
+ * (container-shape branches) and `emitSeparatedListFrom` (`'list'` kinds)
+ * differ ONLY in how the final call expression is built from the resolved
  * variable name, which `buildCallExpr` parameterizes.
  * For repeat-slot containers, a lone array is unwrapped before the same
  * per-element coercion used by spread arguments and config-slot arrays.
@@ -1633,20 +1629,13 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
  * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-UntypedNode check.
+ * @param kind - The grammar kind string for the same-kind check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
- * @param storageKey - The wire storage key to unwrap on the self-UntypedNode path.
+ * @param unwrapConfigKey - The slot's config key, when a lone config object carrying it unwraps to its elements.
  * @param buildCallExpr - Builds the final `factory(...)` call expression from
- *   a resolved variable name (`'input'` or `'children'`) — spread-via-unknown
- *   for container-shape factories, direct array cast for `'list'`.
- * @param childrenTypeAnnotation - Optional explicit type annotation for the
- *   self-UntypedNode-unwrap `children` local (e.g. `': readonly unknown[]'`) —
- *   `emitSeparatedListFrom` needs this so its direct (non-`unknown`-laundered)
- *   cast type-checks; the local's inferred type otherwise widens to `any[]`
- *   via the `Array.isArray` ternary, which a direct cast rejects even though
- *   the runtime value is the same. `emitRepeatedChildrenFrom` doesn't need
- *   it since its cast still routes through `unknown` first.
+ *   the resolved variable name (the rest input, or the unwrapped elements).
+ * @param leadingOptions - The kind's leading options, split off the input first.
  * @returns The emitted function source string.
  */
 ```
@@ -1662,18 +1651,6 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 #### body
 
 ```text
-// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
-// the self-UntypedNode-unwrap branch (a `data` local naming the original
-// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
-// read per-instance facts off it — e.g. preserving `_separator`/
-// `_delimiter` when reconstructing an already-wrapped
-// separatedList node); `false` for the fresh-input path, where no such
-// source node exists to read facts from.
-```
-
-#### body
-
-```text
 // TSGrammar-only kinds (string $type) can't satisfy isNode() (which
 // requires numeric $type). Skip the node-data pass-through guard entirely
 // — the check would always be false at runtime anyway.
@@ -1683,11 +1660,12 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 ```text
 // The accepted-input union allows callers to hand back an existing
-// <kind> UntypedNode OR a flat list of element children. The single-arg
-// self-UntypedNode path unwraps the storage key; otherwise every item must
-// already be an element. The storage value is typed as singular-or-array
-// on the loose `AnyUntypedNode` shape; normalize to an array before the
-// boundary cast.
+// <kind> node OR a flat list of element children. A sole node of the
+// kind is returned as it is, never rebuilt from its storage, so the
+// node keeps its identity and everything it holds; with leading options
+// it comes back through `withOptions`, each option set by its `$with`
+// setter. A kind that holds its own kind (`holdsOwnKind`) skips this
+// branch: there a sole node of the kind is an element to wrap.
 ```
 
 #### options-first list coercer
@@ -1696,7 +1674,7 @@ A separated list's rest parameter is its `LooseArgs` row, which `listBuiltTypeSu
 
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
-With leading options (`leadingOptionsOf`), the coercer first splits a leading options object off `input` (`leadingOptionsSplit`) and resolves the rest. Rebuilding from a node of its own kind, it starts from the registered values that node holds (its storage keys) and lets a passed options object override them, so a coerced node keeps its spelling.
+With leading options (`leadingOptionsOf` for a spread kind, the list's option keys for a list), the coercer first splits a leading options object off `input` (`leadingOptionsSplit`) and resolves the rest, passing the options to the builder first. Given a node of its own kind, it sets each passed option over the node's own through `$with` (`withOptions`) and reads nothing from storage; options it was not given keep the node's values.
 
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
@@ -1745,10 +1723,8 @@ A builder with leading options is called through an untyped view with the option
  * Emits the singular-child variant of a container from() function.
  *
  * @remarks
- * Casts the extracted single child all the way to the element type — the
- * container factory requires a non-nullable element when the grammar says
- * the child is required, and we can't express "indexed access on a non-null
- * tuple" through ConfigOf without pushing casts downstream.
+ * A node of the container's own kind comes back as itself, unless the kind
+ * holds its own kind (`holdsOwnKind`), where that node is the child to wrap.
  *
  * Empty collections (e.g. python `()` / `[]`) have no named children —
  * the reader promotes `(` / `)` / `[` / `]` into fields and produces no
@@ -1802,57 +1778,21 @@ A builder with leading options is called through an untyped view with the option
 
 ```text
 /**
- * Emit a `'list'` from() resolver — dedicated construct/
- * reconstruction surface built directly from `AssembledList`'s own
- * real fields, bypassing the generic `.slots` surface entirely (see
- * `AssembledList`'s doc comment, node-map.ts, and
- * `emitSeparatedListFactory`'s doc comment, factories.ts).
+ * Emit a `'list'` from() resolver, built from `AssembledList`'s own fields
+ * rather than the generic `.slots` surface (see `AssembledList`, node-map.ts,
+ * and `emitSeparatedListFactory`, factories.ts).
  *
- * Shares `emitRestParamFromResolver`'s three-shape structure with
- * `emitRepeatedChildrenFrom` (see that function's doc comment for the shared
- * shape), with ONE deliberate difference in the call expression: the
- * resolved elements are passed to the factory as the `elements` ARRAY
- * argument directly (`factory(children as Parameters<typeof factory>[0])`),
- * never spread and never indexed — a list factory's signature is
- * `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`, not the
- * `factory(...children: T[])` `emitRepeatedChildrenFrom` assumes. The
- * spread/index call shape `emitRepeatedChildrenFrom` uses for real
- * container-shape branches would bind `children[0]` to `elements` and
- * `children[1]` to `options` instead of the whole array, and nothing would
- * throw: a builder runs no non-empty check of its own.
- *
- * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
- * let the original bug hide from tsgo undetected) — empirically confirmed
- * (`tsgo` against a scratch repro) that a DIRECT cast from a `readonly`
- * array type to the tuple-shaped `NonEmptyArray<T>` target IS accepted as
- * "sufficiently overlapping" (tsgo TS2352's own comparability rule), for
- * both the rest-param `input` (already `readonly (...)[]`-typed) and the
- * self-UntypedNode-unwrap `children` local, PROVIDED that local carries an
- * explicit `readonly unknown[]` annotation — its inferred type otherwise
- * widens to `any[]` (via the `Array.isArray` ternary), which tsgo does
- * reject directly. A narrower cast means a genuinely wrong shape at one of
- * these two remaining opaque-`unknown`-origin sites (the self-UntypedNode
- * unwrap's `stored` read, and `_wrapWithChildren`'s own `children` param)
- * would now surface as a real tsgo error instead of silently laundering
- * through `unknown`, closing the exact gap that let this bug ship
- * undetected the first time.
- *
- * `options` is omitted on the fresh-input path (no source node exists there
- * to read per-instance facts from — the factory's own defaults apply, same
- * as before this fix). On the self-UntypedNode-unwrap path, `options` IS built
- * from the original wrapped node's own `_separator_kind`/`_leading_sep`/
- * `_trailing_sep` — calling `from()` on an already-wrapped separatedList
- * node used to silently reconstruct it with the factory's DEFAULTS (comma,
- * no flanks) regardless of what the original instance actually was, e.g.
- * `objectTypeContentFrom()` on a wrapped semicolon-delimited node would
- * change its rendered syntax back to a comma. Gated identically to
- * `emitSeparatedListFactory`'s own options surface (`node.separatorRule !==
- * undefined` / `leadingMode === 'optional'` / `trailingMode === 'optional'`)
- * so only fields the factory actually accepts get passed. `separatorKind`
- * needs a NUMBER→NAME reverse lookup since the wire stores a KindId but the
- * factory's `options.separatorKind` takes one of the candidate NAME
- * strings — built the same way `emitSeparatedListFactory`'s forward
- * (name→id) lookup is, just with the object literal's key/value swapped.
+ * Shares `emitRestParamFromResolver`'s structure with
+ * `emitRepeatedChildrenFrom`: a sole node of the list's kind comes back as
+ * itself, and other input is resolved element by element. A list with
+ * options (`separatedListSurface().optionsType`) splits a leading options
+ * object off its input with the same `leadingOptionsSplit` and option keys
+ * (`listOptionKeys`) its strict builder uses. Given a node of its own kind,
+ * it sets each passed option through the node's `$with` setter
+ * (`withOptions`), so a separator or delimiter it was not given keeps the
+ * node's own; nothing is read from the node's storage. Otherwise the
+ * options go to the builder first and the resolved elements are spread
+ * after them, typed as the same rest tuple the builder declares.
  */
 ```
 
@@ -1861,56 +1801,6 @@ A builder with leading options is called through an untyped view with the option
 ```text
 // Single elemType derivation with the factory surface — including the
 // transparent-wrapper widening (the factory wraps bare content).
-```
-
-#### body
-
-```text
-// Same single-field-storage rule as `emitSeparatedListFactory`
-// (factories.ts): the self-UntypedNode-unwrap path must read the SAME wire
-// storage key the factory actually wrote. Multi-field kinds keep the
-// generic `_content` bucket (see factories.ts's doc comment).
-```
-
-#### body
-
-```text
-// Mirrors emitSeparatedListFactory's own gating exactly (see that
-// function's doc comment, factories.ts) — kept consistent across
-// capture/render/construct/reconstruct rather than diverging.
-```
-
-#### body
-
-```text
-// The factory's spread signature — `fn(...elements)` / `fn(options,
-// ...elements)` — needs the elements ARRAY spread at the call, typed as
-// the same rest-tuple the factory declares (mirrors
-// emitSeparatedListFactory's elementsType derivation).
-```
-
-#### body
-
-```text
-// `data`'s ambient type has no arbitrary storage keys (same reason
-// `storageAccess` above needs its own `unknown` cast) — read the
-// three per-instance fields through one shared cast rather than
-// three separate ones.
-```
-
-#### body
-
-```text
-// A read `_separator` is a kind id and the factory's `separator` option
-// is typed by the same kind ids, so the value passes straight through.
-```
-
-#### body
-
-```text
-// The stored bitflag can carry values outside the factory's
-// permitted union (`Delimiter.None`, an unpermitted side) —
-// narrow with the same member list the option type is built from.
 ```
 
 #### elements resolve through the element slot
@@ -1925,10 +1815,8 @@ used to vanish from an argument list in silence. The element slot is the
 list's content slot, or, when the content is one transparent wrapper
 (`separatedListSurface().wrapper`), that wrapper's own content slot, because
 the strict factory wraps the elements itself. A list whose elements are
-literals is not resolvable and spreads as before. `_listElements` splits a
-leading options object off first, keyed on `listOptionKeys(surface)`, the
-same key list the strict factory accepts, so the options object passes
-through untouched and only the elements resolve.
+literals is not resolvable and spreads as it is. `_listElements` sees only the
+elements: the leading options object is split off before it is called.
 
 `_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. It reads the tag against `tagKinds` (the wrapper and the element slot's leaf and branch kinds). A list that seats a wrapper also passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
 
@@ -2302,12 +2190,9 @@ A `$type` config builds its named kind and then goes back through the same routi
 
 #### `_listElements`
 
-`_listElements(input, optionKeys, wrapperKind, resolve, tagKinds, bagKinds?)`: the loose list
-call's argument split. When `optionKeys` is non-empty and the first argument
-is a plain object whose keys are all option keys (the strict factory's own
-test, minus the `$type` check, which `isNode` covers), it is the options
-object and is returned first, untouched, ahead of the resolved elements;
-otherwise every argument is an element. When the list's content is one
+`_listElements(input, wrapperKind, resolve, tagKinds, bagKinds?)`: the loose list
+call's elements, resolved. Every argument is an element: the coercer splits
+a leading options object off with `leadingOptionsSplit` before calling it. When the list's content is one
 transparent wrapper (`wrapperKind`), a kind-less plain object among the
 elements is that wrapper's own config and builds through the wrapper's
 coercer before the slot resolver sees it, since the element slot is the
@@ -6915,7 +6800,7 @@ Exported for factories.ts, which needs the same synthetic slot to resolve the `e
 
 ### `packages/codegen/src/emitters/wrap.ts::emitSeparatedListWrap`
 
-Emits the wrap function for a `'list'`-classified kind. The list's own view (`listSelfViewParts`, over the elements stored under the list's canonical slot key, `canonicalSeparatedListField`) makes the node an array-like list; a single-slot list's elements accessor hydrates through `hydrateSlots`, and a list whose elements route to more than one model slot gets one accessor per slot (`fieldAccessorLines`), as a field-carrying kind does. The separator kind, the delimiter flags and the elements all arrive in the read native node as the Rust reader stamped them, so the wrap reads no token and stamps no default of its own. Under record storage (`WrapStorage`) it emits the kind's view: the list counts the items its list cell holds (`recordLength`), and reads its delimiters setting from its side record.
+Emits the wrap function for a `'list'`-classified kind. The list's own view (`listSelfViewParts`, over the elements stored under the list's canonical slot key, `canonicalSeparatedListField`) makes the node an array-like list; a single-slot list's elements accessor hydrates through `hydrateSlots`, and a list whose elements route to more than one model slot gets one accessor per slot (`fieldAccessorLines`), as a field-carrying kind does. The separator kind, the delimiter flags and the elements all arrive in the read native node as the Rust reader stamped them, so the wrap reads no token and stamps no default of its own. Its `$with` carries a setter per slot (`inlineSetters`) and one per option (`listOptionSetters`). Under record storage (`WrapStorage`) it emits the kind's view: the list counts the items its list cell holds (`recordLength`), and reads its delimiters setting from its side record.
 
 #### body
 
@@ -9084,6 +8969,8 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 ### `packages/codegen/src/emitters/types.ts::emitInterface`
 
 A storage key is optional exactly when its slot is a single optional value: a list's key never is, a possibly-empty list storing `readonly (X)[]` (`[]` when empty) and a `repeat1` list `NonEmptyArray<X>`. A builder input still omits a possibly-empty list: `ConfigOf` and `LooseConfigOf` take input optionality from `RequiredKeys`, which leaves such a list out, and the factory stores `[]`.
+
+A separated list's interface also declares its option storage (`listOptionStorageMembers`), optional, so a `$with` option setter can write it into the list's data and every surface over the interface inherits it.
 
 Every member of a node interface is `readonly`, its slot getters included: a getter is declared `readonly <name>: () => T` rather than with method syntax, which TypeScript lets a caller reassign, so nothing on a node surface can be swapped without a cast.
 
@@ -12483,6 +12370,10 @@ A wrap function's first line: the exported `wrap<Type>(data: T.<Type>, tree)` ov
 
 Emits a kind's record view, when it has one (`recordStorageOf`), through the same emitter as its wrap. Returns whether it did, so the dispatch table names only kinds with a view.
 
+### `packages/codegen/src/emitters/wrap.ts::listOptionSetters`
+
+A separated list's `$with` setters for its options, one per `listOptionKeys` key, each typed by that key of the list's options type. A setter rewraps the list's edited data with the option's storage key (`_separator`, `_delimiter`) set, as a slot setter rewraps with its slot. A from() given a list node and options sets them through these setters (`withOptions`), so it never reads the list's storage.
+
 ### `packages/codegen/src/emitters/render-module.ts::module`
 
 ```text
@@ -14729,9 +14620,11 @@ Whether a separated list's builder takes an options object: a separator kind to 
 ### `packages/codegen/src/emitters/factories.ts::listOptionKeys`
 
 The keys a list's options object may carry, `separator` and/or `delimiter`,
-derived once from the surface flags. The strict factory's options-first test
-and the coercer's `_listElements` split both read it, so the two never
-disagree on what counts as an options object.
+derived once from the surface flags. The strict factory's options-first test,
+the coercer's options split, the list's `$with` option setters
+(`listOptionSetters`) and the base list type's option storage
+(`listOptionStorageMembers`) all read it, so they never disagree on what
+counts as an option.
 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
@@ -15319,6 +15212,10 @@ The lines every builder opens its node with: the engine handle in scope (`curren
 ### `packages/codegen/src/emitters/factories.ts::textTypeMismatchThrow`
 
 The one place a text guard's type refusal is worded: `<label>: text must be a string: <value>`, with the value written through `describeValue` so the refusal shows what was passed. The leaf guard (`buildLeafGuards`) and the per-slot interior guard (`emitFieldCarryingFactory`) both emit it ahead of any pattern test, and an own-text builder emits it ahead of removing the affixes of text given with `affix: false` (`ownTextArgs`), so a non-string is refused with this one message wherever it is passed, and the pattern message is left to a string the pattern rejects.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionStorageMembers`
+
+The storage members a separated list's interface declares for its options, one optional `_<key>` per `listOptionKeys` key: `_separator` holds the separator's kind id, `_delimiter` the `Delimiter` flags. The key list is the one the builder's options and the `$with` option setters read, so a list stores exactly the options it takes.
 
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 

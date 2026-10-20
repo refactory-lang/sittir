@@ -369,21 +369,12 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
@@ -402,7 +393,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -646,14 +637,8 @@ export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.bui
 }
 
 export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnType<typeof F.buildAlternation> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
-		const data = input[0];
-		const stored = (data as unknown as { _terms?: unknown })._terms;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildAlternation(
-			...(_resolveManyBranch<T.Term>(children, 'term') as unknown as Parameters<typeof F.buildAlternation>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation))
+		return input[0] as unknown as ReturnType<typeof F.buildAlternation>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -668,14 +653,8 @@ export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnTy
 }
 
 export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.buildTerm> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term)) {
-		const data = input[0];
-		const stored = (data as unknown as { _term_group?: unknown })._term_group;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTerm(
-			...(_resolveManyBranch<T.TermGroup>(children, 'term_group') as unknown as Parameters<typeof F.buildTerm>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term))
+		return input[0] as unknown as ReturnType<typeof F.buildTerm>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];

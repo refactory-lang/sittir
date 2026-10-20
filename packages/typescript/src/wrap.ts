@@ -51,6 +51,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptyProgram } from './types.js';
+import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
 import { records as R } from './records.js';
@@ -7182,7 +7183,17 @@ export function wrapExportSpecifiers(data: T.ExportSpecifiers, tree: TreeHandle)
 		items() {
 			return hydrateSlots<T.ExportSpecifier>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.ExportSpecifiers['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapExportSpecifiers(
+						{ ...$edited(data), _item: admitSlot(handle, 'export_specifiers', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapExportSpecifiers({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -7219,7 +7230,17 @@ export function wrapImportSpecifiers(data: T.ImportSpecifiers, tree: TreeHandle)
 		items() {
 			return hydrateSlots<T.ImportSpecifier>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.ImportSpecifiers['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapImportSpecifiers(
+						{ ...$edited(data), _item: admitSlot(handle, 'import_specifiers', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapImportSpecifiers({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -7254,7 +7275,20 @@ export function wrapFormalParametersElements(
 		items() {
 			return hydrateSlots<T.RequiredParameter | T.OptionalParameter>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.FormalParametersElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapFormalParametersElements(
+						{
+							...$edited(data),
+							_item: admitSlot(handle, 'formal_parameters_elements', 'items', restItems('items', v))
+						},
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapFormalParametersElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -7318,7 +7352,17 @@ export function wrapEnumBodyElements(data: T.EnumBodyElements, tree: TreeHandle)
 		items() {
 			return hydrateSlots<T.EnumBodyElement>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.EnumBodyElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapEnumBodyElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'enum_body_elements', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapEnumBodyElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -7350,7 +7394,14 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		items() {
 			return hydrateSlots<T.Type>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.Types['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapTypes({ ...$edited(data), _item: admitSlot(handle, 'types', 'items', restItems('items', v)) }, tree)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTypes({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -7385,7 +7436,17 @@ export function wrapTypeParametersElements(
 		items() {
 			return hydrateSlots<T.TypeParameter>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.TypeParametersElements['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapTypeParametersElements(
+						{ ...$edited(data), _item: admitSlot(handle, 'type_parameters_elements', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTypeParametersElements({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -7426,7 +7487,17 @@ export function wrapTupleTypeMembers(data: T.TupleTypeMembers, tree: TreeHandle)
 				tree
 			);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.TupleTypeMembers['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapTupleTypeMembers(
+						{ ...$edited(data), _item: admitSlot(handle, 'tuple_type_members', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapTupleTypeMembers({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -7621,7 +7692,31 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 				| T.MethodSignature
 			>(this, '_item', tree);
 		},
-		$with: {},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.ObjectTypeContent['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapObjectTypeContent(
+						{ ...$edited(data), _item: admitSlot(handle, 'object_type_content', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			separator: (
+				v: NonNullable<
+					{
+						separator?: TSKindId.Comma | TSKindId.Semi;
+						delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+					}['separator']
+				>
+			) => rebuilt(node, handle, () => wrapObjectTypeContent({ ...$edited(data), _separator: v }, tree)),
+			delimiter: (
+				v: NonNullable<
+					{
+						separator?: TSKindId.Comma | TSKindId.Semi;
+						delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+					}['delimiter']
+				>
+			) => rebuilt(node, handle, () => wrapObjectTypeContent({ ...$edited(data), _delimiter: v }, tree))
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -14950,7 +15045,10 @@ function viewExportSpecifiers(data: RecordStub, tree: TreeHandle): T.ExportSpeci
 		items() {
 			return viewSlots<T.ExportSpecifier>(this, R.ExportSpecifiersNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -14987,7 +15085,10 @@ function viewImportSpecifiers(data: RecordStub, tree: TreeHandle): T.ImportSpeci
 		items() {
 			return viewSlots<T.ImportSpecifier>(this, R.ImportSpecifiersNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -15019,7 +15120,10 @@ function viewFormalParametersElements(data: RecordStub, tree: TreeHandle): T.For
 		items() {
 			return viewSlots<T.RequiredParameter | T.OptionalParameter>(this, R.FormalParametersElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -15077,7 +15181,10 @@ function viewEnumBodyElements(data: RecordStub, tree: TreeHandle): T.EnumBodyEle
 		items() {
 			return viewSlots<T.EnumBodyElement>(this, R.EnumBodyElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -15109,7 +15216,10 @@ function viewTypes(data: RecordStub, tree: TreeHandle): T.Types.Parsed {
 		items() {
 			return viewSlots<T.Type>(this, R.TypesNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -15141,7 +15251,10 @@ function viewTypeParametersElements(data: RecordStub, tree: TreeHandle): T.TypeP
 		items() {
 			return viewSlots<T.TypeParameter>(this, R.TypeParametersElementsNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
@@ -15182,7 +15295,10 @@ function viewTupleTypeMembers(data: RecordStub, tree: TreeHandle): T.TupleTypeMe
 				tree
 			);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -15329,7 +15445,11 @@ function viewObjectTypeContent(data: RecordStub, tree: TreeHandle): T.ObjectType
 				| T.MethodSignature
 			>(this, R.ObjectTypeContentNode.item, tree);
 		},
-		$with: {},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			separator: (...args: unknown[]) => rowWith(node, tree, _wrap, 'separator', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
 		length: listedLength,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),

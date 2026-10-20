@@ -1,24 +1,3 @@
-/**
- * from.ts — 'separatedList' construct/reconstruction emission (separator-as-slot
- * Task 6 follow-up: fix real from() dispatch bug found in spec-compliance review).
- *
- * Before this fix, from.ts's separatedList handling (both the dedicated
- * `xxxFrom` rest-param resolver AND `_wrapWithChildren`'s generic dispatch
- * table) spread/indexed the resolved children array into the factory's
- * positional argument list — correct when the factory took `(...children: T[])`
- * (pre-Task-6), but WRONG now that the factory takes
- * `(elements: T[] | NonEmptyArray<T>, options?: {...})`: spreading bound
- * `children[0]` to `elements` (a single node instead of the array) and
- * `children[1]` to `options` (an unrelated node). Covered here via a
- * synthetic multi-element nonEmpty fixture so the array-vs-spread shape is
- * unambiguous in the assertion.
- *
- * Also covers the follow-up hardening: the fixed call sites use a direct
- * cast (as Parameters<typeof F.x>[0]), not a cast laundered through
- * `unknown` first — the `unknown` intermediate was the exact mechanism that
- * let the original spread/index bug hide from the type checker undetected.
- */
-
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -74,7 +53,7 @@ function looseRow(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 const TAKES_ITS_ROW = 'export function coerceToMemberList(...input: T.MemberList.LooseArgs)';
 
 describe('from emitter — separatedList', () => {
-	it('coerceToMemberList spreads the elements into the factory call, preserving captured flank options on self-unwrap', () => {
+	it('coerceToMemberList returns a sole node of its own kind, with its options set through $with, and otherwise spreads the resolved elements after the options', () => {
 		const rule: SeparatedListElementRule = {
 			type: SYMBOL,
 			name: 'member',
@@ -84,22 +63,16 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).toContain('export function coerceToMemberList(...input');
-		// The factory's signature is spread-with-leading-options — elements go
-		// in as REST arguments, never as one array argument and never indexed
-		// (that's the 'direct'/singular container shape, wrong for a
-		// genuinely multi-element list).
+		expect(emitted).toContain(
+			'if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.MemberList)) return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildMemberList>;'
+		);
 		expect(emitted).not.toContain('children[0] as Parameters<typeof F.buildMemberList>[0]');
 		expect(emitted).toMatch(
-			/F\.buildMemberList\(\{ delimiter: .*\}, \.\.\.\(children as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
-		);
-		// The fresh path resolves each element through the content slot before
-		// spreading, with a leading options object passed through untouched.
-		expect(emitted).toMatch(
-			/F\.buildMemberList\(\.\.\.\(_listElements\(input, \["delimiter"\], undefined, \(els\) => .*\) as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
+			/\(options, \.\.\.\(_listElements\(_rest, undefined, \(els\) => .*\) as unknown as NonEmptyArray<Admit<T\.Member>>\)\)/
 		);
 	});
 
-	it('passes a captured separator kind id straight through on self-unwrap', () => {
+	it('never reads a list node\'s stored separator or delimiter', () => {
 		const sepChoice: RenderRule = {
 			type: CHOICE,
 			members: [
@@ -115,9 +88,8 @@ describe('from emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
 
-		expect(emitted).toContain(
-			'separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator'
-		);
+		expect(emitted).toContain('withOptions(_rest[0], options)');
+		expect(emitted).not.toMatch(/_separator|_delimiter/);
 		expect(emitted).not.toContain('KIND_LITERAL_TEXT');
 	});
 

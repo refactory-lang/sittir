@@ -1022,7 +1022,6 @@ export function blankFromInput(blank: boolean, expr: string): string {
 export interface LeadingOptions {
 	readonly type: string;
 	readonly keys: readonly string[];
-	readonly storageKeys: readonly string[];
 }
 
 export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): LeadingOptions | undefined {
@@ -1030,7 +1029,7 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	const registered = registeredSlots(node);
 	return registered.length === 0
 		? undefined
-		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey), storageKeys: registered.map((slot) => slot.storageKey) };
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey) };
 }
 
 export function classifyFactoryShape(
