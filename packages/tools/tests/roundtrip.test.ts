@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as common from '../src/validate/common.ts';
 import { buildFactoryNode, loadFactoryArtifacts, run } from '../src/exercise/roundtrip.ts';
 
+const KINDS = ['identifier', 'number_literal', 'direct_child', 'spread_child', 'rebuilt_direct', 'rebuilt_spread'];
+const id = (kind: string): number => KINDS.indexOf(kind) + 1;
+const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
+
 describe('exercise roundtrip helpers', () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
@@ -21,10 +25,10 @@ describe('exercise roundtrip helpers', () => {
 	});
 
 	it('uses real metadata-driven child args for direct child-backed factories', () => {
-		const leaf = { $type: 'identifier', $named: true, $text: 'x' };
+		const leaf = { $type: id('identifier'), $named: true, $text: 'x' };
 		const artifacts = {
 			factoryMap: {
-				direct_child: (value: unknown) => ({ $type: 'rebuilt_direct', value })
+				direct_child: (value: unknown) => ({ $type: id('rebuilt_direct'), value })
 			},
 			factoryShapes: { direct_child: 'direct' as const },
 			fieldAliasMap: {},
@@ -43,21 +47,21 @@ describe('exercise roundtrip helpers', () => {
 
 		const result = buildFactoryNode(
 			'direct_child',
-			{ $type: 'direct_child', _children: leaf } as never,
+			{ $type: id('direct_child'), _children: leaf } as never,
 			artifacts,
 			common,
-			undefined
+			kindNameFromId
 		);
 
-		expect(result).toEqual({ $type: 'rebuilt_direct', value: leaf });
+		expect(result).toEqual({ $type: id('rebuilt_direct'), value: leaf });
 	});
 
 	it('uses real metadata-driven child args for spread child-backed factories', () => {
-		const left = { $type: 'identifier', $named: true, $text: 'x' };
-		const right = { $type: 'number_literal', $named: true, $text: '1' };
+		const left = { $type: id('identifier'), $named: true, $text: 'x' };
+		const right = { $type: id('number_literal'), $named: true, $text: '1' };
 		const artifacts = {
 			factoryMap: {
-				spread_child: (...args: unknown[]) => ({ $type: 'rebuilt_spread', args })
+				spread_child: (...args: unknown[]) => ({ $type: id('rebuilt_spread'), args })
 			},
 			factoryShapes: { spread_child: 'spread' as const },
 			fieldAliasMap: {},
@@ -76,13 +80,13 @@ describe('exercise roundtrip helpers', () => {
 
 		const result = buildFactoryNode(
 			'spread_child',
-			{ $type: 'spread_child', _children: [left, right] } as never,
+			{ $type: id('spread_child'), _children: [left, right] } as never,
 			artifacts,
 			common,
-			undefined
+			kindNameFromId
 		);
 
-		expect(result).toEqual({ $type: 'rebuilt_spread', args: [left, right] });
+		expect(result).toEqual({ $type: id('rebuilt_spread'), args: [left, right] });
 	});
 
 	it('runs the real roundtrip path with metadata-driven child reconstruction', async () => {

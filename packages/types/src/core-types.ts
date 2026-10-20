@@ -61,11 +61,8 @@ export interface ByteSpan {
  * instead of structural `isNode` probing.
  */
 export interface AnyUntypedNode {
-	/**
-	 * Kind discriminant. Numeric (TSKindId) for parser.c-derived kinds.
-	 * String for synthesized kinds pending numeric ID assignment.
-	 */
-	$type: number | string;
+	/** Kind discriminant: the language's kind id (`TSKindId`). */
+	$type: number;
 	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readUntypedNode output. */

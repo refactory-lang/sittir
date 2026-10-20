@@ -76,7 +76,7 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly definition: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -110,7 +110,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldDefinition };
 	};
 	readonly namedNode: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
 		plain<T extends { readonly $type: number } | number>(
@@ -121,7 +121,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeSupertyped };
 	};
 	readonly listElement: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.Capture | TSKindId.ListElementQuantifier>;
 		capture<T extends { readonly $type: number } | number>(
@@ -132,7 +132,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListElementQuantifier };
 	};
 	readonly namedNodeGroup: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
 		children<T extends { readonly $type: number } | number>(
@@ -142,7 +142,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -155,7 +155,7 @@ export interface IsGuards {
 		| TSKindId.Indent
 		| TSKindId.Dedent
 	>;
-	quantifier<T extends { readonly $type: string | number } | number>(
+	quantifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>;
 	identifier<T extends { readonly $type: number } | number>(
@@ -164,13 +164,11 @@ export interface IsGuards {
 	immediateIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateIdentifier };
-	predicateType<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.Qmark | TSKindId.Bang>;
+	predicateType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Qmark | TSKindId.Bang>;
 	stringContentText<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContentText };
-	anchor<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Anchor>;
+	anchor<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Anchor>;
 }
 
 // Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.

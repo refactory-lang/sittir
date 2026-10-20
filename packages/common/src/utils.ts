@@ -67,7 +67,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	markRebuilt(result);
 	carryRead(node, result);
 	carrySource(node, result);
-	const facts: TriviaFacts | undefined = handle?.current.trivia;
+	const facts = handle?.current.trivia;
 	if (facts !== undefined) {
 		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
 		carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, stands);
