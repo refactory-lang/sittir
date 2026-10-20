@@ -174,33 +174,47 @@ describe('the supertype recognizer', () => {
 		'a prec-wrapped choice': { type: 'PREC', value: 1, content: { type: CHOICE, members: [sym('a_thing'), sym('b_thing')] } },
 		'a choice holding a choice': { type: CHOICE, members: [sym('a_thing'), { type: CHOICE, members: [sym('b_thing'), sym('c_thing')] }] }
 	};
+	const supertypeInLink = (rules: Record<string, Rule<'evaluate'>>): boolean => {
+		const raw = {
+			name: 'probe',
+			rules: structuredClone(rules),
+			ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+			extras: [],
+			externals: [],
+			supertypes: [],
+			factoryInline: [],
+			inline: [],
+			conflicts: [],
+			precedences: [],
+			word: null,
+			references: []
+		} as unknown as RawGrammar;
+		return link(raw).rules._thing?.type === SUPERTYPE;
+	};
+	const leaves = {
+		a_thing: { type: PATTERN, value: 'a' },
+		b_thing: { type: PATTERN, value: 'b' },
+		c_thing: { type: PATTERN, value: 'c' }
+	};
 	for (const [label, body] of Object.entries(shapes)) {
 		it(`classifies ${label} the same in link and in the stamp`, () => {
 			const rules = {
 				root: { type: SEQ, members: [{ type: STRING, value: 'r' }, sym('_thing')] },
 				_thing: body,
-				a_thing: { type: PATTERN, value: 'a' },
-				b_thing: { type: PATTERN, value: 'b' },
-				c_thing: { type: PATTERN, value: 'c' }
+				...leaves
 			} as unknown as Record<string, Rule<'evaluate'>>;
-			const raw = {
-				name: 'probe',
-				rules: structuredClone(rules),
-				ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
-				extras: [],
-				externals: [],
-				supertypes: [],
-				factoryInline: [],
-				inline: [],
-				conflicts: [],
-				precedences: [],
-				word: null,
-				references: []
-			} as unknown as RawGrammar;
-			const linked = link(raw).rules._thing?.type === SUPERTYPE;
-			expect(isSupertypeOwner('_thing', rules, new Set(), new Set())).toBe(linked);
+			expect(isSupertypeOwner('_thing', rules, new Set(), new Set())).toBe(supertypeInLink(rules));
 		});
 	}
+	it('treats a choice whose member is precedence-wrapped as a supertype owner, in the stamp and in link', () => {
+		const rules = {
+			root: { type: SEQ, members: [{ type: STRING, value: 'r' }, sym('_thing')] },
+			_thing: { type: CHOICE, members: [sym('a_thing'), { type: 'PREC_LEFT', value: 1, content: sym('b_thing') }] },
+			...leaves
+		} as unknown as Record<string, Rule<'evaluate'>>;
+		expect(isSupertypeOwner('_thing', rules, new Set(), new Set())).toBe(true);
+		expect(supertypeInLink(rules)).toBe(true);
+	});
 });
 
 describe('relabelling an arm', () => {

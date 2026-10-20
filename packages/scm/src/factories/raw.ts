@@ -58,9 +58,16 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
 export function buildEscapeSequence(text: `\\${string}`, affix: false): T.EscapeSequence.Bound;
 export function buildEscapeSequence(input: string, affix: boolean = true): T.EscapeSequence.Bound {
-	const value = affix ? input : unaffixed(input, '\\', '', 'escape_sequence');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildEscapeSequence_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'escape_sequence', { content: _content });
@@ -85,8 +92,9 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
+	if (typeof text !== 'string') throw new Error(`identifier: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildIdentifier.test(text))
+	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -106,8 +114,9 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 }
 
 export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bound {
+	if (typeof text !== 'string') throw new Error(`_immediate_identifier: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_immediate_identifier: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildImmediateIdentifier.test(text))
+	if (!_leafRe_buildImmediateIdentifier.test(text))
 		throw new Error(`_immediate_identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
@@ -291,9 +300,15 @@ export function buildParameters(
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
 export function buildComment(text: `;${string}`, affix: false): T.Comment.Bound;
 export function buildComment(input: string, affix: boolean = true): T.Comment.Bound {
-	const value = affix ? input : unaffixed(input, ';', '', 'comment');
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string') throw new Error(`comment.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, ';', '', 'comment');
+	}
 	const _content = value;
-	if (typeof _content !== 'string' || !_slotRe_buildComment_content.test(_content))
+	if (typeof _content !== 'string')
+		throw new Error(`comment.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'comment', { content: _content });
@@ -661,8 +676,9 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 }
 
 export function buildStringContentText(text: string): T.StringContentText.Bound {
+	if (typeof text !== 'string') throw new Error(`string_content_text: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
-	if (typeof text !== 'string' || !_leafRe_buildStringContentText.test(text))
+	if (!_leafRe_buildStringContentText.test(text))
 		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {

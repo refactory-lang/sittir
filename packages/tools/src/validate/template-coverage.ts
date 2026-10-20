@@ -30,6 +30,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load } from '../codegen-surface.ts';
+import { sharedDisplayEntries, type DisplayFamilies } from './display-families.ts';
 import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -120,7 +121,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 	let total = 0;
 	let pass = 0;
 
-	for (const entry of entries) {
+	for (const entry of sharedDisplayEntries(entries, nodeModelFacts.displayUnions)) {
 		if (!entry.named) continue;
 		// Supertypes have no direct rule — skipped by render dispatch.
 		if (entry.subtypes && entry.subtypes.length > 0) continue;
@@ -847,6 +848,7 @@ function loadGrammarJson(grammar: string): GrammarJson | null {
 }
 
 interface NodeModelFacts {
+	readonly displayUnions: DisplayFamilies;
 	readonly factorySlots: Record<string, Record<string, unknown>>;
 	readonly polymorphVariants: PolymorphVariantMap;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
@@ -855,6 +857,7 @@ interface NodeModelFacts {
 }
 
 const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
+	displayUnions: {},
 	factorySlots: {},
 	polymorphVariants: {},
 	fieldAliasMap: {},
@@ -884,6 +887,7 @@ function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	}
 	return {
 		factorySlots: parsed.factorySlots ?? {},
+		displayUnions: parsed.displayUnions ?? {},
 		polymorphVariants: parsed.polymorphVariants ?? {},
 		fieldAliasMap: parsed.fieldAliasMap ?? {},
 		modelFieldsByKind

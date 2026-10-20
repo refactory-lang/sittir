@@ -13369,7 +13369,7 @@ export namespace TokenKeywords {
 
 export namespace CharLiteralEmpty {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly squote?: { readonly before?: LayoutKindId } };
+		readonly __optionsHint__?: { readonly squote?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId } };
 	}
 }
 

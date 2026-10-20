@@ -40,6 +40,7 @@ import {
 	type TokenInterior
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
+import type { DisplayFamilies } from './display-families.ts';
 
 import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
@@ -322,20 +323,28 @@ export interface NativeCandidateCoords {
 	span: { start: number; end: number } | undefined;
 }
 
-export function findFirst(node: TS.Node, kind: string): TS.Node | null {
-	if (node.type === kind && node.isNamed) return node;
+function nodeType(node: TS.Node): string {
+	return node.type;
+}
+
+export function findFirst(
+	node: TS.Node,
+	kind: string,
+	kindOf: (node: TS.Node) => string = nodeType
+): TS.Node | null {
+	if (kindOf(node) === kind && node.isNamed) return node;
 	for (const child of node.children) {
-		const found = findFirst(child, kind);
+		const found = findFirst(child, kind, kindOf);
 		if (found) return found;
 	}
 	return null;
 }
 
-export function collectKinds(node: TS.Node): Set<string> {
+export function collectKinds(node: TS.Node, kindOf: (node: TS.Node) => string = nodeType): Set<string> {
 	const kinds = new Set<string>();
 
 	function walk(n: TS.Node) {
-		if (n.isNamed) kinds.add(n.type);
+		if (n.isNamed) kinds.add(kindOf(n));
 		for (const child of n.children) walk(child);
 	}
 	walk(node);
@@ -448,6 +457,7 @@ export interface Seat {
 export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
 
 export interface LoadedNodeModel {
+	readonly displayUnions: DisplayFamilies;
 	readonly root: string | undefined;
 	readonly irKeys: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
@@ -506,6 +516,7 @@ export function relaxesOf(table: RelaxationFacts | null | undefined): (grammar: 
 }
 
 interface ParsedNodeModel {
+	displayUnions?: DisplayFamilies;
 	root?: string | null;
 	relaxes?: RelaxationFacts | null;
 	nodes?: ReadonlyArray<{
@@ -555,6 +566,7 @@ interface ParsedSlotValue {
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
+	displayUnions: {},
 	root: undefined,
 	irKeys: {},
 	modelTypes: {},
@@ -693,6 +705,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	}
 	return {
 		root: model.root ?? undefined,
+		displayUnions: model.displayUnions ?? {},
 		irKeys,
 		modelTypes,
 		typeNames,

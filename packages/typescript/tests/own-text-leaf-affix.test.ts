@@ -73,3 +73,10 @@ describe('a slot that holds a leaf that is its own text', () => {
 		expect(ir.program({ hashBangLine: ir.hashBangLine('/usr/bin/env node'), statements: [statement()] }).$render()).toBe(rendered);
 	});
 });
+
+describe('an own-text builder with affix false refuses a number as a type, not as unaffixed', () => {
+	it('refuses a number with the slot label, showing what it was given', () => {
+		expect(() => ir.number.bigint.hex(5 as never, false)).toThrow('number_bigint_hex.content: text must be a string: 5');
+	});
+});
+
