@@ -41,11 +41,51 @@ async function neverNodeBuilders(grammar: keyof typeof ENGINES): Promise<string[
 	return offending;
 }
 
+// Every callable reachable from a build table: a path for each function, recursing into namespace objects
+// and into a callable's own enumerable members (its strict and coerce forms, nested routes). The table is
+// the engine's own, so a function is recorded under every path it is reached by.
+function callablePaths(root: unknown): string[][] {
+	const found: string[][] = [];
+	const seen = new Set<unknown>();
+	const walk = (value: unknown, path: string[]): void => {
+		if ((typeof value !== 'object' && typeof value !== 'function') || value === null) return;
+		if (typeof value === 'function') found.push(path);
+		if (seen.has(value)) return;
+		seen.add(value);
+		for (const key of Object.keys(value)) walk((value as Record<string, unknown>)[key], [...path, key]);
+	};
+	walk(root, []);
+	return found;
+}
+
+// A recorded path accounts for a callable at or under it. A strict or coerce member belongs to its bundle, and
+// a route under a kind's path builds that kind with an arm filled (expressionStatement.comparison).
+const accountedFor = (path: readonly string[], recorded: readonly (readonly string[])[]): boolean =>
+	recorded.some((r) => r.length <= path.length && r.every((segment, i) => path[i] === segment));
+
+async function unrecordedBuilders(grammar: keyof typeof ENGINES): Promise<string[]> {
+	const engine = await ENGINES[grammar]();
+	const model = await loadNodeModel(grammar);
+	const recorded = [...Object.values(model.builderPaths), ...Object.values(model.builderPathAlternates).flat()];
+	return callablePaths(engine.build)
+		.filter((path) => !accountedFor(path, recorded))
+		.map((path) => `${path.join('.')} (unrecorded builder)`);
+}
+
 describe('hidden-kind builders', () => {
 	for (const grammar of Object.keys(ENGINES) as (keyof typeof ENGINES)[]) {
 		it(`${grammar}: no builder exists for a kind the parser never shows as a node`, async () => {
 			const offending = await neverNodeBuilders(grammar);
 			expect(offending, `${grammar} builders for never-node kinds:\n${offending.join('\n')}`).toEqual([]);
+		}, 240_000);
+	}
+});
+
+describe('every callable on the build surface is a recorded builder', () => {
+	for (const grammar of Object.keys(ENGINES) as (keyof typeof ENGINES)[]) {
+		it(`${grammar}: no callable is unaccounted for by the model`, async () => {
+			const unrecorded = await unrecordedBuilders(grammar);
+			expect(unrecorded, `${grammar} callables the model does not record:\n${unrecorded.join('\n')}`).toEqual([]);
 		}, 240_000);
 	}
 });
