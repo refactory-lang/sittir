@@ -4287,35 +4287,6 @@
       "vocab": "identifier",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "parameters_elements",
-            "parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "parameters_elements",
-            "lambda_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "identifier.type",
-          "toplevel": false,
-          "within": [
-            "type"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "identifier",
           "toplevel": true,
           "within": [],
@@ -7241,15 +7212,15 @@
       },
       {
         "depth": 2,
-        "paths": 75,
-        "kinds": 70,
-        "refinements": 7
+        "paths": 74,
+        "kinds": 69,
+        "refinements": 6
       },
       {
         "depth": 3,
         "paths": 69,
         "kinds": 63,
-        "refinements": 50
+        "refinements": 47
       },
       {
         "depth": 4,
