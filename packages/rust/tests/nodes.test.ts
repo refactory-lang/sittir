@@ -188,28 +188,28 @@ describe('non_special_token sub-factories', () => {
 		const node = ir.nonSpecialToken.mutableSpecifier();
 		expect(node.$type).toBe(TSKindId.NonSpecialToken);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.MutableSpecifier);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.MutableSpecifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('self builds the parent', () => {
 		const node = ir.nonSpecialToken.self();
 		expect(node.$type).toBe(TSKindId.NonSpecialToken);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Self);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Self);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
 		const node = ir.nonSpecialToken.super();
 		expect(node.$type).toBe(TSKindId.NonSpecialToken);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Super);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Super);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.nonSpecialToken.crate();
 		expect(node.$type).toBe(TSKindId.NonSpecialToken);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Crate);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Crate);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3127,7 +3127,7 @@ describe('identifier', () => {
 		const node = ir.identifier('test');
 		expect(node.$type).toBe(TSKindId.Identifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -3734,7 +3734,7 @@ describe('token_repetition_pattern_text', () => {
 		const node = ir.tokenRepetitionPatternText('test');
 		expect(node.$type).toBe(TSKindId.TokenRepetitionPatternText);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -3743,7 +3743,7 @@ describe('string_open', () => {
 		const node = ir.stringOpen('"');
 		expect(node.$type).toBe(TSKindId.StringOpen);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('"');
+		expect(node.$text()).toBe('"');
 	});
 });
 
@@ -4510,7 +4510,7 @@ describe('line_comment_extra_slashes', () => {
 		const node = ir.lineCommentExtraSlashes('// a');
 		expect(node.$type).toBe(TSKindId.LineCommentExtraSlashes);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('// a');
+		expect(node.$text()).toBe('// a');
 	});
 });
 
@@ -4519,7 +4519,7 @@ describe('line_comment_regular', () => {
 		const node = ir.lineCommentRegular('test');
 		expect(node.$type).toBe(TSKindId.LineCommentRegular);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -4528,7 +4528,7 @@ describe('block_comment_regular', () => {
 		const node = ir.blockCommentRegular('test');
 		expect(node.$type).toBe(TSKindId.BlockCommentRegular);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -4777,7 +4777,7 @@ describe('range_pattern_prefix sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.DotDotEq);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('dotDot builds the parent', () => {
@@ -4786,7 +4786,7 @@ describe('range_pattern_prefix sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.DotDot);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4833,7 +4833,7 @@ describe('range_pattern_with_left sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.RangePatternWithLeftBare);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.RangePatternWithLeftBare);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('withRight.dotDotDot builds the parent', () => {
@@ -4967,7 +4967,7 @@ describe('float_literal', () => {
 		const node = ir.floatLiteral('1.0');
 		expect(node.$type).toBe(TSKindId.FloatLiteral);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('1.0');
+		expect(node.$text()).toBe('1.0');
 	});
 });
 
@@ -4976,7 +4976,7 @@ describe('string_content', () => {
 		const node = ir.stringContent('test');
 		expect(node.$type).toBe(TSKindId.StringContent);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -4985,7 +4985,7 @@ describe('raw_string_literal_content', () => {
 		const node = ir.rawStringLiteralContent('test');
 		expect(node.$type).toBe(TSKindId.RawStringLiteralContent);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -5006,7 +5006,7 @@ describe('raw_string_literal_start', () => {
 		const node = ir.rawStringLiteralStart('r#"');
 		expect(node.$type).toBe(TSKindId.RawStringLiteralStart);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('r#"');
+		expect(node.$text()).toBe('r#"');
 	});
 });
 
@@ -5015,7 +5015,7 @@ describe('raw_string_literal_end', () => {
 		const node = ir.rawStringLiteralEnd('"#');
 		expect(node.$type).toBe(TSKindId.RawStringLiteralEnd);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('"#');
+		expect(node.$text()).toBe('"#');
 	});
 });
 
@@ -5024,6 +5024,6 @@ describe('doc_comment', () => {
 		const node = ir.docComment('test');
 		expect(node.$type).toBe(TSKindId.DocComment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });

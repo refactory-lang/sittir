@@ -24,7 +24,7 @@ export function structuralShape(node: unknown): unknown {
 		shape[key] = structuralShape(value);
 	}
 	const isBareLeaf = Object.keys(shape).length === 1;
-	if (typeof record.$text === 'string' && isBareLeaf) shape.$text = record.$text;
+	if (typeof record.$text === 'function' && isBareLeaf) shape.$text = (record.$text as () => string).call(record);
 	const trivia = (record.$_layout as { readonly trivia?: NodeTrivia } | undefined)?.trivia;
 	if (trivia !== undefined) {
 		const sides = record.$trivia as { leading(): readonly unknown[]; trailing(): readonly unknown[] };

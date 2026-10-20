@@ -163,7 +163,7 @@ describe('ofType at an alias envelope', () => {
 	it('does not select an aliased node by its content kind', () => {
 		const root = engine.parse(SOURCE_FIELDS, { depth: 1 });
 		const identifiers = [...root.$query().$descendants.ofType(engine.kinds.Identifier)];
-		expect(identifiers.map((node) => (node as { readonly $text?: string }).$text)).toEqual(['f', 'a', 'c']);
+		expect(identifiers.map((node) => (node as { $text(): string }).$text())).toEqual(['f', 'a', 'c']);
 		expect(identifiers.every((node) => (node as { readonly $type: number }).$type === engine.kinds.Identifier)).toBe(true);
 	});
 });

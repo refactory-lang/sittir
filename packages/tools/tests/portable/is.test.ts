@@ -8,7 +8,7 @@ import { rows as rustRows } from '../../../rust/src/portable.ts';
 import typescript from '../../../typescript/src/index.ts';
 import { rows as typescriptRows } from '../../../typescript/src/portable.ts';
 
-type Node = { readonly $type: number; readonly $text?: string; readonly $render?: () => string };
+type Node = { readonly $type: number; readonly $text?: () => string; readonly $render?: () => string };
 type Item = Node | number;
 type Guard = ((node: unknown) => boolean) & Record<string, unknown>;
 
@@ -43,7 +43,7 @@ async function surfaces(name: keyof typeof languages) {
 	const idsAt = (path: string): readonly number[] => rows.table.paths[path]?.ids ?? [];
 	const paths = (): string[] => Object.keys(rows.table.paths);
 	const find = (source: string, kind: string, text?: string, nth = 0): Item => {
-		const hit = located(source).filter((n) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text ?? n.$render?.()) === text)))[nth];
+		const hit = located(source).filter((n) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text?.() ?? n.$render?.()) === text)))[nth];
 		if (hit === undefined) throw new Error(`no ${kind}${text === undefined ? '' : ` '${text}'`} in ${JSON.stringify(source)}`);
 		return hit;
 	};

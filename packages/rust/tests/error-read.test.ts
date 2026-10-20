@@ -15,7 +15,7 @@ describe('an ERROR read as trivia', () => {
 		if (first === undefined || !rs.is.functionItem(first)) throw new Error('expected a function item');
 		const [entry] = first.$trivia.trailing();
 		if (!isErrorNode(entry)) throw new Error('expected an ERROR entry');
-		expect((entry as { $text: string }).$text).toBe('@@');
+		expect(entry.$text()).toBe('@@');
 		expect(root.$errors.map((region) => region.span)).toEqual([{ start: 10, end: 12 }]);
 	});
 
