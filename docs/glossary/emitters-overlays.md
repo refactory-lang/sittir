@@ -76,6 +76,8 @@ How many seats an entry carries, of every kind: flatten, elements, tuple and for
  */
 ```
 
+Each seated entry point is a function: one refusing overload, generic over its whole argument row (`refusingParam`), over a plain implementation that calls the composition. A constant typed by a generic rest signature could not take the composed function, whose parameters are fixed.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
 #### body

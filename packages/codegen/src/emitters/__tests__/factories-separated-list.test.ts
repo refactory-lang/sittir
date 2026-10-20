@@ -118,8 +118,8 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), { separator: 'semi' });
 
-		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<Admit<T.Member>>): ');
-		expect(emitted).toContain('export function buildMemberList(options: ');
+		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(...elements: A & RefuseUntyped<A>): ');
+		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(options: ');
 		expect(emitted).toContain('separator?: TSKindId.Comma | TSKindId.Semi');
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
 		expect(emitted).toContain('_member');
@@ -147,8 +147,8 @@ describe('factories emitter — separatedList', () => {
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
-		expect(emitted).not.toContain('export function buildMemberList(...elements: NonEmptyArray<Admit<T.Member>>): ');
-		expect(emitted).toContain('export function buildMemberList(options: ');
+		expect(emitted).not.toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(...elements: A & RefuseUntyped<A>): ');
+		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(options: ');
 		expect(emitted).toContain('separator: TSKindId.Comma | TSKindId.Semi');
 		expect(emitted).not.toContain('separator?:');
 		expect(emitted).toContain("if (options.separator === undefined) throw new Error('member_list: its separator has no declared default; pass options.separator');");
@@ -164,8 +164,8 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<Admit<T.Member>>): ');
-		expect(emitted).toContain('export function buildMemberList(options: ');
+		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(...elements: A & RefuseUntyped<A>): ');
+		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(options: ');
 		expect(emitted).not.toContain('separator?:');
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Trailing');
 		expect(emitted).not.toContain('_separator');
@@ -210,7 +210,7 @@ describe('factories emitter — separatedList', () => {
 		const emitted = emit(makeMultiKindMemberNodeMap());
 
 		// Correct: the union is parenthesized before the array suffix.
-		expect(emitted).toContain('export function buildMemberList(...elements: Admit<T.MemberA | T.MemberB>[]): ');
+		expect(emitted).toContain('export function buildMemberList<A extends Admit<T.MemberA | T.MemberB>[]>(...elements: A & RefuseUntyped<A>): ');
 		// The precedence bug this guards against: `[]` binding to the LAST
 		// union member alone instead of the whole union.
 		expect(emitted).not.toContain('T.MemberA | T.MemberB[]');
@@ -247,11 +247,13 @@ describe('factories emitter — separatedList', () => {
 			kindEntries: [...KIND_ENTRIES, { id: 5, kind: 'wrapper', member: 'Wrapper' }]
 		});
 
-		const wrapperOverloads = [...emitted.matchAll(/^export function buildWrapper\(([^\n]*)\): ReturnType<typeof _buildWrapper>;$/gm)].map(
-			(m) => m[1]
+		const wrapperOverloads = [...emitted.matchAll(/^export function buildWrapper(<[^\n]*>)?\(([^\n]*)\): ReturnType<typeof _buildWrapper>;$/gm)].map(
+			(m) => ({ typeParams: m[1], params: m[2]! })
 		);
-		const optionsFirstIndex = wrapperOverloads.findIndex((p) => p!.startsWith('options: ') && p!.includes('...elements: NonEmptyArray<Admit<T.Member>>'));
-		const elementsOnlyIndex = wrapperOverloads.findIndex((p) => p === '...elements: NonEmptyArray<Admit<T.Member>>');
+		const refusingElements = (p: { typeParams?: string; params: string }): boolean =>
+			p.typeParams === '<A extends NonEmptyArray<Admit<T.Member>>>' && p.params.endsWith('...elements: A & RefuseUntyped<A>');
+		const optionsFirstIndex = wrapperOverloads.findIndex((p) => p.params.startsWith('options: ') && refusingElements(p));
+		const elementsOnlyIndex = wrapperOverloads.findIndex((p) => p.params === '...elements: A & RefuseUntyped<A>' && refusingElements(p));
 		expect(optionsFirstIndex).toBeGreaterThanOrEqual(0);
 		expect(elementsOnlyIndex).toBeGreaterThanOrEqual(0);
 		expect(elementsOnlyIndex).toBe(wrapperOverloads.length - 1);

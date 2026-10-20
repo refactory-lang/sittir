@@ -1326,6 +1326,68 @@ export function expandAndDedupeContentTypes(
 	return expanded;
 }
 
+const IDENTIFIER_KEY = /^[A-Za-z_$][\w$]*$/;
+
+export function isIdentifierKey(key: string): boolean {
+	return IDENTIFIER_KEY.test(key);
+}
+
+export function quoteKey(key: string): string {
+	return isIdentifierKey(key) ? key : JSON.stringify(key);
+}
+
+export function refuseUntyped(typeParam: string, declared?: string): string {
+	return declared === undefined ? `RefuseUntyped<${typeParam}>` : `RefuseUntyped<${typeParam}, ${declared}>`;
+}
+
+export interface RefusingParams {
+	readonly typeParams: string;
+	readonly params: string;
+}
+
+export function refusingParam(
+	label: string,
+	type: string,
+	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: boolean } = {}
+): RefusingParams {
+	const typeParam = shape.rest ? 'A' : 'V';
+	const refusal = refuseUntyped(typeParam, shape.loose ? type : undefined);
+	return {
+		typeParams: `<${shape.loose ? 'const ' : ''}${typeParam} extends ${type}>`,
+		params: shape.rest
+			? `...${label}: ${typeParam} & ${refusal}`
+			: shape.optional
+				? `...${label}: [${label}?: ${typeParam}] & ${refusal}`
+				: `${label}: ${typeParam} & ${refusal}`
+	};
+}
+
+const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUntyped<\w+(?:, .+)?>)$/;
+const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUntyped<\w+(?:, [^,]+)?>)((?:, .*)?)$/;
+
+export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
+	const optional = OPTIONAL_REFUSING.exec(refusing.params);
+	return {
+		...refusing,
+		params: optional === null ? `${refusing.params}, ${trailing}` : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
+	};
+}
+
+export function optionalRefusing(refusing: RefusingParams): RefusingParams {
+	const required = REQUIRED_REFUSING.exec(refusing.params);
+	return {
+		...refusing,
+		params:
+			required === null
+				? refusing.params.replace(/^(\w+): /, '$1?: ')
+				: `...${required[1]}: [${required[1]}?: ${required[2]}${required[4]}] & ${required[3]}`
+	};
+}
+
+export function declaredOverload(head: string, refusing: RefusingParams, returnType: string): string {
+	return `${head}${refusing.typeParams}(${refusing.params}): ${returnType};`;
+}
+
 export function withEmptyOverload(
 	nodeMap: NodeMap,
 	kind: string,

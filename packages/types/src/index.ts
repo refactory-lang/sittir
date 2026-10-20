@@ -38,7 +38,7 @@ export type {
 	PortableSurface,
 	PortableTable
 } from './portable.ts';
-import type { Admit } from './node-surface.ts';
+import type { Admit, MaxDepth } from './node-surface.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
 export type { BooleanKeyword } from './keyword-presence.ts';
 
@@ -218,6 +218,22 @@ type MaxOf<U, Seen extends unknown[] = []> = [Exclude<U, Seen['length']>] extend
 	? Seen['length']
 	: MaxOf<Exclude<U, Seen['length']>, [...Seen, unknown]>;
 
+/**
+ * A module of builders as their internal callers see them, with every type parameter at its constraint: each builder
+ * takes the arguments of any overload it declares ({@link ArgsOf}), then, as its last signature, its own last
+ * overload's, so `Parameters` reads what it reads on the builder. A coercer has refused an untyped node at its own
+ * signature before it calls a strict builder, so it calls through this view, where a builder's parameters type its
+ * arguments contextually.
+ *
+ * @typeParam M - the builder module's type (`typeof import('./raw.js')`).
+ * @returns the module with every function member replaced by its plain signatures.
+ */
+export type PlainBuilders<M> = {
+	readonly [K in keyof M]: M[K] extends AnyFlavorFn
+		? ((...args: ArgsOf<M[K]>) => ReturnType<M[K]>) & ((...args: Parameters<M[K]>) => ReturnType<M[K]>)
+		: M[K];
+};
+
 /** A bare `readonly E[]` rest array as `E[]`; a tuple, however it ends, as it is. */
 type MutableRest<A extends readonly unknown[]> = A extends readonly (infer E)[]
 	? readonly E[] extends A
@@ -316,9 +332,6 @@ export type Contains<Visited extends number[], T extends number> = Visited exten
 		? true
 		: Contains<Rest, T>
 	: false;
-
-/** Max recursion depth for type expansion. Beyond this, branches become opaque. */
-type MaxDepth = 3;
 
 /** Max chain of bare hops (`BareArm`) under one slot: an elided wrapper
  *  whose slot is a list whose element is an elided wrapper… Each hop

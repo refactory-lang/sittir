@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUntyped } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -320,12 +320,18 @@ const subscript$subscripts = <PF extends (config: never) => unknown, CF extends 
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subscripts: _c(child)(...seat) }, options);
 	};
 };
-const subscript$seated: (...args: T.Subscript.BuildArgs) => ReturnType<typeof F.buildSubscript> = subscript$subscripts(
-	F.buildSubscript,
-	F.buildSubscripts
-);
-const subscript$seatedCoerce: (...args: T.Subscript.LooseArgs) => ReturnType<typeof C.coerceToSubscript> =
-	subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts);
+function subscript$seated<A extends T.Subscript.BuildArgs>(
+	...args: A & RefuseUntyped<A>
+): ReturnType<typeof F.buildSubscript>;
+function subscript$seated(...args: T.Subscript.BuildArgs): ReturnType<typeof F.buildSubscript> {
+	return subscript$subscripts(F.buildSubscript, F.buildSubscripts)(...args);
+}
+function subscript$seatedCoerce<const A extends T.Subscript.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.Subscript.LooseArgs>
+): ReturnType<typeof C.coerceToSubscript>;
+function subscript$seatedCoerce(...args: T.Subscript.LooseArgs): ReturnType<typeof C.coerceToSubscript> {
+	return subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts)(...args);
+}
 export const subscript = Object.freeze({
 	...B.subscript,
 	...bundle(subscript$seated, subscript$seatedCoerce, { key: 'subscript', max: 1 })
@@ -353,18 +359,22 @@ const comparisonOperator$comparators = <
 		);
 	};
 };
-const comparisonOperator$seated: (
+function comparisonOperator$seated<A extends T.ComparisonOperator.BuildArgs>(
+	...args: A & RefuseUntyped<A>
+): ReturnType<typeof F.buildComparisonOperator>;
+function comparisonOperator$seated(
 	...args: T.ComparisonOperator.BuildArgs
-) => ReturnType<typeof F.buildComparisonOperator> = comparisonOperator$comparators(
-	F.buildComparisonOperator,
-	F.buildComparisonOperatorComparator
-);
-const comparisonOperator$seatedCoerce: (
+): ReturnType<typeof F.buildComparisonOperator> {
+	return comparisonOperator$comparators(F.buildComparisonOperator, F.buildComparisonOperatorComparator)(...args);
+}
+function comparisonOperator$seatedCoerce<const A extends T.ComparisonOperator.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.ComparisonOperator.LooseArgs>
+): ReturnType<typeof C.coerceToComparisonOperator>;
+function comparisonOperator$seatedCoerce(
 	...args: T.ComparisonOperator.LooseArgs
-) => ReturnType<typeof C.coerceToComparisonOperator> = comparisonOperator$comparators(
-	C.coerceToComparisonOperator,
-	C.coerceToComparisonOperatorComparator
-);
+): ReturnType<typeof C.coerceToComparisonOperator> {
+	return comparisonOperator$comparators(C.coerceToComparisonOperator, C.coerceToComparisonOperatorComparator)(...args);
+}
 export const comparisonOperator = Object.freeze({
 	...B.comparisonOperator,
 	...bundle(comparisonOperator$seated, comparisonOperator$seatedCoerce, { key: 'comparisonOperator', max: 1 })
@@ -413,14 +423,18 @@ const matchStatement$subjects = <PF extends (config: never) => unknown, CF exten
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subjects: _c(child)(...seat) }, options);
 	};
 };
-const matchStatement$seated: (...args: T.MatchStatement.BuildArgs) => ReturnType<typeof F.buildMatchStatement> =
-	matchStatement$subjects(F.buildMatchStatement, F.buildSubjects);
-const matchStatement$seatedCoerce: (
-	...args: T.MatchStatement.LooseArgs
-) => ReturnType<typeof C.coerceToMatchStatement> = matchStatement$subjects(
-	C.coerceToMatchStatement,
-	C.coerceToSubjects
-);
+function matchStatement$seated<A extends T.MatchStatement.BuildArgs>(
+	...args: A & RefuseUntyped<A>
+): ReturnType<typeof F.buildMatchStatement>;
+function matchStatement$seated(...args: T.MatchStatement.BuildArgs): ReturnType<typeof F.buildMatchStatement> {
+	return matchStatement$subjects(F.buildMatchStatement, F.buildSubjects)(...args);
+}
+function matchStatement$seatedCoerce<const A extends T.MatchStatement.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.MatchStatement.LooseArgs>
+): ReturnType<typeof C.coerceToMatchStatement>;
+function matchStatement$seatedCoerce(...args: T.MatchStatement.LooseArgs): ReturnType<typeof C.coerceToMatchStatement> {
+	return matchStatement$subjects(C.coerceToMatchStatement, C.coerceToSubjects)(...args);
+}
 export const matchStatement = Object.freeze({
 	...B.matchStatement,
 	...bundle(matchStatement$seated, matchStatement$seatedCoerce, { key: 'matchStatement', max: 1 })
@@ -467,10 +481,18 @@ const caseClause$casePatterns = <PF extends (config: never) => unknown, CF exten
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), casePatterns: _c(child)(...seat) }, options);
 	};
 };
-const caseClause$seated: (...args: T.CaseClause.BuildArgs) => ReturnType<typeof F.buildCaseClause> =
-	caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns);
-const caseClause$seatedCoerce: (...args: T.CaseClause.LooseArgs) => ReturnType<typeof C.coerceToCaseClause> =
-	caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns);
+function caseClause$seated<A extends T.CaseClause.BuildArgs>(
+	...args: A & RefuseUntyped<A>
+): ReturnType<typeof F.buildCaseClause>;
+function caseClause$seated(...args: T.CaseClause.BuildArgs): ReturnType<typeof F.buildCaseClause> {
+	return caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns)(...args);
+}
+function caseClause$seatedCoerce<const A extends T.CaseClause.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.CaseClause.LooseArgs>
+): ReturnType<typeof C.coerceToCaseClause>;
+function caseClause$seatedCoerce(...args: T.CaseClause.LooseArgs): ReturnType<typeof C.coerceToCaseClause> {
+	return caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns)(...args);
+}
 export const caseClause = Object.freeze({
 	...B.caseClause,
 	...bundle(caseClause$seated, caseClause$seatedCoerce, { key: 'caseClause', max: 1 })
@@ -640,10 +662,18 @@ const classPattern$arguments = <PF extends (config: never) => unknown, CF extend
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), arguments: _c(child)(...seat) }, options);
 	};
 };
-const classPattern$seated: (...args: T.ClassPattern.BuildArgs) => ReturnType<typeof F.buildClassPattern> =
-	classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns);
-const classPattern$seatedCoerce: (...args: T.ClassPattern.LooseArgs) => ReturnType<typeof C.coerceToClassPattern> =
-	classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns);
+function classPattern$seated<A extends T.ClassPattern.BuildArgs>(
+	...args: A & RefuseUntyped<A>
+): ReturnType<typeof F.buildClassPattern>;
+function classPattern$seated(...args: T.ClassPattern.BuildArgs): ReturnType<typeof F.buildClassPattern> {
+	return classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns)(...args);
+}
+function classPattern$seatedCoerce<const A extends T.ClassPattern.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.ClassPattern.LooseArgs>
+): ReturnType<typeof C.coerceToClassPattern>;
+function classPattern$seatedCoerce(...args: T.ClassPattern.LooseArgs): ReturnType<typeof C.coerceToClassPattern> {
+	return classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns)(...args);
+}
 export const classPattern = Object.freeze({
 	...B.classPattern,
 	...bundle(classPattern$seated, classPattern$seatedCoerce, { key: 'classPattern', max: 1 })
@@ -660,10 +690,18 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const unionPattern$seated: (...args: T.UnionPattern.BuildArgs) => ReturnType<typeof F.buildUnionPattern> =
-	unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative);
-const unionPattern$seatedCoerce: (...args: T.UnionPattern.LooseArgs) => ReturnType<typeof C.coerceToUnionPattern> =
-	unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative);
+function unionPattern$seated<A extends T.UnionPattern.BuildArgs>(
+	...args: A & RefuseUntyped<A>
+): ReturnType<typeof F.buildUnionPattern>;
+function unionPattern$seated(...args: T.UnionPattern.BuildArgs): ReturnType<typeof F.buildUnionPattern> {
+	return unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative)(...args);
+}
+function unionPattern$seatedCoerce<const A extends T.UnionPattern.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.UnionPattern.LooseArgs>
+): ReturnType<typeof C.coerceToUnionPattern>;
+function unionPattern$seatedCoerce(...args: T.UnionPattern.LooseArgs): ReturnType<typeof C.coerceToUnionPattern> {
+	return unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative)(...args);
+}
 export const unionPattern = Object.freeze({
 	...B.unionPattern,
 	...bundle(unionPattern$seated, unionPattern$seatedCoerce)
@@ -2363,14 +2401,16 @@ const slice$flatten$step =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, step: _c(child)(inner['expression']) } : rest, options);
 	};
-const slice$seated: (...args: T.Slice.BuildArgs) => ReturnType<typeof F.buildSlice> = slice$flatten$step(
-	F.buildSlice,
-	F.buildSliceGroup
-);
-const slice$seatedCoerce: (...args: T.Slice.LooseArgs) => ReturnType<typeof C.coerceToSlice> = slice$flatten$step(
-	C.coerceToSlice,
-	C.coerceToSliceGroup
-);
+function slice$seated<A extends T.Slice.BuildArgs>(...args: A & RefuseUntyped<A>): ReturnType<typeof F.buildSlice>;
+function slice$seated(...args: T.Slice.BuildArgs): ReturnType<typeof F.buildSlice> {
+	return slice$flatten$step(F.buildSlice, F.buildSliceGroup)(...args);
+}
+function slice$seatedCoerce<const A extends T.Slice.LooseArgs>(
+	...args: A & RefuseUntyped<A, T.Slice.LooseArgs>
+): ReturnType<typeof C.coerceToSlice>;
+function slice$seatedCoerce(...args: T.Slice.LooseArgs): ReturnType<typeof C.coerceToSlice> {
+	return slice$flatten$step(C.coerceToSlice, C.coerceToSliceGroup)(...args);
+}
 export const slice = Object.freeze({
 	...B.slice,
 	...bundle(slice$seated, slice$seatedCoerce, { key: 'slice', max: 1 })

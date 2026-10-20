@@ -354,6 +354,10 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 
 `undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
 
+### `packages/types/src/index.ts::PlainBuilders`
+
+A builder's own public overloads are generic, and a generic parameter gives no contextual type to its argument, so a coercer's inner helper whose result is inferred from the parameter it fills (`coerceMixedEnumStorage`, `_keywordOr`) would infer `unknown`. The first signature takes any overload's arguments, so a call with none, or a forwarding builder's first form, still resolves; the last is the builder's own last overload, so `Parameters<typeof F.buildX>` and `ReturnType<typeof F.buildX>` read what they read on the builder itself.
+
 ### `packages/types/src/vocabulary/utils.ts::Flag`
 
 The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
@@ -381,11 +385,15 @@ Why the refusal needs a generic check. TypeScript admits a plain `number` into a
 - Intersecting the member with its literal reduces to `never`.
 - Giving untyped nodes an enum of their own breaks `AnyUntypedNode` as the type every typed node flows into: a member of one enum is not assignable to another, and the only type every member flows into is `number`, which flows back into every enum.
 
-So the admitting function is generic over the value, and the check reads the type it infers (`UntypedKind`). It distributes over a union, so one untyped item among a rest argument's items refuses the call. A value typed `any` passes, as it does everywhere. The setters of the node surface are built on it (`AdmitsOne`, `AdmitsEach`). The generated builders admit through `Admit` without it, so they take an untyped node at compile time and refuse it only at run time.
+So the admitting function is generic over the value, and the check reads the type it infers (`UntypedKind`). It distributes over a union, so one untyped item among a rest argument's items refuses the call. A value typed `any` passes, as it does everywhere. The setters of the node surface are built on it (`AdmitsOne`, `AdmitsEach`). Every generated builder refuses through it as well: a strict builder per node-valued slot (`RefusingConfig`, a positional value, a rest of items) and a loose builder over its whole input, so the check reads nested configs and lists down to `MaxDepth`.
+
+`Declared` is a loose builder's declared input. A value typed as that whole input skips the search. The declared input holds no untyped node by construction, so the result is the same; what the skip saves is the search itself. TypeScript erases a builder's type parameter to its constraint whenever it reads the signature from outside (`ArgsOf`, the arity a bundle stamps, `Parameters`), and without the skip each erasure searches the full loose widening of the kind, which costs more than every call site together. A strict builder passes none: its values are nodes, where the search stops at once.
 
 ### `packages/types/src/node-surface.ts::UntypedKind`
 
-Whether a value's `$type` is a plain `number`. `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself: the template of an enum member or a numeric literal is one numeral. A conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. It distributes over a union, and a value with no `$type` (leaf text, a kind id, `undefined`) is `false`.
+Whether a value holds an untyped node: one whose `$type` is a plain `number`. `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself: the template of an enum member or a numeric literal is one numeral. A conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member.
+
+The search reads a list's items and a config's fields (every key but `$type`, through `UntypedField`) and stops at a node, a value carrying `$render` or a held tree, whose fields are typed storage. A config tagged with a kind (`{ $type: Kinds.Block, … }`) is searched like any config. It distributes over a union. A value typed `any` proves nothing and is `false`, as is a function and a value with no `$type` and no fields (leaf text, a kind id, `undefined`).
 
 ### `packages/types/src/node-surface.ts::AdmitsOne`
 
@@ -394,6 +402,22 @@ A function that admits one value: generic over it, so `RefuseUntyped` can read w
 ### `packages/types/src/node-surface.ts::AdmitsEach`
 
 The rest form of `AdmitsOne`: generic over the argument tuple, checked over the union of its items, so a repeated slot or a flat key's rest refuses the call when any item is untyped.
+
+### `packages/types/src/node-surface.ts::UntypedField`
+
+The next level of `UntypedKind`'s search: the union of a config's field values other than `$type`, searched one level deeper. It stops at `MaxDepth` levels, the depth loose configs nest to, so the search reaches every node the loose widening can hold and no further.
+
+### `packages/types/src/node-surface.ts::UntypedValue`
+
+`UntypedKind` behind the `Declared` skip of `RefuseUntyped`. It is an alias of its own so that `RefuseUntyped` stays a conditional on its value: while the value is a type parameter, TypeScript keeps the name `RefuseUntyped<…>` in hovers and declaration emit instead of expanding the search, which the declaration of an exported setter could not serialize.
+
+### `packages/types/src/node-surface.ts::RefusingConfig`
+
+The refusal sits on the config rather than on each field because of how TypeScript infers a field's parameter. An optional field typed `S & RefuseUntyped<S>` reads as the union `(S & RefuseUntyped<S>) | undefined`, and against a union target TypeScript infers `S` from each member of a union value separately and keeps the first. A value that may be a built or a parsed node, `{ $type } & (HoldsTree | { $render })`, then infers as its held-tree member alone and fails. A field typed by the bare parameter infers whole. The mapped config also keeps TypeScript's excess-property check, which an intersection with the config, or one parameter over the whole config, loses.
+
+### `packages/types/src/node-surface.ts::MaxDepth`
+
+How deep loose configs nest (`LooseConfigOf`) and, the same number, how deep `UntypedKind` searches them, so the refusal reaches every node the loose widening can hold.
 
 ### `packages/types/src/query.ts::SlotFlagOf`
 

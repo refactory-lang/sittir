@@ -897,6 +897,8 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 // implementation's own header.
 ```
 
+A read of `config` is looked for only after the implementation's signature: the overload declarations before it name `config` without reading it.
+
 ### `packages/codegen/src/emitters/factories.ts::emitRefineFormFactory`
 
 ```text
@@ -1242,6 +1244,8 @@ The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pair
  */
 ```
 
+`F` is the strict builders seen through `PlainBuilders`. A coercer has refused an untyped node at its own signature before it calls a strict builder, and its inner helpers type their results from the builder's parameters, which the builders' own generic overloads would leave untyped.
+
 ```text
 // ---------------------------------------------------------------------------
 // Emission helpers for the from.ts header block
@@ -1544,6 +1548,10 @@ The coercer's signature carries the same facts as types. With a spelled delimite
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
 
 A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's spread: beside its single-value signature it declares `(...input: T.<Target>.LooseArgs)`, and a call with more than one argument hands every argument to the target's own coercer and wraps the result. `parameters(a, b, c)` is `parameters([a, b, c])`, each element resolved as the list resolves it. A spelled or sibling-refusing signature cannot also spread, and the emitter throws if one would.
+
+#### untyped refusal
+
+Every coercer declares its public signature as one overload over its implementation: generic over the whole input and refusing an untyped node anywhere in it (`RefuseUntyped`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
 
 
 #### interior passthrough
@@ -6671,7 +6679,7 @@ A kind with a construction surface narrows `BuildArgs` and `LooseArgs` (typed `r
 The keyword-presence brand is imported as `BaseBooleanKeyword`, the same `Base` prefix the other vocabulary imports
 take, because a grammar may have a kind whose type is named `BooleanKeyword` (typescript's `boolean` keyword).
 
-### `packages/codegen/src/emitters/types.ts::quoteKey`
+### `packages/codegen/src/emitters/shared.ts::quoteKey`
 
 ```text
 /** Quote a type/object key if it is not a plain identifier. */
@@ -10610,7 +10618,7 @@ the record is floored.
 
 ### `packages/codegen/src/emitters/factories.ts::FactoryParam`
 
-A parameter that holds a node (`admitsNodes`) is typed through `Admit`, so it takes any node of the slot's kinds (built, parsed or a draft) by kind and never the storage shape; a leaf parameter is raw text and is not widened.
+A parameter that holds a node (`admitsNodes`) is typed through `Admit`, so it takes any node of the slot's kinds (built, parsed or a draft) by kind and never the storage shape; a leaf parameter is raw text and is not widened. `generic` is the parameter's public form when it refuses something at compile time: an untyped node (`refusingWhole`, `refusingSlots`) or a numeric text value's literal check. It is declared as an overload over the implementation's plain signature.
 
 ```text
 /**
@@ -10716,7 +10724,7 @@ The rewrite consumes only the initializer (`= {}`), never what follows it: a def
  *  string is composed. */
 ```
 
-It also answers the parameter's arity: 1, or none (unbounded) for a rest parameter. `resolveFactorySurface` adds 1 when it appends the spelling `options?`, so the count and the text come from the same parameter list.
+It also answers the parameter's arity: 1, or none (unbounded) for a rest parameter. `resolveFactorySurface` adds 1 when it appends the spelling `options?`, so the count and the text come from the same parameter list. It passes the parameter's refusing form through as `generic`.
 
 ### `packages/codegen/src/emitters/factories.ts::paramsToTuple`
 
@@ -10835,7 +10843,7 @@ A chain that ends in a pattern leaf forwards nothing, because that leaf's constr
 
 ### `packages/codegen/src/emitters/factories.ts::forwardedConstruction`
 
-The overload list of a forwarding strict builder, as a value: the kind's own parameters, then each parameter list the target's constructor declares (`constructorSurface`; a target with no constructor surface forwards the target builder's own arguments), with an empty list first. It carries the list twice, in the two spellings the two readers need: `overloads` for the builder's declarations in `raw.ts`, and `rows` as tuples for `types.ts`, where a target with no constructor surface is named by its row (`T.<Target>.BuildArgs`) because the types module does not see the factories. `emitFieldCarryingFactory` writes the declarations from it and `fieldCarryingBuiltTypeSurface` writes `BuildArgs` as the union of its rows, so a strict row cannot omit an overload the builder declares. `null` when the kind forwards nothing.
+The overload list of a forwarding strict builder, as a value: the kind's own parameters, then each parameter list the target's constructor declares (`constructorSurface`; a target with no constructor surface forwards the target builder's own arguments), with an empty list first. It carries the list twice, in the two spellings the two readers need: `overloads` for the builder's declarations in `raw.ts`, and `rows` as tuples for `types.ts`, where a target with no constructor surface is named by its row (`T.<Target>.BuildArgs`) because the types module does not see the factories. `emitFieldCarryingFactory` writes the declarations from it and `fieldCarryingBuiltTypeSurface` writes `BuildArgs` as the union of its rows, so a strict row cannot omit an overload the builder declares. `null` when the kind forwards nothing. Each of `overloads` carries its type parameters, so a forwarding builder refuses an untyped node as its target does; `rows` stay the plain lists.
 
 A node with registered slots does not offer a spread target's own forms (`restForwardTarget`): its options argument trails its value, so it cannot also take the target's items, and its loose builder takes no spread either (`listSpreadTarget`). It still forwards, so it still builds from no argument when its target can be empty.
 
@@ -10925,6 +10933,8 @@ a `'runtime'` engine's verifier refuses an empty list, and a `repeat1` list take
 (`T[]` is not `NonEmptyArray<T>`).
 
 A compound target whose builder takes leading options declares both forms as `paramsOverloads`, the options-led one first, so a forwarding builder offers the same pair.
+
+`declarations` are the same overloads in their public form, each with the type parameters through which it refuses an untyped node, and `paramsOverloads` stay the plain lists the rows are written from. A chain whose final value an earlier hop leaves optional declares the optional form (`optionalRefusing`).
 
 ### `packages/codegen/src/emitters/factories.ts::BuiltTypeSurface`
 
@@ -14790,6 +14800,10 @@ Whether a type text has ` | ` outside every bracket pair, the test `parenthesize
 
 The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywordOf(input, keywords) ?? resolved` for a single slot. Its declared result is `number | R`, so the checker forms the union without reducing it, which a `??` expression does and which exceeds the depth on a union that holds a node's `.Bound`.
 
+### `packages/codegen/src/emitters/from.ts::RAW_IMPORT`
+
+The coerce module's import of the strict builders, under a name of its own so that `F` can be their plain view (`PlainBuilders`).
+
 ### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
 
 The options a separated list's factory takes, each with the expression a list owner's getter falls back to when the list does not hold it: `undefined` for the delimiter, which a list built without one leaves unset (its default is the options table's, applied at render), and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type, so a list owner's getters report what the list holds.
@@ -14937,6 +14951,42 @@ The kind ids of a slot's drop set, for the reader: the `separatorKindId` stamped
 ### `packages/codegen/src/emitters/shared.ts::reportSkippedParserSymbol`
 
 Says why an emitter skipped a kind `classifyParserSymbolEmission` found no parser symbol for, when there is something to say. A kind the grammar inlines is named on stdout, as a note rather than a warning, since inlining is the grammar's choice. A synthesized kind and a kind tree-sitter left out of the parser are skipped silently. The kinds left out are unreachable by construction: rust's `comment` is a choice over `line_comment` and `block_comment`, which extras name directly, and `_layout` is sittir's layout-trivia union. A kind that goes missing by mistake shows up in the phantom-kind ratchet (`packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts`), which only tightens.
+
+### `packages/codegen/src/emitters/shared.ts::isIdentifierKey`
+
+Whether a key can be written bare, as an object key or after a dot. `quoteKey` and the coercers' storage reads (`emitSingularChildrenFrom`) share it.
+
+### `packages/codegen/src/emitters/shared.ts::refuseUntyped`
+
+`RefuseUntyped<typeParam>`, with the declared input as its second argument when the caller passes one: a loose builder does, so a value typed as its whole input is admitted unsearched.
+
+### `packages/codegen/src/emitters/shared.ts::RefusingParams`
+
+A refusing overload's type parameter list and parameter list: the two parts of a declaration that change when a parameter refuses an untyped node. The implementation keeps its plain parameters.
+
+### `packages/codegen/src/emitters/shared.ts::refusingParam`
+
+The refusing form of one parameter, generic over its value. A required value is `label: V & RefuseUntyped<V>`, a rest `...label: A & RefuseUntyped<A>`, and an optional value the rest tuple `...label: [label?: V] & RefuseUntyped<V>`. The optional form is a tuple for two reasons: `label?: V & RefuseUntyped<V>` reads as a union with `undefined`, against which TypeScript infers a union value one member at a time (`RefusingConfig`), and the tuple reads back through `ArgsOf` as the same optional parameter the kind's row declares. A loose parameter is `const`, as the loose input's other refusals need, and passes its declared input to `RefuseUntyped`.
+
+### `packages/codegen/src/emitters/shared.ts::OPTIONAL_REFUSING`
+
+The optional single-value parameter list `refusingParam` writes, the rest tuple, read back by `withTrailingParam`.
+
+### `packages/codegen/src/emitters/shared.ts::REQUIRED_REFUSING`
+
+The required single-value parameter list `refusingParam` writes, with any parameters after it, read back by `optionalRefusing`.
+
+### `packages/codegen/src/emitters/shared.ts::withTrailingParam`
+
+A refusing parameter list with one more parameter after it, as a builder's spelling `options?` follows its value. An optional value's rest tuple takes it as its last element, since nothing can follow a rest parameter.
+
+### `packages/codegen/src/emitters/shared.ts::optionalRefusing`
+
+The optional form of a refusing parameter list, for a chain whose final constructor takes a required value that an earlier hop leaves optional (`constructorSurface`): a single value becomes the rest tuple, and any other list marks its first parameter optional.
+
+### `packages/codegen/src/emitters/shared.ts::declaredOverload`
+
+One overload declaration of a refusing signature, over a function's plain implementation. The implementation's own signature stays plain, so its body never reads a refused type.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 
@@ -15117,6 +15167,26 @@ Emits one `_delimited_<factory>` constant per delimited kind into the raw module
 ### `packages/codegen/src/emitters/factories.ts::delimitedCheckLine`
 
 The `checkDelimited(handle, node, spec, [content slots], open, close)` call emitted before a delimited builder returns. The delimiter slots come from the stamped fact; every other slot is content.
+
+### `packages/codegen/src/emitters/factories.ts::refusingWhole`
+
+A positional value's or a rest's refusing form (`refusingParam`), over the parameter's own strict type.
+
+### `packages/codegen/src/emitters/factories.ts::refusingSlots`
+
+A config's refusing form: one type parameter per node-valued config slot (`storesNodes`), constrained by the config's own field type and mapped through `RefusingConfig`. Each is named `<ConfigKey>Slot`, so it cannot shadow a name the signature itself uses (`ReturnType`, `T`). A config with numeric text slots keeps its literal check's parameter first. `undefined` when the config has neither.
+
+### `packages/codegen/src/emitters/factories.ts::publicParams`
+
+A surface's declared parameter list: its refusing form, or its plain parameters when it refuses nothing.
+
+### `packages/codegen/src/emitters/factories.ts::declarationOf`
+
+A declared parameter list without its initializers (`declarationParams`), as an overload declaration needs.
+
+### `packages/codegen/src/emitters/factories.ts::ledByOptions`
+
+A declared parameter list with the list options leading it, keeping its type parameters.
 
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 

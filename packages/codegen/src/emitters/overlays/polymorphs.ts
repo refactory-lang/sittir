@@ -9,9 +9,10 @@ import {
 	ownTextLeaf,
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo,
-	withEmptyOverload
+	withEmptyOverload,
+	declaredOverload,
+	refusingParam
 } from '../shared.ts';
-import { emptyForms } from '../../compiler/model/trivia.ts';
 import { keywordLeafArity } from '../from.ts';
 import {
 	builtTypeSurfaceOf,
@@ -455,20 +456,15 @@ function composeSeats(
 		coerceExpr =
 			coerceExpr !== undefined && seat.child.coerce !== undefined ? seat.apply(coerceExpr, seat.child.coerce) : undefined;
 	}
-	const strictParams = `(...args: T.${wireSet.node.typeName}.BuildArgs)`;
-	const coerceParams = `(...args: T.${wireSet.node.typeName}.LooseArgs)`;
-	const seated = (name: string, params: string, returnType: string, expr: string): string[] =>
-		emptyForms(nodeMap).has(wireSet.node.kind)
-			? withEmptyOverload(
-					nodeMap,
-					wireSet.node.kind,
-					`function ${name}`,
-					[`function ${name}(${params.startsWith('(...') ? params.slice(1, -1) : `...args: [${params.slice(1, -1).replace(/^(\w+):/, '$1?:')}]`}): ${returnType} {`, `	return ${expr}(...args);`, '}'],
-					`function ${name}${params}: ${returnType};`
-				)
-			: [`const ${name}: ${params} => ${returnType} = ${expr};`];
+	const seated = (name: string, argsType: string, loose: boolean, returnType: string, expr: string): string[] =>
+		withEmptyOverload(nodeMap, wireSet.node.kind, `function ${name}`, [
+			declaredOverload(`function ${name}`, refusingParam('args', argsType, { rest: true, loose }), returnType),
+			`function ${name}(...args: ${argsType}): ${returnType} {`,
+			`	return ${expr}(...args);`,
+			'}'
+		]);
 	const strictName = `${wireSet.parentKey}$seated`;
-	methods.push(...seated(strictName, strictParams, `ReturnType<typeof ${p.strict}>`, strictExpr));
+	methods.push(...seated(strictName, `T.${wireSet.node.typeName}.BuildArgs`, false, `ReturnType<typeof ${p.strict}>`, strictExpr));
 	const { max } = seatedArity(wireSet, wires)!;
 	if (coerceExpr === undefined || p.coerce === undefined) {
 		return {
@@ -480,7 +476,7 @@ function composeSeats(
 		};
 	}
 	const coerceName = `${wireSet.parentKey}$seatedCoerce`;
-	methods.push(...seated(coerceName, coerceParams, `ReturnType<typeof ${p.coerce}>`, coerceExpr));
+	methods.push(...seated(coerceName, `T.${wireSet.node.typeName}.LooseArgs`, true, `ReturnType<typeof ${p.coerce}>`, coerceExpr));
 	return {
 		refs: { strict: strictName, coerce: coerceName, ...maxOf(max) },
 		wireLine: `	...${bundleExpr(strictName, coerceName, wireSet.parentKey, max)},`,
@@ -1238,7 +1234,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
 		"import { bundle } from '@sittir/common/utils';",
-		`import type { ${['ArgsOf', 'ElementsOf', 'NoneOf', 'OmitEach', 'OptionsArg', 'RenameKeys', 'WithoutGroup'].filter((name) => name === 'ArgsOf' || name === 'OmitEach' || blocks.some((b) => b.includes(`${name}<`))).join(', ')} } from '@sittir/types';`,
+		`import type { ${['ArgsOf', 'ElementsOf', 'NoneOf', 'OmitEach', 'OptionsArg', 'RefuseUntyped', 'RenameKeys', 'WithoutGroup'].filter((name) => name === 'ArgsOf' || name === 'OmitEach' || blocks.some((b) => b.includes(`${name}<`))).join(', ')} } from '@sittir/types';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
 		...(blocks.some((b) => b.includes('isGroupConfig(')) ? ["import { isGroupConfig } from '@sittir/common/utils';"] : []),
 		...(blocks.some((b) => /(?<![\w$.])T\./.test(b)) ? ["import type * as T from '../../types.js';"] : [])

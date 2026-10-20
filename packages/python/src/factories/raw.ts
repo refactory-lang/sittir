@@ -3,7 +3,16 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../kinds.js';
-import type { Admit, ListOptions, NonEmptyArray, NumericConfig, NumericLiteral, WidenNumeric } from '@sittir/types';
+import type {
+	Admit,
+	ListOptions,
+	NonEmptyArray,
+	NumericConfig,
+	NumericLiteral,
+	RefuseUntyped,
+	RefusingConfig,
+	WidenNumeric
+} from '@sittir/types';
 import type { DelimitedSpec } from '@sittir/common/utils';
 import {
 	currentHandle,
@@ -133,7 +142,7 @@ const _delimited_buildString: DelimitedSpec = {
 };
 
 export function buildModule(): T.EmptyModule;
-export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound;
+export function buildModule<A extends Admit<T.Statement[]>>(...children: A & RefuseUntyped<A>): T.Module.Bound;
 export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 	const _statements = children;
 	const handle = currentHandle();
@@ -159,15 +168,15 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 	return node as unknown as T.Module.Bound;
 }
 
-export function buildSimpleStatements(
-	value: Admit<T.SimpleStatementsElements>
+export function buildSimpleStatements<V extends Admit<T.SimpleStatementsElements>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildSimpleStatements>;
-export function buildSimpleStatements(
+export function buildSimpleStatements<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.SimpleStatement>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSimpleStatements>;
-export function buildSimpleStatements(
-	...elements: NonEmptyArray<Admit<T.SimpleStatement>>
+export function buildSimpleStatements<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -227,8 +236,12 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 	return node as unknown as T.SimpleStatements.Bound;
 }
 
-export function buildImportStatement(value: Admit<T.Names | T.Names.Types>): ReturnType<typeof _buildImportStatement>;
-export function buildImportStatement(value: Admit<T.ImportList>): ReturnType<typeof _buildImportStatement>;
+export function buildImportStatement<V extends Admit<T.Names | T.Names.Types>>(
+	value: V & RefuseUntyped<V>
+): ReturnType<typeof _buildImportStatement>;
+export function buildImportStatement<V extends Admit<T.ImportList>>(
+	value: V & RefuseUntyped<V>
+): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildImportStatement(args[0] as Parameters<typeof _buildImportStatement>[0]);
@@ -290,6 +303,10 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 	return node as unknown as T.ImportPrefix.Bound;
 }
 
+export function buildRelativeImport<
+	PrefixSlot extends T.RelativeImport.Config['prefix'],
+	NameSlot extends T.RelativeImport.Config['name']
+>(config: RefusingConfig<T.RelativeImport.Config, { prefix: PrefixSlot; name: NameSlot }>): T.RelativeImport.Bound;
 export function buildRelativeImport(config: T.RelativeImport.Config): T.RelativeImport.Bound {
 	const _prefix = config.prefix;
 	const _name = config.name;
@@ -319,6 +336,9 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 	return node as unknown as T.RelativeImport.Bound;
 }
 
+export function buildFutureImportStatement<V extends Admit<T.ImportList | T.ParenthesizedImportList>>(
+	value: V & RefuseUntyped<V>
+): T.FutureImportStatement.Bound;
 export function buildFutureImportStatement(
 	value: Admit<T.ImportList | T.ParenthesizedImportList>
 ): T.FutureImportStatement.Bound {
@@ -345,6 +365,12 @@ export function buildFutureImportStatement(
 	return node as unknown as T.FutureImportStatement.Bound;
 }
 
+export function buildImportFromStatement<
+	ModuleNameSlot extends T.ImportFromStatement.Config['moduleName'],
+	ContentSlot extends T.ImportFromStatement.Config['content']
+>(
+	config: RefusingConfig<T.ImportFromStatement.Config, { moduleName: ModuleNameSlot; content: ContentSlot }>
+): T.ImportFromStatement.Bound;
 export function buildImportFromStatement(config: T.ImportFromStatement.Config): T.ImportFromStatement.Bound {
 	const _module_name = config.moduleName;
 	const _content = kindIdStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content);
@@ -374,12 +400,12 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 	return node as unknown as T.ImportFromStatement.Bound;
 }
 
-export function buildImportList(
-	...elements: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>
+export function buildImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildImportList>;
-export function buildImportList(
+export function buildImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildImportList>;
 export function buildImportList(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.DottedName | T.AliasedImport>)[]
@@ -437,6 +463,10 @@ function _buildImportList(
 	return node as unknown as T.ImportList.Bound;
 }
 
+export function buildAliasedImport<
+	NameSlot extends T.AliasedImport.Config['name'],
+	AliasSlot extends T.AliasedImport.Config['alias']
+>(config: RefusingConfig<T.AliasedImport.Config, { name: NameSlot; alias: AliasSlot }>): T.AliasedImport.Bound;
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
 	const _name = config.name;
 	const _alias = config.alias;
@@ -467,6 +497,9 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 
 export const buildWildcardImport: TSKindId.WildcardImport = TSKindId.WildcardImport;
 
+export function buildPrintStatement<V extends Admit<T.PrintStatementChevron | T.PrintStatementPlain>>(
+	value: V & RefuseUntyped<V>
+): T.PrintStatement.Bound;
 export function buildPrintStatement(
 	value: Admit<T.PrintStatementChevron | T.PrintStatementPlain>
 ): T.PrintStatement.Bound {
@@ -493,6 +526,7 @@ export function buildPrintStatement(
 	return node as unknown as T.PrintStatement.Bound;
 }
 
+export function buildChevron<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.Chevron.Bound;
 export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 	const _expression = kindIdStorage<NonNullable<T.Chevron['_expression']>>(value);
 	const handle = currentHandle();
@@ -516,6 +550,9 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 	return node as unknown as T.Chevron.Bound;
 }
 
+export function buildAssertStatement<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...children: A & RefuseUntyped<A>
+): T.AssertStatement.Bound;
 export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expression>>): T.AssertStatement.Bound {
 	const _expression = children;
 	const handle = currentHandle();
@@ -540,6 +577,9 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 	return node as unknown as T.AssertStatement.Bound;
 }
 
+export function buildExpressionStatement<
+	V extends Admit<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>
+>(value: V & RefuseUntyped<V>): T.ExpressionStatement.Bound;
 export function buildExpressionStatement(
 	value: Admit<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>
 ): T.ExpressionStatement.Bound {
@@ -569,6 +609,10 @@ export function buildExpressionStatement(
 	return node as unknown as T.ExpressionStatement.Bound;
 }
 
+export function buildNamedExpression<
+	NameSlot extends T.NamedExpression.Config['name'],
+	ValueSlot extends T.NamedExpression.Config['value']
+>(config: RefusingConfig<T.NamedExpression.Config, { name: NameSlot; value: ValueSlot }>): T.NamedExpression.Bound;
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Bound {
 	const _name = config.name;
 	const _value = kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value);
@@ -598,6 +642,9 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 	return node as unknown as T.NamedExpression.Bound;
 }
 
+export function buildNamedExpressionLhs<IdentifierSlot extends T.NamedExpressionLhs.Config['identifier']>(
+	config: RefusingConfig<T.NamedExpressionLhs.Config, { identifier: IdentifierSlot }>
+): T.NamedExpressionLhs.Bound;
 export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.NamedExpressionLhs.Bound {
 	const _identifier = config.identifier;
 	const handle = currentHandle();
@@ -622,6 +669,9 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 	return node as unknown as T.NamedExpressionLhs.Bound;
 }
 
+export function buildReturnStatement<V extends Admit<T.Expression | T.ExpressionList>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): T.ReturnStatement.Bound;
 export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionList>): T.ReturnStatement.Bound {
 	const _expressions = kindIdStorage<NonNullable<T.ReturnStatement['_expressions']>>(value);
 	const handle = currentHandle();
@@ -646,6 +696,9 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 	return node as unknown as T.ReturnStatement.Bound;
 }
 
+export function buildDeleteStatement<V extends Admit<T.Expression | T.ExpressionList>>(
+	value: V & RefuseUntyped<V>
+): T.DeleteStatement.Bound;
 export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionList>): T.DeleteStatement.Bound {
 	const _expressions = kindIdStorage<NonNullable<T.DeleteStatement['_expressions']>>(value);
 	const handle = currentHandle();
@@ -670,6 +723,12 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 	return node as unknown as T.DeleteStatement.Bound;
 }
 
+export function buildRaiseStatement<
+	ExpressionsSlot extends T.RaiseStatement.Config['expressions'],
+	CauseSlot extends T.RaiseStatement.Config['cause']
+>(
+	config?: RefusingConfig<Partial<T.RaiseStatement.Config>, { expressions: ExpressionsSlot; cause: CauseSlot }>
+): T.RaiseStatement.Bound;
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}): T.RaiseStatement.Bound {
 	const _expressions = kindIdStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions);
 	const _cause = kindIdStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause);
@@ -705,6 +764,16 @@ export const buildBreakStatement: TSKindId.BreakStatement = TSKindId.BreakStatem
 
 export const buildContinueStatement: TSKindId.ContinueStatement = TSKindId.ContinueStatement;
 
+export function buildIfStatement<
+	ConditionSlot extends T.IfStatement.Config['condition'],
+	ConsequenceSlot extends T.IfStatement.Config['consequence'],
+	AlternativeSlot extends T.IfStatement.Config['alternative']
+>(
+	config: RefusingConfig<
+		T.IfStatement.Config,
+		{ condition: ConditionSlot; consequence: ConsequenceSlot; alternative: AlternativeSlot }
+	>
+): T.IfStatement.Bound;
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bound {
 	const _condition = kindIdStorage<NonNullable<T.IfStatement['_condition']>>(config.condition);
 	const _consequence = config.consequence;
@@ -739,6 +808,12 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 	return node as unknown as T.IfStatement.Bound;
 }
 
+export function buildElifClause<
+	ConditionSlot extends T.ElifClause.Config['condition'],
+	ConsequenceSlot extends T.ElifClause.Config['consequence']
+>(
+	config: RefusingConfig<T.ElifClause.Config, { condition: ConditionSlot; consequence: ConsequenceSlot }>
+): T.ElifClause.Bound;
 export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound {
 	const _condition = kindIdStorage<NonNullable<T.ElifClause['_condition']>>(config.condition);
 	const _consequence = config.consequence;
@@ -768,6 +843,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 	return node as unknown as T.ElifClause.Bound;
 }
 
+export function buildElseClause<V extends Admit<T.Suite>>(value: V & RefuseUntyped<V>): T.ElseClause.Bound;
 export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 	const _body = value;
 	const handle = currentHandle();
@@ -791,6 +867,10 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 	return node as unknown as T.ElseClause.Bound;
 }
 
+export function buildMatchStatement<
+	SubjectsSlot extends T.MatchStatement.Config['subjects'],
+	BodySlot extends T.MatchStatement.Config['body']
+>(config: RefusingConfig<T.MatchStatement.Config, { subjects: SubjectsSlot; body: BodySlot }>): T.MatchStatement.Bound;
 export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchStatement.Bound {
 	const _subjects = config.subjects;
 	const _body = config.body;
@@ -825,6 +905,9 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	return node as unknown as T.MatchStatement.Bound;
 }
 
+export function buildMatchBlock<V extends Admit<T.MatchBlockBlock | T.MatchBlockEmpty>>(
+	value: V & RefuseUntyped<V>
+): T.MatchBlock.Bound;
 export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>): T.MatchBlock.Bound {
 	const _content = value;
 	const handle = currentHandle();
@@ -849,6 +932,16 @@ export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmp
 	return node as unknown as T.MatchBlock.Bound;
 }
 
+export function buildCaseClause<
+	CasePatternsSlot extends T.CaseClause.Config['casePatterns'],
+	GuardSlot extends T.CaseClause.Config['guard'],
+	ConsequenceSlot extends T.CaseClause.Config['consequence']
+>(
+	config: RefusingConfig<
+		T.CaseClause.Config,
+		{ casePatterns: CasePatternsSlot; guard: GuardSlot; consequence: ConsequenceSlot }
+	>
+): T.CaseClause.Bound;
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound {
 	const _case_patterns = config.casePatterns;
 	const _guard = config.guard;
@@ -888,6 +981,17 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 	return node as unknown as T.CaseClause.Bound;
 }
 
+export function buildForStatement<
+	LeftSlot extends T.ForStatement.Config['left'],
+	RightSlot extends T.ForStatement.Config['right'],
+	BodySlot extends T.ForStatement.Config['body'],
+	AlternativeSlot extends T.ForStatement.Config['alternative']
+>(
+	config: RefusingConfig<
+		T.ForStatement.Config,
+		{ left: LeftSlot; right: RightSlot; body: BodySlot; alternative: AlternativeSlot }
+	>
+): T.ForStatement.Bound;
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _left = config.left;
@@ -931,6 +1035,16 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 	return node as unknown as T.ForStatement.Bound;
 }
 
+export function buildWhileStatement<
+	ConditionSlot extends T.WhileStatement.Config['condition'],
+	BodySlot extends T.WhileStatement.Config['body'],
+	AlternativeSlot extends T.WhileStatement.Config['alternative']
+>(
+	config: RefusingConfig<
+		T.WhileStatement.Config,
+		{ condition: ConditionSlot; body: BodySlot; alternative: AlternativeSlot }
+	>
+): T.WhileStatement.Bound;
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Bound {
 	const _condition = kindIdStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition);
 	const _body = config.body;
@@ -964,6 +1078,17 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 	return node as unknown as T.WhileStatement.Bound;
 }
 
+export function buildTryStatement<
+	BodySlot extends T.TryStatement.Config['body'],
+	ExceptClausesSlot extends T.TryStatement.Config['exceptClauses'],
+	ElseClauseSlot extends T.TryStatement.Config['elseClause'],
+	FinallyClauseSlot extends T.TryStatement.Config['finallyClause']
+>(
+	config: RefusingConfig<
+		T.TryStatement.Config,
+		{ body: BodySlot; exceptClauses: ExceptClausesSlot; elseClause: ElseClauseSlot; finallyClause: FinallyClauseSlot }
+	>
+): T.TryStatement.Bound;
 export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Bound {
 	const _body = config.body;
 	const _except_clauses = listStorage<NonNullable<T.TryStatement['_except_clauses']>>(config.exceptClauses ?? []);
@@ -1004,6 +1129,10 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 	return node as unknown as T.TryStatement.Bound;
 }
 
+export function buildExceptClause<
+	ExceptionSlot extends T.ExceptClause.Config['exception'],
+	BodySlot extends T.ExceptClause.Config['body']
+>(config: RefusingConfig<T.ExceptClause.Config, { exception: ExceptionSlot; body: BodySlot }>): T.ExceptClause.Bound;
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
 	const _group = strictBooleanStorage(config.group);
 	const _exception = config.exception;
@@ -1037,6 +1166,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 	return node as unknown as T.ExceptClause.Bound;
 }
 
+export function buildFinallyClause<V extends Admit<T.Suite>>(value: V & RefuseUntyped<V>): T.FinallyClause.Bound;
 export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound {
 	const _block = value;
 	const handle = currentHandle();
@@ -1060,6 +1190,12 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 	return node as unknown as T.FinallyClause.Bound;
 }
 
+export function buildWithStatement<
+	WithClauseSlot extends T.WithStatement.Config['withClause'],
+	BodySlot extends T.WithStatement.Config['body']
+>(
+	config: RefusingConfig<T.WithStatement.Config, { withClause: WithClauseSlot; body: BodySlot }>
+): T.WithStatement.Bound;
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _with_clause = config.withClause;
@@ -1093,6 +1229,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 	return node as unknown as T.WithStatement.Bound;
 }
 
+export function buildWithItem<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.WithItem.Bound;
 export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 	const _value = kindIdStorage<NonNullable<T.WithItem['_value']>>(value);
 	const handle = currentHandle();
@@ -1116,6 +1253,24 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 	return node as unknown as T.WithItem.Bound;
 }
 
+export function buildFunctionDefinition<
+	NameSlot extends T.FunctionDefinition.Config['name'],
+	TypeParametersSlot extends T.FunctionDefinition.Config['typeParameters'],
+	ParametersSlot extends T.FunctionDefinition.Config['parameters'],
+	ReturnTypeSlot extends T.FunctionDefinition.Config['returnType'],
+	BodySlot extends T.FunctionDefinition.Config['body']
+>(
+	config: RefusingConfig<
+		T.FunctionDefinition.Config,
+		{
+			name: NameSlot;
+			typeParameters: TypeParametersSlot;
+			parameters: ParametersSlot;
+			returnType: ReturnTypeSlot;
+			body: BodySlot;
+		}
+	>
+): T.FunctionDefinition.Bound;
 export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.FunctionDefinition.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _name = config.name;
@@ -1177,12 +1332,16 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 }
 
 export function buildParameters(): T.EmptyParameters;
-export function buildParameters(value?: Admit<T.ParametersElements>): ReturnType<typeof _buildParameters>;
-export function buildParameters(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Parameter>>
+export function buildParameters<V extends Admit<T.ParametersElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildParameters>;
-export function buildParameters(...elements: NonEmptyArray<Admit<T.Parameter>>): ReturnType<typeof _buildParameters>;
+export function buildParameters<A extends NonEmptyArray<Admit<T.Parameter>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildParameters>;
+export function buildParameters<A extends NonEmptyArray<Admit<T.Parameter>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildParameters(args[0] as Parameters<typeof _buildParameters>[0]);
@@ -1240,13 +1399,15 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	return node as unknown as T.Parameters.Bound;
 }
 
-export function buildLambdaParameters(value: Admit<T.ParametersElements>): ReturnType<typeof _buildLambdaParameters>;
-export function buildLambdaParameters(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Parameter>>
+export function buildLambdaParameters<V extends Admit<T.ParametersElements>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildLambdaParameters>;
-export function buildLambdaParameters(
-	...elements: NonEmptyArray<Admit<T.Parameter>>
+export function buildLambdaParameters<A extends NonEmptyArray<Admit<T.Parameter>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildLambdaParameters>;
+export function buildLambdaParameters<A extends NonEmptyArray<Admit<T.Parameter>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -1306,6 +1467,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 	return node as unknown as T.LambdaParameters.Bound;
 }
 
+export function buildListSplat<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.ListSplat.Bound;
 export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 	const _expression = kindIdStorage<NonNullable<T.ListSplat['_expression']>>(value);
 	const handle = currentHandle();
@@ -1329,6 +1491,9 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 	return node as unknown as T.ListSplat.Bound;
 }
 
+export function buildDictionarySplat<V extends Admit<T.Expression>>(
+	value: V & RefuseUntyped<V>
+): T.DictionarySplat.Bound;
 export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySplat.Bound {
 	const _expression = kindIdStorage<NonNullable<T.DictionarySplat['_expression']>>(value);
 	const handle = currentHandle();
@@ -1352,6 +1517,9 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 	return node as unknown as T.DictionarySplat.Bound;
 }
 
+export function buildGlobalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
+	...children: A & RefuseUntyped<A>
+): T.GlobalStatement.Bound;
 export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifier>>): T.GlobalStatement.Bound {
 	const _names = children;
 	const handle = currentHandle();
@@ -1376,6 +1544,9 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 	return node as unknown as T.GlobalStatement.Bound;
 }
 
+export function buildNonlocalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
+	...children: A & RefuseUntyped<A>
+): T.NonlocalStatement.Bound;
 export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identifier>>): T.NonlocalStatement.Bound {
 	const _names = children;
 	const handle = currentHandle();
@@ -1400,6 +1571,10 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 	return node as unknown as T.NonlocalStatement.Bound;
 }
 
+export function buildExecStatement<
+	CodeSlot extends T.ExecStatement.Config['code'],
+	InClauseSlot extends T.ExecStatement.Config['inClause']
+>(config: RefusingConfig<T.ExecStatement.Config, { code: CodeSlot; inClause: InClauseSlot }>): T.ExecStatement.Bound;
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Bound {
 	const _code = config.code;
 	const _in_clause = listStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], kindIdStorage);
@@ -1429,6 +1604,12 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 	return node as unknown as T.ExecStatement.Bound;
 }
 
+export function buildTypeAliasStatement<
+	LeftSlot extends T.TypeAliasStatement.Config['left'],
+	RightSlot extends T.TypeAliasStatement.Config['right']
+>(
+	config: RefusingConfig<T.TypeAliasStatement.Config, { left: LeftSlot; right: RightSlot }>
+): T.TypeAliasStatement.Bound;
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.TypeAliasStatement.Bound {
 	const _left = config.left;
 	const _right = config.right;
@@ -1456,6 +1637,17 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 	return node as unknown as T.TypeAliasStatement.Bound;
 }
 
+export function buildClassDefinition<
+	NameSlot extends T.ClassDefinition.Config['name'],
+	TypeParametersSlot extends T.ClassDefinition.Config['typeParameters'],
+	SuperclassesSlot extends T.ClassDefinition.Config['superclasses'],
+	BodySlot extends T.ClassDefinition.Config['body']
+>(
+	config: RefusingConfig<
+		T.ClassDefinition.Config,
+		{ name: NameSlot; typeParameters: TypeParametersSlot; superclasses: SuperclassesSlot; body: BodySlot }
+	>
+): T.ClassDefinition.Bound;
 export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassDefinition.Bound {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -1506,12 +1698,16 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 	return node as unknown as T.ClassDefinition.Bound;
 }
 
-export function buildTypeParameter(value: Admit<T.Types>): ReturnType<typeof _buildTypeParameter>;
-export function buildTypeParameter(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Type>>
+export function buildTypeParameter<V extends Admit<T.Types>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildTypeParameter>;
-export function buildTypeParameter(...elements: NonEmptyArray<Admit<T.Type>>): ReturnType<typeof _buildTypeParameter>;
+export function buildTypeParameter<A extends NonEmptyArray<Admit<T.Type>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildTypeParameter>;
+export function buildTypeParameter<A extends NonEmptyArray<Admit<T.Type>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParameter(args[0] as Parameters<typeof _buildTypeParameter>[0]);
@@ -1568,6 +1764,9 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 	return node as unknown as T.TypeParameter.Bound;
 }
 
+export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListSplat | T.ListSplat>>(
+	value: V & RefuseUntyped<V>
+): T.ParenthesizedListSplat.Bound;
 export function buildParenthesizedListSplat(
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
@@ -1595,18 +1794,22 @@ export function buildParenthesizedListSplat(
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;
-export function buildArgumentList(value?: Admit<T.ArgumentListElements>): ReturnType<typeof _buildArgumentList>;
-export function buildArgumentList(
+export function buildArgumentList<V extends Admit<T.ArgumentListElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): ReturnType<typeof _buildArgumentList>;
+export function buildArgumentList<
+	A extends NonEmptyArray<
+		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
+	>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildArgumentList>;
+export function buildArgumentList<
+	A extends NonEmptyArray<
 		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
 	>
-): ReturnType<typeof _buildArgumentList>;
-export function buildArgumentList(
-	...elements: NonEmptyArray<
-		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
-	>
-): ReturnType<typeof _buildArgumentList>;
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildArgumentList(args[0] as Parameters<typeof _buildArgumentList>[0]);
@@ -1664,6 +1867,12 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 	return node as unknown as T.ArgumentList.Bound;
 }
 
+export function buildDecoratedDefinition<
+	DecoratorSlot extends T.DecoratedDefinition.Config['decorator'],
+	DefinitionSlot extends T.DecoratedDefinition.Config['definition']
+>(
+	config: RefusingConfig<T.DecoratedDefinition.Config, { decorator: DecoratorSlot; definition: DefinitionSlot }>
+): T.DecoratedDefinition.Bound;
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
 	const _decorator = listStorage<NonNullable<T.DecoratedDefinition['_decorator']>>(config.decorator);
 	const _definition = config.definition;
@@ -1695,6 +1904,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 	return node as unknown as T.DecoratedDefinition.Bound;
 }
 
+export function buildDecorator<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.Decorator.Bound;
 export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 	const _expression = kindIdStorage<NonNullable<T.Decorator['_expression']>>(value);
 	const handle = currentHandle();
@@ -1718,6 +1928,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 	return node as unknown as T.Decorator.Bound;
 }
 
+export function buildBlock<A extends Admit<T.Statement[]>>(...children: A & RefuseUntyped<A>): T.Block.Bound;
 export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 	const _statements = children;
 	const handle = currentHandle();
@@ -1742,12 +1953,12 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 	return node as unknown as T.Block.Bound;
 }
 
-export function buildExpressionList(
-	...elements: NonEmptyArray<Admit<T.Expression>>
+export function buildExpressionList<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildExpressionList>;
-export function buildExpressionList(
+export function buildExpressionList<A extends NonEmptyArray<Admit<T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildExpressionList>;
 export function buildExpressionList(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression>)[]
@@ -1803,6 +2014,9 @@ function _buildExpressionList(
 	return node as unknown as T.ExpressionList.Bound;
 }
 
+export function buildDottedName<A extends NonEmptyArray<Admit<T.Identifier>>>(
+	...children: A & RefuseUntyped<A>
+): T.DottedName.Bound;
 export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>): T.DottedName.Bound {
 	const _names = children;
 	const handle = currentHandle();
@@ -1827,6 +2041,9 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 	return node as unknown as T.DottedName.Bound;
 }
 
+export function buildCasePattern<V extends Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>>(
+	value: V & RefuseUntyped<V>
+): T.CasePattern.Bound;
 export function buildCasePattern(
 	value: Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>
 ): T.CasePattern.Bound {
@@ -1853,6 +2070,25 @@ export function buildCasePattern(
 	return node as unknown as T.CasePattern.Bound;
 }
 
+export function buildSimplePattern<
+	V extends Admit<
+		| T.ClassPattern
+		| T.SplatPattern
+		| T.UnionPattern
+		| T.CaseListPattern
+		| T.CaseTuplePattern
+		| T.DictPattern
+		| T.String
+		| T.ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| T.SimplePatternNegative
+		| T.ComplexPattern
+		| T.DottedName
+		| TSKindId.WildcardPattern
+	>
+>(value: V & RefuseUntyped<V>): T.SimplePattern.Bound;
 export function buildSimplePattern(
 	value: Admit<
 		| T.ClassPattern
@@ -1914,6 +2150,12 @@ export function buildSimplePattern(
 	return node as unknown as T.SimplePattern.Bound;
 }
 
+export function buildCaseAsPattern<
+	CasePatternSlot extends T.CaseAsPattern.Config['casePattern'],
+	IdentifierSlot extends T.CaseAsPattern.Config['identifier']
+>(
+	config: RefusingConfig<T.CaseAsPattern.Config, { casePattern: CasePatternSlot; identifier: IdentifierSlot }>
+): T.CaseAsPattern.Bound;
 export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPattern.Bound {
 	const _case_pattern = config.casePattern;
 	const _identifier = config.identifier;
@@ -1943,6 +2185,27 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 	return node as unknown as T.CaseAsPattern.Bound;
 }
 
+export function buildUnionPattern<
+	A extends NonEmptyArray<
+		Admit<
+			| T.ClassPattern
+			| T.SplatPattern
+			| T.UnionPattern
+			| T.CaseListPattern
+			| T.CaseTuplePattern
+			| T.DictPattern
+			| T.String
+			| T.ConcatenatedString
+			| TSKindId.True
+			| TSKindId.False
+			| TSKindId.None
+			| T.SimplePatternNegative
+			| T.ComplexPattern
+			| T.DottedName
+			| TSKindId.WildcardPattern
+		>
+	>
+>(...children: A & RefuseUntyped<A>): T.UnionPattern.Bound;
 export function buildUnionPattern(
 	...children: NonEmptyArray<
 		Admit<
@@ -2014,13 +2277,15 @@ export function buildUnionPattern(
 }
 
 export function buildDictPattern(): T.EmptyDictPattern;
-export function buildDictPattern(value?: Admit<T.DictPatternElements>): ReturnType<typeof _buildDictPattern>;
-export function buildDictPattern(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>
+export function buildDictPattern<V extends Admit<T.DictPatternElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildDictPattern>;
-export function buildDictPattern(
-	...elements: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>
+export function buildDictPattern<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildDictPattern>;
+export function buildDictPattern<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -2079,6 +2344,10 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 	return node as unknown as T.DictPattern.Bound;
 }
 
+export function buildKeyValuePattern<
+	KeySlot extends T.KeyValuePattern.Config['key'],
+	ValueSlot extends T.KeyValuePattern.Config['value']
+>(config: RefusingConfig<T.KeyValuePattern.Config, { key: KeySlot; value: ValueSlot }>): T.KeyValuePattern.Bound;
 export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyValuePattern.Bound {
 	const _key = kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key);
 	const _value = config.value;
@@ -2108,6 +2377,10 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 	return node as unknown as T.KeyValuePattern.Bound;
 }
 
+export function buildKeywordPattern<
+	NameSlot extends T.KeywordPattern.Config['name'],
+	ValueSlot extends T.KeywordPattern.Config['value']
+>(config: RefusingConfig<T.KeywordPattern.Config, { name: NameSlot; value: ValueSlot }>): T.KeywordPattern.Bound;
 export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordPattern.Bound {
 	const _name = config.name;
 	const _value = kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value);
@@ -2137,6 +2410,9 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 	return node as unknown as T.KeywordPattern.Bound;
 }
 
+export function buildSplatPattern<NameSlot extends T.SplatPattern.Config['name']>(
+	config: RefusingConfig<T.SplatPattern.Config, { name: NameSlot }>
+): T.SplatPattern.Bound;
 export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Bound {
 	const _operator = kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator);
 	const _name = rejectKeywordText(
@@ -2171,6 +2447,10 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 	return node as unknown as T.SplatPattern.Bound;
 }
 
+export function buildClassPattern<
+	NameSlot extends T.ClassPattern.Config['name'],
+	ArgumentsSlot extends T.ClassPattern.Config['arguments']
+>(config: RefusingConfig<T.ClassPattern.Config, { name: NameSlot; arguments: ArgumentsSlot }>): T.ClassPattern.Bound;
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
 	const _name = config.name;
 	const _arguments = config.arguments;
@@ -2205,6 +2485,12 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 	return node as unknown as T.ClassPattern.Bound;
 }
 
+export function buildComplexPattern<
+	RealSlot extends T.ComplexPattern.Config['real'],
+	ImaginarySlot extends T.ComplexPattern.Config['imaginary']
+>(
+	config: RefusingConfig<T.ComplexPattern.Config, { real: RealSlot; imaginary: ImaginarySlot }>
+): T.ComplexPattern.Bound;
 export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexPattern.Bound {
 	const _sign = strictBooleanStorage(config.sign);
 	const _real = config.real;
@@ -2244,12 +2530,12 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 	return node as unknown as T.ComplexPattern.Bound;
 }
 
-export function buildParametersElements(
-	...elements: NonEmptyArray<Admit<T.Parameter>>
+export function buildParametersElements<A extends NonEmptyArray<Admit<T.Parameter>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildParametersElements>;
-export function buildParametersElements(
+export function buildParametersElements<A extends NonEmptyArray<Admit<T.Parameter>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Parameter>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Parameter>)[]
@@ -2305,10 +2591,12 @@ function _buildParametersElements(
 	return node as unknown as T.ParametersElements.Bound;
 }
 
-export function buildPatterns(...elements: NonEmptyArray<Admit<T.Pattern>>): ReturnType<typeof _buildPatterns>;
-export function buildPatterns(
+export function buildPatterns<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildPatterns>;
+export function buildPatterns<A extends NonEmptyArray<Admit<T.Pattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pattern>)[]) {
 	const _optsFirst =
@@ -2362,12 +2650,16 @@ function _buildPatterns(
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
-export function buildTuplePattern(value?: Admit<T.TuplePatternElements>): ReturnType<typeof _buildTuplePattern>;
-export function buildTuplePattern(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pattern>>
+export function buildTuplePattern<V extends Admit<T.TuplePatternElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildTuplePattern>;
-export function buildTuplePattern(...elements: NonEmptyArray<Admit<T.Pattern>>): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTuplePattern(args[0] as Parameters<typeof _buildTuplePattern>[0]);
@@ -2426,12 +2718,16 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 }
 
 export function buildListPattern(): T.EmptyListPattern;
-export function buildListPattern(value?: Admit<T.Patterns>): ReturnType<typeof _buildListPattern>;
-export function buildListPattern(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pattern>>
+export function buildListPattern<V extends Admit<T.Patterns>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildListPattern>;
-export function buildListPattern(...elements: NonEmptyArray<Admit<T.Pattern>>): ReturnType<typeof _buildListPattern>;
+export function buildListPattern<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildListPattern>;
+export function buildListPattern<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildListPattern(args[0] as Parameters<typeof _buildListPattern>[0]);
@@ -2489,6 +2785,10 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 	return node as unknown as T.ListPattern.Bound;
 }
 
+export function buildDefaultParameter<
+	NameSlot extends T.DefaultParameter.Config['name'],
+	ValueSlot extends T.DefaultParameter.Config['value']
+>(config: RefusingConfig<T.DefaultParameter.Config, { name: NameSlot; value: ValueSlot }>): T.DefaultParameter.Bound;
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Bound {
 	const _name = config.name;
 	const _value = kindIdStorage<NonNullable<T.DefaultParameter['_value']>>(config.value);
@@ -2518,6 +2818,13 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 	return node as unknown as T.DefaultParameter.Bound;
 }
 
+export function buildTypedDefaultParameter<
+	NameSlot extends T.TypedDefaultParameter.Config['name'],
+	TypeSlot extends T.TypedDefaultParameter.Config['type'],
+	ValueSlot extends T.TypedDefaultParameter.Config['value']
+>(
+	config: RefusingConfig<T.TypedDefaultParameter.Config, { name: NameSlot; type: TypeSlot; value: ValueSlot }>
+): T.TypedDefaultParameter.Bound;
 export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Config): T.TypedDefaultParameter.Bound {
 	const _name = config.name;
 	const _type = config.type;
@@ -2552,6 +2859,9 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	return node as unknown as T.TypedDefaultParameter.Bound;
 }
 
+export function buildListSplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
+	value: V & RefuseUntyped<V>
+): T.ListSplatPattern.Bound;
 export function buildListSplatPattern(
 	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.ListSplatPattern.Bound {
@@ -2578,6 +2888,9 @@ export function buildListSplatPattern(
 	return node as unknown as T.ListSplatPattern.Bound;
 }
 
+export function buildDictionarySplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
+	value: V & RefuseUntyped<V>
+): T.DictionarySplatPattern.Bound;
 export function buildDictionarySplatPattern(
 	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.DictionarySplatPattern.Bound {
@@ -2604,6 +2917,10 @@ export function buildDictionarySplatPattern(
 	return node as unknown as T.DictionarySplatPattern.Bound;
 }
 
+export function buildAsPattern<
+	ExpressionSlot extends T.AsPattern.Config['expression'],
+	AliasSlot extends T.AsPattern.Config['alias']
+>(config: RefusingConfig<T.AsPattern.Config, { expression: ExpressionSlot; alias: AliasSlot }>): T.AsPattern.Bound;
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _expression = kindIdStorage<NonNullable<T.AsPattern['_expression']>>(config.expression);
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
@@ -2641,6 +2958,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	return node as unknown as T.AsPattern.Bound;
 }
 
+export function buildNotOperator<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.NotOperator.Bound;
 export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Bound {
 	const _argument = kindIdStorage<NonNullable<T.NotOperator['_argument']>>(value);
 	const handle = currentHandle();
@@ -2664,6 +2982,10 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 	return node as unknown as T.NotOperator.Bound;
 }
 
+export function buildBooleanOperator<
+	LeftSlot extends T.BooleanOperator.Config['left'],
+	RightSlot extends T.BooleanOperator.Config['right']
+>(config: RefusingConfig<T.BooleanOperator.Config, { left: LeftSlot; right: RightSlot }>): T.BooleanOperator.Bound;
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Bound {
 	const _left = kindIdStorage<NonNullable<T.BooleanOperator['_left']>>(config.left);
 	const _operator = kindIdStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator);
@@ -2698,6 +3020,10 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 	return node as unknown as T.BooleanOperator.Bound;
 }
 
+export function buildBinaryOperator<
+	LeftSlot extends T.BinaryOperator.Config['left'],
+	RightSlot extends T.BinaryOperator.Config['right']
+>(config: RefusingConfig<T.BinaryOperator.Config, { left: LeftSlot; right: RightSlot }>): T.BinaryOperator.Bound;
 export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOperator.Bound {
 	const _left = kindIdStorage<NonNullable<T.BinaryOperator['_left']>>(config.left);
 	const _operator = kindIdStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator);
@@ -2732,6 +3058,9 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 	return node as unknown as T.BinaryOperator.Bound;
 }
 
+export function buildUnaryOperator<ArgumentSlot extends T.UnaryOperator.Config['argument']>(
+	config: RefusingConfig<T.UnaryOperator.Config, { argument: ArgumentSlot }>
+): T.UnaryOperator.Bound;
 export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOperator.Bound {
 	const _operator = kindIdStorage<NonNullable<T.UnaryOperator['_operator']>>(config.operator);
 	const _argument = kindIdStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument);
@@ -2761,6 +3090,12 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 	return node as unknown as T.UnaryOperator.Bound;
 }
 
+export function buildComparisonOperator<
+	LeftSlot extends T.ComparisonOperator.Config['left'],
+	ComparatorsSlot extends T.ComparisonOperator.Config['comparators']
+>(
+	config: RefusingConfig<T.ComparisonOperator.Config, { left: LeftSlot; comparators: ComparatorsSlot }>
+): T.ComparisonOperator.Bound;
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Bound {
 	const _left = kindIdStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left);
 	const _comparators = listStorage<NonNullable<T.ComparisonOperator['_comparators']>>(config.comparators);
@@ -2797,6 +3132,10 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 	return node as unknown as T.ComparisonOperator.Bound;
 }
 
+export function buildLambda<
+	ParametersSlot extends T.Lambda.Config['parameters'],
+	BodySlot extends T.Lambda.Config['body']
+>(config: RefusingConfig<T.Lambda.Config, { parameters: ParametersSlot; body: BodySlot }>): T.Lambda.Bound;
 export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 	const _parameters = config.parameters;
 	const _body = kindIdStorage<NonNullable<T.Lambda['_body']>>(config.body);
@@ -2832,6 +3171,12 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 	return node as unknown as T.Lambda.Bound;
 }
 
+export function buildLambdaWithinForInClause<
+	ParametersSlot extends T.LambdaWithinForInClause.Config['parameters'],
+	BodySlot extends T.LambdaWithinForInClause.Config['body']
+>(
+	config: RefusingConfig<T.LambdaWithinForInClause.Config, { parameters: ParametersSlot; body: BodySlot }>
+): T.LambdaWithinForInClause.Bound;
 export function buildLambdaWithinForInClause(
 	config: T.LambdaWithinForInClause.Config
 ): T.LambdaWithinForInClause.Bound {
@@ -2869,6 +3214,12 @@ export function buildLambdaWithinForInClause(
 	return node as unknown as T.LambdaWithinForInClause.Bound;
 }
 
+export function buildAugmentedAssignment<
+	LeftSlot extends T.AugmentedAssignment.Config['left'],
+	RightSlot extends T.AugmentedAssignment.Config['right']
+>(
+	config: RefusingConfig<T.AugmentedAssignment.Config, { left: LeftSlot; right: RightSlot }>
+): T.AugmentedAssignment.Bound;
 export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): T.AugmentedAssignment.Bound {
 	const _left = config.left;
 	const _operator = kindIdStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator);
@@ -2903,10 +3254,12 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 	return node as unknown as T.AugmentedAssignment.Bound;
 }
 
-export function buildPatternList(...elements: NonEmptyArray<Admit<T.Pattern>>): ReturnType<typeof _buildPatternList>;
-export function buildPatternList(
+export function buildPatternList<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildPatternList>;
+export function buildPatternList<A extends NonEmptyArray<Admit<T.Pattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPatternList>;
 export function buildPatternList(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pattern>)[]) {
 	const _optsFirst =
@@ -2959,6 +3312,9 @@ function _buildPatternList(
 	return node as unknown as T.PatternList.Bound;
 }
 
+export function buildYield<V extends Admit<T.YieldFromClause | T.Expression | T.ExpressionList>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): T.Yield.Bound;
 export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.ExpressionList>): T.Yield.Bound {
 	const _content = kindIdStorage<NonNullable<T.Yield['_content']>>(value);
 	const handle = currentHandle();
@@ -2983,6 +3339,10 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 	return node as unknown as T.Yield.Bound;
 }
 
+export function buildAttribute<
+	ObjectSlot extends T.Attribute.Config['object'],
+	AttributeSlot extends T.Attribute.Config['attribute']
+>(config: RefusingConfig<T.Attribute.Config, { object: ObjectSlot; attribute: AttributeSlot }>): T.Attribute.Bound;
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	const _object = kindIdStorage<NonNullable<T.Attribute['_object']>>(config.object);
 	const _attribute = config.attribute;
@@ -3012,6 +3372,10 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	return node as unknown as T.Attribute.Bound;
 }
 
+export function buildSubscript<
+	ValueSlot extends T.Subscript.Config['value'],
+	SubscriptsSlot extends T.Subscript.Config['subscripts']
+>(config: RefusingConfig<T.Subscript.Config, { value: ValueSlot; subscripts: SubscriptsSlot }>): T.Subscript.Bound;
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	const _value = kindIdStorage<NonNullable<T.Subscript['_value']>>(config.value);
 	const _subscripts = config.subscripts;
@@ -3047,6 +3411,13 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	return node as unknown as T.Subscript.Bound;
 }
 
+export function buildSlice<
+	StartSlot extends T.Slice.Config['start'],
+	StopSlot extends T.Slice.Config['stop'],
+	StepSlot extends T.Slice.Config['step']
+>(
+	config?: RefusingConfig<Partial<T.Slice.Config>, { start: StartSlot; stop: StopSlot; step: StepSlot }>
+): T.Slice.Bound;
 export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound {
 	const _start = kindIdStorage<NonNullable<T.Slice['_start']>>(config.start);
 	const _stop = kindIdStorage<NonNullable<T.Slice['_stop']>>(config.stop);
@@ -3101,6 +3472,10 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;
 
+export function buildCall<
+	FunctionSlot extends T.Call.Config['function'],
+	ArgumentsSlot extends T.Call.Config['arguments']
+>(config: RefusingConfig<T.Call.Config, { function: FunctionSlot; arguments: ArgumentsSlot }>): T.Call.Bound;
 export function buildCall(config: T.Call.Config): T.Call.Bound {
 	const _function = kindIdStorage<NonNullable<T.Call['_function']>>(config.function);
 	const _arguments = config.arguments;
@@ -3130,6 +3505,10 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 	return node as unknown as T.Call.Bound;
 }
 
+export function buildTypedParameter<
+	NameSlot extends T.TypedParameter.Config['name'],
+	TypeSlot extends T.TypedParameter.Config['type']
+>(config: RefusingConfig<T.TypedParameter.Config, { name: NameSlot; type: TypeSlot }>): T.TypedParameter.Bound;
 export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedParameter.Bound {
 	const _name = config.name;
 	const _type = config.type;
@@ -3158,6 +3537,9 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 	return node as unknown as T.TypedParameter.Bound;
 }
 
+export function buildType<
+	V extends Admit<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>
+>(value: V & RefuseUntyped<V>): T.Type.Bound;
 export function buildType(
 	value: Admit<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>
 ): T.Type.Bound {
@@ -3187,6 +3569,9 @@ export function buildType(
 	return node as unknown as T.Type.Bound;
 }
 
+export function buildSplatType<NameSlot extends T.SplatType.Config['name']>(
+	config: RefusingConfig<T.SplatType.Config, { name: NameSlot }>
+): T.SplatType.Bound;
 export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 	const _operator = kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator);
 	const _name = config.name;
@@ -3215,6 +3600,12 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 	return node as unknown as T.SplatType.Bound;
 }
 
+export function buildGenericType<
+	NameSlot extends T.GenericType.Config['name'],
+	TypeParameterSlot extends T.GenericType.Config['typeParameter']
+>(
+	config: RefusingConfig<T.GenericType.Config, { name: NameSlot; typeParameter: TypeParameterSlot }>
+): T.GenericType.Bound;
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
 	const _name = config.name;
 	const _type_parameter = config.typeParameter;
@@ -3249,6 +3640,10 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	return node as unknown as T.GenericType.Bound;
 }
 
+export function buildUnionType<
+	LeftSlot extends T.UnionType.Config['left'],
+	RightSlot extends T.UnionType.Config['right']
+>(config: RefusingConfig<T.UnionType.Config, { left: LeftSlot; right: RightSlot }>): T.UnionType.Bound;
 export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 	const _left = config.left;
 	const _right = config.right;
@@ -3276,6 +3671,12 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 	return node as unknown as T.UnionType.Bound;
 }
 
+export function buildConstrainedType<
+	BaseTypeSlot extends T.ConstrainedType.Config['baseType'],
+	ConstraintSlot extends T.ConstrainedType.Config['constraint']
+>(
+	config: RefusingConfig<T.ConstrainedType.Config, { baseType: BaseTypeSlot; constraint: ConstraintSlot }>
+): T.ConstrainedType.Bound;
 export function buildConstrainedType(config: T.ConstrainedType.Config): T.ConstrainedType.Bound {
 	const _base_type = config.baseType;
 	const _constraint = config.constraint;
@@ -3305,6 +3706,10 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 	return node as unknown as T.ConstrainedType.Bound;
 }
 
+export function buildMemberType<
+	BaseTypeSlot extends T.MemberType.Config['baseType'],
+	NameSlot extends T.MemberType.Config['name']
+>(config: RefusingConfig<T.MemberType.Config, { baseType: BaseTypeSlot; name: NameSlot }>): T.MemberType.Bound;
 export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound {
 	const _base_type = config.baseType;
 	const _name = config.name;
@@ -3332,6 +3737,10 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 	return node as unknown as T.MemberType.Bound;
 }
 
+export function buildKeywordArgument<
+	NameSlot extends T.KeywordArgument.Config['name'],
+	ValueSlot extends T.KeywordArgument.Config['value']
+>(config: RefusingConfig<T.KeywordArgument.Config, { name: NameSlot; value: ValueSlot }>): T.KeywordArgument.Bound;
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Bound {
 	const _name = config.name;
 	const _value = kindIdStorage<NonNullable<T.KeywordArgument['_value']>>(config.value);
@@ -3362,14 +3771,18 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 }
 
 export function buildList(): T.EmptyList;
-export function buildList(value?: Admit<T.CollectionElements>): ReturnType<typeof _buildList>;
-export function buildList(
+export function buildList<V extends Admit<T.CollectionElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): ReturnType<typeof _buildList>;
+export function buildList<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildList>;
-export function buildList(
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
-): ReturnType<typeof _buildList>;
+export function buildList<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildList>;
 export function buildList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildList(args[0] as Parameters<typeof _buildList>[0]);
@@ -3427,14 +3840,18 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 	return node as unknown as T.List.Bound;
 }
 
-export function buildSet(value: Admit<T.CollectionElements>): ReturnType<typeof _buildSet>;
-export function buildSet(
+export function buildSet<V extends Admit<T.CollectionElements>>(
+	value: V & RefuseUntyped<V>
+): ReturnType<typeof _buildSet>;
+export function buildSet<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSet>;
-export function buildSet(
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
-): ReturnType<typeof _buildSet>;
+export function buildSet<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildSet>;
 export function buildSet(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSet(args[0] as Parameters<typeof _buildSet>[0]);
@@ -3490,14 +3907,18 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 }
 
 export function buildTuple(): T.EmptyTuple;
-export function buildTuple(value?: Admit<T.TupleElements>): ReturnType<typeof _buildTuple>;
-export function buildTuple(
+export function buildTuple<V extends Admit<T.TupleElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): ReturnType<typeof _buildTuple>;
+export function buildTuple<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildTuple>;
-export function buildTuple(
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
-): ReturnType<typeof _buildTuple>;
+export function buildTuple<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTuple(args[0] as Parameters<typeof _buildTuple>[0]);
@@ -3554,13 +3975,15 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 }
 
 export function buildDictionary(): T.EmptyDictionary;
-export function buildDictionary(value?: Admit<T.DictionaryElements>): ReturnType<typeof _buildDictionary>;
-export function buildDictionary(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>
+export function buildDictionary<V extends Admit<T.DictionaryElements>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildDictionary>;
-export function buildDictionary(
-	...elements: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>
+export function buildDictionary<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildDictionary>;
+export function buildDictionary<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -3619,6 +4042,9 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 	return node as unknown as T.Dictionary.Bound;
 }
 
+export function buildPair<KeySlot extends T.Pair.Config['key'], ValueSlot extends T.Pair.Config['value']>(
+	config: RefusingConfig<T.Pair.Config, { key: KeySlot; value: ValueSlot }>
+): T.Pair.Bound;
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	const _key = kindIdStorage<NonNullable<T.Pair['_key']>>(config.key);
 	const _value = kindIdStorage<NonNullable<T.Pair['_value']>>(config.value);
@@ -3648,6 +4074,12 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	return node as unknown as T.Pair.Bound;
 }
 
+export function buildListComprehension<
+	BodySlot extends T.ListComprehension.Config['body'],
+	ClausesSlot extends T.ListComprehension.Config['clauses']
+>(
+	config: RefusingConfig<T.ListComprehension.Config, { body: BodySlot; clauses: ClausesSlot }>
+): T.ListComprehension.Bound;
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Bound {
 	const _body = kindIdStorage<NonNullable<T.ListComprehension['_body']>>(config.body);
 	const _clauses = config.clauses;
@@ -3677,6 +4109,12 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 	return node as unknown as T.ListComprehension.Bound;
 }
 
+export function buildDictionaryComprehension<
+	BodySlot extends T.DictionaryComprehension.Config['body'],
+	ClausesSlot extends T.DictionaryComprehension.Config['clauses']
+>(
+	config: RefusingConfig<T.DictionaryComprehension.Config, { body: BodySlot; clauses: ClausesSlot }>
+): T.DictionaryComprehension.Bound;
 export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Bound {
@@ -3708,6 +4146,12 @@ export function buildDictionaryComprehension(
 	return node as unknown as T.DictionaryComprehension.Bound;
 }
 
+export function buildSetComprehension<
+	BodySlot extends T.SetComprehension.Config['body'],
+	ClausesSlot extends T.SetComprehension.Config['clauses']
+>(
+	config: RefusingConfig<T.SetComprehension.Config, { body: BodySlot; clauses: ClausesSlot }>
+): T.SetComprehension.Bound;
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Bound {
 	const _body = kindIdStorage<NonNullable<T.SetComprehension['_body']>>(config.body);
 	const _clauses = config.clauses;
@@ -3737,6 +4181,12 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 	return node as unknown as T.SetComprehension.Bound;
 }
 
+export function buildGeneratorExpression<
+	BodySlot extends T.GeneratorExpression.Config['body'],
+	ClausesSlot extends T.GeneratorExpression.Config['clauses']
+>(
+	config: RefusingConfig<T.GeneratorExpression.Config, { body: BodySlot; clauses: ClausesSlot }>
+): T.GeneratorExpression.Bound;
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Bound {
 	const _body = kindIdStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body);
 	const _clauses = config.clauses;
@@ -3766,6 +4216,9 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 	return node as unknown as T.GeneratorExpression.Bound;
 }
 
+export function buildParenthesizedExpression<V extends Admit<T.Expression | T.Yield>>(
+	value: V & RefuseUntyped<V>
+): T.ParenthesizedExpression.Bound;
 export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield>): T.ParenthesizedExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value);
 	const handle = currentHandle();
@@ -3790,12 +4243,14 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 	return node as unknown as T.ParenthesizedExpression.Bound;
 }
 
-export function buildCollectionElements(
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
-): ReturnType<typeof _buildCollectionElements>;
-export function buildCollectionElements(
+export function buildCollectionElements<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildCollectionElements>;
+export function buildCollectionElements<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCollectionElements>;
 export function buildCollectionElements(
 	...args: (
@@ -3856,6 +4311,13 @@ function _buildCollectionElements(
 	return node as unknown as T.CollectionElements.Bound;
 }
 
+export function buildForInClause<
+	LeftSlot extends T.ForInClause.Config['left'],
+	RightSlot extends T.ForInClause.Config['right']
+>(
+	config: RefusingConfig<T.ForInClause.Config, { left: LeftSlot; right: RightSlot }>,
+	options?: T.ForInClause.Options
+): T.ForInClause.Bound;
 export function buildForInClause(config: T.ForInClause.Config, options?: T.ForInClause.Options): T.ForInClause.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _left = config.left;
@@ -3898,6 +4360,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 	return node as unknown as T.ForInClause.Bound;
 }
 
+export function buildIfClause<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.IfClause.Bound;
 export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 	const _condition = kindIdStorage<NonNullable<T.IfClause['_condition']>>(value);
 	const handle = currentHandle();
@@ -3921,6 +4384,16 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 	return node as unknown as T.IfClause.Bound;
 }
 
+export function buildConditionalExpression<
+	BodySlot extends T.ConditionalExpression.Config['body'],
+	ConditionSlot extends T.ConditionalExpression.Config['condition'],
+	AlternativeSlot extends T.ConditionalExpression.Config['alternative']
+>(
+	config: RefusingConfig<
+		T.ConditionalExpression.Config,
+		{ body: BodySlot; condition: ConditionSlot; alternative: AlternativeSlot }
+	>
+): T.ConditionalExpression.Bound;
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Bound {
 	const _body = kindIdStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body);
 	const _condition = kindIdStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition);
@@ -3955,6 +4428,9 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 	return node as unknown as T.ConditionalExpression.Bound;
 }
 
+export function buildConcatenatedString<A extends NonEmptyArray<Admit<T.String>>>(
+	...children: A & RefuseUntyped<A>
+): T.ConcatenatedString.Bound;
 export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.String>>): T.ConcatenatedString.Bound {
 	const _string = children;
 	const handle = currentHandle();
@@ -3979,6 +4455,16 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 	return node as unknown as T.ConcatenatedString.Bound;
 }
 
+export function buildString<
+	StringStartSlot extends T.String.Config['stringStart'],
+	ContentSlot extends T.String.Config['content'],
+	StringEndSlot extends T.String.Config['stringEnd']
+>(
+	config: RefusingConfig<
+		T.String.Config,
+		{ stringStart: StringStartSlot; content: ContentSlot; stringEnd: StringEndSlot }
+	>
+): T.String.Bound;
 export function buildString(config: T.String.Config): T.String.Bound {
 	const _string_start = config.stringStart;
 	const _content = listStorage<NonNullable<T.String['_content']>>(config.content ?? []);
@@ -4014,6 +4500,11 @@ export function buildString(config: T.String.Config): T.String.Bound {
 	return node as unknown as T.String.Bound;
 }
 
+export function buildStringContent<
+	A extends NonEmptyArray<
+		Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
+	>
+>(...children: A & RefuseUntyped<A>): T.StringContent.Bound;
 export function buildStringContent(
 	...children: NonEmptyArray<
 		Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
@@ -4045,6 +4536,16 @@ export function buildStringContent(
 	return node as unknown as T.StringContent.Bound;
 }
 
+export function buildInterpolation<
+	ExpressionSlot extends T.Interpolation.Config['expression'],
+	TypeConversionSlot extends T.Interpolation.Config['typeConversion'],
+	FormatSpecifierSlot extends T.Interpolation.Config['formatSpecifier']
+>(
+	config: RefusingConfig<
+		T.Interpolation.Config,
+		{ expression: ExpressionSlot; typeConversion: TypeConversionSlot; formatSpecifier: FormatSpecifierSlot }
+	>
+): T.Interpolation.Bound;
 export function buildInterpolation(config: T.Interpolation.Config): T.Interpolation.Bound {
 	const _expression = kindIdStorage<NonNullable<T.Interpolation['_expression']>>(config.expression);
 	const _debug = strictBooleanStorage(config.debug);
@@ -4086,6 +4587,9 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 
 export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEscapeSequence;
 
+export function buildFormatSpecifier<
+	A extends Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
+>(...children: A & RefuseUntyped<A>): T.FormatSpecifier.Bound;
 export function buildFormatSpecifier(
 	...children: Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
 ): T.FormatSpecifier.Bound {
@@ -4165,6 +4669,7 @@ export const buildFalse: TSKindId.False = TSKindId.False;
 
 export const buildNone: TSKindId.None = TSKindId.None;
 
+export function buildAwait<V extends Admit<T.PrimaryExpression>>(value: V & RefuseUntyped<V>): T.Await.Bound;
 export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 	const _expression = kindIdStorage<NonNullable<T.Await['_expression']>>(value);
 	const handle = currentHandle();
@@ -4220,12 +4725,12 @@ export const buildPositionalSeparator: TSKindId.PositionalSeparator = TSKindId.P
 
 export const buildKeywordSeparator: TSKindId.KeywordSeparator = TSKindId.KeywordSeparator;
 
-export function buildSimpleStatementsElements(
-	...elements: NonEmptyArray<Admit<T.SimpleStatement>>
+export function buildSimpleStatementsElements<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSimpleStatementsElements>;
-export function buildSimpleStatementsElements(
+export function buildSimpleStatementsElements<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.SimpleStatement>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSimpleStatementsElements>;
 export function buildSimpleStatementsElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.SimpleStatement>)[]
@@ -4281,10 +4786,12 @@ function _buildSimpleStatementsElements(
 	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
-export function buildSubjects(...elements: NonEmptyArray<Admit<T.Expression>>): ReturnType<typeof _buildSubjects>;
-export function buildSubjects(
+export function buildSubjects<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildSubjects>;
+export function buildSubjects<A extends NonEmptyArray<Admit<T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSubjects>;
 export function buildSubjects(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression>)[]) {
 	const _optsFirst =
@@ -4338,12 +4845,12 @@ function _buildSubjects(
 	return node as unknown as T.Subjects.Bound;
 }
 
-export function buildCasePatterns(
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns(
+export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCasePatterns>;
 export function buildCasePatterns(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
@@ -4399,12 +4906,12 @@ function _buildCasePatterns(
 	return node as unknown as T.CasePatterns.Bound;
 }
 
-export function buildWithClauseWithItems(
-	...elements: NonEmptyArray<Admit<T.WithItem>>
+export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildWithClauseWithItems>;
-export function buildWithClauseWithItems(
+export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.WithItem>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildWithClauseWithItems>;
 export function buildWithClauseWithItems(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.WithItem>)[]
@@ -4460,10 +4967,12 @@ function _buildWithClauseWithItems(
 	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
-export function buildTypes(...elements: NonEmptyArray<Admit<T.Type>>): ReturnType<typeof _buildTypes>;
-export function buildTypes(
+export function buildTypes<A extends NonEmptyArray<Admit<T.Type>>>(
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildTypes>;
+export function buildTypes<A extends NonEmptyArray<Admit<T.Type>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Type>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Type>)[]) {
 	const _optsFirst =
@@ -4516,16 +5025,18 @@ function _buildTypes(
 	return node as unknown as T.Types.Bound;
 }
 
-export function buildArgumentListElements(
-	...elements: NonEmptyArray<
+export function buildArgumentListElements<
+	A extends NonEmptyArray<
 		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
 	>
-): ReturnType<typeof _buildArgumentListElements>;
-export function buildArgumentListElements(
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildArgumentListElements>;
+export function buildArgumentListElements<
+	A extends NonEmptyArray<
+		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
+	>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<
-		Admit<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
-	>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildArgumentListElements>;
 export function buildArgumentListElements(
 	...args: (
@@ -4591,12 +5102,12 @@ function _buildArgumentListElements(
 	return node as unknown as T.ArgumentListElements.Bound;
 }
 
-export function buildListPatternCasePatterns(
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+export function buildListPatternCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildListPatternCasePatterns>;
-export function buildListPatternCasePatterns(
+export function buildListPatternCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildListPatternCasePatterns>;
 export function buildListPatternCasePatterns(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
@@ -4652,12 +5163,12 @@ function _buildListPatternCasePatterns(
 	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
-export function buildDictPatternElements(
-	...elements: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>
+export function buildDictPatternElements<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildDictPatternElements>;
-export function buildDictPatternElements(
+export function buildDictPatternElements<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildDictPatternElements>;
 export function buildDictPatternElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.KeyValuePattern | T.SplatPattern>)[]
@@ -4715,12 +5226,12 @@ function _buildDictPatternElements(
 	return node as unknown as T.DictPatternElements.Bound;
 }
 
-export function buildSubscripts(
-	...elements: NonEmptyArray<Admit<T.Expression | T.Slice>>
+export function buildSubscripts<A extends NonEmptyArray<Admit<T.Expression | T.Slice>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSubscripts>;
-export function buildSubscripts(
+export function buildSubscripts<A extends NonEmptyArray<Admit<T.Expression | T.Slice>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression | T.Slice>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSubscripts>;
 export function buildSubscripts(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression | T.Slice>)[]
@@ -4776,12 +5287,12 @@ function _buildSubscripts(
 	return node as unknown as T.Subscripts.Bound;
 }
 
-export function buildDictionaryElements(
-	...elements: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>
+export function buildDictionaryElements<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildDictionaryElements>;
-export function buildDictionaryElements(
+export function buildDictionaryElements<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildDictionaryElements>;
 export function buildDictionaryElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pair | T.DictionarySplat>)[]
@@ -4837,6 +5348,9 @@ function _buildDictionaryElements(
 	return node as unknown as T.DictionaryElements.Bound;
 }
 
+export function buildSliceGroup<V extends Admit<T.Expression>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): T.SliceGroup.Bound;
 export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound {
 	const _expression = kindIdStorage<NonNullable<T.SliceGroup['_expression']>>(value);
 	const handle = currentHandle();
@@ -4881,12 +5395,12 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	return node as unknown as T.FormatSpecifierText.Bound;
 }
 
-export function buildTuplePatternElements(
-	...elements: NonEmptyArray<Admit<T.Pattern>>
+export function buildTuplePatternElements<A extends NonEmptyArray<Admit<T.Pattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildTuplePatternElements>;
-export function buildTuplePatternElements(
+export function buildTuplePatternElements<A extends NonEmptyArray<Admit<T.Pattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Pattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Pattern>)[]
@@ -4942,12 +5456,14 @@ function _buildTuplePatternElements(
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
-export function buildTupleElements(
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
-): ReturnType<typeof _buildTupleElements>;
-export function buildTupleElements(
+export function buildTupleElements<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildTupleElements>;
+export function buildTupleElements<
+	A extends NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildTupleElements>;
 export function buildTupleElements(
 	...args: (
@@ -5008,6 +5524,12 @@ function _buildTupleElements(
 	return node as unknown as T.TupleElements.Bound;
 }
 
+export function buildExceptClauseExceptionAs<
+	ValueSlot extends T.ExceptClauseExceptionAs.Config['value'],
+	AliasSlot extends T.ExceptClauseExceptionAs.Config['alias']
+>(
+	config: RefusingConfig<T.ExceptClauseExceptionAs.Config, { value: ValueSlot; alias: AliasSlot }>
+): T.ExceptClauseExceptionAs.Bound;
 export function buildExceptClauseExceptionAs(
 	config: T.ExceptClauseExceptionAs.Config
 ): T.ExceptClauseExceptionAs.Bound {
@@ -5040,15 +5562,15 @@ export function buildExceptClauseExceptionAs(
 }
 
 export function buildCaseTuplePattern(): T.EmptyCaseTuplePattern;
-export function buildCaseTuplePattern(
-	value?: Admit<T.ListPatternCasePatterns>
+export function buildCaseTuplePattern<V extends Admit<T.ListPatternCasePatterns>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildCaseTuplePattern>;
-export function buildCaseTuplePattern(
+export function buildCaseTuplePattern<A extends NonEmptyArray<Admit<T.CasePattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCaseTuplePattern>;
-export function buildCaseTuplePattern(
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+export function buildCaseTuplePattern<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5110,15 +5632,15 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 }
 
 export function buildCaseListPattern(): T.EmptyCaseListPattern;
-export function buildCaseListPattern(
-	value?: Admit<T.ListPatternCasePatterns>
+export function buildCaseListPattern<V extends Admit<T.ListPatternCasePatterns>>(
+	...value: [value?: V] & RefuseUntyped<V>
 ): ReturnType<typeof _buildCaseListPattern>;
-export function buildCaseListPattern(
+export function buildCaseListPattern<A extends NonEmptyArray<Admit<T.CasePattern>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCaseListPattern>;
-export function buildCaseListPattern(
-	...elements: NonEmptyArray<Admit<T.CasePattern>>
+export function buildCaseListPattern<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5179,12 +5701,12 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 	return node as unknown as T.CaseListPattern.Bound;
 }
 
-export function buildPrintArguments(
-	...elements: NonEmptyArray<Admit<T.Expression>>
+export function buildPrintArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPrintArguments>;
-export function buildPrintArguments(
+export function buildPrintArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPrintArguments>;
 export function buildPrintArguments(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression>)[]
@@ -5240,12 +5762,12 @@ function _buildPrintArguments(
 	return node as unknown as T.PrintArguments.Bound;
 }
 
-export function buildPrintChevronArguments(
-	...elements: NonEmptyArray<Admit<T.Expression>>
+export function buildPrintChevronArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPrintChevronArguments>;
-export function buildPrintChevronArguments(
+export function buildPrintChevronArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPrintChevronArguments>;
 export function buildPrintChevronArguments(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression>)[]
@@ -5301,6 +5823,15 @@ function _buildPrintChevronArguments(
 	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
+export function buildPrintStatementChevron<
+	ChevronSlot extends T.PrintStatementChevron.Config['chevron'],
+	PrintChevronArgumentsSlot extends T.PrintStatementChevron.Config['printChevronArguments']
+>(
+	config: RefusingConfig<
+		T.PrintStatementChevron.Config,
+		{ chevron: ChevronSlot; printChevronArguments: PrintChevronArgumentsSlot }
+	>
+): T.PrintStatementChevron.Bound;
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
 	const _chevron = config.chevron;
 	const _print_chevron_arguments = kindIdStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(
@@ -5339,13 +5870,15 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 	return node as unknown as T.PrintStatementChevron.Bound;
 }
 
-export function buildPrintStatementPlain(value: Admit<T.PrintArguments>): ReturnType<typeof _buildPrintStatementPlain>;
-export function buildPrintStatementPlain(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression>>
+export function buildPrintStatementPlain<V extends Admit<T.PrintArguments>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildPrintStatementPlain>;
-export function buildPrintStatementPlain(
-	...elements: NonEmptyArray<Admit<T.Expression>>
+export function buildPrintStatementPlain<A extends NonEmptyArray<Admit<T.Expression>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildPrintStatementPlain>;
+export function buildPrintStatementPlain<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildPrintStatementPlain>;
 export function buildPrintStatementPlain(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5407,15 +5940,15 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
 
-export function buildParenthesizedImportList(
-	value: Admit<T.ImportList>
+export function buildParenthesizedImportList<V extends Admit<T.ImportList>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList(
+export function buildParenthesizedImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList(
-	...elements: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>
+export function buildParenthesizedImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildParenthesizedImportList>;
 export function buildParenthesizedImportList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5475,6 +6008,9 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 	return node as unknown as T.ParenthesizedImportList.Bound;
 }
 
+export function buildComprehensionClauses<A extends NonEmptyArray<Admit<T.ForInClause | T.IfClause>>>(
+	...children: A & RefuseUntyped<A>
+): T.ComprehensionClauses.Bound;
 export function buildComprehensionClauses(
 	...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>
 ): T.ComprehensionClauses.Bound {
@@ -5691,7 +6227,12 @@ export function buildFloatPoint<
 	const C extends WidenNumeric<
 		T.FloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-	>
+	>,
+	IntegerSlot extends T.FloatPoint.Config['integer'],
+	FractionSlot extends T.FloatPoint.Config['fraction'],
+	SignSlot extends T.FloatPoint.Config['sign'],
+	ExponentSlot extends T.FloatPoint.Config['exponent'],
+	ImaginarySlot extends T.FloatPoint.Config['imaginary']
 >(
 	config: C &
 		NumericConfig<
@@ -5701,6 +6242,13 @@ export function buildFloatPoint<
 				T.FloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
+		> &
+		RefusingConfig<
+			WidenNumeric<
+				T.FloatPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
 		>,
 	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound;
@@ -5778,7 +6326,12 @@ export function buildFloatLeadingPoint<
 	const C extends WidenNumeric<
 		T.FloatLeadingPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-	>
+	>,
+	IntegerSlot extends T.FloatLeadingPoint.Config['integer'],
+	FractionSlot extends T.FloatLeadingPoint.Config['fraction'],
+	SignSlot extends T.FloatLeadingPoint.Config['sign'],
+	ExponentSlot extends T.FloatLeadingPoint.Config['exponent'],
+	ImaginarySlot extends T.FloatLeadingPoint.Config['imaginary']
 >(
 	config: C &
 		NumericConfig<
@@ -5788,6 +6341,13 @@ export function buildFloatLeadingPoint<
 				T.FloatLeadingPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
+		> &
+		RefusingConfig<
+			WidenNumeric<
+				T.FloatLeadingPoint.Config,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			{ integer: IntegerSlot; fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
 		>,
 	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound;
@@ -5868,13 +6428,21 @@ export function buildFloatLeadingPoint(
 }
 
 export function buildFloatScientific<
-	const C extends WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+	const C extends WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	IntegerSlot extends T.FloatScientific.Config['integer'],
+	SignSlot extends T.FloatScientific.Config['sign'],
+	ExponentSlot extends T.FloatScientific.Config['exponent'],
+	ImaginarySlot extends T.FloatScientific.Config['imaginary']
 >(
 	config: C &
 		NumericConfig<
 			C,
 			{ integer: true; exponent: true },
 			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+		> &
+		RefusingConfig<
+			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
 		>,
 	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound;
@@ -6169,6 +6737,9 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 
 export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
 
+export function buildSimplePatternNegative<ValueSlot extends T.SimplePatternNegative.Config['value']>(
+	config: RefusingConfig<T.SimplePatternNegative.Config, { value: ValueSlot }>
+): T.SimplePatternNegative.Bound;
 export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Bound {
 	const _sign = strictBooleanStorage(config.sign);
 	const _value = config.value;
@@ -6198,6 +6769,9 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	return node as unknown as T.SimplePatternNegative.Bound;
 }
 
+export function buildExceptClauseExceptionList<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...children: A & RefuseUntyped<A>
+): T.ExceptClauseExceptionList.Bound;
 export function buildExceptClauseExceptionList(
 	...children: NonEmptyArray<Admit<T.Expression>>
 ): T.ExceptClauseExceptionList.Bound {
@@ -6224,6 +6798,9 @@ export function buildExceptClauseExceptionList(
 	return node as unknown as T.ExceptClauseExceptionList.Bound;
 }
 
+export function buildExceptClauseException<V extends Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>>(
+	value: V & RefuseUntyped<V>
+): T.ExceptClauseException.Bound;
 export function buildExceptClauseException(
 	value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>
 ): T.ExceptClauseException.Bound {
@@ -6250,6 +6827,10 @@ export function buildExceptClauseException(
 	return node as unknown as T.ExceptClauseException.Bound;
 }
 
+export function buildAssignmentEq<
+	LeftSlot extends T.AssignmentEq.Config['left'],
+	RightSlot extends T.AssignmentEq.Config['right']
+>(config: RefusingConfig<T.AssignmentEq.Config, { left: LeftSlot; right: RightSlot }>): T.AssignmentEq.Bound;
 export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq.Bound {
 	const _left = config.left;
 	const _right = kindIdStorage<NonNullable<T.AssignmentEq['_right']>>(config.right);
@@ -6279,6 +6860,10 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 	return node as unknown as T.AssignmentEq.Bound;
 }
 
+export function buildAssignmentType<
+	LeftSlot extends T.AssignmentType.Config['left'],
+	TypeSlot extends T.AssignmentType.Config['type']
+>(config: RefusingConfig<T.AssignmentType.Config, { left: LeftSlot; type: TypeSlot }>): T.AssignmentType.Bound;
 export function buildAssignmentType(config: T.AssignmentType.Config): T.AssignmentType.Bound {
 	const _left = config.left;
 	const _type = config.type;
@@ -6307,6 +6892,13 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 	return node as unknown as T.AssignmentType.Bound;
 }
 
+export function buildAssignmentTyped<
+	LeftSlot extends T.AssignmentTyped.Config['left'],
+	TypeSlot extends T.AssignmentTyped.Config['type'],
+	RightSlot extends T.AssignmentTyped.Config['right']
+>(
+	config: RefusingConfig<T.AssignmentTyped.Config, { left: LeftSlot; type: TypeSlot; right: RightSlot }>
+): T.AssignmentTyped.Bound;
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Bound {
 	const _left = config.left;
 	const _type = config.type;
@@ -6340,12 +6932,12 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 	return node as unknown as T.AssignmentTyped.Bound;
 }
 
-export function buildExpressionStatementTuple(
-	...elements: NonEmptyArray<Admit<T.Expression>>
+export function buildExpressionStatementTuple<A extends NonEmptyArray<Admit<T.Expression>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildExpressionStatementTuple>;
-export function buildExpressionStatementTuple(
+export function buildExpressionStatementTuple<A extends NonEmptyArray<Admit<T.Expression>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.Expression>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildExpressionStatementTuple>;
 export function buildExpressionStatementTuple(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Expression>)[]
@@ -6401,12 +6993,12 @@ function _buildExpressionStatementTuple(
 	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
-export function buildWithClauseBare(
-	...elements: NonEmptyArray<Admit<T.WithItem>>
+export function buildWithClauseBare<A extends NonEmptyArray<Admit<T.WithItem>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildWithClauseBare>;
-export function buildWithClauseBare(
+export function buildWithClauseBare<A extends NonEmptyArray<Admit<T.WithItem>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.WithItem>>
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildWithClauseBare>;
 export function buildWithClauseBare(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.WithItem>)[]
@@ -6462,13 +7054,15 @@ function _buildWithClauseBare(
 	return node as unknown as T.WithClauseBare.Bound;
 }
 
-export function buildWithClauseParen(value: Admit<T.WithClauseWithItems>): ReturnType<typeof _buildWithClauseParen>;
-export function buildWithClauseParen(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.WithItem>>
+export function buildWithClauseParen<V extends Admit<T.WithClauseWithItems>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildWithClauseParen>;
-export function buildWithClauseParen(
-	...elements: NonEmptyArray<Admit<T.WithItem>>
+export function buildWithClauseParen<A extends NonEmptyArray<Admit<T.WithItem>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildWithClauseParen>;
+export function buildWithClauseParen<A extends NonEmptyArray<Admit<T.WithItem>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -6529,7 +7123,9 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 }
 
 export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
-export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.MatchBlockBlock.Bound;
+export function buildMatchBlockBlock<A extends Admit<T.CaseClause[]>>(
+	...children: A & RefuseUntyped<A>
+): T.MatchBlockBlock.Bound;
 export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.MatchBlockBlock.Bound {
 	const _alternative = children;
 	const handle = currentHandle();
@@ -6556,7 +7152,9 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 }
 
 export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
-export function buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): ReturnType<typeof _buildMatchBlockEmpty>;
+export function buildMatchBlockEmpty<V extends Admit<TSKindId.Newline>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): ReturnType<typeof _buildMatchBlockEmpty>;
 export function buildMatchBlockEmpty(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildMatchBlockEmpty(args[0] as Parameters<typeof _buildMatchBlockEmpty>[0]);
@@ -6596,13 +7194,15 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 	return node as unknown as T.MatchBlockEmpty.Bound;
 }
 
-export function buildSuiteInline(value: Admit<T.SimpleStatementsElements>): ReturnType<typeof _buildSuiteInline>;
-export function buildSuiteInline(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.SimpleStatement>>
+export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements>>(
+	value: V & RefuseUntyped<V>
 ): ReturnType<typeof _buildSuiteInline>;
-export function buildSuiteInline(
-	...elements: NonEmptyArray<Admit<T.SimpleStatement>>
+export function buildSuiteInline<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUntyped<A>
+): ReturnType<typeof _buildSuiteInline>;
+export function buildSuiteInline<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
+	...elements: A & RefuseUntyped<A>
 ): ReturnType<typeof _buildSuiteInline>;
 export function buildSuiteInline(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -6662,8 +7262,12 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 	return node as unknown as T.SuiteInline.Bound;
 }
 
-export function buildSuiteBlock(value: Admit<T.Block>): ReturnType<typeof _buildSuiteBlock>;
-export function buildSuiteBlock(...children: Admit<T.Statement[]>): ReturnType<typeof _buildSuiteBlock>;
+export function buildSuiteBlock<V extends Admit<T.Block>>(
+	value: V & RefuseUntyped<V>
+): ReturnType<typeof _buildSuiteBlock>;
+export function buildSuiteBlock<A extends Admit<T.Statement[]>>(
+	...children: A & RefuseUntyped<A>
+): ReturnType<typeof _buildSuiteBlock>;
 export function buildSuiteBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildSuiteBlock(buildBlock() as Parameters<typeof _buildSuiteBlock>[0]);
@@ -6704,7 +7308,9 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 }
 
 export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
-export function buildSuiteEmpty(value?: Admit<TSKindId.Newline>): ReturnType<typeof _buildSuiteEmpty>;
+export function buildSuiteEmpty<V extends Admit<TSKindId.Newline>>(
+	...value: [value?: V] & RefuseUntyped<V>
+): ReturnType<typeof _buildSuiteEmpty>;
 export function buildSuiteEmpty(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteEmpty(args[0] as Parameters<typeof _buildSuiteEmpty>[0]);
@@ -6743,6 +7349,11 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 	return node as unknown as T.SuiteEmpty.Bound;
 }
 
+export function buildComparisonOperatorComparator<
+	PrimaryExpressionSlot extends T.ComparisonOperatorComparator.Config['primaryExpression']
+>(
+	config: RefusingConfig<T.ComparisonOperatorComparator.Config, { primaryExpression: PrimaryExpressionSlot }>
+): T.ComparisonOperatorComparator.Bound;
 export function buildComparisonOperatorComparator(
 	config: T.ComparisonOperatorComparator.Config
 ): T.ComparisonOperatorComparator.Bound {
@@ -6776,6 +7387,9 @@ export function buildComparisonOperatorComparator(
 	return node as unknown as T.ComparisonOperatorComparator.Bound;
 }
 
+export function buildYieldFromClause<V extends Admit<T.Expression>>(
+	value: V & RefuseUntyped<V>
+): T.YieldFromClause.Bound;
 export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromClause.Bound {
 	const _expression = kindIdStorage<NonNullable<T.YieldFromClause['_expression']>>(value);
 	const handle = currentHandle();
@@ -6899,6 +7513,7 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
+export function buildNames<V extends Admit<T.ImportList>>(value: V & RefuseUntyped<V>): T.Names.Bound;
 export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 	const _content = value;
 	const handle = currentHandle();
@@ -6929,6 +7544,9 @@ export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 	return node as unknown as T.Names.Bound;
 }
 
+export function buildAsPatternTarget<V extends Admit<T.Expression>>(
+	value: V & RefuseUntyped<V>
+): T.AsPatternTarget.Bound;
 export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTarget.Bound {
 	const _content = kindIdStorage<NonNullable<T.AsPatternTarget['_content']>>(value);
 	const handle = currentHandle();
@@ -6952,6 +7570,9 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 	return node as unknown as T.AsPatternTarget.Bound;
 }
 
+export function buildFormatExpression<V extends Admit<T.Interpolation>>(
+	value: V & RefuseUntyped<V>
+): T.FormatExpression.Bound;
 export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatExpression.Bound {
 	const _content = value;
 	const handle = currentHandle();

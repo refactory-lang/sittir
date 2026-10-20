@@ -18,11 +18,12 @@ const interfaceBlock = (source: string, typeName: string): string => {
 };
 
 const factoryElement = (raw: string, factory: string): string | undefined => {
-	const start = raw.search(new RegExp(`function ${factory}\\(\\s*(?:\\)|value|options|\\.\\.\\.)`));
+	const start = raw.search(new RegExp(`function ${factory}(?:<\\s*A extends [^(]*)?\\(\\s*(?:\\)|value|options|\\.\\.\\.)`));
 	if (start < 0) return undefined;
 	const dispatch = raw.indexOf(`function ${factory}(...args`, start);
 	const body = raw.slice(start, dispatch >= 0 ? dispatch : raw.indexOf('\n}\n', start));
-	const rest = body.slice(body.lastIndexOf('...elements:'));
+	const elements = body.lastIndexOf('...elements:');
+	const rest = body.slice(body.startsWith('...elements: A & RefuseUntyped<A>', elements) ? body.lastIndexOf('A extends ', elements) : elements);
 	const element = /Admit<([\s\S]*?)>\s*(?:>|\[\])/.exec(rest);
 	return element === null ? undefined : compact(element[1]!).replace(/^\|/, '');
 };

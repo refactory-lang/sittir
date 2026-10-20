@@ -89,7 +89,8 @@ import {
 	pruneUnusedImports,
 	importLocalName,
 	isDeclaredSupertype,
-	needsNonEmptyHoist
+	needsNonEmptyHoist,
+	quoteKey
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -1331,10 +1332,6 @@ function emitFieldInputHints(
 		lines.push(...fromHintLines);
 		lines.push('  };');
 	}
-}
-
-function quoteKey(key: string): string {
-	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
 }
 
 function emitNamespaceSugarBlock(

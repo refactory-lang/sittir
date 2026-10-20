@@ -157,18 +157,64 @@ export type Admit<V> = V extends unknown
 			: V
 	: never;
 
-type UntypedKind<V> = V extends { readonly $type: infer Id } ? (`${number}` extends `${Id & number}` ? true : false) : false;
+/** Max recursion depth for type expansion. Beyond this, branches become opaque. */
+export type MaxDepth = 3;
+
+type UntypedKind<V, Levels extends readonly unknown[] = []> = 0 extends 1 & V
+	? false
+	: V extends { readonly $type: infer Id }
+		? `${number}` extends `${Id & number}`
+			? true
+			: V extends { readonly $render: unknown } | HoldsTree
+				? false
+				: UntypedField<V, Levels>
+		: V extends readonly (infer E)[]
+			? UntypedKind<E, Levels>
+			: V extends (...args: never[]) => unknown
+				? false
+				: V extends object
+					? UntypedField<V, Levels>
+					: false;
+
+type UntypedField<V, Levels extends readonly unknown[]> = Levels['length'] extends MaxDepth
+	? false
+	: UntypedKind<V[Exclude<keyof V, '$type'>], [...Levels, unknown]>;
 
 /**
  * Refuses an untyped node: one whose `$type` is a plain `number`. An untyped node has no language, so no typed slot
  * admits it. TypeScript admits `number` into any numeric enum, so `Admit` alone would take it; a function that admits
  * a node is generic over the value and takes `value: V & RefuseUntyped<V>`. A node of the slot's language keeps its
- * kind, and a node of another language is refused by its own enum.
+ * kind, and a node of another language is refused by its own enum. The check reads every node the value holds: the
+ * value itself, a list's items, and a config's fields, down to the depth loose configs nest (`MaxDepth`). A node
+ * (`$render`, or a held tree) ends the search, since its fields are typed storage; a config tagged with a kind is
+ * searched like any config. A value typed `any` proves nothing, so it is admitted.
  *
- * @typeParam V - the admitted value as inferred, or the union of a rest argument's items.
+ * @typeParam V - the admitted value as inferred: a node, a list of them, or a config holding them.
+ * @typeParam Declared - the parameter's declared input, when a value typed as all of it is to be admitted unsearched;
+ *   omitted, every value is searched.
  * @returns `unknown` when every node in `V` names a kind of a language, otherwise an object type no value satisfies.
  */
-export type RefuseUntyped<V> = true extends UntypedKind<V> ? { readonly 'an untyped node has no language': never } : unknown;
+export type RefuseUntyped<V, Declared = never> = true extends UntypedValue<V, Declared>
+	? { readonly 'an untyped node has no language': never }
+	: unknown;
+
+type UntypedValue<V, Declared> = [Declared] extends [never] ? UntypedKind<V> : [Declared] extends [V] ? false : UntypedKind<V>;
+
+/**
+ * A builder's config whose node-valued fields refuse an untyped node. Each field named in `Slots` takes the type
+ * parameter the builder infers it as, and the config as a whole refuses an untyped node held by any of them; every
+ * other field keeps the config's own type, and every field keeps the config's optionality. The refusal sits on the
+ * config rather than on each field so that a field's parameter is inferred whole from a union value. A config that is
+ * a union is mapped member by member.
+ *
+ * @typeParam Config - the builder's strict config.
+ * @typeParam Slots - each node-valued field's key, mapped to the type parameter it is inferred as.
+ * @returns the config with its node-valued fields inferred, refused when any of them holds an untyped node.
+ */
+export type RefusingConfig<Config, Slots> = (Config extends unknown
+	? { [K in keyof Config]: K extends keyof Slots ? Slots[K] : Config[K] }
+	: never) &
+	RefuseUntyped<Slots[keyof Slots]>;
 
 type AdmitsOne<Input, Result> = <V extends Input>(value: V & RefuseUntyped<V>) => Result;
 type AdmitsEach<Inputs extends readonly unknown[], Result> = <A extends Inputs>(...values: A & RefuseUntyped<A[number]>) => Result;
