@@ -1,7 +1,7 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
-import { forEachTriviaList, type TriviaSides } from './trivia.ts';
+import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -20,6 +20,48 @@ export function coordinateOf(node: object): NodeCoordinate | undefined {
 export function spanOf(node: object): ByteSpan | undefined {
 	const span = coordinateOf(node)?.$span;
 	return span === undefined ? undefined : { start: span.start, end: span.end };
+}
+
+/**
+ * A read value given a node's text member: native data whose `$text` is a string, with that text as the method `$text()`. Any other value is returned as it is.
+ */
+export function asTextNode<T>(value: T): T {
+	if (value === null || typeof value !== 'object') return value;
+	const text: unknown = (value as { readonly $text?: unknown }).$text;
+	return typeof text === 'string' ? Object.assign(value, { $text: () => text }) : value;
+}
+
+/**
+ * A trivia entry as native reads it: each `$text` method in it, its own and its slots', as the string it returns. Every other key crosses as the entry holds it. A coordinate crosses as it is.
+ */
+function entryData(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(entryData);
+	if (!isRecord(value) || isCoordinate(value)) return value;
+	const out: Record<string, unknown> = {};
+	for (const key of Object.keys(value)) out[key] = key === '$text' ? nodeText(value) : isStorageKey(key) ? entryData(value[key]) : value[key];
+	return out;
+}
+
+function entriesData<S extends TriviaSides<unknown>>(sides: S): S {
+	return mapTriviaEntries(sides, (entries) => entries.map(entryData)) as S;
+}
+
+/**
+ * Whether a value has a text member, a node's `$text()` or the string `$text` of native node data, decided without calling the method.
+ */
+export function hasNodeText(value: object): boolean {
+	const text: unknown = (value as { readonly $text?: unknown }).$text;
+	return typeof text === 'string' || typeof text === 'function';
+}
+
+/**
+ * The text a leaf holds: a node's `$text()`, or the `$text` of native node data, which carries it as a string. `undefined` for a value with neither.
+ */
+export function nodeText(value: unknown): string | undefined {
+	if (value === null || typeof value !== 'object') return undefined;
+	const text: unknown = (value as { readonly $text?: unknown }).$text;
+	const read = typeof text === 'function' ? (text as (this: object) => unknown).call(value) : text;
+	return typeof read === 'string' ? read : undefined;
 }
 
 /** The trivia a node owns: its layout's, read or written. */
@@ -589,6 +631,10 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_layout') continue;
+		if (key === '$text') {
+			out.$text = nodeText(value);
+			continue;
+		}
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
 		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
@@ -603,10 +649,10 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
-		setLayout(out, 'trivia', trivia);
+		setLayout(out, 'trivia', entriesData(trivia as TriviaSides<unknown>));
 	}
 	const units = fold || sided ? unitSidesOf(value) : undefined;
-	if (units !== undefined && units.length > 0) setLayout(out, 'units', units);
+	if (units !== undefined && units.length > 0) setLayout(out, 'units', units.map((unit) => ({ ...(unit as object), ...entriesData(unit as TriviaSides<unknown>) })));
 	const source = fold ? sourceOf(value) : undefined;
 	if (source !== undefined && sourceTree(source) !== undefined) {
 		setLayout(out, 'sides', plainCoordinate({ $treeHandle: source.treeHandle, $end: source.end, $span: source.span, $type: source.kind }));

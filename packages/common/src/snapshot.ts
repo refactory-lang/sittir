@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
 import { decodeIndex, type TreeHandle } from './read.ts';
-import { coordinateOf, isDataKey, isStorageKey, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
+import { coordinateOf, isDataKey, isStorageKey, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf } from './tree-token.ts';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
@@ -44,6 +44,10 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		const raw = value[key];
+		if (key === '$text') {
+			out.$text = nodeText(value);
+			continue;
+		}
 		if (!isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
 		out[key] = isStorageKey(key) ? snapshotIn(raw, undefined, undefined) : raw;
 	}

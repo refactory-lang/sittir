@@ -27,7 +27,7 @@ describe('the typed read', () => {
 		if (letDecl === undefined || !rs.is.letDeclaration(letDecl)) throw new Error('expected a let declaration');
 		const value = letDecl.value() as unknown as Record<string, unknown>;
 		expect(value.$type).toBe(rs.kinds.Identifier);
-		expect(value.$text).toBe('a');
+		expect((value as unknown as { $text(): string }).$text()).toBe('a');
 		expect(value.$_layout).toMatchObject({ at: { $span: { start: 8, end: 9 }, $type: rs.kinds.Identifier } });
 		expect(treeTokenOf(value)).toBeDefined();
 		expect((value.$render as () => string)()).toBe('a');

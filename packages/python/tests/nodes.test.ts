@@ -76,7 +76,7 @@ describe('import_prefix', () => {
 		const node = ir.importPrefix('.');
 		expect(node.$type).toBe(TSKindId.ImportPrefix);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('.');
+		expect(node.$text()).toBe('.');
 	});
 });
 
@@ -218,7 +218,7 @@ describe('import_from_statement sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ImportFromStatement);
 		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardImport);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.WildcardImport);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('importList builds the parent', () => {
@@ -2841,7 +2841,7 @@ describe('key_value_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		const seated = (node as any).key();
-		expect(seated?.$text ?? seated).toBe(TSKindId.True);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('false builds the parent', () => {
@@ -2863,7 +2863,7 @@ describe('key_value_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		const seated = (node as any).key();
-		expect(seated?.$text ?? seated).toBe(TSKindId.False);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('none builds the parent', () => {
@@ -2885,7 +2885,7 @@ describe('key_value_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		const seated = (node as any).key();
-		expect(seated?.$text ?? seated).toBe(TSKindId.None);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.None);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative builds the parent', () => {
@@ -2975,7 +2975,7 @@ describe('key_value_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		const seated = (node as any).key();
-		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardPattern);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.WildcardPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3167,7 +3167,7 @@ describe('keyword_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		const seated = (node as any).value();
-		expect(seated?.$text ?? seated).toBe(TSKindId.True);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('false builds the parent', () => {
@@ -3176,7 +3176,7 @@ describe('keyword_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		const seated = (node as any).value();
-		expect(seated?.$text ?? seated).toBe(TSKindId.False);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('none builds the parent', () => {
@@ -3185,7 +3185,7 @@ describe('keyword_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		const seated = (node as any).value();
-		expect(seated?.$text ?? seated).toBe(TSKindId.None);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.None);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative builds the parent', () => {
@@ -3223,7 +3223,7 @@ describe('keyword_pattern sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		const seated = (node as any).value();
-		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardPattern);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.WildcardPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4827,7 +4827,7 @@ describe('type_conversion', () => {
 		const node = ir.typeConversion('!a');
 		expect(node.$type).toBe(TSKindId.TypeConversion);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('!a');
+		expect(node.$text()).toBe('!a');
 	});
 });
 
@@ -4836,7 +4836,7 @@ describe('identifier', () => {
 		const node = ir.identifier('test');
 		expect(node.$type).toBe(TSKindId.Identifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -5208,7 +5208,7 @@ describe('format_specifier_text', () => {
 		const node = ir.formatSpecifierText('test');
 		expect(node.$type).toBe(TSKindId.FormatSpecifierText);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -5366,7 +5366,7 @@ describe('print_statement_chevron sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.PrintStatementChevron);
 		const seated = (node as any).printChevronArguments();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Comma);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Comma);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -5868,7 +5868,7 @@ describe('string_start', () => {
 		const node = ir.stringStart('a"');
 		expect(node.$type).toBe(TSKindId.StringStart);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('a"');
+		expect(node.$text()).toBe('a"');
 	});
 });
 
@@ -5877,7 +5877,7 @@ describe('string_fragment', () => {
 		const node = ir.stringFragment('test');
 		expect(node.$type).toBe(TSKindId.StringFragment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -5886,7 +5886,7 @@ describe('escape_interpolation', () => {
 		const node = ir.escapeInterpolation('{{');
 		expect(node.$type).toBe(TSKindId.EscapeInterpolation);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('{{');
+		expect(node.$text()).toBe('{{');
 	});
 });
 
@@ -5895,7 +5895,7 @@ describe('string_end', () => {
 		const node = ir.stringEnd('\\"');
 		expect(node.$type).toBe(TSKindId.StringEnd);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('\\"');
+		expect(node.$text()).toBe('\\"');
 	});
 });
 

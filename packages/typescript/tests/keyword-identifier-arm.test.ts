@@ -30,7 +30,9 @@ function findParsed(node: unknown, kind: number): Record<string, unknown> | unde
 function readLeftContent(text: string): { $type: number; $text?: string } | undefined {
 	const lhs = findParsed(ts.parse(`${text};`), ts.kinds.LhsExpression) as { content(): unknown } | undefined;
 	const content = lhs?.content();
-	return typeof content === 'number' ? { $type: content } : (content as { $type: number; $text?: string } | undefined);
+	if (typeof content === 'number' || content === undefined) return content === undefined ? undefined : { $type: content };
+	const leaf = content as { $type: number; $text(): string };
+	return { $type: leaf.$type, $text: leaf.$text() };
 }
 
 describe('a contextual keyword at a slot the grammar relaxes it in', () => {
@@ -38,8 +40,8 @@ describe('a contextual keyword at a slot the grammar relaxes it in', () => {
 		const built = ts.build.assignmentExpression({ left: 'async', right: ts.build.identifier('b') });
 		const text = built.$render().toString();
 		expect(text).toBe('async = b');
-		const content = (built._left as unknown as { _content: { $type: number; $text: string } })._content;
-		expect(content).toMatchObject({ $type: ts.kinds.Identifier, $text: 'async' });
+		const content = (built._left as unknown as { _content: { $type: number; $text(): string } })._content;
+		expect({ $type: content.$type, $text: content.$text() }).toEqual({ $type: ts.kinds.Identifier, $text: 'async' });
 		expect(readLeftContent(text)).toMatchObject({ $type: ts.kinds.Identifier, $text: 'async' });
 	});
 

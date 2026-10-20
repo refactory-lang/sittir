@@ -1,7 +1,7 @@
 import type { AnyUntypedNode } from '@sittir/types';
 import { isLive, type EngineHandle, type LiveEngine } from './engine-scope.ts';
 import { applyHost } from './reparse.ts';
-import { spanOf } from './utils.ts';
+import { nodeText, spanOf } from './utils.ts';
 
 export interface DelimitedSpec {
 	readonly kind: string;
@@ -26,10 +26,6 @@ type Facet = { readonly $descendants: { ofType(kind: number): Iterable<Spanned> 
 
 const pairings = new WeakMap<DelimitedSpec, Set<string>>();
 
-function textOf(node: unknown): string | undefined {
-	const text = (node as { $text?: unknown } | null)?.$text;
-	return typeof text === 'string' ? text : undefined;
-}
 
 function leafTexts(value: unknown, skip: ReadonlySet<number>, into: string[]): string[] {
 	if (value === undefined || value === null) return into;
@@ -39,7 +35,7 @@ function leafTexts(value: unknown, skip: ReadonlySet<number>, into: string[]): s
 	}
 	const node = value as Record<string, unknown>;
 	if (typeof node.$type === 'number' && skip.has(node.$type)) return into;
-	const text = textOf(node);
+	const text = nodeText(node);
 	if (text !== undefined) into.push(text);
 	else for (const key of Object.keys(node)) if (key.startsWith('_')) leafTexts(node[key], skip, into);
 	return into;
@@ -98,8 +94,8 @@ export function checkDelimited(
 	open?: unknown,
 	close?: unknown
 ): void {
-	const openText = spec.open ?? textOf(open) ?? '';
-	const closeText = spec.close ?? textOf(close) ?? '';
+	const openText = spec.open ?? nodeText(open) ?? '';
+	const closeText = spec.close ?? nodeText(close) ?? '';
 	const skip = new Set(spec.nodeKinds);
 	const texts = content.flatMap((value) => leafTexts(value, skip, []));
 	const clean = texts.every((text) => !spec.excluded.test(text));

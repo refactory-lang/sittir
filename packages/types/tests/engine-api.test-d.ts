@@ -143,4 +143,4 @@ export const reattached: FakeNode = trivia.trailing(errorNode);
 
 // The error guard narrows a trivia item to the ERROR node, exposing its text.
 const firstItem = trivia.leading()[0];
-if (parsing.isErrorNode(firstItem)) firstItem.$text satisfies string;
+if (parsing.isErrorNode(firstItem)) firstItem.$text() satisfies string;
