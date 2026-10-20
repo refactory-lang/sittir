@@ -9,15 +9,26 @@ use crate::read::{index_of, Child, Route, Router};
 use crate::slot::NodeCoordinate;
 use crate::types::Span;
 
-/// One batch of [`crate::engine::ParsedTree::descendants`]: the coordinates of
-/// the nodes found, each the coordinate a read of its parent hands out, the
-/// path to resume after (`None` once the walk is done), and the walk's start
-/// as its own handle, so the next batch names it without minting it again.
+/// One batch of [`crate::engine::ParsedTree::descendants`]: the items found
+/// ([`QueryItem`]), the path to resume after (`None` once the walk is done),
+/// and the walk's start as its own handle, so the next batch names it without
+/// minting it again.
 #[derive(serde::Serialize)]
 pub struct DescendantBatch {
-    pub coordinates: Vec<QueryCoordinate>,
+    pub items: Vec<QueryItem>,
     pub resume: Option<Vec<crate::types::ChildPosition>>,
     pub origin: crate::types::TreeHandle,
+}
+
+/// One element a walk found, as it crosses: the coordinate a read of its
+/// parent hands out for a node, or, for a node its read stores as a unit
+/// (`EngineGrammar::unit_id`), that unit's id as a bare number, as a slot read
+/// stores it. A coordinate never carries a unit's id.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[serde(untagged)]
+pub enum QueryItem {
+    Node(QueryCoordinate),
+    Unit(crate::types::KindId),
 }
 
 /// A node a walk found, as it crosses: `{ $treeHandle, $end, $span, $type }`, its

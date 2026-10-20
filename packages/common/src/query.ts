@@ -31,7 +31,7 @@ export interface DescendantWalk {
 }
 
 export interface DescendantBatch {
-	readonly coordinates: readonly NodeCoordinate[];
+	readonly items: readonly (NodeCoordinate | number)[];
 	readonly resume: readonly number[] | null;
 	readonly origin: number;
 }
@@ -384,7 +384,7 @@ function* batches(
 			...(resume === undefined ? {} : { resume }),
 			...(source.depth === undefined ? {} : { depth: source.depth })
 		});
-		yield batch.coordinates.map((coordinate) => entryOfCoordinate(coordinate, tree, hooks));
+		yield batch.items.map((item) => (typeof item === 'number' ? entryOfItem(item) : entryOfCoordinate(item, tree, hooks)));
 		if (batch.resume === null) return;
 		from = { handle: batch.origin };
 		resume = batch.resume;
@@ -447,7 +447,7 @@ function toIntegerOrInfinity(value: number | undefined): number {
 function entryOfItem(item: unknown): Entry {
 	const node = item !== null && typeof item === 'object' ? (item as AnyUntypedNode) : undefined;
 	return {
-		kind: typeof node?.$type === 'number' ? node.$type : undefined,
+		kind: kindOfItem(item),
 		address: node === undefined ? undefined : nodeAddressOf(node),
 		hydrate: () => item
 	};
@@ -544,7 +544,7 @@ function applyStep(step: Step, items: Iterable<unknown>, context: Context): Iter
 		case 'slice':
 			return sliceItems(items, step.start, step.end);
 		case 'ofKinds':
-			return filterItems(items, (item) => isOfKinds((item as AnyUntypedNode | undefined)?.$type, step.kinds));
+			return filterItems(items, (item) => isOfKinds(kindOfItem(item), step.kinds));
 		case 'where':
 			return filterItems(items, (item) => whereHolds([entryOfItem(item)], step.condition, context).length > 0);
 		case 'filter':
@@ -586,8 +586,14 @@ function* sliceItems(items: Iterable<unknown>, start: number, end: number | unde
 	}
 }
 
-function isOfKinds(type: unknown, kinds: readonly number[]): boolean {
-	return typeof type === 'number' && kinds.includes(type);
+function kindOfItem(item: unknown): number | undefined {
+	if (typeof item === 'number') return item;
+	const type = item !== null && typeof item === 'object' ? (item as { readonly $type?: unknown }).$type : undefined;
+	return typeof type === 'number' ? type : undefined;
+}
+
+function isOfKinds(type: number | undefined, kinds: readonly number[]): boolean {
+	return type !== undefined && kinds.includes(type);
 }
 
 function narrowed(kinds: readonly number[] | undefined, by: readonly number[]): readonly number[] {

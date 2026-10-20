@@ -172,7 +172,7 @@ The `slice` step, with its bounds counted as an array counts them: truncated tow
 
 ### `packages/common/src/query.ts::ofTypeSteps`
 
-The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
+The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
 
 ### `packages/common/src/query.ts::narrowed`
 
@@ -180,7 +180,7 @@ The types a node can have after one more `ofKinds` step: the step's kinds for th
 
 ### `packages/common/src/query.ts::isOfKinds`
 
-Whether an entry's or a hydrated node's type passes an `ofKinds` step: it is a number among the step's kinds.
+Whether an item's kind (`kindOfItem`) passes an `ofKinds` step: it is among the step's kinds. An item with no kind passes none.
 
 ### `packages/common/src/query.ts::whereStep`
 
@@ -208,7 +208,7 @@ The leading run of `ofKinds` and `where` steps that can go into the native walk.
 
 ### `packages/common/src/query.ts::batches`
 
-Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls.
+Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls. Each item of a batch becomes an entry by its shape: a coordinate through `entryOfCoordinate`, and the bare id of a node its read stores as a unit through `entryOfItem`, as a slot's item does.
 
 ### `packages/common/src/query.ts::find`
 
@@ -743,6 +743,10 @@ A query result the native matcher returned as a coordinate, as a query entry: it
 ### `packages/common/src/query.ts::isPortableKind`
 
 Whether an `ofType` argument has a portable kind's shape: an object with a string `$path`. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
+
+### `packages/common/src/query.ts::kindOfItem`
+
+An item's kind, as an `ofKinds` step and a slot entry read it: a node's numeric `$type`, or a bare kind id itself, since a keyword leaf reads as its kind id and the guards read it that way. A walk yields a node its read stores as a unit as that bare id, as a slot read stores it (`batches`), so its entry's kind is the id on every route; a coordinate's `$type` stays the shared stamp.
 
 ### `packages/common/src/runtime.ts::coerceBitflagStorage`
 

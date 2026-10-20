@@ -939,7 +939,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
 		if (withNode && name.startsWith('Parsed')) {
-			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId, PortableQueryIds<PortableReads>>;`);
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId, PortableQueryIds<PortableReads>, FixedTextKindId>;`);
 			lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
 		}
 		for (const member of surface.members) lines.push(`${indent}${member}`);

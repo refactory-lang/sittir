@@ -1096,7 +1096,16 @@ export interface IsGuards {
 		| TSKindId.TypeIdentifier
 		| TSKindId.ThisType
 		| TSKindId.ParenthesizedType
-		| TSKindId.PredefinedType
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.Unique
+		| TSKindId.VoidKeyword
+		| TSKindId.UnknownKeyword
+		| TSKindId.NeverKeyword
+		| TSKindId.ObjectKeyword
 		| TSKindId.NestedTypeIdentifier
 		| TSKindId.GenericType
 		| TSKindId.ObjectType
@@ -1127,7 +1136,16 @@ export interface IsGuards {
 		| TSKindId.TypeIdentifier
 		| TSKindId.ThisType
 		| TSKindId.ParenthesizedType
-		| TSKindId.PredefinedType
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.Unique
+		| TSKindId.VoidKeyword
+		| TSKindId.UnknownKeyword
+		| TSKindId.NeverKeyword
+		| TSKindId.ObjectKeyword
 		| TSKindId.NestedTypeIdentifier
 		| TSKindId.GenericType
 		| TSKindId.ObjectType
@@ -1279,7 +1297,6 @@ export interface IsGuards {
 		| TSKindId.Unique
 		| TSKindId.VoidKeyword
 		| TSKindId.UnknownKeyword
-		| TSKindId.StringKeyword
 		| TSKindId.NeverKeyword
 		| TSKindId.ObjectKeyword
 	>;
@@ -1365,11 +1382,12 @@ const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160
 const _supertype_metaProperty_ids = new Set<number>([436, 437]);
 const _supertype_pattern_ids = new Set<number>([259, 290]);
 const _supertype_type_ids = new Set<number>([
-	475, 474, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379, 381, 378, 343,
-	347, 333, 334
+	475, 474, 364, 40, 41, 42, 43, 44, 144, 77, 145, 146, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
+	348, 346, 380, 379, 381, 378, 343, 347, 333, 334
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	475, 474, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379
+	475, 474, 364, 40, 41, 42, 43, 44, 144, 77, 145, 146, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
+	348, 346, 380, 379
 ]);
 const _supertype_indexSignature_ids = new Set<number>([408, 409]);
 const _supertype_classBodyMember_ids = new Set<number>([405, 406, 288, 407, 404]);
@@ -1377,9 +1395,6 @@ const _supertype_enumBodyElement_ids = new Set<number>([386, 322]);
 const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
 const _supertype_exportStatementDefault_ids = new Set<number>([427, 428]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
-
-const _enum_accessibilityModifier_ids = new Set<number>([34, 35, 36]);
-const _enum_predefinedType_ids = new Set<number>([40, 41, 42, 43, 44, 144, 77, 145, 146, 46]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[189, _supertype_exportStatement_ids],
@@ -1403,7 +1418,9 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[384, _supertype_classBodyMember_ids],
 	[387, _supertype_enumBodyElement_ids],
 	[398, _supertype_exportStatementDefault_ids],
-	[402, _supertype_numberBigint_ids]
+	[402, _supertype_numberBigint_ids],
+	[TSKindId.AccessibilityModifier, new Set<number>([34, 35, 36])],
+	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 144, 77, 145, 146, 46])]
 ]);
 export function isMember(kind: number, type: number): boolean {
 	return _members.get(kind)?.has(type) ?? type === kind;
@@ -1779,10 +1796,10 @@ export const is = Object.freeze({
 	false_: _mg(TSKindId.False),
 	null_: _mg(TSKindId.Null),
 	undefined: _mg(TSKindId.Undefined),
-	accessibilityModifier: _sg(_enum_accessibilityModifier_ids),
+	accessibilityModifier: _mg(TSKindId.AccessibilityModifier),
 	overrideModifier: _mg(TSKindId.OverrideModifier),
 	existentialType: _mg(TSKindId.ExistentialType),
-	predefinedType: _sg(_enum_predefinedType_ids),
+	predefinedType: _mg(TSKindId.PredefinedType),
 	usingDeclarationArm: _mg(TSKindId.UsingDeclarationArm),
 	numberDecimal: _g(TSKindId.NumberDecimal),
 	emptyMember: _mg(TSKindId.EmptyMember),

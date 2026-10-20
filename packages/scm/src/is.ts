@@ -191,14 +191,13 @@ const _supertype_listElement_ids = new Set<number>([39, 54]);
 const _supertype_namedNodeGroup_ids = new Set<number>([63, 64]);
 const _supertype_layout_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
 
-const _enum_quantifier_ids = new Set<number>([2, 3, 4]);
-const _enum_predicateType_ids = new Set<number>([4, 18]);
-
 const _members = new Map<number, ReadonlySet<number>>([
 	[34, _supertype_definition_ids],
 	[48, _supertype_namedNode_ids],
 	[55, _supertype_listElement_ids],
-	[59, _supertype_namedNodeGroup_ids]
+	[59, _supertype_namedNodeGroup_ids],
+	[TSKindId.Quantifier, new Set<number>([2, 3, 4])],
+	[TSKindId.PredicateType, new Set<number>([4, 18])]
 ]);
 export function isMember(kind: number, type: number): boolean {
 	return _members.get(kind)?.has(type) ?? type === kind;
@@ -259,10 +258,10 @@ export const is = Object.freeze({
 	listElement: _supertype_listElement_guard,
 	namedNodeGroup: _supertype_namedNodeGroup_guard,
 	layout: _sg(_supertype_layout_ids),
-	quantifier: _sg(_enum_quantifier_ids),
+	quantifier: _mg(TSKindId.Quantifier),
 	identifier: _g(TSKindId.Identifier),
 	immediateIdentifier: _g(TSKindId.ImmediateIdentifier),
-	predicateType: _sg(_enum_predicateType_ids),
+	predicateType: _mg(TSKindId.PredicateType),
 	stringContentText: _g(TSKindId.StringContentText),
 	anchor: _mg(TSKindId.Anchor)
 }) as unknown as IsGuards;

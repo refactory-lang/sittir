@@ -858,7 +858,23 @@ export interface IsGuards {
 		| TSKindId.DynamicType
 		| TSKindId.BoundedType
 		| TSKindId.RemovedTraitBound
-		| TSKindId.PrimitiveType
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
 	>;
 	readonly pointerType: {
 		<T extends { readonly $type: number } | number>(
@@ -896,7 +912,8 @@ export interface IsGuards {
 		| TSKindId.CharLiteralEscapedHex
 		| TSKindId.CharLiteralPlain
 		| TSKindId.CharLiteralEmpty
-		| TSKindId.BooleanLiteral
+		| TSKindId.TrueKeyword
+		| TSKindId.FalseKeyword
 		| TSKindId.IntegerLiteralDecimal
 		| TSKindId.IntegerLiteralHex
 		| TSKindId.IntegerLiteralBinary
@@ -1042,7 +1059,8 @@ export interface IsGuards {
 		| TSKindId.CharLiteralEscapedHex
 		| TSKindId.CharLiteralPlain
 		| TSKindId.CharLiteralEmpty
-		| TSKindId.BooleanLiteral
+		| TSKindId.TrueKeyword
+		| TSKindId.FalseKeyword
 		| TSKindId.IntegerLiteralDecimal
 		| TSKindId.IntegerLiteralHex
 		| TSKindId.IntegerLiteralBinary
@@ -1114,7 +1132,8 @@ export interface IsGuards {
 		| TSKindId.CharLiteralEscapedHex
 		| TSKindId.CharLiteralPlain
 		| TSKindId.CharLiteralEmpty
-		| TSKindId.BooleanLiteral
+		| TSKindId.TrueKeyword
+		| TSKindId.FalseKeyword
 		| TSKindId.IntegerLiteralDecimal
 		| TSKindId.IntegerLiteralHex
 		| TSKindId.IntegerLiteralBinary
@@ -1133,7 +1152,8 @@ export interface IsGuards {
 		| TSKindId.CharLiteralEscapedHex
 		| TSKindId.CharLiteralPlain
 		| TSKindId.CharLiteralEmpty
-		| TSKindId.BooleanLiteral
+		| TSKindId.TrueKeyword
+		| TSKindId.FalseKeyword
 		| TSKindId.IntegerLiteralDecimal
 		| TSKindId.IntegerLiteralHex
 		| TSKindId.IntegerLiteralBinary
@@ -1374,40 +1394,7 @@ export interface IsGuards {
 		| TSKindId.Pound
 		| TSKindId.Qmark
 	>;
-	tokenKeywords<T extends { readonly $type: number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.Squote
-		| TSKindId.AsKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.BreakKeyword
-		| TSKindId.ConstKeyword
-		| TSKindId.ContinueKeyword
-		| TSKindId.DefaultKeyword
-		| TSKindId.EnumKeyword
-		| TSKindId.FnKeyword
-		| TSKindId.ForKeyword
-		| TSKindId.GenKeyword
-		| TSKindId.IfKeyword
-		| TSKindId.ImplKeyword
-		| TSKindId.LetKeyword
-		| TSKindId.LoopKeyword
-		| TSKindId.MatchKeyword
-		| TSKindId.ModKeyword
-		| TSKindId.PubKeyword
-		| TSKindId.ReturnKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.StructKeyword
-		| TSKindId.TraitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.UnsafeKeyword
-		| TSKindId.UseKeyword
-		| TSKindId.WhereKeyword
-		| TSKindId.WhileKeyword
-	>;
+	tokenKeywords<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.TokenKeywords>;
 	implItemUnsafeMarker<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.ImplItemUnsafeMarker>;
@@ -1492,13 +1479,14 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	468, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 341
+	468, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
-	267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 336, 141,
-	142, 143, 144, 162, 1, 125, 263, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282, 309,
-	310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
+	267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 117, 118,
+	141, 142, 143, 144, 162, 1, 125, 263, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282,
+	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
 const _supertype_rangeExpression_ids = new Set<number>([390, 391, 392, 393]);
@@ -1507,15 +1495,17 @@ const _supertype_arrayExpression_ids = new Set<number>([366, 367]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
-	332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324, 317, 325,
-	326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324, 317,
+	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([414, 415]);
 const _supertype_rangePattern_ids = new Set<number>([422, 419]);
 const _supertype_orPattern_ids = new Set<number>([386, 387]);
-const _supertype_literal_ids = new Set<number>([332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162]);
+const _supertype_literal_ids = new Set<number>([
+	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162
+]);
 const _supertype_literalPattern_ids = new Set<number>([
-	332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162, 330
+	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330
 ]);
 const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
 const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
@@ -1523,18 +1513,6 @@ const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
-
-const _enum_fragmentSpecifier_ids = new Set<number>([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]);
-const _enum_booleanLiteral_ids = new Set<number>([117, 118]);
-const _enum_primitiveType_ids = new Set<number>([59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]);
-const _enum_tokenTreePunctuation_ids = new Set<number>([
-	8, 76, 9, 87, 88, 80, 29, 55, 79, 77, 78, 85, 86, 89, 90, 91, 92, 93, 96, 94, 95, 97, 98, 38, 81, 82, 44, 43, 84, 83,
-	116, 136, 110, 101, 49, 137, 130, 2, 4, 47, 131, 3, 26, 10
-]);
-const _enum_tokenKeywords_ids = new Set<number>([
-	50, 48, 113, 111, 108, 35, 109, 51, 33, 39, 42, 52, 102, 56, 45, 106, 104, 138, 139, 99, 36, 140, 41, 37, 32, 112, 46,
-	40, 105
-]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[177, _supertype_statement_ids],
@@ -1563,7 +1541,18 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[331, _supertype_integerLiteral_ids],
 	[334, _supertype_charLiteral_ids],
 	[335, _supertype_escapeSequence_ids],
-	[365, _supertype_charLiteralEscaped_ids]
+	[365, _supertype_charLiteralEscaped_ids],
+	[TSKindId.FragmentSpecifier, new Set<number>([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])],
+	[TSKindId.BooleanLiteral, new Set<number>([117, 118])],
+	[TSKindId.PrimitiveType, new Set<number>([59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75])],
+	[
+		TSKindId.TokenTreePunctuation,
+		new Set<number>([
+			8, 76, 9, 87, 88, 80, 29, 55, 79, 77, 78, 85, 86, 89, 90, 91, 92, 93, 96, 94, 95, 97, 98, 38, 81, 82, 44, 43, 84,
+			83, 116, 136, 110, 101, 49, 137, 130, 2, 4, 47, 131, 3, 26, 10
+		])
+	],
+	[TSKindId.TokenKeywords, new Set<number>([362])]
 ]);
 export function isMember(kind: number, type: number): boolean {
 	return _members.get(kind)?.has(type) ?? type === kind;
@@ -1934,24 +1923,24 @@ export const is = Object.freeze({
 	layout: _sg(_supertype_layout_ids),
 	charLiteralEscaped: _supertype_charLiteralEscaped_guard,
 	emptyStatement: _mg(TSKindId.EmptyStatement),
-	fragmentSpecifier: _sg(_enum_fragmentSpecifier_ids),
+	fragmentSpecifier: _mg(TSKindId.FragmentSpecifier),
 	unitType: _mg(TSKindId.UnitType),
 	neverType: _mg(TSKindId.NeverType),
 	mutableSpecifier: _mg(TSKindId.MutableSpecifier),
 	unitExpression: _mg(TSKindId.UnitExpression),
 	remainingFieldPattern: _mg(TSKindId.RemainingFieldPattern),
-	booleanLiteral: _sg(_enum_booleanLiteral_ids),
+	booleanLiteral: _mg(TSKindId.BooleanLiteral),
 	innerLineDocCommentMarker: _mg(TSKindId.InnerLineDocCommentMarker),
 	outerLineDocCommentMarker: _mg(TSKindId.OuterLineDocCommentMarker),
 	identifier: _g(TSKindId.Identifier),
 	self: _mg(TSKindId.Self),
 	super_: _mg(TSKindId.Super),
 	crate: _mg(TSKindId.Crate),
-	primitiveType: _sg(_enum_primitiveType_ids),
+	primitiveType: _mg(TSKindId.PrimitiveType),
 	tokenRepetitionPatternText: _g(TSKindId.TokenRepetitionPatternText),
 	stringOpen: _g(TSKindId.StringOpen),
-	tokenTreePunctuation: _sg(_enum_tokenTreePunctuation_ids),
-	tokenKeywords: _sg(_enum_tokenKeywords_ids),
+	tokenTreePunctuation: _mg(TSKindId.TokenTreePunctuation),
+	tokenKeywords: _mg(TSKindId.TokenKeywords),
 	implItemUnsafeMarker: _mg(TSKindId.ImplItemUnsafeMarker),
 	charLiteralEmpty: _g(TSKindId.CharLiteralEmpty),
 	lineCommentExtraSlashes: _g(TSKindId.LineCommentExtraSlashes),

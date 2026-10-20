@@ -2,7 +2,8 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, snakeToCamel } from '../compiler/model/node-map.ts';
-import { expandToConcreteParseKinds, isDeclaredSupertype } from './shared.ts';
+import { isDeclaredSupertype } from './shared.ts';
+import { membershipKindsOf } from './membership.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { flattenedVariantParents, type FlattenedVariantRoute } from '../compiler/model/ir-surface.ts';
@@ -164,7 +165,7 @@ export function emitIs(config: EmitIsConfig): string {
 		const memberKinds: string[] = [];
 		const memberIds: number[] = [];
 		const memberKindIds: string[] = [];
-		for (const sub of expandToConcreteParseKinds([kind], nodeMap)) {
+		for (const sub of membershipKindsOf([kind], nodeMap)) {
 			memberKinds.push(sub);
 			const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, sub);
 			if (entry === undefined || memberIds.includes(entry.id)) continue;
@@ -194,7 +195,7 @@ export function emitIs(config: EmitIsConfig): string {
 			throw new Error(`is emitter: camelCase kind '${guardKey}' collides with reserved guard key or another kind. Rename '${kind}' before proceeding.`);
 		}
 		usedCamelKeys.add(guardKey);
-		const memberEntries = node instanceof AssembledEnum && kindEntries ? node.resolvedKinds.flatMap((member) => findKindEntry(kindEntries, member) ?? []) : [];
+		const memberEntries = node instanceof AssembledEnum && kindEntries ? membershipKindsOf([kind], nodeMap).flatMap((member) => findKindEntry(kindEntries, member) ?? []) : [];
 		leafGuards.push({
 			kind,
 			guardKey,
@@ -298,12 +299,10 @@ export function emitIs(config: EmitIsConfig): string {
 	if (supertypes.length > 0) lines.push('');
 
 	const enumLeaves = leafGuards.filter((leaf) => leaf.shape === 'enum' && kindEntries !== undefined);
-	for (const leaf of enumLeaves) lines.push(`const _enum_${leaf.guardKey}_ids = new Set<number>([${leaf.memberIds.join(', ')}]);`);
-	if (enumLeaves.length > 0) lines.push('');
-
 	const tabled = supertypes.filter((s) => s.id !== undefined && s.memberIds.length > 0);
 	lines.push('const _members = new Map<number, ReadonlySet<number>>([');
 	for (const s of tabled) lines.push(`    [${s.id}, _supertype_${s.guardKey}_ids],`);
+	for (const leaf of enumLeaves) lines.push(`    [${kindDiscriminantExpr(leaf.kind, nodeMap, kindEntries)}, new Set<number>([${leaf.memberIds.join(', ')}])],`);
 	lines.push(']);');
 	lines.push('export function isMember(kind: number, type: number): boolean {');
 	lines.push('    return _members.get(kind)?.has(type) ?? type === kind;');
@@ -354,7 +353,7 @@ export function emitIs(config: EmitIsConfig): string {
 			continue;
 		}
 		const expr = kindDiscriminantExpr(leaf.kind, nodeMap, kindEntries);
-		lines.push(`    ${leaf.guardKey}: ${leaf.shape === 'text' ? `_g(${expr})` : leaf.shape === 'unit' ? `_mg(${expr})` : `_sg(_enum_${leaf.guardKey}_ids)`},`);
+		lines.push(`    ${leaf.guardKey}: ${leaf.shape === 'text' ? `_g(${expr})` : `_mg(${expr})`},`);
 	}
 	lines.push('}) as unknown as IsGuards;');
 	lines.push('');

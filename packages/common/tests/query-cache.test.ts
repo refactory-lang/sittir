@@ -22,7 +22,7 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 		query: {
 			descendants(walk) {
 				walks.push(walk);
-				return { coordinates: [], resume: null, origin: 0 };
+				return { items: [], resume: null, origin: 0 };
 			},
 			planHolds: () => []
 		}
