@@ -23258,13 +23258,11 @@ export namespace UnescapedDoubleStringFragment {
 	export type Config = UnescapedDoubleStringFragmentNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.UnescapedDoubleStringFragment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.UnescapedDoubleStringFragment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23278,13 +23276,11 @@ export namespace UnescapedSingleStringFragment {
 	export type Config = UnescapedSingleStringFragmentNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.UnescapedSingleStringFragment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.UnescapedSingleStringFragment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23298,13 +23294,11 @@ export namespace RegexPattern {
 	export type Config = RegexPatternNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.RegexPattern;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.RegexPattern;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23318,13 +23312,11 @@ export namespace RegexFlags {
 	export type Config = RegexFlagsNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.RegexFlags;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.RegexFlags;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23338,13 +23330,11 @@ export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.Identifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.Identifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23358,13 +23348,11 @@ export namespace NumberDecimal {
 	export type Config = NumberDecimalNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.NumberDecimal;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.NumberDecimal;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23378,13 +23366,11 @@ export namespace HtmlComment {
 	export type Config = HtmlCommentNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.HtmlComment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.HtmlComment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23398,13 +23384,11 @@ export namespace JsxText {
 	export type Config = JsxTextNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.JsxText;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.JsxText;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23418,13 +23402,11 @@ export namespace TemplateChars {
 	export type Config = TemplateCharsNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.TemplateChars;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.TemplateChars;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23438,13 +23420,11 @@ export namespace TernaryQmark {
 	export type Config = TernaryQmarkNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.TernaryQmark;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.TernaryQmark;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -23458,13 +23438,11 @@ export namespace ErrorRecovery {
 	export type Config = ErrorRecoveryNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.ErrorRecovery;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.ErrorRecovery;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}

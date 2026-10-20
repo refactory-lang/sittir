@@ -62,8 +62,6 @@ export interface ByteSpan {
 export interface AnyUntypedNode {
 	/** Kind discriminant: the language's kind id (`TSKindId`). */
 	$type: number;
-	/** Which producer emitted this node (0=ts, 1=sg, 2=factory): a read-only, non-enumerable view of the node's source stamp, so it is absent from `Object.keys` and JSON. */
-	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readUntypedNode output. */
 	$variant?: string;
 	/**
@@ -156,7 +154,6 @@ export interface TriviaFlanks {
  */
 export interface ErrorNode extends AnyUntypedNode, TriviaFlanks {
 	readonly $type: ErrorKindId;
-	readonly $source: 0 | 1;
 	/** The region's own source text: one string, made by this call. */
 	$text(): string;
 }

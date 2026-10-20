@@ -6,7 +6,7 @@ const LIST_ITEMS = Symbol('items');
 
 const leaf = (text: string) => ({
 	$type: 3,
-	$source: 0,
+	
 	$named: true,
 	$text: text,
 	$render: () => text,
@@ -16,7 +16,7 @@ const leaf = (text: string) => ({
 
 const owner = (child: ReturnType<typeof leaf>) => ({
 	$type: 7,
-	$source: 0,
+	
 	$named: true,
 	_body: child,
 	$with: { body: () => undefined },
@@ -37,9 +37,9 @@ describe('the tools walkers select a node by key', () => {
 	it('materialize copies storage and $ metadata only', () => {
 		expect(materialize(owner(leaf('a')))).toEqual({
 			$type: 7,
-			$source: 0,
+			
 			$named: true,
-			_body: { $type: 3, $source: 0, $named: true, $text: 'a' }
+			_body: { $type: 3, $named: true, $text: 'a' }
 		});
 	});
 

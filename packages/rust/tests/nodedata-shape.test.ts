@@ -20,7 +20,7 @@
 
 import { describe, it, expect } from 'vitest';
 import rust from '../src/index.ts';
-import { createEngine } from '@sittir/common';
+import { createEngine, Source, sourceOf } from '@sittir/common';
 
 const rs = await createEngine(rust);
 const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
@@ -85,30 +85,39 @@ describe('Factory shape — branch node', () => {
 		// A reader is an enumerable member; every key is a member or data
 		expect(keys).toContain('name');
 		expect(keys).toEqual(expect.arrayContaining(['$render', '$trivia', '$with']));
-		// $type is present; $source is a read-only getter over the source stamp, not a key
+		// $type is present; provenance is read by sourceOf, and a node has no $source member
 		expect(keys).toContain('$type');
-		expect(keys).not.toContain('$source');
-		expect(node.$source).toBe(2);
+		expect('$source' in node).toBe(false);
 		// _name is present (de-hoisted storage)
 		expect(keys).toContain('_name');
 		// $fields is NOT present (FR-001)
 		expect(keys).not.toContain('$fields');
 	});
 
-	it('SC-004: a read node, and a $with rebuild of it, read $source as ts without listing it', () => {
+	it('SC-004: sourceOf gives a read node, its $with rebuild and a spread copy Ts, and none has a $source member', () => {
 		const file = rs.parse('fn f() {}\n');
 		const rebuilt = file.$with.statements(...file.statements());
-		for (const read of [file, file.statements()[0], rebuilt, rebuilt.statements()[0]]) {
+		for (const read of [file, file.statements()[0], rebuilt, rebuilt.statements()[0], { ...file }]) {
 			if (typeof read !== 'object') throw new Error('`fn f() {}` reads a function item');
-			expect(read.$source).toBe(0);
-			expect(Object.keys(read)).not.toContain('$source');
+			expect(sourceOf(read)).toBe(Source.Ts);
+			expect('$source' in read).toBe(false);
 		}
 	});
 
-	it('SC-004: a $with rebuild of a built node reads $source as factory without listing it', () => {
-		const rebuilt = rs.build.block({ statements: [] }).$with.statements(rs.build.expressionStatement('a'));
-		expect(rebuilt.$source).toBe(2);
-		expect(Object.keys(rebuilt)).not.toContain('$source');
+	it('SC-004: sourceOf gives a built node, its $with rebuild and a spread copy Factory, and none has a $source member', () => {
+		const built = rs.build.block({ statements: [] });
+		const rebuilt = built.$with.statements(rs.build.expressionStatement('a'));
+		for (const node of [built, rebuilt, { ...built }]) {
+			expect(sourceOf(node)).toBe(Source.Factory);
+			expect('$source' in node).toBe(false);
+		}
+	});
+
+	it('SC-004: sourceOf gives no provenance for a config, a JSON copy or a string-key copy', () => {
+		const built = rs.build.block({ statements: [] });
+		expect(sourceOf({ $type: rs.kinds.Block, statements: [] })).toBeUndefined();
+		expect(sourceOf(JSON.parse(JSON.stringify(built)) as object)).toBeUndefined();
+		expect(sourceOf(Object.fromEntries(Object.entries(built)))).toBeUndefined();
 	});
 
 	// CONFIRMED DEFERRED (not a stale assertion or regression): the freeze
@@ -124,8 +133,8 @@ describe('Factory shape — branch node', () => {
 		expect(typeof node.$type).toBe('number');
 	});
 
-	it('$source is 2 (factory provenance)', () => {
-		expect(node.$source).toBe(2);
+	it('sourceOf is Factory (factory provenance)', () => {
+		expect(sourceOf(node)).toBe(Source.Factory);
 	});
 });
 
@@ -202,7 +211,7 @@ describe('$with namespace', () => {
 describe('JSON serialization', () => {
 	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
-	it('SC-007: JSON.stringify includes $type and _<field> keys, and leaves out $source', () => {
+	it('SC-007: JSON.stringify includes $type and _<field> keys, and no $source', () => {
 		// _name holds the coerced leaf UntypedNode object, not the raw config
 		// string — see the FR-001 note above (same current, consistent shape).
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;

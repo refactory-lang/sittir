@@ -3,7 +3,6 @@
 import {
 	restItems,
 	markEdited as $edited,
-	carrySourceStamp,
 	asTextNode,
 	carryRead,
 	treeHandleOf,
@@ -87,7 +86,7 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFi
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.SourceFile.Parsed;
+	return node as unknown as T.SourceFile.Parsed;
 }
 
 export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle): T.ExpressionStatement.Parsed {
@@ -125,7 +124,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ExpressionStatement.Parsed;
+	return node as unknown as T.ExpressionStatement.Parsed;
 }
 
 export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.Parsed {
@@ -155,7 +154,7 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MacroRule.Parsed;
+	return node as unknown as T.MacroRule.Parsed;
 }
 
 export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeHandle): T.TokenBindingPattern.Parsed {
@@ -185,7 +184,7 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenBindingPattern.Parsed;
+	return node as unknown as T.TokenBindingPattern.Parsed;
 }
 
 export function wrapTokenRepetitionPattern(
@@ -227,7 +226,7 @@ export function wrapTokenRepetitionPattern(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenRepetitionPattern.Parsed;
+	return node as unknown as T.TokenRepetitionPattern.Parsed;
 }
 
 export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): T.TokenRepetition.Parsed {
@@ -262,7 +261,7 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenRepetition.Parsed;
+	return node as unknown as T.TokenRepetition.Parsed;
 }
 
 export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): T.NonSpecialToken.Parsed {
@@ -384,7 +383,7 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.NonSpecialToken.Parsed;
+	return node as unknown as T.NonSpecialToken.Parsed;
 }
 
 export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.AttributeItem.Parsed {
@@ -409,7 +408,7 @@ export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.At
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributeItem.Parsed;
+	return node as unknown as T.AttributeItem.Parsed;
 }
 
 export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHandle): T.InnerAttributeItem.Parsed {
@@ -434,7 +433,7 @@ export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.InnerAttributeItem.Parsed;
+	return node as unknown as T.InnerAttributeItem.Parsed;
 }
 
 export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.Parsed {
@@ -466,7 +465,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Attribute.Parsed;
+	return node as unknown as T.Attribute.Parsed;
 }
 
 export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): T.DeclarationList.Parsed {
@@ -494,7 +493,7 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.DeclarationList.Parsed;
+	return node as unknown as T.DeclarationList.Parsed;
 }
 
 export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.Parsed {
@@ -569,7 +568,7 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UnionItem.Parsed;
+	return node as unknown as T.UnionItem.Parsed;
 }
 
 export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Parsed {
@@ -643,7 +642,7 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.EnumItem.Parsed;
+	return node as unknown as T.EnumItem.Parsed;
 }
 
 export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): T.EnumVariantList.Parsed {
@@ -696,7 +695,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.EnumVariantList.Parsed;
+	return node as unknown as T.EnumVariantList.Parsed;
 }
 
 export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVariant.Parsed {
@@ -736,7 +735,7 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVa
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.EnumVariant.Parsed;
+	return node as unknown as T.EnumVariant.Parsed;
 }
 
 export function wrapFieldDeclarationList(
@@ -792,7 +791,7 @@ export function wrapFieldDeclarationList(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.FieldDeclarationList.Parsed;
+	return node as unknown as T.FieldDeclarationList.Parsed;
 }
 
 export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle): T.FieldDeclaration.Parsed {
@@ -827,7 +826,7 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FieldDeclaration.Parsed;
+	return node as unknown as T.FieldDeclaration.Parsed;
 }
 
 export function wrapOrderedFieldDeclarationList(
@@ -883,7 +882,7 @@ export function wrapOrderedFieldDeclarationList(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.OrderedFieldDeclarationList.Parsed;
+	return node as unknown as T.OrderedFieldDeclarationList.Parsed;
 }
 
 export function wrapExternCrateDeclaration(
@@ -921,7 +920,7 @@ export function wrapExternCrateDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ExternCrateDeclaration.Parsed;
+	return node as unknown as T.ExternCrateDeclaration.Parsed;
 }
 
 export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.Parsed {
@@ -961,7 +960,7 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ConstItem.Parsed;
+	return node as unknown as T.ConstItem.Parsed;
 }
 
 export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticItem.Parsed {
@@ -1011,7 +1010,7 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StaticItem.Parsed;
+	return node as unknown as T.StaticItem.Parsed;
 }
 
 export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Parsed {
@@ -1086,7 +1085,7 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TypeItem.Parsed;
+	return node as unknown as T.TypeItem.Parsed;
 }
 
 export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.FunctionItem.Parsed {
@@ -1177,7 +1176,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FunctionItem.Parsed;
+	return node as unknown as T.FunctionItem.Parsed;
 }
 
 export function wrapFunctionSignatureItem(
@@ -1266,7 +1265,7 @@ export function wrapFunctionSignatureItem(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FunctionSignatureItem.Parsed;
+	return node as unknown as T.FunctionSignatureItem.Parsed;
 }
 
 export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandle): T.FunctionModifiers.Parsed {
@@ -1299,7 +1298,7 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FunctionModifiers.Parsed;
+	return node as unknown as T.FunctionModifiers.Parsed;
 }
 
 export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereClause.Parsed {
@@ -1341,7 +1340,7 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.WhereClause.Parsed;
+	return node as unknown as T.WhereClause.Parsed;
 }
 
 export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.WherePredicate.Parsed {
@@ -1398,7 +1397,7 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.WherePredicate.Parsed;
+	return node as unknown as T.WherePredicate.Parsed;
 }
 
 export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.Parsed {
@@ -1472,7 +1471,7 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TraitItem.Parsed;
+	return node as unknown as T.TraitItem.Parsed;
 }
 
 export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.AssociatedType.Parsed {
@@ -1531,7 +1530,7 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AssociatedType.Parsed;
+	return node as unknown as T.AssociatedType.Parsed;
 }
 
 export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitBounds.Parsed {
@@ -1556,7 +1555,7 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitB
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TraitBounds.Parsed;
+	return node as unknown as T.TraitBounds.Parsed;
 }
 
 export function wrapHigherRankedTraitBound(
@@ -1601,7 +1600,7 @@ export function wrapHigherRankedTraitBound(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.HigherRankedTraitBound.Parsed;
+	return node as unknown as T.HigherRankedTraitBound.Parsed;
 }
 
 export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandle): T.RemovedTraitBound.Parsed {
@@ -1626,7 +1625,7 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RemovedTraitBound.Parsed;
+	return node as unknown as T.RemovedTraitBound.Parsed;
 }
 
 export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.TypeParameters.Parsed {
@@ -1678,7 +1677,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.TypeParameters.Parsed;
+	return node as unknown as T.TypeParameters.Parsed;
 }
 
 export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.ConstParameter.Parsed {
@@ -1713,7 +1712,7 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ConstParameter.Parsed;
+	return node as unknown as T.ConstParameter.Parsed;
 }
 
 export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.TypeParameter.Parsed {
@@ -1748,7 +1747,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TypeParameter.Parsed;
+	return node as unknown as T.TypeParameter.Parsed;
 }
 
 export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandle): T.LifetimeParameter.Parsed {
@@ -1778,7 +1777,7 @@ export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LifetimeParameter.Parsed;
+	return node as unknown as T.LifetimeParameter.Parsed;
 }
 
 export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.LetDeclaration.Parsed {
@@ -1823,7 +1822,7 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LetDeclaration.Parsed;
+	return node as unknown as T.LetDeclaration.Parsed;
 }
 
 export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.UseDeclaration.Parsed {
@@ -1864,7 +1863,7 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UseDeclaration.Parsed;
+	return node as unknown as T.UseDeclaration.Parsed;
 }
 
 export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.ScopedUseList.Parsed {
@@ -1902,7 +1901,7 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ScopedUseList.Parsed;
+	return node as unknown as T.ScopedUseList.Parsed;
 }
 
 export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed {
@@ -1944,7 +1943,7 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.UseList.Parsed;
+	return node as unknown as T.UseList.Parsed;
 }
 
 export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsClause.Parsed {
@@ -1976,7 +1975,7 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UseAsClause.Parsed;
+	return node as unknown as T.UseAsClause.Parsed;
 }
 
 export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWildcard.Parsed {
@@ -2025,7 +2024,7 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UseWildcard.Parsed;
+	return node as unknown as T.UseWildcard.Parsed;
 }
 
 export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Parameters.Parsed {
@@ -2077,7 +2076,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.Parameters.Parsed;
+	return node as unknown as T.Parameters.Parsed;
 }
 
 export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.SelfParameter.Parsed {
@@ -2112,7 +2111,7 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.SelfParameter.Parsed;
+	return node as unknown as T.SelfParameter.Parsed;
 }
 
 export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandle): T.VariadicParameter.Parsed {
@@ -2142,7 +2141,7 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.VariadicParameter.Parsed;
+	return node as unknown as T.VariadicParameter.Parsed;
 }
 
 export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.Parsed {
@@ -2177,7 +2176,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Parameter.Parsed;
+	return node as unknown as T.Parameter.Parsed;
 }
 
 export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle): T.ExternModifier.Parsed {
@@ -2202,7 +2201,7 @@ export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ExternModifier.Parsed;
+	return node as unknown as T.ExternModifier.Parsed;
 }
 
 export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHandle): T.VisibilityModifier.Parsed {
@@ -2227,7 +2226,7 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.VisibilityModifier.Parsed;
+	return node as unknown as T.VisibilityModifier.Parsed;
 }
 
 export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle): T.BracketedType.Parsed {
@@ -2252,7 +2251,7 @@ export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle): T.Br
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BracketedType.Parsed;
+	return node as unknown as T.BracketedType.Parsed;
 }
 
 export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle): T.QualifiedType.Parsed {
@@ -2282,7 +2281,7 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle): T.Qu
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.QualifiedType.Parsed;
+	return node as unknown as T.QualifiedType.Parsed;
 }
 
 export function wrapLifetime(data: T.Lifetime, tree: TreeHandle): T.Lifetime.Parsed {
@@ -2307,7 +2306,7 @@ export function wrapLifetime(data: T.Lifetime, tree: TreeHandle): T.Lifetime.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Lifetime.Parsed;
+	return node as unknown as T.Lifetime.Parsed;
 }
 
 export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.Parsed {
@@ -2337,7 +2336,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ArrayType.Parsed;
+	return node as unknown as T.ArrayType.Parsed;
 }
 
 export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForLifetimes.Parsed {
@@ -2379,7 +2378,7 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.ForLifetimes.Parsed;
+	return node as unknown as T.ForLifetimes.Parsed;
 }
 
 export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.FunctionType.Parsed {
@@ -2438,7 +2437,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FunctionType.Parsed;
+	return node as unknown as T.FunctionType.Parsed;
 }
 
 export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.Parsed {
@@ -2479,7 +2478,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.TupleType.Parsed;
+	return node as unknown as T.TupleType.Parsed;
 }
 
 export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): T.GenericFunction.Parsed {
@@ -2521,7 +2520,7 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.GenericFunction.Parsed;
+	return node as unknown as T.GenericFunction.Parsed;
 }
 
 export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.GenericType.Parsed {
@@ -2563,7 +2562,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.GenericType.Parsed;
+	return node as unknown as T.GenericType.Parsed;
 }
 
 export function wrapGenericTypeWithTurbofish(
@@ -2608,7 +2607,7 @@ export function wrapGenericTypeWithTurbofish(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.GenericTypeWithTurbofish.Parsed;
+	return node as unknown as T.GenericTypeWithTurbofish.Parsed;
 }
 
 export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.BoundedType.Parsed {
@@ -2638,7 +2637,7 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.Bounde
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BoundedType.Parsed;
+	return node as unknown as T.BoundedType.Parsed;
 }
 
 export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.Parsed {
@@ -2680,7 +2679,7 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.UseBounds.Parsed;
+	return node as unknown as T.UseBounds.Parsed;
 }
 
 export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.TypeArguments.Parsed {
@@ -2732,7 +2731,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.TypeArguments.Parsed;
+	return node as unknown as T.TypeArguments.Parsed;
 }
 
 export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBinding.Parsed {
@@ -2779,7 +2778,7 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TypeBinding.Parsed;
+	return node as unknown as T.TypeBinding.Parsed;
 }
 
 export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.ReferenceType.Parsed {
@@ -2814,7 +2813,7 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReferenceType.Parsed;
+	return node as unknown as T.ReferenceType.Parsed;
 }
 
 export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.AbstractType.Parsed {
@@ -2864,7 +2863,7 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AbstractType.Parsed;
+	return node as unknown as T.AbstractType.Parsed;
 }
 
 export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.DynamicType.Parsed {
@@ -2896,7 +2895,7 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.Dynami
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.DynamicType.Parsed;
+	return node as unknown as T.DynamicType.Parsed;
 }
 
 export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): T.MacroInvocation.Parsed {
@@ -2926,7 +2925,7 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MacroInvocation.Parsed;
+	return node as unknown as T.MacroInvocation.Parsed;
 }
 
 export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle): T.ScopedIdentifier.Parsed {
@@ -2966,7 +2965,7 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ScopedIdentifier.Parsed;
+	return node as unknown as T.ScopedIdentifier.Parsed;
 }
 
 export function wrapScopedTypeIdentifierInExpressionPosition(
@@ -3008,7 +3007,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ScopedTypeIdentifierInExpressionPosition.Parsed;
+	return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Parsed;
 }
 
 export function wrapScopedTypeIdentifier(
@@ -3052,7 +3051,7 @@ export function wrapScopedTypeIdentifier(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ScopedTypeIdentifier.Parsed;
+	return node as unknown as T.ScopedTypeIdentifier.Parsed;
 }
 
 export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): T.UnaryExpression.Parsed {
@@ -3082,7 +3081,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UnaryExpression.Parsed;
+	return node as unknown as T.UnaryExpression.Parsed;
 }
 
 export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.TryExpression.Parsed {
@@ -3107,7 +3106,7 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.Tr
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TryExpression.Parsed;
+	return node as unknown as T.TryExpression.Parsed;
 }
 
 export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle): T.BinaryExpression.Parsed {
@@ -3142,7 +3141,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BinaryExpression.Parsed;
+	return node as unknown as T.BinaryExpression.Parsed;
 }
 
 export function wrapAssignmentExpression(
@@ -3175,7 +3174,7 @@ export function wrapAssignmentExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AssignmentExpression.Parsed;
+	return node as unknown as T.AssignmentExpression.Parsed;
 }
 
 export function wrapCompoundAssignmentExpr(
@@ -3213,7 +3212,7 @@ export function wrapCompoundAssignmentExpr(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CompoundAssignmentExpr.Parsed;
+	return node as unknown as T.CompoundAssignmentExpr.Parsed;
 }
 
 export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHandle): T.TypeCastExpression.Parsed {
@@ -3243,7 +3242,7 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TypeCastExpression.Parsed;
+	return node as unknown as T.TypeCastExpression.Parsed;
 }
 
 export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle): T.ReturnExpression.Parsed {
@@ -3268,7 +3267,7 @@ export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReturnExpression.Parsed;
+	return node as unknown as T.ReturnExpression.Parsed;
 }
 
 export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): T.YieldExpression.Parsed {
@@ -3293,7 +3292,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.YieldExpression.Parsed;
+	return node as unknown as T.YieldExpression.Parsed;
 }
 
 export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.CallExpression.Parsed {
@@ -3375,7 +3374,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CallExpression.Parsed;
+	return node as unknown as T.CallExpression.Parsed;
 }
 
 export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.Parsed {
@@ -3427,7 +3426,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.Arguments.Parsed;
+	return node as unknown as T.Arguments.Parsed;
 }
 
 export function wrapParenthesizedExpression(
@@ -3455,7 +3454,7 @@ export function wrapParenthesizedExpression(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ParenthesizedExpression.Parsed;
+	return node as unknown as T.ParenthesizedExpression.Parsed;
 }
 
 export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): T.TupleExpression.Parsed {
@@ -3494,7 +3493,7 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TupleExpression.Parsed;
+	return node as unknown as T.TupleExpression.Parsed;
 }
 
 export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle): T.StructExpression.Parsed {
@@ -3534,7 +3533,7 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StructExpression.Parsed;
+	return node as unknown as T.StructExpression.Parsed;
 }
 
 export function wrapFieldInitializerList(
@@ -3584,7 +3583,7 @@ export function wrapFieldInitializerList(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.FieldInitializerList.Parsed;
+	return node as unknown as T.FieldInitializerList.Parsed;
 }
 
 export function wrapShorthandFieldInitializer(
@@ -3619,7 +3618,7 @@ export function wrapShorthandFieldInitializer(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ShorthandFieldInitializer.Parsed;
+	return node as unknown as T.ShorthandFieldInitializer.Parsed;
 }
 
 export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle): T.FieldInitializer.Parsed {
@@ -3656,7 +3655,7 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FieldInitializer.Parsed;
+	return node as unknown as T.FieldInitializer.Parsed;
 }
 
 export function wrapBaseFieldInitializer(
@@ -3684,7 +3683,7 @@ export function wrapBaseFieldInitializer(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BaseFieldInitializer.Parsed;
+	return node as unknown as T.BaseFieldInitializer.Parsed;
 }
 
 export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle): T.IfExpression.Parsed {
@@ -3719,7 +3718,7 @@ export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle): T.IfEx
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.IfExpression.Parsed;
+	return node as unknown as T.IfExpression.Parsed;
 }
 
 export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetCondition.Parsed {
@@ -3749,7 +3748,7 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LetCondition.Parsed;
+	return node as unknown as T.LetCondition.Parsed;
 }
 
 export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Parsed {
@@ -3779,7 +3778,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LetChain.Parsed;
+	return node as unknown as T.LetChain.Parsed;
 }
 
 export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClause.Parsed {
@@ -3804,7 +3803,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ElseClause.Parsed;
+	return node as unknown as T.ElseClause.Parsed;
 }
 
 export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): T.MatchExpression.Parsed {
@@ -3834,7 +3833,7 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MatchExpression.Parsed;
+	return node as unknown as T.MatchExpression.Parsed;
 }
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
@@ -3908,7 +3907,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MatchBlock.Parsed;
+	return node as unknown as T.MatchBlock.Parsed;
 }
 
 export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.LastMatchArm.Parsed {
@@ -3987,7 +3986,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LastMatchArm.Parsed;
+	return node as unknown as T.LastMatchArm.Parsed;
 }
 
 export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.MatchPattern.Parsed {
@@ -4017,7 +4016,7 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.Matc
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MatchPattern.Parsed;
+	return node as unknown as T.MatchPattern.Parsed;
 }
 
 export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle): T.WhileExpression.Parsed {
@@ -4052,7 +4051,7 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.WhileExpression.Parsed;
+	return node as unknown as T.WhileExpression.Parsed;
 }
 
 export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle): T.LoopExpression.Parsed {
@@ -4082,7 +4081,7 @@ export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LoopExpression.Parsed;
+	return node as unknown as T.LoopExpression.Parsed;
 }
 
 export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.ForExpression.Parsed {
@@ -4122,7 +4121,7 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ForExpression.Parsed;
+	return node as unknown as T.ForExpression.Parsed;
 }
 
 export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle): T.ConstBlock.Parsed {
@@ -4147,7 +4146,7 @@ export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle): T.ConstBlo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ConstBlock.Parsed;
+	return node as unknown as T.ConstBlock.Parsed;
 }
 
 export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandle): T.ClosureParameters.Parsed {
@@ -4175,7 +4174,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ClosureParameters.Parsed;
+	return node as unknown as T.ClosureParameters.Parsed;
 }
 
 export function wrapLabel(data: T.Label, tree: TreeHandle): T.Label.Parsed {
@@ -4200,7 +4199,7 @@ export function wrapLabel(data: T.Label, tree: TreeHandle): T.Label.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Label.Parsed;
+	return node as unknown as T.Label.Parsed;
 }
 
 export function wrapBreakExpression(data: T.BreakExpression, tree: TreeHandle): T.BreakExpression.Parsed {
@@ -4230,7 +4229,7 @@ export function wrapBreakExpression(data: T.BreakExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BreakExpression.Parsed;
+	return node as unknown as T.BreakExpression.Parsed;
 }
 
 export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHandle): T.ContinueExpression.Parsed {
@@ -4255,7 +4254,7 @@ export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ContinueExpression.Parsed;
+	return node as unknown as T.ContinueExpression.Parsed;
 }
 
 export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle): T.IndexExpression.Parsed {
@@ -4285,7 +4284,7 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.IndexExpression.Parsed;
+	return node as unknown as T.IndexExpression.Parsed;
 }
 
 export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): T.AwaitExpression.Parsed {
@@ -4310,7 +4309,7 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AwaitExpression.Parsed;
+	return node as unknown as T.AwaitExpression.Parsed;
 }
 
 export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): T.FieldExpression.Parsed {
@@ -4340,7 +4339,7 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FieldExpression.Parsed;
+	return node as unknown as T.FieldExpression.Parsed;
 }
 
 export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.UnsafeBlock.Parsed {
@@ -4365,7 +4364,7 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.Unsafe
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UnsafeBlock.Parsed;
+	return node as unknown as T.UnsafeBlock.Parsed;
 }
 
 export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlock.Parsed {
@@ -4395,7 +4394,7 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AsyncBlock.Parsed;
+	return node as unknown as T.AsyncBlock.Parsed;
 }
 
 export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Parsed {
@@ -4425,7 +4424,7 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.GenBlock.Parsed;
+	return node as unknown as T.GenBlock.Parsed;
 }
 
 export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle): T.TryBlock.Parsed {
@@ -4450,7 +4449,7 @@ export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle): T.TryBlock.Par
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TryBlock.Parsed;
+	return node as unknown as T.TryBlock.Parsed;
 }
 
 export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
@@ -4486,7 +4485,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Block.Parsed;
+	return node as unknown as T.Block.Parsed;
 }
 
 export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.GenericPattern.Parsed {
@@ -4528,7 +4527,7 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.GenericPattern.Parsed;
+	return node as unknown as T.GenericPattern.Parsed;
 }
 
 export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.TuplePattern.Parsed {
@@ -4570,7 +4569,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.TuplePattern.Parsed;
+	return node as unknown as T.TuplePattern.Parsed;
 }
 
 export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.SlicePattern.Parsed {
@@ -4612,7 +4611,7 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return carrySourceStamp(data, node) as unknown as T.SlicePattern.Parsed;
+	return node as unknown as T.SlicePattern.Parsed;
 }
 
 export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHandle): T.TupleStructPattern.Parsed {
@@ -4649,7 +4648,7 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TupleStructPattern.Parsed;
+	return node as unknown as T.TupleStructPattern.Parsed;
 }
 
 export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle): T.StructPattern.Parsed {
@@ -4685,7 +4684,7 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle): T.St
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StructPattern.Parsed;
+	return node as unknown as T.StructPattern.Parsed;
 }
 
 export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPattern.Parsed {
@@ -4710,7 +4709,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPatte
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MutPattern.Parsed;
+	return node as unknown as T.MutPattern.Parsed;
 }
 
 export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPattern.Parsed {
@@ -4735,7 +4734,7 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPatte
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RefPattern.Parsed;
+	return node as unknown as T.RefPattern.Parsed;
 }
 
 export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): T.CapturedPattern.Parsed {
@@ -4765,7 +4764,7 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CapturedPattern.Parsed;
+	return node as unknown as T.CapturedPattern.Parsed;
 }
 
 export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle): T.ReferencePattern.Parsed {
@@ -4795,7 +4794,7 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReferencePattern.Parsed;
+	return node as unknown as T.ReferencePattern.Parsed;
 }
 
 export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle): T.NegativeLiteral.Parsed {
@@ -4820,7 +4819,7 @@ export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.NegativeLiteral.Parsed;
+	return node as unknown as T.NegativeLiteral.Parsed;
 }
 
 export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.StringLiteral.Parsed {
@@ -4850,7 +4849,7 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.St
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StringLiteral.Parsed;
+	return node as unknown as T.StringLiteral.Parsed;
 }
 
 export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle): T.RawStringLiteral.Parsed {
@@ -4885,7 +4884,7 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RawStringLiteral.Parsed;
+	return node as unknown as T.RawStringLiteral.Parsed;
 }
 
 export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineComment.Parsed {
@@ -4912,7 +4911,7 @@ export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineCo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LineComment.Parsed;
+	return node as unknown as T.LineComment.Parsed;
 }
 
 export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.BlockComment.Parsed {
@@ -4941,7 +4940,7 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BlockComment.Parsed;
+	return node as unknown as T.BlockComment.Parsed;
 }
 
 export function wrapShebang(data: T.Shebang, tree: TreeHandle): T.Shebang.Parsed {
@@ -4966,7 +4965,7 @@ export function wrapShebang(data: T.Shebang, tree: TreeHandle): T.Shebang.Parsed
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Shebang.Parsed;
+	return node as unknown as T.Shebang.Parsed;
 }
 
 export function wrapMetavariable(data: T.Metavariable, tree: TreeHandle): T.Metavariable.Parsed {
@@ -4991,7 +4990,7 @@ export function wrapMetavariable(data: T.Metavariable, tree: TreeHandle): T.Meta
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.Metavariable.Parsed;
+	return node as unknown as T.Metavariable.Parsed;
 }
 
 export function wrapMacroRules(data: T.MacroRules, tree: TreeHandle): T.MacroRules.Parsed {
@@ -5023,7 +5022,7 @@ export function wrapMacroRules(data: T.MacroRules, tree: TreeHandle): T.MacroRul
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.MacroRules.Parsed;
+	return node as unknown as T.MacroRules.Parsed;
 }
 
 export function wrapEnumVariantListElements(
@@ -5063,7 +5062,7 @@ export function wrapEnumVariantListElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.EnumVariantListElements.Parsed;
+	return node as unknown as T.EnumVariantListElements.Parsed;
 }
 
 export function wrapFieldDeclarationListElements(
@@ -5103,7 +5102,7 @@ export function wrapFieldDeclarationListElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.FieldDeclarationListElements.Parsed;
+	return node as unknown as T.FieldDeclarationListElements.Parsed;
 }
 
 export function wrapOrderedFieldDeclarationListElements(
@@ -5143,7 +5142,7 @@ export function wrapOrderedFieldDeclarationListElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.OrderedFieldDeclarationListElements.Parsed;
+	return node as unknown as T.OrderedFieldDeclarationListElements.Parsed;
 }
 
 export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle): T.WherePredicates.Parsed {
@@ -5175,7 +5174,7 @@ export function wrapWherePredicates(data: T.WherePredicates, tree: TreeHandle): 
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.WherePredicates.Parsed;
+	return node as unknown as T.WherePredicates.Parsed;
 }
 
 export function wrapTypeParametersElements(
@@ -5215,7 +5214,7 @@ export function wrapTypeParametersElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.TypeParametersElements.Parsed;
+	return node as unknown as T.TypeParametersElements.Parsed;
 }
 
 export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClauses.Parsed {
@@ -5258,7 +5257,7 @@ export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClaus
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.UseClauses.Parsed;
+	return node as unknown as T.UseClauses.Parsed;
 }
 
 export function wrapParametersElements(data: T.ParametersElements, tree: TreeHandle): T.ParametersElements.Parsed {
@@ -5295,7 +5294,7 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.ParametersElements.Parsed;
+	return node as unknown as T.ParametersElements.Parsed;
 }
 
 export function wrapLifetimes(data: T.Lifetimes, tree: TreeHandle): T.Lifetimes.Parsed {
@@ -5327,7 +5326,7 @@ export function wrapLifetimes(data: T.Lifetimes, tree: TreeHandle): T.Lifetimes.
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.Lifetimes.Parsed;
+	return node as unknown as T.Lifetimes.Parsed;
 }
 
 export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
@@ -5359,7 +5358,7 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.Types.Parsed;
+	return node as unknown as T.Types.Parsed;
 }
 
 export function wrapUseBoundsElements(data: T.UseBoundsElements, tree: TreeHandle): T.UseBoundsElements.Parsed {
@@ -5391,7 +5390,7 @@ export function wrapUseBoundsElements(data: T.UseBoundsElements, tree: TreeHandl
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.UseBoundsElements.Parsed;
+	return node as unknown as T.UseBoundsElements.Parsed;
 }
 
 export function wrapTypeArgumentsElements(
@@ -5431,7 +5430,7 @@ export function wrapTypeArgumentsElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.TypeArgumentsElements.Parsed;
+	return node as unknown as T.TypeArgumentsElements.Parsed;
 }
 
 export function wrapArgumentsElements(data: T.ArgumentsElements, tree: TreeHandle): T.ArgumentsElements.Parsed {
@@ -5468,7 +5467,7 @@ export function wrapArgumentsElements(data: T.ArgumentsElements, tree: TreeHandl
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.ArgumentsElements.Parsed;
+	return node as unknown as T.ArgumentsElements.Parsed;
 }
 
 export function wrapExpressions(data: T.Expressions, tree: TreeHandle): T.Expressions.Parsed {
@@ -5500,7 +5499,7 @@ export function wrapExpressions(data: T.Expressions, tree: TreeHandle): T.Expres
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.Expressions.Parsed;
+	return node as unknown as T.Expressions.Parsed;
 }
 
 export function wrapFieldInitializerListElements(
@@ -5539,7 +5538,7 @@ export function wrapFieldInitializerListElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.FieldInitializerListElements.Parsed;
+	return node as unknown as T.FieldInitializerListElements.Parsed;
 }
 
 export function wrapTuplePatternElements(
@@ -5574,7 +5573,7 @@ export function wrapTuplePatternElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.TuplePatternElements.Parsed;
+	return node as unknown as T.TuplePatternElements.Parsed;
 }
 
 export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Parsed {
@@ -5606,7 +5605,7 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.Patterns.Parsed;
+	return node as unknown as T.Patterns.Parsed;
 }
 
 export function wrapStructPatternElements(
@@ -5641,7 +5640,7 @@ export function wrapStructPatternElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return carrySourceStamp(data, node) as unknown as T.StructPatternElements.Parsed;
+	return node as unknown as T.StructPatternElements.Parsed;
 }
 
 export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle): T.UseWildcardGroup.Parsed {
@@ -5668,7 +5667,7 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.UseWildcardGroup.Parsed;
+	return node as unknown as T.UseWildcardGroup.Parsed;
 }
 
 export function wrapIntegerLiteralDecimal(
@@ -5717,7 +5716,7 @@ export function wrapIntegerLiteralDecimal(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.IntegerLiteralDecimal.Parsed;
+	return node as unknown as T.IntegerLiteralDecimal.Parsed;
 }
 
 export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandle): T.IntegerLiteralHex.Parsed {
@@ -5763,7 +5762,7 @@ export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.IntegerLiteralHex.Parsed;
+	return node as unknown as T.IntegerLiteralHex.Parsed;
 }
 
 export function wrapIntegerLiteralBinary(
@@ -5812,7 +5811,7 @@ export function wrapIntegerLiteralBinary(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.IntegerLiteralBinary.Parsed;
+	return node as unknown as T.IntegerLiteralBinary.Parsed;
 }
 
 export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeHandle): T.IntegerLiteralOctal.Parsed {
@@ -5858,7 +5857,7 @@ export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.IntegerLiteralOctal.Parsed;
+	return node as unknown as T.IntegerLiteralOctal.Parsed;
 }
 
 export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle): T.CharLiteralPlain.Parsed {
@@ -5888,7 +5887,7 @@ export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CharLiteralPlain.Parsed;
+	return node as unknown as T.CharLiteralPlain.Parsed;
 }
 
 export function wrapCharLiteralEscapedSimple(
@@ -5921,7 +5920,7 @@ export function wrapCharLiteralEscapedSimple(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CharLiteralEscapedSimple.Parsed;
+	return node as unknown as T.CharLiteralEscapedSimple.Parsed;
 }
 
 export function wrapCharLiteralEscapedUnicodeFixed(
@@ -5954,7 +5953,7 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CharLiteralEscapedUnicodeFixed.Parsed;
+	return node as unknown as T.CharLiteralEscapedUnicodeFixed.Parsed;
 }
 
 export function wrapCharLiteralEscapedUnicodeBraced(
@@ -5987,7 +5986,7 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CharLiteralEscapedUnicodeBraced.Parsed;
+	return node as unknown as T.CharLiteralEscapedUnicodeBraced.Parsed;
 }
 
 export function wrapCharLiteralEscapedHex(
@@ -6020,7 +6019,7 @@ export function wrapCharLiteralEscapedHex(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CharLiteralEscapedHex.Parsed;
+	return node as unknown as T.CharLiteralEscapedHex.Parsed;
 }
 
 export function wrapEscapeSequenceSimple(
@@ -6048,7 +6047,7 @@ export function wrapEscapeSequenceSimple(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.EscapeSequenceSimple.Parsed;
+	return node as unknown as T.EscapeSequenceSimple.Parsed;
 }
 
 export function wrapEscapeSequenceUnicodeFixed(
@@ -6076,7 +6075,7 @@ export function wrapEscapeSequenceUnicodeFixed(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
+	return node as unknown as T.EscapeSequenceUnicodeFixed.Parsed;
 }
 
 export function wrapEscapeSequenceUnicodeBraced(
@@ -6104,7 +6103,7 @@ export function wrapEscapeSequenceUnicodeBraced(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.EscapeSequenceUnicodeBraced.Parsed;
+	return node as unknown as T.EscapeSequenceUnicodeBraced.Parsed;
 }
 
 export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandle): T.EscapeSequenceHex.Parsed {
@@ -6129,7 +6128,7 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.EscapeSequenceHex.Parsed;
+	return node as unknown as T.EscapeSequenceHex.Parsed;
 }
 
 export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeHandle): T.ArrayExpressionSemi.Parsed {
@@ -6166,7 +6165,7 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ArrayExpressionSemi.Parsed;
+	return node as unknown as T.ArrayExpressionSemi.Parsed;
 }
 
 export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeHandle): T.ArrayExpressionList.Parsed {
@@ -6211,7 +6210,7 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ArrayExpressionList.Parsed;
+	return node as unknown as T.ArrayExpressionList.Parsed;
 }
 
 export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle): T.AttributeInput.Parsed {
@@ -6241,7 +6240,7 @@ export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributeInput.Parsed;
+	return node as unknown as T.AttributeInput.Parsed;
 }
 
 export function wrapClosureExpressionBlock(
@@ -6294,7 +6293,7 @@ export function wrapClosureExpressionBlock(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ClosureExpressionBlock.Parsed;
+	return node as unknown as T.ClosureExpressionBlock.Parsed;
 }
 
 export function wrapClosureExpressionExpr(
@@ -6342,7 +6341,7 @@ export function wrapClosureExpressionExpr(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ClosureExpressionExpr.Parsed;
+	return node as unknown as T.ClosureExpressionExpr.Parsed;
 }
 
 export function wrapReferenceExpressionRawConst(
@@ -6370,7 +6369,7 @@ export function wrapReferenceExpressionRawConst(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReferenceExpressionRawConst.Parsed;
+	return node as unknown as T.ReferenceExpressionRawConst.Parsed;
 }
 
 export function wrapReferenceExpressionRawMut(
@@ -6398,7 +6397,7 @@ export function wrapReferenceExpressionRawMut(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReferenceExpressionRawMut.Parsed;
+	return node as unknown as T.ReferenceExpressionRawMut.Parsed;
 }
 
 export function wrapReferenceExpressionMut(
@@ -6426,7 +6425,7 @@ export function wrapReferenceExpressionMut(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReferenceExpressionMut.Parsed;
+	return node as unknown as T.ReferenceExpressionMut.Parsed;
 }
 
 export function wrapReferenceExpressionBare(
@@ -6454,7 +6453,7 @@ export function wrapReferenceExpressionBare(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ReferenceExpressionBare.Parsed;
+	return node as unknown as T.ReferenceExpressionBare.Parsed;
 }
 
 export function wrapImplItemPositiveClause(
@@ -6482,7 +6481,7 @@ export function wrapImplItemPositiveClause(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ImplItemPositiveClause.Parsed;
+	return node as unknown as T.ImplItemPositiveClause.Parsed;
 }
 
 export function wrapImplItemNegativeClause(
@@ -6510,7 +6509,7 @@ export function wrapImplItemNegativeClause(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ImplItemNegativeClause.Parsed;
+	return node as unknown as T.ImplItemNegativeClause.Parsed;
 }
 
 export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.ImplItemBody.Parsed {
@@ -6579,7 +6578,7 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ImplItemBody.Parsed;
+	return node as unknown as T.ImplItemBody.Parsed;
 }
 
 export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.ImplItemSemi.Parsed {
@@ -6643,7 +6642,7 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ImplItemSemi.Parsed;
+	return node as unknown as T.ImplItemSemi.Parsed;
 }
 
 export function wrapVisibilityModifierPubScopeInPath(
@@ -6673,7 +6672,7 @@ export function wrapVisibilityModifierPubScopeInPath(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.VisibilityModifierPubScopeInPath.Parsed;
+	return node as unknown as T.VisibilityModifierPubScopeInPath.Parsed;
 }
 
 export function wrapVisibilityModifierPubScope(
@@ -6705,7 +6704,7 @@ export function wrapVisibilityModifierPubScope(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.VisibilityModifierPubScope.Parsed;
+	return node as unknown as T.VisibilityModifierPubScope.Parsed;
 }
 
 export function wrapVisibilityModifierPub(
@@ -6735,7 +6734,7 @@ export function wrapVisibilityModifierPub(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.VisibilityModifierPub.Parsed;
+	return node as unknown as T.VisibilityModifierPub.Parsed;
 }
 
 export function wrapFunctionTypeTraitForm(
@@ -6763,7 +6762,7 @@ export function wrapFunctionTypeTraitForm(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FunctionTypeTraitForm.Parsed;
+	return node as unknown as T.FunctionTypeTraitForm.Parsed;
 }
 
 export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHandle): T.FunctionTypeFnForm.Parsed {
@@ -6788,7 +6787,7 @@ export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FunctionTypeFnForm.Parsed;
+	return node as unknown as T.FunctionTypeFnForm.Parsed;
 }
 
 export function wrapModItemExternal(data: T.ModItemExternal, tree: TreeHandle): T.ModItemExternal.Parsed {
@@ -6818,7 +6817,7 @@ export function wrapModItemExternal(data: T.ModItemExternal, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ModItemExternal.Parsed;
+	return node as unknown as T.ModItemExternal.Parsed;
 }
 
 export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.ModItemInline.Parsed {
@@ -6853,7 +6852,7 @@ export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.Mo
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ModItemInline.Parsed;
+	return node as unknown as T.ModItemInline.Parsed;
 }
 
 export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): T.OrPatternBinary.Parsed {
@@ -6883,7 +6882,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.OrPatternBinary.Parsed;
+	return node as unknown as T.OrPatternBinary.Parsed;
 }
 
 export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): T.OrPatternPrefix.Parsed {
@@ -6908,7 +6907,7 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.OrPatternPrefix.Parsed;
+	return node as unknown as T.OrPatternPrefix.Parsed;
 }
 
 export function wrapPointerTypeConst(data: T.PointerTypeConst, tree: TreeHandle): T.PointerTypeConst.Parsed {
@@ -6933,7 +6932,7 @@ export function wrapPointerTypeConst(data: T.PointerTypeConst, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.PointerTypeConst.Parsed;
+	return node as unknown as T.PointerTypeConst.Parsed;
 }
 
 export function wrapPointerTypeMut(data: T.PointerTypeMut, tree: TreeHandle): T.PointerTypeMut.Parsed {
@@ -6958,7 +6957,7 @@ export function wrapPointerTypeMut(data: T.PointerTypeMut, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.PointerTypeMut.Parsed;
+	return node as unknown as T.PointerTypeMut.Parsed;
 }
 
 export function wrapRangeExpressionBinary(
@@ -6996,7 +6995,7 @@ export function wrapRangeExpressionBinary(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangeExpressionBinary.Parsed;
+	return node as unknown as T.RangeExpressionBinary.Parsed;
 }
 
 export function wrapRangeExpressionPostfix(
@@ -7024,7 +7023,7 @@ export function wrapRangeExpressionPostfix(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangeExpressionPostfix.Parsed;
+	return node as unknown as T.RangeExpressionPostfix.Parsed;
 }
 
 export function wrapRangeExpressionPrefix(
@@ -7052,7 +7051,7 @@ export function wrapRangeExpressionPrefix(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangeExpressionPrefix.Parsed;
+	return node as unknown as T.RangeExpressionPrefix.Parsed;
 }
 
 export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeHandle): T.RangeExpressionBare.Parsed {
@@ -7077,7 +7076,7 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangeExpressionBare.Parsed;
+	return node as unknown as T.RangeExpressionBare.Parsed;
 }
 
 export function wrapExpressionStatementWithSemi(
@@ -7105,7 +7104,7 @@ export function wrapExpressionStatementWithSemi(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ExpressionStatementWithSemi.Parsed;
+	return node as unknown as T.ExpressionStatementWithSemi.Parsed;
 }
 
 export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHandle): T.ForeignModItemSemi.Parsed {
@@ -7135,7 +7134,7 @@ export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ForeignModItemSemi.Parsed;
+	return node as unknown as T.ForeignModItemSemi.Parsed;
 }
 
 export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHandle): T.ForeignModItemBody.Parsed {
@@ -7170,7 +7169,7 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ForeignModItemBody.Parsed;
+	return node as unknown as T.ForeignModItemBody.Parsed;
 }
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
@@ -7246,7 +7245,7 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MatchArmWithComma.Parsed;
+	return node as unknown as T.MatchArmWithComma.Parsed;
 }
 
 export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeHandle): T.MatchArmBlockEnding.Parsed {
@@ -7334,7 +7333,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MatchArmBlockEnding.Parsed;
+	return node as unknown as T.MatchArmBlockEnding.Parsed;
 }
 
 export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeHandle): T.LineCommentDocOuter.Parsed {
@@ -7359,7 +7358,7 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LineCommentDocOuter.Parsed;
+	return node as unknown as T.LineCommentDocOuter.Parsed;
 }
 
 export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeHandle): T.LineCommentDocInner.Parsed {
@@ -7384,7 +7383,7 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.LineCommentDocInner.Parsed;
+	return node as unknown as T.LineCommentDocInner.Parsed;
 }
 
 export function wrapBlockCommentDocOuter(
@@ -7412,7 +7411,7 @@ export function wrapBlockCommentDocOuter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BlockCommentDocOuter.Parsed;
+	return node as unknown as T.BlockCommentDocOuter.Parsed;
 }
 
 export function wrapBlockCommentDocInner(
@@ -7440,7 +7439,7 @@ export function wrapBlockCommentDocInner(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.BlockCommentDocInner.Parsed;
+	return node as unknown as T.BlockCommentDocInner.Parsed;
 }
 
 export function wrapTokenTreePatternParen(
@@ -7473,7 +7472,7 @@ export function wrapTokenTreePatternParen(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenTreePatternParen.Parsed;
+	return node as unknown as T.TokenTreePatternParen.Parsed;
 }
 
 export function wrapTokenTreePatternBracket(
@@ -7506,7 +7505,7 @@ export function wrapTokenTreePatternBracket(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenTreePatternBracket.Parsed;
+	return node as unknown as T.TokenTreePatternBracket.Parsed;
 }
 
 export function wrapTokenTreePatternBrace(
@@ -7539,7 +7538,7 @@ export function wrapTokenTreePatternBrace(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenTreePatternBrace.Parsed;
+	return node as unknown as T.TokenTreePatternBrace.Parsed;
 }
 
 export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.TokenTreeParen.Parsed {
@@ -7565,7 +7564,7 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenTreeParen.Parsed;
+	return node as unknown as T.TokenTreeParen.Parsed;
 }
 
 export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle): T.TokenTreeBracket.Parsed {
@@ -7591,7 +7590,7 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenTreeBracket.Parsed;
+	return node as unknown as T.TokenTreeBracket.Parsed;
 }
 
 export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.TokenTreeBrace.Parsed {
@@ -7617,7 +7616,7 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TokenTreeBrace.Parsed;
+	return node as unknown as T.TokenTreeBrace.Parsed;
 }
 
 export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeHandle): T.DelimTokenTreeParen.Parsed {
@@ -7645,7 +7644,7 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.DelimTokenTreeParen.Parsed;
+	return node as unknown as T.DelimTokenTreeParen.Parsed;
 }
 
 export function wrapDelimTokenTreeBracket(
@@ -7676,7 +7675,7 @@ export function wrapDelimTokenTreeBracket(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.DelimTokenTreeBracket.Parsed;
+	return node as unknown as T.DelimTokenTreeBracket.Parsed;
 }
 
 export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeHandle): T.DelimTokenTreeBrace.Parsed {
@@ -7704,7 +7703,7 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.DelimTokenTreeBrace.Parsed;
+	return node as unknown as T.DelimTokenTreeBrace.Parsed;
 }
 
 export function wrapFieldPatternShorthand(
@@ -7742,7 +7741,7 @@ export function wrapFieldPatternShorthand(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FieldPatternShorthand.Parsed;
+	return node as unknown as T.FieldPatternShorthand.Parsed;
 }
 
 export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandle): T.FieldPatternNamed.Parsed {
@@ -7782,7 +7781,7 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FieldPatternNamed.Parsed;
+	return node as unknown as T.FieldPatternNamed.Parsed;
 }
 
 export function wrapMacroDefinitionParen(
@@ -7822,7 +7821,7 @@ export function wrapMacroDefinitionParen(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MacroDefinitionParen.Parsed;
+	return node as unknown as T.MacroDefinitionParen.Parsed;
 }
 
 export function wrapMacroDefinitionBracket(
@@ -7862,7 +7861,7 @@ export function wrapMacroDefinitionBracket(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MacroDefinitionBracket.Parsed;
+	return node as unknown as T.MacroDefinitionBracket.Parsed;
 }
 
 export function wrapMacroDefinitionBrace(
@@ -7902,7 +7901,7 @@ export function wrapMacroDefinitionBrace(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MacroDefinitionBrace.Parsed;
+	return node as unknown as T.MacroDefinitionBrace.Parsed;
 }
 
 export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHandle): T.RangePatternPrefix.Parsed {
@@ -7940,7 +7939,7 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangePatternPrefix.Parsed;
+	return node as unknown as T.RangePatternPrefix.Parsed;
 }
 
 export function wrapRangePatternWithLeftWithRight(
@@ -7981,7 +7980,7 @@ export function wrapRangePatternWithLeftWithRight(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangePatternWithLeftWithRight.Parsed;
+	return node as unknown as T.RangePatternWithLeftWithRight.Parsed;
 }
 
 export function wrapRangePatternWithLeft(
@@ -8022,7 +8021,7 @@ export function wrapRangePatternWithLeft(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.RangePatternWithLeft.Parsed;
+	return node as unknown as T.RangePatternWithLeft.Parsed;
 }
 
 export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): T.StructItemBrace.Parsed {
@@ -8097,7 +8096,7 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StructItemBrace.Parsed;
+	return node as unknown as T.StructItemBrace.Parsed;
 }
 
 export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): T.StructItemTuple.Parsed {
@@ -8172,7 +8171,7 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StructItemTuple.Parsed;
+	return node as unknown as T.StructItemTuple.Parsed;
 }
 
 export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.StructItemUnit.Parsed {
@@ -8219,7 +8218,7 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.StructItemUnit.Parsed;
+	return node as unknown as T.StructItemUnit.Parsed;
 }
 
 export function wrapAttributedFieldDeclaration(
@@ -8254,7 +8253,7 @@ export function wrapAttributedFieldDeclaration(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributedFieldDeclaration.Parsed;
+	return node as unknown as T.AttributedFieldDeclaration.Parsed;
 }
 
 export function wrapAttributedEnumVariant(
@@ -8289,7 +8288,7 @@ export function wrapAttributedEnumVariant(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributedEnumVariant.Parsed;
+	return node as unknown as T.AttributedEnumVariant.Parsed;
 }
 
 export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeHandle): T.AttributedParameter.Parsed {
@@ -8323,7 +8322,7 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributedParameter.Parsed;
+	return node as unknown as T.AttributedParameter.Parsed;
 }
 
 export function wrapAttributedTypeParameter(
@@ -8362,7 +8361,7 @@ export function wrapAttributedTypeParameter(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributedTypeParameter.Parsed;
+	return node as unknown as T.AttributedTypeParameter.Parsed;
 }
 
 export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHandle): T.AttributedArgument.Parsed {
@@ -8394,7 +8393,7 @@ export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHan
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributedArgument.Parsed;
+	return node as unknown as T.AttributedArgument.Parsed;
 }
 
 export function wrapAttributedOrderedField(
@@ -8434,7 +8433,7 @@ export function wrapAttributedOrderedField(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.AttributedOrderedField.Parsed;
+	return node as unknown as T.AttributedOrderedField.Parsed;
 }
 
 export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.TypeArgument.Parsed {
@@ -8464,7 +8463,7 @@ export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.Type
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TypeArgument.Parsed;
+	return node as unknown as T.TypeArgument.Parsed;
 }
 
 export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.MatchBlockArms.Parsed {
@@ -8494,7 +8493,7 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.MatchBlockArms.Parsed;
+	return node as unknown as T.MatchBlockArms.Parsed;
 }
 
 export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.TypeIdentifier.Parsed {
@@ -8519,7 +8518,7 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.TypeIdentifier.Parsed;
+	return node as unknown as T.TypeIdentifier.Parsed;
 }
 
 export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): T.FieldIdentifier.Parsed {
@@ -8544,7 +8543,7 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.FieldIdentifier.Parsed;
+	return node as unknown as T.FieldIdentifier.Parsed;
 }
 
 export function wrapCrateVisibilityModifier(
@@ -8572,7 +8571,7 @@ export function wrapCrateVisibilityModifier(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.CrateVisibilityModifier.Parsed;
+	return node as unknown as T.CrateVisibilityModifier.Parsed;
 }
 
 export function wrapShorthandFieldIdentifier(
@@ -8600,7 +8599,7 @@ export function wrapShorthandFieldIdentifier(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node) as unknown as T.ShorthandFieldIdentifier.Parsed;
+	return node as unknown as T.ShorthandFieldIdentifier.Parsed;
 }
 
 function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
@@ -8618,7 +8617,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return carrySourceStamp(data, node);
+	return node;
 }
 
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {

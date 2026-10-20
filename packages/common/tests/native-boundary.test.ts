@@ -7,7 +7,7 @@ describe('native boundary', () => {
 		expect(() =>
 			assertRenderableUntypedNode({
 				$type: 1,
-				$source: 0,
+				
 				$named: true,
 				_kind: 16,
 				$text: 'const'
@@ -19,7 +19,7 @@ describe('native boundary', () => {
 		expect(() =>
 			assertRenderableUntypedNode({
 				$type: 1,
-				$source: 0,
+				
 				$named: true,
 				_optional: true
 			} as AnyUntypedNode)

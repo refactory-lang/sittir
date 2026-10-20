@@ -23,7 +23,7 @@ const rootAt = ($type: number, start: number, end: number) => ({ ...at($type, st
 const coordinate = (start: number, end: number) => at(2, start, end);
 /** A child a read expanded: its storage and the coordinate it was read at. */
 const deep = (start: number, end: number, storage: Record<string, unknown>) => ({ $type: 4, $_layout: { at: at(4, start, end) }, ...storage });
-const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, $source: 2, $named: true, ...storage });
+const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, $named: true, ...storage });
 
 describe('toNodeData', () => {
 	it('folds an unedited node with only coordinates and leaves below it to its coordinate', () => {
@@ -215,18 +215,18 @@ describe('sideOf', () => {
 });
 
 describe('the edges of the render root', () => {
-	const comment = { $type: 3, $source: 0, $named: true, $text: '// c' };
+	const comment = { $type: 3, $named: true, $text: '// c' };
 	const both = { leading: true, trailing: true };
 
 	it('are changed, since it renders with no neighbour: a built root crosses with its trivia and both edges named', () => {
-		const node = { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
+		const node = { $type: 5, $named: true, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
 		expect(toNodeData(node as never, PLAIN_KINDS)).toEqual({ ...node, $_layout: { trivia: node.$_layout.trivia, changed: both } });
 	});
 
 	it("are the root's only: a node below it keeps its edges", () => {
-		const child = { $type: 5, $source: 0, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
-		const root = { $type: 6, $source: 0, $named: true, _body: child, $_layout: { trivia: { leading: [9] } } };
-		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, $source: 0, $named: true, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
+		const child = { $type: 5, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
+		const root = { $type: 6, $named: true, _body: child, $_layout: { trivia: { leading: [9] } } };
+		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, $named: true, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
 	});
 
 	it("are the document's when the root is its tree's root: they are not changed", () => {
@@ -270,19 +270,19 @@ describe("a rebuilt list item's changed edges", () => {
 		(toNodeData({ ...markEdited(owner), _item: [first, wrapper] } as never, view) as unknown as { _item: Crossed[] })._item[1]!;
 
 	it('judges a rebuilt group around one node by the node it holds', () => {
-		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [], _content: b };
+		const wrapper = { $type: ATTRIBUTED, _attribute_item: [], _content: b };
 		expect(second(a, wrapper)._content?.$_layout?.changed).toBeUndefined();
 		expect(second(other, wrapper)._content?.$_layout?.changed).toEqual({ leading: true, trailing: false });
 	});
 
 	it('judges a rebuilt alias envelope by the node it holds, whatever its slot is called', () => {
-		const wrapper = { $type: ALIAS_ENVELOPE, $source: 2, _name: b };
+		const wrapper = { $type: ALIAS_ENVELOPE, _name: b };
 		expect(second(a, wrapper)._name?.$_layout?.changed).toBeUndefined();
 		expect(second(other, wrapper)._name?.$_layout?.changed).toEqual({ leading: true, trailing: false });
 	});
 
 	it('names the changed edge on the content a rebuilt wrapper holds, not on the wrapper', () => {
-		const wrapper = { $type: ATTRIBUTED, $source: 2, _content: b };
+		const wrapper = { $type: ATTRIBUTED, _content: b };
 		expect(second(other, wrapper).$_layout).toBeUndefined();
 	});
 });

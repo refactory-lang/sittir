@@ -122,7 +122,6 @@ const IGNORED_NODE_KEYS = new Set([
 	'$_layout',
 	'$treeHandle',
 	'$span',
-	'$source',
 	'$named',
 	'$with',
 	'$variant'
@@ -307,7 +306,7 @@ export interface FactoryStorageResult {
 	render: BuiltRenderResult;
 }
 
-const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span', '$source']);
+const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span']);
 
 /**
  * `node` with every node under it built through `build` from its leaves up,

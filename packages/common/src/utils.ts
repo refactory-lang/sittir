@@ -8,7 +8,7 @@ import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { register, registered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
-import { sourceStampOf } from './source-stamp.ts';
+import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 
@@ -523,7 +523,7 @@ export function seatWith(
 export function isNode(v: unknown): v is AnyUntypedNode {
 	if (v === null || typeof v !== 'object') return false;
 	if (typeof (v as { readonly $type?: unknown }).$type !== 'number') return false;
-	return sourceStampOf(v) !== undefined || treeTokenOf(v) !== undefined;
+	return sourceOf(v) !== undefined || treeTokenOf(v) !== undefined;
 }
 
 export function describeValue(v: unknown): string {
@@ -676,7 +676,7 @@ export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, placeOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
-export { stampBuilt, sourceStampOf, carrySourceStamp } from './source-stamp.ts';
+export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
 	interiorPattern,

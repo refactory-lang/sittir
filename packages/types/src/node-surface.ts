@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
+import type { TriviaSetter } from './core-types.ts';
 import type { KeysOfUnion } from 'type-fest';
 import type { IsExactly } from './type-utils.ts';
 
@@ -33,7 +33,7 @@ export interface HoldsTree {
 
 /** A node: an object a factory built, a parse read, or a validator copied, stamped with which of them produced it. Every `.Bound` and `.Parsed` node is one. */
 export interface HoldsSource {
-	readonly [SourceMember]: NonNullable<AnyUntypedNode['$source']>;
+	readonly [SourceMember]: 0 | 1 | 2;
 }
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
@@ -446,7 +446,6 @@ export type FlatShapesOf<Surface, N, ByChild> = ShapesOf<Surface, N, FlatOf<N>, 
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &
 	ListPart<N, ByChild> & {
-		readonly $source?: AnyUntypedNode['$source'];
 		readonly __slotHints__?: HintsOf<N>;
 		readonly __flags__?: FlagsHintOf<N>;
 		readonly __slotFlags__?: SlotFlagsHintOf<N>;

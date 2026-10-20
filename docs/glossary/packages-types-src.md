@@ -288,7 +288,7 @@ The `.Bound` surface of a node's kind: the entry of the `.Bound` map at the node
 
 ### `packages/types/src/node-surface.ts::BoundOf`
 
-The surface of every engine-bound node, computed from a kind's main interface and the id-keyed map of `.Bound` interfaces. Accessors are the main interface's own, each returning the child's `.Bound` (a stored kind id passes through unchanged; a supertype distributes member by member); the storage members stay; kinds that read as a list gain `ListView`; `$source` is carried. A seated group's slot accessor and its flattened keys are left to `FlatShapesOf`, which the emitted `X.Bound` adds on top. It does not add `$with` or the node methods: the emitted `X.Bound` interface composes those on top (`$with` through `BoundWithNode`, which returns the node, and the methods through `NodeMethodsOf`). Children resolve through named interfaces in the map, so type-checking resolves lazily and never infers through the tree's recursion.
+The surface of every engine-bound node, computed from a kind's main interface and the id-keyed map of `.Bound` interfaces. Accessors are the main interface's own, each returning the child's `.Bound` (a stored kind id passes through unchanged; a supertype distributes member by member); the storage members stay; kinds that read as a list gain `ListView`. A seated group's slot accessor and its flattened keys are left to `FlatShapesOf`, which the emitted `X.Bound` adds on top. It does not add `$with` or the node methods: the emitted `X.Bound` interface composes those on top (`$with` through `BoundWithNode`, which returns the node, and the methods through `NodeMethodsOf`). Children resolve through named interfaces in the map, so type-checking resolves lazily and never infers through the tree's recursion.
 
 ### `packages/types/src/node-surface.ts::ParsedOf`
 
@@ -463,7 +463,7 @@ A refusal's path one key or tuple index deeper, dotted, with no leading dot at t
 
 ### `packages/types/src/node-surface.ts::NodeMarker`
 
-What makes an object a node, for admission and for the refusal walk alike: a source stamp (`HoldsSource`) or a held tree (`HoldsTree`), the same fact `isNode` tests at run time. `Admit` requires it of a member with a numeric `$type`, the walk stops at a value that carries it (`MemberRefusals`), and a declared shape's members that carry it are nodes, not configs to check keys against (`Configs`). One definition serves all three. Neither member's symbol is exported as a value, so no literal carries one: a config that names `$render` or `$source` is still a config, and both keys are undeclared, refused like any other.
+What makes an object a node, for admission and for the refusal walk alike: a source stamp (`HoldsSource`) or a held tree (`HoldsTree`), the same fact `isNode` tests at run time. `Admit` requires it of a member with a numeric `$type`, the walk stops at a value that carries it (`MemberRefusals`), and a declared shape's members that carry it are nodes, not configs to check keys against (`Configs`). One definition serves all three. Neither member's symbol is exported as a value, so no literal carries one: a config that names `$render` or `$source` is still a config, and both keys are undeclared, refused like any other. No node has a `$source` member; provenance is read by `sourceOf`.
 
 ### `packages/types/src/node-surface.ts::ListOf`
 

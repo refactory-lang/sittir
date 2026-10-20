@@ -15856,13 +15856,11 @@ export namespace ImportPrefix {
 	export type Config = ImportPrefixNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.ImportPrefix;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.ImportPrefix;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15876,13 +15874,11 @@ export namespace TypeConversion {
 	export type Config = TypeConversionNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.TypeConversion;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.TypeConversion;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15896,13 +15892,11 @@ export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.Identifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.Identifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15916,13 +15910,11 @@ export namespace FormatSpecifierText {
 	export type Config = FormatSpecifierTextNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.FormatSpecifierText;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.FormatSpecifierText;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15936,13 +15928,11 @@ export namespace IntegerDecimalLong {
 	export type Config = IntegerDecimalLongNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.IntegerDecimalLong;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalLong;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15956,13 +15946,11 @@ export namespace IntegerDecimalImaginary {
 	export type Config = IntegerDecimalImaginaryNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.IntegerDecimalImaginary;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalImaginary;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15976,13 +15964,11 @@ export namespace IntegerDecimalPlain {
 	export type Config = IntegerDecimalPlainNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.IntegerDecimalPlain;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.IntegerDecimalPlain;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -15996,13 +15982,11 @@ export namespace LineContinuationNewline {
 	export type Config = LineContinuationNewlineNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.LineContinuationNewline;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.LineContinuationNewline;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -16016,13 +16000,11 @@ export namespace StringStart {
 	export type Config = StringStartNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.StringStart;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.StringStart;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -16036,13 +16018,11 @@ export namespace StringFragment {
 	export type Config = StringFragmentNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.StringFragment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.StringFragment;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -16056,13 +16036,11 @@ export namespace EscapeInterpolation {
 	export type Config = EscapeInterpolationNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.EscapeInterpolation;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.EscapeInterpolation;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -16076,13 +16054,11 @@ export namespace StringEnd {
 	export type Config = StringEndNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.StringEnd;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.StringEnd;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}

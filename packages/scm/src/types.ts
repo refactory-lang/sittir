@@ -2397,13 +2397,11 @@ export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.Identifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.Identifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -2417,13 +2415,11 @@ export namespace ImmediateIdentifier {
 	export type Config = ImmediateIdentifierNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.ImmediateIdentifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.ImmediateIdentifier;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
@@ -2437,13 +2433,11 @@ export namespace StringContentText {
 	export type Config = StringContentTextNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
 		readonly $type: TSKindId.StringContentText;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.StringContentText;
-		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		$text(): string;
 	}

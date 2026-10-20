@@ -597,28 +597,6 @@ The runtime guard statements of a text-leaf factory, each a complete `if (…) t
 A pattern value contributes `string`; a slot holding only pattern values never types as `never`.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::autoStampExpression`
-
-```text
-/**
- * Build the TypeScript stamp expression for an auto-stamp-eligible field.
- *
- * @remarks
- * Two cases:
- *
- * - **Source A** (`field.literalValues.length === 1`): the field content is an
- *   inline string literal. Stamp the string directly, e.g. `'pub' as const`.
- *
- * - **Source B** (`field.contentTypes.length === 1` and the referenced kind is
- *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
- *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
- *   UntypedNode object whose shape matches `Terminal<kind, text>`:
- *   `{ $type: '_kw_async', $text: 'async', $source: 2, $named: true }`.
- *
- * Returns `undefined` when the field is NOT auto-stamp-eligible.
- */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::setterValueSignature`
 
 ```text
@@ -4126,31 +4104,6 @@ machines.
  * stamp the constant directly in factory output. The field stays in the
  * `$fields` block of the concrete TypeScript interface so UntypedNode output
  * shape is unchanged and round-trips with readUntypedNode remain identical.
- */
-```
-
-### `packages/codegen/src/emitters/shared.ts::stampExpressionFor`
-
-```text
-/**
- * Build the TypeScript stamp expression for an auto-stamp-eligible REQUIRED slot.
- *
- * Returns `undefined` when:
- * - The slot is optional (no stamp needed — omit the key from the factory call).
- * - The slot is not auto-stamp-eligible.
- *
- * Two expression shapes:
- * - **Inline literal** (TerminalValue): `JSON.stringify(value) + " as const"`
- * - **Referenced keyword** (hidden AssembledKeyword NodeRef): UntypedNode object literal
- *   `{ $type: '...', $text: '...', $source: 2 as const, $named: true as const }`
- * - **Referenced parameterless compound**: factory call expression from
- *   `ref.stampExpression` — e.g. `"breakExpression()"`.
- *
- * @remarks
- * This function replaces the field-only `autoStampExpression()` inside factories.ts
- * for the general case. The factories.ts private function is kept as-is for backwards
- * compat; this helper is the authoritative version for emitters that need to handle
- * children slots too.
  */
 ```
 
@@ -7870,7 +7823,7 @@ prints through it.
 /** Maximum branch-recursion depth for synthesized dummy stubs. Bounds
  * self-referential grammars (e.g. `expression` containing `expression`);
  * beyond this depth `buildDummyStub` falls back to the flat base literal
- * (`$type`/`$text`/`$source`/`$named`, omitting nested required fields —
+ * (`$type`/`$text`/`$named`, omitting nested required fields —
  * see its docstring) rather than looping forever. */
 ```
 
@@ -11275,7 +11228,7 @@ The structure table the emitter recorded while emitting builders: each emitted c
 
 An alias kind gets no test of its own: it is not on `ir`, and every parent test that seats one exercises its builder.
 
-Every node a test builds passes through the file's `expectBuiltNode`: its `$source` reads `Factory`, `isNode` takes it, and its string-key twin (`Object.fromEntries(Object.entries(node))`), the same keys without the stamp, is no node. That pins the node fact for every built kind of the grammar.
+Every node a test builds passes through the file's `expectBuiltNode`: `sourceOf` gives `Factory`, it has no `$source` member, `isNode` takes it, and its string-key twin (`Object.fromEntries(Object.entries(node))`), the same keys without the stamp, is no node. That pins the node fact for every built kind of the grammar.
 
 #### body
 
@@ -12196,9 +12149,9 @@ One `name() { … }` accessor line per model slot of a field-carrying kind, minu
 
 The declared return type of a kind's wrap: `T.<Kind>.Parsed` when the kind has a catalog entry (a kind id and a namespace), nothing when it has none. The parsed-by-kind-id map holds the same declared types, and it is the one map the wrapped root (`<Root>Tree`), `wrapNode`'s return and every accessor's child type read, so no wrap's type is inferred from its body and no second mapping exists.
 
-### `packages/codegen/src/emitters/wrap.ts::wrapReturn`
+### `packages/codegen/src/emitters/wrap.ts::castToParsed`
 
-The return line of every wrap, a kind's and `wrapLeaf` alike. The literal is built by spreading `data`, which copies the source stamp (an enumerable symbol member) but not the non-enumerable `$source` getter over it, so the wrap returns `carrySourceStamp(data, node)`: the stamp again, with its getter. Where the kind has a declared `Parsed` type, the line is also the one cast the wrap makes: the object literal carries the storage keys, the accessors and `$with`, and is not related to `T.<Kind>.Parsed` structurally. Relating them walks every accessor of both interfaces and exceeds the checker's relation depth on deep grammars, so the literal is cast through `unknown` once, at the return, and the declared `Parsed` is what callers see.
+The one cast a wrap makes at each return: the object literal it builds carries the storage keys, the accessors and `$with`, and is not related to `T.<Kind>.Parsed` structurally. Relating them walks every accessor of both interfaces and exceeds the checker's relation depth on deep grammars, so the literal is cast through `unknown` once, at the return, and the declared `Parsed` is what callers see.
 
 ### `packages/codegen/src/emitters/wrap.ts::returnAnnotation`
 

@@ -1032,7 +1032,6 @@ function leafBuiltTypeSurface(
 		mainType: undefined,
 		members: [
 			`  readonly $type: ${kindDiscriminantType(node.kind, nodeMap, kindEntries)};`,
-			'  readonly $source?: 0 | 1 | 2;',
 			'  readonly $named: true;',
 			`  $text(): ${textType};`
 		],

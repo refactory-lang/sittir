@@ -28,7 +28,7 @@ const newShapeList = () => {
 
 describe('a node is selected by key', () => {
 	it('names storage and $ metadata as data, and members as not', () => {
-		for (const key of ['_elements', '$other', '$type', '$source', '$named', '$text', '$span', '$handle', '$_trivia']) {
+		for (const key of ['_elements', '$other', '$type', '$named', '$text', '$span', '$handle', '$_trivia']) {
 			expect(isDataKey(key)).toBe(true);
 		}
 		for (const key of ['$with', '$trivia', '$engine', '$render', 'elements', 'length', '0', 'delimiter', 'map']) {

@@ -8,7 +8,7 @@ const ts = await createEngine(typescript);
 // Phase D: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
 	$type: ts.kinds.Identifier,
-	$source: 2,
+	
 	$named: true,
 	$text: 'x'
 } as const;
@@ -74,12 +74,11 @@ describe('engine render boundary', () => {
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		// Phase D: $type is numeric on the wire; TSKindId.Identifier = 1
-		// $source is numeric: 2 = factory
 		expect(render(identifier)).toBe(`ok:${ts.kinds.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: ts.kinds.Identifier,
-				$source: 2,
+				
 				$named: true,
 				$text: 'x'
 			})
@@ -100,7 +99,7 @@ describe('engine render boundary', () => {
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			$type: ts.kinds.Arguments,
-			$source: 2,
+			
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;

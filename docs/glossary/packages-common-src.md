@@ -367,15 +367,15 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 ### `packages/common/src/source.ts::Source`
 
-Where a node came from, the value of its source stamp (`sourceStampOf`; `$source` reads it): `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. It is stamped once, where the node is created: by the reader (`holdReadTree`), by the builders (`stampBuilt`), and onto a validator's copy (`carrySourceStamp`). An edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
+Where a node came from, the value of its source stamp as `sourceOf` reports it: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. It is stamped once, where the node is created: by the reader (`holdReadTree`), by the builders (`stampBuilt`), and onto a validator's copy made by string keys (`carrySourceStamp`). An edit keeps it (`$with` and `detachCoordinate` drop only coordinates), and so does a spread copy, so it records the node's origin, not whether it still holds a live tree handle. A node carries no `$source` member; `sourceOf` is the one read path. Rust's `enum Source` in sittir-core mirrors the values. The object `satisfies` a record of `HoldsSource`'s member type, so the type-level `0 | 1 | 2` union there stays the one declaration of the values.
 
 ### `packages/common/src/utils.ts::isNode`
 
-Whether a value is a sittir node, built or read: an object with a numeric `$type` that holds a source stamp (`sourceStampOf`) or a tree token (`treeTokenOf`). Nothing structural counts: storage (`_` keys), text, `$_layout` or a `$source` key make no node, so a factory config, a JSON copy or a string-key copy of a node is not one. It is the run-time side of the fact the types admit by (`NodeMarker`), so the two cannot disagree. A spread copy keeps the stamp, which is an enumerable symbol member. `isNodeValue` adds coordinates.
+Whether a value is a sittir node, built or read: an object with a numeric `$type` that holds a source stamp (`sourceOf`) or a tree token (`treeTokenOf`). Nothing structural counts: storage (`_` keys), text, `$_layout` or a `$source` key make no node, so a factory config, a JSON copy or a string-key copy of a node is not one. It is the run-time side of the fact the types admit by (`NodeMarker`), so the two cannot disagree. A spread copy keeps the stamp, which is an enumerable symbol member. `isNodeValue` adds coordinates.
 
 ### `packages/common/src/utils.ts::isParsedNode`
 
-A node that originated from a parse: `$source` is `Source.Ts` or `Source.Sg`. It holds before the read root is wrapped and after the node is edited, since both keep the stamp.
+A node a read produced (`isRead`). It holds before the read root is wrapped and after the node is edited, since both carry the read; its provenance (`sourceOf`) is `Source.Ts` or `Source.Sg`.
 
 ### `packages/common/src/utils.ts::isFactoryNode`
 
@@ -405,7 +405,7 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
-`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceStampOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
 
 ### `packages/common/src/runtime.ts::strictBooleanStorage`
 
@@ -916,16 +916,16 @@ The type of one node of the shared kind tree: its `$path` as a literal, and each
 
 ### `packages/common/src/source-stamp.ts::stampSource`
 
-Stamps `node` with where it came from (`Source`), which makes it a node (`isNode`). The stamp is a member under a module-private symbol, so no literal, JSON value or string-key copy can carry it, while a spread copy keeps it (the member is enumerable, as the tree token's is). Beside it the node gets `$source`, a read-only, non-enumerable getter over the stamp: readable, but absent from `Object.keys`, JSON and string-key copies. Nothing internal reads the getter; readers go through `sourceStampOf`. Stamping again replaces the stamp.
+Stamps `node` with where it came from (`Source`), which makes it a node (`isNode`). The stamp is a member under a module-private symbol, so no literal, JSON value or string-key copy can carry it, while a spread copy keeps it (the member is enumerable, as the tree token's is). The node gets no `$source` member: `sourceOf` is the one way to read the stamp. Stamping again replaces the stamp.
 
 ### `packages/common/src/source-stamp.ts::stampBuilt`
 
 `stampSource` with `Source.Factory`: what every generated builder returns its node through, and what a test stamps a hand-written built node with. It is exported through `@sittir/common/utils`, so code can call it on purpose; what it rules out is a node by accident or by literal.
 
-### `packages/common/src/source-stamp.ts::sourceStampOf`
+### `packages/common/src/source-stamp.ts::sourceOf`
 
-The source stamp `node` holds, or `undefined` when it holds none: the one reader of the stamp, used by `isNode`, `verifyStructure` and `carrySourceStamp`.
+The one read of a node's provenance, public through `@sittir/common`: the stamp the node holds, or `undefined` for anything that is no node. It answers for every node sittir hands out, read, built or rebuilt, and for a spread copy of one, because it reads the stamp member itself rather than a member set per object. `isNode`, `verifyStructure` and `carrySourceStamp` read the stamp through it. It is distinct from `placeOf`, which says where in its source text a node sits.
 
 ### `packages/common/src/source-stamp.ts::carrySourceStamp`
 
-Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised and re-led copies) loses the stamp with every other symbol member; this puts it back, so the copy is the node it stands for. Beside `carryPlace`, which carries a different fact: where in its source a node sits.
+Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised copies, `materializeValue`) loses the stamp with every other symbol member, and this puts it back, so the copy is the node it stands for. A spread copy keeps the stamp and needs no carry. Beside `carryPlace`, which carries a different fact: where in its source a node sits.

@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Language, LanguageAPI } from '@sittir/types';
 import { createEngine } from '@sittir/common';
-import { isCoordinate, isNode, Source } from '@sittir/common/utils';
+import { isCoordinate, isNode, Source, sourceOf } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
 import { loadCorpusEntries, walkWrappedTree } from '../src/validate/common.ts';
 
@@ -35,7 +35,7 @@ function readNodeFact(
 			const at = `${entry.name}: ${node.$type}`;
 			if (!isNode(node)) unrecognised.push(at);
 			if (isNode(Object.fromEntries(Object.entries(node)))) twinsRecognised.push(at);
-			if ((node as { readonly $source?: number }).$source !== Source.Ts || Object.keys(node).includes('$source')) sourceUnread.push(at);
+			if (sourceOf(node) !== Source.Ts || '$source' in node) sourceUnread.push(at);
 		});
 	}
 	return { read, unrecognised, twinsRecognised, sourceUnread };
@@ -44,7 +44,7 @@ function readNodeFact(
 for (const [wire, engineOf] of Object.entries(WIRES)) {
 	describe(`the node fact over every read node of the corpus, ${wire} wire`, () => {
 		for (const grammar of GRAMMARS) {
-			it(`${grammar}: a read node is a node reading $source as Ts, and its string-key twin is not`, async () => {
+			it(`${grammar}: a read node is a node whose sourceOf is Ts, and its string-key twin is not`, async () => {
 				const { read, unrecognised, twinsRecognised, sourceUnread } = readNodeFact(
 					await engineOf(await languageByName(grammar)),
 					grammar
