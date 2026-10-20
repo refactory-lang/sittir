@@ -592,6 +592,11 @@ describe('a ruled-narrowing ruling is stated in words', () => {
 	});
 
 	it.each([
+		'See tasks 8 and 9',
+		'per specs 026',
+		'PRs 12 and 13',
+		'pull-request 9',
+		'the parser plans 3 passes',
 		'See pull request 916',
 		'See specification 026',
 		'Per task no. 8',
@@ -604,7 +609,9 @@ describe('a ruled-narrowing ruling is stated in words', () => {
 
 	it.each([
 		'A backreference to capture group 1 is forbidden unless that group precedes it',
-		'the specification forbids 2 adjacent commas'
+		'the specification forbids 2 adjacent commas',
+		'Apr 2 release',
+		'the parser makes 3 passes'
 	])('accepts a ruling that names no planning reference: %s', (ruling) => {
 		expect(judge(ruling)).toEqual([]);
 	});
