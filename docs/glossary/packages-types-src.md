@@ -296,15 +296,15 @@ The surface of a tree-bound node: the same computation as `BoundOf` with childre
 
 ### `packages/types/src/node-surface.ts::Admit`
 
-What an input admits where it names a node: each member with a numeric `$type` becomes the object `{ readonly $type: Id } & ({ readonly $render } | HoldsTree)` of that kind, written out in place so a hover shows it flat. Both arms are facts of the object at run time: a built node and a draft carry `$render`, and every object read from a parse holds its tree's token, a parsed leaf included, which is plain data with no methods. `Renderable`, what `engine.render` takes, is defined as `Admit` of a bare `$type`, so the two cannot drift apart. Arrays and tuples are mapped element by element, and everything else (leaf text, kind ids, brands, config objects) is unchanged. It distributes over unions. A built node, a parsed node and an edited node (a draft) all pass by kind with no structural comparison, so nesting a draft into a builder or a parent's slot cannot exceed the checker's depth. A storage-shaped object is refused, because the storage interfaces are internal and hold neither arm; so is a structured clone or a JSON copy of a parsed node, which leaves its tree behind. Builder parameters, strict config fields, setters and the generated coercers' internals all admit through it. The loose surface applies it to each node arm where that arm enters the widening (the passthrough of `TagEachArm`, `LooseOrConfigBag` and the depth and cycle cut-offs, a leaf's node arm, a kind enum's node arm), never to a widened value as a whole: a kind-tagged config (`{ $type: Name } & <config>`) also carries a numeric `$type`, and for a kind without fields it is the same type as that kind's storage, so only the place a node arm is introduced can tell the two apart.
+What an input admits where it names a node: each member with a numeric `$type` becomes the object `{ readonly $type: Id } & ({ readonly $render } | HoldsTree)` of that kind, written out in place so a hover shows it flat. Both arms are facts of the object at run time: a built node and a draft carry `$render`, and every object read from a parse holds its tree's token, a parsed leaf included, which is plain data with no methods. `Renderable`, what `engine.render` takes, is defined as `Admit` of a bare `$type`, so the two cannot drift apart. Arrays and tuples are mapped element by element, and everything else (leaf text, kind ids, brands, config objects) is unchanged. It distributes over unions. A built node, a parsed node and an edited node (a draft) all pass by kind with no structural comparison, so nesting a draft into a builder or a parent's slot cannot exceed the checker's depth. A storage-shaped object is refused, because the storage interfaces are internal and hold neither arm; so is a structured clone or a JSON copy of a parsed node, which leaves its tree behind. Builder parameters, strict config fields, setters and the generated coercers' internals all admit through it. By itself it cannot refuse an untyped node, since TypeScript admits a plain `number` into any numeric enum; a function that admits a node adds `RefuseUntyped` over the value it infers. The loose surface applies it to each node arm where that arm enters the widening (the passthrough of `TagEachArm`, `LooseOrConfigBag` and the depth and cycle cut-offs, a leaf's node arm, a kind enum's node arm), never to a widened value as a whole: a kind-tagged config (`{ $type: Name } & <config>`) also carries a numeric `$type`, and for a kind without fields it is the same type as that kind's storage, so only the place a node arm is introduced can tell the two apart.
 
 ### `packages/types/src/node-surface.ts::ValueSetter`
 
-A slot setter: one value admitted through `Admit` (rest arguments for a repeated slot, each admitted the same way), and no argument to clear an optional slot. Builders and setters admit through the same rule, so `$with.<slot>` takes what the builder's matching input takes.
+A slot setter: one value admitted through `Admit` (rest arguments for a repeated slot, each admitted the same way), and no argument to clear an optional slot. It is generic over the value (`AdmitsOne`, `AdmitsEach`), so it refuses an untyped node (`RefuseUntyped`). Otherwise `$with.<slot>` takes what the builder's matching input takes. The generated builders admit through `Admit` without that check, so a builder's input still takes an untyped node at compile time, and refuses it at run time.
 
 ### `packages/types/src/node-surface.ts::ListItems`
 
-A list slot's items form, with and without its options, each item admitted through `Admit`; the options come first as `ListOptions`.
+A list slot's items form, with and without its options, each item admitted through `Admit`; the options come first as `ListOptions`. Both are generic over the items, and refuse the call when any item is untyped (`RefuseUntyped`).
 
 ### `packages/types/src/node-surface.ts::ListOptions`
 
@@ -373,6 +373,27 @@ The plan language one condition compiles to, which the native walk and `holds` b
 ### `packages/types/src/node-surface.ts::SlotFlagsHintOf`
 
 The vocabulary flags a slot test can read on each of a node type's slots, by slot accessor, read from its `__slotFlags__`, which a bound grammar's `portable.ts` declares on the node interface beside `__flags__` and the parsed surface carries (`SurfaceOf`); `never` for a type with none. It is what types a flag carried by a kind read as a kind-id leaf, which has no node interface of its own.
+
+### `packages/types/src/node-surface.ts::RefuseUntyped`
+
+Why the refusal needs a generic check. TypeScript admits a plain `number` into a numeric enum, into one of its members, into a union of members and into an object property typed by one, so `{ $type: number, $render }` fits `Admit` of every kind. No non-generic shape separates `number` from an enum member:
+- Mapping the member to its numeric literal refuses `number`, but it admits another language's member of the same value, and the per-language enums are what refuse a foreign node.
+- Intersecting the member with its literal reduces to `never`.
+- Giving untyped nodes an enum of their own breaks `AnyUntypedNode` as the type every typed node flows into: a member of one enum is not assignable to another, and the only type every member flows into is `number`, which flows back into every enum.
+
+So the admitting function is generic over the value, and the check reads the type it infers (`UntypedKind`). It distributes over a union, so one untyped item among a rest argument's items refuses the call. A value typed `any` passes, as it does everywhere. The setters of the node surface are built on it (`AdmitsOne`, `AdmitsEach`). The generated builders admit through `Admit` without it, so they take an untyped node at compile time and refuse it only at run time.
+
+### `packages/types/src/node-surface.ts::UntypedKind`
+
+Whether a value's `$type` is a plain `number`. `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself: the template of an enum member or a numeric literal is one numeral. A conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. It distributes over a union, and a value with no `$type` (leaf text, a kind id, `undefined`) is `false`.
+
+### `packages/types/src/node-surface.ts::AdmitsOne`
+
+A function that admits one value: generic over it, so `RefuseUntyped` can read what the caller passed. Every single-value setter of the node surface (a slot, a flat key, a seat) is one; when its parameters are inferred from outside, as `FormsHolding` does, the value takes its constraint and the check is `unknown`.
+
+### `packages/types/src/node-surface.ts::AdmitsEach`
+
+The rest form of `AdmitsOne`: generic over the argument tuple, checked over the union of its items, so a repeated slot or a flat key's rest refuses the call when any item is untyped.
 
 ### `packages/types/src/query.ts::SlotFlagOf`
 

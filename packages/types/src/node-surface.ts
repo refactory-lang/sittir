@@ -154,6 +154,22 @@ export type Admit<V> = V extends unknown
 			: V
 	: never;
 
+type UntypedKind<V> = V extends { readonly $type: infer Id } ? (`${number}` extends `${Id & number}` ? true : false) : false;
+
+/**
+ * Refuses an untyped node: one whose `$type` is a plain `number`. An untyped node has no language, so no typed slot
+ * admits it. TypeScript admits `number` into any numeric enum, so `Admit` alone would take it; a function that admits
+ * a node is generic over the value and takes `value: V & RefuseUntyped<V>`. A node of the slot's language keeps its
+ * kind, and a node of another language is refused by its own enum.
+ *
+ * @typeParam V - the admitted value as inferred, or the union of a rest argument's items.
+ * @returns `unknown` when every node in `V` names a kind of a language, otherwise an object type no value satisfies.
+ */
+export type RefuseUntyped<V> = true extends UntypedKind<V> ? { readonly 'an untyped node has no language': never } : unknown;
+
+type AdmitsOne<Input, Result> = <V extends Input>(value: V & RefuseUntyped<V>) => Result;
+type AdmitsEach<Inputs extends readonly unknown[], Result> = <A extends Inputs>(...values: A & RefuseUntyped<A[number]>) => Result;
+
 type SetResult<Self, K extends PropertyKey, V, ByBound, Reflect extends boolean> = Reflect extends true
 	? Self
 	: WithSlot<Self, K, V, ByBound>;
@@ -162,19 +178,22 @@ type ValueSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Reflect ext
 	SlotRest<Of, K> extends true
 		? SlotInput<Of, K> extends infer Rest extends readonly unknown[]
 			? Admit<WidenElements<Rest, SlotConfig<Of, K>>> extends infer Admitted extends readonly unknown[]
-				? (...values: Admitted) => SetResult<Self, K, Rest, ByBound, Reflect>
+				? AdmitsEach<Admitted, SetResult<Self, K, Rest, ByBound, Reflect>>
 				: never
 			: never
 		: SlotOptional<Of, K> extends true
-			? ((value: Admit<SlotInput<Of, K>>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>) &
+			? AdmitsOne<Admit<SlotInput<Of, K>>, SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>> &
 					(() => SetResult<Self, K, undefined, ByBound, Reflect>)
-			: (value: Admit<SlotInput<Of, K>>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
+			: AdmitsOne<Admit<SlotInput<Of, K>>, SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>>;
 
 export type ListOptions<O> = O & { readonly $type?: never };
 
 type ListItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Reflect extends boolean> = {
-	(options: ListOptions<O>, ...items: readonly Admit<E>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
-	(...items: readonly Admit<E>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
+	<A extends readonly Admit<E>[]>(
+		options: ListOptions<O>,
+		...items: A & RefuseUntyped<A[number]>
+	): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
+	<A extends readonly Admit<E>[]>(...items: A & RefuseUntyped<A[number]>): SetResult<Self, K, SlotInput<Of, K>, ByBound, Reflect>;
 };
 
 type SlotSetterOf<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Reflect extends boolean> =
@@ -235,12 +254,12 @@ type KeySetter<G, K, Result> = K extends keyof SlotHintsOf<G>
 	? SlotRest<G, K> extends true
 		? SlotInput<G, K> extends infer Rest extends readonly unknown[]
 			? Admit<Rest> extends infer Admitted extends readonly unknown[]
-				? (...values: Admitted) => Result
+				? AdmitsEach<Admitted, Result>
 				: never
 			: never
 		: SlotOptional<G, K> extends true
-			? ((value: Admit<SlotInput<G, K>>) => Result) & (() => Result)
-			: (value: Admit<SlotInput<G, K>>) => Result
+			? AdmitsOne<Admit<SlotInput<G, K>>, Result> & (() => Result)
+			: AdmitsOne<Admit<SlotInput<G, K>>, Result>
 	: never;
 
 type RequiredFlatKeys<F> =
@@ -264,7 +283,7 @@ type ShapeNode<Surface, N, H, F, Present extends boolean, ByChild> = Surface &
 
 type SeatSetter<Surface, N, H, F, ByChild> =
 	F extends FlatHint<infer S, unknown, AnyKeys, infer O>
-		? ((value: SeatInput<N, S>) => ShapeNode<Surface, N, H, F, true, ByChild>) &
+		? AdmitsOne<SeatInput<N, S>, ShapeNode<Surface, N, H, F, true, ByChild>> &
 				(O extends true ? () => ShapeNode<Surface, N, H, F, false, ByChild> : unknown)
 		: never;
 
@@ -274,7 +293,7 @@ type PresentMembers<Surface, N, H, F, ByChild> =
 				readonly $with: {
 					[P in keyof Keys & string]: P extends S
 						? SeatSetter<Surface, N, H, F, ByChild> &
-								((value: Admit<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>>) => ShapeNode<Surface, N, H, F, true, ByChild>)
+								AdmitsOne<Admit<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>>, ShapeNode<Surface, N, H, F, true, ByChild>>
 						: KeySetter<G, Keys[P], ShapeNode<Surface, N, H, F, true, ByChild>>;
 				} & { [P in S as P extends keyof Keys ? never : P]: SeatSetter<Surface, N, H, F, ByChild> };
 			}
@@ -286,9 +305,10 @@ type AbsentMembers<Surface, N, H, F, ByChild> =
 				[P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: () => undefined;
 			} & {
 				readonly $with: {
-					[P in SoleKey<RequiredFlatKeys<F>>]: (
-						value: Admit<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>>
-					) => ShapeNode<Surface, N, H, F, true, ByChild>;
+					[P in SoleKey<RequiredFlatKeys<F>>]: AdmitsOne<
+						Admit<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>>,
+						ShapeNode<Surface, N, H, F, true, ByChild>
+					>;
 				} & { [P in S as P extends keyof Keys ? never : P]: SeatSetter<Surface, N, H, F, ByChild> };
 			}
 		: never;
