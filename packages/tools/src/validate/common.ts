@@ -942,9 +942,12 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 	const { modelTypes } = await loadNodeModel(grammar);
 	return (kindId) => {
 		const name = kindNameFromId?.(kindId);
-		const modelType = name === undefined ? undefined : modelTypes[name];
-		return modelType === 'pattern' || modelType === 'enum' || isUnitModelType(modelType);
+		return isLeafModelType(name === undefined ? undefined : modelTypes[name]);
 	};
+}
+
+export function isLeafModelType(modelType: string | undefined): boolean {
+	return modelType === 'pattern' || modelType === 'enum' || isUnitModelType(modelType);
 }
 
 export function isUnitModelType(modelType: string | undefined): boolean {

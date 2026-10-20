@@ -35,7 +35,7 @@ import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
-import type { ValidatorSkip } from './common.ts';
+import { isLeafModelType, parseNodeModel, type ValidatorSkip } from './common.ts';
 
 /**
  * Every emitted kind's body in the checker's placeholder shape
@@ -129,6 +129,8 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
 		const hasChildren = entry.children !== undefined;
 		if (!hasFields && !hasChildren) continue;
+		// A kind the model holds as a leaf renders its text, whatever structure node-types gives it.
+		if (isLeafModelType(nodeModelFacts.modelTypes[entry.type])) continue;
 
 		// Canonical-hidden architecture (Option Y): tree-sitter
 		// node-types.json reports the visible alias-target name (`x`),
@@ -852,6 +854,7 @@ interface NodeModelFacts {
 	readonly factorySlots: Record<string, Record<string, unknown>>;
 	readonly polymorphVariants: PolymorphVariantMap;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
+	readonly modelTypes: Record<string, string>;
 	/** Visible kind → the model's slot names for it. */
 	readonly modelFieldsByKind: Map<string, Set<string>>;
 }
@@ -861,37 +864,33 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 	factorySlots: {},
 	polymorphVariants: {},
 	fieldAliasMap: {},
+	modelTypes: {},
 	modelFieldsByKind: new Map()
 };
 
 /**
- * Load the `factorySlots` / `polymorphVariants` / `fieldAliasMap` sections
- * of a grammar's `node-model.json5` (`packages/<grammar>/src/`) — the same
- * stamped facts `validate/common.ts`'s `loadNodeModel` reads for the live
- * NodeMap-backed validators. This validator is a lightweight file reader
- * (no live `NodeMap`, see the module doc), so it reads the sections it
- * needs directly and synchronously rather than pulling in that async
- * loader. Returns empty maps when the file is unavailable — mirrors
- * `loadGrammarJson`'s fail-soft behavior for fresh checkouts.
+ * Load the facts this validator reads from a grammar's `node-model.json5`
+ * (`packages/<grammar>/src/`): display families, factory slots, polymorph
+ * variants, field aliases, model types, and the model's slot names per kind.
+ * They come through `validate/common.ts`'s `parseNodeModel`, the reader
+ * `loadNodeModel` uses for the live NodeMap-backed validators, called
+ * synchronously because this validator is a lightweight file reader (no live
+ * `NodeMap`, see the module doc). Returns empty maps when the file is
+ * unavailable — mirrors `loadGrammarJson`'s fail-soft behavior for fresh
+ * checkouts.
  */
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
-	const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<NodeModelFacts> & {
-		nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }>;
-	};
+	const text = readFileSync(path, 'utf8');
+	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes } = parseNodeModel(text);
+	const { nodes } = JSON.parse(text) as { nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }> };
 	const modelFieldsByKind = new Map<string, Set<string>>();
-	for (const node of parsed.nodes ?? []) {
+	for (const node of nodes ?? []) {
 		if (node.slots === undefined) continue;
 		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.slots.map((f) => f.name)));
 	}
-	return {
-		factorySlots: parsed.factorySlots ?? {},
-		displayUnions: parsed.displayUnions ?? {},
-		polymorphVariants: parsed.polymorphVariants ?? {},
-		fieldAliasMap: parsed.fieldAliasMap ?? {},
-		modelFieldsByKind
-	};
+	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, modelFieldsByKind };
 }
 
 interface UnionSlotRoutedDiagnostic {

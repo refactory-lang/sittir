@@ -241,7 +241,7 @@ What `walkNativeForKind` records for a node it visits: an unread coordinate as t
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
 
-Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test (`loadIsLeafKind`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
+Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
 
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords.embeddedData`
@@ -879,13 +879,7 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 
 ### `packages/tools/src/validate/common.ts::loadIsLeafKind`
 
-```text
-/**
- * The model's own classification of a kind as a leaf — a `pattern`, `token`,
- * `keyword` or `enum` kind carries text, not storage — keyed by kind id.
- * Unknown ids (and a grammar with no node model) are not leaves.
- */
-```
+The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id. Unknown ids, and a grammar with no node model, are not leaves.
 
 ### `packages/tools/src/validate/common.ts::loadKindNameFromId`
 
@@ -1783,6 +1777,10 @@ Every named node's kind under `node`, `node` included, as `kindOf` names it (by 
 ### `packages/tools/src/validate/common.ts::nodeType`
 
 A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `collectKinds` use unless given another.
+
+### `packages/tools/src/validate/common.ts::isLeafModelType`
+
+Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
