@@ -722,13 +722,14 @@ The rulings left these to the design. Each is stated in its section; this list i
 
 - **Where it is legal.** Over the grammar's flattened productions, where a repeat helper's productions count as its owner's, an `eof()` is legal when both hold:
   - it is the last step of its production;
-  - end-of-input is in its rule's FOLLOW set, so some derivation from the start rule places the rule last in the input. The start rule is followed by end-of-input. A rule that ends a production, or is followed in it only by steps that consume nothing, is followed by whatever follows that production's rule. A rule followed by an `eof()` is followed by end-of-input.
+  - end-of-input is in its rule's FOLLOW set, so some derivation from the start rule places the rule last in the input. The start rule and the extras are followed by end-of-input. A rule that ends a production is followed by whatever follows that production's rule. So is a rule followed in it only by steps that can consume nothing: a rule that derives the empty string, an `eof()`, or an external token, which a scanner may produce with zero width at the end of the input. A rule followed by an `eof()` is followed by end-of-input.
 - **What is refused.** Each refusal is a blocking diagnostic, reported on the authored rule that holds the production.
   - `eof-not-last`, for one of four reasons:
     - something follows an `eof()` in its production;
     - a rule every derivation of which ends the input is followed by more content (the diagnostic names that rule);
     - a repetition's item always ends at `eof()`, so the repetition can never repeat;
-    - an `eof()` ends its production, but its rule is never followed by end-of-input, so the `eof()` can never match. Extracting a choice into a rule does not hide this: `r = choice($.x, eof())`, used only as `seq($.r, 'z')`, is refused just as `seq(choice($.x, eof()), 'z')` is.
+    - an `eof()` ends its production in a rule that may end the input but need not, and that rule is never followed by end-of-input, so the `eof()` can never match. Extracting a choice into a rule does not hide this: `r = choice($.x, eof())`, used only as `seq($.r, 'z')`, is refused just as `seq(choice($.x, eof()), 'z')` is.
+  - Each mistake is one diagnostic. A rule every derivation of which ends the input is refused where something follows it (the second and third reasons), not a second time for its own `eof()`.
   - `eof-in-token`: an `eof()` inside `token` or `token.immediate`, since a token cannot match the end of input.
 - **The terminator pattern stays legal.** Take `choice(';', '\n', eof())` ending a statement in a repetition of statements. It may end the input, after the last statement, and it may be followed by more content, before the next. Only an `eof()` that can never end the input is refused. A rule that can end it somewhere is legal everywhere it is used.
 - **The compiler.** Normalize lowers `EOF` to blank, so `seq($.x, eof())` assembles as `seq($.x)` does, and a rule whose body is `eof()` assembles as one whose body is `blank()`.
