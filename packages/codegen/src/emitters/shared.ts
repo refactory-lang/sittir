@@ -1336,8 +1336,8 @@ export function quoteKey(key: string): string {
 	return isIdentifierKey(key) ? key : JSON.stringify(key);
 }
 
-export function refuseUntyped(typeParam: string, declared?: string): string {
-	return declared === undefined ? `RefuseUntyped<${typeParam}>` : `RefuseUntyped<${typeParam}, ${declared}>`;
+export function refuseUndeclared(typeParam: string, declared?: string): string {
+	return declared === undefined ? `RefuseUndeclared<${typeParam}>` : `RefuseUndeclared<${typeParam}, ${declared}>`;
 }
 
 export interface RefusingParams {
@@ -1351,7 +1351,7 @@ export function refusingParam(
 	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: boolean } = {}
 ): RefusingParams {
 	const typeParam = shape.rest ? 'A' : 'V';
-	const refusal = refuseUntyped(typeParam, shape.loose ? type : undefined);
+	const refusal = refuseUndeclared(typeParam, shape.loose ? type : undefined);
 	return {
 		typeParams: `<${shape.loose ? 'const ' : ''}${typeParam} extends ${type}>`,
 		params: shape.rest
@@ -1362,8 +1362,8 @@ export function refusingParam(
 	};
 }
 
-const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUntyped<\w+(?:, .+)?>)$/;
-const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUntyped<\w+(?:, [^,]+)?>)((?:, .*)?)$/;
+const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUndeclared<\w+(?:, .+)?>)$/;
+const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+)?>)((?:, .*)?)$/;
 
 export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
 	const optional = OPTIONAL_REFUSING.exec(refusing.params);

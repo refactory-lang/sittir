@@ -23,7 +23,7 @@ const factoryElement = (raw: string, factory: string): string | undefined => {
 	const dispatch = raw.indexOf(`function ${factory}(...args`, start);
 	const body = raw.slice(start, dispatch >= 0 ? dispatch : raw.indexOf('\n}\n', start));
 	const elements = body.lastIndexOf('...elements:');
-	const rest = body.slice(body.startsWith('...elements: A & RefuseUntyped<A>', elements) ? body.lastIndexOf('A extends ', elements) : elements);
+	const rest = body.slice(body.startsWith('...elements: A & RefuseUndeclared<A>', elements) ? body.lastIndexOf('A extends ', elements) : elements);
 	const element = /Admit<([\s\S]*?)>\s*(?:>|\[\])/.exec(rest);
 	return element === null ? undefined : compact(element[1]!).replace(/^\|/, '');
 };

@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUntyped } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import type * as T from '../../types.js';
 export * from './refines.js';
@@ -444,13 +444,13 @@ const catchClause$flatten$catchClauseGroup =
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, catchClauseGroup: _c(child)(inner) } : rest, options);
 	};
 function catchClause$seated<A extends T.CatchClause.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildCatchClause>;
 function catchClause$seated(...args: T.CatchClause.BuildArgs): ReturnType<typeof F.buildCatchClause> {
 	return catchClause$flatten$catchClauseGroup(F.buildCatchClause, F.buildCatchClauseGroup)(...args);
 }
 function catchClause$seatedCoerce<const A extends T.CatchClause.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.CatchClause.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.CatchClause.LooseArgs>
 ): ReturnType<typeof C.coerceToCatchClause>;
 function catchClause$seatedCoerce(...args: T.CatchClause.LooseArgs): ReturnType<typeof C.coerceToCatchClause> {
 	return catchClause$flatten$catchClauseGroup(C.coerceToCatchClause, C.coerceToCatchClauseGroup)(...args);

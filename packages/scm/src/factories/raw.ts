@@ -2,7 +2,7 @@
 
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../kinds.js';
-import type { Admit, NonEmptyArray, RefuseUntyped, RefusingConfig } from '@sittir/types';
+import type { Admit, NonEmptyArray, RefuseUndeclared, RefusingConfig } from '@sittir/types';
 import {
 	currentHandle,
 	elementsWith,
@@ -27,7 +27,7 @@ export const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
 export function buildProgram(): T.EmptyProgram;
-export function buildProgram<A extends Admit<T.Definition[]>>(...children: A & RefuseUntyped<A>): T.Program.Bound;
+export function buildProgram<A extends Admit<T.Definition[]>>(...children: A & RefuseUndeclared<A>): T.Program.Bound;
 export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Bound {
 	const _definitions = children;
 	const handle = currentHandle();
@@ -123,7 +123,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 	return node as unknown as T.ImmediateIdentifier.Bound;
 }
 
-export function buildCapture<V extends Admit<T.ImmediateIdentifier>>(value: V & RefuseUntyped<V>): T.Capture.Bound;
+export function buildCapture<V extends Admit<T.ImmediateIdentifier>>(value: V & RefuseUndeclared<V>): T.Capture.Bound;
 export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bound {
 	const _name = value;
 	const handle = currentHandle();
@@ -148,10 +148,10 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 }
 
 export function buildString<V extends Admit<T.StringContent>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildString>;
 export function buildString<A extends NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildString>;
 export function buildString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -190,10 +190,10 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 }
 
 export function buildImmediateString<V extends Admit<T.StringContent>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString<A extends NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -234,7 +234,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 }
 
 export function buildStringContent<A extends NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.StringContent.Bound;
 export function buildStringContent(
 	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
@@ -263,7 +263,7 @@ export function buildStringContent(
 }
 
 export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.Parameters.Bound;
 export function buildParameters(
 	...children: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>
@@ -499,7 +499,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	return node as unknown as T.FieldDefinition.Bound;
 }
 
-export function buildNegatedField<V extends Admit<T.Identifier>>(value: V & RefuseUntyped<V>): T.NegatedField.Bound;
+export function buildNegatedField<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.NegatedField.Bound;
 export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bound {
 	const _identifier = value;
 	const handle = currentHandle();
@@ -567,7 +567,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 }
 
 export function buildListElementQuantifier<V extends Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ListElementQuantifier.Bound;
 export function buildListElementQuantifier(
 	value: Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>

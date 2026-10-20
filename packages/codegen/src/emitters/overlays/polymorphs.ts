@@ -1234,7 +1234,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
 		"import { bundle } from '@sittir/common/utils';",
-		`import type { ${['ArgsOf', 'ElementsOf', 'NoneOf', 'OmitEach', 'OptionsArg', 'RefuseUntyped', 'RenameKeys', 'WithoutGroup'].filter((name) => name === 'ArgsOf' || name === 'OmitEach' || blocks.some((b) => b.includes(`${name}<`))).join(', ')} } from '@sittir/types';`,
+		`import type { ${['ArgsOf', 'ElementsOf', 'NoneOf', 'OmitEach', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'WithoutGroup'].filter((name) => name === 'ArgsOf' || name === 'OmitEach' || blocks.some((b) => b.includes(`${name}<`))).join(', ')} } from '@sittir/types';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
 		...(blocks.some((b) => b.includes('isGroupConfig(')) ? ["import { isGroupConfig } from '@sittir/common/utils';"] : []),
 		...(blocks.some((b) => /(?<![\w$.])T\./.test(b)) ? ["import type * as T from '../../types.js';"] : [])

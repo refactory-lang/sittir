@@ -106,6 +106,7 @@ import {
 	declaredOverload,
 	optionalRefusing,
 	quoteKey,
+	refuseUndeclared,
 	refusingParam,
 	withTrailingParam,
 	type RefusingParams
@@ -1405,7 +1406,7 @@ function resolveConfigFactorySurface(
 	const generic = refusingSlots(
 		configParam,
 		configType,
-		numericSlots === undefined ? undefined : { typeParam: `const C extends ${strictType}`, type: `C & NumericConfig<C, ${numericSlots}, ${strictType}>` },
+		numericSlots === undefined ? undefined : { typeParam: `const C extends ${strictType}`, type: `C & NumericConfig<C, ${numericSlots}> & ${refuseUndeclared('C', strictType)}` },
 		node.configSlots.filter((slot) => storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries)))
 	);
 	const param: FactoryParam = generic === undefined ? configParam : { ...configParam, generic };
@@ -2814,4 +2815,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUntyped', 'RefusingConfig', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenNumeric'];

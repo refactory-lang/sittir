@@ -10,7 +10,7 @@ import type {
 	NonEmptyArray,
 	NumericConfig,
 	NumericLiteral,
-	RefuseUntyped,
+	RefuseUndeclared,
 	RefusingConfig,
 	WidenNumeric
 } from '@sittir/types';
@@ -208,7 +208,7 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 }
 
 export function buildNamespaceExport<V extends Admit<T.Identifier | T.String | TSKindId.DefaultKeyword>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.NamespaceExport.Bound;
 export function buildNamespaceExport(
 	value: Admit<T.Identifier | T.String | TSKindId.DefaultKeyword>
@@ -243,17 +243,17 @@ export function buildNamespaceExport(
 
 export function buildExportClause(): T.EmptyExportClause;
 export function buildExportClause<V extends Admit<T.ExportSpecifiers>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildExportClause>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildExportClause(args[0] as Parameters<typeof _buildExportClause>[0]);
@@ -422,7 +422,7 @@ export function buildImportStatement(
 }
 
 export function buildImportClause<V extends Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ImportClause.Bound;
 export function buildImportClause(
 	value: Admit<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>
@@ -451,7 +451,7 @@ export function buildImportClause(
 }
 
 export function buildNamespaceImport<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.NamespaceImport.Bound;
 export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImport.Bound {
 	const _name = value;
@@ -478,14 +478,14 @@ export function buildNamespaceImport(value: Admit<T.Identifier>): T.NamespaceImp
 
 export function buildNamedImports(): T.EmptyNamedImports;
 export function buildNamedImports<V extends Admit<T.ImportSpecifiers>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports<A extends NonEmptyArray<Admit<T.ImportSpecifier>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports<A extends NonEmptyArray<Admit<T.ImportSpecifier>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -577,7 +577,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 }
 
 export function buildExpressionStatement<V extends Admit<T.Expression | T.SequenceExpression>>(
-	value: V & RefuseUntyped<V>,
+	value: V & RefuseUndeclared<V>,
 	options?: T.ExpressionStatement.Options
 ): T.ExpressionStatement.Bound;
 export function buildExpressionStatement(
@@ -616,11 +616,11 @@ export function buildExpressionStatement(
 }
 
 export function buildVariableDeclaration<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.VariableDeclaration.Bound;
 export function buildVariableDeclaration<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
 	options: ListOptions<T.VariableDeclaration.Options>,
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.VariableDeclaration.Bound;
 export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclaration.Bound {
 	const _optsFirst =
@@ -758,11 +758,11 @@ export function buildUsingDeclaration(
 
 export function buildStatementBlock(): T.EmptyStatementBlock;
 export function buildStatementBlock<A extends Admit<T.Statement[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.StatementBlock.Bound;
 export function buildStatementBlock<A extends Admit<T.Statement[]>>(
 	options: ListOptions<T.StatementBlock.Options>,
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.StatementBlock.Bound;
 export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound {
 	const _optsFirst =
@@ -805,7 +805,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 	return node as unknown as T.StatementBlock.Bound;
 }
 
-export function buildElseClause<V extends Admit<T.Statement>>(value: V & RefuseUntyped<V>): T.ElseClause.Bound;
+export function buildElseClause<V extends Admit<T.Statement>>(value: V & RefuseUndeclared<V>): T.ElseClause.Bound;
 export function buildElseClause(value: Admit<T.Statement>): T.ElseClause.Bound {
 	const _body = kindIdStorage<NonNullable<T.ElseClause['_body']>>(value);
 	const handle = currentHandle();
@@ -1151,10 +1151,10 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 }
 
 export function buildBreakStatement<V extends Admit<T.StatementIdentifier | T.StatementIdentifier.Types>>(
-	...value: [value?: V, options?: T.BreakStatement.Options] & RefuseUntyped<V>
+	...value: [value?: V, options?: T.BreakStatement.Options] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildBreakStatement>;
 export function buildBreakStatement<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildBreakStatement>;
 export function buildBreakStatement(...args: unknown[]) {
 	if (args[0] === undefined) {
@@ -1211,10 +1211,10 @@ function _buildBreakStatement(
 }
 
 export function buildContinueStatement<V extends Admit<T.StatementIdentifier | T.StatementIdentifier.Types>>(
-	...value: [value?: V, options?: T.ContinueStatement.Options] & RefuseUntyped<V>
+	...value: [value?: V, options?: T.ContinueStatement.Options] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement(...args: unknown[]) {
 	if (args[0] === undefined) {
@@ -1274,7 +1274,7 @@ function _buildContinueStatement(
 }
 
 export function buildDebuggerStatement<V extends Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.DebuggerStatement.Bound;
 export function buildDebuggerStatement(
 	value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>
@@ -1303,7 +1303,7 @@ export function buildDebuggerStatement(
 }
 
 export function buildReturnStatement<V extends Admit<T.Expression | T.SequenceExpression>>(
-	...value: [value?: V, options?: T.ReturnStatement.Options] & RefuseUntyped<V>
+	...value: [value?: V, options?: T.ReturnStatement.Options] & RefuseUndeclared<V>
 ): T.ReturnStatement.Bound;
 export function buildReturnStatement(
 	value?: Admit<T.Expression | T.SequenceExpression>,
@@ -1341,7 +1341,7 @@ export function buildReturnStatement(
 }
 
 export function buildThrowStatement<V extends Admit<T.Expression | T.SequenceExpression>>(
-	value: V & RefuseUntyped<V>,
+	value: V & RefuseUndeclared<V>,
 	options?: T.ThrowStatement.Options
 ): T.ThrowStatement.Bound;
 export function buildThrowStatement(
@@ -1418,7 +1418,7 @@ export function buildLabeledStatement(config: T.LabeledStatement.Config): T.Labe
 
 export function buildSwitchBody(): T.EmptySwitchBody;
 export function buildSwitchBody<A extends Admit<(T.SwitchCase | T.SwitchDefault)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.SwitchBody.Bound;
 export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefault)[]>): T.SwitchBody.Bound {
 	const _cases = children;
@@ -1479,7 +1479,7 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 }
 
 export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.SwitchDefault.Bound;
 export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	const _body = children;
@@ -1587,14 +1587,14 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 }
 
 export function buildFinallyClause<V extends Admit<T.StatementBlock>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause<A extends Admit<T.Statement[]>>(
 	options: ListOptions<T.StatementBlock.Options>,
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause<A extends Admit<T.Statement[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFinallyClause>;
 export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0) {
@@ -1638,7 +1638,7 @@ function _buildFinallyClause(value: Admit<T.StatementBlock>): T.FinallyClause.Bo
 }
 
 export function buildYieldExpression<V extends Admit<T.YieldExpressionDelegate | T.Expression>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): T.YieldExpression.Bound;
 export function buildYieldExpression(value?: Admit<T.YieldExpressionDelegate | T.Expression>): T.YieldExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.YieldExpression['_expression']>>(value);
@@ -1672,7 +1672,7 @@ export function buildObject<
 			| T.ShorthandPropertyIdentifier.Types
 		)[]
 	>
->(...children: A & RefuseUntyped<A>): T.Object.Bound;
+>(...children: A & RefuseUndeclared<A>): T.Object.Bound;
 export function buildObject(
 	...children: Admit<
 		(
@@ -1719,7 +1719,7 @@ export function buildObjectPattern<
 			| T.ShorthandPropertyIdentifierPattern.Types
 		)[]
 	>
->(...children: A & RefuseUntyped<A>): T.ObjectPattern.Bound;
+>(...children: A & RefuseUndeclared<A>): T.ObjectPattern.Bound;
 export function buildObjectPattern(
 	...children: Admit<
 		(
@@ -1838,7 +1838,7 @@ export function buildObjectAssignmentPattern(
 
 export function buildArray(): T.EmptyArray;
 export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.Array.Bound;
 export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
 	const _elements = children;
@@ -1867,7 +1867,7 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
 export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPattern)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.ArrayPattern.Bound;
 export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
 	const _elements = children;
@@ -2091,7 +2091,7 @@ export function buildClassDeclaration(
 }
 
 export function buildClassHeritage<V extends Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ClassHeritage.Bound;
 export function buildClassHeritage(
 	value: Admit<T.ClassHeritageExtendsClause | T.ImplementsClause>
@@ -2552,7 +2552,7 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 }
 
 export function buildAwaitExpression<V extends Admit<T.Expression>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.AwaitExpression.Bound;
 export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.AwaitExpression['_expression']>>(value);
@@ -2675,7 +2675,7 @@ export function buildLhsExpression<
 		| T.ArrayPattern
 		| T.NonNullExpression
 	>
->(value: V & RefuseUntyped<V>): T.LhsExpression.Bound;
+>(value: V & RefuseUndeclared<V>): T.LhsExpression.Bound;
 export function buildLhsExpression(
 	value: Admit<
 		| T.MemberExpression
@@ -2811,7 +2811,9 @@ export function buildAugmentedAssignmentExpression(
 	return node as unknown as T.AugmentedAssignmentExpression.Bound;
 }
 
-export function buildSpreadElement<V extends Admit<T.Expression>>(value: V & RefuseUntyped<V>): T.SpreadElement.Bound;
+export function buildSpreadElement<V extends Admit<T.Expression>>(
+	value: V & RefuseUndeclared<V>
+): T.SpreadElement.Bound;
 export function buildSpreadElement(value: Admit<T.Expression>): T.SpreadElement.Bound {
 	const _expression = kindIdStorage<NonNullable<T.SpreadElement['_expression']>>(value);
 	const handle = currentHandle();
@@ -2961,7 +2963,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 }
 
 export function buildSequenceExpression<A extends NonEmptyArray<Admit<T.Expression>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.SequenceExpression.Bound;
 export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expression>>): T.SequenceExpression.Bound {
 	const _expression = children;
@@ -3058,7 +3060,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 }
 
 export function buildTemplateString<A extends Admit<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.TemplateString.Bound;
 export function buildTemplateString(
 	...children: Admit<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]>
@@ -3087,7 +3089,7 @@ export function buildTemplateString(
 }
 
 export function buildTemplateSubstitution<V extends Admit<T.Expression | T.SequenceExpression>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.TemplateSubstitution.Bound;
 export function buildTemplateSubstitution(
 	value: Admit<T.Expression | T.SequenceExpression>
@@ -3277,7 +3279,7 @@ export const buildUndefined: TSKindId.Undefined = TSKindId.Undefined;
 
 export function buildArguments(): T.EmptyArguments;
 export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.Arguments.Bound;
 export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
 	const _elements = children;
@@ -3308,7 +3310,7 @@ export function buildDecorator<
 	V extends Admit<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 	>
->(value: V & RefuseUntyped<V>): T.Decorator.Bound;
+>(value: V & RefuseUndeclared<V>): T.Decorator.Bound;
 export function buildDecorator(
 	value: Admit<
 		T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
@@ -3444,7 +3446,7 @@ export function buildDecoratorCallExpression(
 
 export function buildClassBody(): T.EmptyClassBody;
 export function buildClassBody<A extends Admit<T.ClassBodyMember[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.ClassBody.Bound;
 export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.ClassBody.Bound {
 	const _members = children;
@@ -3473,14 +3475,14 @@ export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.Class
 
 export function buildFormalParameters(): T.EmptyFormalParameters;
 export function buildFormalParameters<V extends Admit<T.FormalParametersElements>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters<A extends NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters<A extends NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -3542,7 +3544,7 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 }
 
 export function buildClassStaticBlock<V extends Admit<T.StatementBlock>>(
-	value: V & RefuseUntyped<V>,
+	value: V & RefuseUndeclared<V>,
 	options?: T.ClassStaticBlock.Options
 ): ReturnType<typeof _buildClassStaticBlock>;
 export function buildClassStaticBlock(...args: unknown[]) {
@@ -3610,7 +3612,7 @@ export function buildRestPattern<
 		| T.ArrayPattern
 		| T.NonNullExpression
 	>
->(value: V & RefuseUntyped<V>): T.RestPattern.Bound;
+>(value: V & RefuseUndeclared<V>): T.RestPattern.Bound;
 export function buildRestPattern(
 	value: Admit<
 		| T.MemberExpression
@@ -3871,7 +3873,7 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 }
 
 export function buildComputedPropertyName<V extends Admit<T.Expression>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ComputedPropertyName.Bound;
 export function buildComputedPropertyName(value: Admit<T.Expression>): T.ComputedPropertyName.Bound {
 	const _expression = kindIdStorage<NonNullable<T.ComputedPropertyName['_expression']>>(value);
@@ -4003,7 +4005,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 }
 
 export function buildNonNullExpression<V extends Admit<T.Expression>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.NonNullExpression.Bound;
 export function buildNonNullExpression(value: Admit<T.Expression>): T.NonNullExpression.Bound {
 	const _expression = kindIdStorage<NonNullable<T.NonNullExpression['_expression']>>(value);
@@ -4319,7 +4321,7 @@ export function buildFunctionSignature(
 
 export function buildDecoratorParenthesizedExpression<
 	V extends Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>
->(value: V & RefuseUntyped<V>): T.DecoratorParenthesizedExpression.Bound;
+>(value: V & RefuseUndeclared<V>): T.DecoratorParenthesizedExpression.Bound;
 export function buildDecoratorParenthesizedExpression(
 	value: Admit<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>
 ): T.DecoratorParenthesizedExpression.Bound {
@@ -4548,7 +4550,7 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 }
 
 export function buildExtendsClause<A extends NonEmptyArray<Admit<T.ExtendsClauseSingle>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.ExtendsClause.Bound;
 export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsClauseSingle>>): T.ExtendsClause.Bound {
 	const _types = children;
@@ -4616,7 +4618,7 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 }
 
 export function buildImplementsClause<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.ImplementsClause.Bound;
 export function buildImplementsClause(
 	...children: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
@@ -4648,7 +4650,7 @@ export function buildImplementsClause(
 
 export function buildAmbientDeclaration<
 	V extends Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>
->(value: V & RefuseUntyped<V>): T.AmbientDeclaration.Bound;
+>(value: V & RefuseUndeclared<V>): T.AmbientDeclaration.Bound;
 export function buildAmbientDeclaration(
 	value: Admit<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>
 ): T.AmbientDeclaration.Bound {
@@ -4956,7 +4958,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 
 export function buildExtendsTypeClause<
 	A extends NonEmptyArray<Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>>
->(...children: A & RefuseUntyped<A>): T.ExtendsTypeClause.Bound;
+>(...children: A & RefuseUndeclared<A>): T.ExtendsTypeClause.Bound;
 export function buildExtendsTypeClause(
 	...children: NonEmptyArray<
 		Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
@@ -5036,14 +5038,14 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 
 export function buildEnumBody(): T.EmptyEnumBody;
 export function buildEnumBody<V extends Admit<T.EnumBodyElements>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody<A extends NonEmptyArray<Admit<T.EnumBodyElement>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody<A extends NonEmptyArray<Admit<T.EnumBodyElement>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5351,7 +5353,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 }
 
 export function buildOmittingTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.OmittingTypeAnnotation.Bound;
 export function buildOmittingTypeAnnotation(
 	value: Admit<T.Type | T.TypeIdentifier.Types>
@@ -5383,7 +5385,7 @@ export function buildOmittingTypeAnnotation(
 }
 
 export function buildAddingTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.AddingTypeAnnotation.Bound;
 export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types>): T.AddingTypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.AddingTypeAnnotation['_type']>>(
@@ -5413,7 +5415,7 @@ export function buildAddingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 }
 
 export function buildOptingTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.OptingTypeAnnotation.Bound;
 export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types>): T.OptingTypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.OptingTypeAnnotation['_type']>>(
@@ -5443,7 +5445,7 @@ export function buildOptingTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier
 }
 
 export function buildTypeAnnotation<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.TypeAnnotation.Bound;
 export function buildTypeAnnotation(value: Admit<T.Type | T.TypeIdentifier.Types>): T.TypeAnnotation.Bound {
 	const _type = admitAliasContent<NonNullable<T.TypeAnnotation['_type']>>(
@@ -5561,7 +5563,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 }
 
 export function buildAsserts<V extends Admit<T.TypePredicate | T.Identifier | TSKindId.This>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.Asserts.Bound;
 export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Bound {
 	const _value = rejectKeywordText(
@@ -5593,10 +5595,10 @@ export function buildAsserts(value: Admit<T.TypePredicate | T.Identifier | TSKin
 }
 
 export function buildAssertsAnnotation<V extends Admit<T.Asserts>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation<V extends Admit<T.TypePredicate | T.Identifier | TSKindId.This>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5705,7 +5707,7 @@ export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Con
 }
 
 export function buildOptionalType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.OptionalType.Bound;
 export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.OptionalType.Bound {
 	const _type = admitAliasContent<NonNullable<T.OptionalType['_type']>>(
@@ -5735,7 +5737,7 @@ export function buildOptionalType(value: Admit<T.Type | T.TypeIdentifier.Types>)
 }
 
 export function buildRestType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.RestType.Bound;
 export function buildRestType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.RestType.Bound {
 	const _type = admitAliasContent<NonNullable<T.RestType['_type']>>(
@@ -5829,7 +5831,7 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 }
 
 export function buildTemplateType<V extends Admit<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.TemplateType.Bound;
 export function buildTemplateType(
 	value: Admit<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>
@@ -5861,7 +5863,7 @@ export function buildTemplateType(
 }
 
 export function buildTemplateLiteralType<A extends Admit<(T.TemplateChars | T.TemplateType)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.TemplateLiteralType.Bound;
 export function buildTemplateLiteralType(
 	...children: Admit<(T.TemplateChars | T.TemplateType)[]>
@@ -6074,7 +6076,7 @@ export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredic
 }
 
 export function buildTypePredicateAnnotation<V extends Admit<T.TypePredicate>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypePredicateAnnotation>;
 export function buildTypePredicateAnnotation<
 	NameSlot extends T.TypePredicate.Config['name'],
@@ -6328,7 +6330,7 @@ export function buildTypeQuery<
 		| T.Identifier
 		| TSKindId.This
 	>
->(value: V & RefuseUntyped<V>): T.TypeQuery.Bound;
+>(value: V & RefuseUndeclared<V>): T.TypeQuery.Bound;
 export function buildTypeQuery(
 	value: Admit<
 		| T.TypeQuerySubscriptExpression
@@ -6378,7 +6380,7 @@ export function buildTypeQuery(
 }
 
 export function buildIndexTypeQuery<V extends Admit<T.PrimaryType | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.IndexTypeQuery.Bound;
 export function buildIndexTypeQuery(value: Admit<T.PrimaryType | T.TypeIdentifier.Types>): T.IndexTypeQuery.Bound {
 	const _type = admitAliasContent<NonNullable<T.IndexTypeQuery['_type']>>(
@@ -6505,7 +6507,7 @@ export function buildLiteralType<
 		| TSKindId.Null
 		| TSKindId.Undefined
 	>
->(value: V & RefuseUntyped<V>): T.LiteralType.Bound;
+>(value: V & RefuseUndeclared<V>): T.LiteralType.Bound;
 export function buildLiteralType(
 	value: Admit<
 		| T.LiteralTypeNegativeNumber
@@ -6554,7 +6556,7 @@ export function buildLiteralType(
 export const buildExistentialType: TSKindId.ExistentialType = TSKindId.ExistentialType;
 
 export function buildFlowMaybeType<V extends Admit<T.PrimaryType | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.FlowMaybeType.Bound;
 export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier.Types>): T.FlowMaybeType.Bound {
 	const _type = admitAliasContent<NonNullable<T.FlowMaybeType['_type']>>(
@@ -6584,7 +6586,7 @@ export function buildFlowMaybeType(value: Admit<T.PrimaryType | T.TypeIdentifier
 }
 
 export function buildParenthesizedType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ParenthesizedType.Bound;
 export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.ParenthesizedType.Bound {
 	const _type = admitAliasContent<NonNullable<T.ParenthesizedType['_type']>>(
@@ -6614,14 +6616,14 @@ export function buildParenthesizedType(value: Admit<T.Type | T.TypeIdentifier.Ty
 }
 
 export function buildTypeArguments<V extends Admit<T.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -6916,17 +6918,17 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 }
 
 export function buildTypeParameters<V extends Admit<T.TypeParametersElements>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters<
 	A extends NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters<
 	A extends NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildTypeParameters>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParameters(args[0] as Parameters<typeof _buildTypeParameters>[0]);
@@ -7039,7 +7041,7 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 }
 
 export function buildDefaultType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.DefaultType.Bound;
 export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.DefaultType.Bound {
 	const _type = admitAliasContent<NonNullable<T.DefaultType['_type']>>(
@@ -7165,7 +7167,7 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 }
 
 export function buildArrayType<V extends Admit<T.PrimaryType | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ArrayType.Bound;
 export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Types>): T.ArrayType.Bound {
 	const _type = admitAliasContent<NonNullable<T.ArrayType['_type']>>(
@@ -7196,7 +7198,7 @@ export function buildArrayType(value: Admit<T.PrimaryType | T.TypeIdentifier.Typ
 
 export function buildTupleType(): T.EmptyTupleType;
 export function buildTupleType<V extends Admit<T.TupleTypeMembers>>(
-	...value: [value?: V] & RefuseUntyped<V>
+	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType<
 	A extends NonEmptyArray<
@@ -7204,13 +7206,13 @@ export function buildTupleType<
 	>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType<
 	A extends NonEmptyArray<
 		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildTupleType>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTupleType(args[0] as Parameters<typeof _buildTupleType>[0]);
@@ -7269,7 +7271,7 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 }
 
 export function buildReadonlyType<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ReadonlyType.Bound;
 export function buildReadonlyType(value: Admit<T.Type | T.TypeIdentifier.Types>): T.ReadonlyType.Bound {
 	const _type = admitAliasContent<NonNullable<T.ReadonlyType['_type']>>(
@@ -7437,12 +7439,12 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 
 export function buildExportSpecifiers<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildExportSpecifiers>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers<
 	A extends NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
 	...args: (
@@ -7515,11 +7517,11 @@ function _buildExportSpecifiers(
 }
 
 export function buildImportSpecifiers<A extends NonEmptyArray<Admit<T.ImportSpecifier>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers<A extends NonEmptyArray<Admit<T.ImportSpecifier>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.ImportSpecifier>)[]
@@ -7577,12 +7579,12 @@ function _buildImportSpecifiers(
 
 export function buildFormalParametersElements<
 	A extends NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildFormalParametersElements>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements<
 	A extends NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFormalParametersElements>;
 export function buildFormalParametersElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.RequiredParameter | T.OptionalParameter>)[]
@@ -7645,7 +7647,7 @@ export function buildEnumBodyElementName<
 		| (T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName)
 		| T.PropertyIdentifier.Types
 	>
->(value: V & RefuseUntyped<V>): T.EnumBodyElementName.Bound;
+>(value: V & RefuseUndeclared<V>): T.EnumBodyElementName.Bound;
 export function buildEnumBodyElementName(
 	value: Admit<
 		| (T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName)
@@ -7683,11 +7685,11 @@ export function buildEnumBodyElementName(
 }
 
 export function buildEnumBodyElements<A extends NonEmptyArray<Admit<T.EnumBodyElement>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements<A extends NonEmptyArray<Admit<T.EnumBodyElement>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.EnumBodyElement>)[]
@@ -7744,11 +7746,11 @@ function _buildEnumBodyElements(
 }
 
 export function buildTypes<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes<A extends NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>>(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypes>;
 export function buildTypes(
 	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.Type | T.TypeIdentifier.Types>)[]
@@ -7810,12 +7812,12 @@ function _buildTypes(
 
 export function buildTypeParametersElements<
 	A extends NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildTypeParametersElements>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements<
 	A extends NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
 	...args: (
@@ -7891,14 +7893,14 @@ export function buildTupleTypeMembers<
 	A extends NonEmptyArray<
 		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildTupleTypeMembers>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers<
 	A extends NonEmptyArray<
 		Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 	>
 >(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTupleTypeMembers>;
 export function buildTupleTypeMembers(
 	...args: (
@@ -7969,7 +7971,7 @@ function _buildTupleTypeMembers(
 }
 
 export function buildImportClauseGroup<V extends Admit<T.NamespaceImport | T.NamedImports>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ImportClauseGroup.Bound;
 export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedImports>): T.ImportClauseGroup.Bound {
 	const _content = value;
@@ -8033,14 +8035,14 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 }
 
 export function buildAmbientDeclarationGlobal<V extends Admit<T.StatementBlock>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal<A extends Admit<T.Statement[]>>(
 	options: ListOptions<T.StatementBlock.Options>,
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal<A extends Admit<T.Statement[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildAmbientDeclarationGlobal>;
 export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 	if (args.length === 0) {
@@ -8156,7 +8158,7 @@ export function buildObjectTypeContent<
 			| T.MethodSignature
 		>
 	>
->(...elements: A & RefuseUntyped<A>): ReturnType<typeof _buildObjectTypeContent>;
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent<
 	A extends NonEmptyArray<
 		Admit<
@@ -8173,7 +8175,7 @@ export function buildObjectTypeContent<
 		separator?: TSKindId.Comma | TSKindId.Semi;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	}>,
-	...elements: A & RefuseUntyped<A>
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildObjectTypeContent>;
 export function buildObjectTypeContent(
 	...args: (
@@ -8282,7 +8284,7 @@ function _buildObjectTypeContent(
 }
 
 export function buildExportStatementNamespaceExport<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>,
+	value: V & RefuseUndeclared<V>,
 	options?: T.ExportStatementNamespaceExport.Options
 ): T.ExportStatementNamespaceExport.Bound;
 export function buildExportStatementNamespaceExport(
@@ -8321,7 +8323,7 @@ export function buildExportStatementNamespaceExport(
 }
 
 export function buildExportStatementEqualsExport<V extends Admit<T.Expression>>(
-	value: V & RefuseUntyped<V>,
+	value: V & RefuseUndeclared<V>,
 	options?: T.ExportStatementEqualsExport.Options
 ): T.ExportStatementEqualsExport.Bound;
 export function buildExportStatementEqualsExport(
@@ -8417,7 +8419,7 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 }
 
 export function buildLiteralTypeNegativeNumber<V extends Admit<T.Number>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.LiteralTypeNegativeNumber.Bound;
 export function buildLiteralTypeNegativeNumber(value: Admit<T.Number>): T.LiteralTypeNegativeNumber.Bound {
 	const _argument = value;
@@ -8492,9 +8494,9 @@ export function buildNumberFloatPoint<
 	ExponentSlot extends T.NumberFloatPoint.Config['exponent']
 >(
 	config: C &
-		NumericConfig<
+		NumericConfig<C, { integer: true; fraction: true; exponent: true }> &
+		RefuseUndeclared<
 			C,
-			{ integer: true; fraction: true; exponent: true },
 			WidenNumeric<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
@@ -8585,9 +8587,9 @@ export function buildNumberFloatLeadingPoint<
 	ExponentSlot extends T.NumberFloatLeadingPoint.Config['exponent']
 >(
 	config: C &
-		NumericConfig<
+		NumericConfig<C, { fraction: true; exponent: true }> &
+		RefuseUndeclared<
 			C,
-			{ fraction: true; exponent: true },
 			WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>
 		> &
 		RefusingConfig<
@@ -8659,9 +8661,9 @@ export function buildNumberFloatScientific<
 	ExponentSlot extends T.NumberFloatScientific.Config['exponent']
 >(
 	config: C &
-		NumericConfig<
+		NumericConfig<C, { integer: true; exponent: true }> &
+		RefuseUndeclared<
 			C,
-			{ integer: true; exponent: true },
 			WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 		> &
 		RefusingConfig<
@@ -9088,7 +9090,7 @@ export function buildClassBodyMemberMethodSig(
 
 export function buildClassBodyMemberDeclaration<
 	V extends Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>
->(value: V & RefuseUntyped<V>, options?: T.ClassBodyMemberDeclaration.Options): T.ClassBodyMemberDeclaration.Bound;
+>(value: V & RefuseUndeclared<V>, options?: T.ClassBodyMemberDeclaration.Options): T.ClassBodyMemberDeclaration.Bound;
 export function buildClassBodyMemberDeclaration(
 	value: Admit<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>,
 	options?: T.ClassBodyMemberDeclaration.Options
@@ -9269,7 +9271,7 @@ export function buildImportStatementClauseFrom(
 }
 
 export function buildYieldExpressionDelegate<V extends Admit<T.Expression>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.YieldExpressionDelegate.Bound;
 export function buildYieldExpressionDelegate(value: Admit<T.Expression>): T.YieldExpressionDelegate.Bound {
 	const _expression = kindIdStorage<NonNullable<T.YieldExpressionDelegate['_expression']>>(value);
@@ -9410,10 +9412,10 @@ export function buildParenthesizedExpressionTyped(
 }
 
 export function buildParenthesizedExpressionSequence<V extends Admit<T.SequenceExpression>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence<A extends NonEmptyArray<Admit<T.Expression>>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -9598,7 +9600,7 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 }
 
 export function buildStringDouble<A extends Admit<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.StringDouble.Bound;
 export function buildStringDouble(
 	...children: Admit<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[]>
@@ -9627,7 +9629,7 @@ export function buildStringDouble(
 }
 
 export function buildStringSingle<A extends Admit<(T.UnescapedSingleStringFragment | T.EscapeSequence)[]>>(
-	...children: A & RefuseUntyped<A>
+	...children: A & RefuseUndeclared<A>
 ): T.StringSingle.Bound;
 export function buildStringSingle(
 	...children: Admit<(T.UnescapedSingleStringFragment | T.EscapeSequence)[]>
@@ -9722,7 +9724,7 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 }
 
 export function buildArrowFunctionParameter<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ArrowFunctionParameter.Bound;
 export function buildArrowFunctionParameter(value: Admit<T.Identifier>): T.ArrowFunctionParameter.Bound {
 	const _parameter = value;
@@ -9918,7 +9920,7 @@ export function buildExportStatementDefaultDeclaration(
 }
 
 export function buildExportStatementDefaultFromStarFrom<V extends Admit<T.String>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ExportStatementDefaultFromStarFrom.Bound;
 export function buildExportStatementDefaultFromStarFrom(
 	value: Admit<T.String>
@@ -10034,7 +10036,7 @@ export function buildExportStatementDefaultFromClauseFrom(
 
 export function buildExportStatementDefaultDeclarationDefaultKw<
 	V extends Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>
->(value: V & RefuseUntyped<V>): T.ExportStatementDefaultDeclarationDefaultKw.Bound;
+>(value: V & RefuseUndeclared<V>): T.ExportStatementDefaultDeclarationDefaultKw.Bound;
 export function buildExportStatementDefaultDeclarationDefaultKw(
 	value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>
 ): T.ExportStatementDefaultDeclarationDefaultKw.Bound {
@@ -10062,7 +10064,7 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKwValue<V extends Admit<T.Expression>>(
-	value: V & RefuseUntyped<V>,
+	value: V & RefuseUndeclared<V>,
 	options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 ): T.ExportStatementDefaultDeclarationDefaultKwValue.Bound;
 export function buildExportStatementDefaultDeclarationDefaultKwValue(
@@ -10499,7 +10501,7 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 }
 
 export function buildStatementIdentifier<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.StatementIdentifier.Bound;
 export function buildStatementIdentifier(value: Admit<T.Identifier>): T.StatementIdentifier.Bound {
 	const _content = value;
@@ -10525,7 +10527,7 @@ export function buildStatementIdentifier(value: Admit<T.Identifier>): T.Statemen
 }
 
 export function buildShorthandPropertyIdentifier<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ShorthandPropertyIdentifier.Bound;
 export function buildShorthandPropertyIdentifier(value: Admit<T.Identifier>): T.ShorthandPropertyIdentifier.Bound {
 	const _content = value;
@@ -10551,7 +10553,7 @@ export function buildShorthandPropertyIdentifier(value: Admit<T.Identifier>): T.
 }
 
 export function buildShorthandPropertyIdentifierPattern<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.ShorthandPropertyIdentifierPattern.Bound;
 export function buildShorthandPropertyIdentifierPattern(
 	value: Admit<T.Identifier>
@@ -10580,7 +10582,7 @@ export function buildShorthandPropertyIdentifierPattern(
 }
 
 export function buildPropertyIdentifierContent<V extends Admit<T.Identifier>>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.PropertyIdentifier.Bound;
 export function buildPropertyIdentifierContent(value: Admit<T.Identifier>): T.PropertyIdentifier.Bound {
 	const _content = value;
@@ -10606,7 +10608,7 @@ export function buildPropertyIdentifierContent(value: Admit<T.Identifier>): T.Pr
 }
 
 export function buildPropertyIdentifier<V extends string | Parameters<typeof buildPropertyIdentifierContent>[0]>(
-	value: V & RefuseUntyped<V>
+	value: V & RefuseUndeclared<V>
 ): T.PropertyIdentifier.Bound;
 export function buildPropertyIdentifier(
 	value: string | Parameters<typeof buildPropertyIdentifierContent>[0]
@@ -10616,7 +10618,9 @@ export function buildPropertyIdentifier(
 	);
 }
 
-export function buildTypeIdentifier<V extends Admit<T.Identifier>>(value: V & RefuseUntyped<V>): T.TypeIdentifier.Bound;
+export function buildTypeIdentifier<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>
+): T.TypeIdentifier.Bound;
 export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifier.Bound {
 	const _content = value;
 	const handle = currentHandle();
@@ -10640,7 +10644,9 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 	return node as unknown as T.TypeIdentifier.Bound;
 }
 
-export function buildInterfaceBody<V extends Admit<T.ObjectType>>(value: V & RefuseUntyped<V>): T.InterfaceBody.Bound;
+export function buildInterfaceBody<V extends Admit<T.ObjectType>>(
+	value: V & RefuseUndeclared<V>
+): T.InterfaceBody.Bound;
 export function buildInterfaceBody(value: Admit<T.ObjectType>): T.InterfaceBody.Bound {
 	const _content = value;
 	const handle = currentHandle();

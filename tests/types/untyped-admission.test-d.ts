@@ -12,6 +12,7 @@
 import type { Engine } from '@sittir/types';
 import type { RustAPI } from '@sittir/rust';
 import type { PythonAPI } from '@sittir/python';
+import type { Block } from '@sittir/rust';
 
 declare const rs: Engine<RustAPI>;
 declare const py: Engine<PythonAPI>;
@@ -49,6 +50,31 @@ rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { st
 // @ts-expect-error one untyped item among typed ones refuses the call
 rs.build.block({ statements: [rs.build.expressionStatement(rs.build.identifier('a')), untyped] });
 
+declare const flag: boolean;
+declare const looseBlock: Block.Loose;
+// @ts-expect-error an untyped node beside a whole loose input refuses the call
+rs.build.block(flag ? looseBlock : untyped);
+// @ts-expect-error an untyped node inside a loose config nested in another refuses the call
+rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: untyped } });
+// @ts-expect-error an untyped node below loose configs nested past the widening's own depth refuses the call
+rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: untyped } } } });
+
+interface RecursiveBlock {
+	readonly $type: typeof rs.kinds.Block;
+	readonly trailingExpression?: RecursiveBlock;
+}
+interface RecursiveUntyped {
+	readonly $type: typeof rs.kinds.Block;
+	readonly trailingExpression?: RecursiveUntyped | typeof untyped;
+}
+declare const recursive: RecursiveBlock;
+declare const recursiveUntyped: RecursiveUntyped;
+// @ts-expect-error an untyped node inside a recursive declared type refuses the call
+rs.build.block(recursiveUntyped);
+
+export const builtRecursive = rs.build.block(recursive);
+export const builtFromLoose = rs.build.block(looseBlock);
+export const builtDeep = rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: rs.build.identifier('a') } } } });
 export const builtBody = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: block });
 export const builtStatement = rs.build.expressionStatement(rs.build.identifier('a'));
 export const builtNested = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [rs.build.expressionStatement(rs.build.identifier('a'))] } });

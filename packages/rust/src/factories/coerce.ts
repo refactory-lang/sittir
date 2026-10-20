@@ -13,7 +13,7 @@ import type {
 	NonEmptyArray,
 	NumericInput,
 	PlainBuilders,
-	RefuseUntyped,
+	RefuseUndeclared,
 	SiblingLeadRefusal
 } from '@sittir/types';
 import {
@@ -2539,7 +2539,7 @@ export function resolveSourceFile_statements(
 
 export function coerceToSourceFile(): T.EmptySourceFile;
 export function coerceToSourceFile<const I extends T.SourceFile.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.SourceFile.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.SourceFile.Loose>
 ): ReturnType<typeof F.buildSourceFile>;
 export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> {
 	if (!_isLooseConfig<T.SourceFile.LooseConfig | undefined>(input))
@@ -2574,7 +2574,7 @@ export function resolveExpressionStatement_content(
 }
 
 export function coerceToExpressionStatement<const I extends T.ExpressionStatement.Loose>(
-	input: I & RefuseUntyped<I, T.ExpressionStatement.Loose>
+	input: I & RefuseUndeclared<I, T.ExpressionStatement.Loose>
 ): ReturnType<typeof F.buildExpressionStatement>;
 export function coerceToExpressionStatement(
 	input: T.ExpressionStatement.Loose
@@ -2612,7 +2612,7 @@ export function resolveMacroRule_right(value: T.MacroRule.LooseConfig['right']):
 }
 
 export function coerceToMacroRule<const I extends T.MacroRule.Loose>(
-	input: I & RefuseUntyped<I, T.MacroRule.Loose>
+	input: I & RefuseUndeclared<I, T.MacroRule.Loose>
 ): ReturnType<typeof F.buildMacroRule>;
 export function coerceToMacroRule(input: T.MacroRule.Loose): ReturnType<typeof F.buildMacroRule> {
 	if (!_isLooseConfig<T.MacroRule.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMacroRule>;
@@ -2672,7 +2672,7 @@ export function resolveTokenBindingPattern_type(
 }
 
 export function coerceToTokenBindingPattern<const I extends T.TokenBindingPattern.Loose>(
-	input: I & RefuseUntyped<I, T.TokenBindingPattern.Loose>
+	input: I & RefuseUndeclared<I, T.TokenBindingPattern.Loose>
 ): ReturnType<typeof F.buildTokenBindingPattern>;
 export function coerceToTokenBindingPattern(
 	input: T.TokenBindingPattern.Loose
@@ -2709,7 +2709,7 @@ export function resolveTokenRepetitionPattern_operator(
 }
 
 export function coerceToTokenRepetitionPattern<const I extends T.TokenRepetitionPattern.Loose>(
-	input: I & RefuseUntyped<I, T.TokenRepetitionPattern.Loose>
+	input: I & RefuseUndeclared<I, T.TokenRepetitionPattern.Loose>
 ): ReturnType<typeof F.buildTokenRepetitionPattern>;
 export function coerceToTokenRepetitionPattern(
 	input: T.TokenRepetitionPattern.Loose
@@ -2745,7 +2745,7 @@ export function resolveTokenRepetition_operator(
 }
 
 export function coerceToTokenRepetition<const I extends T.TokenRepetition.Loose>(
-	input: I & RefuseUntyped<I, T.TokenRepetition.Loose>
+	input: I & RefuseUndeclared<I, T.TokenRepetition.Loose>
 ): ReturnType<typeof F.buildTokenRepetition>;
 export function coerceToTokenRepetition(input: T.TokenRepetition.Loose): ReturnType<typeof F.buildTokenRepetition> {
 	if (!_isLooseConfig<T.TokenRepetition.LooseConfig>(input))
@@ -3017,7 +3017,7 @@ export function resolveNonSpecialToken_content(
 }
 
 export function coerceToNonSpecialToken<const I extends T.NonSpecialToken.Loose>(
-	input: I & RefuseUntyped<I, T.NonSpecialToken.Loose>
+	input: I & RefuseUndeclared<I, T.NonSpecialToken.Loose>
 ): ReturnType<typeof F.buildNonSpecialToken>;
 export function coerceToNonSpecialToken(input: T.NonSpecialToken.Loose): ReturnType<typeof F.buildNonSpecialToken> {
 	if (isNodeOfKind(input, TSKindId.NonSpecialToken))
@@ -3293,7 +3293,7 @@ export function resolveAttributeItem_attribute(
 }
 
 export function coerceToAttributeItem<const I extends T.AttributeItem.Loose>(
-	input: I & RefuseUntyped<I, T.AttributeItem.Loose>
+	input: I & RefuseUndeclared<I, T.AttributeItem.Loose>
 ): ReturnType<typeof F.buildAttributeItem>;
 export function coerceToAttributeItem(input: T.AttributeItem.Loose): ReturnType<typeof F.buildAttributeItem> {
 	if (isNodeOfKind(input, TSKindId.AttributeItem)) return input as unknown as ReturnType<typeof F.buildAttributeItem>;
@@ -3312,7 +3312,7 @@ export function resolveInnerAttributeItem_attribute(
 }
 
 export function coerceToInnerAttributeItem<const I extends T.InnerAttributeItem.Loose>(
-	input: I & RefuseUntyped<I, T.InnerAttributeItem.Loose>
+	input: I & RefuseUndeclared<I, T.InnerAttributeItem.Loose>
 ): ReturnType<typeof F.buildInnerAttributeItem>;
 export function coerceToInnerAttributeItem(
 	input: T.InnerAttributeItem.Loose
@@ -3346,7 +3346,7 @@ export function resolveAttribute_input(value: T.Attribute.LooseConfig['input']):
 }
 
 export function coerceToAttribute<const I extends T.Attribute.Loose>(
-	input: I & RefuseUntyped<I, T.Attribute.Loose>
+	input: I & RefuseUndeclared<I, T.Attribute.Loose>
 ): ReturnType<typeof F.buildAttribute>;
 export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F.buildAttribute> {
 	if (!_isLooseConfig<T.Attribute.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
@@ -3358,7 +3358,7 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 
 export function coerceToDeclarationList(): T.EmptyDeclarationList;
 export function coerceToDeclarationList<const A extends T.DeclarationList.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.DeclarationList.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.DeclarationList.LooseArgs>
 ): ReturnType<typeof F.buildDeclarationList>;
 export function coerceToDeclarationList(
 	...input: T.DeclarationList.LooseArgs
@@ -3417,7 +3417,7 @@ export function resolveUnionItem_body(value: T.UnionItem.LooseConfig['body']): A
 }
 
 export function coerceToUnionItem<const I extends T.UnionItem.Loose>(
-	input: I & RefuseUntyped<I, T.UnionItem.Loose>
+	input: I & RefuseUndeclared<I, T.UnionItem.Loose>
 ): ReturnType<typeof F.buildUnionItem>;
 export function coerceToUnionItem(input: T.UnionItem.Loose): ReturnType<typeof F.buildUnionItem> {
 	if (!_isLooseConfig<T.UnionItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildUnionItem>;
@@ -3457,7 +3457,7 @@ export function resolveEnumItem_body(value: T.EnumItem.LooseConfig['body']): Adm
 }
 
 export function coerceToEnumItem<const I extends T.EnumItem.Loose>(
-	input: I & RefuseUntyped<I, T.EnumItem.Loose>
+	input: I & RefuseUndeclared<I, T.EnumItem.Loose>
 ): ReturnType<typeof F.buildEnumItem>;
 export function coerceToEnumItem(input: T.EnumItem.Loose): ReturnType<typeof F.buildEnumItem> {
 	if (!_isLooseConfig<T.EnumItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildEnumItem>;
@@ -3478,10 +3478,10 @@ export function resolveEnumVariantList_elements(
 
 export function coerceToEnumVariantList(): T.EmptyEnumVariantList;
 export function coerceToEnumVariantList<const A extends T.EnumVariantListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.EnumVariantListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
 ): ReturnType<typeof F.buildEnumVariantList>;
 export function coerceToEnumVariantList<const I extends T.EnumVariantList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.EnumVariantList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.EnumVariantList.Loose>
 ): ReturnType<typeof F.buildEnumVariantList>;
 export function coerceToEnumVariantList(...args: unknown[]): ReturnType<typeof F.buildEnumVariantList> {
 	if (args.length > 1)
@@ -3528,7 +3528,7 @@ export function resolveEnumVariant_value(value: T.EnumVariant.LooseConfig['value
 }
 
 export function coerceToEnumVariant<const I extends T.EnumVariant.Loose>(
-	input: I & RefuseUntyped<I, T.EnumVariant.Loose>
+	input: I & RefuseUndeclared<I, T.EnumVariant.Loose>
 ): ReturnType<typeof F.buildEnumVariant>;
 export function coerceToEnumVariant(input: T.EnumVariant.Loose): ReturnType<typeof F.buildEnumVariant> {
 	if (!_isLooseConfig<T.EnumVariant.LooseConfig>(input))
@@ -3549,10 +3549,10 @@ export function resolveFieldDeclarationList_elements(
 
 export function coerceToFieldDeclarationList(): T.EmptyFieldDeclarationList;
 export function coerceToFieldDeclarationList<const A extends T.FieldDeclarationListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.FieldDeclarationListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.FieldDeclarationListElements.LooseArgs>
 ): ReturnType<typeof F.buildFieldDeclarationList>;
 export function coerceToFieldDeclarationList<const I extends T.FieldDeclarationList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.FieldDeclarationList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.FieldDeclarationList.Loose>
 ): ReturnType<typeof F.buildFieldDeclarationList>;
 export function coerceToFieldDeclarationList(...args: unknown[]): ReturnType<typeof F.buildFieldDeclarationList> {
 	if (args.length > 1)
@@ -3594,7 +3594,7 @@ export function resolveFieldDeclaration_type(
 }
 
 export function coerceToFieldDeclaration<const I extends T.FieldDeclaration.Loose>(
-	input: I & RefuseUntyped<I, T.FieldDeclaration.Loose>
+	input: I & RefuseUndeclared<I, T.FieldDeclaration.Loose>
 ): ReturnType<typeof F.buildFieldDeclaration>;
 export function coerceToFieldDeclaration(input: T.FieldDeclaration.Loose): ReturnType<typeof F.buildFieldDeclaration> {
 	if (!_isLooseConfig<T.FieldDeclaration.LooseConfig>(input))
@@ -3619,10 +3619,10 @@ export function resolveOrderedFieldDeclarationList_attributes(
 
 export function coerceToOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
 export function coerceToOrderedFieldDeclarationList<const A extends T.OrderedFieldDeclarationListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.OrderedFieldDeclarationListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.OrderedFieldDeclarationListElements.LooseArgs>
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 export function coerceToOrderedFieldDeclarationList<const I extends T.OrderedFieldDeclarationList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.OrderedFieldDeclarationList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.OrderedFieldDeclarationList.Loose>
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 export function coerceToOrderedFieldDeclarationList(
 	...args: unknown[]
@@ -3665,7 +3665,7 @@ export function resolveExternCrateDeclaration_alias(
 }
 
 export function coerceToExternCrateDeclaration<const I extends T.ExternCrateDeclaration.Loose>(
-	input: I & RefuseUntyped<I, T.ExternCrateDeclaration.Loose>
+	input: I & RefuseUndeclared<I, T.ExternCrateDeclaration.Loose>
 ): ReturnType<typeof F.buildExternCrateDeclaration>;
 export function coerceToExternCrateDeclaration(
 	input: T.ExternCrateDeclaration.Loose
@@ -3704,7 +3704,7 @@ export function resolveConstItem_value(value: T.ConstItem.LooseConfig['value']):
 }
 
 export function coerceToConstItem<const I extends T.ConstItem.Loose>(
-	input: I & RefuseUntyped<I, T.ConstItem.Loose>
+	input: I & RefuseUndeclared<I, T.ConstItem.Loose>
 ): ReturnType<typeof F.buildConstItem>;
 export function coerceToConstItem(input: T.ConstItem.Loose): ReturnType<typeof F.buildConstItem> {
 	if (!_isLooseConfig<T.ConstItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildConstItem>;
@@ -3749,7 +3749,7 @@ export function resolveStaticItem_value(value: T.StaticItem.LooseConfig['value']
 }
 
 export function coerceToStaticItem<const I extends T.StaticItem.Loose>(
-	input: I & RefuseUntyped<I, T.StaticItem.Loose>
+	input: I & RefuseUndeclared<I, T.StaticItem.Loose>
 ): ReturnType<typeof F.buildStaticItem>;
 export function coerceToStaticItem(input: T.StaticItem.Loose): ReturnType<typeof F.buildStaticItem> {
 	if (!_isLooseConfig<T.StaticItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildStaticItem>;
@@ -3799,7 +3799,7 @@ export function resolveTypeItem_trailingWhereClause(
 }
 
 export function coerceToTypeItem<const I extends T.TypeItem.Loose>(
-	input: I & RefuseUntyped<I, T.TypeItem.Loose>
+	input: I & RefuseUndeclared<I, T.TypeItem.Loose>
 ): ReturnType<typeof F.buildTypeItem>;
 export function coerceToTypeItem(input: T.TypeItem.Loose): ReturnType<typeof F.buildTypeItem> {
 	if (!_isLooseConfig<T.TypeItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTypeItem>;
@@ -3861,7 +3861,7 @@ export function resolveFunctionItem_body(value: T.FunctionItem.LooseConfig['body
 }
 
 export function coerceToFunctionItem<const I extends T.FunctionItem.Loose>(
-	input: I & RefuseUntyped<I, T.FunctionItem.Loose>
+	input: I & RefuseUndeclared<I, T.FunctionItem.Loose>
 ): ReturnType<typeof F.buildFunctionItem>;
 export function coerceToFunctionItem(input: T.FunctionItem.Loose): ReturnType<typeof F.buildFunctionItem> {
 	if (!_isLooseConfig<T.FunctionItem.LooseConfig>(input))
@@ -3924,7 +3924,7 @@ export function resolveFunctionSignatureItem_whereClause(
 }
 
 export function coerceToFunctionSignatureItem<const I extends T.FunctionSignatureItem.Loose>(
-	input: I & RefuseUntyped<I, T.FunctionSignatureItem.Loose>
+	input: I & RefuseUndeclared<I, T.FunctionSignatureItem.Loose>
 ): ReturnType<typeof F.buildFunctionSignatureItem>;
 export function coerceToFunctionSignatureItem(
 	input: T.FunctionSignatureItem.Loose
@@ -3943,7 +3943,7 @@ export function coerceToFunctionSignatureItem(
 }
 
 export function coerceToFunctionModifiers<const A extends T.FunctionModifiers.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.FunctionModifiers.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.FunctionModifiers.LooseArgs>
 ): ReturnType<typeof F.buildFunctionModifiers>;
 export function coerceToFunctionModifiers(
 	...input: T.FunctionModifiers.LooseArgs
@@ -4028,10 +4028,10 @@ export function resolveWhereClause_wherePredicates(
 }
 
 export function coerceToWhereClause<const A extends T.WherePredicates.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.WherePredicates.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.WherePredicates.LooseArgs>
 ): ReturnType<typeof F.buildWhereClause>;
 export function coerceToWhereClause<const I extends T.WhereClause.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.WhereClause.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.WhereClause.Loose>
 ): ReturnType<typeof F.buildWhereClause>;
 export function coerceToWhereClause(...args: unknown[]): ReturnType<typeof F.buildWhereClause> {
 	if (args.length > 1)
@@ -4135,7 +4135,7 @@ export function resolveWherePredicate_bounds(
 }
 
 export function coerceToWherePredicate<const I extends T.WherePredicate.Loose>(
-	input: I & RefuseUntyped<I, T.WherePredicate.Loose>
+	input: I & RefuseUndeclared<I, T.WherePredicate.Loose>
 ): ReturnType<typeof F.buildWherePredicate>;
 export function coerceToWherePredicate(input: T.WherePredicate.Loose): ReturnType<typeof F.buildWherePredicate> {
 	if (!_isLooseConfig<T.WherePredicate.LooseConfig>(input))
@@ -4181,7 +4181,7 @@ export function resolveTraitItem_body(value: T.TraitItem.LooseConfig['body']): A
 }
 
 export function coerceToTraitItem<const I extends T.TraitItem.Loose>(
-	input: I & RefuseUntyped<I, T.TraitItem.Loose>
+	input: I & RefuseUndeclared<I, T.TraitItem.Loose>
 ): ReturnType<typeof F.buildTraitItem>;
 export function coerceToTraitItem(input: T.TraitItem.Loose): ReturnType<typeof F.buildTraitItem> {
 	if (!_isLooseConfig<T.TraitItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTraitItem>;
@@ -4221,7 +4221,7 @@ export function resolveAssociatedType_whereClause(
 }
 
 export function coerceToAssociatedType<const I extends T.AssociatedType.Loose>(
-	input: I & RefuseUntyped<I, T.AssociatedType.Loose>
+	input: I & RefuseUndeclared<I, T.AssociatedType.Loose>
 ): ReturnType<typeof F.buildAssociatedType>;
 export function coerceToAssociatedType(input: T.AssociatedType.Loose): ReturnType<typeof F.buildAssociatedType> {
 	if (!_isLooseConfig<T.AssociatedType.LooseConfig>(input))
@@ -4235,7 +4235,7 @@ export function coerceToAssociatedType(input: T.AssociatedType.Loose): ReturnTyp
 }
 
 export function coerceToTraitBounds<const A extends T.TraitBounds.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TraitBounds.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TraitBounds.LooseArgs>
 ): ReturnType<typeof F.buildTraitBounds>;
 export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnType<typeof F.buildTraitBounds> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds)) {
@@ -4283,7 +4283,7 @@ export function resolveHigherRankedTraitBound_type(
 }
 
 export function coerceToHigherRankedTraitBound<const I extends T.HigherRankedTraitBound.Loose>(
-	input: I & RefuseUntyped<I, T.HigherRankedTraitBound.Loose>
+	input: I & RefuseUndeclared<I, T.HigherRankedTraitBound.Loose>
 ): ReturnType<typeof F.buildHigherRankedTraitBound>;
 export function coerceToHigherRankedTraitBound(
 	input: T.HigherRankedTraitBound.Loose
@@ -4306,7 +4306,7 @@ export function resolveRemovedTraitBound_type(
 }
 
 export function coerceToRemovedTraitBound<const I extends T.RemovedTraitBound.Loose>(
-	input: I & RefuseUntyped<I, T.RemovedTraitBound.Loose>
+	input: I & RefuseUndeclared<I, T.RemovedTraitBound.Loose>
 ): ReturnType<typeof F.buildRemovedTraitBound>;
 export function coerceToRemovedTraitBound(
 	input: T.RemovedTraitBound.Loose
@@ -4334,10 +4334,10 @@ export function resolveTypeParameters_elements(
 }
 
 export function coerceToTypeParameters<const A extends T.TypeParametersElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TypeParametersElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
 ): ReturnType<typeof F.buildTypeParameters>;
 export function coerceToTypeParameters<const I extends T.TypeParameters.Loose>(
-	input: I & RefuseUntyped<I, T.TypeParameters.Loose>
+	input: I & RefuseUndeclared<I, T.TypeParameters.Loose>
 ): ReturnType<typeof F.buildTypeParameters>;
 export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.buildTypeParameters> {
 	if (args.length > 1)
@@ -4381,7 +4381,7 @@ export function resolveConstParameter_value(
 }
 
 export function coerceToConstParameter<const I extends T.ConstParameter.Loose>(
-	input: I & RefuseUntyped<I, T.ConstParameter.Loose>
+	input: I & RefuseUndeclared<I, T.ConstParameter.Loose>
 ): ReturnType<typeof F.buildConstParameter>;
 export function coerceToConstParameter(input: T.ConstParameter.Loose): ReturnType<typeof F.buildConstParameter> {
 	if (!_isLooseConfig<T.ConstParameter.LooseConfig>(input))
@@ -4413,7 +4413,7 @@ export function resolveTypeParameter_defaultType(
 }
 
 export function coerceToTypeParameter<const I extends T.TypeParameter.Loose>(
-	input: I & RefuseUntyped<I, T.TypeParameter.Loose>
+	input: I & RefuseUndeclared<I, T.TypeParameter.Loose>
 ): ReturnType<typeof F.buildTypeParameter>;
 export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {
 	if (!_isLooseConfig<T.TypeParameter.LooseConfig>(input))
@@ -4438,7 +4438,7 @@ export function resolveLifetimeParameter_bounds(
 }
 
 export function coerceToLifetimeParameter<const I extends T.LifetimeParameter.Loose>(
-	input: I & RefuseUntyped<I, T.LifetimeParameter.Loose>
+	input: I & RefuseUndeclared<I, T.LifetimeParameter.Loose>
 ): ReturnType<typeof F.buildLifetimeParameter>;
 export function coerceToLifetimeParameter(
 	input: T.LifetimeParameter.Loose
@@ -4491,7 +4491,7 @@ export function resolveLetDeclaration_alternative(
 }
 
 export function coerceToLetDeclaration<const I extends T.LetDeclaration.Loose>(
-	input: I & RefuseUntyped<I, T.LetDeclaration.Loose>
+	input: I & RefuseUndeclared<I, T.LetDeclaration.Loose>
 ): ReturnType<typeof F.buildLetDeclaration>;
 export function coerceToLetDeclaration(input: T.LetDeclaration.Loose): ReturnType<typeof F.buildLetDeclaration> {
 	if (!_isLooseConfig<T.LetDeclaration.LooseConfig>(input))
@@ -4539,7 +4539,7 @@ export function resolveUseDeclaration_argument(
 }
 
 export function coerceToUseDeclaration<const I extends T.UseDeclaration.Loose>(
-	input: I & RefuseUntyped<I, T.UseDeclaration.Loose>
+	input: I & RefuseUndeclared<I, T.UseDeclaration.Loose>
 ): ReturnType<typeof F.buildUseDeclaration>;
 export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnType<typeof F.buildUseDeclaration> {
 	if (!_isLooseConfig<T.UseDeclaration.LooseConfig>(input))
@@ -4571,7 +4571,7 @@ export function resolveScopedUseList_list(
 }
 
 export function coerceToScopedUseList<const I extends T.ScopedUseList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ScopedUseList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ScopedUseList.Loose>
 ): ReturnType<typeof F.buildScopedUseList>;
 export function coerceToScopedUseList(input?: T.ScopedUseList.Loose): ReturnType<typeof F.buildScopedUseList> {
 	if (!_isLooseConfig<T.ScopedUseList.LooseConfig | undefined>(input))
@@ -4590,10 +4590,10 @@ export function resolveUseList_useClauses(
 
 export function coerceToUseList(): T.EmptyUseList;
 export function coerceToUseList<const A extends T.UseClauses.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.UseClauses.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.UseClauses.LooseArgs>
 ): ReturnType<typeof F.buildUseList>;
 export function coerceToUseList<const I extends T.UseList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.UseList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.UseList.Loose>
 ): ReturnType<typeof F.buildUseList>;
 export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUseList> {
 	if (args.length > 1) return F.buildUseList(coerceToUseClauses(...(args as Parameters<typeof coerceToUseClauses>)));
@@ -4627,7 +4627,7 @@ export function resolveUseAsClause_alias(value: T.UseAsClause.LooseConfig['alias
 }
 
 export function coerceToUseAsClause<const I extends T.UseAsClause.Loose>(
-	input: I & RefuseUntyped<I, T.UseAsClause.Loose>
+	input: I & RefuseUndeclared<I, T.UseAsClause.Loose>
 ): ReturnType<typeof F.buildUseAsClause>;
 export function coerceToUseAsClause(input: T.UseAsClause.Loose): ReturnType<typeof F.buildUseAsClause> {
 	if (!_isLooseConfig<T.UseAsClause.LooseConfig>(input))
@@ -4645,7 +4645,7 @@ export function resolveUseWildcard_useWildcardGroup(
 }
 
 export function coerceToUseWildcard<const I extends T.UseWildcard.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.UseWildcard.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.UseWildcard.Loose>
 ): ReturnType<typeof F.buildUseWildcard>;
 export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typeof F.buildUseWildcard> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.UseWildcard))
@@ -4668,10 +4668,10 @@ export function resolveParameters_elements(
 
 export function coerceToParameters(): T.EmptyParameters;
 export function coerceToParameters<const A extends T.ParametersElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.ParametersElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
 ): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters<const I extends T.Parameters.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.Parameters.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.Parameters.Loose>
 ): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(...args: unknown[]): ReturnType<typeof F.buildParameters> {
 	if (args.length > 1)
@@ -4708,7 +4708,7 @@ export function resolveSelfParameter_mutable(
 }
 
 export function coerceToSelfParameter<const I extends T.SelfParameter.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.SelfParameter.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.SelfParameter.Loose>
 ): ReturnType<typeof F.buildSelfParameter>;
 export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType<typeof F.buildSelfParameter> {
 	if (!_isLooseConfig<T.SelfParameter.LooseConfig | undefined>(input))
@@ -4736,7 +4736,7 @@ export function resolveVariadicParameter_pattern(
 }
 
 export function coerceToVariadicParameter<const I extends T.VariadicParameter.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.VariadicParameter.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.VariadicParameter.Loose>
 ): ReturnType<typeof F.buildVariadicParameter>;
 export function coerceToVariadicParameter(
 	input?: T.VariadicParameter.Loose
@@ -4770,7 +4770,7 @@ export function resolveParameter_type(value: T.Parameter.LooseConfig['type']): A
 }
 
 export function coerceToParameter<const I extends T.Parameter.Loose>(
-	input: I & RefuseUntyped<I, T.Parameter.Loose>
+	input: I & RefuseUndeclared<I, T.Parameter.Loose>
 ): ReturnType<typeof F.buildParameter>;
 export function coerceToParameter(input: T.Parameter.Loose): ReturnType<typeof F.buildParameter> {
 	if (!_isLooseConfig<T.Parameter.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildParameter>;
@@ -4786,7 +4786,7 @@ export function resolveExternModifier_abi(value: T.ExternModifier.LooseConfig['a
 }
 
 export function coerceToExternModifier<const I extends T.ExternModifier.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ExternModifier.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ExternModifier.Loose>
 ): ReturnType<typeof F.buildExternModifier>;
 export function coerceToExternModifier(input?: T.ExternModifier.Loose): ReturnType<typeof F.buildExternModifier> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ExternModifier))
@@ -4813,7 +4813,7 @@ export function resolveVisibilityModifier_content(
 }
 
 export function coerceToVisibilityModifier<const I extends T.VisibilityModifier.Loose>(
-	input: I & RefuseUntyped<I, T.VisibilityModifier.Loose>
+	input: I & RefuseUndeclared<I, T.VisibilityModifier.Loose>
 ): ReturnType<typeof F.buildVisibilityModifier>;
 export function coerceToVisibilityModifier(
 	input: T.VisibilityModifier.Loose
@@ -4849,7 +4849,7 @@ export function resolveBracketedType_type(value: T.BracketedType.LooseConfig['ty
 }
 
 export function coerceToBracketedType<const I extends T.BracketedType.Loose>(
-	input: I & RefuseUntyped<I, T.BracketedType.Loose>
+	input: I & RefuseUndeclared<I, T.BracketedType.Loose>
 ): ReturnType<typeof F.buildBracketedType>;
 export function coerceToBracketedType(input: T.BracketedType.Loose): ReturnType<typeof F.buildBracketedType> {
 	if (isNodeOfKind(input, TSKindId.BracketedType)) return input as unknown as ReturnType<typeof F.buildBracketedType>;
@@ -4886,7 +4886,7 @@ export function resolveQualifiedType_alias(
 }
 
 export function coerceToQualifiedType<const I extends T.QualifiedType.Loose>(
-	input: I & RefuseUntyped<I, T.QualifiedType.Loose>
+	input: I & RefuseUndeclared<I, T.QualifiedType.Loose>
 ): ReturnType<typeof F.buildQualifiedType>;
 export function coerceToQualifiedType(input: T.QualifiedType.Loose): ReturnType<typeof F.buildQualifiedType> {
 	if (!_isLooseConfig<T.QualifiedType.LooseConfig>(input))
@@ -4902,7 +4902,7 @@ export function resolveLifetime_name(value: T.Lifetime.LooseConfig['name']): Adm
 }
 
 export function coerceToLifetime<const I extends T.Lifetime.Loose>(
-	input: I & RefuseUntyped<I, T.Lifetime.Loose>
+	input: I & RefuseUndeclared<I, T.Lifetime.Loose>
 ): ReturnType<typeof F.buildLifetime>;
 export function coerceToLifetime(input: T.Lifetime.Loose): ReturnType<typeof F.buildLifetime> {
 	if (isNodeOfKind(input, TSKindId.Lifetime)) return input as unknown as ReturnType<typeof F.buildLifetime>;
@@ -4929,7 +4929,7 @@ export function resolveArrayType_length(value: T.ArrayType.LooseConfig['length']
 }
 
 export function coerceToArrayType<const I extends T.ArrayType.Loose>(
-	input: I & RefuseUntyped<I, T.ArrayType.Loose>
+	input: I & RefuseUndeclared<I, T.ArrayType.Loose>
 ): ReturnType<typeof F.buildArrayType>;
 export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
 	if (!_isLooseConfig<T.ArrayType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildArrayType>;
@@ -4946,10 +4946,10 @@ export function resolveForLifetimes_lifetimes(
 }
 
 export function coerceToForLifetimes<const A extends T.Lifetimes.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Lifetimes.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Lifetimes.LooseArgs>
 ): ReturnType<typeof F.buildForLifetimes>;
 export function coerceToForLifetimes<const I extends T.ForLifetimes.Loose>(
-	input: I & RefuseUntyped<I, T.ForLifetimes.Loose>
+	input: I & RefuseUndeclared<I, T.ForLifetimes.Loose>
 ): ReturnType<typeof F.buildForLifetimes>;
 export function coerceToForLifetimes(...args: unknown[]): ReturnType<typeof F.buildForLifetimes> {
 	if (args.length > 1) return F.buildForLifetimes(coerceToLifetimes(...(args as Parameters<typeof coerceToLifetimes>)));
@@ -4991,7 +4991,7 @@ export function resolveFunctionType_returnType(
 }
 
 export function coerceToFunctionType<const I extends T.FunctionType.Loose>(
-	input: I & RefuseUntyped<I, T.FunctionType.Loose>
+	input: I & RefuseUndeclared<I, T.FunctionType.Loose>
 ): ReturnType<typeof F.buildFunctionType>;
 export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<typeof F.buildFunctionType> {
 	if (!_isLooseConfig<T.FunctionType.LooseConfig>(input))
@@ -5009,10 +5009,10 @@ export function resolveTupleType_types(value: T.TupleType.LooseConfig['types']):
 }
 
 export function coerceToTupleType<const A extends T.Types.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Types.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
 ): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType<const I extends T.TupleType.Loose>(
-	input: I & RefuseUntyped<I, T.TupleType.Loose>
+	input: I & RefuseUndeclared<I, T.TupleType.Loose>
 ): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
 	if (args.length > 1) return F.buildTupleType(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
@@ -5042,7 +5042,7 @@ export function resolveGenericFunction_typeArguments(
 }
 
 export function coerceToGenericFunction<const I extends T.GenericFunction.Loose>(
-	input: I & RefuseUntyped<I, T.GenericFunction.Loose>
+	input: I & RefuseUndeclared<I, T.GenericFunction.Loose>
 ): ReturnType<typeof F.buildGenericFunction>;
 export function coerceToGenericFunction(input: T.GenericFunction.Loose): ReturnType<typeof F.buildGenericFunction> {
 	if (!_isLooseConfig<T.GenericFunction.LooseConfig>(input))
@@ -5064,7 +5064,7 @@ export function resolveGenericType_typeArguments(
 }
 
 export function coerceToGenericType<const I extends T.GenericType.Loose>(
-	input: I & RefuseUntyped<I, T.GenericType.Loose>
+	input: I & RefuseUndeclared<I, T.GenericType.Loose>
 ): ReturnType<typeof F.buildGenericType>;
 export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<typeof F.buildGenericType> {
 	if (!_isLooseConfig<T.GenericType.LooseConfig>(input))
@@ -5088,7 +5088,7 @@ export function resolveGenericTypeWithTurbofish_typeArguments(
 }
 
 export function coerceToGenericTypeWithTurbofish<const I extends T.GenericTypeWithTurbofish.Loose>(
-	input: I & RefuseUntyped<I, T.GenericTypeWithTurbofish.Loose>
+	input: I & RefuseUndeclared<I, T.GenericTypeWithTurbofish.Loose>
 ): ReturnType<typeof F.buildGenericTypeWithTurbofish>;
 export function coerceToGenericTypeWithTurbofish(
 	input: T.GenericTypeWithTurbofish.Loose
@@ -5116,7 +5116,7 @@ export function resolveBoundedType_right(value: T.BoundedType.LooseConfig['right
 }
 
 export function coerceToBoundedType<const I extends T.BoundedType.Loose>(
-	input: I & RefuseUntyped<I, T.BoundedType.Loose>
+	input: I & RefuseUndeclared<I, T.BoundedType.Loose>
 ): ReturnType<typeof F.buildBoundedType>;
 export function coerceToBoundedType(input: T.BoundedType.Loose): ReturnType<typeof F.buildBoundedType> {
 	if (!_isLooseConfig<T.BoundedType.LooseConfig>(input))
@@ -5133,10 +5133,10 @@ export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']
 
 export function coerceToUseBounds(): T.EmptyUseBounds;
 export function coerceToUseBounds<const A extends T.UseBoundsElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.UseBoundsElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.UseBoundsElements.LooseArgs>
 ): ReturnType<typeof F.buildUseBounds>;
 export function coerceToUseBounds<const I extends T.UseBounds.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.UseBounds.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.UseBounds.Loose>
 ): ReturnType<typeof F.buildUseBounds>;
 export function coerceToUseBounds(...args: unknown[]): ReturnType<typeof F.buildUseBounds> {
 	if (args.length > 1)
@@ -5161,10 +5161,10 @@ export function resolveTypeArguments_elements(
 }
 
 export function coerceToTypeArguments<const A extends T.TypeArgumentsElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TypeArgumentsElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
 ): ReturnType<typeof F.buildTypeArguments>;
 export function coerceToTypeArguments<const I extends T.TypeArguments.Loose>(
-	input: I & RefuseUntyped<I, T.TypeArguments.Loose>
+	input: I & RefuseUndeclared<I, T.TypeArguments.Loose>
 ): ReturnType<typeof F.buildTypeArguments>;
 export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
 	if (args.length > 1)
@@ -5199,7 +5199,7 @@ export function resolveTypeBinding_type(value: T.TypeBinding.LooseConfig['type']
 }
 
 export function coerceToTypeBinding<const I extends T.TypeBinding.Loose>(
-	input: I & RefuseUntyped<I, T.TypeBinding.Loose>
+	input: I & RefuseUndeclared<I, T.TypeBinding.Loose>
 ): ReturnType<typeof F.buildTypeBinding>;
 export function coerceToTypeBinding(input: T.TypeBinding.Loose): ReturnType<typeof F.buildTypeBinding> {
 	if (!_isLooseConfig<T.TypeBinding.LooseConfig>(input))
@@ -5231,7 +5231,7 @@ export function resolveReferenceType_type(value: T.ReferenceType.LooseConfig['ty
 }
 
 export function coerceToReferenceType<const I extends T.ReferenceType.Loose>(
-	input: I & RefuseUntyped<I, T.ReferenceType.Loose>
+	input: I & RefuseUndeclared<I, T.ReferenceType.Loose>
 ): ReturnType<typeof F.buildReferenceType>;
 export function coerceToReferenceType(input: T.ReferenceType.Loose): ReturnType<typeof F.buildReferenceType> {
 	if (!_isLooseConfig<T.ReferenceType.LooseConfig>(input))
@@ -5266,7 +5266,7 @@ export function resolveAbstractType_trait(value: T.AbstractType.LooseConfig['tra
 }
 
 export function coerceToAbstractType<const I extends T.AbstractType.Loose>(
-	input: I & RefuseUntyped<I, T.AbstractType.Loose>
+	input: I & RefuseUndeclared<I, T.AbstractType.Loose>
 ): ReturnType<typeof F.buildAbstractType>;
 export function coerceToAbstractType(input: T.AbstractType.Loose): ReturnType<typeof F.buildAbstractType> {
 	if (!_isLooseConfig<T.AbstractType.LooseConfig>(input))
@@ -5284,7 +5284,7 @@ export function resolveDynamicType_trait(value: T.DynamicType.LooseConfig['trait
 }
 
 export function coerceToDynamicType<const I extends T.DynamicType.Loose>(
-	input: I & RefuseUntyped<I, T.DynamicType.Loose>
+	input: I & RefuseUndeclared<I, T.DynamicType.Loose>
 ): ReturnType<typeof F.buildDynamicType>;
 export function coerceToDynamicType(input: T.DynamicType.Loose): ReturnType<typeof F.buildDynamicType> {
 	if (isNodeOfKind(input, TSKindId.DynamicType)) return input as unknown as ReturnType<typeof F.buildDynamicType>;
@@ -5321,7 +5321,7 @@ export function resolveMacroInvocation_arguments(
 }
 
 export function coerceToMacroInvocation<const I extends T.MacroInvocation.Loose>(
-	input: I & RefuseUntyped<I, T.MacroInvocation.Loose>
+	input: I & RefuseUndeclared<I, T.MacroInvocation.Loose>
 ): ReturnType<typeof F.buildMacroInvocation>;
 export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnType<typeof F.buildMacroInvocation> {
 	if (!_isLooseConfig<T.MacroInvocation.LooseConfig>(input))
@@ -5369,7 +5369,7 @@ export function resolveScopedIdentifier_name(
 }
 
 export function coerceToScopedIdentifier<const I extends T.ScopedIdentifier.Loose>(
-	input: I & RefuseUntyped<I, T.ScopedIdentifier.Loose>
+	input: I & RefuseUndeclared<I, T.ScopedIdentifier.Loose>
 ): ReturnType<typeof F.buildScopedIdentifier>;
 export function coerceToScopedIdentifier(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.buildScopedIdentifier> {
 	if (!_isLooseConfig<T.ScopedIdentifier.LooseConfig>(input))
@@ -5407,7 +5407,7 @@ export function resolveScopedTypeIdentifierInExpressionPosition_name(
 export function coerceToScopedTypeIdentifierInExpressionPosition<
 	const I extends T.ScopedTypeIdentifierInExpressionPosition.Loose
 >(
-	input: I & RefuseUntyped<I, T.ScopedTypeIdentifierInExpressionPosition.Loose>
+	input: I & RefuseUndeclared<I, T.ScopedTypeIdentifierInExpressionPosition.Loose>
 ): ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
 export function coerceToScopedTypeIdentifierInExpressionPosition(
 	input: T.ScopedTypeIdentifierInExpressionPosition.Loose
@@ -5453,7 +5453,7 @@ export function resolveScopedTypeIdentifier_name(
 }
 
 export function coerceToScopedTypeIdentifier<const I extends T.ScopedTypeIdentifier.Loose>(
-	input: I & RefuseUntyped<I, T.ScopedTypeIdentifier.Loose>
+	input: I & RefuseUndeclared<I, T.ScopedTypeIdentifier.Loose>
 ): ReturnType<typeof F.buildScopedTypeIdentifier>;
 export function coerceToScopedTypeIdentifier(
 	input: T.ScopedTypeIdentifier.Loose
@@ -5485,7 +5485,7 @@ export function resolveUnaryExpression_operand(
 }
 
 export function coerceToUnaryExpression<const I extends T.UnaryExpression.Loose>(
-	input: I & RefuseUntyped<I, T.UnaryExpression.Loose>
+	input: I & RefuseUndeclared<I, T.UnaryExpression.Loose>
 ): ReturnType<typeof F.buildUnaryExpression>;
 export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
 	if (!_isLooseConfig<T.UnaryExpression.LooseConfig>(input))
@@ -5506,7 +5506,7 @@ export function resolveTryExpression_value(
 }
 
 export function coerceToTryExpression<const I extends T.TryExpression.Loose>(
-	input: I & RefuseUntyped<I, T.TryExpression.Loose>
+	input: I & RefuseUndeclared<I, T.TryExpression.Loose>
 ): ReturnType<typeof F.buildTryExpression>;
 export function coerceToTryExpression(input: T.TryExpression.Loose): ReturnType<typeof F.buildTryExpression> {
 	return F.buildTryExpression(
@@ -5593,7 +5593,7 @@ export function resolveBinaryExpression_right(
 }
 
 export function coerceToBinaryExpression<const I extends T.BinaryExpression.Loose>(
-	input: I & RefuseUntyped<I, T.BinaryExpression.Loose>
+	input: I & RefuseUndeclared<I, T.BinaryExpression.Loose>
 ): ReturnType<typeof F.buildBinaryExpression>;
 export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
 	if (!_isLooseConfig<T.BinaryExpression.LooseConfig>(input))
@@ -5624,7 +5624,7 @@ export function resolveAssignmentExpression_right(
 }
 
 export function coerceToAssignmentExpression<const I extends T.AssignmentExpression.Loose>(
-	input: I & RefuseUntyped<I, T.AssignmentExpression.Loose>
+	input: I & RefuseUndeclared<I, T.AssignmentExpression.Loose>
 ): ReturnType<typeof F.buildAssignmentExpression>;
 export function coerceToAssignmentExpression(
 	input: T.AssignmentExpression.Loose
@@ -5678,7 +5678,7 @@ export function resolveCompoundAssignmentExpr_right(
 }
 
 export function coerceToCompoundAssignmentExpr<const I extends T.CompoundAssignmentExpr.Loose>(
-	input: I & RefuseUntyped<I, T.CompoundAssignmentExpr.Loose>
+	input: I & RefuseUndeclared<I, T.CompoundAssignmentExpr.Loose>
 ): ReturnType<typeof F.buildCompoundAssignmentExpr>;
 export function coerceToCompoundAssignmentExpr(
 	input: T.CompoundAssignmentExpr.Loose
@@ -5711,7 +5711,7 @@ export function resolveTypeCastExpression_type(
 }
 
 export function coerceToTypeCastExpression<const I extends T.TypeCastExpression.Loose>(
-	input: I & RefuseUntyped<I, T.TypeCastExpression.Loose>
+	input: I & RefuseUndeclared<I, T.TypeCastExpression.Loose>
 ): ReturnType<typeof F.buildTypeCastExpression>;
 export function coerceToTypeCastExpression(
 	input: T.TypeCastExpression.Loose
@@ -5734,7 +5734,7 @@ export function resolveReturnExpression_expression(
 }
 
 export function coerceToReturnExpression<const I extends T.ReturnExpression.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ReturnExpression.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ReturnExpression.Loose>
 ): ReturnType<typeof F.buildReturnExpression>;
 export function coerceToReturnExpression(input?: T.ReturnExpression.Loose): ReturnType<typeof F.buildReturnExpression> {
 	return F.buildReturnExpression(
@@ -5763,7 +5763,7 @@ export function resolveYieldExpression_expression(
 }
 
 export function coerceToYieldExpression<const I extends T.YieldExpression.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.YieldExpression.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.YieldExpression.Loose>
 ): ReturnType<typeof F.buildYieldExpression>;
 export function coerceToYieldExpression(input?: T.YieldExpression.Loose): ReturnType<typeof F.buildYieldExpression> {
 	return F.buildYieldExpression(
@@ -5842,7 +5842,7 @@ export function resolveCallExpression_arguments(
 }
 
 export function coerceToCallExpression<const I extends T.CallExpression.Loose>(
-	input: I & RefuseUntyped<I, T.CallExpression.Loose>
+	input: I & RefuseUndeclared<I, T.CallExpression.Loose>
 ): ReturnType<typeof F.buildCallExpression>;
 export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnType<typeof F.buildCallExpression> {
 	if (!_isLooseConfig<T.CallExpression.LooseConfig>(input))
@@ -5859,10 +5859,10 @@ export function resolveArguments_elements(value: T.Arguments.LooseConfig['elemen
 
 export function coerceToArguments(): T.EmptyArguments;
 export function coerceToArguments<const A extends T.ArgumentsElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.ArgumentsElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
 ): ReturnType<typeof F.buildArguments>;
 export function coerceToArguments<const I extends T.Arguments.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.Arguments.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.Arguments.Loose>
 ): ReturnType<typeof F.buildArguments>;
 export function coerceToArguments(...args: unknown[]): ReturnType<typeof F.buildArguments> {
 	if (args.length > 1)
@@ -5890,7 +5890,7 @@ export function resolveParenthesizedExpression_expression(
 }
 
 export function coerceToParenthesizedExpression<const I extends T.ParenthesizedExpression.Loose>(
-	input: I & RefuseUntyped<I, T.ParenthesizedExpression.Loose>
+	input: I & RefuseUndeclared<I, T.ParenthesizedExpression.Loose>
 ): ReturnType<typeof F.buildParenthesizedExpression>;
 export function coerceToParenthesizedExpression(
 	input: T.ParenthesizedExpression.Loose
@@ -5924,7 +5924,7 @@ export function resolveTupleExpression_expressions(
 }
 
 export function coerceToTupleExpression<const I extends T.TupleExpression.Loose>(
-	input: I & RefuseUntyped<I, T.TupleExpression.Loose>
+	input: I & RefuseUndeclared<I, T.TupleExpression.Loose>
 ): ReturnType<typeof F.buildTupleExpression>;
 export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
 	if (!_isLooseConfig<T.TupleExpression.LooseConfig>(input))
@@ -5956,7 +5956,7 @@ export function resolveStructExpression_body(
 }
 
 export function coerceToStructExpression<const I extends T.StructExpression.Loose>(
-	input: I & RefuseUntyped<I, T.StructExpression.Loose>
+	input: I & RefuseUndeclared<I, T.StructExpression.Loose>
 ): ReturnType<typeof F.buildStructExpression>;
 export function coerceToStructExpression(input: T.StructExpression.Loose): ReturnType<typeof F.buildStructExpression> {
 	if (!_isLooseConfig<T.StructExpression.LooseConfig>(input))
@@ -5975,10 +5975,10 @@ export function resolveFieldInitializerList_initializers(
 
 export function coerceToFieldInitializerList(): T.EmptyFieldInitializerList;
 export function coerceToFieldInitializerList<const A extends T.FieldInitializerListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.FieldInitializerListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.FieldInitializerListElements.LooseArgs>
 ): ReturnType<typeof F.buildFieldInitializerList>;
 export function coerceToFieldInitializerList<const I extends T.FieldInitializerList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.FieldInitializerList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.FieldInitializerList.Loose>
 ): ReturnType<typeof F.buildFieldInitializerList>;
 export function coerceToFieldInitializerList(...args: unknown[]): ReturnType<typeof F.buildFieldInitializerList> {
 	if (args.length > 1)
@@ -6011,7 +6011,7 @@ export function resolveShorthandFieldInitializer_name(
 }
 
 export function coerceToShorthandFieldInitializer<const I extends T.ShorthandFieldInitializer.Loose>(
-	input: I & RefuseUntyped<I, T.ShorthandFieldInitializer.Loose>
+	input: I & RefuseUndeclared<I, T.ShorthandFieldInitializer.Loose>
 ): ReturnType<typeof F.buildShorthandFieldInitializer>;
 export function coerceToShorthandFieldInitializer(
 	input: T.ShorthandFieldInitializer.Loose
@@ -6046,7 +6046,7 @@ export function resolveFieldInitializer_value(
 }
 
 export function coerceToFieldInitializer<const I extends T.FieldInitializer.Loose>(
-	input: I & RefuseUntyped<I, T.FieldInitializer.Loose>
+	input: I & RefuseUndeclared<I, T.FieldInitializer.Loose>
 ): ReturnType<typeof F.buildFieldInitializer>;
 export function coerceToFieldInitializer(input: T.FieldInitializer.Loose): ReturnType<typeof F.buildFieldInitializer> {
 	if (!_isLooseConfig<T.FieldInitializer.LooseConfig>(input))
@@ -6068,7 +6068,7 @@ export function resolveBaseFieldInitializer_value(
 }
 
 export function coerceToBaseFieldInitializer<const I extends T.BaseFieldInitializer.Loose>(
-	input: I & RefuseUntyped<I, T.BaseFieldInitializer.Loose>
+	input: I & RefuseUndeclared<I, T.BaseFieldInitializer.Loose>
 ): ReturnType<typeof F.buildBaseFieldInitializer>;
 export function coerceToBaseFieldInitializer(
 	input: T.BaseFieldInitializer.Loose
@@ -6113,7 +6113,7 @@ export function resolveIfExpression_alternative(
 }
 
 export function coerceToIfExpression<const I extends T.IfExpression.Loose>(
-	input: I & RefuseUntyped<I, T.IfExpression.Loose>
+	input: I & RefuseUndeclared<I, T.IfExpression.Loose>
 ): ReturnType<typeof F.buildIfExpression>;
 export function coerceToIfExpression(input: T.IfExpression.Loose): ReturnType<typeof F.buildIfExpression> {
 	if (!_isLooseConfig<T.IfExpression.LooseConfig>(input))
@@ -6142,7 +6142,7 @@ export function resolveLetCondition_value(value: T.LetCondition.LooseConfig['val
 }
 
 export function coerceToLetCondition<const I extends T.LetCondition.Loose>(
-	input: I & RefuseUntyped<I, T.LetCondition.Loose>
+	input: I & RefuseUndeclared<I, T.LetCondition.Loose>
 ): ReturnType<typeof F.buildLetCondition>;
 export function coerceToLetCondition(input: T.LetCondition.Loose): ReturnType<typeof F.buildLetCondition> {
 	if (!_isLooseConfig<T.LetCondition.LooseConfig>(input))
@@ -6168,7 +6168,7 @@ export function resolveLetChain_rights(value: T.LetChain.LooseConfig['right']): 
 }
 
 export function coerceToLetChain<const I extends T.LetChain.Loose>(
-	input: I & RefuseUntyped<I, T.LetChain.Loose>
+	input: I & RefuseUndeclared<I, T.LetChain.Loose>
 ): ReturnType<typeof F.buildLetChain>;
 export function coerceToLetChain(input: T.LetChain.Loose): ReturnType<typeof F.buildLetChain> {
 	if (!_isLooseConfig<T.LetChain.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildLetChain>;
@@ -6183,7 +6183,7 @@ export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']):
 }
 
 export function coerceToElseClause<const I extends T.ElseClause.Loose>(
-	input: I & RefuseUntyped<I, T.ElseClause.Loose>
+	input: I & RefuseUndeclared<I, T.ElseClause.Loose>
 ): ReturnType<typeof F.buildElseClause>;
 export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
 	if (isNodeOfKind(input, TSKindId.ElseClause)) return input as unknown as ReturnType<typeof F.buildElseClause>;
@@ -6212,7 +6212,7 @@ export function resolveMatchExpression_body(
 }
 
 export function coerceToMatchExpression<const I extends T.MatchExpression.Loose>(
-	input: I & RefuseUntyped<I, T.MatchExpression.Loose>
+	input: I & RefuseUndeclared<I, T.MatchExpression.Loose>
 ): ReturnType<typeof F.buildMatchExpression>;
 export function coerceToMatchExpression(input: T.MatchExpression.Loose): ReturnType<typeof F.buildMatchExpression> {
 	if (!_isLooseConfig<T.MatchExpression.LooseConfig>(input))
@@ -6231,7 +6231,7 @@ export function resolveMatchBlock_matchBlockArms(
 
 export function coerceToMatchBlock(): T.EmptyMatchBlock;
 export function coerceToMatchBlock<const I extends T.MatchBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.MatchBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.MatchBlock.Loose>
 ): ReturnType<typeof F.buildMatchBlock>;
 export function coerceToMatchBlock(input?: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.MatchBlock))
@@ -6266,7 +6266,7 @@ export function resolveLastMatchArm_value(value: T.LastMatchArm.LooseConfig['val
 }
 
 export function coerceToLastMatchArm<const I extends T.LastMatchArm.Loose>(
-	input: I & RefuseUntyped<I, T.LastMatchArm.Loose>,
+	input: I & RefuseUndeclared<I, T.LastMatchArm.Loose>,
 	options?: T.LastMatchArm.Options
 ): ReturnType<typeof F.buildLastMatchArm>;
 export function coerceToLastMatchArm(
@@ -6304,7 +6304,7 @@ export function resolveMatchPattern_condition(
 }
 
 export function coerceToMatchPattern<const I extends T.MatchPattern.Loose>(
-	input: I & RefuseUntyped<I, T.MatchPattern.Loose>
+	input: I & RefuseUndeclared<I, T.MatchPattern.Loose>
 ): ReturnType<typeof F.buildMatchPattern>;
 export function coerceToMatchPattern(input: T.MatchPattern.Loose): ReturnType<typeof F.buildMatchPattern> {
 	if (!_isLooseConfig<T.MatchPattern.LooseConfig>(input))
@@ -6337,7 +6337,7 @@ export function resolveWhileExpression_body(
 }
 
 export function coerceToWhileExpression<const I extends T.WhileExpression.Loose>(
-	input: I & RefuseUntyped<I, T.WhileExpression.Loose>
+	input: I & RefuseUndeclared<I, T.WhileExpression.Loose>
 ): ReturnType<typeof F.buildWhileExpression>;
 export function coerceToWhileExpression(input: T.WhileExpression.Loose): ReturnType<typeof F.buildWhileExpression> {
 	if (!_isLooseConfig<T.WhileExpression.LooseConfig>(input))
@@ -6362,7 +6362,7 @@ export function resolveLoopExpression_body(
 }
 
 export function coerceToLoopExpression<const I extends T.LoopExpression.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.LoopExpression.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.LoopExpression.Loose>
 ): ReturnType<typeof F.buildLoopExpression>;
 export function coerceToLoopExpression(input?: T.LoopExpression.Loose): ReturnType<typeof F.buildLoopExpression> {
 	if (!_isLooseConfig<T.LoopExpression.LooseConfig | undefined>(input))
@@ -6402,7 +6402,7 @@ export function resolveForExpression_body(value: T.ForExpression.LooseConfig['bo
 }
 
 export function coerceToForExpression<const I extends T.ForExpression.Loose>(
-	input: I & RefuseUntyped<I, T.ForExpression.Loose>
+	input: I & RefuseUndeclared<I, T.ForExpression.Loose>
 ): ReturnType<typeof F.buildForExpression>;
 export function coerceToForExpression(input: T.ForExpression.Loose): ReturnType<typeof F.buildForExpression> {
 	if (!_isLooseConfig<T.ForExpression.LooseConfig>(input))
@@ -6422,7 +6422,7 @@ export function resolveConstBlock_body(
 }
 
 export function coerceToConstBlock<const I extends T.ConstBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ConstBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ConstBlock.Loose>
 ): ReturnType<typeof F.buildConstBlock>;
 export function coerceToConstBlock(input?: T.ConstBlock.Loose): ReturnType<typeof F.buildConstBlock> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ConstBlock))
@@ -6437,7 +6437,7 @@ export function coerceToConstBlock(input?: T.ConstBlock.Loose): ReturnType<typeo
 
 export function coerceToClosureParameters(): T.EmptyClosureParameters;
 export function coerceToClosureParameters<const A extends T.ClosureParameters.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.ClosureParameters.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.ClosureParameters.LooseArgs>
 ): ReturnType<typeof F.buildClosureParameters>;
 export function coerceToClosureParameters(
 	...input: T.ClosureParameters.LooseArgs
@@ -6474,7 +6474,7 @@ export function resolveLabel_name(value: T.Label.LooseConfig['name']): Admit<T.L
 }
 
 export function coerceToLabel<const I extends T.Label.Loose>(
-	input: I & RefuseUntyped<I, T.Label.Loose>
+	input: I & RefuseUndeclared<I, T.Label.Loose>
 ): ReturnType<typeof F.buildLabel>;
 export function coerceToLabel(input: T.Label.Loose): ReturnType<typeof F.buildLabel> {
 	if (isNodeOfKind(input, TSKindId.Label)) return input as unknown as ReturnType<typeof F.buildLabel>;
@@ -6502,7 +6502,7 @@ export function resolveBreakExpression_expression(
 }
 
 export function coerceToBreakExpression<const I extends T.BreakExpression.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.BreakExpression.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.BreakExpression.Loose>
 ): ReturnType<typeof F.buildBreakExpression>;
 export function coerceToBreakExpression(input?: T.BreakExpression.Loose): ReturnType<typeof F.buildBreakExpression> {
 	if (!_isLooseConfig<T.BreakExpression.LooseConfig | undefined>(input))
@@ -6520,7 +6520,7 @@ export function resolveContinueExpression_label(
 }
 
 export function coerceToContinueExpression<const I extends T.ContinueExpression.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ContinueExpression.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ContinueExpression.Loose>
 ): ReturnType<typeof F.buildContinueExpression>;
 export function coerceToContinueExpression(
 	input?: T.ContinueExpression.Loose
@@ -6556,7 +6556,7 @@ export function resolveIndexExpression_index(
 }
 
 export function coerceToIndexExpression<const I extends T.IndexExpression.Loose>(
-	input: I & RefuseUntyped<I, T.IndexExpression.Loose>
+	input: I & RefuseUndeclared<I, T.IndexExpression.Loose>
 ): ReturnType<typeof F.buildIndexExpression>;
 export function coerceToIndexExpression(input: T.IndexExpression.Loose): ReturnType<typeof F.buildIndexExpression> {
 	if (!_isLooseConfig<T.IndexExpression.LooseConfig>(input))
@@ -6577,7 +6577,7 @@ export function resolveAwaitExpression_expression(
 }
 
 export function coerceToAwaitExpression<const I extends T.AwaitExpression.Loose>(
-	input: I & RefuseUntyped<I, T.AwaitExpression.Loose>
+	input: I & RefuseUndeclared<I, T.AwaitExpression.Loose>
 ): ReturnType<typeof F.buildAwaitExpression>;
 export function coerceToAwaitExpression(input: T.AwaitExpression.Loose): ReturnType<typeof F.buildAwaitExpression> {
 	return F.buildAwaitExpression(
@@ -6612,7 +6612,7 @@ export function resolveFieldExpression_field(
 }
 
 export function coerceToFieldExpression<const I extends T.FieldExpression.Loose>(
-	input: I & RefuseUntyped<I, T.FieldExpression.Loose>
+	input: I & RefuseUndeclared<I, T.FieldExpression.Loose>
 ): ReturnType<typeof F.buildFieldExpression>;
 export function coerceToFieldExpression(input: T.FieldExpression.Loose): ReturnType<typeof F.buildFieldExpression> {
 	if (!_isLooseConfig<T.FieldExpression.LooseConfig>(input))
@@ -6630,7 +6630,7 @@ export function resolveUnsafeBlock_body(
 }
 
 export function coerceToUnsafeBlock<const I extends T.UnsafeBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.UnsafeBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.UnsafeBlock.Loose>
 ): ReturnType<typeof F.buildUnsafeBlock>;
 export function coerceToUnsafeBlock(input?: T.UnsafeBlock.Loose): ReturnType<typeof F.buildUnsafeBlock> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.UnsafeBlock))
@@ -6654,7 +6654,7 @@ export function resolveAsyncBlock_body(
 }
 
 export function coerceToAsyncBlock<const I extends T.AsyncBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.AsyncBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.AsyncBlock.Loose>
 ): ReturnType<typeof F.buildAsyncBlock>;
 export function coerceToAsyncBlock(input?: T.AsyncBlock.Loose): ReturnType<typeof F.buildAsyncBlock> {
 	if (!_isLooseConfig<T.AsyncBlock.LooseConfig | undefined>(input))
@@ -6674,7 +6674,7 @@ export function resolveGenBlock_body(value: T.GenBlock.LooseConfig['body'] | und
 }
 
 export function coerceToGenBlock<const I extends T.GenBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.GenBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.GenBlock.Loose>
 ): ReturnType<typeof F.buildGenBlock>;
 export function coerceToGenBlock(input?: T.GenBlock.Loose): ReturnType<typeof F.buildGenBlock> {
 	if (!_isLooseConfig<T.GenBlock.LooseConfig | undefined>(input))
@@ -6690,7 +6690,7 @@ export function resolveTryBlock_body(value: T.TryBlock.LooseConfig['body'] | und
 }
 
 export function coerceToTryBlock<const I extends T.TryBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.TryBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.TryBlock.Loose>
 ): ReturnType<typeof F.buildTryBlock>;
 export function coerceToTryBlock(input?: T.TryBlock.Loose): ReturnType<typeof F.buildTryBlock> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.TryBlock))
@@ -6725,7 +6725,7 @@ export function resolveBlock_trailingExpression(
 
 export function coerceToBlock(): T.EmptyBlock;
 export function coerceToBlock<const I extends T.Block.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.Block.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.Block.Loose>
 ): ReturnType<typeof F.buildBlock>;
 export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildBlock> {
 	if (!_isLooseConfig<T.Block.LooseConfig | undefined>(input))
@@ -6750,7 +6750,7 @@ export function resolveGenericPattern_typeArguments(
 }
 
 export function coerceToGenericPattern<const I extends T.GenericPattern.Loose>(
-	input: I & RefuseUntyped<I, T.GenericPattern.Loose>
+	input: I & RefuseUndeclared<I, T.GenericPattern.Loose>
 ): ReturnType<typeof F.buildGenericPattern>;
 export function coerceToGenericPattern(input: T.GenericPattern.Loose): ReturnType<typeof F.buildGenericPattern> {
 	if (!_isLooseConfig<T.GenericPattern.LooseConfig>(input))
@@ -6769,10 +6769,10 @@ export function resolveTuplePattern_elements(
 
 export function coerceToTuplePattern(): T.EmptyTuplePattern;
 export function coerceToTuplePattern<const A extends T.TuplePatternElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TuplePatternElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TuplePatternElements.LooseArgs>
 ): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern<const I extends T.TuplePattern.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.TuplePattern.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.TuplePattern.Loose>
 ): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.buildTuplePattern> {
 	if (args.length > 1)
@@ -6798,10 +6798,10 @@ export function resolveSlicePattern_patterns(
 
 export function coerceToSlicePattern(): T.EmptySlicePattern;
 export function coerceToSlicePattern<const A extends T.Patterns.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Patterns.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Patterns.LooseArgs>
 ): ReturnType<typeof F.buildSlicePattern>;
 export function coerceToSlicePattern<const I extends T.SlicePattern.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.SlicePattern.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.SlicePattern.Loose>
 ): ReturnType<typeof F.buildSlicePattern>;
 export function coerceToSlicePattern(...args: unknown[]): ReturnType<typeof F.buildSlicePattern> {
 	if (args.length > 1) return F.buildSlicePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
@@ -6829,7 +6829,7 @@ export function resolveTupleStructPattern_patterns(
 }
 
 export function coerceToTupleStructPattern<const I extends T.TupleStructPattern.Loose>(
-	input: I & RefuseUntyped<I, T.TupleStructPattern.Loose>
+	input: I & RefuseUndeclared<I, T.TupleStructPattern.Loose>
 ): ReturnType<typeof F.buildTupleStructPattern>;
 export function coerceToTupleStructPattern(
 	input: T.TupleStructPattern.Loose
@@ -6853,7 +6853,7 @@ export function resolveStructPattern_fields(
 }
 
 export function coerceToStructPattern<const I extends T.StructPattern.Loose>(
-	input: I & RefuseUntyped<I, T.StructPattern.Loose>
+	input: I & RefuseUndeclared<I, T.StructPattern.Loose>
 ): ReturnType<typeof F.buildStructPattern>;
 export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<typeof F.buildStructPattern> {
 	if (!_isLooseConfig<T.StructPattern.LooseConfig>(input))
@@ -6878,7 +6878,7 @@ export function resolveMutPattern_pattern(value: T.MutPattern.LooseConfig['patte
 }
 
 export function coerceToMutPattern<const I extends T.MutPattern.Loose>(
-	input: I & RefuseUntyped<I, T.MutPattern.Loose>
+	input: I & RefuseUndeclared<I, T.MutPattern.Loose>
 ): ReturnType<typeof F.buildMutPattern>;
 export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof F.buildMutPattern> {
 	return F.buildMutPattern(
@@ -6905,7 +6905,7 @@ export function resolveRefPattern_pattern(value: T.RefPattern.LooseConfig['patte
 }
 
 export function coerceToRefPattern<const I extends T.RefPattern.Loose>(
-	input: I & RefuseUntyped<I, T.RefPattern.Loose>
+	input: I & RefuseUndeclared<I, T.RefPattern.Loose>
 ): ReturnType<typeof F.buildRefPattern>;
 export function coerceToRefPattern(input: T.RefPattern.Loose): ReturnType<typeof F.buildRefPattern> {
 	return F.buildRefPattern(
@@ -6940,7 +6940,7 @@ export function resolveCapturedPattern_pattern(
 }
 
 export function coerceToCapturedPattern<const I extends T.CapturedPattern.Loose>(
-	input: I & RefuseUntyped<I, T.CapturedPattern.Loose>
+	input: I & RefuseUndeclared<I, T.CapturedPattern.Loose>
 ): ReturnType<typeof F.buildCapturedPattern>;
 export function coerceToCapturedPattern(input: T.CapturedPattern.Loose): ReturnType<typeof F.buildCapturedPattern> {
 	if (!_isLooseConfig<T.CapturedPattern.LooseConfig>(input))
@@ -6967,7 +6967,7 @@ export function resolveReferencePattern_pattern(
 }
 
 export function coerceToReferencePattern<const I extends T.ReferencePattern.Loose>(
-	input: I & RefuseUntyped<I, T.ReferencePattern.Loose>
+	input: I & RefuseUndeclared<I, T.ReferencePattern.Loose>
 ): ReturnType<typeof F.buildReferencePattern>;
 export function coerceToReferencePattern(input: T.ReferencePattern.Loose): ReturnType<typeof F.buildReferencePattern> {
 	if (!_isLooseConfig<T.ReferencePattern.LooseConfig>(input))
@@ -6985,7 +6985,7 @@ export function resolveNegativeLiteral_value(
 }
 
 export function coerceToNegativeLiteral<const I extends T.NegativeLiteral.Loose>(
-	input: I & RefuseUntyped<I, T.NegativeLiteral.Loose>
+	input: I & RefuseUndeclared<I, T.NegativeLiteral.Loose>
 ): ReturnType<typeof F.buildNegativeLiteral>;
 export function coerceToNegativeLiteral(input: T.NegativeLiteral.Loose): ReturnType<typeof F.buildNegativeLiteral> {
 	if (isNodeOfKind(input, TSKindId.NegativeLiteral))
@@ -7012,7 +7012,7 @@ export function resolveStringLiteral_elements(
 }
 
 export function coerceToStringLiteral<const I extends T.StringLiteral.Loose>(
-	input: I & RefuseUntyped<I, T.StringLiteral.Loose>
+	input: I & RefuseUndeclared<I, T.StringLiteral.Loose>
 ): ReturnType<typeof F.buildStringLiteral>;
 export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
 	if (!_isLooseConfig<T.StringLiteral.LooseConfig>(input))
@@ -7042,7 +7042,7 @@ export function resolveRawStringLiteral_rawStringLiteralEnd(
 }
 
 export function coerceToRawStringLiteral<const I extends T.RawStringLiteral.Loose>(
-	input: I & RefuseUntyped<I, T.RawStringLiteral.Loose>
+	input: I & RefuseUndeclared<I, T.RawStringLiteral.Loose>
 ): ReturnType<typeof F.buildRawStringLiteral>;
 export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> {
 	if (!_isLooseConfig<T.RawStringLiteral.LooseConfig>(input))
@@ -7066,7 +7066,7 @@ export function resolveLineComment_content(
 }
 
 export function coerceToLineComment<const I extends T.LineComment.Loose>(
-	input: I & RefuseUntyped<I, T.LineComment.Loose>
+	input: I & RefuseUndeclared<I, T.LineComment.Loose>
 ): ReturnType<typeof F.buildLineComment>;
 export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<typeof F.buildLineComment> {
 	if (isNodeOfKind(input, TSKindId.LineComment)) return input as unknown as ReturnType<typeof F.buildLineComment>;
@@ -7116,7 +7116,7 @@ export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
 		input?: I &
 			SiblingLeadRefusal<I, '/*', '*/', [['*', 'ir.blockComment.docOuter'], ['!', 'ir.blockComment.docInner']]>
 	] &
-		RefuseUntyped<I, T.BlockComment.Loose>
+		RefuseUndeclared<I, T.BlockComment.Loose>
 ): ReturnType<typeof F.buildBlockComment>;
 export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
 	input?: I & SiblingLeadRefusal<I, '/*', '*/', [['*', 'ir.blockComment.docOuter'], ['!', 'ir.blockComment.docInner']]>
@@ -7141,7 +7141,7 @@ export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
 }
 
 export function coerceToIdentifier<const V extends T.Identifier.Loose>(
-	input: V & RefuseUntyped<V, T.Identifier.Loose>
+	input: V & RefuseUndeclared<V, T.Identifier.Loose>
 ): ReturnType<typeof F.buildIdentifier>;
 export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof F.buildIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;
@@ -7153,7 +7153,7 @@ export function resolveShebang_content(value: T.Shebang.LooseConfig['content']):
 }
 
 export function coerceToShebang<const I extends T.Shebang.Loose>(
-	input: I & RefuseUntyped<I, T.Shebang.Loose>
+	input: I & RefuseUndeclared<I, T.Shebang.Loose>
 ): ReturnType<typeof F.buildShebang>;
 export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.buildShebang> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildShebang>;
@@ -7185,7 +7185,7 @@ export function resolveMetavariable_name(value: T.Metavariable.LooseConfig['name
 }
 
 export function coerceToMetavariable<const I extends T.Metavariable.Loose>(
-	input: I & RefuseUntyped<I, T.Metavariable.Loose>
+	input: I & RefuseUndeclared<I, T.Metavariable.Loose>
 ): ReturnType<typeof F.buildMetavariable>;
 export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<typeof F.buildMetavariable> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildMetavariable>;
@@ -7201,7 +7201,7 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 }
 
 export function coerceToMacroRules<const A extends T.MacroRules.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.MacroRules.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.MacroRules.LooseArgs>
 ): ReturnType<typeof F.buildMacroRules>;
 export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType<typeof F.buildMacroRules> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
@@ -7226,7 +7226,7 @@ export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType
 }
 
 export function coerceToEnumVariantListElements<const A extends T.EnumVariantListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.EnumVariantListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
 ): ReturnType<typeof F.buildEnumVariantListElements>;
 export function coerceToEnumVariantListElements(
 	...input: T.EnumVariantListElements.LooseArgs
@@ -7258,7 +7258,7 @@ export function coerceToEnumVariantListElements(
 }
 
 export function coerceToFieldDeclarationListElements<const A extends T.FieldDeclarationListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.FieldDeclarationListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.FieldDeclarationListElements.LooseArgs>
 ): ReturnType<typeof F.buildFieldDeclarationListElements>;
 export function coerceToFieldDeclarationListElements(
 	...input: T.FieldDeclarationListElements.LooseArgs
@@ -7292,7 +7292,7 @@ export function coerceToFieldDeclarationListElements(
 export function coerceToOrderedFieldDeclarationListElements<
 	const A extends T.OrderedFieldDeclarationListElements.LooseArgs
 >(
-	...input: A & RefuseUntyped<A, T.OrderedFieldDeclarationListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.OrderedFieldDeclarationListElements.LooseArgs>
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
 export function coerceToOrderedFieldDeclarationListElements(
 	...input: T.OrderedFieldDeclarationListElements.LooseArgs
@@ -7367,7 +7367,7 @@ export function coerceToOrderedFieldDeclarationListElements(
 }
 
 export function coerceToWherePredicates<const A extends T.WherePredicates.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.WherePredicates.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.WherePredicates.LooseArgs>
 ): ReturnType<typeof F.buildWherePredicates>;
 export function coerceToWherePredicates(
 	...input: T.WherePredicates.LooseArgs
@@ -7398,7 +7398,7 @@ export function coerceToWherePredicates(
 }
 
 export function coerceToTypeParametersElements<const A extends T.TypeParametersElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TypeParametersElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
 ): ReturnType<typeof F.buildTypeParametersElements>;
 export function coerceToTypeParametersElements(
 	...input: T.TypeParametersElements.LooseArgs
@@ -7437,7 +7437,7 @@ export function coerceToTypeParametersElements(
 }
 
 export function coerceToUseClauses<const A extends T.UseClauses.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.UseClauses.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.UseClauses.LooseArgs>
 ): ReturnType<typeof F.buildUseClauses>;
 export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType<typeof F.buildUseClauses> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseClauses)) {
@@ -7534,7 +7534,7 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 }
 
 export function coerceToParametersElements<const A extends T.ParametersElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.ParametersElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
 ): ReturnType<typeof F.buildParametersElements>;
 export function coerceToParametersElements(
 	...input: T.ParametersElements.LooseArgs
@@ -7629,7 +7629,7 @@ export function coerceToParametersElements(
 }
 
 export function coerceToLifetimes<const A extends T.Lifetimes.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Lifetimes.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Lifetimes.LooseArgs>
 ): ReturnType<typeof F.buildLifetimes>;
 export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<typeof F.buildLifetimes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
@@ -7654,7 +7654,7 @@ export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<t
 }
 
 export function coerceToTypes<const A extends T.Types.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Types.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
 ): ReturnType<typeof F.buildTypes>;
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
@@ -7706,7 +7706,7 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 }
 
 export function coerceToUseBoundsElements<const A extends T.UseBoundsElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.UseBoundsElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.UseBoundsElements.LooseArgs>
 ): ReturnType<typeof F.buildUseBoundsElements>;
 export function coerceToUseBoundsElements(
 	...input: T.UseBoundsElements.LooseArgs
@@ -7737,7 +7737,7 @@ export function coerceToUseBoundsElements(
 }
 
 export function coerceToTypeArgumentsElements<const A extends T.TypeArgumentsElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TypeArgumentsElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
 ): ReturnType<typeof F.buildTypeArgumentsElements>;
 export function coerceToTypeArgumentsElements(
 	...input: T.TypeArgumentsElements.LooseArgs
@@ -7849,7 +7849,7 @@ export function coerceToTypeArgumentsElements(
 }
 
 export function coerceToArgumentsElements<const A extends T.ArgumentsElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.ArgumentsElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
 ): ReturnType<typeof F.buildArgumentsElements>;
 export function coerceToArgumentsElements(
 	...input: T.ArgumentsElements.LooseArgs
@@ -8005,7 +8005,7 @@ export function coerceToArgumentsElements(
 }
 
 export function coerceToExpressions<const A extends T.Expressions.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Expressions.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Expressions.LooseArgs>
 ): ReturnType<typeof F.buildExpressions>;
 export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnType<typeof F.buildExpressions> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Expressions)) {
@@ -8100,7 +8100,7 @@ export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnTy
 }
 
 export function coerceToFieldInitializerListElements<const A extends T.FieldInitializerListElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.FieldInitializerListElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.FieldInitializerListElements.LooseArgs>
 ): ReturnType<typeof F.buildFieldInitializerListElements>;
 export function coerceToFieldInitializerListElements(
 	...input: T.FieldInitializerListElements.LooseArgs
@@ -8133,7 +8133,7 @@ export function coerceToFieldInitializerListElements(
 }
 
 export function coerceToTuplePatternElements<const A extends T.TuplePatternElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TuplePatternElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TuplePatternElements.LooseArgs>
 ): ReturnType<typeof F.buildTuplePatternElements>;
 export function coerceToTuplePatternElements(
 	...input: T.TuplePatternElements.LooseArgs
@@ -8205,7 +8205,7 @@ export function coerceToTuplePatternElements(
 }
 
 export function coerceToPatterns<const A extends T.Patterns.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Patterns.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Patterns.LooseArgs>
 ): ReturnType<typeof F.buildPatterns>;
 export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildPatterns> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
@@ -8273,7 +8273,7 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 }
 
 export function coerceToStructPatternElements<const A extends T.StructPatternElements.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.StructPatternElements.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.StructPatternElements.LooseArgs>
 ): ReturnType<typeof F.buildStructPatternElements>;
 export function coerceToStructPatternElements(
 	...input: T.StructPatternElements.LooseArgs
@@ -8326,7 +8326,7 @@ export function resolveUseWildcardGroup_path(
 }
 
 export function coerceToUseWildcardGroup<const I extends T.UseWildcardGroup.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.UseWildcardGroup.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.UseWildcardGroup.Loose>
 ): ReturnType<typeof F.buildUseWildcardGroup>;
 export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): ReturnType<typeof F.buildUseWildcardGroup> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.UseWildcardGroup))
@@ -8353,7 +8353,7 @@ export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): Retu
 }
 
 export function coerceToTokenRepetitionPatternText<const V extends T.TokenRepetitionPatternText.Loose>(
-	input: V & RefuseUntyped<V, T.TokenRepetitionPatternText.Loose>
+	input: V & RefuseUndeclared<V, T.TokenRepetitionPatternText.Loose>
 ): ReturnType<typeof F.buildTokenRepetitionPatternText>;
 export function coerceToTokenRepetitionPatternText(
 	input: T.TokenRepetitionPatternText.Loose
@@ -8363,7 +8363,7 @@ export function coerceToTokenRepetitionPatternText(
 }
 
 export function coerceToStringOpen<const V extends T.StringOpen.Loose>(
-	input: V & RefuseUntyped<V, T.StringOpen.Loose>
+	input: V & RefuseUndeclared<V, T.StringOpen.Loose>
 ): ReturnType<typeof F.buildStringOpen>;
 export function coerceToStringOpen(input: T.StringOpen.Loose): ReturnType<typeof F.buildStringOpen> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringOpen>;
@@ -8387,9 +8387,7 @@ export function resolveIntegerLiteralDecimal_suffix(
 }
 
 export function coerceToIntegerLiteralDecimal<const I extends T.IntegerLiteralDecimal.Loose>(
-	input: I &
-		NumericInput<I, undefined, { content: true }, T.IntegerLiteralDecimal.Loose> &
-		RefuseUntyped<I, T.IntegerLiteralDecimal.Loose>
+	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntegerLiteralDecimal.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralDecimal>;
 export function coerceToIntegerLiteralDecimal(
 	input: T.IntegerLiteralDecimal.Loose
@@ -8422,9 +8420,7 @@ export function resolveIntegerLiteralHex_suffix(
 }
 
 export function coerceToIntegerLiteralHex<const I extends T.IntegerLiteralHex.Loose>(
-	input: I &
-		NumericInput<I, undefined, { content: true }, T.IntegerLiteralHex.Loose> &
-		RefuseUntyped<I, T.IntegerLiteralHex.Loose>
+	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntegerLiteralHex.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralHex>;
 export function coerceToIntegerLiteralHex(
 	input: T.IntegerLiteralHex.Loose
@@ -8457,9 +8453,7 @@ export function resolveIntegerLiteralBinary_suffix(
 }
 
 export function coerceToIntegerLiteralBinary<const I extends T.IntegerLiteralBinary.Loose>(
-	input: I &
-		NumericInput<I, undefined, { content: true }, T.IntegerLiteralBinary.Loose> &
-		RefuseUntyped<I, T.IntegerLiteralBinary.Loose>
+	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntegerLiteralBinary.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralBinary>;
 export function coerceToIntegerLiteralBinary(
 	input: T.IntegerLiteralBinary.Loose
@@ -8492,9 +8486,7 @@ export function resolveIntegerLiteralOctal_suffix(
 }
 
 export function coerceToIntegerLiteralOctal<const I extends T.IntegerLiteralOctal.Loose>(
-	input: I &
-		NumericInput<I, undefined, { content: true }, T.IntegerLiteralOctal.Loose> &
-		RefuseUntyped<I, T.IntegerLiteralOctal.Loose>
+	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntegerLiteralOctal.Loose>
 ): ReturnType<typeof F.buildIntegerLiteralOctal>;
 export function coerceToIntegerLiteralOctal(
 	input: T.IntegerLiteralOctal.Loose
@@ -8523,7 +8515,7 @@ export function resolveCharLiteralPlain_content(
 }
 
 export function coerceToCharLiteralPlain<const I extends T.CharLiteralPlain.Loose>(
-	input: I & RefuseUntyped<I, T.CharLiteralPlain.Loose>
+	input: I & RefuseUndeclared<I, T.CharLiteralPlain.Loose>
 ): ReturnType<typeof F.buildCharLiteralPlain>;
 export function coerceToCharLiteralPlain(input: T.CharLiteralPlain.Loose): ReturnType<typeof F.buildCharLiteralPlain> {
 	if (!_isLooseConfig<T.CharLiteralPlain.LooseConfig | string>(input))
@@ -8536,7 +8528,7 @@ export function coerceToCharLiteralPlain(input: T.CharLiteralPlain.Loose): Retur
 }
 
 export function coerceToCharLiteralEmpty<const V extends T.CharLiteralEmpty.Loose>(
-	input: V & RefuseUntyped<V, T.CharLiteralEmpty.Loose>
+	input: V & RefuseUndeclared<V, T.CharLiteralEmpty.Loose>
 ): ReturnType<typeof F.buildCharLiteralEmpty>;
 export function coerceToCharLiteralEmpty(input: T.CharLiteralEmpty.Loose): ReturnType<typeof F.buildCharLiteralEmpty> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharLiteralEmpty>;
@@ -8556,7 +8548,7 @@ export function resolveCharLiteralEscapedSimple_content(
 }
 
 export function coerceToCharLiteralEscapedSimple<const I extends T.CharLiteralEscapedSimple.Loose>(
-	input: I & RefuseUntyped<I, T.CharLiteralEscapedSimple.Loose>
+	input: I & RefuseUndeclared<I, T.CharLiteralEscapedSimple.Loose>
 ): ReturnType<typeof F.buildCharLiteralEscapedSimple>;
 export function coerceToCharLiteralEscapedSimple(
 	input: T.CharLiteralEscapedSimple.Loose
@@ -8583,7 +8575,7 @@ export function resolveCharLiteralEscapedUnicodeFixed_content(
 }
 
 export function coerceToCharLiteralEscapedUnicodeFixed<const I extends T.CharLiteralEscapedUnicodeFixed.Loose>(
-	input: I & RefuseUntyped<I, T.CharLiteralEscapedUnicodeFixed.Loose>
+	input: I & RefuseUndeclared<I, T.CharLiteralEscapedUnicodeFixed.Loose>
 ): ReturnType<typeof F.buildCharLiteralEscapedUnicodeFixed>;
 export function coerceToCharLiteralEscapedUnicodeFixed(
 	input: T.CharLiteralEscapedUnicodeFixed.Loose
@@ -8610,7 +8602,7 @@ export function resolveCharLiteralEscapedUnicodeBraced_content(
 }
 
 export function coerceToCharLiteralEscapedUnicodeBraced<const I extends T.CharLiteralEscapedUnicodeBraced.Loose>(
-	input: I & RefuseUntyped<I, T.CharLiteralEscapedUnicodeBraced.Loose>
+	input: I & RefuseUndeclared<I, T.CharLiteralEscapedUnicodeBraced.Loose>
 ): ReturnType<typeof F.buildCharLiteralEscapedUnicodeBraced>;
 export function coerceToCharLiteralEscapedUnicodeBraced(
 	input: T.CharLiteralEscapedUnicodeBraced.Loose
@@ -8639,7 +8631,7 @@ export function resolveCharLiteralEscapedHex_content(
 }
 
 export function coerceToCharLiteralEscapedHex<const I extends T.CharLiteralEscapedHex.Loose>(
-	input: I & RefuseUntyped<I, T.CharLiteralEscapedHex.Loose>
+	input: I & RefuseUndeclared<I, T.CharLiteralEscapedHex.Loose>
 ): ReturnType<typeof F.buildCharLiteralEscapedHex>;
 export function coerceToCharLiteralEscapedHex(
 	input: T.CharLiteralEscapedHex.Loose
@@ -8660,7 +8652,7 @@ export function resolveEscapeSequenceSimple_content(
 }
 
 export function coerceToEscapeSequenceSimple<const I extends T.EscapeSequenceSimple.Loose>(
-	input: I & RefuseUntyped<I, T.EscapeSequenceSimple.Loose>
+	input: I & RefuseUndeclared<I, T.EscapeSequenceSimple.Loose>
 ): ReturnType<typeof F.buildEscapeSequenceSimple>;
 export function coerceToEscapeSequenceSimple(
 	input: T.EscapeSequenceSimple.Loose
@@ -8686,7 +8678,7 @@ export function resolveEscapeSequenceUnicodeFixed_content(
 }
 
 export function coerceToEscapeSequenceUnicodeFixed<const I extends T.EscapeSequenceUnicodeFixed.Loose>(
-	input: I & RefuseUntyped<I, T.EscapeSequenceUnicodeFixed.Loose>
+	input: I & RefuseUndeclared<I, T.EscapeSequenceUnicodeFixed.Loose>
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
 export function coerceToEscapeSequenceUnicodeFixed(
 	input: T.EscapeSequenceUnicodeFixed.Loose
@@ -8712,7 +8704,7 @@ export function resolveEscapeSequenceUnicodeBraced_content(
 }
 
 export function coerceToEscapeSequenceUnicodeBraced<const I extends T.EscapeSequenceUnicodeBraced.Loose>(
-	input: I & RefuseUntyped<I, T.EscapeSequenceUnicodeBraced.Loose>
+	input: I & RefuseUndeclared<I, T.EscapeSequenceUnicodeBraced.Loose>
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeBraced>;
 export function coerceToEscapeSequenceUnicodeBraced(
 	input: T.EscapeSequenceUnicodeBraced.Loose
@@ -8738,7 +8730,7 @@ export function resolveEscapeSequenceHex_content(
 }
 
 export function coerceToEscapeSequenceHex<const I extends T.EscapeSequenceHex.Loose>(
-	input: I & RefuseUntyped<I, T.EscapeSequenceHex.Loose>
+	input: I & RefuseUndeclared<I, T.EscapeSequenceHex.Loose>
 ): ReturnType<typeof F.buildEscapeSequenceHex>;
 export function coerceToEscapeSequenceHex(
 	input: T.EscapeSequenceHex.Loose
@@ -8780,7 +8772,7 @@ export function resolveArrayExpressionSemi_length(
 }
 
 export function coerceToArrayExpressionSemi<const I extends T.ArrayExpressionSemi.Loose>(
-	input: I & RefuseUntyped<I, T.ArrayExpressionSemi.Loose>
+	input: I & RefuseUndeclared<I, T.ArrayExpressionSemi.Loose>
 ): ReturnType<typeof F.buildArrayExpressionSemi>;
 export function coerceToArrayExpressionSemi(
 	input: T.ArrayExpressionSemi.Loose
@@ -8808,7 +8800,7 @@ export function resolveArrayExpressionList_elements(
 
 export function coerceToArrayExpressionList(): T.EmptyArrayExpressionList;
 export function coerceToArrayExpressionList<const I extends T.ArrayExpressionList.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ArrayExpressionList.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ArrayExpressionList.Loose>
 ): ReturnType<typeof F.buildArrayExpressionList>;
 export function coerceToArrayExpressionList(
 	input?: T.ArrayExpressionList.Loose
@@ -8837,7 +8829,7 @@ export function resolveAttributeInput_arguments(
 }
 
 export function coerceToAttributeInput<const I extends T.AttributeInput.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.AttributeInput.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.AttributeInput.Loose>
 ): ReturnType<typeof F.buildAttributeInput>;
 export function coerceToAttributeInput(input?: T.AttributeInput.Loose): ReturnType<typeof F.buildAttributeInput> {
 	if (!_isLooseConfig<T.AttributeInput.LooseConfig | undefined>(input))
@@ -8888,7 +8880,7 @@ export function resolveClosureExpressionBlock_body(
 }
 
 export function coerceToClosureExpressionBlock<const I extends T.ClosureExpressionBlock.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ClosureExpressionBlock.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ClosureExpressionBlock.Loose>
 ): ReturnType<typeof F.buildClosureExpressionBlock>;
 export function coerceToClosureExpressionBlock(
 	input?: T.ClosureExpressionBlock.Loose
@@ -8941,7 +8933,7 @@ export function resolveClosureExpressionExpr_body(
 }
 
 export function coerceToClosureExpressionExpr<const I extends T.ClosureExpressionExpr.Loose>(
-	input: I & RefuseUntyped<I, T.ClosureExpressionExpr.Loose>
+	input: I & RefuseUndeclared<I, T.ClosureExpressionExpr.Loose>
 ): ReturnType<typeof F.buildClosureExpressionExpr>;
 export function coerceToClosureExpressionExpr(
 	input: T.ClosureExpressionExpr.Loose
@@ -8967,7 +8959,7 @@ export function resolveReferenceExpressionRawConst_value(
 }
 
 export function coerceToReferenceExpressionRawConst<const I extends T.ReferenceExpressionRawConst.Loose>(
-	input: I & RefuseUntyped<I, T.ReferenceExpressionRawConst.Loose>
+	input: I & RefuseUndeclared<I, T.ReferenceExpressionRawConst.Loose>
 ): ReturnType<typeof F.buildReferenceExpressionRawConst>;
 export function coerceToReferenceExpressionRawConst(
 	input: T.ReferenceExpressionRawConst.Loose
@@ -8998,7 +8990,7 @@ export function resolveReferenceExpressionRawMut_value(
 }
 
 export function coerceToReferenceExpressionRawMut<const I extends T.ReferenceExpressionRawMut.Loose>(
-	input: I & RefuseUntyped<I, T.ReferenceExpressionRawMut.Loose>
+	input: I & RefuseUndeclared<I, T.ReferenceExpressionRawMut.Loose>
 ): ReturnType<typeof F.buildReferenceExpressionRawMut>;
 export function coerceToReferenceExpressionRawMut(
 	input: T.ReferenceExpressionRawMut.Loose
@@ -9029,7 +9021,7 @@ export function resolveReferenceExpressionMut_value(
 }
 
 export function coerceToReferenceExpressionMut<const I extends T.ReferenceExpressionMut.Loose>(
-	input: I & RefuseUntyped<I, T.ReferenceExpressionMut.Loose>
+	input: I & RefuseUndeclared<I, T.ReferenceExpressionMut.Loose>
 ): ReturnType<typeof F.buildReferenceExpressionMut>;
 export function coerceToReferenceExpressionMut(
 	input: T.ReferenceExpressionMut.Loose
@@ -9060,7 +9052,7 @@ export function resolveReferenceExpressionBare_value(
 }
 
 export function coerceToReferenceExpressionBare<const I extends T.ReferenceExpressionBare.Loose>(
-	input: I & RefuseUntyped<I, T.ReferenceExpressionBare.Loose>
+	input: I & RefuseUndeclared<I, T.ReferenceExpressionBare.Loose>
 ): ReturnType<typeof F.buildReferenceExpressionBare>;
 export function coerceToReferenceExpressionBare(
 	input: T.ReferenceExpressionBare.Loose
@@ -9088,7 +9080,7 @@ export function resolveImplItemPositiveClause_trait(
 }
 
 export function coerceToImplItemPositiveClause<const I extends T.ImplItemPositiveClause.Loose>(
-	input: I & RefuseUntyped<I, T.ImplItemPositiveClause.Loose>
+	input: I & RefuseUndeclared<I, T.ImplItemPositiveClause.Loose>
 ): ReturnType<typeof F.buildImplItemPositiveClause>;
 export function coerceToImplItemPositiveClause(
 	input: T.ImplItemPositiveClause.Loose
@@ -9111,7 +9103,7 @@ export function resolveImplItemNegativeClause_trait(
 }
 
 export function coerceToImplItemNegativeClause<const I extends T.ImplItemNegativeClause.Loose>(
-	input: I & RefuseUntyped<I, T.ImplItemNegativeClause.Loose>
+	input: I & RefuseUndeclared<I, T.ImplItemNegativeClause.Loose>
 ): ReturnType<typeof F.buildImplItemNegativeClause>;
 export function coerceToImplItemNegativeClause(
 	input: T.ImplItemNegativeClause.Loose
@@ -9168,7 +9160,7 @@ export function resolveImplItemBody_body(value: T.ImplItemBody.LooseConfig['body
 }
 
 export function coerceToImplItemBody<const I extends T.ImplItemBody.Loose>(
-	input: I & RefuseUntyped<I, T.ImplItemBody.Loose>
+	input: I & RefuseUndeclared<I, T.ImplItemBody.Loose>
 ): ReturnType<typeof F.buildImplItemBody>;
 export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<typeof F.buildImplItemBody> {
 	if (!_isLooseConfig<T.ImplItemBody.LooseConfig>(input))
@@ -9220,7 +9212,7 @@ export function resolveImplItemSemi_whereClause(
 }
 
 export function coerceToImplItemSemi<const I extends T.ImplItemSemi.Loose>(
-	input: I & RefuseUntyped<I, T.ImplItemSemi.Loose>
+	input: I & RefuseUndeclared<I, T.ImplItemSemi.Loose>
 ): ReturnType<typeof F.buildImplItemSemi>;
 export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<typeof F.buildImplItemSemi> {
 	if (!_isLooseConfig<T.ImplItemSemi.LooseConfig>(input))
@@ -9251,7 +9243,7 @@ export function resolveVisibilityModifierPubScopeInPath_path(
 }
 
 export function coerceToVisibilityModifierPubScopeInPath<const I extends T.VisibilityModifierPubScopeInPath.Loose>(
-	input: I & RefuseUntyped<I, T.VisibilityModifierPubScopeInPath.Loose>
+	input: I & RefuseUndeclared<I, T.VisibilityModifierPubScopeInPath.Loose>
 ): ReturnType<typeof F.buildVisibilityModifierPubScopeInPath>;
 export function coerceToVisibilityModifierPubScopeInPath(
 	input: T.VisibilityModifierPubScopeInPath.Loose
@@ -9296,7 +9288,7 @@ export function resolveVisibilityModifierPubScope_content(
 }
 
 export function coerceToVisibilityModifierPubScope<const I extends T.VisibilityModifierPubScope.Loose>(
-	input: I & RefuseUntyped<I, T.VisibilityModifierPubScope.Loose>
+	input: I & RefuseUndeclared<I, T.VisibilityModifierPubScope.Loose>
 ): ReturnType<typeof F.buildVisibilityModifierPubScope>;
 export function coerceToVisibilityModifierPubScope(
 	input: T.VisibilityModifierPubScope.Loose
@@ -9331,7 +9323,7 @@ export function resolveVisibilityModifierPub_visibilityModifierPubScope(
 }
 
 export function coerceToVisibilityModifierPub<const I extends T.VisibilityModifierPub.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.VisibilityModifierPub.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.VisibilityModifierPub.Loose>
 ): ReturnType<typeof F.buildVisibilityModifierPub>;
 export function coerceToVisibilityModifierPub(
 	input?: T.VisibilityModifierPub.Loose
@@ -9355,7 +9347,7 @@ export function resolveFunctionTypeTraitForm_trait(
 }
 
 export function coerceToFunctionTypeTraitForm<const I extends T.FunctionTypeTraitForm.Loose>(
-	input: I & RefuseUntyped<I, T.FunctionTypeTraitForm.Loose>
+	input: I & RefuseUndeclared<I, T.FunctionTypeTraitForm.Loose>
 ): ReturnType<typeof F.buildFunctionTypeTraitForm>;
 export function coerceToFunctionTypeTraitForm(
 	input: T.FunctionTypeTraitForm.Loose
@@ -9378,10 +9370,10 @@ export function resolveFunctionTypeFnForm_functionModifiers(
 }
 
 export function coerceToFunctionTypeFnForm<const A extends T.FunctionModifiers.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.FunctionModifiers.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.FunctionModifiers.LooseArgs>
 ): ReturnType<typeof F.buildFunctionTypeFnForm>;
 export function coerceToFunctionTypeFnForm<const I extends T.FunctionTypeFnForm.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.FunctionTypeFnForm.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.FunctionTypeFnForm.Loose>
 ): ReturnType<typeof F.buildFunctionTypeFnForm>;
 export function coerceToFunctionTypeFnForm(...args: unknown[]): ReturnType<typeof F.buildFunctionTypeFnForm> {
 	if (args.length > 1)
@@ -9414,7 +9406,7 @@ export function resolveModItemExternal_name(
 }
 
 export function coerceToModItemExternal<const I extends T.ModItemExternal.Loose>(
-	input: I & RefuseUntyped<I, T.ModItemExternal.Loose>
+	input: I & RefuseUndeclared<I, T.ModItemExternal.Loose>
 ): ReturnType<typeof F.buildModItemExternal>;
 export function coerceToModItemExternal(input: T.ModItemExternal.Loose): ReturnType<typeof F.buildModItemExternal> {
 	if (!_isLooseConfig<T.ModItemExternal.LooseConfig>(input))
@@ -9440,7 +9432,7 @@ export function resolveModItemInline_body(value: T.ModItemInline.LooseConfig['bo
 }
 
 export function coerceToModItemInline<const I extends T.ModItemInline.Loose>(
-	input: I & RefuseUntyped<I, T.ModItemInline.Loose>
+	input: I & RefuseUndeclared<I, T.ModItemInline.Loose>
 ): ReturnType<typeof F.buildModItemInline>;
 export function coerceToModItemInline(input: T.ModItemInline.Loose): ReturnType<typeof F.buildModItemInline> {
 	if (!_isLooseConfig<T.ModItemInline.LooseConfig>(input))
@@ -9471,7 +9463,7 @@ export function resolveOrPatternBinary_right(
 }
 
 export function coerceToOrPatternBinary<const I extends T.OrPatternBinary.Loose>(
-	input: I & RefuseUntyped<I, T.OrPatternBinary.Loose>
+	input: I & RefuseUndeclared<I, T.OrPatternBinary.Loose>
 ): ReturnType<typeof F.buildOrPatternBinary>;
 export function coerceToOrPatternBinary(input: T.OrPatternBinary.Loose): ReturnType<typeof F.buildOrPatternBinary> {
 	if (!_isLooseConfig<T.OrPatternBinary.LooseConfig>(input))
@@ -9492,7 +9484,7 @@ export function resolveOrPatternPrefix_right(
 }
 
 export function coerceToOrPatternPrefix<const I extends T.OrPatternPrefix.Loose>(
-	input: I & RefuseUntyped<I, T.OrPatternPrefix.Loose>
+	input: I & RefuseUndeclared<I, T.OrPatternPrefix.Loose>
 ): ReturnType<typeof F.buildOrPatternPrefix>;
 export function coerceToOrPatternPrefix(input: T.OrPatternPrefix.Loose): ReturnType<typeof F.buildOrPatternPrefix> {
 	return F.buildOrPatternPrefix(
@@ -9521,7 +9513,7 @@ export function resolvePointerTypeConst_type(
 }
 
 export function coerceToPointerTypeConst<const I extends T.PointerTypeConst.Loose>(
-	input: I & RefuseUntyped<I, T.PointerTypeConst.Loose>
+	input: I & RefuseUndeclared<I, T.PointerTypeConst.Loose>
 ): ReturnType<typeof F.buildPointerTypeConst>;
 export function coerceToPointerTypeConst(input: T.PointerTypeConst.Loose): ReturnType<typeof F.buildPointerTypeConst> {
 	return F.buildPointerTypeConst(
@@ -9550,7 +9542,7 @@ export function resolvePointerTypeMut_type(
 }
 
 export function coerceToPointerTypeMut<const I extends T.PointerTypeMut.Loose>(
-	input: I & RefuseUntyped<I, T.PointerTypeMut.Loose>
+	input: I & RefuseUndeclared<I, T.PointerTypeMut.Loose>
 ): ReturnType<typeof F.buildPointerTypeMut>;
 export function coerceToPointerTypeMut(input: T.PointerTypeMut.Loose): ReturnType<typeof F.buildPointerTypeMut> {
 	return F.buildPointerTypeMut(
@@ -9597,7 +9589,7 @@ export function resolveRangeExpressionBinary_end(
 }
 
 export function coerceToRangeExpressionBinary<const I extends T.RangeExpressionBinary.Loose>(
-	input: I & RefuseUntyped<I, T.RangeExpressionBinary.Loose>
+	input: I & RefuseUndeclared<I, T.RangeExpressionBinary.Loose>
 ): ReturnType<typeof F.buildRangeExpressionBinary>;
 export function coerceToRangeExpressionBinary(
 	input: T.RangeExpressionBinary.Loose
@@ -9621,7 +9613,7 @@ export function resolveRangeExpressionPostfix_start(
 }
 
 export function coerceToRangeExpressionPostfix<const I extends T.RangeExpressionPostfix.Loose>(
-	input: I & RefuseUntyped<I, T.RangeExpressionPostfix.Loose>
+	input: I & RefuseUndeclared<I, T.RangeExpressionPostfix.Loose>
 ): ReturnType<typeof F.buildRangeExpressionPostfix>;
 export function coerceToRangeExpressionPostfix(
 	input: T.RangeExpressionPostfix.Loose
@@ -9652,7 +9644,7 @@ export function resolveRangeExpressionPrefix_end(
 }
 
 export function coerceToRangeExpressionPrefix<const I extends T.RangeExpressionPrefix.Loose>(
-	input: I & RefuseUntyped<I, T.RangeExpressionPrefix.Loose>
+	input: I & RefuseUndeclared<I, T.RangeExpressionPrefix.Loose>
 ): ReturnType<typeof F.buildRangeExpressionPrefix>;
 export function coerceToRangeExpressionPrefix(
 	input: T.RangeExpressionPrefix.Loose
@@ -9683,7 +9675,7 @@ export function resolveRangeExpressionBare_rangeExpressionBare(
 }
 
 export function coerceToRangeExpressionBare<const I extends T.RangeExpressionBare.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.RangeExpressionBare.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.RangeExpressionBare.Loose>
 ): ReturnType<typeof F.buildRangeExpressionBare>;
 export function coerceToRangeExpressionBare(
 	input?: T.RangeExpressionBare.Loose
@@ -9716,7 +9708,7 @@ export function resolveExpressionStatementWithSemi_expression(
 }
 
 export function coerceToExpressionStatementWithSemi<const I extends T.ExpressionStatementWithSemi.Loose>(
-	input: I & RefuseUntyped<I, T.ExpressionStatementWithSemi.Loose>
+	input: I & RefuseUndeclared<I, T.ExpressionStatementWithSemi.Loose>
 ): ReturnType<typeof F.buildExpressionStatementWithSemi>;
 export function coerceToExpressionStatementWithSemi(
 	input: T.ExpressionStatementWithSemi.Loose
@@ -9752,7 +9744,7 @@ export function resolveForeignModItemSemi_externModifier(
 }
 
 export function coerceToForeignModItemSemi<const I extends T.ForeignModItemSemi.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ForeignModItemSemi.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ForeignModItemSemi.Loose>
 ): ReturnType<typeof F.buildForeignModItemSemi>;
 export function coerceToForeignModItemSemi(
 	input?: T.ForeignModItemSemi.Loose
@@ -9784,7 +9776,7 @@ export function resolveForeignModItemBody_body(
 }
 
 export function coerceToForeignModItemBody<const I extends T.ForeignModItemBody.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ForeignModItemBody.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ForeignModItemBody.Loose>
 ): ReturnType<typeof F.buildForeignModItemBody>;
 export function coerceToForeignModItemBody(
 	input?: T.ForeignModItemBody.Loose
@@ -9820,7 +9812,7 @@ export function resolveMatchArmWithComma_value(
 }
 
 export function coerceToMatchArmWithComma<const I extends T.MatchArmWithComma.Loose>(
-	input: I & RefuseUntyped<I, T.MatchArmWithComma.Loose>
+	input: I & RefuseUndeclared<I, T.MatchArmWithComma.Loose>
 ): ReturnType<typeof F.buildMatchArmWithComma>;
 export function coerceToMatchArmWithComma(
 	input: T.MatchArmWithComma.Loose
@@ -9865,7 +9857,7 @@ export function resolveMatchArmBlockEnding_value(
 }
 
 export function coerceToMatchArmBlockEnding<const I extends T.MatchArmBlockEnding.Loose>(
-	input: I & RefuseUntyped<I, T.MatchArmBlockEnding.Loose>
+	input: I & RefuseUndeclared<I, T.MatchArmBlockEnding.Loose>
 ): ReturnType<typeof F.buildMatchArmBlockEnding>;
 export function coerceToMatchArmBlockEnding(
 	input: T.MatchArmBlockEnding.Loose
@@ -9880,7 +9872,7 @@ export function coerceToMatchArmBlockEnding(
 }
 
 export function coerceToLineCommentExtraSlashes<const V extends T.LineCommentExtraSlashes.Loose>(
-	input: V & RefuseUntyped<V, T.LineCommentExtraSlashes.Loose>
+	input: V & RefuseUndeclared<V, T.LineCommentExtraSlashes.Loose>
 ): ReturnType<typeof F.buildLineCommentExtraSlashes>;
 export function coerceToLineCommentExtraSlashes(
 	input: T.LineCommentExtraSlashes.Loose
@@ -9896,7 +9888,7 @@ export function resolveLineCommentDocOuter_doc(
 }
 
 export function coerceToLineCommentDocOuter<const I extends T.LineCommentDocOuter.Loose>(
-	input: I & RefuseUntyped<I, T.LineCommentDocOuter.Loose>
+	input: I & RefuseUndeclared<I, T.LineCommentDocOuter.Loose>
 ): ReturnType<typeof F.buildLineCommentDocOuter>;
 export function coerceToLineCommentDocOuter(
 	input: T.LineCommentDocOuter.Loose
@@ -9918,7 +9910,7 @@ export function resolveLineCommentDocInner_doc(
 }
 
 export function coerceToLineCommentDocInner<const I extends T.LineCommentDocInner.Loose>(
-	input: I & RefuseUntyped<I, T.LineCommentDocInner.Loose>
+	input: I & RefuseUndeclared<I, T.LineCommentDocInner.Loose>
 ): ReturnType<typeof F.buildLineCommentDocInner>;
 export function coerceToLineCommentDocInner(
 	input: T.LineCommentDocInner.Loose
@@ -9934,7 +9926,7 @@ export function coerceToLineCommentDocInner(
 }
 
 export function coerceToLineCommentRegular<const V extends T.LineCommentRegular.Loose>(
-	input: V & RefuseUntyped<V, T.LineCommentRegular.Loose>
+	input: V & RefuseUndeclared<V, T.LineCommentRegular.Loose>
 ): ReturnType<typeof F.buildLineCommentRegular>;
 export function coerceToLineCommentRegular(
 	input: T.LineCommentRegular.Loose
@@ -9950,7 +9942,7 @@ export function resolveBlockCommentDocOuter_doc(
 }
 
 export function coerceToBlockCommentDocOuter<const I extends T.BlockCommentDocOuter.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.BlockCommentDocOuter.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.BlockCommentDocOuter.Loose>
 ): ReturnType<typeof F.buildBlockCommentDocOuter>;
 export function coerceToBlockCommentDocOuter(
 	input?: T.BlockCommentDocOuter.Loose
@@ -9972,7 +9964,7 @@ export function resolveBlockCommentDocInner_doc(
 }
 
 export function coerceToBlockCommentDocInner<const I extends T.BlockCommentDocInner.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.BlockCommentDocInner.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.BlockCommentDocInner.Loose>
 ): ReturnType<typeof F.buildBlockCommentDocInner>;
 export function coerceToBlockCommentDocInner(
 	input?: T.BlockCommentDocInner.Loose
@@ -9988,7 +9980,7 @@ export function coerceToBlockCommentDocInner(
 }
 
 export function coerceToBlockCommentRegular<const V extends T.BlockCommentRegular.Loose>(
-	input: V & RefuseUntyped<V, T.BlockCommentRegular.Loose>
+	input: V & RefuseUndeclared<V, T.BlockCommentRegular.Loose>
 ): ReturnType<typeof F.buildBlockCommentRegular>;
 export function coerceToBlockCommentRegular(
 	input: T.BlockCommentRegular.Loose
@@ -9999,7 +9991,7 @@ export function coerceToBlockCommentRegular(
 
 export function coerceToTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
 export function coerceToTokenTreePatternParen<const A extends T.TokenTreePatternParen.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TokenTreePatternParen.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TokenTreePatternParen.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreePatternParen>;
 export function coerceToTokenTreePatternParen(
 	...input: T.TokenTreePatternParen.LooseArgs
@@ -10021,7 +10013,7 @@ export function coerceToTokenTreePatternParen(
 
 export function coerceToTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
 export function coerceToTokenTreePatternBracket<const A extends T.TokenTreePatternBracket.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TokenTreePatternBracket.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TokenTreePatternBracket.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreePatternBracket>;
 export function coerceToTokenTreePatternBracket(
 	...input: T.TokenTreePatternBracket.LooseArgs
@@ -10043,7 +10035,7 @@ export function coerceToTokenTreePatternBracket(
 
 export function coerceToTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
 export function coerceToTokenTreePatternBrace<const A extends T.TokenTreePatternBrace.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TokenTreePatternBrace.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TokenTreePatternBrace.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreePatternBrace>;
 export function coerceToTokenTreePatternBrace(
 	...input: T.TokenTreePatternBrace.LooseArgs
@@ -10065,7 +10057,7 @@ export function coerceToTokenTreePatternBrace(
 
 export function coerceToTokenTreeParen(): T.EmptyTokenTreeParen;
 export function coerceToTokenTreeParen<const A extends T.TokenTreeParen.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TokenTreeParen.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TokenTreeParen.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreeParen>;
 export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): ReturnType<typeof F.buildTokenTreeParen> {
 	const _elems: readonly unknown[] = (() => {
@@ -10087,7 +10079,7 @@ export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): Re
 
 export function coerceToTokenTreeBracket(): T.EmptyTokenTreeBracket;
 export function coerceToTokenTreeBracket<const A extends T.TokenTreeBracket.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TokenTreeBracket.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TokenTreeBracket.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreeBracket>;
 export function coerceToTokenTreeBracket(
 	...input: T.TokenTreeBracket.LooseArgs
@@ -10111,7 +10103,7 @@ export function coerceToTokenTreeBracket(
 
 export function coerceToTokenTreeBrace(): T.EmptyTokenTreeBrace;
 export function coerceToTokenTreeBrace<const A extends T.TokenTreeBrace.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.TokenTreeBrace.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.TokenTreeBrace.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreeBrace>;
 export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): ReturnType<typeof F.buildTokenTreeBrace> {
 	const _elems: readonly unknown[] = (() => {
@@ -10133,7 +10125,7 @@ export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): Re
 
 export function coerceToDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
 export function coerceToDelimTokenTreeParen<const A extends T.DelimTokenTreeParen.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.DelimTokenTreeParen.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.DelimTokenTreeParen.LooseArgs>
 ): ReturnType<typeof F.buildDelimTokenTreeParen>;
 export function coerceToDelimTokenTreeParen(
 	...input: T.DelimTokenTreeParen.LooseArgs
@@ -10156,7 +10148,7 @@ export function coerceToDelimTokenTreeParen(
 
 export function coerceToDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
 export function coerceToDelimTokenTreeBracket<const A extends T.DelimTokenTreeBracket.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.DelimTokenTreeBracket.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.DelimTokenTreeBracket.LooseArgs>
 ): ReturnType<typeof F.buildDelimTokenTreeBracket>;
 export function coerceToDelimTokenTreeBracket(
 	...input: T.DelimTokenTreeBracket.LooseArgs
@@ -10179,7 +10171,7 @@ export function coerceToDelimTokenTreeBracket(
 
 export function coerceToDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
 export function coerceToDelimTokenTreeBrace<const A extends T.DelimTokenTreeBrace.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.DelimTokenTreeBrace.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.DelimTokenTreeBrace.LooseArgs>
 ): ReturnType<typeof F.buildDelimTokenTreeBrace>;
 export function coerceToDelimTokenTreeBrace(
 	...input: T.DelimTokenTreeBrace.LooseArgs
@@ -10219,7 +10211,7 @@ export function resolveFieldPatternShorthand_name(
 }
 
 export function coerceToFieldPatternShorthand<const I extends T.FieldPatternShorthand.Loose>(
-	input: I & RefuseUntyped<I, T.FieldPatternShorthand.Loose>
+	input: I & RefuseUndeclared<I, T.FieldPatternShorthand.Loose>
 ): ReturnType<typeof F.buildFieldPatternShorthand>;
 export function coerceToFieldPatternShorthand(
 	input: T.FieldPatternShorthand.Loose
@@ -10261,7 +10253,7 @@ export function resolveFieldPatternNamed_pattern(
 }
 
 export function coerceToFieldPatternNamed<const I extends T.FieldPatternNamed.Loose>(
-	input: I & RefuseUntyped<I, T.FieldPatternNamed.Loose>
+	input: I & RefuseUndeclared<I, T.FieldPatternNamed.Loose>
 ): ReturnType<typeof F.buildFieldPatternNamed>;
 export function coerceToFieldPatternNamed(
 	input: T.FieldPatternNamed.Loose
@@ -10289,7 +10281,7 @@ export function resolveMacroDefinitionParen_macroRules(
 }
 
 export function coerceToMacroDefinitionParen<const I extends T.MacroDefinitionParen.Loose>(
-	input: I & RefuseUntyped<I, T.MacroDefinitionParen.Loose>
+	input: I & RefuseUndeclared<I, T.MacroDefinitionParen.Loose>
 ): ReturnType<typeof F.buildMacroDefinitionParen>;
 export function coerceToMacroDefinitionParen(
 	input: T.MacroDefinitionParen.Loose
@@ -10315,7 +10307,7 @@ export function resolveMacroDefinitionBracket_macroRules(
 }
 
 export function coerceToMacroDefinitionBracket<const I extends T.MacroDefinitionBracket.Loose>(
-	input: I & RefuseUntyped<I, T.MacroDefinitionBracket.Loose>
+	input: I & RefuseUndeclared<I, T.MacroDefinitionBracket.Loose>
 ): ReturnType<typeof F.buildMacroDefinitionBracket>;
 export function coerceToMacroDefinitionBracket(
 	input: T.MacroDefinitionBracket.Loose
@@ -10341,7 +10333,7 @@ export function resolveMacroDefinitionBrace_macroRules(
 }
 
 export function coerceToMacroDefinitionBrace<const I extends T.MacroDefinitionBrace.Loose>(
-	input: I & RefuseUntyped<I, T.MacroDefinitionBrace.Loose>
+	input: I & RefuseUndeclared<I, T.MacroDefinitionBrace.Loose>
 ): ReturnType<typeof F.buildMacroDefinitionBrace>;
 export function coerceToMacroDefinitionBrace(
 	input: T.MacroDefinitionBrace.Loose
@@ -10382,7 +10374,7 @@ export function resolveRangePatternPrefix_right(
 }
 
 export function coerceToRangePatternPrefix<const I extends T.RangePatternPrefix.Loose>(
-	input: I & RefuseUntyped<I, T.RangePatternPrefix.Loose>
+	input: I & RefuseUndeclared<I, T.RangePatternPrefix.Loose>
 ): ReturnType<typeof F.buildRangePatternPrefix>;
 export function coerceToRangePatternPrefix(
 	input: T.RangePatternPrefix.Loose
@@ -10423,7 +10415,7 @@ export function resolveRangePatternWithLeftWithRight_right(
 }
 
 export function coerceToRangePatternWithLeftWithRight<const I extends T.RangePatternWithLeftWithRight.Loose>(
-	input: I & RefuseUntyped<I, T.RangePatternWithLeftWithRight.Loose>
+	input: I & RefuseUndeclared<I, T.RangePatternWithLeftWithRight.Loose>
 ): ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
 export function coerceToRangePatternWithLeftWithRight(
 	input: T.RangePatternWithLeftWithRight.Loose
@@ -10470,7 +10462,7 @@ export function resolveRangePatternWithLeft_content(
 }
 
 export function coerceToRangePatternWithLeft<const I extends T.RangePatternWithLeft.Loose>(
-	input: I & RefuseUntyped<I, T.RangePatternWithLeft.Loose>
+	input: I & RefuseUndeclared<I, T.RangePatternWithLeft.Loose>
 ): ReturnType<typeof F.buildRangePatternWithLeft>;
 export function coerceToRangePatternWithLeft(
 	input: T.RangePatternWithLeft.Loose
@@ -10514,7 +10506,7 @@ export function resolveStructItemBrace_body(
 }
 
 export function coerceToStructItemBrace<const I extends T.StructItemBrace.Loose>(
-	input: I & RefuseUntyped<I, T.StructItemBrace.Loose>
+	input: I & RefuseUndeclared<I, T.StructItemBrace.Loose>
 ): ReturnType<typeof F.buildStructItemBrace>;
 export function coerceToStructItemBrace(input: T.StructItemBrace.Loose): ReturnType<typeof F.buildStructItemBrace> {
 	if (!_isLooseConfig<T.StructItemBrace.LooseConfig>(input))
@@ -10559,7 +10551,7 @@ export function resolveStructItemTuple_whereClause(
 }
 
 export function coerceToStructItemTuple<const I extends T.StructItemTuple.Loose>(
-	input: I & RefuseUntyped<I, T.StructItemTuple.Loose>
+	input: I & RefuseUndeclared<I, T.StructItemTuple.Loose>
 ): ReturnType<typeof F.buildStructItemTuple>;
 export function coerceToStructItemTuple(input: T.StructItemTuple.Loose): ReturnType<typeof F.buildStructItemTuple> {
 	if (!_isLooseConfig<T.StructItemTuple.LooseConfig>(input))
@@ -10592,7 +10584,7 @@ export function resolveStructItemUnit_typeParameters(
 }
 
 export function coerceToStructItemUnit<const I extends T.StructItemUnit.Loose>(
-	input: I & RefuseUntyped<I, T.StructItemUnit.Loose>
+	input: I & RefuseUndeclared<I, T.StructItemUnit.Loose>
 ): ReturnType<typeof F.buildStructItemUnit>;
 export function coerceToStructItemUnit(input: T.StructItemUnit.Loose): ReturnType<typeof F.buildStructItemUnit> {
 	if (!_isLooseConfig<T.StructItemUnit.LooseConfig>(input))
@@ -10621,7 +10613,7 @@ export function resolveAttributedFieldDeclaration_fieldDeclaration(
 }
 
 export function coerceToAttributedFieldDeclaration<const I extends T.AttributedFieldDeclaration.Loose>(
-	input: I & RefuseUntyped<I, T.AttributedFieldDeclaration.Loose>
+	input: I & RefuseUndeclared<I, T.AttributedFieldDeclaration.Loose>
 ): ReturnType<typeof F.buildAttributedFieldDeclaration>;
 export function coerceToAttributedFieldDeclaration(
 	input: T.AttributedFieldDeclaration.Loose
@@ -10647,7 +10639,7 @@ export function resolveAttributedEnumVariant_enumVariant(
 }
 
 export function coerceToAttributedEnumVariant<const I extends T.AttributedEnumVariant.Loose>(
-	input: I & RefuseUntyped<I, T.AttributedEnumVariant.Loose>
+	input: I & RefuseUndeclared<I, T.AttributedEnumVariant.Loose>
 ): ReturnType<typeof F.buildAttributedEnumVariant>;
 export function coerceToAttributedEnumVariant(
 	input: T.AttributedEnumVariant.Loose
@@ -10680,7 +10672,7 @@ export function resolveAttributedParameter_content(
 }
 
 export function coerceToAttributedParameter<const I extends T.AttributedParameter.Loose>(
-	input: I & RefuseUntyped<I, T.AttributedParameter.Loose>
+	input: I & RefuseUndeclared<I, T.AttributedParameter.Loose>
 ): ReturnType<typeof F.buildAttributedParameter>;
 export function coerceToAttributedParameter(
 	input: T.AttributedParameter.Loose
@@ -10706,7 +10698,7 @@ export function resolveAttributedTypeParameter_content(
 }
 
 export function coerceToAttributedTypeParameter<const I extends T.AttributedTypeParameter.Loose>(
-	input: I & RefuseUntyped<I, T.AttributedTypeParameter.Loose>
+	input: I & RefuseUndeclared<I, T.AttributedTypeParameter.Loose>
 ): ReturnType<typeof F.buildAttributedTypeParameter>;
 export function coerceToAttributedTypeParameter(
 	input: T.AttributedTypeParameter.Loose
@@ -10735,7 +10727,7 @@ export function resolveAttributedArgument_expression(
 }
 
 export function coerceToAttributedArgument<const I extends T.AttributedArgument.Loose>(
-	input: I & RefuseUntyped<I, T.AttributedArgument.Loose>
+	input: I & RefuseUndeclared<I, T.AttributedArgument.Loose>
 ): ReturnType<typeof F.buildAttributedArgument>;
 export function coerceToAttributedArgument(
 	input: T.AttributedArgument.Loose
@@ -10770,7 +10762,7 @@ export function resolveAttributedOrderedField_type(
 }
 
 export function coerceToAttributedOrderedField<const I extends T.AttributedOrderedField.Loose>(
-	input: I & RefuseUntyped<I, T.AttributedOrderedField.Loose>
+	input: I & RefuseUndeclared<I, T.AttributedOrderedField.Loose>
 ): ReturnType<typeof F.buildAttributedOrderedField>;
 export function coerceToAttributedOrderedField(
 	input: T.AttributedOrderedField.Loose
@@ -10802,7 +10794,7 @@ export function resolveTypeArgument_traitBounds(
 }
 
 export function coerceToTypeArgument<const I extends T.TypeArgument.Loose>(
-	input: I & RefuseUntyped<I, T.TypeArgument.Loose>
+	input: I & RefuseUndeclared<I, T.TypeArgument.Loose>
 ): ReturnType<typeof F.buildTypeArgument>;
 export function coerceToTypeArgument(input: T.TypeArgument.Loose): ReturnType<typeof F.buildTypeArgument> {
 	if (!_isLooseConfig<T.TypeArgument.LooseConfig>(input))
@@ -10826,7 +10818,7 @@ export function resolveMatchBlockArms_lastArm(
 }
 
 export function coerceToMatchBlockArms<const I extends T.MatchBlockArms.Loose>(
-	input: I & RefuseUntyped<I, T.MatchBlockArms.Loose>
+	input: I & RefuseUndeclared<I, T.MatchBlockArms.Loose>
 ): ReturnType<typeof F.buildMatchBlockArms>;
 export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnType<typeof F.buildMatchBlockArms> {
 	if (!_isLooseConfig<T.MatchBlockArms.LooseConfig>(input))
@@ -10838,7 +10830,7 @@ export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnTyp
 }
 
 export function coerceToFloatLiteral<const V extends T.FloatLiteral.Loose>(
-	input: V & RefuseUntyped<V, T.FloatLiteral.Loose>
+	input: V & RefuseUndeclared<V, T.FloatLiteral.Loose>
 ): ReturnType<typeof F.buildFloatLiteral>;
 export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
 	if (typeof input !== 'string' && !(typeof input === 'number'))
@@ -10847,7 +10839,7 @@ export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<ty
 }
 
 export function coerceToStringContent<const V extends T.StringContent.Loose>(
-	input: V & RefuseUntyped<V, T.StringContent.Loose>
+	input: V & RefuseUndeclared<V, T.StringContent.Loose>
 ): ReturnType<typeof F.buildStringContent>;
 export function coerceToStringContent(input: T.StringContent.Loose): ReturnType<typeof F.buildStringContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContent>;
@@ -10855,7 +10847,7 @@ export function coerceToStringContent(input: T.StringContent.Loose): ReturnType<
 }
 
 export function coerceToRawStringLiteralContent<const V extends T.RawStringLiteralContent.Loose>(
-	input: V & RefuseUntyped<V, T.RawStringLiteralContent.Loose>
+	input: V & RefuseUndeclared<V, T.RawStringLiteralContent.Loose>
 ): ReturnType<typeof F.buildRawStringLiteralContent>;
 export function coerceToRawStringLiteralContent(
 	input: T.RawStringLiteralContent.Loose
@@ -10877,7 +10869,7 @@ export function coerceToInnerDocCommentMarker(
 }
 
 export function coerceToRawStringLiteralStart<const V extends T.RawStringLiteralStart.Loose>(
-	input: V & RefuseUntyped<V, T.RawStringLiteralStart.Loose>
+	input: V & RefuseUndeclared<V, T.RawStringLiteralStart.Loose>
 ): ReturnType<typeof F.buildRawStringLiteralStart>;
 export function coerceToRawStringLiteralStart(
 	input: T.RawStringLiteralStart.Loose
@@ -10887,7 +10879,7 @@ export function coerceToRawStringLiteralStart(
 }
 
 export function coerceToRawStringLiteralEnd<const V extends T.RawStringLiteralEnd.Loose>(
-	input: V & RefuseUntyped<V, T.RawStringLiteralEnd.Loose>
+	input: V & RefuseUndeclared<V, T.RawStringLiteralEnd.Loose>
 ): ReturnType<typeof F.buildRawStringLiteralEnd>;
 export function coerceToRawStringLiteralEnd(
 	input: T.RawStringLiteralEnd.Loose
@@ -10897,7 +10889,7 @@ export function coerceToRawStringLiteralEnd(
 }
 
 export function coerceToDocComment<const V extends T.DocComment.Loose>(
-	input: V & RefuseUntyped<V, T.DocComment.Loose>
+	input: V & RefuseUndeclared<V, T.DocComment.Loose>
 ): ReturnType<typeof F.buildDocComment>;
 export function coerceToDocComment(input: T.DocComment.Loose): ReturnType<typeof F.buildDocComment> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildDocComment>;
@@ -10905,7 +10897,7 @@ export function coerceToDocComment(input: T.DocComment.Loose): ReturnType<typeof
 }
 
 export function coerceToBlockCommentContent<const V extends T.BlockCommentContent.Loose>(
-	input: V & RefuseUntyped<V, T.BlockCommentContent.Loose>
+	input: V & RefuseUndeclared<V, T.BlockCommentContent.Loose>
 ): ReturnType<typeof F.buildBlockCommentContent>;
 export function coerceToBlockCommentContent(
 	input: T.BlockCommentContent.Loose
@@ -10953,7 +10945,7 @@ export function resolveTypeIdentifier_content(
 }
 
 export function coerceToTypeIdentifier<const I extends T.TypeIdentifier.Loose>(
-	input: I & RefuseUntyped<I, T.TypeIdentifier.Loose>
+	input: I & RefuseUndeclared<I, T.TypeIdentifier.Loose>
 ): ReturnType<typeof F.buildTypeIdentifier>;
 export function coerceToTypeIdentifier(input: T.TypeIdentifier.Loose): ReturnType<typeof F.buildTypeIdentifier> {
 	if (isNodeOfKind(input, TSKindId.TypeIdentifier)) return input as unknown as ReturnType<typeof F.buildTypeIdentifier>;
@@ -10972,7 +10964,7 @@ export function resolveFieldIdentifier_content(
 }
 
 export function coerceToFieldIdentifier<const I extends T.FieldIdentifier.Loose>(
-	input: I & RefuseUntyped<I, T.FieldIdentifier.Loose>
+	input: I & RefuseUndeclared<I, T.FieldIdentifier.Loose>
 ): ReturnType<typeof F.buildFieldIdentifier>;
 export function coerceToFieldIdentifier(input: T.FieldIdentifier.Loose): ReturnType<typeof F.buildFieldIdentifier> {
 	if (isNodeOfKind(input, TSKindId.FieldIdentifier))
@@ -10992,7 +10984,7 @@ export function resolveShorthandFieldIdentifier_content(
 }
 
 export function coerceToShorthandFieldIdentifier<const I extends T.ShorthandFieldIdentifier.Loose>(
-	input: I & RefuseUntyped<I, T.ShorthandFieldIdentifier.Loose>
+	input: I & RefuseUndeclared<I, T.ShorthandFieldIdentifier.Loose>
 ): ReturnType<typeof F.buildShorthandFieldIdentifier>;
 export function coerceToShorthandFieldIdentifier(
 	input: T.ShorthandFieldIdentifier.Loose

@@ -5,7 +5,7 @@ import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../kinds.js';
 import { KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode, Admit, PlainBuilders, RefuseUntyped } from '@sittir/types';
+import type { AnyUntypedNode, Admit, PlainBuilders, RefuseUndeclared } from '@sittir/types';
 import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -636,7 +636,7 @@ export function resolvePattern_content(value: T.Pattern.LooseConfig['content']):
 }
 
 export function coerceToPattern<const I extends T.Pattern.Loose>(
-	input: I & RefuseUntyped<I, T.Pattern.Loose>
+	input: I & RefuseUndeclared<I, T.Pattern.Loose>
 ): ReturnType<typeof F.buildPattern>;
 export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.buildPattern> {
 	if (isNodeOfKind(input, TSKindId.Pattern)) return input as unknown as ReturnType<typeof F.buildPattern>;
@@ -650,7 +650,7 @@ export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.bui
 }
 
 export function coerceToAlternation<const A extends T.Alternation.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Alternation.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Alternation.LooseArgs>
 ): ReturnType<typeof F.buildAlternation>;
 export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnType<typeof F.buildAlternation> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
@@ -675,7 +675,7 @@ export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnTy
 }
 
 export function coerceToTerm<const A extends T.Term.LooseArgs>(
-	...input: A & RefuseUntyped<A, T.Term.LooseArgs>
+	...input: A & RefuseUndeclared<A, T.Term.LooseArgs>
 ): ReturnType<typeof F.buildTerm>;
 export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.buildTerm> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term)) {
@@ -728,7 +728,7 @@ export function resolveLookaroundAssertion_content(
 }
 
 export function coerceToLookaroundAssertion<const I extends T.LookaroundAssertion.Loose>(
-	input: I & RefuseUntyped<I, T.LookaroundAssertion.Loose>
+	input: I & RefuseUndeclared<I, T.LookaroundAssertion.Loose>
 ): ReturnType<typeof F.buildLookaroundAssertion>;
 export function coerceToLookaroundAssertion(
 	input: T.LookaroundAssertion.Loose
@@ -760,7 +760,7 @@ export function resolveLookaheadAssertion_pattern(
 }
 
 export function coerceToLookaheadAssertion<const I extends T.LookaheadAssertion.Loose>(
-	input: I & RefuseUntyped<I, T.LookaheadAssertion.Loose>
+	input: I & RefuseUndeclared<I, T.LookaheadAssertion.Loose>
 ): ReturnType<typeof F.buildLookaheadAssertion>;
 export function coerceToLookaheadAssertion(
 	input: T.LookaheadAssertion.Loose
@@ -789,7 +789,7 @@ export function resolveLookbehindAssertion_pattern(
 }
 
 export function coerceToLookbehindAssertion<const I extends T.LookbehindAssertion.Loose>(
-	input: I & RefuseUntyped<I, T.LookbehindAssertion.Loose>
+	input: I & RefuseUndeclared<I, T.LookbehindAssertion.Loose>
 ): ReturnType<typeof F.buildLookbehindAssertion>;
 export function coerceToLookbehindAssertion(
 	input: T.LookbehindAssertion.Loose
@@ -803,7 +803,7 @@ export function coerceToLookbehindAssertion(
 }
 
 export function coerceToPatternCharacter<const V extends T.PatternCharacter.Loose>(
-	input: V & RefuseUntyped<V, T.PatternCharacter.Loose>
+	input: V & RefuseUndeclared<V, T.PatternCharacter.Loose>
 ): ReturnType<typeof F.buildPatternCharacter>;
 export function coerceToPatternCharacter(input: T.PatternCharacter.Loose): ReturnType<typeof F.buildPatternCharacter> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildPatternCharacter>;
@@ -850,7 +850,7 @@ export function resolveCharacterClass_trailing(
 
 export function coerceToCharacterClass(): T.EmptyCharacterClass;
 export function coerceToCharacterClass<const I extends T.CharacterClass.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.CharacterClass.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.CharacterClass.Loose>
 ): ReturnType<typeof F.buildCharacterClass>;
 export function coerceToCharacterClass(input?: T.CharacterClass.Loose): ReturnType<typeof F.buildCharacterClass> {
 	if (!_isLooseConfig<T.CharacterClass.LooseConfig | undefined>(input))
@@ -870,7 +870,7 @@ export function resolvePosixCharacterClass_posixClassName(
 }
 
 export function coerceToPosixCharacterClass<const I extends T.PosixCharacterClass.Loose>(
-	input: I & RefuseUntyped<I, T.PosixCharacterClass.Loose>
+	input: I & RefuseUndeclared<I, T.PosixCharacterClass.Loose>
 ): ReturnType<typeof F.buildPosixCharacterClass>;
 export function coerceToPosixCharacterClass(
 	input: T.PosixCharacterClass.Loose
@@ -888,7 +888,7 @@ export function coerceToPosixCharacterClass(
 }
 
 export function coerceToPosixClassName<const V extends T.PosixClassName.Loose>(
-	input: V & RefuseUntyped<V, T.PosixClassName.Loose>
+	input: V & RefuseUndeclared<V, T.PosixClassName.Loose>
 ): ReturnType<typeof F.buildPosixClassName>;
 export function coerceToPosixClassName(input: T.PosixClassName.Loose): ReturnType<typeof F.buildPosixClassName> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildPosixClassName>;
@@ -914,7 +914,7 @@ export function resolveClassRange_end(value: T.ClassRange.LooseConfig['end']): A
 }
 
 export function coerceToClassRange<const I extends T.ClassRange.Loose>(
-	input: I & RefuseUntyped<I, T.ClassRange.Loose>
+	input: I & RefuseUndeclared<I, T.ClassRange.Loose>
 ): ReturnType<typeof F.buildClassRange>;
 export function coerceToClassRange(input: T.ClassRange.Loose): ReturnType<typeof F.buildClassRange> {
 	if (!_isLooseConfig<T.ClassRange.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildClassRange>;
@@ -925,7 +925,7 @@ export function coerceToClassRange(input: T.ClassRange.Loose): ReturnType<typeof
 }
 
 export function coerceToClassCharacter<const V extends T.ClassCharacter.Loose>(
-	input: V & RefuseUntyped<V, T.ClassCharacter.Loose>
+	input: V & RefuseUndeclared<V, T.ClassCharacter.Loose>
 ): ReturnType<typeof F.buildClassCharacter>;
 export function coerceToClassCharacter(input: T.ClassCharacter.Loose): ReturnType<typeof F.buildClassCharacter> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildClassCharacter>;
@@ -939,7 +939,7 @@ export function resolveAnonymousCapturingGroup_pattern(
 }
 
 export function coerceToAnonymousCapturingGroup<const I extends T.AnonymousCapturingGroup.Loose>(
-	input: I & RefuseUntyped<I, T.AnonymousCapturingGroup.Loose>
+	input: I & RefuseUndeclared<I, T.AnonymousCapturingGroup.Loose>
 ): ReturnType<typeof F.buildAnonymousCapturingGroup>;
 export function coerceToAnonymousCapturingGroup(
 	input: T.AnonymousCapturingGroup.Loose
@@ -976,7 +976,7 @@ export function resolveNamedCapturingGroup_pattern(
 }
 
 export function coerceToNamedCapturingGroup<const I extends T.NamedCapturingGroup.Loose>(
-	input: I & RefuseUntyped<I, T.NamedCapturingGroup.Loose>
+	input: I & RefuseUndeclared<I, T.NamedCapturingGroup.Loose>
 ): ReturnType<typeof F.buildNamedCapturingGroup>;
 export function coerceToNamedCapturingGroup(
 	input: T.NamedCapturingGroup.Loose
@@ -997,7 +997,7 @@ export function resolveNonCapturingGroup_pattern(
 }
 
 export function coerceToNonCapturingGroup<const I extends T.NonCapturingGroup.Loose>(
-	input: I & RefuseUntyped<I, T.NonCapturingGroup.Loose>
+	input: I & RefuseUndeclared<I, T.NonCapturingGroup.Loose>
 ): ReturnType<typeof F.buildNonCapturingGroup>;
 export function coerceToNonCapturingGroup(
 	input: T.NonCapturingGroup.Loose
@@ -1013,7 +1013,7 @@ export function coerceToNonCapturingGroup(
 }
 
 export function coerceToFlags<const V extends T.Flags.Loose>(
-	input: V & RefuseUntyped<V, T.Flags.Loose>
+	input: V & RefuseUndeclared<V, T.Flags.Loose>
 ): ReturnType<typeof F.buildFlags>;
 export function coerceToFlags(input: T.Flags.Loose): ReturnType<typeof F.buildFlags> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFlags>;
@@ -1025,7 +1025,7 @@ export function resolveZeroOrMore_lazy(value: T.ZeroOrMore.LooseConfig['lazy']):
 }
 
 export function coerceToZeroOrMore<const I extends T.ZeroOrMore.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.ZeroOrMore.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.ZeroOrMore.Loose>
 ): ReturnType<typeof F.buildZeroOrMore>;
 export function coerceToZeroOrMore(input?: T.ZeroOrMore.Loose): ReturnType<typeof F.buildZeroOrMore> {
 	if (!_isLooseConfig<T.ZeroOrMore.LooseConfig | undefined>(input))
@@ -1040,7 +1040,7 @@ export function resolveOneOrMore_lazy(value: T.OneOrMore.LooseConfig['lazy']): A
 }
 
 export function coerceToOneOrMore<const I extends T.OneOrMore.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.OneOrMore.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.OneOrMore.Loose>
 ): ReturnType<typeof F.buildOneOrMore>;
 export function coerceToOneOrMore(input?: T.OneOrMore.Loose): ReturnType<typeof F.buildOneOrMore> {
 	if (!_isLooseConfig<T.OneOrMore.LooseConfig | undefined>(input))
@@ -1055,7 +1055,7 @@ export function resolveOptional_lazy(value: T.Optional.LooseConfig['lazy']): Adm
 }
 
 export function coerceToOptional<const I extends T.Optional.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.Optional.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.Optional.Loose>
 ): ReturnType<typeof F.buildOptional>;
 export function coerceToOptional(input?: T.Optional.Loose): ReturnType<typeof F.buildOptional> {
 	if (!_isLooseConfig<T.Optional.LooseConfig | undefined>(input))
@@ -1078,7 +1078,7 @@ export function resolveCountQuantifier_lazy(
 }
 
 export function coerceToCountQuantifier<const I extends T.CountQuantifier.Loose>(
-	input: I & RefuseUntyped<I, T.CountQuantifier.Loose>
+	input: I & RefuseUndeclared<I, T.CountQuantifier.Loose>
 ): ReturnType<typeof F.buildCountQuantifier>;
 export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnType<typeof F.buildCountQuantifier> {
 	if (!_isLooseConfig<T.CountQuantifier.LooseConfig>(input))
@@ -1096,7 +1096,7 @@ export function resolveBackreferenceEscape_groupName(
 }
 
 export function coerceToBackreferenceEscape<const I extends T.BackreferenceEscape.Loose>(
-	input: I & RefuseUntyped<I, T.BackreferenceEscape.Loose>
+	input: I & RefuseUndeclared<I, T.BackreferenceEscape.Loose>
 ): ReturnType<typeof F.buildBackreferenceEscape>;
 export function coerceToBackreferenceEscape(
 	input: T.BackreferenceEscape.Loose
@@ -1120,7 +1120,7 @@ export function resolveNamedGroupBackreference_groupName(
 }
 
 export function coerceToNamedGroupBackreference<const I extends T.NamedGroupBackreference.Loose>(
-	input: I & RefuseUntyped<I, T.NamedGroupBackreference.Loose>
+	input: I & RefuseUndeclared<I, T.NamedGroupBackreference.Loose>
 ): ReturnType<typeof F.buildNamedGroupBackreference>;
 export function coerceToNamedGroupBackreference(
 	input: T.NamedGroupBackreference.Loose
@@ -1138,7 +1138,7 @@ export function coerceToNamedGroupBackreference(
 }
 
 export function coerceToDecimalEscape<const V extends T.DecimalEscape.Loose>(
-	input: V & RefuseUntyped<V, T.DecimalEscape.Loose>
+	input: V & RefuseUndeclared<V, T.DecimalEscape.Loose>
 ): ReturnType<typeof F.buildDecimalEscape>;
 export function coerceToDecimalEscape(input: T.DecimalEscape.Loose): ReturnType<typeof F.buildDecimalEscape> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildDecimalEscape>;
@@ -1156,7 +1156,7 @@ export function resolveCharacterClassEscape_content(
 }
 
 export function coerceToCharacterClassEscape<const I extends T.CharacterClassEscape.Loose>(
-	input: I & RefuseUntyped<I, T.CharacterClassEscape.Loose>
+	input: I & RefuseUndeclared<I, T.CharacterClassEscape.Loose>
 ): ReturnType<typeof F.buildCharacterClassEscape>;
 export function coerceToCharacterClassEscape(
 	input: T.CharacterClassEscape.Loose
@@ -1173,7 +1173,7 @@ export function coerceToCharacterClassEscape(
 }
 
 export function coerceToUnicodeCharacterEscape<const V extends T.UnicodeCharacterEscape.Loose>(
-	input: V & RefuseUntyped<V, T.UnicodeCharacterEscape.Loose>
+	input: V & RefuseUndeclared<V, T.UnicodeCharacterEscape.Loose>
 ): ReturnType<typeof F.buildUnicodeCharacterEscape>;
 export function coerceToUnicodeCharacterEscape(
 	input: T.UnicodeCharacterEscape.Loose
@@ -1200,7 +1200,7 @@ export function resolveUnicodePropertyValueExpression_unicodePropertyValue(
 }
 
 export function coerceToUnicodePropertyValueExpression<const I extends T.UnicodePropertyValueExpression.Loose>(
-	input: I & RefuseUntyped<I, T.UnicodePropertyValueExpression.Loose>
+	input: I & RefuseUndeclared<I, T.UnicodePropertyValueExpression.Loose>
 ): ReturnType<typeof F.buildUnicodePropertyValueExpression>;
 export function coerceToUnicodePropertyValueExpression(
 	input: T.UnicodePropertyValueExpression.Loose
@@ -1216,7 +1216,7 @@ export function coerceToUnicodePropertyValueExpression(
 }
 
 export function coerceToUnicodePropertyValue<const V extends T.UnicodePropertyValue.Loose>(
-	input: V & RefuseUntyped<V, T.UnicodePropertyValue.Loose>
+	input: V & RefuseUndeclared<V, T.UnicodePropertyValue.Loose>
 ): ReturnType<typeof F.buildUnicodePropertyValue>;
 export function coerceToUnicodePropertyValue(
 	input: T.UnicodePropertyValue.Loose
@@ -1226,7 +1226,7 @@ export function coerceToUnicodePropertyValue(
 }
 
 export function coerceToControlEscape<const V extends T.ControlEscape.Loose>(
-	input: V & RefuseUntyped<V, T.ControlEscape.Loose>
+	input: V & RefuseUndeclared<V, T.ControlEscape.Loose>
 ): ReturnType<typeof F.buildControlEscape>;
 export function coerceToControlEscape(input: T.ControlEscape.Loose): ReturnType<typeof F.buildControlEscape> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildControlEscape>;
@@ -1234,7 +1234,7 @@ export function coerceToControlEscape(input: T.ControlEscape.Loose): ReturnType<
 }
 
 export function coerceToControlLetterEscape<const V extends T.ControlLetterEscape.Loose>(
-	input: V & RefuseUntyped<V, T.ControlLetterEscape.Loose>
+	input: V & RefuseUndeclared<V, T.ControlLetterEscape.Loose>
 ): ReturnType<typeof F.buildControlLetterEscape>;
 export function coerceToControlLetterEscape(
 	input: T.ControlLetterEscape.Loose
@@ -1250,7 +1250,7 @@ export function resolveIdentityEscape_content(
 }
 
 export function coerceToIdentityEscape<const I extends T.IdentityEscape.Loose>(
-	input: I & RefuseUntyped<I, T.IdentityEscape.Loose>
+	input: I & RefuseUndeclared<I, T.IdentityEscape.Loose>
 ): ReturnType<typeof F.buildIdentityEscape>;
 export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnType<typeof F.buildIdentityEscape> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
@@ -1266,7 +1266,7 @@ export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnTyp
 }
 
 export function coerceToGroupName<const V extends T.GroupName.Loose>(
-	input: V & RefuseUntyped<V, T.GroupName.Loose>
+	input: V & RefuseUndeclared<V, T.GroupName.Loose>
 ): ReturnType<typeof F.buildGroupName>;
 export function coerceToGroupName(input: T.GroupName.Loose): ReturnType<typeof F.buildGroupName> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildGroupName>;
@@ -1274,7 +1274,7 @@ export function coerceToGroupName(input: T.GroupName.Loose): ReturnType<typeof F
 }
 
 export function coerceToDecimalDigits<const V extends T.DecimalDigits.Loose>(
-	input: V & RefuseUntyped<V, T.DecimalDigits.Loose>
+	input: V & RefuseUndeclared<V, T.DecimalDigits.Loose>
 ): ReturnType<typeof F.buildDecimalDigits>;
 export function coerceToDecimalDigits(input: T.DecimalDigits.Loose): ReturnType<typeof F.buildDecimalDigits> {
 	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
@@ -1325,7 +1325,7 @@ export function resolveTermGroup_quantifier(
 }
 
 export function coerceToTermGroup<const I extends T.TermGroup.Loose>(
-	input: I & RefuseUntyped<I, T.TermGroup.Loose>
+	input: I & RefuseUndeclared<I, T.TermGroup.Loose>
 ): ReturnType<typeof F.buildTermGroup>;
 export function coerceToTermGroup(input: T.TermGroup.Loose): ReturnType<typeof F.buildTermGroup> {
 	if (!_isLooseConfig<T.TermGroup.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTermGroup>;
@@ -1342,7 +1342,7 @@ export function resolveCountQuantifierGroup_decimalDigits(
 }
 
 export function coerceToCountQuantifierGroup<const I extends T.CountQuantifierGroup.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.CountQuantifierGroup.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.CountQuantifierGroup.Loose>
 ): ReturnType<typeof F.buildCountQuantifierGroup>;
 export function coerceToCountQuantifierGroup(
 	input?: T.CountQuantifierGroup.Loose
@@ -1372,7 +1372,7 @@ export function resolveCountQuantifierArm_countQuantifierGroup(
 }
 
 export function coerceToCountQuantifierArm<const I extends T.CountQuantifierArm.Loose>(
-	input: I & RefuseUntyped<I, T.CountQuantifierArm.Loose>
+	input: I & RefuseUndeclared<I, T.CountQuantifierArm.Loose>
 ): ReturnType<typeof F.buildCountQuantifierArm>;
 export function coerceToCountQuantifierArm(
 	input: T.CountQuantifierArm.Loose
@@ -1398,7 +1398,7 @@ export function resolveCharacterClassEscapeArm_unicodePropertyValueExpression(
 }
 
 export function coerceToCharacterClassEscapeArm<const I extends T.CharacterClassEscapeArm.Loose>(
-	input: I & RefuseUntyped<I, T.CharacterClassEscapeArm.Loose>
+	input: I & RefuseUndeclared<I, T.CharacterClassEscapeArm.Loose>
 ): ReturnType<typeof F.buildCharacterClassEscapeArm>;
 export function coerceToCharacterClassEscapeArm(
 	input: T.CharacterClassEscapeArm.Loose
@@ -1424,7 +1424,7 @@ export function resolveUnicodePropertyValueExpressionGroup_unicodePropertyName(
 export function coerceToUnicodePropertyValueExpressionGroup<
 	const I extends T.UnicodePropertyValueExpressionGroup.Loose
 >(
-	input: I & RefuseUntyped<I, T.UnicodePropertyValueExpressionGroup.Loose>
+	input: I & RefuseUndeclared<I, T.UnicodePropertyValueExpressionGroup.Loose>
 ): ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup>;
 export function coerceToUnicodePropertyValueExpressionGroup(
 	input: T.UnicodePropertyValueExpressionGroup.Loose
@@ -1442,7 +1442,7 @@ export function coerceToUnicodePropertyValueExpressionGroup(
 }
 
 export function coerceToCharacterClassEscapeText1<const V extends T.CharacterClassEscapeText1.Loose>(
-	input: V & RefuseUntyped<V, T.CharacterClassEscapeText1.Loose>
+	input: V & RefuseUndeclared<V, T.CharacterClassEscapeText1.Loose>
 ): ReturnType<typeof F.buildCharacterClassEscapeText1>;
 export function coerceToCharacterClassEscapeText1(
 	input: T.CharacterClassEscapeText1.Loose
@@ -1452,7 +1452,7 @@ export function coerceToCharacterClassEscapeText1(
 }
 
 export function coerceToCharacterClassEscapeText2<const V extends T.CharacterClassEscapeText2.Loose>(
-	input: V & RefuseUntyped<V, T.CharacterClassEscapeText2.Loose>
+	input: V & RefuseUndeclared<V, T.CharacterClassEscapeText2.Loose>
 ): ReturnType<typeof F.buildCharacterClassEscapeText2>;
 export function coerceToCharacterClassEscapeText2(
 	input: T.CharacterClassEscapeText2.Loose
@@ -1478,7 +1478,7 @@ export function resolveInlineFlagsGroupEnable_pattern(
 }
 
 export function coerceToInlineFlagsGroupEnable<const I extends T.InlineFlagsGroupEnable.Loose>(
-	input: I & RefuseUntyped<I, T.InlineFlagsGroupEnable.Loose>
+	input: I & RefuseUndeclared<I, T.InlineFlagsGroupEnable.Loose>
 ): ReturnType<typeof F.buildInlineFlagsGroupEnable>;
 export function coerceToInlineFlagsGroupEnable(
 	input: T.InlineFlagsGroupEnable.Loose
@@ -1510,7 +1510,7 @@ export function resolveInlineFlagsGroupToggle_pattern(
 }
 
 export function coerceToInlineFlagsGroupToggle<const I extends T.InlineFlagsGroupToggle.Loose>(
-	input: I & RefuseUntyped<I, T.InlineFlagsGroupToggle.Loose>
+	input: I & RefuseUndeclared<I, T.InlineFlagsGroupToggle.Loose>
 ): ReturnType<typeof F.buildInlineFlagsGroupToggle>;
 export function coerceToInlineFlagsGroupToggle(
 	input: T.InlineFlagsGroupToggle.Loose
@@ -1537,7 +1537,7 @@ export function resolveInlineFlagsGroupDisable_pattern(
 }
 
 export function coerceToInlineFlagsGroupDisable<const I extends T.InlineFlagsGroupDisable.Loose>(
-	input: I & RefuseUntyped<I, T.InlineFlagsGroupDisable.Loose>
+	input: I & RefuseUndeclared<I, T.InlineFlagsGroupDisable.Loose>
 ): ReturnType<typeof F.buildInlineFlagsGroupDisable>;
 export function coerceToInlineFlagsGroupDisable(
 	input: T.InlineFlagsGroupDisable.Loose
@@ -1574,7 +1574,7 @@ export function resolveLazy_content(value: T.Lazy.LooseConfig['content'] | undef
 }
 
 export function coerceToLazy<const I extends T.Lazy.Loose>(
-	...input: [input?: I] & RefuseUntyped<I, T.Lazy.Loose>
+	...input: [input?: I] & RefuseUndeclared<I, T.Lazy.Loose>
 ): ReturnType<typeof F.buildLazy>;
 export function coerceToLazy(input?: T.Lazy.Loose): ReturnType<typeof F.buildLazy> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.Lazy))
@@ -1602,7 +1602,7 @@ export function resolveUnicodePropertyName_content(
 }
 
 export function coerceToUnicodePropertyName<const I extends T.UnicodePropertyName.Loose>(
-	input: I & RefuseUntyped<I, T.UnicodePropertyName.Loose>
+	input: I & RefuseUndeclared<I, T.UnicodePropertyName.Loose>
 ): ReturnType<typeof F.buildUnicodePropertyName>;
 export function coerceToUnicodePropertyName(
 	input: T.UnicodePropertyName.Loose

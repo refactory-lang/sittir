@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUntyped } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -321,13 +321,13 @@ const subscript$subscripts = <PF extends (config: never) => unknown, CF extends 
 	};
 };
 function subscript$seated<A extends T.Subscript.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildSubscript>;
 function subscript$seated(...args: T.Subscript.BuildArgs): ReturnType<typeof F.buildSubscript> {
 	return subscript$subscripts(F.buildSubscript, F.buildSubscripts)(...args);
 }
 function subscript$seatedCoerce<const A extends T.Subscript.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.Subscript.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.Subscript.LooseArgs>
 ): ReturnType<typeof C.coerceToSubscript>;
 function subscript$seatedCoerce(...args: T.Subscript.LooseArgs): ReturnType<typeof C.coerceToSubscript> {
 	return subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts)(...args);
@@ -360,7 +360,7 @@ const comparisonOperator$comparators = <
 	};
 };
 function comparisonOperator$seated<A extends T.ComparisonOperator.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildComparisonOperator>;
 function comparisonOperator$seated(
 	...args: T.ComparisonOperator.BuildArgs
@@ -368,7 +368,7 @@ function comparisonOperator$seated(
 	return comparisonOperator$comparators(F.buildComparisonOperator, F.buildComparisonOperatorComparator)(...args);
 }
 function comparisonOperator$seatedCoerce<const A extends T.ComparisonOperator.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.ComparisonOperator.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.ComparisonOperator.LooseArgs>
 ): ReturnType<typeof C.coerceToComparisonOperator>;
 function comparisonOperator$seatedCoerce(
 	...args: T.ComparisonOperator.LooseArgs
@@ -424,13 +424,13 @@ const matchStatement$subjects = <PF extends (config: never) => unknown, CF exten
 	};
 };
 function matchStatement$seated<A extends T.MatchStatement.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMatchStatement>;
 function matchStatement$seated(...args: T.MatchStatement.BuildArgs): ReturnType<typeof F.buildMatchStatement> {
 	return matchStatement$subjects(F.buildMatchStatement, F.buildSubjects)(...args);
 }
 function matchStatement$seatedCoerce<const A extends T.MatchStatement.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MatchStatement.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MatchStatement.LooseArgs>
 ): ReturnType<typeof C.coerceToMatchStatement>;
 function matchStatement$seatedCoerce(...args: T.MatchStatement.LooseArgs): ReturnType<typeof C.coerceToMatchStatement> {
 	return matchStatement$subjects(C.coerceToMatchStatement, C.coerceToSubjects)(...args);
@@ -482,13 +482,13 @@ const caseClause$casePatterns = <PF extends (config: never) => unknown, CF exten
 	};
 };
 function caseClause$seated<A extends T.CaseClause.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildCaseClause>;
 function caseClause$seated(...args: T.CaseClause.BuildArgs): ReturnType<typeof F.buildCaseClause> {
 	return caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns)(...args);
 }
 function caseClause$seatedCoerce<const A extends T.CaseClause.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.CaseClause.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.CaseClause.LooseArgs>
 ): ReturnType<typeof C.coerceToCaseClause>;
 function caseClause$seatedCoerce(...args: T.CaseClause.LooseArgs): ReturnType<typeof C.coerceToCaseClause> {
 	return caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns)(...args);
@@ -663,13 +663,13 @@ const classPattern$arguments = <PF extends (config: never) => unknown, CF extend
 	};
 };
 function classPattern$seated<A extends T.ClassPattern.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildClassPattern>;
 function classPattern$seated(...args: T.ClassPattern.BuildArgs): ReturnType<typeof F.buildClassPattern> {
 	return classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns)(...args);
 }
 function classPattern$seatedCoerce<const A extends T.ClassPattern.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.ClassPattern.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.ClassPattern.LooseArgs>
 ): ReturnType<typeof C.coerceToClassPattern>;
 function classPattern$seatedCoerce(...args: T.ClassPattern.LooseArgs): ReturnType<typeof C.coerceToClassPattern> {
 	return classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns)(...args);
@@ -691,13 +691,13 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function unionPattern$seated<A extends T.UnionPattern.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildUnionPattern>;
 function unionPattern$seated(...args: T.UnionPattern.BuildArgs): ReturnType<typeof F.buildUnionPattern> {
 	return unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative)(...args);
 }
 function unionPattern$seatedCoerce<const A extends T.UnionPattern.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.UnionPattern.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.UnionPattern.LooseArgs>
 ): ReturnType<typeof C.coerceToUnionPattern>;
 function unionPattern$seatedCoerce(...args: T.UnionPattern.LooseArgs): ReturnType<typeof C.coerceToUnionPattern> {
 	return unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative)(...args);
@@ -2401,12 +2401,12 @@ const slice$flatten$step =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, step: _c(child)(inner['expression']) } : rest, options);
 	};
-function slice$seated<A extends T.Slice.BuildArgs>(...args: A & RefuseUntyped<A>): ReturnType<typeof F.buildSlice>;
+function slice$seated<A extends T.Slice.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildSlice>;
 function slice$seated(...args: T.Slice.BuildArgs): ReturnType<typeof F.buildSlice> {
 	return slice$flatten$step(F.buildSlice, F.buildSliceGroup)(...args);
 }
 function slice$seatedCoerce<const A extends T.Slice.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.Slice.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.Slice.LooseArgs>
 ): ReturnType<typeof C.coerceToSlice>;
 function slice$seatedCoerce(...args: T.Slice.LooseArgs): ReturnType<typeof C.coerceToSlice> {
 	return slice$flatten$step(C.coerceToSlice, C.coerceToSliceGroup)(...args);

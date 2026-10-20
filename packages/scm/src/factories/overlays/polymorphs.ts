@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUntyped } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -52,13 +52,13 @@ const grouping$groupingGroup = <PF extends (config: never) => unknown, CF extend
 	};
 };
 function grouping$seated<A extends T.Grouping.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildGrouping>;
 function grouping$seated(...args: T.Grouping.BuildArgs): ReturnType<typeof F.buildGrouping> {
 	return grouping$groupingGroup(F.buildGrouping, F.buildGroupingGroup)(...args);
 }
 function grouping$seatedCoerce<const A extends T.Grouping.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.Grouping.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.Grouping.LooseArgs>
 ): ReturnType<typeof C.coerceToGrouping>;
 function grouping$seatedCoerce(...args: T.Grouping.LooseArgs): ReturnType<typeof C.coerceToGrouping> {
 	return grouping$groupingGroup(C.coerceToGrouping, C.coerceToGroupingGroup)(...args);

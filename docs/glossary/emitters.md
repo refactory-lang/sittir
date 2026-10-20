@@ -1549,9 +1549,9 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 
 A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's spread: beside its single-value signature it declares `(...input: T.<Target>.LooseArgs)`, and a call with more than one argument hands every argument to the target's own coercer and wraps the result. `parameters(a, b, c)` is `parameters([a, b, c])`, each element resolved as the list resolves it. A spelled or sibling-refusing signature cannot also spread, and the emitter throws if one would.
 
-#### untyped refusal
+#### input refusal
 
-Every coercer declares its public signature as one overload over its implementation: generic over the whole input and refusing an untyped node anywhere in it (`RefuseUntyped`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
+Every coercer declares its public signature as one overload over its implementation: generic over the whole input and refusing an untyped node or an undeclared key anywhere in it (`RefuseUndeclared`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
 
 
 #### interior passthrough
@@ -14956,9 +14956,9 @@ Says why an emitter skipped a kind `classifyParserSymbolEmission` found no parse
 
 Whether a key can be written bare, as an object key or after a dot. `quoteKey` and the coercers' storage reads (`emitSingularChildrenFrom`) share it.
 
-### `packages/codegen/src/emitters/shared.ts::refuseUntyped`
+### `packages/codegen/src/emitters/shared.ts::refuseUndeclared`
 
-`RefuseUntyped<typeParam>`, with the declared input as its second argument when the caller passes one: a loose builder does, so a value typed as its whole input is admitted unsearched.
+`RefuseUndeclared<typeParam>`, with the declared input as its second argument when the caller passes one: a loose builder does, and a strict builder whose whole config is generic (`refusingSlots`), so the value's keys are checked against that input and a value typed as all of it is admitted unwalked.
 
 ### `packages/codegen/src/emitters/shared.ts::RefusingParams`
 
@@ -14966,7 +14966,7 @@ A refusing overload's type parameter list and parameter list: the two parts of a
 
 ### `packages/codegen/src/emitters/shared.ts::refusingParam`
 
-The refusing form of one parameter, generic over its value. A required value is `label: V & RefuseUntyped<V>`, a rest `...label: A & RefuseUntyped<A>`, and an optional value the rest tuple `...label: [label?: V] & RefuseUntyped<V>`. The optional form is a tuple for two reasons: `label?: V & RefuseUntyped<V>` reads as a union with `undefined`, against which TypeScript infers a union value one member at a time (`RefusingConfig`), and the tuple reads back through `ArgsOf` as the same optional parameter the kind's row declares. A loose parameter is `const`, as the loose input's other refusals need, and passes its declared input to `RefuseUntyped`.
+The refusing form of one parameter, generic over its value. A required value is `label: V & RefuseUndeclared<V>`, a rest `...label: A & RefuseUndeclared<A>`, and an optional value the rest tuple `...label: [label?: V] & RefuseUndeclared<V>`. The optional form is a tuple for two reasons: `label?: V & RefuseUndeclared<V>` reads as a union with `undefined`, against which TypeScript infers a union value one member at a time (`RefusingConfig`), and the tuple reads back through `ArgsOf` as the same optional parameter the kind's row declares. A loose parameter is `const`, as the loose input's other refusals need, and passes its declared input to `RefuseUndeclared`.
 
 ### `packages/codegen/src/emitters/shared.ts::OPTIONAL_REFUSING`
 
@@ -15174,7 +15174,7 @@ A positional value's or a rest's refusing form (`refusingParam`), over the param
 
 ### `packages/codegen/src/emitters/factories.ts::refusingSlots`
 
-A config's refusing form: one type parameter per node-valued config slot (`storesNodes`), constrained by the config's own field type and mapped through `RefusingConfig`. Each is named `<ConfigKey>Slot`, so it cannot shadow a name the signature itself uses (`ReturnType`, `T`). A config with numeric text slots keeps its literal check's parameter first. `undefined` when the config has neither.
+A config's refusing form: one type parameter per node-valued config slot (`storesNodes`), constrained by the config's own field type and mapped through `RefusingConfig`. Each is named `<ConfigKey>Slot`, so it cannot shadow a name the signature itself uses (`ReturnType`, `T`). A config with numeric text slots keeps its literal check's parameter first, generic over the whole config, so TypeScript's excess-property check no longer reaches the config; it refuses an undeclared key through `RefuseUndeclared` with the strict config as its declared input. `undefined` when the config has neither.
 
 ### `packages/codegen/src/emitters/factories.ts::publicParams`
 

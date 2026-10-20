@@ -38,7 +38,8 @@ export type {
 	PortableSurface,
 	PortableTable
 } from './portable.ts';
-import type { Admit, MaxDepth } from './node-surface.ts';
+import type { Admit } from './node-surface.ts';
+import type { KeysOfAll } from './type-utils.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
 export type { BooleanKeyword } from './keyword-presence.ts';
 
@@ -332,6 +333,9 @@ export type Contains<Visited extends number[], T extends number> = Visited exten
 		? true
 		: Contains<Rest, T>
 	: false;
+
+/** Max recursion depth for type expansion. Beyond this, branches become opaque. */
+type MaxDepth = 3;
 
 /** Max chain of bare hops (`BareArm`) under one slot: an elided wrapper
  *  whose slot is a list whose element is an elided wrapper… Each hop
@@ -1335,29 +1339,24 @@ export type {
 
 type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 
-type KeysOfAll<K> = K extends unknown ? keyof K : never;
-
 type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
 	? K extends keyof C
 		? RefusedValue<C[K], Integer>
 		: never
 	: never;
 
-type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
-
 /**
- * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W, Known>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses, or `C` names a key `Known` (the config type the builder accepts) does not. A union `C` is judged slot by slot across all its members, and a key one member lacks is not refused for that member.
+ * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses. A union `C` is judged slot by slot across all its members. A key the builder does not declare is refused by `RefuseUndeclared`.
  */
-export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known = C> = {
+export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = {
 	readonly [K in KeysOfAll<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
-} & NoExtraKeys<C, Known>;
+};
 
 /**
- * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
+ * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does.
  */
 export type NumericInput<
 	I,
 	Bare extends boolean | undefined,
-	W extends Readonly<Record<string, boolean>> = {},
-	Known = I
-> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W, Known>;
+	W extends Readonly<Record<string, boolean>> = {}
+> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W>;

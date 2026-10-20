@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUntyped } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -1250,12 +1250,12 @@ const term$termGroup = <PF extends (...args: never[]) => unknown, CF extends (..
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-function term$seated<A extends T.Term.BuildArgs>(...args: A & RefuseUntyped<A>): ReturnType<typeof F.buildTerm>;
+function term$seated<A extends T.Term.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildTerm>;
 function term$seated(...args: T.Term.BuildArgs): ReturnType<typeof F.buildTerm> {
 	return term$termGroup(F.buildTerm, F.buildTermGroup)(...args);
 }
 function term$seatedCoerce<const A extends T.Term.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.Term.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.Term.LooseArgs>
 ): ReturnType<typeof C.coerceToTerm>;
 function term$seatedCoerce(...args: T.Term.LooseArgs): ReturnType<typeof C.coerceToTerm> {
 	return term$termGroup(C.coerceToTerm, C.coerceToTermGroup)(...args);

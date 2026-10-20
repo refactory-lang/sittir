@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUntyped } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -98,7 +98,7 @@ const enumVariantListElements$item = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function enumVariantListElements$seated<A extends T.EnumVariantListElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildEnumVariantListElements>;
 function enumVariantListElements$seated(
 	...args: T.EnumVariantListElements.BuildArgs
@@ -106,7 +106,7 @@ function enumVariantListElements$seated(
 	return enumVariantListElements$item(F.buildEnumVariantListElements, F.buildAttributedEnumVariant)(...args);
 }
 function enumVariantListElements$seatedCoerce<const A extends T.EnumVariantListElements.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.EnumVariantListElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
 ): ReturnType<typeof C.coerceToEnumVariantListElements>;
 function enumVariantListElements$seatedCoerce(
 	...args: T.EnumVariantListElements.LooseArgs
@@ -131,14 +131,14 @@ const enumVariantList$item = <PF extends (...args: never[]) => unknown, CF exten
 };
 function enumVariantList$seated(): T.EmptyEnumVariantList;
 function enumVariantList$seated<A extends T.EnumVariantList.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildEnumVariantList>;
 function enumVariantList$seated(...args: T.EnumVariantList.BuildArgs): ReturnType<typeof F.buildEnumVariantList> {
 	return enumVariantList$item(F.buildEnumVariantList, F.buildAttributedEnumVariant)(...args);
 }
 function enumVariantList$seatedCoerce(): T.EmptyEnumVariantList;
 function enumVariantList$seatedCoerce<const A extends T.EnumVariantList.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.EnumVariantList.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.EnumVariantList.LooseArgs>
 ): ReturnType<typeof C.coerceToEnumVariantList>;
 function enumVariantList$seatedCoerce(
 	...args: T.EnumVariantList.LooseArgs
@@ -165,7 +165,7 @@ const fieldDeclarationListElements$item = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function fieldDeclarationListElements$seated<A extends T.FieldDeclarationListElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildFieldDeclarationListElements>;
 function fieldDeclarationListElements$seated(
 	...args: T.FieldDeclarationListElements.BuildArgs
@@ -176,7 +176,7 @@ function fieldDeclarationListElements$seated(
 	)(...args);
 }
 function fieldDeclarationListElements$seatedCoerce<const A extends T.FieldDeclarationListElements.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.FieldDeclarationListElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.FieldDeclarationListElements.LooseArgs>
 ): ReturnType<typeof C.coerceToFieldDeclarationListElements>;
 function fieldDeclarationListElements$seatedCoerce(
 	...args: T.FieldDeclarationListElements.LooseArgs
@@ -204,7 +204,7 @@ const fieldDeclarationList$item = <PF extends (...args: never[]) => unknown, CF 
 };
 function fieldDeclarationList$seated(): T.EmptyFieldDeclarationList;
 function fieldDeclarationList$seated<A extends T.FieldDeclarationList.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildFieldDeclarationList>;
 function fieldDeclarationList$seated(
 	...args: T.FieldDeclarationList.BuildArgs
@@ -213,7 +213,7 @@ function fieldDeclarationList$seated(
 }
 function fieldDeclarationList$seatedCoerce(): T.EmptyFieldDeclarationList;
 function fieldDeclarationList$seatedCoerce<const A extends T.FieldDeclarationList.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.FieldDeclarationList.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.FieldDeclarationList.LooseArgs>
 ): ReturnType<typeof C.coerceToFieldDeclarationList>;
 function fieldDeclarationList$seatedCoerce(
 	...args: T.FieldDeclarationList.LooseArgs
@@ -240,7 +240,7 @@ const orderedFieldDeclarationListElements$item = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function orderedFieldDeclarationListElements$seated<A extends T.OrderedFieldDeclarationListElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
 function orderedFieldDeclarationListElements$seated(
 	...args: T.OrderedFieldDeclarationListElements.BuildArgs
@@ -253,7 +253,7 @@ function orderedFieldDeclarationListElements$seated(
 function orderedFieldDeclarationListElements$seatedCoerce<
 	const A extends T.OrderedFieldDeclarationListElements.LooseArgs
 >(
-	...args: A & RefuseUntyped<A, T.OrderedFieldDeclarationListElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.OrderedFieldDeclarationListElements.LooseArgs>
 ): ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements>;
 function orderedFieldDeclarationListElements$seatedCoerce(
 	...args: T.OrderedFieldDeclarationListElements.LooseArgs
@@ -284,7 +284,7 @@ const orderedFieldDeclarationList$item = <
 };
 function orderedFieldDeclarationList$seated(): T.EmptyOrderedFieldDeclarationList;
 function orderedFieldDeclarationList$seated<A extends T.OrderedFieldDeclarationList.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 function orderedFieldDeclarationList$seated(
 	...args: T.OrderedFieldDeclarationList.BuildArgs
@@ -293,7 +293,7 @@ function orderedFieldDeclarationList$seated(
 }
 function orderedFieldDeclarationList$seatedCoerce(): T.EmptyOrderedFieldDeclarationList;
 function orderedFieldDeclarationList$seatedCoerce<const A extends T.OrderedFieldDeclarationList.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.OrderedFieldDeclarationList.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.OrderedFieldDeclarationList.LooseArgs>
 ): ReturnType<typeof C.coerceToOrderedFieldDeclarationList>;
 function orderedFieldDeclarationList$seatedCoerce(
 	...args: T.OrderedFieldDeclarationList.LooseArgs
@@ -323,7 +323,7 @@ const typeParametersElements$item = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function typeParametersElements$seated<A extends T.TypeParametersElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTypeParametersElements>;
 function typeParametersElements$seated(
 	...args: T.TypeParametersElements.BuildArgs
@@ -331,7 +331,7 @@ function typeParametersElements$seated(
 	return typeParametersElements$item(F.buildTypeParametersElements, F.buildAttributedTypeParameter)(...args);
 }
 function typeParametersElements$seatedCoerce<const A extends T.TypeParametersElements.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.TypeParametersElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
 ): ReturnType<typeof C.coerceToTypeParametersElements>;
 function typeParametersElements$seatedCoerce(
 	...args: T.TypeParametersElements.LooseArgs
@@ -355,13 +355,13 @@ const typeParameters$item = <PF extends (...args: never[]) => unknown, CF extend
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function typeParameters$seated<A extends T.TypeParameters.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTypeParameters>;
 function typeParameters$seated(...args: T.TypeParameters.BuildArgs): ReturnType<typeof F.buildTypeParameters> {
 	return typeParameters$item(F.buildTypeParameters, F.buildAttributedTypeParameter)(...args);
 }
 function typeParameters$seatedCoerce<const A extends T.TypeParameters.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.TypeParameters.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.TypeParameters.LooseArgs>
 ): ReturnType<typeof C.coerceToTypeParameters>;
 function typeParameters$seatedCoerce(...args: T.TypeParameters.LooseArgs): ReturnType<typeof C.coerceToTypeParameters> {
 	return typeParameters$item(C.coerceToTypeParameters, C.coerceToAttributedTypeParameter)(...args);
@@ -381,13 +381,13 @@ const useWildcard$flatten$useWildcardGroup =
 			? _fwd<ReturnType<PF>>(parent, config, options)
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
 function useWildcard$seated<A extends T.UseWildcard.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildUseWildcard>;
 function useWildcard$seated(...args: T.UseWildcard.BuildArgs): ReturnType<typeof F.buildUseWildcard> {
 	return useWildcard$flatten$useWildcardGroup(F.buildUseWildcard, F.buildUseWildcardGroup)(...args);
 }
 function useWildcard$seatedCoerce<const A extends T.UseWildcard.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.UseWildcard.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.UseWildcard.LooseArgs>
 ): ReturnType<typeof C.coerceToUseWildcard>;
 function useWildcard$seatedCoerce(...args: T.UseWildcard.LooseArgs): ReturnType<typeof C.coerceToUseWildcard> {
 	return useWildcard$flatten$useWildcardGroup(C.coerceToUseWildcard, C.coerceToUseWildcardGroup)(...args);
@@ -466,7 +466,7 @@ const parametersElements$item = <PF extends (...args: never[]) => unknown, CF ex
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function parametersElements$seated<A extends T.ParametersElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildParametersElements>;
 function parametersElements$seated(
 	...args: T.ParametersElements.BuildArgs
@@ -474,7 +474,7 @@ function parametersElements$seated(
 	return parametersElements$item(F.buildParametersElements, F.buildAttributedParameter)(...args);
 }
 function parametersElements$seatedCoerce<const A extends T.ParametersElements.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.ParametersElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
 ): ReturnType<typeof C.coerceToParametersElements>;
 function parametersElements$seatedCoerce(
 	...args: T.ParametersElements.LooseArgs
@@ -499,14 +499,14 @@ const parameters$item = <PF extends (...args: never[]) => unknown, CF extends (.
 };
 function parameters$seated(): T.EmptyParameters;
 function parameters$seated<A extends T.Parameters.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildParameters>;
 function parameters$seated(...args: T.Parameters.BuildArgs): ReturnType<typeof F.buildParameters> {
 	return parameters$item(F.buildParameters, F.buildAttributedParameter)(...args);
 }
 function parameters$seatedCoerce(): T.EmptyParameters;
 function parameters$seatedCoerce<const A extends T.Parameters.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.Parameters.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.Parameters.LooseArgs>
 ): ReturnType<typeof C.coerceToParameters>;
 function parameters$seatedCoerce(...args: T.Parameters.LooseArgs): ReturnType<typeof C.coerceToParameters> {
 	return parameters$item(C.coerceToParameters, C.coerceToAttributedParameter)(...args);
@@ -913,7 +913,7 @@ const typeArgumentsElements$item = <PF extends (...args: never[]) => unknown, CF
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function typeArgumentsElements$seated<A extends T.TypeArgumentsElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTypeArgumentsElements>;
 function typeArgumentsElements$seated(
 	...args: T.TypeArgumentsElements.BuildArgs
@@ -921,7 +921,7 @@ function typeArgumentsElements$seated(
 	return typeArgumentsElements$item(F.buildTypeArgumentsElements, F.buildTypeArgument)(...args);
 }
 function typeArgumentsElements$seatedCoerce<const A extends T.TypeArgumentsElements.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.TypeArgumentsElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
 ): ReturnType<typeof C.coerceToTypeArgumentsElements>;
 function typeArgumentsElements$seatedCoerce(
 	...args: T.TypeArgumentsElements.LooseArgs
@@ -945,13 +945,13 @@ const typeArguments$item = <PF extends (...args: never[]) => unknown, CF extends
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function typeArguments$seated<A extends T.TypeArguments.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTypeArguments>;
 function typeArguments$seated(...args: T.TypeArguments.BuildArgs): ReturnType<typeof F.buildTypeArguments> {
 	return typeArguments$item(F.buildTypeArguments, F.buildTypeArgument)(...args);
 }
 function typeArguments$seatedCoerce<const A extends T.TypeArguments.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.TypeArguments.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.TypeArguments.LooseArgs>
 ): ReturnType<typeof C.coerceToTypeArguments>;
 function typeArguments$seatedCoerce(...args: T.TypeArguments.LooseArgs): ReturnType<typeof C.coerceToTypeArguments> {
 	return typeArguments$item(C.coerceToTypeArguments, C.coerceToTypeArgument)(...args);
@@ -973,13 +973,13 @@ const argumentsElements$item = <PF extends (...args: never[]) => unknown, CF ext
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function argumentsElements$seated<A extends T.ArgumentsElements.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildArgumentsElements>;
 function argumentsElements$seated(...args: T.ArgumentsElements.BuildArgs): ReturnType<typeof F.buildArgumentsElements> {
 	return argumentsElements$item(F.buildArgumentsElements, F.buildAttributedArgument)(...args);
 }
 function argumentsElements$seatedCoerce<const A extends T.ArgumentsElements.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.ArgumentsElements.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
 ): ReturnType<typeof C.coerceToArgumentsElements>;
 function argumentsElements$seatedCoerce(
 	...args: T.ArgumentsElements.LooseArgs
@@ -1004,14 +1004,14 @@ const arguments_$item = <PF extends (...args: never[]) => unknown, CF extends (.
 };
 function arguments_$seated(): T.EmptyArguments;
 function arguments_$seated<A extends T.Arguments.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildArguments>;
 function arguments_$seated(...args: T.Arguments.BuildArgs): ReturnType<typeof F.buildArguments> {
 	return arguments_$item(F.buildArguments, F.buildAttributedArgument)(...args);
 }
 function arguments_$seatedCoerce(): T.EmptyArguments;
 function arguments_$seatedCoerce<const A extends T.Arguments.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.Arguments.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.Arguments.LooseArgs>
 ): ReturnType<typeof C.coerceToArguments>;
 function arguments_$seatedCoerce(...args: T.Arguments.LooseArgs): ReturnType<typeof C.coerceToArguments> {
 	return arguments_$item(C.coerceToArguments, C.coerceToAttributedArgument)(...args);
@@ -1036,13 +1036,13 @@ const tupleExpression$expressions = <PF extends (config: never) => unknown, CF e
 	};
 };
 function tupleExpression$seated<A extends T.TupleExpression.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTupleExpression>;
 function tupleExpression$seated(...args: T.TupleExpression.BuildArgs): ReturnType<typeof F.buildTupleExpression> {
 	return tupleExpression$expressions(F.buildTupleExpression, F.buildExpressions)(...args);
 }
 function tupleExpression$seatedCoerce<const A extends T.TupleExpression.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.TupleExpression.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.TupleExpression.LooseArgs>
 ): ReturnType<typeof C.coerceToTupleExpression>;
 function tupleExpression$seatedCoerce(
 	...args: T.TupleExpression.LooseArgs
@@ -1065,14 +1065,14 @@ const matchBlock$flatten$matchBlockArms =
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
 function matchBlock$seated(): T.EmptyMatchBlock;
 function matchBlock$seated<A extends T.MatchBlock.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMatchBlock>;
 function matchBlock$seated(...args: T.MatchBlock.BuildArgs): ReturnType<typeof F.buildMatchBlock> {
 	return matchBlock$flatten$matchBlockArms(F.buildMatchBlock, F.buildMatchBlockArms)(...args);
 }
 function matchBlock$seatedCoerce(): T.EmptyMatchBlock;
 function matchBlock$seatedCoerce<const A extends T.MatchBlock.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MatchBlock.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MatchBlock.LooseArgs>
 ): ReturnType<typeof C.coerceToMatchBlock>;
 function matchBlock$seatedCoerce(...args: T.MatchBlock.LooseArgs): ReturnType<typeof C.coerceToMatchBlock> {
 	return matchBlock$flatten$matchBlockArms(C.coerceToMatchBlock, C.coerceToMatchBlockArms)(...args);
@@ -1113,13 +1113,13 @@ const lastMatchArm$flatten$pattern =
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
 	};
 function lastMatchArm$seated<A extends T.LastMatchArm.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildLastMatchArm>;
 function lastMatchArm$seated(...args: T.LastMatchArm.BuildArgs): ReturnType<typeof F.buildLastMatchArm> {
 	return lastMatchArm$flatten$pattern(F.buildLastMatchArm, F.buildMatchPattern, TSKindId.MatchPattern)(...args);
 }
 function lastMatchArm$seatedCoerce<const A extends T.LastMatchArm.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.LastMatchArm.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.LastMatchArm.LooseArgs>
 ): ReturnType<typeof C.coerceToLastMatchArm>;
 function lastMatchArm$seatedCoerce(...args: T.LastMatchArm.LooseArgs): ReturnType<typeof C.coerceToLastMatchArm> {
 	return lastMatchArm$flatten$pattern(C.coerceToLastMatchArm, C.coerceToMatchPattern, TSKindId.MatchPattern)(...args);
@@ -1144,7 +1144,7 @@ const tupleStructPattern$patterns = <PF extends (config: never) => unknown, CF e
 	};
 };
 function tupleStructPattern$seated<A extends T.TupleStructPattern.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTupleStructPattern>;
 function tupleStructPattern$seated(
 	...args: T.TupleStructPattern.BuildArgs
@@ -1152,7 +1152,7 @@ function tupleStructPattern$seated(
 	return tupleStructPattern$patterns(F.buildTupleStructPattern, F.buildPatterns)(...args);
 }
 function tupleStructPattern$seatedCoerce<const A extends T.TupleStructPattern.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.TupleStructPattern.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.TupleStructPattern.LooseArgs>
 ): ReturnType<typeof C.coerceToTupleStructPattern>;
 function tupleStructPattern$seatedCoerce(
 	...args: T.TupleStructPattern.LooseArgs
@@ -1179,13 +1179,13 @@ const structPattern$fields = <PF extends (config: never) => unknown, CF extends 
 	};
 };
 function structPattern$seated<A extends T.StructPattern.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildStructPattern>;
 function structPattern$seated(...args: T.StructPattern.BuildArgs): ReturnType<typeof F.buildStructPattern> {
 	return structPattern$fields(F.buildStructPattern, F.buildStructPatternElements)(...args);
 }
 function structPattern$seatedCoerce<const A extends T.StructPattern.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.StructPattern.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.StructPattern.LooseArgs>
 ): ReturnType<typeof C.coerceToStructPattern>;
 function structPattern$seatedCoerce(...args: T.StructPattern.LooseArgs): ReturnType<typeof C.coerceToStructPattern> {
 	return structPattern$fields(C.coerceToStructPattern, C.coerceToStructPatternElements)(...args);
@@ -1307,7 +1307,7 @@ const arrayExpressionList$elements = <PF extends (config: never) => unknown, CF 
 };
 function arrayExpressionList$seated(): T.EmptyArrayExpressionList;
 function arrayExpressionList$seated<A extends T.ArrayExpressionList.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildArrayExpressionList>;
 function arrayExpressionList$seated(
 	...args: T.ArrayExpressionList.BuildArgs
@@ -1316,7 +1316,7 @@ function arrayExpressionList$seated(
 }
 function arrayExpressionList$seatedCoerce(): T.EmptyArrayExpressionList;
 function arrayExpressionList$seatedCoerce<const A extends T.ArrayExpressionList.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.ArrayExpressionList.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.ArrayExpressionList.LooseArgs>
 ): ReturnType<typeof C.coerceToArrayExpressionList>;
 function arrayExpressionList$seatedCoerce(
 	...args: T.ArrayExpressionList.LooseArgs
@@ -1509,7 +1509,7 @@ const matchArmWithComma$flatten$pattern =
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
 	};
 function matchArmWithComma$seated<A extends T.MatchArmWithComma.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMatchArmWithComma>;
 function matchArmWithComma$seated(...args: T.MatchArmWithComma.BuildArgs): ReturnType<typeof F.buildMatchArmWithComma> {
 	return matchArmWithComma$flatten$pattern(
@@ -1519,7 +1519,7 @@ function matchArmWithComma$seated(...args: T.MatchArmWithComma.BuildArgs): Retur
 	)(...args);
 }
 function matchArmWithComma$seatedCoerce<const A extends T.MatchArmWithComma.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MatchArmWithComma.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MatchArmWithComma.LooseArgs>
 ): ReturnType<typeof C.coerceToMatchArmWithComma>;
 function matchArmWithComma$seatedCoerce(
 	...args: T.MatchArmWithComma.LooseArgs
@@ -1566,7 +1566,7 @@ const matchArmBlockEnding$flatten$pattern =
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
 	};
 function matchArmBlockEnding$seated<A extends T.MatchArmBlockEnding.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMatchArmBlockEnding>;
 function matchArmBlockEnding$seated(
 	...args: T.MatchArmBlockEnding.BuildArgs
@@ -1578,7 +1578,7 @@ function matchArmBlockEnding$seated(
 	)(...args);
 }
 function matchArmBlockEnding$seatedCoerce<const A extends T.MatchArmBlockEnding.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MatchArmBlockEnding.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MatchArmBlockEnding.LooseArgs>
 ): ReturnType<typeof C.coerceToMatchArmBlockEnding>;
 function matchArmBlockEnding$seatedCoerce(
 	...args: T.MatchArmBlockEnding.LooseArgs
@@ -1612,7 +1612,7 @@ const macroDefinitionParen$macroRules = <
 	};
 };
 function macroDefinitionParen$seated<A extends T.MacroDefinitionParen.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMacroDefinitionParen>;
 function macroDefinitionParen$seated(
 	...args: T.MacroDefinitionParen.BuildArgs
@@ -1620,7 +1620,7 @@ function macroDefinitionParen$seated(
 	return macroDefinitionParen$macroRules(F.buildMacroDefinitionParen, F.buildMacroRules)(...args);
 }
 function macroDefinitionParen$seatedCoerce<const A extends T.MacroDefinitionParen.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MacroDefinitionParen.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MacroDefinitionParen.LooseArgs>
 ): ReturnType<typeof C.coerceToMacroDefinitionParen>;
 function macroDefinitionParen$seatedCoerce(
 	...args: T.MacroDefinitionParen.LooseArgs
@@ -1650,7 +1650,7 @@ const macroDefinitionBracket$macroRules = <
 	};
 };
 function macroDefinitionBracket$seated<A extends T.MacroDefinitionBracket.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMacroDefinitionBracket>;
 function macroDefinitionBracket$seated(
 	...args: T.MacroDefinitionBracket.BuildArgs
@@ -1658,7 +1658,7 @@ function macroDefinitionBracket$seated(
 	return macroDefinitionBracket$macroRules(F.buildMacroDefinitionBracket, F.buildMacroRules)(...args);
 }
 function macroDefinitionBracket$seatedCoerce<const A extends T.MacroDefinitionBracket.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MacroDefinitionBracket.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MacroDefinitionBracket.LooseArgs>
 ): ReturnType<typeof C.coerceToMacroDefinitionBracket>;
 function macroDefinitionBracket$seatedCoerce(
 	...args: T.MacroDefinitionBracket.LooseArgs
@@ -1691,7 +1691,7 @@ const macroDefinitionBrace$macroRules = <
 	};
 };
 function macroDefinitionBrace$seated<A extends T.MacroDefinitionBrace.BuildArgs>(
-	...args: A & RefuseUntyped<A>
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMacroDefinitionBrace>;
 function macroDefinitionBrace$seated(
 	...args: T.MacroDefinitionBrace.BuildArgs
@@ -1699,7 +1699,7 @@ function macroDefinitionBrace$seated(
 	return macroDefinitionBrace$macroRules(F.buildMacroDefinitionBrace, F.buildMacroRules)(...args);
 }
 function macroDefinitionBrace$seatedCoerce<const A extends T.MacroDefinitionBrace.LooseArgs>(
-	...args: A & RefuseUntyped<A, T.MacroDefinitionBrace.LooseArgs>
+	...args: A & RefuseUndeclared<A, T.MacroDefinitionBrace.LooseArgs>
 ): ReturnType<typeof C.coerceToMacroDefinitionBrace>;
 function macroDefinitionBrace$seatedCoerce(
 	...args: T.MacroDefinitionBrace.LooseArgs

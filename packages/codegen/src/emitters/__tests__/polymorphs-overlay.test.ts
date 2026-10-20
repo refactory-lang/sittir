@@ -273,7 +273,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
-		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUntyped<A>): ReturnType<typeof F.buildClause>;');
+		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');
 		expect(out).toContain('function clause$seated(...args: T.Clause.BuildArgs): ReturnType<typeof F.buildClause> {');
 		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
 		const { buildArgs } = seatedRows(nodeMap, 'clause');
@@ -321,7 +321,7 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
 		expect(out).toContain('return comparison$comparators(F.buildComparison, F.buildComparisonComparator)(...args);');
 		expect(out).toContain('...bundle(comparison$seated, comparison$seatedCoerce, { key: "comparison", max: 1 }),');
-		expect(out).toContain('function comparison$seated<A extends T.Comparison.BuildArgs>(...args: A & RefuseUntyped<A>):');
+		expect(out).toContain('function comparison$seated<A extends T.Comparison.BuildArgs>(...args: A & RefuseUndeclared<A>):');
 		expect(seatedRows(nodeMap, 'comparison').buildArgs).toContain('{ comparators: ReadonlyArray<T.ComparisonComparator.BuildArgs[0]');
 	});
 });
@@ -523,7 +523,7 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 		});
 		const out = emitPolymorphsOverlay({ nodeMap }).text.split('\n');
 		const seat = out.find((line) => line.startsWith('function items$seatedCoerce<'));
-		expect(seat).toContain('<const A extends T.Items.LooseArgs>(...args: A & RefuseUntyped<A, T.Items.LooseArgs>)');
+		expect(seat).toContain('<const A extends T.Items.LooseArgs>(...args: A & RefuseUndeclared<A, T.Items.LooseArgs>)');
 		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, undefined)!.looseArgs;
 		expect(row.startsWith('[options: ')).toBe(true);
 		expect(row).not.toMatch(/(^|\| )\[element: /);

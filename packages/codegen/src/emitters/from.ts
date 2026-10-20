@@ -30,7 +30,7 @@ import {
 	withEmptyOverload,
 	isIdentifierKey,
 	declaredOverload,
-	refuseUntyped,
+	refuseUndeclared,
 	refusingParam,
 	isRequired,
 	isMultiple,
@@ -180,7 +180,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUntyped', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -414,7 +414,7 @@ function emitBranchFrom(
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
-	const numericRefusal = numericInputRefusal(node, bareShape, inputType);
+	const numericRefusal = numericInputRefusal(node, bareShape);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined
@@ -423,7 +423,7 @@ function emitBranchFrom(
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
 	const inputParams = (input: string, options: string): string =>
-		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUntyped('I', inputType)}` : `input: ${input} & ${refuseUntyped('I', inputType)}${options}`;
+		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType)}` : `input: ${input} & ${refuseUndeclared('I', inputType)}${options}`;
 	const publicOverloads =
 		spelledType !== undefined
 			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams(refused(numericRefusal), ', options?: O')}): ${spelledType};`]
