@@ -218,7 +218,7 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 		$type: TSKindId.PatternCharacter as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -307,7 +307,7 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 		$type: TSKindId.PosixClassName as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -357,7 +357,7 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 		$type: TSKindId.ClassCharacter as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -496,7 +496,7 @@ export function buildFlags(text: string): T.Flags.Bound {
 		$type: TSKindId.Flags as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -664,7 +664,7 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 		$type: TSKindId.DecimalEscape as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -711,7 +711,7 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 		$type: TSKindId.UnicodeCharacterEscape as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -765,7 +765,7 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 		$type: TSKindId.UnicodePropertyValue as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -786,7 +786,7 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 		$type: TSKindId.ControlEscape as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -807,7 +807,7 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 		$type: TSKindId.ControlLetterEscape as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -856,7 +856,7 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 		$type: TSKindId.GroupName as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -881,7 +881,7 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 		$type: TSKindId.DecimalDigits as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -1069,7 +1069,7 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 		$type: TSKindId.CharacterClassEscapeText1 as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -1090,7 +1090,7 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 		$type: TSKindId.CharacterClassEscapeText2 as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {

@@ -35,7 +35,7 @@ describe('identifier', () => {
 		const node = ir.identifier('test');
 		expect(node.$type).toBe(TSKindId.Identifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -44,7 +44,7 @@ describe('_immediate_identifier', () => {
 		const node = ir.immediateIdentifier('test');
 		expect(node.$type).toBe(TSKindId.ImmediateIdentifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -512,7 +512,7 @@ describe('string_content_text', () => {
 		const node = ir.stringContentText('test');
 		expect(node.$type).toBe(TSKindId.StringContentText);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text()).toBe('test');
 	});
 });
 
@@ -544,7 +544,7 @@ describe('named_node_plain sub-factories', () => {
 		const node = ir.namedNodePlain.underscore({});
 		expect(node.$type).toBe(TSKindId.NamedNodePlain);
 		const seated = (node as any).name();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Underscore);
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Underscore);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('children builds the parent', () => {

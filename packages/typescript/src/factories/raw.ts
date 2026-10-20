@@ -2635,7 +2635,7 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 		$type: TSKindId.UnescapedDoubleStringFragment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -2656,7 +2656,7 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 		$type: TSKindId.UnescapedSingleStringFragment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -2784,7 +2784,7 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 		$type: TSKindId.RegexPattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -2805,7 +2805,7 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 		$type: TSKindId.RegexFlags as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -2829,7 +2829,7 @@ export function buildIdentifier<const W extends string>(
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -2850,7 +2850,7 @@ export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7792,7 +7792,7 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 		$type: TSKindId.NumberDecimal as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9245,7 +9245,7 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 		$type: TSKindId.HtmlComment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9266,7 +9266,7 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 		$type: TSKindId.JsxText as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9287,7 +9287,7 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 		$type: TSKindId.TemplateChars as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9327,7 +9327,7 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 		$type: TSKindId.TernaryQmark as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9346,7 +9346,7 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 		$type: TSKindId.ErrorRecovery as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {

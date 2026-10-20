@@ -5601,7 +5601,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7149,7 +7149,7 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 		$type: TSKindId.TokenRepetitionPatternText as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7170,7 +7170,7 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 		$type: TSKindId.StringOpen as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7453,7 +7453,7 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 		$type: TSKindId.CharLiteralEmpty as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -8940,7 +8940,7 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 		$type: TSKindId.LineCommentExtraSlashes as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9006,7 +9006,7 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 		$type: TSKindId.LineCommentRegular as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9072,7 +9072,7 @@ export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bo
 		$type: TSKindId.BlockCommentRegular as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10150,7 +10150,7 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 		$type: TSKindId.FloatLiteral as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10171,7 +10171,7 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 		$type: TSKindId.StringContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10191,7 +10191,7 @@ export function buildRawStringLiteralContent(text: string): T.RawStringLiteralCo
 		$type: TSKindId.RawStringLiteralContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10216,7 +10216,7 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 		$type: TSKindId.RawStringLiteralStart as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10237,7 +10237,7 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 		$type: TSKindId.RawStringLiteralEnd as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10257,7 +10257,7 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 		$type: TSKindId.DocComment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10277,7 +10277,7 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bo
 		$type: TSKindId.BlockCommentContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10312,7 +10312,7 @@ export function buildStringClose(text: string): T.StringClose.Bound {
 		$type: TSKindId.StringClose as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10331,7 +10331,7 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 		$type: TSKindId.ErrorSentinel as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {

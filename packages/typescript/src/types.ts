@@ -21808,13 +21808,13 @@ export namespace UnescapedDoubleStringFragment {
 		readonly $type: TSKindId.UnescapedDoubleStringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnescapedDoubleStringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = UnescapedDoubleStringFragmentNs['Loose'];
 	export type LooseConfig = UnescapedDoubleStringFragmentNs['LooseConfig'];
@@ -21828,13 +21828,13 @@ export namespace UnescapedSingleStringFragment {
 		readonly $type: TSKindId.UnescapedSingleStringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.UnescapedSingleStringFragment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = UnescapedSingleStringFragmentNs['Loose'];
 	export type LooseConfig = UnescapedSingleStringFragmentNs['LooseConfig'];
@@ -21848,13 +21848,13 @@ export namespace RegexPattern {
 		readonly $type: TSKindId.RegexPattern;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RegexPattern;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = RegexPatternNs['Loose'];
 	export type LooseConfig = RegexPatternNs['LooseConfig'];
@@ -21868,13 +21868,13 @@ export namespace RegexFlags {
 		readonly $type: TSKindId.RegexFlags;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.RegexFlags;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = RegexFlagsNs['Loose'];
 	export type LooseConfig = RegexFlagsNs['LooseConfig'];
@@ -21888,13 +21888,13 @@ export namespace Identifier {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.Identifier;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
@@ -21908,13 +21908,13 @@ export namespace NumberDecimal {
 		readonly $type: TSKindId.NumberDecimal;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.NumberDecimal;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = NumberDecimalNs['Loose'];
 	export type LooseConfig = NumberDecimalNs['LooseConfig'];
@@ -21928,13 +21928,13 @@ export namespace HtmlComment {
 		readonly $type: TSKindId.HtmlComment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.HtmlComment;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = HtmlCommentNs['Loose'];
 	export type LooseConfig = HtmlCommentNs['LooseConfig'];
@@ -21948,13 +21948,13 @@ export namespace JsxText {
 		readonly $type: TSKindId.JsxText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.JsxText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = JsxTextNs['Loose'];
 	export type LooseConfig = JsxTextNs['LooseConfig'];
@@ -21968,13 +21968,13 @@ export namespace TemplateChars {
 		readonly $type: TSKindId.TemplateChars;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TemplateChars;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = TemplateCharsNs['Loose'];
 	export type LooseConfig = TemplateCharsNs['LooseConfig'];
@@ -21988,13 +21988,13 @@ export namespace TernaryQmark {
 		readonly $type: TSKindId.TernaryQmark;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.TernaryQmark;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = TernaryQmarkNs['Loose'];
 	export type LooseConfig = TernaryQmarkNs['LooseConfig'];
@@ -22008,13 +22008,13 @@ export namespace ErrorRecovery {
 		readonly $type: TSKindId.ErrorRecovery;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export interface Parsed extends NodeMethodsOf, HoldsTree {
 		readonly $type: TSKindId.ErrorRecovery;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
-		readonly $text: string;
+		$text(): string;
 	}
 	export type Loose = ErrorRecoveryNs['Loose'];
 	export type LooseConfig = ErrorRecoveryNs['LooseConfig'];

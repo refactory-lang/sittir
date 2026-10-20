@@ -16,7 +16,7 @@ describe('a leaf reached through a parent', () => {
 
 	it('builds from text and refuses a built node of its own kind', () => {
 		const name = ir.identifier('x');
-		expect(name.$text).toBe('x');
+		expect(name.$text()).toBe('x');
 		expect(() => ir.identifier(name as never)).toThrow(/identifier/);
 	});
 
