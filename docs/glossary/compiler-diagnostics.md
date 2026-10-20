@@ -614,7 +614,7 @@ Judges the witnesses of a narrowing cause, `'accepts-invalid-syntax'` or
 productions exclude, or the maintainer ruled out, and the authored rule does
 not. For each witness:
 - it must state its cause's justification (`NARROWING_JUSTIFICATIONS`): the
-  excluding `production`, or the `ruling`;
+  excluding `production`, or the `ruling`, which must state its constraint in words (`statesInWords`);
 - the upstream rule named by its `kind` must derive its `form`;
 - the grammar must author a rule of that name, and that rule must not derive
   the `form`.
@@ -631,7 +631,7 @@ parse clean, so a recovery that swallows a neighbour fails.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 
-Whether the gate verifies every cause of a rule's declaration by witness, each one in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'`, `'accepts-invalid-syntax'` and `'ruled-narrowing'`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. `unverifiedRuleNames` reads it to tell a verified correction from debt, for a declaration and for the rules that reach a vocabulary helper.
+Whether the gate verifies every cause of a rule's declaration by witness, each one in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'`, `'accepts-invalid-syntax'` and `'ruled-narrowing'`. A declaration with no cause is never verified, though "every cause" would hold of it vacuously. `'semantic-gap'` additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. `unverifiedRuleNames` reads it to tell a verified correction from debt, for a declaration and for the rules that reach a vocabulary helper.
 
 ### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
 
@@ -680,8 +680,8 @@ the declaration or deletion that resolves it:
   whose definition differs from the minted one. The minted definition wins in
   both, so the tree-sitter build still completes; this record stops the
   compile. Judged without the enriched stage.
-- `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
-  enriched stage.
+- `rule-cause-missing`: a `rules:` entry with a bare body, judged without the
+  enriched stage, or a `reauthored` entry that declares no cause.
 - `render-only-not-external`: a `renderAs:` key that is not an upstream
   external, as the evaluated externals list spells it.
 - `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
@@ -712,7 +712,7 @@ instead: `judgeOtherKindWitnesses`, `judgeRejectedWitnesses` or
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::NARROWING_JUSTIFICATIONS`
 
-The justification each narrowing cause's witness must state, and the reason a witness without it fails: `production` for `'accepts-invalid-syntax'`, `ruling` for `'ruled-narrowing'`.
+The justification each narrowing cause's witness must state, the reason a witness without it fails, and whether it must state its constraint in words (`inWords`, judged by `statesInWords`): `production` for `'accepts-invalid-syntax'`, the excluding production's name; `ruling` for `'ruled-narrowing'`, the ruling's constraint in words.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::NarrowingCause`
 
@@ -721,6 +721,10 @@ The causes `judgeNarrowingWitnesses` judges: the keys of `NARROWING_JUSTIFICATIO
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::unverifiedRuleNames`
 
 The `rules:` entries the hand-written rule ratchet counts, sorted: every undeclared rule, every `reauthored` rule with a cause the gate does not verify (`isWitnessVerified`), and every `vocabulary` rule the rules reaching it do not verify. Those rules are found by walking up the evaluated references (`RawGrammar.references`) from the helper to its referrers. The walk passes through the rules sittir minted (any rule upstream does not declare and the grammar does not author: a variant, a copy, a lifted helper) and stops at the first authored or upstream rule on each path. The helper is verified when there is at least one such rule and every one is a declaration `isWitnessVerified` accepts. A helper an upstream rule or an unverified declaration reaches stays counted, and so does one no rule reaches.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::statesInWords`
+
+Whether a ruling states its constraint in words: it holds a word (`WORD`, two or more letters) and cites no numbered planning reference. A planning reference is a `#` and a number, or PR, ADR, spec or task followed by a number, in any case (`PLANNING_REFERENCE`: `PR-137`, `PR #45`, `ADR-0009`, `spec 026`, `task 8`, `#45`), or a requirement id, a capital `R` and digits (`REQUIREMENT_ID`: `R11`). A reference rots once its artifact is archived or renamed, and a bare number states nothing, so the witness has to say the constraint itself. `judgeNarrowingWitnesses` asks it of a `ruled-narrowing` witness's `ruling` (`NARROWING_JUSTIFICATIONS`); an `accepts-invalid-syntax` witness names a production, so it is not asked.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
 

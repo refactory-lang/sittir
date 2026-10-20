@@ -73,7 +73,11 @@ export interface RuleCausesInput {
 }
 
 export function isWitnessVerified(declaration: RuleCauseDeclaration): boolean {
-	return declaration.kind === 'reauthored' && declaration.causes.every(({ cause }) => (WITNESSED_CAUSES as readonly RuleCause[]).includes(cause));
+	return (
+		declaration.kind === 'reauthored' &&
+		declaration.causes.length > 0 &&
+		declaration.causes.every(({ cause }) => (WITNESSED_CAUSES as readonly RuleCause[]).includes(cause))
+	);
 }
 
 export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'>): string[] {
@@ -145,7 +149,16 @@ export function diagnoseRuleCauses(input: RuleCausesInput): GrammarDiagnostic[] 
 		const diagnostics =
 			declaration.kind === 'vocabulary'
 				? [judgeVocabulary(grammar, name, enriched)]
-				: declaration.causes.map((declared) => judgeReauthored(grammar, enriched, name, declared, upstreamRules, authoredRules));
+				: declaration.causes.length === 0
+					? [
+							blocking(
+								grammar,
+								'rule-cause-missing',
+								name,
+								`rules: '${name}' is declared reauthored with no cause. Declare at least one: reauthored(cause, body), or reauthored([[cause, witnesses], …], body)`
+							)
+						]
+					: declaration.causes.map((declared) => judgeReauthored(grammar, enriched, name, declared, upstreamRules, authoredRules));
 		for (const diagnostic of diagnostics) if (diagnostic !== undefined) out.push(diagnostic);
 	}
 	return out;
@@ -321,9 +334,19 @@ function judgeRejectedWitnesses(
 }
 
 const NARROWING_JUSTIFICATIONS = {
-	'accepts-invalid-syntax': { key: 'production', missing: 'it cites no excluding production' },
-	'ruled-narrowing': { key: 'ruling', missing: 'it states no ruling' }
+	'accepts-invalid-syntax': { key: 'production', missing: 'it cites no excluding production', inWords: false },
+	'ruled-narrowing': { key: 'ruling', missing: 'it states no ruling', inWords: true }
 } as const;
+
+const PLANNING_REFERENCE = /#\d+|\b(?:PR|ADR|spec|task)[\s#-]*\d+/i;
+
+const REQUIREMENT_ID = /\bR\d+\b/;
+
+const WORD = /\p{L}{2,}/u;
+
+function statesInWords(text: string): boolean {
+	return WORD.test(text) && !PLANNING_REFERENCE.test(text) && !REQUIREMENT_ID.test(text);
+}
 
 type NarrowingCause = keyof typeof NARROWING_JUSTIFICATIONS;
 
@@ -335,7 +358,7 @@ function judgeNarrowingWitnesses(
 	upstreamRules: GrammarRules,
 	authoredRules: GrammarRules
 ): GrammarDiagnostic | undefined {
-	const { key, missing } = NARROWING_JUSTIFICATIONS[cause];
+	const { key, missing, inWords } = NARROWING_JUSTIFICATIONS[cause];
 	return judgeWitnesses(
 		grammar,
 		name,
@@ -345,6 +368,8 @@ function judgeNarrowingWitnesses(
 		(witness) => {
 			const justification: unknown = Reflect.get(witness, key);
 			if (typeof justification !== 'string' || justification.trim().length === 0) return missing;
+			if (inWords && !statesInWords(justification))
+				return `its ${key} cites a PR, spec or task number or holds no word, where it must state the constraint in words`;
 			const upstream = upstreamRules[witness.kind];
 			if (upstream === undefined) return `upstream declares no rule '${witness.kind}'`;
 			if (!derivesForm(upstreamRules, upstream, witness.form)) return `upstream '${witness.kind}' does not derive the witness form`;

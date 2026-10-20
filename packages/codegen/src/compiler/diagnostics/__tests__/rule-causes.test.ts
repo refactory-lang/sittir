@@ -496,3 +496,74 @@ describe('unverifiedRuleNames counts a vocabulary helper only when every rule re
 	});
 });
 
+describe('a reauthored declaration with an empty cause list', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const upstreamRules = { getter: seq(str('get'), sym('name'), str('('), { type: 'OPTIONAL', content: sym('parameter') }, str(')')) };
+	const authoredRules = { getter: seq(str('get'), sym('name'), str('('), str(')')) };
+
+	it('is a blocking rule-cause-missing record', () => {
+		const ds = diagnose({
+			ruleCauses: { getter: { kind: 'reauthored', causes: [] } as never },
+			enriched: enriched({ ruleNames: new Set(Object.keys(upstreamRules)) }),
+			upstreamRules,
+			authoredRules
+		});
+		expect(ds).toEqual([
+			expect.objectContaining({
+				code: 'rule-cause-missing',
+				canProceed: false,
+				message: expect.stringMatching(/^rules: 'getter' is declared reauthored with no cause/)
+			})
+		]);
+	});
+
+	it('is not witness-verified', () => {
+		expect(isWitnessVerified({ kind: 'reauthored', causes: [] } as never)).toBe(false);
+	});
+
+	it('is counted as unverified', () => {
+		const raw = {
+			ruleCauses: { getter: { kind: 'reauthored', causes: [] } },
+			undeclaredRules: [],
+			references: [],
+			stages: { raw: { grammar: { rules: {} } } }
+		} as never;
+		expect(unverifiedRuleNames(raw)).toContain('getter');
+	});
+});
+
+describe('a ruled-narrowing ruling is stated in words', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const upstreamRules = { getter: seq(str('get'), sym('name'), str('('), { type: 'OPTIONAL', content: sym('parameter') }, str(')')) };
+	const authoredRules = { getter: seq(str('get'), sym('name'), str('('), str(')')) };
+	const ruleNames = new Set(Object.keys(upstreamRules));
+	const withRuling = (ruling: string) => ({
+		text: 'get x(a)',
+		form: ['get', { symbol: 'name' }, '(', { symbol: 'parameter' }, ')'],
+		kind: 'getter',
+		ruling
+	});
+	const judge = (ruling: string) =>
+		diagnose({
+			ruleCauses: { getter: { kind: 'reauthored', causes: [{ cause: 'ruled-narrowing', witnesses: [withRuling(ruling) as never] }] } },
+			enriched: enriched({ ruleNames }),
+			upstreamRules,
+			authoredRules
+		});
+	const reason = 'its ruling cites a PR, spec or task number or holds no word, where it must state the constraint in words';
+
+	it.each(['PR-137', 'ADR-0009', 'spec 026', 'R11', 'task 8', '#916', '42'])('refuses a ruling that is only %s', (ruling) => {
+		const ds = judge(ruling);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain(reason);
+	});
+
+	it('accepts a ruling that states the constraint in words', () => {
+		expect(judge('the authored rule drops the optional parameter')).toEqual([]);
+	});
+});
+

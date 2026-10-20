@@ -45,6 +45,10 @@ describe('rule-cause declarations', () => {
 		});
 	});
 
+	it('reauthored with an empty cause list records no causes', () => {
+		expect(ruleCauseOf(reauthored([] as never, () => 1))).toEqual({ kind: 'reauthored', causes: [] });
+	});
+
 	it('vocabulary tags without a cause', () => {
 		expect(ruleCauseOf(vocabulary(() => 1))).toEqual({ kind: 'vocabulary' });
 	});
