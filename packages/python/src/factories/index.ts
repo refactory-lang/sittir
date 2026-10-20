@@ -226,8 +226,6 @@ export const expressionStatementTuple: Hoisted<typeof O.expressionStatementTuple
 >(O.expressionStatementTuple);
 export const withClauseBare: Hoisted<typeof O.withClauseBare> = hoistAs<typeof O.withClauseBare>(O.withClauseBare);
 export const withClauseParen: Hoisted<typeof O.withClauseParen> = hoistAs<typeof O.withClauseParen>(O.withClauseParen);
-export const matchBlockBlock: Hoisted<typeof O.matchBlockBlock> = hoistAs<typeof O.matchBlockBlock>(O.matchBlockBlock);
-export const matchBlockEmpty: Hoisted<typeof O.matchBlockEmpty> = hoistAs<typeof O.matchBlockEmpty>(O.matchBlockEmpty);
 export const suiteInline: Hoisted<typeof O.suiteInline> = hoistAs<typeof O.suiteInline>(O.suiteInline);
 export const suiteBlock: Hoisted<typeof O.suiteBlock> = hoistAs<typeof O.suiteBlock>(O.suiteBlock);
 export const suiteEmpty: Hoisted<typeof O.suiteEmpty> = hoistAs<typeof O.suiteEmpty>(O.suiteEmpty);

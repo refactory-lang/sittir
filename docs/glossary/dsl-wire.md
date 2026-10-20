@@ -230,18 +230,30 @@ Wraps the grammar's `supertypes` callback so registered flattened parents
 are appended to the base list, the way conflict groups are appended to
 `conflicts`. tree-sitter evaluates `supertypes` after every rule, so the
 whole-grammar facts are complete here. A parent is skipped when it is
-already listed, or when its name is an alias target: some other rule
-presents content as a node of that kind, and tree-sitter cannot treat one
-kind as both a concrete node and a supertype (node-type generation panics
-sorting the supertype graph). typescript's `decorator` aliasing
-`decorator_call_expression` to `call_expression` is the case that forces it.
+already listed, or when the parser would show it as a concrete node:
+tree-sitter cannot treat one kind as both a concrete node and a supertype.
+Both ways the parser shows a parent as a node are read from the evaluated
+bodies (`recordEvaluatedBodies`):
 
-### `packages/codegen/src/dsl/wire/wire.ts::recordAliasTargets`
+- Its name is an alias target: some other rule presents content as a node
+  of that kind (`namedAliasValues`). Node-type generation then panics
+  sorting the supertype graph. typescript's `decorator` aliasing
+  `decorator_call_expression` to `call_expression` is the case that forces
+  it.
+- Every reference to it carries a named alias (`onlyAliasedSymbols`): the
+  parser makes that alias the rule's own name, a visible node whose child
+  is the variant. python's `_match_block`, shown as `match_block` in
+  `match_statement`, is the case. Such a parent keeps its wrapper, and the
+  model holds the visible node with the variant as its content.
 
-The last wrapper applied to every rule fn: after the rule evaluates, walk
-its final tree and add each named `ALIAS` value to
-`context.aliasTargets`. It wraps outside pattern replacement and the
-visible-externals rewrite so it sees the tree those passes produce.
+### `packages/codegen/src/dsl/wire/wire.ts::recordEvaluatedBodies`
+
+The last wrapper applied to every rule fn: after the rule evaluates, it
+keeps the rule's final tree in `context.evaluatedBodies`, keyed by rule
+name. It wraps outside pattern replacement and the visible-externals
+rewrite, so it records the tree those passes produce. Wire gives every base
+rule a rule fn, so the bodies cover the whole grammar.
+`wrapSupertypesCallback` reads them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsPrecedenceRankedRule`
 
@@ -2023,6 +2035,10 @@ Records one effect while a binding patch set applies; outside one it does nothin
 ### `packages/codegen/src/dsl/wire/wire.ts::wireBindingEffects`
 
 The effects recorded on the wire context that `wire()` attached to `opts`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::namedAliasValues`
+
+The value of every named `ALIAS` in `bodies`: each kind name that some rule presents content as.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 

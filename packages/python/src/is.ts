@@ -583,12 +583,6 @@ export interface IsGuards {
 	withClauseParen<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseParen };
-	matchBlockBlock<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockBlock };
-	matchBlockEmpty<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockEmpty };
 	suiteInline<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteInline };
@@ -1393,8 +1387,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 		withClauseBare: _g(TSKindId.WithClauseBare),
 		withClauseParen: _g(TSKindId.WithClauseParen),
-		matchBlockBlock: _g(TSKindId.MatchBlockBlock),
-		matchBlockEmpty: _g(TSKindId.MatchBlockEmpty),
 		suiteInline: _g(TSKindId.SuiteInline),
 		suiteBlock: _g(TSKindId.SuiteBlock),
 		suiteEmpty: _g(TSKindId.SuiteEmpty),

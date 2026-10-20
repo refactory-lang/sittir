@@ -1,19 +1,5 @@
 [
   {
-    "type": "_match_block",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "match_block_block",
-        "named": true
-      },
-      {
-        "type": "match_block_empty",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "_statement",
     "named": true,
     "subtypes": [

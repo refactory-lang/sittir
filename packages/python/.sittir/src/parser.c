@@ -17,7 +17,7 @@
 #define MAX_ALIAS_SEQUENCE_LENGTH 9
 #define MAX_RESERVED_WORD_SET_SIZE 35
 #define PRODUCTION_ID_COUNT 173
-#define SUPERTYPE_COUNT 12
+#define SUPERTYPE_COUNT 11
 
 enum ts_symbol_identifiers {
   sym_identifier = 1,
@@ -5620,7 +5620,6 @@ static const TSStateId ts_primary_state_ids[STATE_COUNT] = {
 };
 
 static const TSSymbol ts_supertype_symbols[SUPERTYPE_COUNT] = {
-  sym__match_block,
   sym__statement,
   sym_assignment,
   sym_escape_sequence,
@@ -5635,25 +5634,21 @@ static const TSSymbol ts_supertype_symbols[SUPERTYPE_COUNT] = {
 };
 
 static const TSMapSlice ts_supertype_map_slices[] = {
-  [sym__match_block] = {.index = 0, .length = 2},
-  [sym__statement] = {.index = 2, .length = 10},
-  [sym_assignment] = {.index = 12, .length = 3},
-  [sym_escape_sequence] = {.index = 15, .length = 7},
-  [sym_expression] = {.index = 22, .length = 8},
-  [sym_float] = {.index = 30, .length = 3},
-  [sym_integer] = {.index = 33, .length = 4},
-  [sym_integer_decimal] = {.index = 37, .length = 3},
-  [sym_parameter] = {.index = 40, .length = 9},
-  [sym_pattern] = {.index = 49, .length = 6},
-  [sym_primary_expression] = {.index = 55, .length = 25},
-  [sym_with_clause] = {.index = 80, .length = 2},
+  [sym__statement] = {.index = 0, .length = 10},
+  [sym_assignment] = {.index = 10, .length = 3},
+  [sym_escape_sequence] = {.index = 13, .length = 7},
+  [sym_expression] = {.index = 20, .length = 8},
+  [sym_float] = {.index = 28, .length = 3},
+  [sym_integer] = {.index = 31, .length = 4},
+  [sym_integer_decimal] = {.index = 35, .length = 3},
+  [sym_parameter] = {.index = 38, .length = 9},
+  [sym_pattern] = {.index = 47, .length = 6},
+  [sym_primary_expression] = {.index = 53, .length = 25},
+  [sym_with_clause] = {.index = 78, .length = 2},
 };
 
 static const TSSymbol ts_supertype_map_entries[] = {
   [0] =
-    sym_match_block_block,
-    sym_match_block_empty,
-  [2] =
     alias_sym_simple_statements,
     sym_class_definition,
     sym_decorated_definition,
@@ -5664,11 +5659,11 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_try_statement,
     sym_while_statement,
     sym_with_statement,
-  [12] =
+  [10] =
     sym_assignment_eq,
     sym_assignment_type,
     sym_assignment_typed,
-  [15] =
+  [13] =
     sym_escape_sequence_hex,
     sym_escape_sequence_line_break,
     sym_escape_sequence_named,
@@ -5676,7 +5671,7 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_escape_sequence_simple,
     sym_escape_sequence_unicode_fixed,
     sym_escape_sequence_unicode_wide,
-  [22] =
+  [20] =
     sym_as_pattern,
     sym_boolean_operator,
     sym_comparison_operator,
@@ -5685,20 +5680,20 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_named_expression,
     sym_not_operator,
     sym_primary_expression,
-  [30] =
+  [28] =
     sym_float_leading_point,
     sym_float_point,
     sym_float_scientific,
-  [33] =
+  [31] =
     sym_integer_binary,
     sym_integer_decimal,
     sym_integer_hex,
     sym_integer_octal,
-  [37] =
+  [35] =
     sym_integer_decimal_imaginary,
     sym_integer_decimal_long,
     sym_integer_decimal_plain,
-  [40] =
+  [38] =
     sym_default_parameter,
     sym_dictionary_splat_pattern,
     sym_identifier,
@@ -5708,14 +5703,14 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_tuple_pattern,
     sym_typed_default_parameter,
     sym_typed_parameter,
-  [49] =
+  [47] =
     sym_attribute,
     sym_identifier,
     sym_list_pattern,
     sym_list_splat_pattern,
     sym_subscript,
     sym_tuple_pattern,
-  [55] =
+  [53] =
     sym_attribute,
     sym_await,
     sym_binary_operator,
@@ -5741,7 +5736,7 @@ static const TSSymbol ts_supertype_map_entries[] = {
     sym_true,
     sym_tuple,
     sym_unary_operator,
-  [80] =
+  [78] =
     sym_with_clause_bare,
     sym_with_clause_paren,
 };

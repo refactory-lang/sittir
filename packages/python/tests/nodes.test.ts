@@ -5777,30 +5777,6 @@ describe('with_clause_paren', () => {
 	});
 });
 
-describe('match_block_block', () => {
-	it('factory produces correct type', () => {
-		const node = ir.matchBlockBlock();
-		expect(node.$type).toBe(TSKindId.MatchBlockBlock);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlockBlock();
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
-describe('match_block_empty', () => {
-	it('factory produces correct type', () => {
-		const node = ir.matchBlockEmpty({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
-		expect(node.$type).toBe(TSKindId.MatchBlockEmpty);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlockEmpty({ $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any);
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
 describe('suite_inline', () => {
 	it('factory produces correct type', () => {
 		const node = ir.suiteInline({

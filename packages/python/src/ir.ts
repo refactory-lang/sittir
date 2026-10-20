@@ -218,8 +218,6 @@ export const ir: {
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
 	readonly withClauseParen: typeof F.withClauseParen;
-	readonly matchBlockBlock: typeof F.matchBlockBlock;
-	readonly matchBlockEmpty: typeof F.matchBlockEmpty;
 	readonly suiteInline: typeof F.suiteInline;
 	readonly suiteBlock: typeof F.suiteBlock;
 	readonly suiteEmpty: typeof F.suiteEmpty;
@@ -410,8 +408,6 @@ export const ir: {
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
 	withClauseParen: F.withClauseParen,
-	matchBlockBlock: F.matchBlockBlock,
-	matchBlockEmpty: F.matchBlockEmpty,
 	suiteInline: F.suiteInline,
 	suiteBlock: F.suiteBlock,
 	suiteEmpty: F.suiteEmpty,
