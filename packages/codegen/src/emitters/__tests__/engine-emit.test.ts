@@ -107,7 +107,7 @@ describe('emitDescriptor', () => {
 		expect(output).toContain("export const name = 'rust';");
 		expect(output).toContain('export const fileTypes: readonly string[] = Object.freeze(["rs"]);');
 		expect(output).toContain('export const kinds = TSKindId;');
-		expect(output).toContain('export const is = languageGuards(guards, rust);');
+		expect(output).toContain('export const is = languageGuards(guardsWith, rust);');
 		expect(output).toContain("export const load: Language<RustAPI>['load'] = () => import('./api.js').then((m) => m.hooks);");
 		expect(output).toContain("export const createEngine: Language<RustAPI>['createEngine'] = (options) => import('@sittir/common').then((m) => m.createEngine(rust, options));");
 		expect(output).toContain('void (rust satisfies Language<RustAPI>);');
@@ -116,7 +116,7 @@ describe('emitDescriptor', () => {
 	it('builds a bound grammar\'s portable guards as a view for the language it composes against', () => {
 		const bound = emitDescriptor({ grammar: 'rust', nodeMap: { fileTypes: ['rs'] } as never, portable: true });
 		expect(bound).toContain("import { portable, portableGuardsOf } from '@sittir/common/portable';");
-		expect(bound).toContain('export const is = languageGuards(guards, rust, (language) => ({ portable: portableGuardsOf(language) as PortableIs }));');
+		expect(bound).toContain('export const is = languageGuards(guardsWith, rust, (language) => ({ portable: portableGuardsOf(language) as PortableIs }));');
 	});
 
 	it('loads at import only the kind ids, the guards, the language check and itself', () => {
@@ -125,7 +125,7 @@ describe('emitDescriptor', () => {
 			"import { languageGuards } from '@sittir/common/language';",
 			"import * as rust from './descriptor.js';",
 			"import { TSKindId } from './kinds.js';",
-			"import { is as guards } from './is.js';"
+			"import { guardsWith } from './is.js';"
 		]);
 	});
 

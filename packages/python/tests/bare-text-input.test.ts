@@ -23,16 +23,16 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 		'builds a string fragment from %j, text the scanner reads inside some string',
 		(text) => {
 			expect(py.build.stringContent.coerce(text).$render()).toBe(text);
-			expect(py.build.stringFragment(text).$text).toBe(text);
+			expect(py.build.stringFragment(text).$text()).toBe(text);
 		}
 	);
 
 	it.each([['`'], ["r'"], ['"""']])('builds the string start %j the scanner reads', (text) => {
-		expect(py.build.stringStart(text).$text).toBe(text);
+		expect(py.build.stringStart(text).$text()).toBe(text);
 	});
 
 	it.each([['`'], ["\\'"], ['\\\\"']])('builds the string end %j the scanner reads, backslashes of a raw string included', (text) => {
-		expect(py.build.stringEnd(text).$text).toBe(text);
+		expect(py.build.stringEnd(text).$text()).toBe(text);
 	});
 
 	it('rejects bare text strictly in a node slot', () => {

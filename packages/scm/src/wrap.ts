@@ -4,6 +4,7 @@ import {
 	restItems,
 	admitSlot,
 	markEdited as $edited,
+	asTextNode,
 	carryRead,
 	treeHandleOf,
 	hydrateWith,
@@ -943,6 +944,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	const handle = currentHandle();
 	const node = {
 		...data,
+		$text: () => data.$text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -1002,7 +1004,7 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;
 export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	const fn = _wrapTable[data.$type as unknown as number];
 	return fn === undefined
-		? data
+		? asTextNode(data)
 		: carryRead(
 				data,
 				inTreeEngine(tree, () => fn(data, tree))

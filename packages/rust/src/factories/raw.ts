@@ -2824,9 +2824,11 @@ function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.
 }
 
 export function buildVisibilityModifier(
-	value: Admit<TSKindId.Crate | T.VisibilityModifierPub>
+	value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
 ): T.VisibilityModifier.Bound {
-	const _content = kindIdStorage<NonNullable<T.VisibilityModifier['_content']>>(value);
+	const _content = admitAliasContent<NonNullable<T.VisibilityModifier['_content']>>(value, [
+		[[127], (v: unknown) => buildCrateVisibilityModifier(v as never)]
+	]);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'visibility_modifier', { content: _content });
 	const node = {
@@ -2835,8 +2837,9 @@ export function buildVisibilityModifier(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (value: Admit<NonNullable<TSKindId.Crate | T.VisibilityModifierPub>>) =>
-				rebuilt(node, handle, () => buildVisibilityModifier(value))
+			content: (
+				value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
+			) => rebuilt(node, handle, () => buildVisibilityModifier(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
@@ -5864,7 +5867,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7433,7 +7436,7 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 		$type: TSKindId.TokenRepetitionPatternText as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7454,7 +7457,7 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 		$type: TSKindId.StringOpen as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -7742,7 +7745,7 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 		$type: TSKindId.CharLiteralEmpty as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9313,7 +9316,7 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 		$type: TSKindId.LineCommentExtraSlashes as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9381,7 +9384,7 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 		$type: TSKindId.LineCommentRegular as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -9449,7 +9452,7 @@ export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bo
 		$type: TSKindId.BlockCommentRegular as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10591,7 +10594,7 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 		$type: TSKindId.FloatLiteral as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10612,7 +10615,7 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 		$type: TSKindId.StringContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10632,7 +10635,7 @@ export function buildRawStringLiteralContent(text: string): T.RawStringLiteralCo
 		$type: TSKindId.RawStringLiteralContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10657,7 +10660,7 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 		$type: TSKindId.RawStringLiteralStart as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10678,7 +10681,7 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 		$type: TSKindId.RawStringLiteralEnd as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10698,7 +10701,7 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 		$type: TSKindId.DocComment as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10718,7 +10721,7 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bo
 		$type: TSKindId.BlockCommentContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10753,7 +10756,7 @@ export function buildStringClose(text: string): T.StringClose.Bound {
 		$type: TSKindId.StringClose as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10772,7 +10775,7 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 		$type: TSKindId.ErrorSentinel as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		$trivia: {
@@ -10830,6 +10833,33 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.FieldIdentifier.Bound;
+}
+
+export function buildCrateVisibilityModifier(value?: Admit<TSKindId.Crate>): T.CrateVisibilityModifier.Bound {
+	const _content = kindIdStorage<NonNullable<T.CrateVisibilityModifier['_content']>>(
+		orDefault(value, () => TSKindId.Crate as const)
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'crate_visibility_modifier', { content: _content });
+	const node = {
+		$type: TSKindId.CrateVisibilityModifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: Admit<NonNullable<TSKindId.Crate>>) =>
+				rebuilt(node, handle, () => buildCrateVisibilityModifier(value))
+		},
+		content: () => _content,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CrateVisibilityModifier.Bound;
 }
 
 export function buildShorthandFieldIdentifier(value: Admit<T.Identifier>): T.ShorthandFieldIdentifier.Bound {
@@ -11121,6 +11151,7 @@ export type FluentKindMap = {
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
+	crate_visibility_modifier: T.CrateVisibilityModifier.Bound;
 	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
 };
 
@@ -11389,6 +11420,7 @@ export const _factoryMap = {
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
+	crate_visibility_modifier: buildCrateVisibilityModifier,
 	shorthand_field_identifier: buildShorthandFieldIdentifier
 } as const;
 export type _FactoryMap = typeof _factoryMap;

@@ -152,7 +152,7 @@ layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
  * `kinds` when given and to the `where` plan (JSON, see
  * `query::PlanSpec`) when given, resuming after the path `resume`
  * an earlier batch returned, `depth` levels down (every level
- * when absent). As JSON `{ stubs, resume }`. Refuses
+ * when absent). As JSON `{ items, resume, origin }`. Refuses
  * a tree that is not live and a plan whose pattern the native
  * matcher cannot compile.
  */

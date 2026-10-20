@@ -3,8 +3,17 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './kinds.js';
+import { holdsKinds, type KindTest } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
+
+// KindMembers — each supertype and enum kind, mapped to the kind ids it holds for.
+export interface KindMembers {
+	[TSKindId.InlineFlagsGroup]:
+		| TSKindId.InlineFlagsGroupEnable
+		| TSKindId.InlineFlagsGroupToggle
+		| TSKindId.InlineFlagsGroupDisable;
+}
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -88,12 +97,7 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly inlineFlagsGroup: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			TSKindId.InlineFlagsGroupEnable | TSKindId.InlineFlagsGroupToggle | TSKindId.InlineFlagsGroupDisable
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.InlineFlagsGroup]>;
 		enable<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupEnable };
@@ -156,85 +160,98 @@ export interface IsGuards {
 	negation<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
 }
 
-// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
-function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && isMember(id, v.$type);
+const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
+const _supertype_layout_ids = new Set<number>([47, 48, 49, 50]);
+
+const _members = new Map<number, ReadonlySet<number>>([[TSKindId.InlineFlagsGroup, _supertype_inlineFlagsGroup_ids]]);
+const _single = new Map<number, ReadonlySet<number>>();
+function _kinds(kind: number): ReadonlySet<number> {
+	const members = _members.get(kind);
+	if (members !== undefined) return members;
+	let single = _single.get(kind);
+	if (single === undefined) _single.set(kind, (single = new Set([kind])));
+	return single;
 }
-function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
+export function isMember(kind: number, type: number): boolean {
+	return _kinds(kind).has(type);
 }
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
-	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
+export function membersOf(kind: number): readonly number[] {
+	return [..._kinds(kind)];
 }
+
 function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
-const _supertype_layout_ids = new Set<number>([47, 48, 49, 50]);
-
-const _members = new Map<number, ReadonlySet<number>>([[65, _supertype_inlineFlagsGroup_ids]]);
-export function isMember(kind: number, type: number): boolean {
-	return _members.get(kind)?.has(type) ?? type === kind;
+// Runtime: every guard holds through the one kind test it is built with; an engine's `ofType` reads the same test.
+export function guardsWith(test: KindTest): IsGuards {
+	const _g = (id: number) => {
+		const kinds = _kinds(id);
+		return (v: unknown): boolean => typeof v !== 'number' && test(v, kinds);
+	};
+	const _mg = (kind: number) => {
+		const kinds = _kinds(kind);
+		return (v: unknown): boolean => test(v, kinds);
+	};
+	const _sg =
+		(kinds: ReadonlySet<number>) =>
+		(v: unknown): boolean =>
+			test(v, kinds);
+	const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
+		enable: _g(TSKindId.InlineFlagsGroupEnable),
+		toggle: _g(TSKindId.InlineFlagsGroupToggle),
+		disable: _g(TSKindId.InlineFlagsGroupDisable)
+	});
+	return Object.freeze({
+		pattern: _g(TSKindId.Pattern),
+		alternation: _g(TSKindId.Alternation),
+		term: _g(TSKindId.Term),
+		lookaroundAssertion: _g(TSKindId.LookaroundAssertion),
+		lookaheadAssertion: _g(TSKindId.LookaheadAssertion),
+		lookbehindAssertion: _g(TSKindId.LookbehindAssertion),
+		characterClass: _g(TSKindId.CharacterClass),
+		posixCharacterClass: _g(TSKindId.PosixCharacterClass),
+		classRange: _g(TSKindId.ClassRange),
+		anonymousCapturingGroup: _g(TSKindId.AnonymousCapturingGroup),
+		namedCapturingGroup: _g(TSKindId.NamedCapturingGroup),
+		nonCapturingGroup: _g(TSKindId.NonCapturingGroup),
+		zeroOrMore: _g(TSKindId.ZeroOrMore),
+		oneOrMore: _g(TSKindId.OneOrMore),
+		optional: _g(TSKindId.Optional),
+		countQuantifier: _g(TSKindId.CountQuantifier),
+		backreferenceEscape: _g(TSKindId.BackreferenceEscape),
+		namedGroupBackreference: _g(TSKindId.NamedGroupBackreference),
+		characterClassEscape: _g(TSKindId.CharacterClassEscape),
+		unicodePropertyValueExpression: _g(TSKindId.UnicodePropertyValueExpression),
+		identityEscape: _g(TSKindId.IdentityEscape),
+		inlineFlagsGroupEnable: _g(TSKindId.InlineFlagsGroupEnable),
+		inlineFlagsGroupToggle: _g(TSKindId.InlineFlagsGroupToggle),
+		inlineFlagsGroupDisable: _g(TSKindId.InlineFlagsGroupDisable),
+		lazy: _g(TSKindId.Lazy),
+		unicodePropertyName: _g(TSKindId.UnicodePropertyName),
+		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
+		inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
+		layout: _sg(_supertype_layout_ids),
+		anyCharacter: _mg(TSKindId.AnyCharacter),
+		startAssertion: _mg(TSKindId.StartAssertion),
+		endAssertion: _mg(TSKindId.EndAssertion),
+		boundaryAssertion: _mg(TSKindId.BoundaryAssertion),
+		nonBoundaryAssertion: _mg(TSKindId.NonBoundaryAssertion),
+		patternCharacter: _g(TSKindId.PatternCharacter),
+		posixClassName: _g(TSKindId.PosixClassName),
+		classCharacter: _g(TSKindId.ClassCharacter),
+		flags: _g(TSKindId.Flags),
+		decimalEscape: _g(TSKindId.DecimalEscape),
+		unicodeCharacterEscape: _g(TSKindId.UnicodeCharacterEscape),
+		unicodePropertyValue: _g(TSKindId.UnicodePropertyValue),
+		controlEscape: _g(TSKindId.ControlEscape),
+		controlLetterEscape: _g(TSKindId.ControlLetterEscape),
+		groupName: _g(TSKindId.GroupName),
+		decimalDigits: _g(TSKindId.DecimalDigits),
+		characterClassEscapeText1: _g(TSKindId.CharacterClassEscapeText1),
+		characterClassEscapeText2: _g(TSKindId.CharacterClassEscapeText2),
+		negation: _mg(TSKindId.Negation)
+	}) as unknown as IsGuards;
 }
-export function membersOf(kind: number): readonly number[] {
-	const members = _members.get(kind);
-	return members === undefined ? [kind] : [...members];
-}
 
-const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
-	enable: _g(TSKindId.InlineFlagsGroupEnable),
-	toggle: _g(TSKindId.InlineFlagsGroupToggle),
-	disable: _g(TSKindId.InlineFlagsGroupDisable)
-});
-
-export const is = Object.freeze({
-	pattern: _g(TSKindId.Pattern),
-	alternation: _g(TSKindId.Alternation),
-	term: _g(TSKindId.Term),
-	lookaroundAssertion: _g(TSKindId.LookaroundAssertion),
-	lookaheadAssertion: _g(TSKindId.LookaheadAssertion),
-	lookbehindAssertion: _g(TSKindId.LookbehindAssertion),
-	characterClass: _g(TSKindId.CharacterClass),
-	posixCharacterClass: _g(TSKindId.PosixCharacterClass),
-	classRange: _g(TSKindId.ClassRange),
-	anonymousCapturingGroup: _g(TSKindId.AnonymousCapturingGroup),
-	namedCapturingGroup: _g(TSKindId.NamedCapturingGroup),
-	nonCapturingGroup: _g(TSKindId.NonCapturingGroup),
-	zeroOrMore: _g(TSKindId.ZeroOrMore),
-	oneOrMore: _g(TSKindId.OneOrMore),
-	optional: _g(TSKindId.Optional),
-	countQuantifier: _g(TSKindId.CountQuantifier),
-	backreferenceEscape: _g(TSKindId.BackreferenceEscape),
-	namedGroupBackreference: _g(TSKindId.NamedGroupBackreference),
-	characterClassEscape: _g(TSKindId.CharacterClassEscape),
-	unicodePropertyValueExpression: _g(TSKindId.UnicodePropertyValueExpression),
-	identityEscape: _g(TSKindId.IdentityEscape),
-	inlineFlagsGroupEnable: _g(TSKindId.InlineFlagsGroupEnable),
-	inlineFlagsGroupToggle: _g(TSKindId.InlineFlagsGroupToggle),
-	inlineFlagsGroupDisable: _g(TSKindId.InlineFlagsGroupDisable),
-	lazy: _g(TSKindId.Lazy),
-	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
-	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
-	inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
-	layout: _sg(_supertype_layout_ids),
-	anyCharacter: _mg(TSKindId.AnyCharacter),
-	startAssertion: _mg(TSKindId.StartAssertion),
-	endAssertion: _mg(TSKindId.EndAssertion),
-	boundaryAssertion: _mg(TSKindId.BoundaryAssertion),
-	nonBoundaryAssertion: _mg(TSKindId.NonBoundaryAssertion),
-	patternCharacter: _g(TSKindId.PatternCharacter),
-	posixClassName: _g(TSKindId.PosixClassName),
-	classCharacter: _g(TSKindId.ClassCharacter),
-	flags: _g(TSKindId.Flags),
-	decimalEscape: _g(TSKindId.DecimalEscape),
-	unicodeCharacterEscape: _g(TSKindId.UnicodeCharacterEscape),
-	unicodePropertyValue: _g(TSKindId.UnicodePropertyValue),
-	controlEscape: _g(TSKindId.ControlEscape),
-	controlLetterEscape: _g(TSKindId.ControlLetterEscape),
-	groupName: _g(TSKindId.GroupName),
-	decimalDigits: _g(TSKindId.DecimalDigits),
-	characterClassEscapeText1: _g(TSKindId.CharacterClassEscapeText1),
-	characterClassEscapeText2: _g(TSKindId.CharacterClassEscapeText2),
-	negation: _mg(TSKindId.Negation)
-}) as unknown as IsGuards;
+export const is = guardsWith(holdsKinds);

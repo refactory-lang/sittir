@@ -1,8 +1,9 @@
-import type { PortableCondition, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { anchored, holds, slotItems } from '../query-holds.ts';
-import { spannedTextOf } from '../node-data.ts';
+import { nodeText, spannedTextOf } from '../node-data.ts';
+import { portablePathHasFacts } from './facts.ts';
 
-type Node = { readonly $type: number; readonly $text?: string };
+type Node = { readonly $type: number };
 
 /** Reads a node or a bare kind id of a bound grammar as the vocabulary path of its kind's first read entry that holds, if any. */
 export type PortableClassifier = <T extends Node>(value: T | number) => string | undefined;
@@ -36,6 +37,16 @@ const decidesKindId = (entry: PortableReadEntry): boolean =>
 
 const classifiers = new WeakMap<PortableRows, PortableClassifier>();
 
+export const portablePathOf = (rows: PortableRows, path: string): PortablePath | undefined =>
+	Object.hasOwn(rows.table.paths, path) ? rows.table.paths[path] : undefined;
+
+export const readsAs = (rows: PortableRows, path: string, value: Node | number): boolean => {
+	const admitted = portablePathOf(rows, path);
+	const kind = typeof value === 'number' ? value : value.$type;
+	if (admitted === undefined || !admitted.ids.includes(kind)) return false;
+	return admitted.exact || portablePathHasFacts(path, classifierOf(rows)(value));
+};
+
 /**
  * The classifier of a bound grammar's portable rows, built once per rows object.
  *
@@ -66,7 +77,7 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 			: typeof item === 'number'
 				? table.fixedText[item]
 				: hasKind(item)
-					? (item.$text ?? spannedTextOf(item))
+					? (nodeText(item) ?? spannedTextOf(item))
 					: undefined;
 	const typeOf = (item: unknown): readonly number[] =>
 		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];

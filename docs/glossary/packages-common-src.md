@@ -24,7 +24,7 @@ The `intercept` option activates build, parse and render middleware. Parse hooks
 
 The engine object and its `EngineIdentity` are frozen, so no member can be reassigned; the identity holds the caller's `options` as given, and that object stays the caller's.
 
-`is` on the engine is the language's table composed against the engine's own language (`guardsOf`), so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
+`is` on the engine is the language's table built with the language's kind test (`guardsOf`), so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone. The engine's query hooks carry the same kind test (`kindTestOf`), so `ofType` and the guards run one function.
 
 ### `packages/common/src/create-engine.ts::scopeBuilders`
 
@@ -156,7 +156,7 @@ The limits a walk's successive batches take: 1, 4, 16, 64, then 256 for every ba
 
 ### `packages/common/src/query.ts::splitPlan`
 
-Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofType`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
+Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofKinds`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
 
 ### `packages/common/src/query.ts::QueryView`
 
@@ -170,21 +170,19 @@ A lazy sequence: a source (a slot's items, or a walk under a node to a depth) an
 
 The `slice` step, with its bounds counted as an array counts them: truncated toward zero, `NaN` as zero, a negative counted from the end.
 
-### `packages/common/src/query.ts::ofTypeStep`
+### `packages/common/src/query.ts::ofTypeSteps`
 
-The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result. It keeps a node whose type is the kind or a member of it (a supertype's member, a polymorph's arm), by the language's `membership`, the test its `is.*` guards make; nothing restamps a node's type to pass it.
+The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
+
+The step holds its kinds as a set, which each route reads. Pushed into a walk, or run over the tree's own entries, it reads membership alone: those elements are the tree's, so of its language. Run over elements after an opaque step, which may have put anything in their place, it is the language's kind test (`kindTest`, from `kindTestOf`), the test the language's guards are built with, so an element of another language never passes, as for the guards, and a bare kind id does.
 
 ### `packages/common/src/query.ts::narrowed`
 
-The types a node can have after one more `ofType` step: every member of its kind for the first step, then those of the earlier steps' types that are members of it. An empty result means no node passes every step.
-
-### `packages/common/src/query.ts::isOfType`
-
-Whether a hydrated node passes an `ofType` step: its `$type` is a member of the step's kind.
+The kinds a node can have after one more `ofKinds` step: the step's set for the first step, then those of the earlier steps' set the step also holds, in the earlier order. An empty set means no node passes every step.
 
 ### `packages/common/src/query.ts::whereStep`
 
-The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofType` steps allow when they are known, otherwise once against a recorder with no kind.
+The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofKinds` steps allow when they are known, otherwise once against a recorder with no kind.
 
 ### `packages/common/src/query.ts::run`
 
@@ -204,11 +202,11 @@ The entries of a walk source. The steps `pushdown` takes go into the native walk
 
 ### `packages/common/src/query.ts::pushdown`
 
-The leading run of `ofType` and `where` steps that can go into the native walk. Each `ofType` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
+The leading run of `ofKinds` and `where` steps that can go into the native walk. Each `ofKinds` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
 
 ### `packages/common/src/query.ts::batches`
 
-Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls.
+Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls. Each item of a batch becomes an entry by its shape: a coordinate through `entryOfCoordinate`, and the bare id of a node its read stores as a unit through `entryOfItem`, as a slot's item does.
 
 ### `packages/common/src/query.ts::find`
 
@@ -752,6 +750,14 @@ Refuses a delimited composite whose content would not read back inside its own d
 
 A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
+### `packages/common/src/query.ts::isPortableKind`
+
+Whether an `ofType` argument has a portable kind's shape: an object with a string `$path`. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
+
+### `packages/common/src/language.ts::kindOf`
+
+A value's kind, as the kind test and a query's slot entries read it: a node's numeric `$type`, or a bare kind id itself, since a keyword leaf reads as its kind id and the guards read it that way; anything else has none. A walk yields a node its read stores as a unit as that bare id, as a slot read stores it (`batches`), so its entry's kind is the id on every route; a coordinate's `$type` stays the shared stamp.
+
 ### `packages/common/src/runtime.ts::coerceBitflagStorage`
 
 A bitflag slot's loose input as the number the slot stores: a number as it is (0 as absent), an array as the union of its items' bits, and a node or text as the bit of its text's position in `texts`. Absent, `false`, an unknown text or no bits at all store as `undefined`. The factories call it.
@@ -762,11 +768,11 @@ A keyword-presence slot's loose input as what the slot stores: `true` for any pr
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry as it is.
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry with its text as the method `$text()` (`asTextNode`).
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 
-A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the same array when none is a coordinate.
+A trivia side as its reader gets it, each entry through `hydrateTriviaEntry`. The array is a new one only when an entry is a coordinate. Otherwise it is the same array, its entries given the method `$text()` in place, so a side read back is the one stored.
 
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
@@ -788,9 +794,13 @@ Whether a value is an object with a numeric `$type`: the shape a classifier read
 
 The shared portable guard of a vocabulary path. It refuses a value without a kind (`hasKind`), and so a bare kind id, which names no language. It then reads the node by the rows of the language whose engine stamped it (`engineOf(node)?.portable`) through `readsAs`; no engine, or a grammar without bindings, answers false. A node of any bound language reads by its own rows, so one tree serves every language.
 
-### `packages/common/src/portable/index.ts::readsAs`
+### `packages/common/src/portable/classify.ts::readsAs`
 
-Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the path's ids in the rows' table; an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test both the shared guards (`guardOf`) and a language's guards (`languageGuardOf`) run once they hold the rows.
+Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
+
+### `packages/common/src/portable/classify.ts::portablePathOf`
+
+The ids and exactness a bound grammar's rows give a vocabulary path, or `undefined` when the grammar reads nothing at or under it. It reads the table's own keys only, so a path a caller supplies (a query's portable kind) cannot reach a prototype member such as `constructor`.
 
 ### `packages/common/src/portable/index.ts::registerPortableRows`
 
@@ -806,7 +816,7 @@ A language's view of the portable guards: `portableTrees` over the same `vocabul
 
 ### `packages/common/src/portable/index.ts::languageGuardOf`
 
-The guard of a vocabulary path in one language's view. A bare kind id reads through the rows recorded for the language's `load` (`rowsByLoad`) by `readsAs`. If no engine of the language, or of a copy sharing its `load`, has loaded them yet, it throws, naming the language and asking for an engine first: answering false there would read as a classification. A node must carry a kind and have been stamped by an engine of this very language object (`engineOf(value)?.language === language`) that carries portable rows; it then reads by those rows. A node of another language, or one no engine stamped, answers false.
+The guard of a vocabulary path in one language's view. A bare kind id reads through the rows recorded for the language's `load` (`rowsByLoad`) by `readsAs`. If no engine of the language, or of a copy sharing its `load`, has loaded them yet, it throws, naming the language and asking for an engine first: answering false there would read as a classification. A node must carry a kind and pass the language check (`ofLanguage`, the `inLanguage` check `portableGuardsOf` builds once per view, the same one the language's kind test makes), and its engine must carry portable rows; it then reads by those rows. A node of another language, or one no engine stamped, answers false.
 
 ### `packages/common/src/identity.ts::Role`
 
@@ -874,7 +884,19 @@ The `$_layout` keys `toNodeValue` decides for itself: `at`, which a crossing nev
 
 ### `packages/common/src/node-data.ts::spannedTextOf`
 
-The text a parsed node spans (`spanOf`), as its tree's native text call answers it (`TreeHandle.text`): one string of the node's characters. A parsed tree's source stays native and never crosses to JavaScript, so every reader that wants a node's source text and has no `$text` (the portable classifier's text tests, the validators' `readNodeText`) asks for that span's text here. `tree` defaults to the node's own; a caller that already holds the tree passes it. `undefined` for a built node, which has no span, and for a node whose tree is not registered.
+The text a parsed node spans (`spanOf`), as its tree's native text call answers it (`TreeHandle.text`): one string of the node's characters. A parsed tree's source stays native and never crosses to JavaScript, so every reader that wants a node's source text and finds no text of its own (`nodeText`), such as the portable classifier's text tests and the validators' `readNodeText`, asks for that span's text here. `tree` defaults to the node's own; a caller that already holds the tree passes it. `undefined` for a built node, which has no span, and for a node whose tree is not registered.
+
+### `packages/common/src/node-data.ts::nodeText`
+
+The text a leaf holds, from either form a value takes: a node's `$text()` method, which makes the string when called, or the `$text` string native node data carries across the boundary. `undefined` for a value with neither. Code that may hold either form, such as the crossing (`toNodeValue`), builder input checks (`rejectKeywordText`, `rejectReservedText`), the delimited check, the portable classifier and the validators, reads text here and nowhere else. Typed code holds nodes only and calls `$text()`.
+
+### `packages/common/src/node-data.ts::asTextNode`
+
+A read value given a node's text member: an object whose `$text` is a string gets the method `$text()` under that key, on the same object, so the tree it holds and its read identity stay with it, and every node a user reaches reads its text one way. Native returns the string, because what it returns is data, and data serializes (a `$snapshot()` result, a render input, a fixture). JavaScript turns it into a node here, at the two places a read value becomes one without a kind's wrap: a trivia entry (`hydrateTriviaEntry`), such as a detached comment or an ERROR region read as trivia, and a value of a kind with no wrap in the generated table (`wrapNode`), such as an ERROR region in a slot or at the root. Any other value, including a node that already has the method, is returned as it is.
+
+### `packages/common/src/node-data.ts::hasNodeText`
+
+Whether a value has a text member in either form, a node's `$text()` method or native data's `$text` string, decided by the member's type alone. It never calls the method: a node's text is made strictly on access, and a method backed by the tree's native `text(span)` would otherwise cost a native call and a string on every check. `isNode`, which every coercer runs, tests text presence here; code that needs the text itself reads it through `nodeText`.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 
@@ -882,23 +904,27 @@ The compiled whole-token regex of a token interior, built once per interior obje
 
 ### `packages/common/src/language.ts::inLanguage`
 
-The language check a language's guards use: a value whose stamped engine is of `language` (`engineOf`), compared by the language object itself, or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language asking. Keyed by the language rather than an engine, so a descriptor builds its guards before any engine exists, and `assembleEngine`'s node guards use the same check.
+The language check of a language's kind test (`kindTestOf`), which its guards and its engines' `ofType` read, and of `assembleEngine`'s node guards: a value whose stamped engine is of `language` (`engineOf`), compared by the language object itself, or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language asking. Keyed by the language rather than an engine, so a descriptor builds its guards before any engine exists.
 
 ### `packages/common/src/language.ts::languageGuards`
 
-Composes every function on a language's `is` table with the language check (`inLanguage`): the guard runs only for a value of `language`, and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The generated descriptor composes its guards with it at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes. `shared` builds members added beside the composed guards as they are, without the check. It is called with `language`, so a bound grammar's descriptor passes `(language) => ({ portable: portableGuardsOf(language) })`, the language's view of the portable guards, which checks nodes and kind ids itself. It records each composed table with the guards, the language and the `shared` builder it was composed from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
+A language's guard table: the grammar's `guardsWith` called with the language's kind test (`kindTestOf`), so every guard holds only for a value of `language`, with the extra arguments of a guard such as `kind` passed through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The guards call the test themselves, so a supertype guard's variant guards (`is.suite.block`) check the language as the supertype guard does, with nothing wrapped around them. The generated descriptor builds its table at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes. `shared` builds members added beside the guards as they are. It is called with `language`, so a bound grammar's descriptor passes `(language) => ({ portable: portableGuardsOf(language) })`, the language's view of the portable guards, which checks nodes and kind ids itself. It records each table with the builder, the language and the `shared` builder it was built from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
 
 ### `packages/common/src/language.ts::guardsOf`
 
-The guards an engine of `language` exposes: `language.is` itself when it was composed against `language`, as a generated descriptor's is. Otherwise the same guards composed against `language`: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. The shared members are rebuilt for the copy through the builder recorded with the original, so an engine of the copy exposes the copy's own view of the portable guards (`portableGuardsOf`), which reads the copy's nodes and finds the language's rows through the shared `load`. A hand-built table that no composition recorded is composed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
+The guards an engine of `language` exposes: `language.is` itself when it was built for `language`, as a generated descriptor's is. Otherwise the same builder called with `language`'s kind test: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. The shared members are rebuilt for the copy through the builder recorded with the original, so an engine of the copy exposes the copy's own view of the portable guards (`portableGuardsOf`), which reads the copy's nodes and finds the language's rows through the shared `load`. A hand-built table that no `languageGuards` call recorded has no builder to call, so it is exposed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
 
-### `packages/common/src/language.ts::composed`
+### `packages/common/src/language.ts::KindTest`
 
-The composition over one table: each guard composed through `languageGuard`, the result frozen with the table's type. One composition shares a map from each guard to its composed guard (`wrapped`), so a guard reached under several names, as a portable path is under its aliases, is composed once and stays one object.
+The test a guard and a query's `ofType` make of a value: whether it is of one of `kinds`, the set the kind asked for holds for (its members, or itself). Taking the set rather than a kind lets one test serve a guard over a kind, a supertype with no kind id, and a portable path's ids.
 
-### `packages/common/src/language.ts::languageGuard`
+### `packages/common/src/language.ts::holdsKinds`
 
-One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn and defined on the composed function, so `rust.is.suite.block` checks the language as `rust.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
+The kind test with no language check: whether the value's kind (`kindOf`) is in the set. A grammar's package-level `is` is built with it, so it answers for storage data and for a node of any language alike, and a hand-built query context with no language uses it.
+
+### `packages/common/src/language.ts::kindTestOf`
+
+A language's kind test: the language check (`inLanguage`), then membership (`holdsKinds`). It is the one test the language's guards are built with (`languageGuards`) and an engine's `ofType` runs over elements after an opaque step (the `kindTest` query hook), so a node of another language whose kind id matches passes neither, and a bare kind id passes both, since it carries no language. Kept per language object, so the guards and every engine of the language hold the same function.
 
 ### `packages/common/src/portable/tree.ts::ChildrenOf`
 

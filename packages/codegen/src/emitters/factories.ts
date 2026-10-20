@@ -1025,7 +1025,7 @@ function leafBuiltTypeSurface(
 			`  readonly $type: ${kindDiscriminantType(node.kind, nodeMap, kindEntries)};`,
 			'  readonly $source?: 0 | 1 | 2;',
 			'  readonly $named: true;',
-			`  readonly $text: ${textType};`
+			`  $text(): ${textType};`
 		],
 		setters: [],
 		buildArgs: paramsToTuple(params),
@@ -2588,8 +2588,7 @@ function emitTextFactory(
 		`    $type: ${typeExpr},`,
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
-		`    $text: ${textExpr},`,
-		...nodeMemberLines({ accessors: [], inner: nodeMap === undefined ? { inner: false } : innerPositionsOf(node.kind, nodeMap) }),
+		...nodeMemberLines({ accessors: [], text: textExpr, inner: nodeMap === undefined ? { inner: false } : innerPositionsOf(node.kind, nodeMap) }),
 		'  };',
 		`  return node as unknown as T.${node.typeName}.Bound;`,
 		'}'

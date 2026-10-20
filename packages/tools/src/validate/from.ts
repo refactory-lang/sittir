@@ -12,7 +12,7 @@
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan, sourceSpans } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
-import { spanOf } from '@sittir/common/utils';
+import { nodeText, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { importGrammarModule, requireGrammarModule, type GrammarModules } from '../grammar-internals.ts';
@@ -367,8 +367,9 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		const readKind =
 			readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
 		const readKindId = kindIdFromName?.(readKind);
+		const readText = nodeText(readData);
 		const aliasRead =
-			typeof readData.$text === 'string' &&
+			readText !== undefined &&
 			typeof readData.$type === 'number' &&
 			readKindId !== undefined &&
 			readData.$type !== readKindId;
@@ -381,7 +382,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				});
 				return undefined;
 			}
-			const fromResult = fromMap[readKind]!(aliasRead ? (readData.$text as never) : readData) as AnyUntypedNode;
+			const fromResult = fromMap[readKind]!(aliasRead ? (readText as never) : readData) as AnyUntypedNode;
 			let factoryResult: AnyUntypedNode;
 			try {
 				// Route by the shape declared at codegen time — same
@@ -431,7 +432,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					// A text-shaped factory takes the node's bytes, which its span
 					// addresses whether or not the reader captured them as `$text`.
 					const span = spanOf(readData);
-					const textForFactory = span ? sliceSpan(entry.source, span) : (readData.$text ?? '');
+					const textForFactory = span ? sliceSpan(entry.source, span) : (nodeText(readData) ?? '');
 					factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
 				} else if (shape === 'elements') {
 					// separatedList factory: spread with a LEADING optional

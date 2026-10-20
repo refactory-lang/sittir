@@ -48,13 +48,13 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 		}) as any;
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
 		expect(result.right().$type).toBe(py.kinds.IntegerDecimalPlain);
-		expect(result.right().$text).toBe('42');
+		expect(result.right().$text()).toBe('42');
 	});
 
 	it('a leaf tag builds that leaf from its text', () => {
 		const result = py.build.assignment.eq({ left: 'x' as any, right: { $type: py.kinds.Identifier, text: 'y' } as any }) as any;
 		expect(result.right().$type).toBe(py.kinds.Identifier);
-		expect(result.right().$text).toBe('y');
+		expect(result.right().$text()).toBe('y');
 	});
 
 	it('a leaf tag without its text throws naming the shape', () => {

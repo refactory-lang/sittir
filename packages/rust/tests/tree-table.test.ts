@@ -157,7 +157,7 @@ describe('the tree table across threads and processes', () => {
 		const engine = await createEngine(rust);
 		const leaf = (engine.parse('fn f() {}\n').statements()[0] as unknown as { name(): object }).name();
 		const worker = new Worker(fixture('tree-clone-worker.mts'), {
-			workerData: { leaf: Object.fromEntries(Object.entries(leaf).filter(([key, member]) => typeof member !== 'function' && key !== '$trivia')) },
+			workerData: { leaf: { ...Object.fromEntries(Object.entries(leaf).filter(([key, member]) => typeof member !== 'function' && key !== '$trivia')), $text: (leaf as { $text(): string }).$text() } },
 			execArgv: ['--import', 'tsx']
 		});
 		const message = await reply<{ rendered?: string; error?: string }>(worker);

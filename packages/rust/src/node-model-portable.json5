@@ -852,7 +852,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -3045,7 +3045,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -3216,15 +3216,6 @@
       "vocab": "identifier.crate",
       "read": [
         {
-          "vocab": "modifier.visibility.public.internal",
-          "toplevel": false,
-          "within": [
-            "visibility_modifier"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "identifier.crate",
           "toplevel": true,
           "within": [],
@@ -3233,6 +3224,26 @@
         }
       ],
       "members": []
+    },
+    "crate_visibility_modifier": {
+      "vocab": "modifier.visibility.public.internal",
+      "read": [
+        {
+          "vocab": "modifier.visibility.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
+      "container": {
+        "kinds": [
+          "crate"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "declaration_list": {
       "container": {
@@ -3767,7 +3778,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -4799,7 +4810,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -4905,7 +4916,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -4998,7 +5009,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -5746,7 +5757,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -6254,7 +6265,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -7545,7 +7556,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -7631,7 +7642,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -7977,7 +7988,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -8648,7 +8659,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -8994,7 +9005,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -11452,7 +11463,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -11848,7 +11859,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -14043,7 +14054,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -14632,7 +14643,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -15061,7 +15072,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -15497,7 +15508,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -16382,7 +16393,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -16966,7 +16977,7 @@
               "via": [
                 {
                   "slots": {
-                    "468": 0
+                    "469": 0
                   }
                 }
               ],
@@ -17325,7 +17336,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -18053,7 +18064,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -18636,7 +18647,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  465
                 ],
                 "slots": {
                   "235": 0
@@ -18839,7 +18850,7 @@
     "visibility_modifier": {
       "container": {
         "kinds": [
-          "crate",
+          "crate_visibility_modifier",
           "visibility_modifier_pub"
         ],
         "terminals": [],

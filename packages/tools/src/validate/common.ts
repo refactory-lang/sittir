@@ -20,6 +20,7 @@ import {
 	holdTree,
 	sideOf,
 	sidesOf,
+	nodeText,
 	spanOf,
 	spannedTextOf,
 	treeTokenOf,
@@ -804,6 +805,10 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 	const materialized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key)) continue;
+		if (key === '$text') {
+			materialized.$text = nodeText(value);
+			continue;
+		}
 		const raw = (value as Record<string, unknown>)[key];
 		if (typeof raw === 'function') continue;
 		if (key === '$_layout' && raw != null) {
@@ -1028,7 +1033,7 @@ export interface NodeToConfigOpts {
 
 export interface ReadNodeLike {
 	readonly $type?: number;
-	readonly $text?: string;
+	readonly $text?: string | (() => string);
 	readonly $named?: boolean;
 	readonly $_layout?: NodeLayout;
 }
@@ -1105,7 +1110,8 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 }
 
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
-	if (typeof node.$text === 'string') return node.$text;
+	const own = nodeText(node);
+	if (own !== undefined) return own;
 	const spanned = spannedTextOf(node as object, opts.tree ?? treeOf(node as object));
 	if (spanned !== undefined) return spanned;
 	const rec = node as unknown as Record<string, unknown>;
@@ -1690,18 +1696,18 @@ function promoteAnonymousTokenFields(
 	};
 
 	if (missing.has('semicolon')) {
-		const semicolonIndex = anonymousEntries.findIndex(([, value]) => (value as ReadNodeLike).$text === ';');
+		const semicolonIndex = anonymousEntries.findIndex(([, value]) => nodeText(value) === ';');
 		if (semicolonIndex >= 0) assign('semicolon', semicolonIndex);
 	}
 	if (missing.has('opening')) {
 		const openingIndex = anonymousEntries.findIndex(
-			([, value], index) => !used.has(index) && isOpeningDelimiter((value as ReadNodeLike).$text)
+			([, value], index) => !used.has(index) && isOpeningDelimiter(nodeText(value))
 		);
 		if (openingIndex >= 0) assign('opening', openingIndex);
 	}
 	if (missing.has('closing')) {
 		const closingIndex = anonymousEntries.findLastIndex(
-			([, value], index) => !used.has(index) && isClosingDelimiter((value as ReadNodeLike).$text)
+			([, value], index) => !used.has(index) && isClosingDelimiter(nodeText(value))
 		);
 		if (closingIndex >= 0) assign('closing', closingIndex);
 	}
@@ -1711,9 +1717,10 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	const out: Record<string, unknown> = {};
 	const rec = data as unknown as Record<string, unknown>;
 	const interior = opts.shownKind === undefined ? undefined : opts.interiorOf?.(opts.shownKind);
+	const text = nodeText(data);
 	const unprojected =
 		interior !== undefined &&
-		typeof data.$text === 'string' &&
+		text !== undefined &&
 		!interior.slots.some((slot) => rec[`_${slot.name}`] !== undefined);
 	const parentKind = unprojected
 		? opts.shownKind
@@ -1727,7 +1734,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		}
 	}
 	if (unprojected) {
-		for (const [name, value] of Object.entries(projectInterior(data.$text as string, interior, opts.shownKind!))) {
+		for (const [name, value] of Object.entries(projectInterior(text!, interior, opts.shownKind!))) {
 			if (value !== undefined && value !== false) namedSlotEntries.push([name, value]);
 		}
 	}

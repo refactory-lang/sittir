@@ -11,6 +11,7 @@ import { ERROR_KIND_ROW, type GeneratedKindEntry } from '../../dsl/symbol-table.
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts';
 import { emitTypesModules } from '../types.ts';
+import { emitIs } from '../is.ts';
 
 function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 	const members = [
@@ -54,6 +55,7 @@ it.each(['typescript', 'typescript6'])(
 			writeFileSync(join(dir, 'kinds.ts'), modules.kinds);
 			writeFileSync(join(dir, 'types.ts'), modules.types);
 			writeFileSync(join(dir, 'types-internal.ts'), modules.internal);
+			writeFileSync(join(dir, 'is.ts'), emitIs({ grammar: 'synth', nodeMap, generatedIdTables }));
 			writeFileSync(
 				join(dir, 'check.ts'),
 				`import type { Tuple, Identifier, NamespaceMap, TSKindId } from './types.ts';

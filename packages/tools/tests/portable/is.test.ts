@@ -8,7 +8,7 @@ import { rows as rustRows } from '../../../rust/src/portable.ts';
 import typescript from '../../../typescript/src/index.ts';
 import { rows as typescriptRows } from '../../../typescript/src/portable.ts';
 
-type Node = { readonly $type: number; readonly $text?: string; readonly $render?: () => string };
+type Node = { readonly $type: number; readonly $text?: () => string; readonly $render?: () => string };
 type Item = Node | number;
 type Guard = ((node: unknown) => boolean) & Record<string, unknown>;
 
@@ -43,7 +43,7 @@ async function surfaces(name: keyof typeof languages) {
 	const idsAt = (path: string): readonly number[] => rows.table.paths[path]?.ids ?? [];
 	const paths = (): string[] => Object.keys(rows.table.paths);
 	const find = (source: string, kind: string, text?: string, nth = 0): Item => {
-		const hit = located(source).filter((n) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text ?? n.$render?.()) === text)))[nth];
+		const hit = located(source).filter((n) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text?.() ?? n.$render?.()) === text)))[nth];
 		if (hit === undefined) throw new Error(`no ${kind}${text === undefined ? '' : ` '${text}'`} in ${JSON.stringify(source)}`);
 		return hit;
 	};
@@ -297,6 +297,13 @@ describe('portable is: rust', async () => {
 		expect(statics.map((n) => at('declaration.variable.public.internal')(n))).toEqual([false, false, true]);
 		expect(at('declaration.variable')(local)).toBe(true);
 		expect(at('declaration.variable.public')(local)).toBe(false);
+	});
+
+	it('reads a bare `crate` visibility as internal by its own kind, and the item it marks as internal, as `pub(crate)` is', () => {
+		const SOURCE = 'crate fn f() {}\npub(crate) fn g() {}\n';
+		const items = [0, 1].map((nth) => find(SOURCE, 'function_item', undefined, nth));
+		expect(at('modifier.visibility.public.internal')(find(SOURCE, 'crate_visibility_modifier'))).toBe(true);
+		expect(items.map((n) => at('declaration.function.public.internal')(n))).toEqual([true, true]);
 	});
 
 	it.skip('reads a static item\'s `mut` and `ref` as its flags (pending: `mutable` and `byReference` are flags of declaration.variable, and the runtime flag is-guards come with the runtime-bindings stage)', () => {

@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { stampIrSurface } from '../ir-surface.ts';
 import type { Rule } from '../../../types/rule.ts';
@@ -12,6 +12,7 @@ import {
 	elementsSeatOf,
 	flattenSeatsOf,
 	subFactoriesOf,
+	tupleSeatOf,
 	type NodeArm,
 	type SubFactory
 } from '../sub-factories.ts';
@@ -577,5 +578,50 @@ describe('flattenSeatsOf flattens two groups whose keys do not collide', () => {
 			['first_group', ['parameter', 'label']],
 			['second_group', ['size', 'unit']]
 		]);
+	});
+});
+
+describe('tupleSeatOf seats a forwarded group by where it forwards', () => {
+	function forwardedSeatMap(target: 'elements' | 'config'): NodeMap {
+		const inner: Rule<'evaluate'> =
+			target === 'elements'
+				? {
+						type: SEQ,
+						members: [
+							{ type: SYMBOL, name: 'item' },
+							{ type: REPEAT, content: { type: SEQ, members: [{ type: STRING, value: ',' }, { type: SYMBOL, name: 'item' }] } }
+						]
+					}
+				: {
+						type: SEQ,
+						members: [
+							{ type: STRING, value: 'in' },
+							{ type: FIELD, name: 'a', content: { type: PATTERN, value: '[0-9]+' } },
+							{ type: FIELD, name: 'b', content: { type: PATTERN, value: '[0-9]+' } }
+						]
+					};
+		return buildNodeMap({
+			root: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: 'root' },
+					{ type: FIELD, name: 'group', content: { type: SYMBOL, name: 'group' } },
+					{ type: FIELD, name: 'label', content: { type: PATTERN, value: '[a-z]+' } }
+				]
+			},
+			group: { type: SEQ, members: [{ type: STRING, value: 'grp' }, { type: SYMBOL, name: 'inner' }], annotations: { hoisted: true } },
+			inner,
+			item: { type: PATTERN, value: '[a-z]+' }
+		});
+	}
+
+	it('seats a forwarded group whose forward target is a separated list', () => {
+		const nodeMap = forwardedSeatMap('elements');
+		expect(tupleSeatOf(nodeMap.nodes.get('root')!, nodeMap).map((seat) => seat.group.kind)).toEqual(['group']);
+	});
+
+	it('does not seat a forwarded group whose forward target is a config-shaped kind', () => {
+		const nodeMap = forwardedSeatMap('config');
+		expect(tupleSeatOf(nodeMap.nodes.get('root')!, nodeMap)).toEqual([]);
 	});
 });

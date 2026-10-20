@@ -3,7 +3,7 @@ import type { FieldRule, Rule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { makeRuleMetadata, withReservedWordsets } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import { withoutBlankMembers } from '../dsl/rule-patterns.ts';
+import { optionalContentOf, withoutBlankMembers } from '../dsl/rule-patterns.ts';
 import { grammarRootNames, pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import type { EvaluatedGrammar, EvaluationStages, RawGrammar, StageEvaluation } from './types.ts';
@@ -52,6 +52,11 @@ function canonicalRepeat1Rule(rule: EvalRule & { type: typeof REPEAT1 }): EvalRu
 }
 
 function canonicalChoiceRule(rule: EvalRule & { type: typeof CHOICE }): EvalRule {
+	const optional = optionalContentOf(rule);
+	if (optional !== undefined) {
+		const { members: _members, ...attributes } = rule;
+		return canonicalOptionalRule({ ...attributes, type: OPTIONAL, content: optional });
+	}
 	const arms = withoutBlankMembers(rule);
 	if (arms.members.length === 0) return arms;
 	const members = rule.members;
