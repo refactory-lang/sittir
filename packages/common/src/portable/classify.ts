@@ -1,8 +1,9 @@
-import type { PortableCondition, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { anchored, holds, slotItems } from '../query-holds.ts';
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
 import { nodeText, spanOf } from '../node-data.ts';
+import { portablePathHasFacts } from './facts.ts';
 
 type Node = { readonly $type: number };
 
@@ -37,6 +38,16 @@ const decidesKindId = (entry: PortableReadEntry): boolean =>
 	entry.test.every((condition) => condition.via.length === 0 && readsItself(condition.plan));
 
 const classifiers = new WeakMap<PortableRows, PortableClassifier>();
+
+export const portablePathOf = (rows: PortableRows, path: string): PortablePath | undefined =>
+	Object.hasOwn(rows.table.paths, path) ? rows.table.paths[path] : undefined;
+
+export const readsAs = (rows: PortableRows, path: string, value: Node | number): boolean => {
+	const admitted = portablePathOf(rows, path);
+	const kind = typeof value === 'number' ? value : value.$type;
+	if (admitted === undefined || !admitted.ids.includes(kind)) return false;
+	return admitted.exact || portablePathHasFacts(path, classifierOf(rows)(value));
+};
 
 /**
  * The classifier of a bound grammar's portable rows, built once per rows object.

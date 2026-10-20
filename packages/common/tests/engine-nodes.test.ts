@@ -52,11 +52,11 @@ function fakeLanguage(name: string) {
 	};
 	const language = { name, kinds: {}, load: async () => hooks, get is() { return is; } };
 	const is = languageGuards(
-		{
-			leaf: (v: AnyUntypedNode) => v.$type === 1,
-			kind: (v: AnyUntypedNode, k: number) => v.$type === k,
-			expression: (v: AnyUntypedNode) => new Set([1, 3]).has(v.$type as number)
-		},
+		(test) => ({
+			leaf: (v: unknown) => typeof v !== 'number' && test(v, new Set([1])),
+			kind: (v: unknown, k: number) => typeof v !== 'number' && test(v, new Set([k])),
+			expression: (v: unknown) => typeof v !== 'number' && test(v, new Set([1, 3]))
+		}),
 		language
 	);
 	return {

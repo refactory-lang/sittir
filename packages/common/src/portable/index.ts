@@ -1,32 +1,27 @@
 import { engineOf } from '../engine-scope.ts';
-import { classifierOf, hasKind } from './classify.ts';
-import { portablePathHasFacts } from './facts.ts';
+import { inLanguage } from '../language.ts';
+import { hasKind, readsAs } from './classify.ts';
 import type { PortableRows } from '@sittir/types';
 import { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree } from './tree.ts';
 import { vocabularyPaths } from './vocabulary-paths.ts';
 
-type VocabularyPath = (typeof vocabularyPaths)[number];
+/** A vocabulary path: one of {@link vocabularyPaths}. */
+export type VocabularyPath = (typeof vocabularyPaths)[number];
+
+/**
+ * Every vocabulary path, mapped to the kind ids a bound grammar reads at or under it, or to `never` where it reads none.
+ *
+ * @typeParam Ids - A bound grammar's kind ids per path it reads (its `PortableIds`); `{}` for a grammar without bindings.
+ */
+export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath]: P extends keyof Ids ? Ids[P] : never };
 
 export { classifierOf, hasKind, type PortableClassifier } from './classify.ts';
 export { portablePathHasFacts } from './facts.ts';
-export {
-	portableTrees,
-	type LanguageGuard,
-	type PortableGuard,
-	type PortableGuardTree,
-	type PortableKind,
-	type PortableKindTree
-} from './tree.ts';
+export { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree, type PortableKindTree } from './tree.ts';
+export type { PortableKind } from '@sittir/types';
 export { vocabularyPaths } from './vocabulary-paths.ts';
 
 type Node = { readonly $type: number };
-
-const readsAs = (rows: PortableRows, path: string, value: Node | number): boolean => {
-	const admitted = rows.table.paths[path];
-	const kind = typeof value === 'number' ? value : value.$type;
-	if (admitted === undefined || !admitted.ids.includes(kind)) return false;
-	return admitted.exact || portablePathHasFacts(path, classifierOf(rows)(value));
-};
 
 const guardOf =
 	(path: string): PortableGuard =>
@@ -86,12 +81,15 @@ export const portable = portableTrees(vocabularyPaths, guardOf);
  */
 export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<VocabularyPath, LanguageGuard> {
 	let view = views.get(language);
-	if (view === undefined) views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, path)).is));
+	if (view === undefined) {
+		const ofLanguage = inLanguage(language);
+		views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, ofLanguage, path)).is));
+	}
 	return view;
 }
 
 const languageGuardOf =
-	(language: PortableLanguage, path: string): LanguageGuard =>
+	(language: PortableLanguage, ofLanguage: (value: unknown) => boolean, path: string): LanguageGuard =>
 	(value): value is Node | number => {
 		if (typeof value === 'number') {
 			const rows = rowsByLoad.get(language.load);
@@ -99,7 +97,7 @@ const languageGuardOf =
 				throw new Error(`${language.name}: a portable guard given a kind id reads the language's rows; create an engine for ${language.name} first`);
 			return readsAs(rows, path, value);
 		}
-		if (!hasKind(value)) return false;
-		const engine = engineOf(value);
-		return engine?.language === language && engine.portable !== undefined && readsAs(engine.portable, path, value);
+		if (!hasKind(value) || !ofLanguage(value)) return false;
+		const rows = engineOf(value)?.portable;
+		return rows !== undefined && readsAs(rows, path, value);
 	};

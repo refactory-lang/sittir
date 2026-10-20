@@ -5,7 +5,7 @@ import type { TypescriptAPI } from './api.js';
 import { languageGuards } from '@sittir/common/language';
 import * as typescript from './descriptor.js';
 import { TSKindId } from './kinds.js';
-import { is as guards } from './is.js';
+import { guardsWith } from './is.js';
 import { portable, portableGuardsOf } from '@sittir/common/portable';
 import type { PortableIs, PortableKinds } from './portable.js';
 
@@ -22,7 +22,7 @@ export const kinds: typeof TSKindId & { readonly portable: PortableKinds } = Obj
 	...TSKindId,
 	portable: portable.kinds as PortableKinds
 });
-export const is = languageGuards(guards, typescript, (language) => ({
+export const is = languageGuards(guardsWith, typescript, (language) => ({
 	portable: portableGuardsOf(language) as PortableIs
 }));
 export const load: Language<TypescriptAPI>['load'] = () => import('./api.js').then((m) => m.hooks);

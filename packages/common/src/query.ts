@@ -2,6 +2,8 @@ import type {
 	AnyUntypedNode,
 	Cond,
 	KindMembership,
+	PortableKind,
+	PortableRows,
 	PresenceRef,
 	QueryFlags,
 	QueryPlan,
@@ -17,6 +19,8 @@ import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { hydrateWith, nodeAddressOf, type NodeAddress } from './utils.ts';
 import { refuse, slotItems } from './query-holds.ts';
+import { portablePathOf, readsAs } from './portable/classify.ts';
+import { kindOf, type KindTest } from './language.ts';
 
 export interface DescendantWalk {
 	readonly from: NodeAddress;
@@ -28,7 +32,7 @@ export interface DescendantWalk {
 }
 
 export interface DescendantBatch {
-	readonly coordinates: readonly NodeCoordinate[];
+	readonly items: readonly (NodeCoordinate | number)[];
 	readonly resume: readonly number[] | null;
 	readonly origin: number;
 }
@@ -43,6 +47,8 @@ export interface QueryHooks {
 	readonly queryFlags: QueryFlags;
 	readonly querySlotFlags: QuerySlotFlags;
 	readonly membership: KindMembership;
+	readonly kindTest: KindTest;
+	readonly portable: PortableRows | undefined;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly wrap: (data: unknown, tree: unknown) => unknown;
 }
@@ -208,17 +214,17 @@ type Source =
 type Where = (slots: Recorder<unknown>) => Cond;
 
 type Step =
-	| { readonly op: 'ofType'; readonly kind: number }
+	| { readonly op: 'ofKinds'; readonly kinds: ReadonlySet<number> }
 	| { readonly op: 'where'; readonly condition: Where }
 	| { readonly op: 'slice'; readonly start: number; readonly end: number | undefined }
 	| { readonly op: 'filter'; readonly fn: (node: unknown, index: number) => unknown }
 	| { readonly op: 'map'; readonly fn: (node: unknown, index: number) => unknown }
 	| { readonly op: 'flatMap'; readonly fn: (node: unknown, index: number) => unknown };
 
-type Declarative = Extract<Step, { readonly op: 'ofType' | 'where' | 'slice' }>;
+type Declarative = Extract<Step, { readonly op: 'ofKinds' | 'where' | 'slice' }>;
 
 function isDeclarative(step: Step): step is Declarative {
-	return step.op === 'ofType' || step.op === 'where' || step.op === 'slice';
+	return step.op === 'ofKinds' || step.op === 'where' || step.op === 'slice';
 }
 
 export function splitPlan(steps: readonly Step[]): {
@@ -247,7 +253,7 @@ interface QueryView extends Iterable<unknown> {
 	map(fn: Fn): QueryView;
 	flatMap(fn: Fn): QueryView;
 	slice(start?: number, end?: number): QueryView;
-	ofType(kind: number): QueryView;
+	ofType(kind: number | PortableKind): QueryView;
 	where(condition: Where): QueryView;
 	find(predicate?: Fn): unknown;
 	findIndex(predicate: Fn): number;
@@ -260,14 +266,14 @@ interface QueryView extends Iterable<unknown> {
 }
 
 function view(context: Context, source: Source, steps: readonly Step[]): QueryView {
-	const next = (step: Step): QueryView => view(context, source, [...steps, step]);
+	const next = (...added: Step[]): QueryView => view(context, source, [...steps, ...added]);
 	const items = (): Iterable<unknown> => run(context, source, steps);
 	return {
 		filter: (fn) => next({ op: 'filter', fn }),
 		map: (fn) => next({ op: 'map', fn }),
 		flatMap: (fn) => next({ op: 'flatMap', fn }),
 		slice: (start, end) => next(sliceStep(start, end)),
-		ofType: (kind) => next(ofTypeStep(kind)),
+		ofType: (kind) => next(...ofTypeSteps(context, kind)),
 		where: (condition) => next(whereStep(context, steps, condition)),
 		find: (predicate) => find(items(), predicate),
 		findIndex: (predicate) => findIndex(items(), predicate),
@@ -289,9 +295,18 @@ function sliceStep(start: number | undefined, end: number | undefined): Step {
 	};
 }
 
-function ofTypeStep(kind: number): Step {
-	if (typeof kind !== 'number') refuse('query: ofType takes a kind id');
-	return { op: 'ofType', kind };
+function ofTypeSteps(context: Context, kind: unknown): readonly Step[] {
+	if (typeof kind === 'number') return [{ op: 'ofKinds', kinds: new Set(context.hooks.membership.membersOf(kind)) }];
+	if (!isPortableKind(kind)) refuse('query: ofType takes a kind id or a portable kind');
+	const rows = context.hooks.portable;
+	const read = rows === undefined ? undefined : portablePathOf(rows, kind.$path);
+	if (rows === undefined || read === undefined) return [{ op: 'ofKinds', kinds: new Set() }];
+	const ofKinds: Step = { op: 'ofKinds', kinds: new Set(read.ids) };
+	return read.exact ? [ofKinds] : [ofKinds, { op: 'filter', fn: (node) => readsAs(rows, kind.$path, node as AnyUntypedNode | number) }];
+}
+
+function isPortableKind(value: unknown): value is PortableKind {
+	return typeof value === 'object' && value !== null && typeof (value as PortableKind).$path === 'string';
 }
 
 function whereStep(context: Context, steps: readonly Step[], condition: Where): Step {
@@ -331,13 +346,13 @@ function pushdown(
 	context: Context,
 	early: readonly Declarative[]
 ): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
-	let kinds: readonly number[] | undefined;
+	let kinds: ReadonlySet<number> | undefined;
 	const plans: QueryPlan[] = [];
 	let count = 0;
 	for (const step of early) {
-		if (step.op === 'ofType') {
-			kinds = narrowed(context, kinds, step.kind);
-			if (kinds.length === 0) return 'none';
+		if (step.op === 'ofKinds') {
+			kinds = narrowed(kinds, step.kinds);
+			if (kinds.size === 0) return 'none';
 		} else if (step.op === 'where') {
 			const plan = kinds === undefined ? undefined : sharedPlan(context, step.condition, kinds);
 			if (plan === undefined) break;
@@ -346,7 +361,7 @@ function pushdown(
 		count++;
 	}
 	return {
-		kinds: kinds ?? [],
+		kinds: kinds === undefined ? [] : [...kinds],
 		plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans },
 		count
 	};
@@ -371,7 +386,7 @@ function* batches(
 			...(resume === undefined ? {} : { resume }),
 			...(source.depth === undefined ? {} : { depth: source.depth })
 		});
-		yield batch.coordinates.map((coordinate) => entryOfCoordinate(coordinate, tree, hooks));
+		yield batch.items.map((item) => (typeof item === 'number' ? entryOfItem(item) : entryOfCoordinate(item, tree, hooks)));
 		if (batch.resume === null) return;
 		from = { handle: batch.origin };
 		resume = batch.resume;
@@ -434,7 +449,7 @@ function toIntegerOrInfinity(value: number | undefined): number {
 function entryOfItem(item: unknown): Entry {
 	const node = item !== null && typeof item === 'object' ? (item as AnyUntypedNode) : undefined;
 	return {
-		kind: typeof node?.$type === 'number' ? node.$type : undefined,
+		kind: kindOf(item),
 		address: node === undefined ? undefined : nodeAddressOf(node),
 		hydrate: () => item
 	};
@@ -468,8 +483,8 @@ function declarativeStep(
 	context: Context
 ): Iterable<readonly Entry[]> {
 	switch (step.op) {
-		case 'ofType':
-			return mapBatches(batches, (batch) => batch.filter((entry) => isOfType(context, entry.kind, step.kind)));
+		case 'ofKinds':
+			return mapBatches(batches, (batch) => batch.filter((entry) => entry.kind !== undefined && step.kinds.has(entry.kind)));
 		case 'where':
 			return mapBatches(batches, (batch) => whereHolds(batch, step.condition, context));
 		case 'slice':
@@ -530,8 +545,8 @@ function applyStep(step: Step, items: Iterable<unknown>, context: Context): Iter
 	switch (step.op) {
 		case 'slice':
 			return sliceItems(items, step.start, step.end);
-		case 'ofType':
-			return filterItems(items, (item) => isOfType(context, (item as AnyUntypedNode | undefined)?.$type, step.kind));
+		case 'ofKinds':
+			return filterItems(items, (item) => context.hooks.kindTest(item, step.kinds));
 		case 'where':
 			return filterItems(items, (item) => whereHolds([entryOfItem(item)], step.condition, context).length > 0);
 		case 'filter':
@@ -573,19 +588,14 @@ function* sliceItems(items: Iterable<unknown>, start: number, end: number | unde
 	}
 }
 
-function isOfType(context: Context, type: unknown, kind: number): boolean {
-	return typeof type === 'number' && context.hooks.membership.isMember(kind, type);
+function narrowed(kinds: ReadonlySet<number> | undefined, by: ReadonlySet<number>): ReadonlySet<number> {
+	return kinds === undefined ? by : new Set([...kinds].filter((type) => by.has(type)));
 }
 
-function narrowed(context: Context, kinds: readonly number[] | undefined, kind: number): readonly number[] {
-	const { membership } = context.hooks;
-	return kinds === undefined ? membership.membersOf(kind) : kinds.filter((type) => membership.isMember(kind, type));
-}
-
-function knownKinds(context: Context, steps: readonly Step[]): readonly number[] | undefined {
-	let kinds: readonly number[] | undefined;
+function knownKinds(context: Context, steps: readonly Step[]): ReadonlySet<number> | undefined {
+	let kinds: ReadonlySet<number> | undefined;
 	for (const step of steps) {
-		if (step.op === 'ofType') kinds = narrowed(context, kinds, step.kind);
+		if (step.op === 'ofKinds') kinds = narrowed(kinds, step.kinds);
 		else if (step.op === 'map' || step.op === 'flatMap') kinds = undefined;
 	}
 	return kinds;
@@ -604,8 +614,8 @@ function compileFor(context: Context, condition: Where, kind: number): QueryPlan
 	return plan;
 }
 
-function sharedPlan(context: Context, condition: Where, kinds: readonly number[]): QueryPlan | undefined {
-	const merged = mergedAt(kinds.map((kind) => compileFor(context, condition, kind)), undefined);
+function sharedPlan(context: Context, condition: Where, kinds: ReadonlySet<number>): QueryPlan | undefined {
+	const merged = mergedAt([...kinds].map((kind) => compileFor(context, condition, kind)), undefined);
 	return merged === CONFLICT ? undefined : (merged as QueryPlan | undefined);
 }
 
