@@ -282,7 +282,7 @@ export function nativeNodeIsKind(
 	kind: string,
 	kindNameFromId: ((id: number) => string | undefined) | undefined
 ): boolean {
-	return (typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type) === kind;
+	return (kindNameFromId?.(d.$type) ?? String(d.$type)) === kind;
 }
 
 /** Every node of `kind` in the tree, in document order, each with where it was found and its span. */
@@ -1027,7 +1027,7 @@ export interface NodeToConfigOpts {
 }
 
 export interface ReadNodeLike {
-	readonly $type?: string | number;
+	readonly $type?: number;
 	readonly $text?: string;
 	readonly $named?: boolean;
 	readonly $_layout?: NodeLayout;
@@ -1073,12 +1073,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		if (text !== '') return text;
 	}
 	const rawTypeId = hydrated.$type ?? c.$type;
-	const rawKind =
-		rawTypeId !== undefined
-			? typeof rawTypeId === 'number'
-				? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId))
-				: rawTypeId
-			: undefined;
+	const rawKind = rawTypeId !== undefined ? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId)) : undefined;
 	if (!rawKind) return hydrated;
 	let kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap);
 	let factory = factoryMap![kind];
@@ -1550,9 +1545,7 @@ function rawChildKindName(
 ): string | undefined {
 	if (value == null || typeof value !== 'object') return undefined;
 	const rawType = (value as ReadNodeLike).$type;
-	if (typeof rawType === 'string') return rawType;
-	if (typeof rawType === 'number') return kindNameFromId?.(rawType);
-	return undefined;
+	return typeof rawType === 'number' ? kindNameFromId?.(rawType) : undefined;
 }
 
 function narrowSingularUnnamedChildrenValue(
@@ -1726,9 +1719,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	const parentKind = unprojected
 		? opts.shownKind
 		: data.$type !== undefined
-			? typeof data.$type === 'number'
-				? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
-				: data.$type
+			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 			: undefined;
 	const namedSlotEntries: [string, unknown][] = [];
 	for (const key of Object.keys(rec)) {

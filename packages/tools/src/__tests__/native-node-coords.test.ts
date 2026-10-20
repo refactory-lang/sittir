@@ -43,7 +43,7 @@ describe('native node coords', () => {
 			if (!coords || !treeNode) continue;
 
 			const data = readNativeAt(handle, coords);
-			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
+			const dataKind = kindNameFromId(data.$type);
 			expect(dataKind).toBe(kind);
 		}
 	}, 30000);
@@ -76,7 +76,7 @@ describe('native node coords', () => {
 			if (!coords || !treeNode) continue;
 
 			const data = readNativeAt(handle, coords);
-			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
+			const dataKind = kindNameFromId(data.$type);
 			expect(dataKind).toBe(kind);
 		}
 	}, 30000);
@@ -102,7 +102,7 @@ describe('native node coords', () => {
 		if (!coords || !treeNode) return;
 
 		const data = readNativeAt(handle, coords);
-		const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
+		const dataKind = kindNameFromId(data.$type);
 		expect(dataKind).toBe('module');
 	}, 30000);
 });

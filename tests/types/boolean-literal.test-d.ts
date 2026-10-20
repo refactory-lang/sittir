@@ -4,10 +4,10 @@ import { TSKindId } from '../../packages/rust/src/types.ts';
 
 type Expect<T extends true> = T;
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
-type Identifier = Terminal<'identifier', string>;
+type Identifier = Terminal<TSKindId.Identifier, string>;
 
 interface MixedSlots {
-	readonly $type: 'mixed_slots';
+	readonly $type: 999_999;
 	readonly _true_or_identifier: TSKindId.TrueKeyword | Identifier;
 	readonly _false_or_identifier: TSKindId.FalseKeyword | Identifier;
 	readonly _boolean_or_identifier: TSKindId.TrueKeyword | TSKindId.FalseKeyword | Identifier;

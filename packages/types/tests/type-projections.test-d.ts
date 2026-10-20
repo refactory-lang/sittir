@@ -17,16 +17,14 @@ type Equal<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
 type Extends<A, B> = A extends B ? true : false;
 
 // ---------------------------------------------------------------------------
-// 1. KindOf — extract type from a node
+// 1. KindOf — extract the kind id from a node
 // ---------------------------------------------------------------------------
 
-type _1a = Expect<Equal<KindOf<{ readonly $type: 'function_item' }>, 'function_item'>>;
-type _1c = Expect<Equal<KindOf<{ readonly $type: 'identifier' }>, 'identifier'>>;
+type _1a = Expect<Equal<KindOf<{ readonly $type: 42 }>, 42>>;
+type _1c = Expect<Equal<KindOf<{ readonly $type: 7 }>, 7>>;
 
 // Union distribution
-type _1d = Expect<
-	Equal<KindOf<{ readonly $type: 'identifier' } | { readonly $type: 'metavariable' }>, 'identifier' | 'metavariable'>
->;
+type _1d = Expect<Equal<KindOf<{ readonly $type: 7 } | { readonly $type: 9 }>, 7 | 9>>;
 
 // ---------------------------------------------------------------------------
 // 2. SetterKey / ConfigOf — Object.prototype-colliding field names escape
