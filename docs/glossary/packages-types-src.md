@@ -411,7 +411,7 @@ The walk has one termination rule: it opens at most `WalkDepth` lists and config
 
 ### `packages/types/src/node-surface.ts::MemberRefusals`
 
-One member of a union value. A `$type` that is a plain `number` is an untyped node: `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself, the template of an enum member or a numeric literal being one numeral, while a conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. A node (`NodeMarker`: the render method, or a held tree) ends the walk, since its fields are typed storage; a config that only names a `$render` is no node, and is opened. A list or a config, a config tagged with a kind included, is opened (`OpenedRefusals`); anything else (leaf text, a kind id, a function, `undefined`) holds nothing.
+One member of a union value. A `$type` that is a plain `number` is an untyped node: `` `${number}` `` is assignable to the template of `$type` only when `$type` is `number` itself, the template of an enum member or a numeric literal being one numeral, while a conditional on `number extends Id` cannot tell them apart, since `number` is assignable to any numeric enum member. A node (`NodeMarker`: the render method, or a held tree) ends the walk, since its fields are typed storage; a config that only names a `$render` is no node, and is opened. Any other object with a key is opened (`OpenedRefusals`): a list, a config, a config tagged with a kind, and a function carrying config fields, which the coercer reads as a config. An object with no key, a bare function included, and anything that is no object (leaf text, a kind id, `undefined`) holds nothing.
 
 ### `packages/types/src/node-surface.ts::OpenedRefusals`
 
@@ -467,7 +467,12 @@ What makes an object a node, for admission and for the refusal walk alike: a `$r
 
 ### `packages/types/src/node-surface.ts::ListOf`
 
-A value when it is a list, `never` otherwise: an array or tuple type, which carries a numeric index signature. An object literal with a list spread into it has the list's own keys (its indices, `length`, its methods) and no numeric index, yet inferred from a literal it is assignable to `readonly unknown[]`, so assignability alone would walk it as a list and never check its keys. It is a config instead, whose every key is refused as unknown: coercion reads only declared fields, so the spread items would otherwise be lost without a word.
+A value when it is a list, `never` otherwise: an array or tuple type, which carries a numeric index signature, with no key that an array does not have. Anything else that is assignable to `readonly unknown[]` is a config, checked key by key, because the coercer reads it as one:
+
+- an object literal with a list spread into it has the list's own keys (its indices, `length`, its methods) and no numeric index, yet inferred from a literal it is assignable to `readonly unknown[]`; walked as a list, its keys would go unchecked and the spread items be lost without a word;
+- an array carrying config fields (`Object.assign([], { statements })`) has the numeric index, but its fields are what the coercer reads; walked as a list, only its items would be checked.
+
+Checked as a config, each such value has its array keys refused as unknown.
 
 ### `packages/types/src/node-surface.ts::KeyText`
 

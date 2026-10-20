@@ -65,6 +65,10 @@ declare const notANode: {
 };
 // @ts-expect-error a polymorph form builder opens a config whose `$render` is no render function
 rs.build.expressionStatement.withSemi(notANode);
+// @ts-expect-error a function carrying config fields is a config, so the untyped node in it refuses the call
+rs.build.block(Object.assign(() => {}, { trailingExpression: untyped }));
+// @ts-expect-error a list carrying config fields is no list, so the untyped node in it refuses the call
+rs.build.block(Object.assign([], { statements: [untyped] }));
 // @ts-expect-error an untyped node below loose configs nested past the widening's own depth refuses the call
 rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: untyped } } } });
 

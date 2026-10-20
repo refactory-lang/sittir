@@ -51,6 +51,10 @@ declare const symbolKey: unique symbol;
 rs.build.block({ statements: [], [symbolKey]: 1 });
 // @ts-expect-error a polymorph form builder refuses a numeric key
 rs.build.attribute.input({ path: 'x', 0: 'y' });
+// @ts-expect-error a function carrying config fields refuses a misspelled key among them
+rs.build.block(Object.assign(() => {}, { statements: [], statments: [] }));
+// @ts-expect-error a list carrying config fields refuses a misspelled key among them
+rs.build.block(Object.assign([], { statements: [], statments: [] }));
 
 export const declaredKeys = rs.build.block({ statements: [], trailingExpression: 'a' });
 export const nestedKeys = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [] } });

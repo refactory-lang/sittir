@@ -179,11 +179,11 @@ type MemberRefusals<V, Declared, Depth extends readonly 0[], Path extends string
 		: V extends NodeMarker
 			? never
 			: OpenedRefusals<V, Declared, Depth, Path>
-	: V extends (...args: never[]) => unknown
-		? never
-		: V extends object
-			? OpenedRefusals<V, Declared, Depth, Path>
-			: never;
+	: V extends object
+		? [keyof V] extends [never]
+			? never
+			: OpenedRefusals<V, Declared, Depth, Path>
+		: never;
 
 type OpenedRefusals<V, Declared, Depth extends readonly 0[], Path extends string> =
 	IsOneOf<V, Declared> extends true
@@ -194,7 +194,13 @@ type OpenedRefusals<V, Declared, Depth extends readonly 0[], Path extends string
 				? KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, [...Depth, 0], Path>
 				: ItemRefusals<ListOf<V>, Declared, [...Depth, 0], Path>;
 
-type ListOf<V> = V extends readonly unknown[] ? (number extends keyof V ? V : never) : never;
+type ListOf<V> = V extends readonly unknown[]
+	? number extends keyof V
+		? [Exclude<keyof V, keyof unknown[] | `${number}`>] extends [never]
+			? V
+			: never
+		: never
+	: never;
 
 type WalkDepth = 20;
 
