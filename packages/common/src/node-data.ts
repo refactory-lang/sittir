@@ -47,6 +47,14 @@ function entriesData<S extends TriviaSides<unknown>>(sides: S): S {
 }
 
 /**
+ * Whether a value has a text member, a node's `$text()` or the string `$text` of native node data, decided without calling the method.
+ */
+export function hasNodeText(value: object): boolean {
+	const text: unknown = (value as { readonly $text?: unknown }).$text;
+	return typeof text === 'string' || typeof text === 'function';
+}
+
+/**
  * The text a leaf holds: a node's `$text()`, or the `$text` of native node data, which carries it as a string. `undefined` for a value with neither.
  */
 export function nodeText(value: unknown): string | undefined {

@@ -41,6 +41,13 @@ describe('@sittir/common/utils runtime surface', () => {
 		expect(render).toHaveBeenCalledWith(node);
 	});
 
+	it('isNode sees a text member without calling it', () => {
+		const text = vi.fn(() => 'x');
+		expect(isNode({ $type: 1, $text: text })).toBe(true);
+		expect(isNode({ $type: 1, $text: 'x' })).toBe(true);
+		expect(text).not.toHaveBeenCalled();
+	});
+
 	it('guards and coercers behave consistently', () => {
 		expect(isNode({ $type: 1, $source: 2, _name: 'x' })).toBe(true);
 		expect(isNode({ $type: 1 })).toBe(false);
