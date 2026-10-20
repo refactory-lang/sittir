@@ -56,6 +56,15 @@ declare const looseBlock: Block.Loose;
 rs.build.block(flag ? looseBlock : untyped);
 // @ts-expect-error an untyped node inside a loose config nested in another refuses the call
 rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: untyped } });
+// @ts-expect-error a config whose `$render` is no render function is not a node, so the untyped node inside it refuses the call
+rs.build.block({ $type: rs.kinds.Block, $render: undefined, trailingExpression: untyped });
+declare const notANode: {
+	readonly $type: typeof rs.kinds.Block;
+	readonly $render: undefined;
+	readonly trailingExpression: typeof untyped;
+};
+// @ts-expect-error a polymorph form builder opens a config whose `$render` is no render function
+rs.build.expressionStatement.withSemi(notANode);
 // @ts-expect-error an untyped node below loose configs nested past the widening's own depth refuses the call
 rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: untyped } } } });
 

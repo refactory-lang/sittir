@@ -40,6 +40,18 @@ declare const misspelled: { readonly $type: typeof rs.kinds.Block; readonly stat
 // @ts-expect-error a polymorph form builder refuses a misspelled key inside a declared value
 rs.build.expressionStatement.withSemi(misspelled);
 
+// @ts-expect-error a numeric key refuses the call
+rs.build.block({ statements: [], 123: 'dropped' });
+// @ts-expect-error a numeric key in a tagged nested config refuses the call
+rs.build.block({ trailingExpression: { $type: rs.kinds.Block, statements: [], 123: 'dropped' } });
+// @ts-expect-error a list spread into a config lands under numeric keys, which refuse the call
+rs.build.block({ statements: [], ...[rs.build.expressionStatement('a')] });
+declare const symbolKey: unique symbol;
+// @ts-expect-error a symbol key refuses the call
+rs.build.block({ statements: [], [symbolKey]: 1 });
+// @ts-expect-error a polymorph form builder refuses a numeric key
+rs.build.attribute.input({ path: 'x', 0: 'y' });
+
 export const declaredKeys = rs.build.block({ statements: [], trailingExpression: 'a' });
 export const nestedKeys = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [] } });
 export const listItemKeys = rs.build.block({ statements: [{ $type: rs.kinds.ExpressionStatement, content: 'a' }] });

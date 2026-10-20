@@ -155,9 +155,11 @@ export type Admit<V> = V extends unknown
 	? V extends readonly unknown[]
 		? { [I in keyof V]: Admit<V[I]> }
 		: V extends { readonly $type: infer Id extends number }
-			? { readonly $type: Id } & ({ readonly $render: NodeMethods['$render'] } | HoldsTree)
+			? { readonly $type: Id } & NodeMarker
 			: V
 	: never;
+
+type NodeMarker = { readonly $render: NodeMethods['$render'] } | HoldsTree;
 
 type IsOneOf<V, U> = true extends (U extends unknown ? IsExactly<V, U> : never) ? true : false;
 
@@ -174,7 +176,7 @@ type MemberRefusals<V, Declared, Depth extends readonly 0[], Path extends string
 }
 	? `${number}` extends `${Id & number}`
 		? 'an untyped node has no language'
-		: V extends { readonly $render: unknown } | HoldsTree
+		: V extends NodeMarker
 			? never
 			: OpenedRefusals<V, Declared, Depth, Path>
 	: V extends (...args: never[]) => unknown
@@ -188,9 +190,11 @@ type OpenedRefusals<V, Declared, Depth extends readonly 0[], Path extends string
 		? never
 		: Depth['length'] extends WalkDepth
 			? `an input nested too deep to check: ${Path}`
-			: V extends readonly unknown[]
-				? ItemRefusals<V, Declared, [...Depth, 0], Path>
-				: KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, [...Depth, 0], Path>;
+			: [ListOf<V>] extends [never]
+				? KeyRefusals<V, ConfigShapes<V, Declared>, Path> | FieldRefusals<V, ConfigShapes<V, Declared>, [...Depth, 0], Path>
+				: ItemRefusals<ListOf<V>, Declared, [...Depth, 0], Path>;
+
+type ListOf<V> = V extends readonly unknown[] ? (number extends keyof V ? V : never) : never;
 
 type WalkDepth = 20;
 
@@ -198,7 +202,7 @@ type Step<Path extends string, Key extends string> = Path extends '' ? Key : `${
 
 type ConfigShapes<V, Declared> = V extends { readonly $type: infer Id } ? Tagged<Configs<Declared>, Id> : Configs<Declared>;
 
-type Configs<D> = D extends readonly unknown[] | ((...args: never[]) => unknown) | { readonly $render: unknown } | HoldsTree
+type Configs<D> = D extends readonly unknown[] | ((...args: never[]) => unknown) | NodeMarker
 	? never
 	: D extends object
 		? D
@@ -208,10 +212,12 @@ type Tagged<C, Id> = C extends { readonly $type?: infer K } ? (Id extends K ? C 
 
 type KeyRefusals<V, Shapes, Path extends string> = [Shapes] extends [never]
 	? never
-	: `an unknown key: ${Step<Path, Exclude<keyof V, KeysOfUnion<Shapes> | '$type'> & string>}`;
+	: `an unknown key: ${Step<Path, KeyText<Exclude<keyof V, KeysOfUnion<Shapes> | '$type'>>>}`;
+
+type KeyText<K> = K extends string | number ? `${K}` : '[symbol]';
 
 type FieldRefusals<V, Shapes, Depth extends readonly 0[], Path extends string> = {
-	[K in keyof V]-?: K extends '$type' ? never : Refusals<V[K], FieldOf<Shapes, K>, Depth, Step<Path, K & string>>;
+	[K in keyof V]-?: K extends '$type' ? never : Refusals<V[K], FieldOf<Shapes, K>, Depth, Step<Path, KeyText<K>>>;
 }[keyof V];
 
 type FieldOf<C, K> = C extends unknown ? (K extends keyof C ? Exclude<C[K], undefined> : never) : never;
