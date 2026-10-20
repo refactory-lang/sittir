@@ -556,7 +556,7 @@ describe('a ruled-narrowing ruling is stated in words', () => {
 		});
 	const reason = 'its ruling cites a PR, spec or task number or holds no word, where it must state the constraint in words';
 
-	it.each(['PR-137', 'ADR-0009', 'spec 026', 'R11', 'task 8', '#916', '42'])('refuses a ruling that is only %s', (ruling) => {
+	it.each(['PR-137', 'ADR-0009', 'spec 026', 'R11', 'task 8', '#916', '42', 'plan 3'])('refuses a ruling that is only %s', (ruling) => {
 		const ds = judge(ruling);
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
 		expect(ds[0]!.message).toContain(reason);
