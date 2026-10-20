@@ -87,7 +87,7 @@ import {
 	loadSlotReaders,
 	type SlotReaders,
 	readNodeOf,
-	walkNativeForKind,
+	findWrappedNode,
 	buildKindToSupertypes,
 	loadReparseHosts,
 	wrapForReparse,
@@ -109,7 +109,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, NodeCoordinate } from '@sittir/types';
 import { sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
-import { spanOf, readNode as readUntyped, PLAIN_KINDS, toNodeData, type TreeHandle } from '@sittir/common/utils';
+import { coordinateOf, spanOf, readNode as readUntyped, PLAIN_KINDS, toNodeData, type TreeHandle } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -807,20 +807,20 @@ async function readProbeLanes(
 ): Promise<{ shallow: unknown; deep: unknown; deepTyped?: unknown; deepUntypedNode?: unknown }> {
 	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
 	const readNode = await readNodeOf(grammar);
+	const readers = await loadSlotReaders(grammar);
 	let coordinate: NodeCoordinate | undefined;
 	if (!isRoot) {
+		if (readNode === null) throw new Error('probe-kind: the grammar has no read');
 		const kindNameFromId = await loadKindNameFromId(grammar);
-		const targetSpan = spanOfNode(sourceSpans(source), targetNode);
-		coordinate = walkNativeForKind(handle, targetKind ?? targetNode.type, kindNameFromId).find(
-			(candidate) => candidate.span?.start === targetSpan.start && candidate.span?.end === targetSpan.end
-		)?.coords.coordinate;
-		if (coordinate === undefined) throw new Error('probe-kind: no native node at the target span');
+		const found = findWrappedNode(readNode(handle), readers, targetKind ?? targetNode.type, kindNameFromId, spanOfNode(sourceSpans(source), targetNode));
+		coordinate = found === undefined ? undefined : coordinateOf(found);
+		if (coordinate === undefined) throw new Error('probe-kind: no read node at the target span');
 	}
 	const read = (depth?: number): unknown => (coordinate === undefined ? handle.read!(0, depth) : readUntyped(handle, coordinate, depth));
 	const shallow = stripBigInts(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
 	const deepTyped = readNode ? readNode(handle, coordinate) : undefined;
-	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, await loadSlotReaders(grammar), onAccessorThrow);
+	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, readers, onAccessorThrow);
 	return { shallow, deep, deepTyped, deepUntypedNode };
 }
 

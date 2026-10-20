@@ -685,7 +685,7 @@ export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type 
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, spannedTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, spannedTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {

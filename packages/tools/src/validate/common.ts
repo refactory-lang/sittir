@@ -274,42 +274,6 @@ export async function buildReadHandle(grammar: string, source: string): Promise<
 	return readNativeTree(await loadNativeEngine(grammar), source).tree;
 }
 
-/** Where a native search found a node: its coordinate when it has one, and the native node as the whole-tree read holds it, or neither for the root. */
-export interface NativeNodeCoords {
-	coordinate?: NodeCoordinate;
-	embeddedData?: AnyUntypedNode;
-}
-
-/** The node a native search found, read one level down. */
-export function readNativeAt(handle: TreeHandle, coords: NativeNodeCoords): AnyUntypedNode {
-	if (coords.embeddedData !== undefined) return coords.embeddedData;
-	if (handle.read === undefined) throw new Error('readNativeAt: the tree has no native read');
-	return (coords.coordinate === undefined ? handle.read(0) : readNode(handle, coords.coordinate)) as AnyUntypedNode;
-}
-
-function storedChildren(d: AnyUntypedNode): readonly AnyUntypedNode[] {
-	const out: AnyUntypedNode[] = [];
-	for (const [key, value] of Object.entries(d)) {
-		if (!key.startsWith('_')) continue;
-		for (const entry of Array.isArray(value) ? value : [value]) {
-			if (entry !== null && typeof entry === 'object' && '$type' in entry) out.push(entry as AnyUntypedNode);
-		}
-	}
-	return out;
-}
-
-function sideEntries(d: AnyUntypedNode): readonly AnyUntypedNode[] {
-	const sides = sidesOf(d);
-	if (sides === undefined) return [];
-	return [sides.leading, sides.trailing, sides.inner].flatMap((entries) => (entries ?? []).filter((entry): entry is AnyUntypedNode => typeof entry === 'object'));
-}
-
-function coordsOf(d: AnyUntypedNode): NativeNodeCoords {
-	if (isCoordinate(d)) return { coordinate: d };
-	const at = d.$_layout?.at;
-	return at === undefined ? { embeddedData: d } : { coordinate: at, embeddedData: d };
-}
-
 export function nativeNodeIsKind(
 	d: AnyUntypedNode,
 	kind: string,
@@ -318,40 +282,40 @@ export function nativeNodeIsKind(
 	return (kindNameFromId?.(d.$type) ?? String(d.$type)) === kind;
 }
 
-/** Every node of `kind` in the tree, in document order, each with where it was found and its span. */
-export function walkNativeForKind(
-	handle: TreeHandle,
+export interface WrappedCandidate {
+	readonly node: TypedNode;
+	readonly span: { start: number; end: number } | undefined;
+}
+
+export function wrappedNodesOfKind(
+	root: unknown,
+	readers: SlotReaders,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined
-): NativeCandidateCoords[] {
-	if (handle.read === undefined) return [];
-	const results: NativeCandidateCoords[] = [];
-	const visit = (d: AnyUntypedNode, coords: NativeNodeCoords): void => {
-		if (nativeNodeIsKind(d, kind, kindNameFromId)) results.push({ coords, span: spanOf(d) });
-		const node = isCoordinate(d) ? (readNode(handle, d, Infinity) as AnyUntypedNode) : d;
-		for (const entry of sideEntries(node)) visit(entry, coordsOf(entry));
-		for (const child of storedChildren(node)) visit(child, coordsOf(child));
+	kindNameFromId: ((id: number) => string | undefined) | undefined
+): WrappedCandidate[] {
+	const found: WrappedCandidate[] = [];
+	const visit = (node: TypedNode): void => {
+		if (nativeNodeIsKind(node as unknown as AnyUntypedNode, kind, kindNameFromId)) found.push({ node, span: spanOf(node) });
+		const sides = sidesOf(node);
+		if (sides === undefined) return;
+		for (const entries of [sides.leading, sides.trailing, sides.inner]) {
+			for (const entry of entries ?? []) if (typeof entry === 'object') walkWrappedTree(hydrateTriviaEntry(entry), readers, visit);
+		}
 	};
-	visit(handle.read(0, Infinity) as AnyUntypedNode, {});
-	return results;
+	walkWrappedTree(root, readers, visit);
+	return found;
 }
 
-/** The first node of `kind` (at `span` when given), or null. */
-export function findNativeNodeId(
-	handle: TreeHandle,
+export function findWrappedNode(
+	root: unknown,
+	readers: SlotReaders,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined,
+	kindNameFromId: ((id: number) => string | undefined) | undefined,
 	span?: { readonly start: number; readonly end: number }
-): NativeNodeCoords | null {
-	const found = walkNativeForKind(handle, kind, kindNameFromId).find(
+): TypedNode | undefined {
+	return wrappedNodesOfKind(root, readers, kind, kindNameFromId).find(
 		(candidate) => span === undefined || (candidate.span?.start === span.start && candidate.span?.end === span.end)
-	);
-	return found?.coords ?? null;
-}
-
-export interface NativeCandidateCoords {
-	coords: NativeNodeCoords;
-	span: { start: number; end: number } | undefined;
+	)?.node;
 }
 
 function nodeType(node: TS.Node): string {
@@ -468,10 +432,6 @@ export async function readNodeOf(
 		if (tree.read === undefined) throw new Error('readNodeOf: the tree has no native read');
 		return wrapNode(tree.read(0, depth), tree);
 	};
-}
-
-export function loadWrapNode(grammar: string): Promise<((data: AnyUntypedNode, tree: TreeHandle) => unknown) | null> {
-	return wrapExportOf(grammar, 'wrapNode');
 }
 
 export function hydrateOf(grammar: string): Promise<Hydrate | null> {

@@ -15,7 +15,7 @@ import { isCoordinate } from '@sittir/common/utils';
 import { nodeText, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
-import { importGrammarModule, requireGrammarModule, type GrammarModules } from '../grammar-internals.ts';
+import { importGrammarModule, requireGrammarModule } from '../grammar-internals.ts';
 import { physicalDisplayKind, type DisplayFamilies } from './display-families.ts';
 import {
 	loadStorageKindNameFromId,
@@ -26,8 +26,8 @@ import {
 	loadKindNameFromId,
 	buildReadHandle,
 	findFirst,
-	findNativeNodeId,
-	readNativeAt,
+	findWrappedNode,
+	loadSlotReaders,
 	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
@@ -197,7 +197,6 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let displayUnions: DisplayFamilies = {};
-	let wrapNode: GrammarModules['wrap.ts']['wrapNode'] | undefined;
 	const errors: FromValidationError[] = [];
 	try {
 		const fromModule = await requireGrammarModule(grammar, 'factories/coerce.ts');
@@ -228,13 +227,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			message: (e as Error).message
 		});
 	}
-	try {
-		const wrapModule = await requireGrammarModule(grammar, 'wrap.ts');
-		wrapNode = wrapModule.wrapNode;
-	} catch {
-		/* wrap module unavailable — the read crosses unwrapped */
-	}
 	const readNode = await readNodeOf(grammar);
+	const readers = await loadSlotReaders(grammar);
 
 	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
 	// in factoryMap` below and total stays 0 — silently reporting a passing
@@ -317,24 +311,17 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		try {
 			const handle = await buildReadHandle(grammar, entry.source);
 			readTree = handle;
-			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
-			// Resolve via the native data tree; if the kind is an alias target
-			// the native engine emits under a different rule name, skip rather
-			// than fall back to a mismatched WASM ID.
-			const nativeCoords = findNativeNodeId(
-				handle,
-				kind,
-				nativeKindName,
-				node.parent === null ? undefined : sourceSpans(entry.source).toSpan({ start: node.startIndex, end: node.endIndex })
-			);
-			if (nativeCoords === null && handle.read) {
-				// The native read stores most leaf kinds SCALARIZED — collapsed
-				// to text inside parent storage, no node to locate — and alias
-				// targets emit under a different rule name. For a text-shaped
-				// kind that is not a locator failure: the sound comparison
-				// needs no native node at all. Feed the WASM node's text
-				// through both from() (the real leaf-coercion route, pattern
-				// guards included) and the factory, and compare the results.
+			const found =
+				readNode === null
+					? undefined
+					: findWrappedNode(
+							readNode(handle),
+							readers,
+							kind,
+							nativeKindName,
+							node.parent === null ? undefined : sourceSpans(entry.source).toSpan({ start: node.startIndex, end: node.endIndex })
+						);
+			if (found === undefined) {
 				const leafShape = factoryShapes[kind] ?? 'config';
 				if (leafShape === 'text' || leafShape === 'constant') {
 					validateLeafByText(kind, credited, node.text, leafShape);
@@ -345,19 +332,11 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				errors.push({
 					kind: credited,
 					severity: 'error',
-					message: `native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound`
+					message: `no read node of the kind at its source span`
 				});
 				return undefined;
 			}
-			if (nativeCoords?.embeddedData !== undefined) {
-				readData = wrapNode
-					? (wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode)
-					: nativeCoords.embeddedData;
-			} else {
-				readData = readNode
-					? (readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode)
-					: readNativeAt(handle, nativeCoords ?? {});
-			}
+			readData = found as unknown as AnyUntypedNode;
 		} catch (e) {
 			errors.push({
 				kind: credited,

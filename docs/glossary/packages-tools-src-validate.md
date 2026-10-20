@@ -229,54 +229,15 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  */
 ```
 
-### `packages/tools/src/validate/common.ts::NativeNodeCoords`
-
-`coordinate` is the node's own coordinate (`$_layout.at`, or the node itself when the walk met it unread); `embeddedData` is the native node as the whole-tree read holds it. A trivia entry read whole can carry data and no coordinate. The root is `{}`.
-
-
-### `packages/tools/src/validate/common.ts::coordsOf`
-
-What `walkNativeForKind` records for a node it visits: an unread coordinate as the coordinate alone, a native node as its stamped `at` beside the native node itself, and a native node with no `at` (a trivia entry the read handed over whole) as its data alone.
-
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
 
 Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test (`loadIsLeafKind`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
 
-### `packages/tools/src/validate/common.ts::NativeNodeCoords.embeddedData`
-
-```text
-/**
-	 * Set instead of `handle`/`childIndex` for a match found inside
-	 * `$_trivia` — those entries are fully materialized at read time
-	 * (not lazy stubs), so they carry no handle+child-index coordinates
-	 * to re-read them by. Callers must use this data directly rather
-	 * than calling `handle.read(handle, childIndex)`.
-	 */
-```
-
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
 
-Whether a node from the native read is of a given kind name, under either identity it carries: the grammar symbol that parsed it (`$type`), or the kind the parser shows it as (`$displayType`, present only at an alias). The corpus names an alias envelope by the shown kind (`property_identifier`, `field_identifier`), so a lookup by `$type` alone would never find one. `findNativeNodeId` and `walkNativeForKind` both locate nodes through it.
-
-### `packages/tools/src/validate/common.ts::findNativeNodeId`
-
-The first `walkNativeForKind` candidate, narrowed to `span` when the caller passes one. The from validator passes its CST node's span converted to bytes (`sourceSpans(source).toSpan`), because a WASM node's indices count characters while a native span counts UTF-8 bytes; it passes none for the root. A span is a stamped read fact, so no text is compared, and a node found inside a trivia entry matches the same way.
-
-
-### `packages/tools/src/validate/common.ts::NativeCandidateCoords`
-
-```text
-/**
- * A native candidate: navigation coordinates plus the node's byte span
- * (when available from the native AnyUntypedNode's `$span`).
- */
-```
-
-### `packages/tools/src/validate/common.ts::walkNativeForKind`
-
-Reads the whole tree once (`handle.read(0, Infinity)`) and visits every native node in document order, each node's trivia entries (leading, trailing and inner) before its slot children. A coordinate met on the way (a child the read left unread) is read whole through `readNode` before its children are visited. Each candidate carries `coordsOf` the node: its own coordinate and the native node as the whole-tree read holds it, so a caller uses the data without reading it again; the root is `{}`, which `readNativeAt` reads as index 0. Empty for a handle with no native read.
+Whether a node is of a kind name: the kind `kindNameFromId` gives its `$type`, else the id itself as text. The validators pass a lookup that names a kind as the corpus does (the from validator's `nativeKindName` maps a shared display to its physical kind), so a node found by kind matches the corpus node it stands for. `wrappedNodesOfKind` and the probe's lane search find nodes through it.
 
 
 ### `packages/tools/src/validate/common.ts::findFirst`
@@ -643,10 +604,6 @@ A grammar's reparse wrappers: an identity wrapper for the node model's root kind
 
 The upstream judge: `.sittir/upstream.wasm`, the unmodified grammar sittir builds on, built by the regen with the same CLI. The upstream package's published wasm stands in only when that file is absent; a grammar with neither is an error naming the gen command. An unknown name yields `undefined`.
 
-### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
-
-A native node is a kind when its `$type` or its shown kind id (`$displayType` when present) names it; numeric ids resolve through the grammar's `kindNameFromId`.
-
 ### `packages/tools/src/validate/common.ts::wrapExportOf`
 
 One export of a grammar's generated wrap module, loaded through the typed internal loader: `readNode`, `wrapNode` or `hydrateChild`. The selected export determines the return type. A module that fails to load is reported on stderr and yields null, as does a missing export.
@@ -659,18 +616,6 @@ One export of a grammar's generated wrap module, loaded through the typed intern
  * validators to build source-typed wrapped views — the wire `$type` is
  * the grammar symbol, so nodes arrive under their source kind and the
  * validator render dispatches through the source template directly.
- */
-```
-
-### `packages/tools/src/validate/common.ts::loadWrapNode`
-
-```text
-/**
- * Dynamic import of a grammar's `wrapNode` entry point — the fluent-view
- * wrapper `readNode` applies after reading. Used to produce the same
- * wrapped shape for already-materialized data (e.g. a trivia entry's
- * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
- * through `readNode` itself.
  */
 ```
 
@@ -848,8 +793,8 @@ One accessor that threw instead of returning its slot's value, with the slot's s
 #### body
 
 ```text
-// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds findNativeNodeId/
-// walkNativeForKind's native<->WASM kind-name bridge, which must
+// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds findWrappedNode/
+// wrappedNodesOfKind's read<->WASM kind-name bridge, which must
 // match tree-sitter's own raw `.type` string (the display label),
 // not the canonical catalog key. See emitKindIdEnumAndLookups's
 // KIND_DISPLAY_NAMES doc comment.
@@ -1688,14 +1633,6 @@ The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as 
 
 A grammar's generated `hydrate`, or `null` when the grammar has no wrap module, so a validator hydrates read data on the same path as the accessors.
 
-### `packages/tools/src/validate/common.ts::storedChildren`
-
-Every node a native node stores in its `_` slots, list items included, in key order: the children `walkNativeForKind` descends into. A kind id or a text value is not a node and is skipped.
-
-### `packages/tools/src/validate/common.ts::sideEntries`
-
-Every node entry of a read node's sides (`sidesOf`, its tree's trivia table): its leading, trailing and inner sides, in that order, without their layout runs. `walkNativeForKind` descends into them, so a comment kind is found where the table assigns it.
-
 ### `packages/tools/src/validate/gap-census.ts::adjacentPairs`
 
 Each item paired with the one after it, in order: the neighbouring list items whose gap the census measures, and the neighbouring field runs a separator sits between. Its items are objects, so a missing left neighbour is the only `undefined` it meets.
@@ -1794,6 +1731,18 @@ A wrapped tree as plain node data (`materializeValue`): each node's stored value
 ### `packages/tools/src/validate/common.ts::materializeValue`
 
 One value of `materialize`. An array maps entry by entry, and anything without a numeric `$type` passes through. A node keeps its non-`_` data keys: `$text` as `nodeText` gives it, and `$_layout` with its trivia entries materialized too. It drops its methods and its `_` keys, and its stored values come from `slotValuesOf` instead. The copy keeps the node's source identity (`carrySource`) and its read (`carryRead`).
+
+### `packages/tools/src/validate/common.ts::wrappedNodesOfKind`
+
+Every wrapped node of a kind under a root, with its byte span (`spanOf`), in `walkWrappedTree` order. A node's trivia entries (`sidesOf`: leading, trailing, inner) are searched when the node is visited, before its slot children, so a comment kind is found where the tree's trivia table puts it. A trivia entry is hydrated (`hydrateTriviaEntry`) and walked like any subtree. The walk goes through the slot readers, so it finds nodes the same way on either wire.
+
+### `packages/tools/src/validate/common.ts::findWrappedNode`
+
+The first wrapped node of a kind (`wrappedNodesOfKind`), at `span` when the caller passes one. The from validator passes its CST node's span in bytes (`sourceSpans(source).toSpan`), since a WASM node's indices count characters and a read span counts UTF-8 bytes; it passes none for the root. A span is a stamped read fact, so no text is compared. The node comes back as found, wrapped, so the caller reads it without reading the tree again.
+
+### `packages/tools/src/validate/common.ts::WrappedCandidate`
+
+A wrapped node a search found, with its byte span, or `undefined` for a node with none (a built node).
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

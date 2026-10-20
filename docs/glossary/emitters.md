@@ -6277,8 +6277,8 @@ The grammar's `kinds.ts`: the runtime kind-id enum `TSKindId` alone, frozen, so 
 // Two OTHER consumers prefer the C-parser display label instead
 // (`entry.symbolName`) and must NOT read this map — see
 // `KIND_DISPLAY_NAMES` below, which serves them:
-//  - The validator's native/WASM coordinate bridge
-//    (`findNativeNodeId` / `walkNativeForKind`,
+//  - The validator's read/WASM node bridge
+//    (`findWrappedNode` / `wrappedNodesOfKind`,
 //    packages/tools/src/validate/common.ts): it matches a native
 //    numeric `$type` against a WASM-parsed tree's raw string
 //    `.type` field, which tree-sitter itself populates from
