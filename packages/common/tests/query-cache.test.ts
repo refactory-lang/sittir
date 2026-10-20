@@ -33,6 +33,7 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 		queryFlags: {},
 		querySlotFlags: {},
 		membership,
+		portable: undefined,
 		kindName: (kind) => `kind_${kind}`,
 		wrap: (data) => data
 	};

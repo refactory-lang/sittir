@@ -1,5 +1,8 @@
 import type { QueryPlan, QuerySlots, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
 
+/** A portable kind: one vocabulary path, the same object for every language. */
+export type PortableKind<Path extends string = string> = { readonly $path: Path };
+
 /** One step of a condition: a slot by its numbers, narrowed to its first or last node when `anchor` is set, or reaching its node only when it holds exactly one (`only`). */
 export interface PortableStep extends SlotSubject {
 	readonly anchor?: StepAnchor;

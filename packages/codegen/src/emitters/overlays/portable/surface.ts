@@ -88,19 +88,16 @@ export function emitPortableSurface({ nodeType, routes, readTest, kindIdOf, fixe
 		'export const querySlotFlags: QuerySlotFlags = Object.freeze({',
 		...slotFlags.map(([id, slots]) => `\t${id}: ${JSON.stringify(Object.fromEntries([...slots].map(([accessor, held]) => [accessor, Object.fromEntries(held)])))},`),
 		'} satisfies QuerySlotFlags);',
-		...(flagTypes.length === 0 && slotFlagTypes.length === 0
-			? []
-			: [
-					'',
-					"declare module './types.js' {",
-					...flagTypes.flatMap(([typeName, names]) => [`\tinterface ${typeName} {`, `\t\treadonly __flags__?: ${names.map(q).join(' | ')};`, '\t}']),
-					...slotFlagTypes.flatMap(([typeName, slots]) => [
-						`\tinterface ${typeName} {`,
-						`\t\treadonly __slotFlags__?: { ${slots.map(([accessor, names]) => `readonly ${q(accessor)}: ${names.map(q).join(' | ')}`).join('; ')} };`,
-						'\t}'
-					]),
-					'}'
-				]),
+		'',
+		"declare module './types.js' {",
+		'\tinterface PortableReads extends PortableIds {}',
+		...flagTypes.flatMap(([typeName, names]) => [`\tinterface ${typeName} {`, `\t\treadonly __flags__?: ${names.map(q).join(' | ')};`, '\t}']),
+		...slotFlagTypes.flatMap(([typeName, slots]) => [
+			`\tinterface ${typeName} {`,
+			`\t\treadonly __slotFlags__?: { ${slots.map(([accessor, names]) => `readonly ${q(accessor)}: ${names.map(q).join(' | ')}`).join('; ')} };`,
+			'\t}'
+		]),
+		'}',
 		''
 	].join('\n');
 }

@@ -30,6 +30,7 @@ export type {
 export type {
 	PortableCondition,
 	PortableGuard,
+	PortableKind,
 	PortablePath,
 	PortableReadEntry,
 	PortableRows,

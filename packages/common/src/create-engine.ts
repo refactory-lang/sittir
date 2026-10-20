@@ -210,6 +210,7 @@ function assembleEngine<API extends LanguageAPI>(
 		queryFlags: hooks.queryFlags ?? {},
 		querySlotFlags: hooks.querySlotFlags ?? {},
 		membership: hooks.membership,
+		portable: hooks.portable,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
 	};

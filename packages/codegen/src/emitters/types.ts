@@ -331,6 +331,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.push('}');
 		lines.push('');
 	}
+	lines.push('export interface PortableReads {}', '');
 
 	const fixedTextKindIds = new Set(fixedTextKinds(nodeMap, kindEntries).map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries)));
 	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
@@ -411,6 +412,9 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
+	}
+	if (/\bPortableQueryIds\b/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { PortableQueryIds } from '@sittir/common/portable';`);
 	}
 	if (/\bERROR_KIND_ID\b/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type { ERROR_KIND_ID } from '@sittir/common/error-kind';`);
@@ -935,7 +939,7 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
 		if (withNode && name.startsWith('Parsed')) {
-			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId, PortableQueryIds<PortableReads>>;`);
 			lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
 		}
 		for (const member of surface.members) lines.push(`${indent}${member}`);

@@ -7281,6 +7281,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
+	interface PortableReads extends PortableIds {}
 	interface AsyncBlock {
 		readonly __flags__?: 'move';
 	}

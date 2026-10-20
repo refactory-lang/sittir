@@ -156,7 +156,7 @@ The limits a walk's successive batches take: 1, 4, 16, 64, then 256 for every ba
 
 ### `packages/common/src/query.ts::splitPlan`
 
-Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofType`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
+Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofKinds`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
 
 ### `packages/common/src/query.ts::QueryView`
 
@@ -170,21 +170,21 @@ A lazy sequence: a source (a slot's items, or a walk under a node to a depth) an
 
 The `slice` step, with its bounds counted as an array counts them: truncated toward zero, `NaN` as zero, a negative counted from the end.
 
-### `packages/common/src/query.ts::ofTypeStep`
+### `packages/common/src/query.ts::ofTypeSteps`
 
-The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result. It keeps a node whose type is the kind or a member of it (a supertype's member, a polymorph's arm), by the language's `membership`, the test its `is.*` guards make; nothing restamps a node's type to pass it.
+The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
 
 ### `packages/common/src/query.ts::narrowed`
 
-The types a node can have after one more `ofType` step: every member of its kind for the first step, then those of the earlier steps' types that are members of it. An empty result means no node passes every step.
+The types a node can have after one more `ofKinds` step: the step's kinds for the first step, then those of the earlier steps' types the step also lists. An empty result means no node passes every step.
 
-### `packages/common/src/query.ts::isOfType`
+### `packages/common/src/query.ts::isOfKinds`
 
-Whether a hydrated node passes an `ofType` step: its `$type` is a member of the step's kind.
+Whether an entry's or a hydrated node's type passes an `ofKinds` step: it is a number among the step's kinds.
 
 ### `packages/common/src/query.ts::whereStep`
 
-The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofType` steps allow when they are known, otherwise once against a recorder with no kind.
+The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofKinds` steps allow when they are known, otherwise once against a recorder with no kind.
 
 ### `packages/common/src/query.ts::run`
 
@@ -204,7 +204,7 @@ The entries of a walk source. The steps `pushdown` takes go into the native walk
 
 ### `packages/common/src/query.ts::pushdown`
 
-The leading run of `ofType` and `where` steps that can go into the native walk. Each `ofType` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
+The leading run of `ofKinds` and `where` steps that can go into the native walk. Each `ofKinds` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
 
 ### `packages/common/src/query.ts::batches`
 
@@ -740,6 +740,10 @@ Refuses a delimited composite whose content would not read back inside its own d
 
 A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
+### `packages/common/src/query.ts::isPortableKind`
+
+Whether an `ofType` argument has a portable kind's shape: an object with a string `$path`. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
+
 ### `packages/common/src/runtime.ts::coerceBitflagStorage`
 
 A bitflag slot's loose input as the number the slot stores: a number as it is (0 as absent), an array as the union of its items' bits, and a node or text as the bit of its text's position in `texts`. Absent, `false`, an unknown text or no bits at all store as `undefined`. The factories call it.
@@ -776,9 +780,13 @@ Whether a value is an object with a numeric `$type`: the shape a classifier read
 
 The shared portable guard of a vocabulary path. It refuses a value without a kind (`hasKind`), and so a bare kind id, which names no language. It then reads the node by the rows of the language whose engine stamped it (`engineOf(node)?.portable`) through `readsAs`; no engine, or a grammar without bindings, answers false. A node of any bound language reads by its own rows, so one tree serves every language.
 
-### `packages/common/src/portable/index.ts::readsAs`
+### `packages/common/src/portable/classify.ts::readsAs`
 
-Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the path's ids in the rows' table; an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test both the shared guards (`guardOf`) and a language's guards (`languageGuardOf`) run once they hold the rows.
+Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
+
+### `packages/common/src/portable/classify.ts::portablePathOf`
+
+The ids and exactness a bound grammar's rows give a vocabulary path, or `undefined` when the grammar reads nothing at or under it. It reads the table's own keys only, so a path a caller supplies (a query's portable kind) cannot reach a prototype member such as `constructor`.
 
 ### `packages/common/src/portable/index.ts::registerPortableRows`
 
