@@ -1659,7 +1659,7 @@ The ref's own storage identity: the rule, or literal symbol, that parsed it.
 
 ### `packages/codegen/src/types/rule.ts::BlankRule`
 
-tree-sitter's empty rule, as `blank()` builds it (`dsl/builders.ts::structuralBuilder`). Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.
+tree-sitter's empty rule, as tree-sitter's `blank()` builds it; sittir's `blank()` builds the empty choice. Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`).
 
 ### `packages/codegen/src/types/spacing.ts::SpacingAddress`
 

@@ -309,14 +309,14 @@ A newly registered rule is recorded in `ruleOrigins` as a `keyword` mint.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isBlank`
 
-True for every spelling of an empty rule: `BLANK`, which `blank()` builds under both runtimes, and the empty
-`CHOICE` or `SEQ` the compile phases use (the boundary lowers a bare `BLANK` to the empty `CHOICE`, and normalize lowers `EOF` to it). The one blank test; nothing else
+True for every spelling of an empty rule: tree-sitter's `BLANK`, and the empty
+`CHOICE` or `SEQ` sittir's `blank()` builds and the compile phases use (the boundary lowers a bare `BLANK` to the empty `CHOICE`, and normalize lowers `EOF` to it). The one blank test; nothing else
 compares a rule type against `'BLANK'` or checks for zero members to mean
 "empty".
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::optionalContentOf`
 
-The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: the compile boundary (`compiler/canonical-rules.ts::canonicalChoiceRule`) and link's stamping (`compiler/link.ts::rewriteRuleForStamp`) build their `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
+The content of an optional rule in either representation: `OPTIONAL(x)`, or a `CHOICE` with at least one blank member (`isBlank`) and at least one other, whose content is the one non-blank member or a fresh `CHOICE` of the non-blank members in their order. Returns `undefined` for anything else, including a choice with no blank member and one whose members are all blank. Every site that treats a rule as "optional x" reads through it, so an `OPTIONAL` and a choice with blank arms, wherever they sit, always take the same path: link's stamping (`compiler/link.ts::rewriteRuleForStamp`) builds its `OPTIONAL` from it. The fresh choice carries none of the original's facts; they stay on the wrapper the caller builds.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isArmChoice`
 
@@ -3381,7 +3381,7 @@ Each method builds the node tree-sitter's own DSL builds for the same call:
 `seq` and `choice` keep every member, a single one included; `optional`,
 `repeat`, `repeat1` and `field` wrap their content as given; `token` carries
 no `immediate` flag and `token.immediate` builds its own `IMMEDIATE_TOKEN`
-node; `blank` builds `BLANK`, not an empty choice. Nothing collapses at construction, so enrich and wire — which run
+node. Nothing collapses at construction, so enrich and wire — which run
 under both runtimes — read the same shape tree-sitter reads. The canonical
 shape the compiler phases read is produced once, at the compile boundary,
 by `compiler/canonical-rules.ts::canonicalRuleTree`. Evaluate's DSL wrappers
