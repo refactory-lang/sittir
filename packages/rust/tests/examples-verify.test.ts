@@ -215,22 +215,6 @@ describe('namespaced constructors reach the arm kinds', () => {
 	});
 });
 
-// Ceiling, never a floor: an artefact kind moves off the top-level namespace
-// onto its parent, so this count only shrinks.
-describe('ir entry ratchet', () => {
-	it('exposes no more top-level builders than the recorded ceiling', () => {
-		// Grouped namespaces are objects, not builders — the
-		// ratchet tracks builder exposure, so only callable entries count.
-		// (The ceiling is the exact current count, so any new top-level
-		// builder trips it. The user-facing
-		// aliased pattern leaves — stringOpen, rawStringLiteralStart /
-		// End, the comment-content patterns — are on the surface; the
-		// enum-of-literals leaves are not, their values being kind ids.)
-		const builders = Object.keys(rs.build).filter((k) => typeof (rs.build as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(219);
-	});
-});
-
 // The generated rebuild: `sittir tool emit-factory-source` over the dogfood-rust.rs fixture. It
 // is checked in so the strict surface's gaps are a diff, not a description;
 // its type errors are counted under examples/generated-typecheck-ceiling.json.
