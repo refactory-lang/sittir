@@ -1785,6 +1785,26 @@ Every named node's kind under `node`, `node` included, as `kindOf` names it (by 
 
 A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `collectKinds` use unless given another.
 
+### `packages/tools/src/validate/common.ts::NODE_STORAGES`
+
+The node storages a validation run can read trees as, each an engine `nodeStorage`: object nodes (`object`, the default) or record views (`arena`). `parseNodeStorage` checks a CLI value against it.
+
+### `packages/tools/src/validate/common.ts::parseNodeStorage`
+
+A `--node-storage` value as the node storage it names (`NODE_STORAGES`), refused when it names none. The CLI passes the raw value and calls this behind its lazy import of the tools, so the storages are listed once.
+
+### `packages/tools/src/validate/common.ts::validationNodeStorage`
+
+The node storage this process's validation engines read trees as. It is one setting per process, because the engines are cached per grammar (`loadNativeEngine`) and every validator loads them by grammar alone.
+
+### `packages/tools/src/validate/common.ts::useValidationNodeStorage`
+
+Sets the run's node storage (`validationNodeStorage`), which `createNativeEngine` passes to each engine as `nodeStorage`. It refuses a change once an engine has loaded, since a cached engine reads its trees one way. `runCountsCli` calls it from `--node-storage`, and hands the same value to each isolate worker.
+
+### `packages/tools/src/validate/common.ts::validationStorage`
+
+The run's node storage. `runCountsCli` records validation history only for object storage: the history compares runs of one wire, and a record-view run is checked against it through its report.
+
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
 The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.

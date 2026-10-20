@@ -67,6 +67,7 @@ Per-grammar raw pass/total counts for all four validators
 **Options**
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
+- `--node-storage <storage>` — How the engine reads a parsed tree: as object nodes (object), or as record views (arena) (default: `object`)
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**

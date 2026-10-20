@@ -42,7 +42,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, NodeCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -177,8 +177,30 @@ const cachedNativeEngines = new Map<
 	{ engine: Promise<NativeEngine>; binaryMtimeMs: number; profile?: string | undefined }
 >();
 
+const NODE_STORAGES: readonly NodeStorage[] = ['object', 'arena'];
+
+export function parseNodeStorage(value: string): NodeStorage {
+	const storage = NODE_STORAGES.find((known) => known === value);
+	if (storage === undefined) throw new Error(`node storage '${value}' is none of ${NODE_STORAGES.join(', ')}`);
+	return storage;
+}
+
+let validationNodeStorage: NodeStorage = 'object';
+
+export function useValidationNodeStorage(storage: NodeStorage): void {
+	if (storage === validationNodeStorage) return;
+	if (cachedNativeEngines.size > 0) {
+		throw new Error(`validation reads trees as '${validationNodeStorage}' storage already; choose '${storage}' before the first engine loads`);
+	}
+	validationNodeStorage = storage;
+}
+
+export function validationStorage(): NodeStorage {
+	return validationNodeStorage;
+}
+
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime' });
+	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage });
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
