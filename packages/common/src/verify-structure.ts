@@ -2,6 +2,7 @@ import type { StructureRow, StructureTable } from '@sittir/types';
 import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
 import { isRebuilt } from './node-data.ts';
+import { sourceStampOf } from './source-stamp.ts';
 
 export function verifyStructure(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
 	if (typeof value === 'object' && value !== null && !seen.has(value)) verifyNode(value as Record<string, unknown>, table, seen);
@@ -23,7 +24,7 @@ function verifyBuilt(value: unknown, table: StructureTable, seen: WeakSet<object
 	}
 	if (typeof value !== 'object' || value === null || seen.has(value)) return;
 	const node = value as Record<string, unknown>;
-	if (node.$source === Source.Factory || isRebuilt(node)) verifyNode(node, table, seen);
+	if (sourceStampOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, seen);
 }
 
 function checkRow(node: Record<string, unknown>, row: StructureRow): void {

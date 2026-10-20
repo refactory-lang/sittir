@@ -483,23 +483,6 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
-
-```text
-/**
-	 * Stamp expression for this kind in **child context** — used when a
-	 * parent stamps this kind into its `$children` slot. Defaults to
-	 * `stampExpression`, but terminal classes override to return the
-	 * full UntypedNode literal (`{ $type, $text, $source, $named }`)
-	 * because child interfaces expose the UntypedNode shape
-	 * (`$children: readonly [Crate]` where `Crate` is
-	 * `Terminal<"crate", "crate">`), not the plain string.
-	 *
-	 * Compounds' `stampExpression` is already a factory call that
-	 * returns UntypedNode, so they share the default.
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleMetadata`
 
 ```text
@@ -1108,18 +1091,6 @@ flatten and simplify joins use.
 /** Field-context stamp: JSON literal with `as const`. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
-
-```text
-/**
-	 * Child-context stamp: wrap the literal in an UntypedNode object so
-	 * the parent's `$children` slot matches the `Terminal<kind, text>`
-	 * interface shape. `$named: true` because keywords are named
-	 * (`_kw_async` / `async` etc. surface as named nodes in tree-
-	 * sitter's output).
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
@@ -1177,17 +1148,6 @@ flatten and simplify joins use.
 	 * string tokens from lexer-hint tokens (e.g. rust's `TOKEN(prec(1,
 	 * '<'))` in `type_arguments`). See {@link immediate} for the
 	 * adjacency-specific flag.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
-
-```text
-/**
-	 * Child-context stamp: wrap the single-literal text in an UntypedNode
-	 * object. `$named: false` — tokens are anonymous in tree-sitter's
-	 * output (non-word literals like `..` / `=>` never have a named
-	 * entry in `node-types.json`).
 	 */
 ```
 

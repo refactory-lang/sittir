@@ -26,8 +26,8 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 		// $type must be numeric TSKindId.
 		// binary_expression.operator now carries the merged operator union, so grouped
 		// and flat IR entry points must agree when the same explicit operator is passed.
-		const leaf = { $type: rs.kinds.IntegerLiteral, $text: '1' } as any;
-		const leaf2 = { $type: rs.kinds.IntegerLiteral, $text: '2' } as any;
+		const leaf = rs.build.integerLiteral('1');
+		const leaf2 = rs.build.integerLiteral('2');
 		const flat = rs.build.binaryExpression({ left: leaf, operator: '&&', right: leaf2 });
 		const grouped = irExpression.binary({ left: leaf, operator: '&&', right: leaf2 });
 		expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat));

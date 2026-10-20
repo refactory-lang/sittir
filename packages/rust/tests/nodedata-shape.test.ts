@@ -85,9 +85,10 @@ describe('Factory shape — branch node', () => {
 		// A reader is an enumerable member; every key is a member or data
 		expect(keys).toContain('name');
 		expect(keys).toEqual(expect.arrayContaining(['$render', '$trivia', '$with']));
-		// $type and $source are present
+		// $type is present; $source is a read-only getter over the source stamp, not a key
 		expect(keys).toContain('$type');
-		expect(keys).toContain('$source');
+		expect(keys).not.toContain('$source');
+		expect(node.$source).toBe(2);
 		// _name is present (de-hoisted storage)
 		expect(keys).toContain('_name');
 		// $fields is NOT present (FR-001)
@@ -185,12 +186,12 @@ describe('$with namespace', () => {
 describe('JSON serialization', () => {
 	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
-	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
+	it('SC-007: JSON.stringify includes $type and _<field> keys, and leaves out $source', () => {
 		// _name holds the coerced leaf UntypedNode object, not the raw config
 		// string — see the FR-001 note above (same current, consistent shape).
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
 		expect(parsed['$type']).toBe(rs.kinds.FunctionItem);
-		expect(parsed['$source']).toBe(2);
+		expect(parsed['$source']).toBeUndefined();
 		expect(parsed['_name']).toMatchObject({ $type: rs.kinds.Identifier });
 	});
 

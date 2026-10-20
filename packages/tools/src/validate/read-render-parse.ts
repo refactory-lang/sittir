@@ -15,6 +15,7 @@ import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
 	nodeText,
 	carrySource,
+	carrySourceStamp,
 	isCoordinate,
 	isDataKey,
 	isStorageKey,
@@ -444,6 +445,7 @@ export function leadingTriviaRenderedWidth(
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
 		const copy = markEdited({ ...storageOf(data), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
 		carrySource(node, copy);
+		carrySourceStamp(node, copy);
 		return copy;
 	};
 	const childSlots = (node: AnyUntypedNode): { key: string; index: number | undefined; child: AnyUntypedNode }[] =>

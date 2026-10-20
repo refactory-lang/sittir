@@ -18,6 +18,7 @@ import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carrySource,
+	carrySourceStamp,
 	holdTree,
 	sideOf,
 	sidesOf,
@@ -851,6 +852,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 		materialized[key] = materializeValue(raw, onAccessorThrow);
 	}
 	carrySource(value, materialized);
+	carrySourceStamp(value, materialized);
 	return carryRead(value, materialized);
 }
 

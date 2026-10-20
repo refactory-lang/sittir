@@ -54,16 +54,15 @@ export interface ByteSpan {
  * Runtime node shape — grammar-agnostic. Used by @sittir/common functions
  * that accept any node regardless of grammar.
  *
- * Spec 008 US7: metadata keys are `$`-prefixed to eliminate the entire
- * class of field-name-vs-discriminant collisions (e.g. Python's
- * `type_alias_statement` has a field literally named `type`). The `$source`
- * provenance tag lets `.from()` dispatch with a clean equality check
- * instead of structural `isNode` probing.
+ * Metadata keys are `$`-prefixed so they never collide with a field name
+ * (Python's `type_alias_statement` has a field literally named `type`).
+ * Holding this shape does not make an object a node: a node holds a source
+ * stamp or a tree token, which no literal can carry.
  */
 export interface AnyUntypedNode {
 	/** Kind discriminant: the language's kind id (`TSKindId`). */
 	$type: number;
-	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
+	/** Which producer emitted this node (0=ts, 1=sg, 2=factory): a read-only, non-enumerable view of the node's source stamp, so it is absent from `Object.keys` and JSON. */
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readUntypedNode output. */
 	$variant?: string;

@@ -56,6 +56,13 @@ rs.build.block(Object.assign(() => {}, { statements: [], statments: [] }));
 // @ts-expect-error a list carrying config fields refuses a misspelled key among them
 rs.build.block(Object.assign([], { statements: [], statments: [] }));
 
+// A node is an object holding a source stamp or a tree token, which no literal carries, so a literal with node members
+// is a config and those members are undeclared keys.
+// @ts-expect-error a config carrying a render method is a config, and the render method an undeclared key
+rs.build.block({ trailingExpression: { $type: rs.kinds.Block, $render: () => '', statements: [] } });
+// @ts-expect-error a config naming a source is a config, and `$source` an undeclared key
+rs.build.block({ trailingExpression: { $type: rs.kinds.Block, $source: 2, statements: [] } });
+
 export const declaredKeys = rs.build.block({ statements: [], trailingExpression: 'a' });
 export const nestedKeys = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [] } });
 export const listItemKeys = rs.build.block({ statements: [{ $type: rs.kinds.ExpressionStatement, content: 'a' }] });
@@ -64,14 +71,11 @@ export const numericKeys = rs.build.integerLiteralDecimal({ content: 1 });
 export const strictNumericKeys = rs.build.integerLiteralDecimal.strict({ content: 1 });
 export const pythonKeys = py.build.ifStatement({ condition: 'x', consequence: py.build.block(), alternative: [] });
 
-// The three shapes whose keys stay unchecked, each admitted:
+// The two shapes whose keys stay unchecked, each admitted:
 // an untagged config where the place declares several untagged configs (a kind's own and its bare slot's) is checked
 // against the keys of all of them together, so `left`, a where predicate's key, passes in a where clause's config;
 export const uncheckedSeveralConfigs = rs.build.whereClause({ wherePredicates: [], left: 'T' });
 // a value typed `any` proves nothing;
 declare const anything: any;
 export const uncheckedAny = rs.build.block({ trailingExpression: anything });
-// and a config carrying a render method of its own passes as a node: the types take a node by the admission fact (a
-// tree token or a render method), while the runtime still tells a node by its structure and reads this object as a
-// config. It closes once the runtime's node test is the admission fact too.
-export const uncheckedForgedRender = rs.build.block({ $type: rs.kinds.Block, $render: () => '', statments: [] });
+

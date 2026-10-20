@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { PLAIN_KINDS, toNodeData } from '../src/node-data.ts';
 import { isDataKey, isEmptyNode, isNode } from '../src/utils.ts';
+import { stampBuilt } from '../src/source-stamp.ts';
 
 const LIST_ITEMS = Symbol('items');
 
 const newShapeList = () => {
 	const items = ['a', 'b'];
-	return {
+	return stampBuilt({
 		$type: 7,
-		$source: 2,
 		$named: true,
 		_elements: items,
 		$with: { elements: () => undefined },
@@ -23,7 +23,7 @@ const newShapeList = () => {
 		$render: () => 'x',
 		$trivia: { leading: () => [], trailing: () => [] },
 		$engine: undefined
-	};
+	});
 };
 
 describe('a node is selected by key', () => {
@@ -36,8 +36,8 @@ describe('a node is selected by key', () => {
 		}
 	});
 
-	it('toNodeData copies storage and $ metadata and nothing else', () => {
-		expect(toNodeData(newShapeList() as never, PLAIN_KINDS)).toEqual({ $type: 7, $source: 2, $named: true, _elements: ['a', 'b'] });
+	it('toNodeData copies storage and $ metadata and nothing else, the source stamp and its getter included', () => {
+		expect(toNodeData(newShapeList() as never, PLAIN_KINDS)).toEqual({ $type: 7, $named: true, _elements: ['a', 'b'] });
 	});
 
 	it('reads only the keys it selects, so a getter that throws is never called', () => {

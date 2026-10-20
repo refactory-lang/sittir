@@ -2,6 +2,8 @@ import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, 
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { stampSource } from './source-stamp.ts';
+import { Source } from './source.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -84,6 +86,7 @@ export function holdTree(value: unknown, token: TreeToken): void {
 export function holdReadTree(value: unknown, token: TreeToken): void {
 	forEachParsedObject(value, (node) => {
 		holdTreeOn(node, token);
+		stampSource(node, Source.Ts);
 		readObjects.add(node);
 	});
 }

@@ -1,13 +1,14 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carrySource, holdsSlots, indexOf, isRead, hasNodeText, isStorageKey, markRebuilt, nodeText, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carrySource, indexOf, isRead, isStorageKey, markRebuilt, nodeText, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { register, registered, type Role } from './identity.ts';
-import { treeOf } from './tree-token.ts';
+import { treeOf, treeTokenOf } from './tree-token.ts';
+import { sourceStampOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 
@@ -521,16 +522,8 @@ export function seatWith(
 
 export function isNode(v: unknown): v is AnyUntypedNode {
 	if (v === null || typeof v !== 'object') return false;
-	const o = v as Record<string, unknown>;
-	if (typeof o.$type !== 'number') return false;
-	return (
-		holdsSlots(o) ||
-		hasNodeText(o) ||
-		o.$_layout !== undefined ||
-		o.$source === Source.Ts ||
-		o.$source === Source.Sg ||
-		o.$source === Source.Factory
-	);
+	if (typeof (v as { readonly $type?: unknown }).$type !== 'number') return false;
+	return sourceStampOf(v) !== undefined || treeTokenOf(v) !== undefined;
 }
 
 export function describeValue(v: unknown): string {
@@ -683,6 +676,7 @@ export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { stampBuilt, sourceStampOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
 	interiorPattern,

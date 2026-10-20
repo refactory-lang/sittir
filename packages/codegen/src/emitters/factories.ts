@@ -1754,7 +1754,6 @@ function emitFieldCarryingFactory(
 	lines.push('  const handle = currentHandle();');
 	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of slotsToEmit) {
 		lines.push(`    ${f.storageKey},`);
@@ -1771,7 +1770,7 @@ function emitFieldCarryingFactory(
 	lines.push(...(view?.postlude ?? []));
 	const delimitedCheck = delimitedCheckLine(node, slotsToEmit, leafReConsts);
 	if (delimitedCheck !== undefined) lines.push(delimitedCheck);
-	lines.push(`  return node as unknown as ${builtName};`);
+	lines.push(`  return stampBuilt(node) as unknown as ${builtName};`);
 	lines.push('}');
 
 	const { directParamOptional } = surface;
@@ -1963,7 +1962,6 @@ function emitRefineFormFactory(
 	lines.push('  const handle = currentHandle();');
 	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of allSlots) {
 		lines.push(`    ${f.storageKey},`);
@@ -1976,7 +1974,7 @@ function emitRefineFormFactory(
 		})
 	);
 	lines.push('  };');
-	lines.push(`  return node as unknown as ${formBuiltName};`);
+	lines.push(`  return stampBuilt(node) as unknown as ${formBuiltName};`);
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -2589,7 +2587,6 @@ function emitSeparatedListFactory(
 		lines.push('  const handle = currentHandle();');
 		lines.push('  const node = {');
 		lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
-		lines.push('    $source: 2 as const,');
 		lines.push('    $named: true as const,');
 		lines.push(`    ${contentStorageKey},`);
 		if (hasSeparatorKindOption) lines.push('    _separator,');
@@ -2604,7 +2601,7 @@ function emitSeparatedListFactory(
 		);
 		lines.push('  };');
 		lines.push(...view.postlude);
-		lines.push(`  return node as unknown as ${listBuiltName};`);
+		lines.push(`  return stampBuilt(node) as unknown as ${listBuiltName};`);
 		lines.push('}');
 		return lines.join('\n');
 	}
@@ -2653,11 +2650,10 @@ function emitTextFactory(
 		'  const handle = currentHandle();',
 		'  const node = {',
 		`    $type: ${typeExpr},`,
-		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		...nodeMemberLines({ accessors: [], text: textExpr, inner: nodeMap === undefined ? { inner: false } : innerPositionsOf(node.kind, nodeMap) }),
 		'  };',
-		`  return node as unknown as T.${node.typeName}.Bound;`,
+		`  return stampBuilt(node) as unknown as T.${node.typeName}.Bound;`,
 		'}'
 	);
 	return body.join('\n');
@@ -2705,7 +2701,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(
-			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

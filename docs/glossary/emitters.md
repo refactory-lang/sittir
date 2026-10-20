@@ -5913,9 +5913,9 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
  * envelope, polymorph, or list alike — no separate case for a hoisted kind).
  *
  * @remarks
- * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $source,
- * $named }` stubs (this is what native's node `FromNapiValue` expects
- * for those shapes). Compound kinds additionally require every required
+ * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $named }`
+ * stubs, stamped built (`dummyNodeLiteral`), which is what native's node
+ * `FromNapiValue` expects for those shapes. Compound kinds additionally require every required
  * field to be present and correctly shaped — a flat stub is rejected with
  * "Missing field `_x`" by the native node. A hoisted kind (the
  * synthesized single-field wrapper kinds, e.g. `_match_arm_with_comma`) is
@@ -5930,7 +5930,7 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
  * too: an empty list is `[]`, and the node refuses a missing list key.
  *
  * When recursion bottoms out (depth limit or cycle) the stub still declares
- * `$type`/`$text`/`$source`/`$named` but omits nested required single fields —
+ * `$type`/`$text`/`$named`, stamped built, but omits nested required single fields —
  * this may still fail construction for pathological kinds, matching the
  * existing "skip when no safe sample found" precedent elsewhere in this
  * emitter (see {@link pickSampleForPattern}) rather than guessing further.
@@ -5971,8 +5971,8 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
 #### body
 
 ```text
-// Splice the recursively-built required fields into the base literal —
-// `base` always ends in `} as any`; insert before the closing brace.
+// The recursively-built required fields join the literal's own members
+// (`dummyNodeLiteral`'s `storage`), inside its stamp.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::dummyTextForKind`
@@ -11275,6 +11275,8 @@ The structure table the emitter recorded while emitting builders: each emitted c
 
 An alias kind gets no test of its own: it is not on `ir`, and every parent test that seats one exercises its builder.
 
+Every node a test builds passes through the file's `expectBuiltNode`: its `$source` reads `Factory`, `isNode` takes it, and its string-key twin (`Object.fromEntries(Object.entries(node))`), the same keys without the stamp, is no node. That pins the node fact for every built kind of the grammar.
+
 #### body
 
 ```text
@@ -15208,6 +15210,10 @@ The one place a text guard's type refusal is worded: `<label>: text must be a st
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 
 The sample text of every leaf that ends a delimited composite: the shortest text its pattern accepts, so the generated tests build a string with a matching start and end instead of `test` on both sides.
+
+### `packages/codegen/src/emitters/test.ts::dummyNodeLiteral`
+
+The literal of one dummy node in a generated test: its `$type`, `$text` and `$named`, then the storage members `buildDummyStub` filled (`storage`), wrapped in `stampBuilt(...)`. A dummy stands where a test passes a node, and only a stamped object is one; unstamped, the same literal is a config, which the builder coerces or refuses.
 
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 
