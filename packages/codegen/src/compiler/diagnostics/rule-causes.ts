@@ -348,7 +348,7 @@ const CODE_SPAN = /`[^`]*`/g;
 
 function statesInWords(text: string): boolean {
 	const prose = text.replace(CODE_SPAN, ' ');
-	return WORD.test(prose) && !PLANNING_REFERENCE.test(prose) && !REQUIREMENT_ID.test(prose);
+	return !PLANNING_REFERENCE.test(text) && WORD.test(prose) && !REQUIREMENT_ID.test(prose);
 }
 
 type NarrowingCause = keyof typeof NARROWING_JUSTIFICATIONS;

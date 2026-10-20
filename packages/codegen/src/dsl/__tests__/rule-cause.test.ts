@@ -54,7 +54,9 @@ describe('rule-cause declarations', () => {
 	});
 
 	it('reauthored drops a hole in its cause list and keeps the real cause', () => {
-		expect(ruleCauseOf(reauthored([['ambiguity'], , ] as never, () => 1))).toEqual({
+		const causes = Array(2);
+		causes[0] = ['ambiguity'];
+		expect(ruleCauseOf(reauthored(causes as never, () => 1))).toEqual({
 			kind: 'reauthored',
 			causes: [{ cause: 'ambiguity' }]
 		});

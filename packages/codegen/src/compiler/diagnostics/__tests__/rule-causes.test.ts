@@ -585,6 +585,12 @@ describe('a ruled-narrowing ruling is stated in words', () => {
 		expect(judge('the identifier `R11` is reserved')).toEqual([]);
 	});
 
+	it.each(['uses `PR-137`', 'see `#916`'])('refuses a planning reference quoted as code: %s', (ruling) => {
+		const ds = judge(ruling);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain(reason);
+	});
+
 	it('refuses a ruling that is only code', () => {
 		const ds = judge('`R11`');
 		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
