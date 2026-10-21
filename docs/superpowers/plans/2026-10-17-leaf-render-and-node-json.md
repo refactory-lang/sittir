@@ -179,6 +179,7 @@ The walk runs once at the root, not in each reviver call. The order is the same,
 - C3.8 Kind facts, not JSON shape: `JSON.parse('{"$type":"block"}', rs.reviver)` is a built `block` with `statements()` equal to `[]`, not a kind id. A unit, such as rust `{ "$type": "mutable_specifier" }` or a python comparison operator, revives to its kind id.
 - C3.9 The reviver is bound: `const { reviver } = rs; JSON.parse(text, reviver)` revives the same as `JSON.parse(text, rs.reviver)`.
 - C3.10 A string slot (scm `escape_sequence.content`) revives through `buildByKind` as the same string, with no kind inferred from the text.
+- C3.11 A list's empty element is `undefined` on both wires (its type is `X | undefined`). `JSON.stringify` writes it as `null`, and the reviver brings a `null` list item back as `undefined`: regex `a||b` and typescript `[a,,b]` round-trip with the empty element `undefined`.
 
 ### Task 4: Gates, review and PR
 
