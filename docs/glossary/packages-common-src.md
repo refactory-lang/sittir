@@ -372,6 +372,10 @@ The level count a native read takes for a set of parse options: one by default, 
 
 Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` passes the call's flat options as the render options the native engine resolves over its own, and none when the call has none or an empty object. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
 
+### `packages/common/src/engine.ts::renderNativeNode`
+
+Renders through the calling engine's native instance, so that engine supplies render defaults for both object nodes and record views. A record view supplies its source tree and record address; its tree reader owns storage access and carries no render callback. Deferred render handles retain the input node, keeping every source tree it names alive until the render finishes.
+
 
 ### `packages/common/src/delimiter.ts::Delimiter`
 

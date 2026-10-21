@@ -78,8 +78,17 @@ impl<G: RecordGrammar> ParsedTree<G> {
         }
         let kind = {
             let arena = self.tree_arena();
-            let header = arena.arena().words(at, HEADER_WORDS).map_err(RenderError::Record)?;
-            u16::try_from(header[0]).map(KindId).map_err(|_| refused("record kind"))?
+            let header = arena
+                .arena()
+                .words(at, HEADER_WORDS)
+                .map_err(RenderError::Record)?;
+            let kind = u16::try_from(header[0])
+                .map(KindId)
+                .map_err(|_| refused("record kind"))?;
+            if !arena.contains_record(at) {
+                return Err(refused("record address"));
+            }
+            kind
         };
         let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: Some(self.tree_id()), site: None };
         let ctx = RenderContext { options, sources: self };

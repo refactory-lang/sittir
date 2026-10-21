@@ -577,6 +577,63 @@ fn an_address_that_names_no_record_of_the_arena_is_refused() {
 }
 
 #[test]
+fn an_address_inside_a_side_record_is_refused_before_source_folding() {
+    let mut engine = rust().engine();
+    let options = engine.options().clone();
+    let tree = RustRenders::parse(&mut engine, "fn a() {}");
+    RustRenders::first_read(&tree, Depth::All).expect("every record written");
+    let row = index_of(&tree, rust_kinds::PARAMETERS, 0);
+    let at = {
+        let arena = tree.tree_arena();
+        let record = arena.record(row).expect("the parameters record");
+        let header = arena.arena().words(record, 2).expect("its header");
+        Address(header[1])
+            .offset(1)
+            .expect("the first payload word of its side record")
+    };
+    assert!(
+        matches!(
+            tree.render_record(at, ChangedEdges::default(), &options),
+            Err(RenderError::Record(_))
+        ),
+        "a side record's row is never a node record header"
+    );
+}
+
+#[test]
+fn payload_words_never_render_as_node_records() {
+    use std::collections::HashSet;
+    for source in ["fn a() {}".to_owned(), "fn a() {}\n".repeat(40)] {
+        let mut engine = rust().engine();
+        let options = engine.options().clone();
+        let tree = RustRenders::parse(&mut engine, &source);
+        RustRenders::first_read(&tree, Depth::All).expect("every record written");
+        let records: HashSet<_> = {
+            let arena = tree.tree_arena();
+            (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+                .filter_map(|row| arena.record(NodeIndex::new(row)))
+                .collect()
+        };
+        for chunk_index in 0.. {
+            let Some(chunk) = tree.record_chunk(chunk_index) else {
+                break;
+            };
+            for word in 0..u32::try_from(chunk.len()).expect("a chunk's length") {
+                let at = Address::new(chunk_index, word).expect("a chunk's address");
+                if records.contains(&at) {
+                    continue;
+                }
+                assert!(
+                    tree.render_record(at, ChangedEdges::default(), &options)
+                        .is_err(),
+                    "word {at:?} is not a node record"
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn a_chunk_is_copied_out_as_its_records_fill_it() {
     let mut engine = rust().engine();
     let tree = RustRenders::parse(&mut engine, EDITED);

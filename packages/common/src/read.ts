@@ -51,8 +51,6 @@ export interface RecordReader {
 	words(address: number, length: number): Uint32Array;
 	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */
 	coordinate(index: number): { readonly kind: number; readonly end: number };
-	/** The record at `address` rendered as the native render renders the node read into it, a render root whose `changed` edges have no neighbour. */
-	render(address: number, changed: { readonly leading: boolean; readonly trailing: boolean }, options?: object): string;
 }
 
 /**

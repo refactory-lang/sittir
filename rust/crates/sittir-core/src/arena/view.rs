@@ -387,11 +387,19 @@ pub trait RecordView<'a, T>: Sized {
 /// # Errors
 ///
 /// What reading the words or the side record refuses, or
-/// `ArenaError::Malformed` for a header of another kind.
+/// `ArenaError::Malformed` for a header of another kind or a parsed address
+/// the native writer never allocated as a record.
 pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) -> Result<(&[u32], super::SideRecord), ArenaError> {
     let words = ctx.words(at, len)?;
     if words[0] != u32::from(kind.0) {
         return Err(malformed("record kind", words[0]));
+    }
+    if ctx.tree.is_some_and(|tree| {
+        ctx.arenas
+            .tree(tree)
+            .is_none_or(|arena| !arena.contains_record(at))
+    }) {
+        return Err(malformed("record address", at.0));
     }
     let side = if words[1] == Address::NONE.0 { super::SideRecord::default() } else { super::SideRecord::read(ctx.arena, Address(words[1]))? };
     Ok((words, side))

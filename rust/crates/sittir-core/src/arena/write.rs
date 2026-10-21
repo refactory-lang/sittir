@@ -67,6 +67,13 @@ impl<'a, T: Clone> RecordSink<'a, T> {
         }
     }
 
+    fn push_record(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        match &mut self.to {
+            Target::Parsed { arena, .. } => arena.push_record(words),
+            Target::Built { arena, .. } => arena.push(words),
+        }
+    }
+
     /// The tree of a first read's sink; `None` for a built write.
     fn tree(&self) -> Option<TreeId> {
         match self.to {
@@ -93,7 +100,7 @@ impl<'a, T: Clone> RecordSink<'a, T> {
     /// A header-only record: `kind` and the side record `side`.
     fn header(&mut self, kind: KindId, side: &SideRecord) -> Result<Address, ArenaError> {
         let side = if side.is_empty() { Address::NONE } else { side.write(self.arena())? };
-        self.arena().push(&[u32::from(kind.0), side.0])
+        self.push_record(&[u32::from(kind.0), side.0])
     }
 
     /// Moves a built record's trivia and its units' into the store, at the
@@ -342,7 +349,7 @@ fn write_words<T: Clone>(
     if !side.is_empty() {
         record[1] = side.write(sink.arena())?.0;
     }
-    let at = sink.arena().push(&record)?;
+    let at = sink.push_record(&record)?;
     match (row, &mut sink.to) {
         (Some(_), Target::Parsed { .. }) if content => {}
         (Some(row), Target::Parsed { arena, .. }) => arena.index(row, at)?,

@@ -8,6 +8,7 @@
 
 use super::{Address, Arena, ArenaError};
 use crate::types::NodeIndex;
+use std::collections::HashSet;
 
 /// One parsed tree's records, and the record each row's first read wrote.
 #[derive(Debug, Default)]
@@ -16,6 +17,9 @@ pub struct TreeArena {
     /// Each row's record, by the row: `Address::NONE` where no read has
     /// written one yet.
     rows: Vec<Address>,
+    /// Native record starts, including content that shares its envelope's
+    /// row and has no row-index entry.
+    records: HashSet<Address>,
 }
 
 impl TreeArena {
@@ -37,6 +41,20 @@ impl TreeArena {
 
     pub(super) fn arena_mut(&mut self) -> &mut Arena {
         &mut self.arena
+    }
+
+    /// Appends a native node record; side records and list runs use the
+    /// arena directly and never enter the set of record starts.
+    pub(super) fn push_record(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        let at = self.arena.push(words)?;
+        self.records.insert(at);
+        Ok(at)
+    }
+
+    #[must_use]
+    /// Whether the native writer allocated a record at `at`.
+    pub(super) fn contains_record(&self, at: Address) -> bool {
+        self.records.contains(&at)
     }
 
     /// Holds `at` as `row`'s record, for every later read. The record writer

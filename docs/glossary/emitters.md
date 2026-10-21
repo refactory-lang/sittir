@@ -2776,8 +2776,10 @@ view's `KindOf`.
 ### `packages/codegen/src/emitters/render-module.ts::renderRecordFn`
 
 The generated `render_record`, under `records_codec!`: renders the record
-a root cell names (`CellAt`). A parsed root with no write in its range
-(`sittir_core::arena::source_root`) renders as its row's coordinate, through
+a root cell names (`CellAt`). A parsed address must name a record start stamped by the native writer before
+`sittir_core::arena::source_root` can fold it. Content records carry this stamp
+even when they share their envelope's row and have no row-index entry. A parsed root with no write in its range
+renders as its row's coordinate, through
 `render_node_parts` as a native coordinate root does, so an untouched parsed
 node renders as its source bytes on both sides (shared-arena design
 § Render; trivia-table design § 4). Any other root is prepared into a fresh

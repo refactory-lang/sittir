@@ -388,8 +388,7 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 				coordinates.set(index, at);
 			}
 			return at;
-		},
-		render: (address, changed, options) => renderRecord.call(engine, treeId, address, changed.leading, changed.trailing, options)
+		}
 	};
 }
 
@@ -435,14 +434,23 @@ export function createNativeEngine<
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
+			const holdsTrees = (): unknown => node;
 			// A view is never edited (a write goes through its row and returns
 			// an object node), so it renders as the record it reads.
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
-				const records = treeOf(node as object)?.records;
-				if (records === undefined) throw new Error('a record view renders through the tree it was read from, which is gone');
+				const tree = treeOf(node as object);
+				const treeId = tree?.id;
+				if (tree?.records === undefined || treeId === undefined)
+					throw new Error('a record view renders through the tree it was read from, which is gone');
+				const renderRecord = engine.renderRecord;
+				if (renderRecord === undefined)
+					throw new Error('arena node storage needs an addon built with the `arena` feature');
 				const changed = rootEdges(node as object);
-				return createRenderHandle(() => records.render(record, changed, perCall));
+				return createRenderHandle(() => {
+					holdsTrees();
+					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
+				});
 			}
 			// The projection is the one place a node's storage wins over the
 			// coordinate it read in with: it crosses here, on every render
@@ -457,7 +465,6 @@ export function createNativeEngine<
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
 			// can still render.
-			const holdsTrees = (): unknown => node;
 			return createRenderHandle(
 				() => {
 					holdsTrees();
