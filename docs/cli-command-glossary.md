@@ -196,7 +196,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
 
 ### `tool bench-storage`
 
-Measure native corpus parse, hydration, render and retained memory
+Measure native workflows or object/arena validation buckets
 
 **Arguments**
 
@@ -209,6 +209,7 @@ Measure native corpus parse, hydration, render and retained memory
 - `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
+- `--validation` — Profile deep read, factory and IR render/parse validators with object and arena storage
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 

@@ -376,6 +376,38 @@ Adapts one grammar's native engine to the language hooks' native engine shape, t
 
 Renders through the calling engine's native instance, so that engine supplies render defaults for both object nodes and record views. A record view supplies its source tree and record address; its tree reader owns storage access and carries no render callback. Deferred render handles retain the input node, keeping every source tree it names alive until the render finishes.
 
+### `packages/common/src/engine.ts::NativeEngineLike`
+
+The shared TypeScript contract of a grammar addon. Record lookup, deep hydration, typed candidate metadata, chunk copies, address rendering and candidate rendering are independent capabilities. Candidate enumeration exports only coordinates and addresses from the native typed record tree. Candidate rendering renders a native parsed row or record with its outer trivia excluded; it does not export node fields.
+
+### `packages/common/src/engine.ts::recordReader`
+
+Binds a parsed tree's native record operations and retains chunk copies only when words are explicitly requested. Hydration can deepen cached records without fetching words. Candidate enumeration walks native record cells and returns metadata and addresses, including nested content sharing a row. Normal rendering uses an address; candidate rendering additionally names the parsed row so its outer trivia is excluded natively. Object reads remain a separate operation for callers that explicitly need them.
+
+### `packages/common/src/engine.ts::hydrate`
+
+Delegates a requested depth to native record hydration and returns only the optional address. It refuses an addon lacking that capability instead of substituting cached lookup or exporting data.
+
+### `packages/common/src/engine.ts::renderCandidate`
+
+Delegates a parsed row and its optional record address to native candidate rendering. Recordless leaves remain native coordinate renders. No node objects or chunk words are fetched.
+
+### `packages/common/src/engine.ts::createNativeEngine`
+
+Creates a grammar's native engine with object or arena reads. Its diagnostic parse retains a tree immediately and reads the root on demand; any first root read stamps parse errors and is cached by depth. Public parsing still requests and wraps that root. Tree tokens retain native storage independently of engine disposal, and render handles retain their node's trees.
+
+### `packages/common/src/engine.ts::parseAndRead#1`
+
+Parses and registers a native tree, retaining its token in the bound read closures. The returned root getter performs the first root read at the requested depth. Code retaining only the tree can query metadata, hydrate records and render natively without exporting root data. All root reads stamp the parse's error regions and share the depth cache.
+
+### `packages/common/src/engine.ts::root`
+
+Reads the diagnostic root through the tree's depth cache. It requests the caller's parse depth and returns the same root object and error stamp as a direct root read.
+
+### `packages/common/src/engine.ts::candidates`
+
+Returns only metadata and native addresses from the hydrated typed record tree. The native walk uses the generated cell schema, includes content sharing its envelope's row, and omits unit cells and captured strings. It neither reads object data nor exports arena words.
+
 
 ### `packages/common/src/delimiter.ts::Delimiter`
 
@@ -781,6 +813,10 @@ A trivia side as its reader gets it, each entry through `hydrateTriviaEntry`. Th
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
+
+### `packages/common/src/read.ts::RecordReader`
+
+A parsed arena's independent lookup, hydration, typed candidate enumeration, rendering, object export and word-copy operations. Native hydration returns addresses without copying chunks; candidate enumeration returns only coordinates and addresses from generated record-cell shapes, excluding units and captures. Native candidate rendering strips only the root's outer trivia. Reading words is explicit and owns a JavaScript copy. Cached record lookup does not substitute for a deeper hydration request.
 
 ### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 

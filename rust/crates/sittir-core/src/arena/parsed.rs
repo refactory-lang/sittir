@@ -3,14 +3,16 @@
 //! A record is named by its tree and its address together: the address
 //! reads nothing once its tree is gone.
 
-use super::{Address, Arena, Cell, CellAt, HeldArenas, RecordTrees, WriteCell};
+use super::{
+    Address, Arena, Cell, CellAt, HeldArenas, RecordCells, RecordTrees, Row, SideRecord, WriteCell,
+};
 use crate::engine::{EngineGrammar, ParsedTree};
 use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
 use crate::read::{Depth, ReadNode};
 use crate::record::HEADER_WORDS;
-use crate::render::RenderError;
-use crate::slot::ChangedEdges;
+use crate::render::{RenderError, SourceTable};
+use crate::slot::{ChangedEdges, NodeCoordinate};
 use crate::trivia_store::TriviaStore;
 use crate::types::{KindId, NodeIndex};
 
@@ -92,6 +94,109 @@ impl<G: EngineGrammar> ParsedTree<G> {
 }
 
 impl<G: RecordGrammar> ParsedTree<G> {
+    /// The hydrated typed nodes below `index`, in stored field order, as
+    /// coordinates and optional record addresses. Includes nested content
+    /// sharing a row, and excludes unit cells and captured strings.
+    ///
+    /// # Errors
+    ///
+    /// An unhydrated record, an invalid row or a malformed stored cell.
+    pub fn record_candidates<N: RecordCells>(
+        &self,
+        index: NodeIndex,
+    ) -> Result<Vec<(NodeCoordinate, Option<Address>)>, RenderError> {
+        let refused = |what, word| RenderError::Record(super::ArenaError::Malformed { what, word });
+        let coord = self
+            .row_coordinate(index)
+            .ok_or_else(|| refused("candidate row", index.0))?;
+        let address = self.tree_arena().record(index);
+        let root = match address {
+            Some(at) => self.record_root(at, ChangedEdges::default())?.cell,
+            None => Cell::Coordinate {
+                kind: coord
+                    .kind
+                    .ok_or_else(|| refused("candidate kind", index.0))?,
+                index,
+                span: coord.span,
+            },
+        };
+        let mut pending = vec![root];
+        let mut seen = std::collections::HashSet::new();
+        let mut candidates = Vec::new();
+        while let Some(cell) = pending.pop() {
+            match cell {
+                Cell::Child {
+                    kind,
+                    at,
+                    link: None,
+                    ..
+                } => {
+                    if !seen.insert(at) {
+                        continue;
+                    }
+                    let (root, row) = self.candidate_record(at)?;
+                    if root.cell.kind() != Some(kind) {
+                        return Err(refused("candidate record kind", at.0));
+                    }
+                    let mut coordinate = self
+                        .row_coordinate(row.index)
+                        .ok_or_else(|| refused("candidate row", row.index.0))?;
+                    coordinate.kind = Some(kind);
+                    coordinate.end = row.end;
+                    coordinate.span = row.span;
+                    candidates.push((coordinate, Some(at)));
+                    let record = N::shape(kind)
+                        .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
+                    let first = pending.len();
+                    super::admit::for_each_cell(self.tree_arena().arena(), at, record, |child| {
+                        pending.push(child);
+                        Ok(())
+                    })
+                    .map_err(RenderError::Record)?;
+                    pending[first..].reverse();
+                }
+                Cell::Coordinate { kind, index, span } => {
+                    if let Some(at) = self.tree_arena().record(index) {
+                        pending.push(Cell::Child {
+                            kind,
+                            at,
+                            link: None,
+                            changed: ChangedEdges::default(),
+                        });
+                    } else {
+                        let node = crate::engine::node_at_index(self.tree(), index)
+                            .ok_or_else(|| refused("candidate row", index.0))?;
+                        if self.grammar().unit_id(&mut node.walk()).is_some() {
+                            continue;
+                        }
+                        let shape = N::shape(kind)
+                            .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
+                        if shape.words > HEADER_WORDS || !shape.cells.is_empty() {
+                            return Err(refused("unhydrated candidate record", index.0));
+                        }
+                        let mut coordinate = self
+                            .row_coordinate(index)
+                            .ok_or_else(|| refused("candidate row", index.0))?;
+                        coordinate.kind = Some(kind);
+                        coordinate.span = span;
+                        candidates.push((coordinate, None));
+                    }
+                }
+                Cell::ParsedLeaf { kind, span, row } => {
+                    let mut coordinate = self
+                        .row_coordinate(row)
+                        .ok_or_else(|| refused("candidate row", row.0))?;
+                    coordinate.kind = Some(kind);
+                    coordinate.span = span;
+                    candidates.push((coordinate, None));
+                }
+                Cell::Absent | Cell::Unit { .. } | Cell::ParsedText { .. } => {}
+                _ => return Err(refused("built cell in parsed candidates", index.0)),
+            }
+        }
+        Ok(candidates)
+    }
+
     /// The record at `at` of the tree's arena, rendered as a render root
     /// whose `changed` edges have no neighbour (the edges a node crossing as
     /// its coordinate marks), under `options`, its line endings unspelled.
@@ -102,6 +207,66 @@ impl<G: RecordGrammar> ParsedTree<G> {
     /// arena: none, past what it wrote, or a header naming no kind the
     /// grammar writes a record of; else what the record's render refuses.
     pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions) -> Result<String, RenderError> {
+        self.render_cell(self.record_root(at, changed)?, options, self)
+    }
+
+    /// Renders a parsed candidate without its outer trivia. Its record stays
+    /// native; a recordless leaf uses the same coordinate cell as a slot does.
+    ///
+    /// # Errors
+    ///
+    /// An invalid row or record address, or a refused prepare or render.
+    pub fn render_candidate(
+        &self,
+        index: NodeIndex,
+        at: Option<Address>,
+        options: &ResolvedOptions,
+    ) -> Result<String, RenderError> {
+        let refused = || {
+            RenderError::Record(super::ArenaError::Malformed {
+                what: "candidate row or address",
+                word: at.unwrap_or(Address::NONE).0,
+            })
+        };
+        let coord = self.row_coordinate(index).ok_or_else(refused)?;
+        let root = if let Some(at) = at {
+            let (root, row) = self.candidate_record(at)?;
+            if row.index != index {
+                return Err(refused());
+            }
+            root
+        } else {
+            CellAt {
+                cell: Cell::Coordinate {
+                    kind: coord.kind.ok_or_else(refused)?,
+                    index,
+                    span: coord.span,
+                },
+                tree: Some(self.tree_id()),
+                site: None,
+            }
+        };
+        self.render_cell(root, options, &CandidateSources { tree: self, index })
+    }
+
+    fn candidate_record(&self, at: Address) -> Result<(CellAt, Row), RenderError> {
+        let root = self.record_root(at, ChangedEdges::default())?;
+        let arena = self.tree_arena();
+        let header = arena
+            .arena()
+            .words(at, HEADER_WORDS)
+            .map_err(RenderError::Record)?;
+        let row = SideRecord::read(arena.arena(), Address(header[1]))
+            .map_err(RenderError::Record)?
+            .at
+            .ok_or(RenderError::Record(super::ArenaError::Malformed {
+                what: "candidate record row",
+                word: at.0,
+            }))?;
+        Ok((root, row))
+    }
+
+    fn record_root(&self, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
         let refused = |what| RenderError::Record(super::ArenaError::Malformed { what, word: at.0 });
         if at == Address::NONE {
             return Err(refused("record address"));
@@ -120,9 +285,130 @@ impl<G: RecordGrammar> ParsedTree<G> {
             }
             kind
         };
-        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: Some(self.tree_id()), site: None };
-        let ctx = RenderContext { options, sources: self };
+        Ok(CellAt {
+            cell: Cell::Child {
+                kind,
+                at,
+                link: None,
+                changed,
+            },
+            tree: Some(self.tree_id()),
+            site: None,
+        })
+    }
+
+    fn render_cell(
+        &self,
+        root: CellAt,
+        options: &ResolvedOptions,
+        sources: &dyn SourceTable,
+    ) -> Result<String, RenderError> {
+        let ctx = RenderContext { options, sources };
         let mut arenas = HeldArenas::of([(self.tree_id(), self.tree_arena())]);
         self.grammar().render_record(root, &mut arenas, &Arena::new(), self.written(), &ctx)
+    }
+}
+
+struct CandidateSources<'a, G: EngineGrammar> {
+    tree: &'a ParsedTree<G>,
+    index: NodeIndex,
+}
+
+impl<G: EngineGrammar> CandidateSources<'_, G> {
+    fn is_root(&self, coord: &NodeCoordinate) -> bool {
+        coord.tree == self.tree.tree_id() && coord.index == self.index
+    }
+}
+
+impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
+    fn source_of(&self, tree: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+        self.tree.source_of(tree)
+    }
+
+    fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        self.tree.kind_of(coord)
+    }
+
+    fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
+        self.tree.line_starts_inside_tokens(coord)
+    }
+
+    fn last_list_child_kind(
+        &self,
+        tree: crate::types::TreeId,
+        span: crate::types::Span,
+        kind: KindId,
+    ) -> Option<KindId> {
+        self.tree.last_list_child_kind(tree, span, kind)
+    }
+
+    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+        self.tree.for_each_kind_ending_with(coord, f);
+    }
+
+    fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
+        self.tree.depth_move(coord)
+    }
+
+    fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let sides = self.tree.sides(coord)?;
+        if !self.is_root(coord) {
+            return Some(sides);
+        }
+        let mut sides = sides
+            .into_any()
+            .downcast::<crate::trivia::NodeTrivia<G::Trivia>>()
+            .ok()?;
+        sides.leading = Some(Vec::new());
+        sides.trailing = Some(Vec::new());
+        Some(sides)
+    }
+
+    fn frames(&self, coord: &NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
+        if self.is_root(coord) {
+            Vec::new()
+        } else {
+            self.tree.frames(coord)
+        }
+    }
+
+    fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        SourceTable::slot_layouts(self.tree, coord)
+    }
+
+    fn separator_before(&self, coord: &NodeCoordinate) -> Option<KindId> {
+        SourceTable::separator_before(self.tree, coord)
+    }
+
+    fn framed_span(&self, coord: &NodeCoordinate) -> crate::types::Span {
+        if self.is_root(coord) {
+            coord.span
+        } else {
+            self.tree.framed_span(coord)
+        }
+    }
+
+    fn edited_within(&self, coord: &NodeCoordinate) -> bool {
+        SourceTable::edited_within(self.tree, coord)
+    }
+
+    fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
+        self.tree.renders_as_source(coord)
+    }
+
+    fn seat_through(
+        &self,
+        coord: &NodeCoordinate,
+        wrappers: &[Option<crate::options::SeatPath>],
+        seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>,
+    ) -> Option<crate::types::SiteId> {
+        self.tree.seat_through(coord, wrappers, seat)
+    }
+
+    fn read_ctx(
+        &self,
+        tree: crate::types::TreeId,
+    ) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+        self.tree.read_ctx(tree)
     }
 }

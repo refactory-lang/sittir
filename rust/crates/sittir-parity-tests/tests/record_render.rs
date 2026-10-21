@@ -760,7 +760,6 @@ fn a_chunk_is_copied_out_as_its_records_fill_it() {
     assert_eq!(tree.record_chunk(sittir_core::arena::MAX_CHUNKS), None);
 }
 
-
 #[test]
 fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
     let mut engine = rust().engine();
@@ -773,4 +772,140 @@ fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
     assert_eq!(tree.render_record(call, both, &options).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
     assert_eq!(tree.render_record(call, ChangedEdges::default(), &options).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
     assert_eq!(tree.render_record(record(rust_kinds::FUNCTION_ITEM, 1), both, &options).expect("a render"), "fn b() { Ok(None) }");
+}
+
+#[test]
+fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged() {
+    let mut engine = rust().engine();
+    let options = engine.options().clone();
+    let source = "fn f() {\n  // outside\n  call(/* inside */ arg); // tail\n}\n";
+    let tree = RustRenders::parse(&mut engine, source);
+    let statement = node_spanning(
+        &tree,
+        source,
+        "expression_statement",
+        "call(/* inside */ arg);",
+    );
+    let at = tree
+        .hydrate_record::<sittir_rust::render::AnyNode>(statement, Depth::All)
+        .expect("a deep read");
+    let record = at.expect("a statement record");
+    let ordinary = tree
+        .render_record(record, ChangedEdges::default(), &options)
+        .expect("the ordinary render");
+    assert_eq!(
+        tree.render_candidate(statement, at, &options)
+            .expect("the candidate render"),
+        "call(/* inside */ arg);"
+    );
+    assert_eq!(
+        tree.render_record(record, ChangedEdges::default(), &options)
+            .expect("the ordinary render after the candidate"),
+        ordinary
+    );
+
+    let leaf = node_spanning(&tree, source, "identifier", "arg");
+    let at = tree
+        .hydrate_record::<sittir_rust::render::AnyNode>(leaf, Depth::All)
+        .expect("a leaf read");
+    assert_eq!(at, None);
+    assert_eq!(
+        tree.render_candidate(leaf, at, &options)
+            .expect("a recordless candidate"),
+        "arg"
+    );
+    assert!(
+        tree.render_candidate(NodeIndex::ROOT, Some(record), &options)
+            .is_err(),
+        "another row's record is refused"
+    );
+}
+
+#[test]
+fn native_candidate_enumeration_keeps_same_row_content_and_its_own_address() {
+    let mut engine = typescript().engine();
+    let options = engine.options().clone();
+    let source = "interface A { x: number }";
+    let tree = TypeScriptRenders::parse(&mut engine, source);
+    tree.hydrate_record::<sittir_typescript::render::AnyNode>(NodeIndex::ROOT, Depth::All)
+        .expect("a deep root");
+    let (row, envelope, content) = envelope_and_content(&tree);
+    let candidates = tree
+        .record_candidates::<sittir_typescript::render::AnyNode>(NodeIndex::ROOT)
+        .expect("typed candidates");
+    let outer = candidates
+        .iter()
+        .position(|(_, at)| *at == Some(envelope))
+        .expect("the envelope");
+    let inner = candidates
+        .iter()
+        .position(|(_, at)| *at == Some(content))
+        .expect("its content");
+    assert!(outer < inner);
+    assert_eq!(candidates[inner].0.index, row);
+    assert_ne!(candidates[outer].0.kind, candidates[inner].0.kind);
+    assert_eq!(
+        tree.render_candidate(row, Some(content), &options)
+            .expect("content renders at its own address"),
+        "{ x: number }"
+    );
+}
+
+#[test]
+fn native_candidate_enumeration_distinguishes_units_from_presence_nodes() {
+    let mut engine = Engine::new(
+        sittir_regex::RegexGrammar,
+        sittir_regex::render::options::defaults(),
+    )
+    .expect("an engine");
+    let tree = engine
+        .parse("a*?", claim_tree_id().expect("a tree id"))
+        .expect("a parse");
+    tree.hydrate_record::<sittir_regex::render::AnyNode>(NodeIndex::ROOT, Depth::All)
+        .expect("a deep root");
+    let candidates = tree
+        .record_candidates::<sittir_regex::render::AnyNode>(NodeIndex::ROOT)
+        .expect("typed candidates");
+    assert_ne!(candidates, Vec::new());
+    assert!(
+        candidates.iter().any(|(_, at)| at.is_none()),
+        "recordless leaves remain candidates"
+    );
+    assert!(candidates
+        .iter()
+        .filter_map(|(coord, _)| coord.kind)
+        .all(|kind| tree.grammar().kind_name(kind) != "lazy"));
+    let lazy = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+        .map(NodeIndex::new)
+        .find(|&index| {
+            sittir_core::engine::node_at_index(tree.tree(), index)
+                .is_some_and(|node| node.kind() == "lazy")
+        })
+        .expect("a lazy unit row");
+    tree.hydrate_record::<sittir_regex::render::AnyNode>(lazy, Depth::All)
+        .expect("a standalone envelope read");
+    assert_ne!(
+        tree.record_candidates::<sittir_regex::render::AnyNode>(lazy)
+            .expect("a standalone presence envelope"),
+        Vec::new()
+    );
+    let unit_tree = engine
+        .parse(".", claim_tree_id().expect("another tree id"))
+        .expect("a unit parse");
+    let unit = (0..sittir_core::read::descendant_count(&unit_tree.tree().root_node()))
+        .map(NodeIndex::new)
+        .find(|&index| {
+            sittir_core::engine::node_at_index(unit_tree.tree(), index)
+                .is_some_and(|node| unit_tree.grammar().unit_id(&mut node.walk()).is_some())
+        })
+        .expect("a row the read stores as a unit");
+    unit_tree
+        .hydrate_record::<sittir_regex::render::AnyNode>(unit, Depth::All)
+        .expect("a unit read");
+    assert_eq!(
+        unit_tree
+            .record_candidates::<sittir_regex::render::AnyNode>(unit)
+            .expect("unit-root candidates"),
+        Vec::new()
+    );
 }

@@ -213,21 +213,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ### `packages/tools/src/validate/common.ts::buildReadHandle`
 
-```text
-/**
- * Build the read-side TreeHandle for the corpus validators. Selects
- * between the wasm/JS handle (default) and a native-engine handle
- * (when `SITTIR_BACKEND=native` is set). A native handle is the grammar
- * engine's own parse (`readNativeTree`): every read — root and
- * hydration alike — goes through the engine that also renders, so the
- * coordinates it hands out resolve at render time.
- *
- * The wasm `tree` is still required: validators use it for kind
- * navigation (`findFirst`, `collectKinds`) — that traversal needs a
- * raw tree-sitter tree the JS side can walk. The native engine owns
- * its own internal tree for reads; the two coexist within one probe.
- */
-```
+Returns the public engine's native tree handle without requesting its diagnostic root. A caller explicitly chooses its first read: wrapped shallow data, a deep object root, or native arena hydration. The handle and all rendering share the same cached grammar engine.
 
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
@@ -1539,6 +1525,8 @@ The grammar's root kind as the node model records it; `undefined` when no model 
 
 ### `packages/tools/src/validate/read-render-parse.ts::validateReadRenderParse`
 
+An optional run-local profile records the explicit deep root read, candidate reads, primary rendering and reparsing, plus ordered work and output fingerprints. Deep runs read the root to Infinity before enumeration. Arena runs retain node data in Rust, walk the generated record-cell schema natively, receive candidate coordinates and addresses, and render native candidates; object runs keep their detached candidate path. Enumeration and AST verification remain part of total validator runtime. Fixture capture explicitly exports a self-contained input only when requested.
+
 Reads each corpus candidate, renders it, reparses the render inside its supertype wrapper and compares the reparsed node's AST with the source's. The reparsed node is found at the wrapper's splice offset (`findReparsedNodeAtOffset`), past the candidate's own leading trivia. A candidate that is the tree's root (its kind is the first parse's root node type) is compared against the reparsed tree's root node directly: the root's render carries its source flanks, and a leading whitespace flank is padding tree-sitter starts no node at, so no offset names it. Every other candidate keeps the offset lookup, so a non-root render that starts with whitespace still fails it as `kind not found at rendered offset`.
 
 A kind passes when any of its candidates round-trips, so a candidate that only renders badly is outweighed by one that renders well. A candidate that throws is not: an error while its input is read, rendered, measured (`leadingTriviaRenderedWidth`) or captured as a fixture (`selfContainedRenderInput`) is reported with its message and fails the entry whatever its kind's other candidates do, so a broken trivia view or line-gap query surfaces as a failure instead of one fewer fixture.
@@ -1551,9 +1539,11 @@ Rendered text inside its reparse host: the kind's own host (`wrapForReparse`), o
 
 ### `packages/tools/src/validate/read-render-parse.ts::renderReparse`
 
-The render-and-reparse step every rendering row shares. It renders a node with the native engine, wraps the text in its kind's reparse wrapper (`wrapRendered`), reparses it, finds the reparsed node of the target kind at the wrapper's offset (or the tree's root for a root candidate), and diffs its AST with the source node's (`astStructuralDiff`). It returns one outcome: excluded (no wrapper for the kind, or an empty render), failed (a reparse error, or the kind not at the offset), or round-tripped with the AST difference. A render that throws propagates, so each row reports it in its own terms. `loadRenderReparseContext` loads what it needs for a grammar once per run.
+The shared primary render, reparse and AST verification for read, factory and IR rows. An object input is projected without outer trivia before native render; a render callback supplies already-framed native candidate text without materializing a JS node. Only object inputs need the existing leading-trivia width probes. Output hashing and wrappers remain outside the narrow render timer, and source-node lookup and AST comparison remain outside the narrow parse timer. The returned outcome preserves exclusions, parse failures and structural differences.
 
 ### `packages/tools/src/validate/factory-storage.ts::validateFactoryStorage`
+
+An optional profile records read-reference materialization, recursive round-trip construction, primary rendering and reparsing. The separate storage-check construction, candidate enumeration and AST/storage comparisons remain in total validator time. Raw and IR constructors currently produce object-backed built nodes for either parsed storage setting.
 
 Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
 
@@ -1620,6 +1610,10 @@ Loads the generated raw factory map through the typed internal loader, scopes bu
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 
 Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.
+
+### `packages/tools/src/validate/factory-storage.ts::ValidateFactoryStorageOptions`
+
+Selects the raw factory or IR construction surface and an optional run-local profiler. Profiling observes the existing read, recursive build, primary render and reparse operations; it does not select a different validation workload.
 
 ### `packages/tools/src/grammar-internals.ts::Hydrate`
 
@@ -1760,6 +1754,18 @@ value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the
 value under the slot key as an unseated slot's value is.
 
+### `packages/tools/src/validate/read-render-parse.ts::loadRenderReparseContext`
+
+Loads the existing grammar wrappers, parser, engine renderer, trivia and AST-comparison metadata for a validator run. Carries an optional run-local profile to the shared render/reparse operations; it does not select a different rendering path.
+
+### `packages/tools/src/validate/read-render-parse.ts::ValidateReadRenderParseOptions`
+
+Selects deep or shallow read validation, optional diagnostics and a run-local profiler. Deep runs explicitly read the root to Infinity before enumeration. Arena deep reads and renders stay native; an explicitly requested fixture callback separately exports a self-contained render input after validation.
+
+### `packages/tools/src/validate/read-render-parse.ts::RenderReparseContext`
+
+Run-local rendering, parser, wrapper and AST-comparison facts shared by read, factory and IR validators. An optional profiler observes primary render and reparse phases. The read validator may supply a native render callback to the shared operation; candidate projection and trivia-width probing apply to object inputs.
+
 ### `packages/tools/src/validate/layout-runs.ts::withTreeOf`
 
 Parses a source with a grammar's native engine, hands the tree id to the caller, and disposes the tree after, so each corpus diagnostic (`layoutRunsOf`, `storedLayoutOf`) reads one live tree per source and leaks none.
@@ -1815,3 +1821,31 @@ Node-types entries with each shared display's entry repeated once per storage ki
 ### `packages/tools/src/validate/parity-fixtures.ts::keysInOrder`
 
 The `JSON.stringify` replacer behind the fixture files (`serializeFixtures`, `serializeLeftOut`): every object is written with its keys sorted, and arrays keep their order. A fixture's input is materialized read data whose key order follows how the walk visited the node, so without sorting a change to the walk would rewrite every fixture file without changing any fixture.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::PhaseMeasurement`
+
+Accumulated milliseconds, invocation count and thrown invocation count for one instrumented operation. Refusals remain part of the observation and propagate unchanged.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile`
+
+An optional per-validator-run collector for read materialization, recursive construction, primary render and reparse durations. Separately fingerprints ordered candidate identities and rendered text. It does not change validation results or install a global observer; a caller finishes it once after the run.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::measure`
+
+Times one synchronous operation, preserving its return identity and propagating its original exception. The finally path records elapsed time for successful and throwing calls alike. An injectable clock permits deterministic accounting tests.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::candidate`
+
+Adds an ordered candidate identity from entry name, source digest, canonical kind and byte span. Source digests are cached within the run rather than rehashing a corpus entry for every candidate; equal display names with different source content remain distinct.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::output`
+
+Fingerprints primary rendered outputs in order, including their source and target kind, and records UTF-8 byte and output counts. Hashing occurs outside the render-phase timer.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::finish`
+
+Finalizes candidate and output digests and returns them with phase measurements. Called once per run, outside the validator and operation timers.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::measureRoundtrip`
+
+Runs an operation through the optional collector, or directly when profiling is absent. The same action executes once in either case, so optional instrumentation preserves behavior.

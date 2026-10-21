@@ -22,9 +22,9 @@ A read node as the timing calls it: a node the slot readers reach (`wrappedNodes
 
 ### `packages/tools/src/profile/storage.ts::run`
 
-Runs the native parsed-corpus workflow in fresh GC-enabled processes, defaulting to full-depth hydration. Validates settings before spawning, optionally gates each worker on machine idleness, refuses mismatched work across rounds, and writes native raw samples plus per-round median summaries. Process startup and imports are excluded from worker timers.
+Runs either native parse/hydrate/render measurements or, with validation enabled, the canonical deep read, factory and IR validator buckets under both storages. Fresh workers keep engine caches independent; paired storage order alternates by round. Settings and complete workload fingerprints are checked before aggregation. The report discriminates native hydration from paired validation samples.
 
-### `packages/tools/src/profile/storage.ts::median`
+### `packages/tools/src/profile/storage-common.ts::median`
 
 The middle value of a sorted sample, or the mean of its two middle values. An empty sample is an error.
 
@@ -34,7 +34,7 @@ Refuses non-integer or out-of-range benchmark settings before any subprocess is 
 
 ### `packages/tools/src/profile/storage.ts::StorageBenchOptions`
 
-Configuration for native corpus parse, hydration and render: grammar selection, rounds, warmup and measured batches, hydration depth (all by default), optional smoke limit, per-worker idle-gate script and JSON output path.
+Shared runner settings for grammar selection, rounds, warmup and measured iterations, idle gating and JSON output. Validation mode compares the three existing full-corpus validator buckets across object and arena storage. Native mode defaults to full depth and also accepts bounded depth and a corpus smoke limit; those controls cannot silently restrict validation mode.
 
 ### `packages/tools/src/profile/storage.ts::retainedMemory`
 
@@ -46,7 +46,7 @@ Requires identical corpus, depth, eligible/root-record counts, render bytes/hash
 
 ### `packages/tools/src/profile/storage.ts::runWorker`
 
-Runs the native hydration worker in a fresh GC-enabled production Node process, after the optional idle gate. Adds round and idle observations; startup and imports remain outside worker timers.
+Runs a named native-hydration or validation-storage worker in a fresh GC-enabled production Node process after the optional idle gate. Records round and idle observations; startup and module imports stay outside worker timings.
 
 ### `packages/tools/src/profile/storage-common.ts::collectGarbage`
 
@@ -103,3 +103,27 @@ A native hydration sample with grammar, fresh worker PID and ordered corpus fing
 ### `packages/tools/src/profile/native-hydration-worker.ts::sampleNative`
 
 Loads the grammar's native hooks and corpus, then measures native parse, requested-depth hydration and address-based rendering in a fresh process without constructing wrapped nodes. Returns raw samples plus worker and corpus provenance.
+
+### `packages/tools/src/profile/validation-storage-worker.ts::ValidationStorageOptions`
+
+One fresh worker's grammar, explicit parsed-node storage, warmup count and measured iteration count. It always exercises the full corpus and deep read validation.
+
+### `packages/tools/src/profile/validation-storage-worker.ts::sampleValidationStorage`
+
+Selects storage through the canonical validation switch before loading an engine, then profiles the actual deep read, raw factory and IR validators. Warmup and GC are outside measured samples. Each sample records total validator time plus instrumented phases, semantic-result, candidate and rendered-output fingerprints. Drift between iterations fails the worker; worker exit bounds cached native engine lifetime.
+
+### `packages/tools/src/profile/validation-storage.ts::ValidationBucketSample`
+
+One canonical validator bucket's counts, semantic-result digest, ordered candidate/output facts, per-phase call/throw counts and raw iteration durations. Total validator time includes preparation and AST checks; phase durations describe narrower operations.
+
+### `packages/tools/src/profile/validation-storage.ts::ValidationStorageRun`
+
+One fresh process's grammar, selected storage, PID, full ordered corpus fingerprint and all three validation bucket samples. The parent adds round and idle-gate observations.
+
+### `packages/tools/src/profile/validation-storage.ts::bucketFingerprint`
+
+The non-timing identity of a bucket: complete validator-result digest, counts, ordered cases and phase call/throw counts, with exact rendered bytes by default. Deep read comparisons may omit byte details across storage modes because native source folding and object reconstruction can preserve different whitespace while passing identical AST checks. Every iteration and same-storage round still uses exact output identity.
+
+### `packages/tools/src/profile/validation-storage.ts::summarizeValidationStorage`
+
+Requires all canonical buckets, identical ordered work, complete validation results and call/throw counts across modes, and exactly paired distinct rounds. Rendered bytes must be stable within each storage mode; factory and IR bytes must also agree across modes. Deep read byte fingerprints are retained for both modes because their production render paths can format whitespace differently. Medians summarize iterations within workers, then medians and ranges across rounds; no expected winner is encoded.

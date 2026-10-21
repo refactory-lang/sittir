@@ -2,7 +2,7 @@ import { type CommandModule, defineCommand } from '../../framework/command-modul
 
 export const benchStorage: CommandModule = {
 	name: 'bench-storage',
-	describe: 'Measure native corpus parse, hydration, render and retained memory',
+	describe: 'Measure native workflows or object/arena validation buckets',
 	register: (program) => {
 		defineCommand(program, benchStorage)
 			.argument('[grammars...]', 'Defaults to all stable grammars')
@@ -11,6 +11,7 @@ export const benchStorage: CommandModule = {
 			.option('--iterations <n>', 'Measured corpus batches per phase and round', '3')
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
 			.option('--native-depth <depth>', 'Native hydration depth: a positive integer or all', 'all')
+			.option('--validation', 'Profile deep read, factory and IR render/parse validators with object and arena storage')
 			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
 			.option('--output <path>', 'Write the complete JSON report to this file')
 			.action(
@@ -22,6 +23,7 @@ export const benchStorage: CommandModule = {
 						iterations: string;
 						limit?: string;
 						nativeDepth: string;
+						validation?: boolean;
 						idleGate?: string;
 						output?: string;
 					}
@@ -34,6 +36,7 @@ export const benchStorage: CommandModule = {
 						iterations: Number(opts.iterations),
 						limit: opts.limit === undefined ? undefined : Number(opts.limit),
 						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
+						validation: opts.validation,
 						idleGate: opts.idleGate,
 						output: opts.output
 					});

@@ -186,12 +186,16 @@ export interface NativeEngineLike<TNode = unknown> {
 	readRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
+	/** JSON pairs of coordinates and native record addresses for the hydrated typed subtree, including nested content but no node fields or words. */
+	recordCandidates?(treeId: number, index: number): string;
 	/** The words records fill in chunk `n` of the tree's arena, copied. Present when the addon carries the record codec. */
 	chunk?(treeId: number, n: number): Uint32Array;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
+	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
+	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
 	/**
 	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
 	 * `Siblings`.
@@ -369,6 +373,22 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 	return {
 		format,
 		record: (index, depth) => readRecord.call(engine, treeId, index, depth) ?? undefined,
+		hydrate(index, depth) {
+			if (engine.hydrateRecord === undefined)
+				throw new Error('native record hydration needs an addon with hydrateRecord');
+			return engine.hydrateRecord(treeId, index, depth) ?? undefined;
+		},
+		candidates(index) {
+			if (engine.recordCandidates === undefined)
+				throw new Error('native candidate enumeration needs an addon with recordCandidates');
+			return JSON.parse(engine.recordCandidates(treeId, index));
+		},
+		renderCandidate(index, address) {
+			if (engine.renderCandidate === undefined)
+				throw new Error('native candidate rendering needs an addon with renderCandidate');
+			return engine.renderCandidate(treeId, index, address);
+		},
+		render: (address, leading, trailing) => renderRecord.call(engine, treeId, address, leading, trailing),
 		object: (index, depth = 1) => readObjectAt(index, depth),
 		words(address, length) {
 			const n = chunkOf(address, format);
@@ -522,7 +542,7 @@ export function createNativeEngine<
 							holdReadTree(stub, liveToken);
 							return stub as TNode;
 						};
-						// One root per depth: the parse's own read seeds it, and a
+						// One root per depth: the first root read seeds it, and a
 						// root asked for at another depth is read once.
 						const roots = new Map<number, unknown>();
 						const tree: TreeHandle = {
@@ -533,7 +553,9 @@ export function createNativeEngine<
 								if (index !== 0) return readAt(index, depth);
 								let cached = roots.get(depth);
 								if (cached === undefined) {
-									cached = readAt(0, depth);
+									cached = Object.assign(readObject(readAt(0, depth), 'the root'), {
+										$errors: Object.freeze(parsed.errors)
+									});
 									roots.set(depth, cached);
 								}
 								return cached;
@@ -573,10 +595,13 @@ export function createNativeEngine<
 							}
 						};
 						// The parse's error regions ride beside the root and are stamped here.
-						const root = Object.assign(readObject(readAt(0, depthOf(parseOptions)), 'the root'), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
-						roots.set(depthOf(parseOptions), root);
 						registerTree(liveToken, tree);
-						return { root, tree };
+						return {
+							get root() {
+								return tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot;
+							},
+							tree
+						};
 					}
 				}
 			}

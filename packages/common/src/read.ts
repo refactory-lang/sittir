@@ -45,6 +45,14 @@ export interface RecordReader {
 	readonly format: CellFormat;
 	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
 	record(index: number, depth?: number): number | undefined;
+	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
+	hydrate(index: number, depth?: number): number | undefined;
+	/** The hydrated typed subtree in stored field order, as metadata and native addresses. Includes content sharing a row; excludes units and captured strings. */
+	candidates(index: number): readonly (readonly [coordinate: NodeCoordinate, address: number | null])[];
+	/** Renders a native record address without exporting its words. The edge flags follow the native render-root convention. */
+	render(address: number, leading: boolean, trailing: boolean): string;
+	/** Renders a parsed candidate, excluding its outer trivia, without exporting its data. */
+	renderCandidate(index: number, address?: number): string;
 	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
 	object(index: number, depth?: number): unknown;
 	/** The words of the chunk `address` lies in, holding at least `length` words from it: a copy JavaScript owns, fetched again when the words sought lie past the copy held. */

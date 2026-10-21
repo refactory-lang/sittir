@@ -206,6 +206,13 @@ readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null):
  */
 hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
 /**
+ * r" The hydrated typed nodes below `index` in stored field
+ * r" order, as JSON pairs `[coordinate, address | null]`. Nested
+ * r" content sharing a row is included; units and captured
+ * r" strings are omitted. Exports no node fields or words.
+ */
+recordCandidates(treeId: TreeId, index: NodeIndex): string
+/**
  * r" The nodes at `indexes` of the live tree `treeId`, in order:
  * r" each read as `read` reads it when `wire` is `object`, and,
  * r" when it is `record`, each record's address as `readRecord`
@@ -224,6 +231,12 @@ readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | 
  * r" arena, and a record whose render refuses.
  */
 renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" Renders a parsed candidate without exporting its data or its
+ * r" outer trivia. A record address must belong to its row; a
+ * r" recordless node renders through its native coordinate.
+ */
+renderCandidate(treeId: number, index: number, address?: number | undefined | null, options?: object | undefined | null): string
 /**
  * r" The coordinate a read of the live tree `treeId` names the node
  * r" at `index` by, as `[kind, end]`: the kind the read stamps on

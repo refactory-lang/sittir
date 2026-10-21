@@ -1,0 +1,724 @@
+{
+  "snapshot": "/private/tmp/sittir-validation-8jbs8v1h",
+  "baseCommit": "6746b2a5176cb37fc67ab7d5772128bf5de2198c",
+  "overlayScope": [
+    "docs/cli-command-glossary.md",
+    "docs/glossary/packages-common-src.md",
+    "docs/glossary/packages-tools-src-profile.md",
+    "docs/glossary/packages-tools-src-validate.md",
+    "docs/glossary/packages-types-src.md",
+    "docs/superpowers/probes/2026-10-12-record-wire/README.md",
+    "packages/cli/src/commands/tool/bench-storage.ts",
+    "packages/common/src/engine.ts",
+    "packages/common/src/read.ts",
+    "packages/common/src/utils.ts",
+    "packages/python/native/index.d.ts",
+    "packages/regex/native/index.d.ts",
+    "packages/rust/native/index.d.ts",
+    "packages/rust/tests/engine.test.ts",
+    "packages/scm/native/index.d.ts",
+    "packages/tools/src/profile/storage-common.ts",
+    "packages/tools/src/profile/storage.ts",
+    "packages/tools/src/profile/validation-storage-worker.ts",
+    "packages/tools/src/profile/validation-storage.ts",
+    "packages/tools/src/validate/factory-storage.ts",
+    "packages/tools/src/validate/read-render-parse.ts",
+    "packages/tools/src/validate/roundtrip-profile.ts",
+    "packages/tools/tests/native-read-validator.test.ts",
+    "packages/tools/tests/roundtrip-profile.test.ts",
+    "packages/tools/tests/storage-bench.test.ts",
+    "packages/tools/tests/validation-storage.test.ts",
+    "packages/types/src/engine-api.ts",
+    "packages/typescript/native/index.d.ts",
+    "rust/crates/sittir-core/src/arena/admit.rs",
+    "rust/crates/sittir-core/src/arena/parsed.rs",
+    "rust/crates/sittir-core/src/napi_engine.rs",
+    "rust/crates/sittir-parity-tests/tests/record_render.rs"
+  ],
+  "implementationOverlayScope": [
+    "packages/cli/src/commands/tool/bench-storage.ts",
+    "packages/common/src/engine.ts",
+    "packages/common/src/read.ts",
+    "packages/common/src/utils.ts",
+    "packages/python/native/index.d.ts",
+    "packages/regex/native/index.d.ts",
+    "packages/rust/native/index.d.ts",
+    "packages/rust/tests/engine.test.ts",
+    "packages/scm/native/index.d.ts",
+    "packages/tools/src/profile/storage-common.ts",
+    "packages/tools/src/profile/storage.ts",
+    "packages/tools/src/profile/validation-storage-worker.ts",
+    "packages/tools/src/profile/validation-storage.ts",
+    "packages/tools/src/validate/factory-storage.ts",
+    "packages/tools/src/validate/read-render-parse.ts",
+    "packages/tools/src/validate/roundtrip-profile.ts",
+    "packages/tools/tests/native-read-validator.test.ts",
+    "packages/tools/tests/roundtrip-profile.test.ts",
+    "packages/tools/tests/storage-bench.test.ts",
+    "packages/tools/tests/validation-storage.test.ts",
+    "packages/types/src/engine-api.ts",
+    "packages/typescript/native/index.d.ts",
+    "rust/crates/sittir-core/src/arena/admit.rs",
+    "rust/crates/sittir-core/src/arena/parsed.rs",
+    "rust/crates/sittir-core/src/napi_engine.rs",
+    "rust/crates/sittir-parity-tests/tests/record_render.rs"
+  ],
+  "implementationFilesSha256": {
+    "packages/cli/src/commands/tool/bench-storage.ts": "5170c78c3e5c25a383b6416672c53d0b5751150e9c4f9fa77718b0ce715e8e3c",
+    "packages/common/src/engine.ts": "658a4409a9af59388f7949fa82e91855913235add7a4f18ad89d19eeb6d37bfa",
+    "packages/common/src/read.ts": "3f150a7c9de660c91050f3abcf53b10e027f864eb0c5a81130b470b068cc4f1a",
+    "packages/common/src/utils.ts": "f39ee3291cea36f8377f86a31cdf532e9476df0e51a5f9b797d41d8013191218",
+    "packages/python/native/index.d.ts": "534a4224c3501786187578a101e37391728203c8d51c6053348ce1592890e8d2",
+    "packages/regex/native/index.d.ts": "534a4224c3501786187578a101e37391728203c8d51c6053348ce1592890e8d2",
+    "packages/rust/native/index.d.ts": "534a4224c3501786187578a101e37391728203c8d51c6053348ce1592890e8d2",
+    "packages/rust/tests/engine.test.ts": "56a6c839613a54225101c89bcabd86218df163e81fe605ab2400dab36af4c828",
+    "packages/scm/native/index.d.ts": "534a4224c3501786187578a101e37391728203c8d51c6053348ce1592890e8d2",
+    "packages/tools/src/profile/storage-common.ts": "5b7908265e3189aca94c00139faf4ca94bab81678f0de095839d276766664e43",
+    "packages/tools/src/profile/storage.ts": "9a88c5501ce6a973b8309c47208de7d39fe16dced421628c025a789368db0626",
+    "packages/tools/src/profile/validation-storage-worker.ts": "dea10a4ecadc3c5225b480b8e69f7399f7c98ebfdac41abb22f6152b741490e0",
+    "packages/tools/src/profile/validation-storage.ts": "6071c8b27f816a58f4be078d1e1896d7f4cc7134558d7bfa69846af3cc7a53ec",
+    "packages/tools/src/validate/factory-storage.ts": "f61ba552a37e9e7a2fb29df3849ab6ad05e67f5744498aeefd4333b58a9a9a52",
+    "packages/tools/src/validate/read-render-parse.ts": "b467eb880f1ffe86ebf9d1cbdd974333b50e0dc0bd2f556dfd4af88a75937784",
+    "packages/tools/src/validate/roundtrip-profile.ts": "28d45de070d926af8b3d4d04aec044e2458724aae017a67ce560981425ccbb52",
+    "packages/tools/tests/native-read-validator.test.ts": "1239100c450507320fa017297cee43c9662e212e2fa371d111d88ea5ecb1c1e4",
+    "packages/tools/tests/roundtrip-profile.test.ts": "dd3d6a008aa02a8e00cd122b90fe52b630c5111258a466b30fc8dcbd94999aad",
+    "packages/tools/tests/storage-bench.test.ts": "96b4418b73a412900eddef07c350ae49284c57643a9002e048443cb73fc27ff8",
+    "packages/tools/tests/validation-storage.test.ts": "0415fc522f3683eeb00503742fa672dc6d38b169a84e33298615a08de02d1673",
+    "packages/types/src/engine-api.ts": "31d81db4664b24451af2d497af6412e492b2b4d119de167437dd759803ed46af",
+    "packages/typescript/native/index.d.ts": "534a4224c3501786187578a101e37391728203c8d51c6053348ce1592890e8d2",
+    "rust/crates/sittir-core/src/arena/admit.rs": "6c34a7f4d42f5d92cf8013a7e3ff59491087a29482f198751abdeec67821cb33",
+    "rust/crates/sittir-core/src/arena/parsed.rs": "0d90a6af11a264fcb8854e3ffedcc019f9fc574c51e918de10eefac047f54079",
+    "rust/crates/sittir-core/src/napi_engine.rs": "17c2e65e891735d89d1f93d10bb757ded4be5a456ecf9fbe43da2b2376449e9f",
+    "rust/crates/sittir-parity-tests/tests/record_render.rs": "273fa5dca4d0cbd63734565953e2b2fb1624e4d3eed6b74ae916431f9cb415e7"
+  },
+  "implementationOverlaySha256": "a48b118b9fded9b84f9359aa6d298c389cab52ddaa8d6c1ce03d9e5c5b55be5e",
+  "completeRuntimeSource": {
+    "files": 2201,
+    "sha256": "e386a90b7e0d71de49a571c950fbaa927457e74c7164b5d6700222256576e834"
+  },
+  "compiledRuntime": {
+    "files": 2270,
+    "sha256": "e909cd808f669758d01baad3b9abfe5f086443a67f5d6057d1ea1857c6e580d3"
+  },
+  "nativeAndWasmSha256": {
+    "packages/python/.sittir/parser.wasm": "6e5c36355549a746f9d66909b9337b1563de6b30a4185061bfcf4176cb2995cd",
+    "packages/python/.sittir/upstream.wasm": "125f5a0d4c58434794f2fde1164fd8e16e0117655e469440737dbcae58924716",
+    "packages/python/native/sittir-python.darwin-arm64.node": "86e1d4bf3318ede619d528d89a44b087fa5ee1622adacd5f5635432b48539913",
+    "packages/regex/.sittir/parser.wasm": "371e2e8f609170cf31749f7eb7c432da0609de2abf8d47f06f055dcec3ab7cca",
+    "packages/regex/.sittir/upstream.wasm": "7b03d1251d48be6856dd639a01edd3fa5b377a43e37ee9e7674c47cbd3c1a9da",
+    "packages/regex/native/sittir-regex.darwin-arm64.node": "419c97284928a4c916152b0a113e4fc4491a27f1fee4625f503f313adcc0d00e",
+    "packages/rust/.sittir/parser.wasm": "dd2b485de15a4ba53df3c9b2b51a18a99081b53dd793b7bd5ed31d0e3778d9ec",
+    "packages/rust/.sittir/upstream.wasm": "d2c6c2223bffb21c7adaf051305552029131d953493c7883a4014bd6836627af",
+    "packages/rust/native/sittir-rust.darwin-arm64.node": "014b12f5f3e304346e9f560ed5060d8d2ee30f58080257a23ee07a5d0cf6d20b",
+    "packages/scm/.sittir/parser.wasm": "bb61d28a0cd4b158d09eace7bed6b68796b208b0194f5b3f105620cfa1c7f5b1",
+    "packages/scm/.sittir/upstream.wasm": "8e331f552ad6973c09ef81b331a64d57f95fda04a059db7e00e1a420b188a361",
+    "packages/scm/native/sittir-scm.darwin-arm64.node": "ee9fee80305ee81813319c65444465e1a20d7106b694ef399bf90bcbc806963b",
+    "packages/typescript/.sittir/parser.wasm": "ac8ce5467fcd0a17a5bd03131f59abe342a3ee7ea4bf06d393a4b237a40cc1d9",
+    "packages/typescript/.sittir/upstream.wasm": "dd6d9f0568433a24c5f607a3ad1ffdfb67746fcf8dbb7afae7035a6ec1c19047",
+    "packages/typescript/native/sittir-typescript.darwin-arm64.node": "c8be4b19c1866f40f854641377fb24d6c3811ea32f27ccafff063715cc334368"
+  },
+  "command": [
+    "node",
+    "packages/cli/dist/cli.js",
+    "tool",
+    "bench-storage",
+    "--validation",
+    "--rounds",
+    "5",
+    "--warmup",
+    "2",
+    "--iterations",
+    "3",
+    "--idle-gate",
+    "docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh",
+    "--output",
+    "/private/tmp/sittir-validation-8jbs8v1h/validation-storage.json"
+  ],
+  "snapshotGitIndex": {
+    "independent": true,
+    "commitCreated": false,
+    "sourceTrackedPathsSha256": "d6688355228528f7c0bc273c98aae1d46f659a4eb48f769f4a3620d187e90e32",
+    "gitVisiblePathsSha256": "70690eb9de27d8c47c1201f22e9248c2b8544e12065a9b0d031478a33e8652de",
+    "visiblePathCount": 4418,
+    "sourceAndSnapshotVisiblePathsMatchAtInitialization": true,
+    "nonSourceOutputsCreatedAfterInitialization": [
+      "validation-preflight.json",
+      "validation-storage.json"
+    ]
+  },
+  "workspaceImportsResolveWithinSnapshot": true,
+  "compiledHarnessFilesSha256": {
+    "packages/tools/dist/profile/storage.js": "5130c1986889977df6fe5eac59120bc9dc5e86a470de6cab2b2e37a1032a3121",
+    "packages/tools/dist/profile/storage-common.js": "b6451b960c2d71e058358c18a743d8754f2619ecf3e343adedfdffefa48a9998",
+    "packages/tools/dist/profile/validation-storage-worker.js": "5a0a4582ebd3694089c0db46e25b33c3160eec209faf90d94eea2b1cc7804727",
+    "packages/tools/dist/profile/validation-storage.js": "f3b8063cf496d0f5ce7c4dc5cd32cbf1a7f98c95a458926f4a7dc52d4cb11405",
+    "packages/tools/dist/validate/roundtrip-profile.js": "0716d1aadbe11000da37fc65ae9164940a23597619ed99d76fb58fc5efbfbc28",
+    "packages/tools/dist/validate/read-render-parse.js": "7f11edf629f6082469ade1c27236d71fb8f2a7eaefcc022ced296990df0edf9c",
+    "packages/tools/dist/validate/factory-storage.js": "6f50857d007c75cb0e8a8d8a757e1cec6afa0ab5cebb7e27800d38395fb180c7",
+    "packages/tools/dist/validate/common.js": "0db324aae2422c24a4554e5fd6811a30f6621f6f37c1dcd6b96c374f2280cfcb"
+  },
+  "compiledHarnessSha256": "59dd7c8241e3faaee10bd98df39a8f326bd7d7bf523293fcf5e9bb14b279f2ec",
+  "rawReportsSha256": {
+    "2026-10-21-validation-storage-darwin-arm64.json": "ac8c9686bf8bad7d76350a2f92b8539882db5a4a0a12f4adc1f70db1b2a88f2f"
+  },
+  "environment": {
+    "node": "v26.12.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "os": "27.2.0",
+    "cpu": "Apple M4 Pro",
+    "cpuCount": 14,
+    "cwd": "/private/tmp/sittir-validation-8jbs8v1h",
+    "nodeEnv": "production",
+    "idleGated": true,
+    "harnessSha256": "59dd7c8241e3faaee10bd98df39a8f326bd7d7bf523293fcf5e9bb14b279f2ec"
+  },
+  "startedAt": "2026-10-21T22:38:25.526Z",
+  "finishedAt": "2026-10-21T23:05:01.517Z",
+  "verification": {
+    "allStatisticsIndependentlyRecomputed": true,
+    "sourceAndCompiledAndNativeAndWasmUnchangedBeforeAfter": true,
+    "compiledHarnessHashVerified": true,
+    "exactWorkResultsAndCallsAcrossStorageIterationsRounds": true,
+    "stableOutputWithinEachStorage": true,
+    "exactFactoryAndIrOutputAcrossStorages": true,
+    "freshWorkers": 50,
+    "idlePercentRange": [
+      76,
+      93
+    ],
+    "corpusEntries": 440,
+    "acceptedDeepRoots": 436,
+    "timedMeasurements": 450,
+    "summary": [
+      {
+        "bucket": "read-render-parse",
+        "workCases": 11629,
+        "renderCalls": 11629,
+        "totalsOfGrammarMedians": [
+          {
+            "phase": "validator",
+            "objectMs": 10015.171916,
+            "arenaMs": 7550.117041000002,
+            "arenaOverObject": 0.7538679419909023
+          },
+          {
+            "phase": "read",
+            "objectMs": 264.5132650000762,
+            "arenaMs": 31.62335499996709,
+            "arenaOverObject": 0.11955300237951386
+          },
+          {
+            "phase": "build",
+            "objectMs": 0,
+            "arenaMs": 0,
+            "arenaOverObject": null
+          },
+          {
+            "phase": "render",
+            "objectMs": 834.2620069998745,
+            "arenaMs": 50.1772389999893,
+            "arenaOverObject": 0.060145659971300655
+          },
+          {
+            "phase": "parse",
+            "objectMs": 68.02392700008113,
+            "arenaMs": 65.25397899981431,
+            "arenaOverObject": 0.9592797987057772
+          }
+        ]
+      },
+      {
+        "bucket": "factory-render-parse",
+        "workCases": 4711,
+        "renderCalls": 4658,
+        "totalsOfGrammarMedians": [
+          {
+            "phase": "validator",
+            "objectMs": 10018.378958000001,
+            "arenaMs": 10135.117499,
+            "arenaOverObject": 1.0116524381328957
+          },
+          {
+            "phase": "read",
+            "objectMs": 79.01355100003957,
+            "arenaMs": 133.4769380001203,
+            "arenaOverObject": 1.689291726681838
+          },
+          {
+            "phase": "build",
+            "objectMs": 1813.8003439998488,
+            "arenaMs": 1815.2612490000754,
+            "arenaOverObject": 1.0008054387050147
+          },
+          {
+            "phase": "render",
+            "objectMs": 110.57017900004712,
+            "arenaMs": 110.80015300013247,
+            "arenaOverObject": 1.0020798917227516
+          },
+          {
+            "phase": "parse",
+            "objectMs": 33.530796999979884,
+            "arenaMs": 33.653470999995534,
+            "arenaOverObject": 1.0036585470967399
+          }
+        ]
+      },
+      {
+        "bucket": "ir-render-parse",
+        "workCases": 4191,
+        "renderCalls": 4138,
+        "totalsOfGrammarMedians": [
+          {
+            "phase": "validator",
+            "objectMs": 10033.323125000006,
+            "arenaMs": 10135.597749000006,
+            "arenaOverObject": 1.0101934944908892
+          },
+          {
+            "phase": "read",
+            "objectMs": 74.99622099990711,
+            "arenaMs": 127.1076859998434,
+            "arenaOverObject": 1.694854544737672
+          },
+          {
+            "phase": "build",
+            "objectMs": 1813.1416490001575,
+            "arenaMs": 1814.8979789996874,
+            "arenaOverObject": 1.0009686667340627
+          },
+          {
+            "phase": "render",
+            "objectMs": 104.89540999999781,
+            "arenaMs": 104.08443300009594,
+            "arenaOverObject": 0.9922687084220188
+          },
+          {
+            "phase": "parse",
+            "objectMs": 31.845108000116397,
+            "arenaMs": 31.752386000162005,
+            "arenaOverObject": 0.9970883439944982
+          }
+        ]
+      }
+    ]
+  },
+  "method": "Canonical deep read/render/reparse, raw factory/render/reparse and IR/render/reparse, paired parsed storage modes. Explicit root Infinity read before candidate enumeration; arena hydration and typed-cell walk native with only coordinate/address metadata exported, no JS inspection or text access. Normal source folding enabled. Current factory and IR constructors build objects in both modes. Complete validator totals retain normal checking and instrumentation overhead; narrow phases exclude digest finalization.",
+  "gates": {
+    "native-read-final-types": {
+      "exit": 0,
+      "seconds": 140.17,
+      "command": [
+        "pnpm",
+        "run",
+        "type-check"
+      ]
+    },
+    "native-read-final-lint": {
+      "exit": 0,
+      "seconds": 0.69,
+      "command": [
+        "pnpm",
+        "run",
+        "lint"
+      ]
+    },
+    "native-read-final-clippy-object-no-default": {
+      "exit": 0,
+      "seconds": 0.19,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--no-default-features",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "native-read-final-clippy-object-default": {
+      "exit": 0,
+      "seconds": 0.17,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "native-read-final-clippy-arena-no-default": {
+      "exit": 0,
+      "seconds": 0.24,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--no-default-features",
+        "--features",
+        "sittir-parity-tests/arena",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "native-read-final-clippy-arena-default": {
+      "exit": 0,
+      "seconds": 20.09,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--features",
+        "sittir-parity-tests/arena",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "native-read-final-rust-object": {
+      "exit": 0,
+      "seconds": 19.53,
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "sittir-core",
+        "-p",
+        "sittir-node-macros",
+        "-p",
+        "sittir-parity-tests",
+        "--no-default-features"
+      ]
+    },
+    "native-read-final-rust-arena": {
+      "exit": 0,
+      "seconds": 54.33,
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "sittir-core",
+        "-p",
+        "sittir-node-macros",
+        "-p",
+        "sittir-parity-tests",
+        "--no-default-features",
+        "--features",
+        "sittir-parity-tests/arena"
+      ]
+    },
+    "native-read-final-rust-debug": {
+      "exit": 0,
+      "seconds": 13.4,
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "sittir-parity-tests",
+        "--no-default-features",
+        "--features",
+        "sittir-core/read-debug-checks",
+        "--test",
+        "typed_read"
+      ]
+    },
+    "native-read-final-vitest-repeat": {
+      "exit": 0,
+      "seconds": 178.08,
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--maxWorkers",
+        "4"
+      ]
+    },
+    "native-read-final-counts-object": {
+      "exit": 0,
+      "seconds": 57.13,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "counts",
+        "--node-storage",
+        "object"
+      ]
+    },
+    "native-read-final-history-object": {
+      "exit": 0,
+      "seconds": 1.24,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "history",
+        "--diff",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/validation-report-object.json",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/native-read-final-report-object.json"
+      ]
+    },
+    "native-read-final-counts-arena": {
+      "exit": 0,
+      "seconds": 53.47,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "counts",
+        "--node-storage",
+        "arena"
+      ]
+    },
+    "native-read-final-history-arena": {
+      "exit": 0,
+      "seconds": 1.29,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "history",
+        "--diff",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/validation-report-object.json",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/native-read-final-report-arena.json"
+      ]
+    },
+    "native-read-final-test-types": {
+      "exit": 0,
+      "command": [
+        "pnpm",
+        "run",
+        "type-check:tests"
+      ]
+    },
+    "native-read-final-test-lint": {
+      "exit": 0,
+      "command": [
+        "pnpm",
+        "run",
+        "lint"
+      ]
+    },
+    "native-read-final-targeted-green": {
+      "exit": 0,
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "packages/rust/tests/engine.test.ts",
+        "packages/tools/tests/storage-bench.test.ts",
+        "-t",
+        "reads the root and every coordinate|profiles the canonical",
+        "--maxWorkers",
+        "1"
+      ]
+    }
+  },
+  "fullVitest": {
+    "filesPassed": 812,
+    "testsPassed": 8197,
+    "expectedFailures": 7,
+    "skipped": 19,
+    "todo": 4,
+    "total": 8227,
+    "reportSha256": "b70e19eb6eee75b7df5f8202759514d82bc3c1b2b313e5bebb6eb46405554a2f"
+  },
+  "rustTests": {
+    "object": {
+      "passed": 422,
+      "suites": 26
+    },
+    "arena": {
+      "passed": 525,
+      "suites": 26
+    },
+    "debug": {
+      "passed": 29,
+      "suites": 1
+    }
+  },
+  "validationReportComparison": {
+    "allReportsEqual": true,
+    "serializedRows": 72,
+    "all29RawFieldsMatch": true,
+    "reportSha256": {
+      "object": "495dbccc906cc3e052f028ae7e544e7ff9db3c1bfa5aac3bad28af63b37cd0d8",
+      "arena": "495dbccc906cc3e052f028ae7e544e7ff9db3c1bfa5aac3bad28af63b37cd0d8"
+    },
+    "normalizedRows": 193,
+    "rawCounts": {
+      "python": {
+        "fromPass": 180,
+        "fromTotal": 180,
+        "fromTrivia": 0,
+        "covPass": 149,
+        "covTotal": 149,
+        "read-render-parsePass": 115,
+        "read-render-parseTotal": 116,
+        "read-render-parseAstMatchPass": 115,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 115,
+        "read-render-parse-shallowTotal": 116,
+        "read-render-parse-shallowAstMatchPass": 115,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 1404,
+        "factory-storageTotal": 1404,
+        "factory-storageAstMatchPass": 1404,
+        "ir-storagePass": 1387,
+        "ir-storageTotal": 1387,
+        "ir-storageAstMatchPass": 1387,
+        "built-render-parsePass": 2685,
+        "built-render-parseTotal": 2685,
+        "built-render-parseAstMatchPass": 2685,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 4245,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 158,
+        "layout-storedSlots": 16,
+        "layout-storedSeparators": 0
+      },
+      "regex": {
+        "fromPass": 50,
+        "fromTotal": 50,
+        "fromTrivia": 0,
+        "covPass": 28,
+        "covTotal": 28,
+        "read-render-parsePass": 37,
+        "read-render-parseTotal": 37,
+        "read-render-parseAstMatchPass": 37,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 37,
+        "read-render-parse-shallowTotal": 37,
+        "read-render-parse-shallowAstMatchPass": 37,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 183,
+        "factory-storageTotal": 183,
+        "factory-storageAstMatchPass": 183,
+        "ir-storagePass": 137,
+        "ir-storageTotal": 137,
+        "ir-storageAstMatchPass": 137,
+        "built-render-parsePass": 320,
+        "built-render-parseTotal": 320,
+        "built-render-parseAstMatchPass": 320,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 387,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 18,
+        "layout-storedSlots": 0,
+        "layout-storedSeparators": 0
+      },
+      "rust": {
+        "fromPass": 246,
+        "fromTotal": 246,
+        "fromTrivia": 0,
+        "covPass": 207,
+        "covTotal": 207,
+        "read-render-parsePass": 149,
+        "read-render-parseTotal": 149,
+        "read-render-parseAstMatchPass": 149,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 149,
+        "read-render-parse-shallowTotal": 149,
+        "read-render-parse-shallowAstMatchPass": 149,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 1681,
+        "factory-storageTotal": 1681,
+        "factory-storageAstMatchPass": 1681,
+        "ir-storagePass": 1383,
+        "ir-storageTotal": 1383,
+        "ir-storageAstMatchPass": 1383,
+        "built-render-parsePass": 3064,
+        "built-render-parseTotal": 3064,
+        "built-render-parseAstMatchPass": 3064,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 4547,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 284,
+        "layout-storedSlots": 18,
+        "layout-storedSeparators": 0
+      },
+      "scm": {
+        "fromPass": 27,
+        "fromTotal": 27,
+        "fromTrivia": 0,
+        "covPass": 21,
+        "covTotal": 21,
+        "read-render-parsePass": 19,
+        "read-render-parseTotal": 19,
+        "read-render-parseAstMatchPass": 19,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 19,
+        "read-render-parse-shallowTotal": 19,
+        "read-render-parse-shallowAstMatchPass": 19,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 123,
+        "factory-storageTotal": 123,
+        "factory-storageAstMatchPass": 123,
+        "ir-storagePass": 118,
+        "ir-storageTotal": 118,
+        "ir-storageAstMatchPass": 118,
+        "built-render-parsePass": 241,
+        "built-render-parseTotal": 241,
+        "built-render-parseAstMatchPass": 241,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 729,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 68,
+        "layout-storedSlots": 0,
+        "layout-storedSeparators": 0
+      },
+      "typescript": {
+        "fromPass": 193,
+        "fromTotal": 193,
+        "fromTrivia": 0,
+        "covPass": 203,
+        "covTotal": 203,
+        "read-render-parsePass": 116,
+        "read-render-parseTotal": 119,
+        "read-render-parseAstMatchPass": 116,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 116,
+        "read-render-parse-shallowTotal": 119,
+        "read-render-parse-shallowAstMatchPass": 116,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 1320,
+        "factory-storageTotal": 1320,
+        "factory-storageAstMatchPass": 1320,
+        "ir-storagePass": 1166,
+        "ir-storageTotal": 1166,
+        "ir-storageAstMatchPass": 1166,
+        "built-render-parsePass": 2486,
+        "built-render-parseTotal": 2486,
+        "built-render-parseAstMatchPass": 2486,
+        "built-render-parseSeparatorTolerated": 59,
+        "layout-runsTotal": 3931,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 259,
+        "layout-storedSlots": 20,
+        "layout-storedSeparators": 0
+      }
+    }
+  }
+}

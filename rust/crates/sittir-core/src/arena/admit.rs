@@ -50,6 +50,37 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
+pub(super) fn for_each_cell(
+    arena: &Arena,
+    at: Address,
+    record: RecordShape,
+    mut visit: impl FnMut(Cell) -> Result<(), ArenaError>,
+) -> Result<(), ArenaError> {
+    let words = arena.words(at, record.words.max(HEADER_WORDS))?;
+    for cell in record.cells {
+        let start = cell.word as usize;
+        let mut read = |words: &[u32]| visit(Cell::decode(words)?.below(at)?);
+        match cell.run {
+            None => read(
+                words
+                    .get(start..start + cell.width as usize)
+                    .ok_or(malformed("cell word", cell.word))?,
+            )?,
+            Some(run) => {
+                let list = ListCell::decode(
+                    words
+                        .get(start..start + ListCell::WIDTH as usize)
+                        .ok_or(malformed("cell word", cell.word))?,
+                )?;
+                for item in list.items(arena, run)? {
+                    read(item)?;
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Admits the records of `arena` the record at `root` reaches, their shapes
 /// by `shape`: each is read once, its header naming a kind `shape` knows and
 /// its cell's, its side record and every cell decoding, and every record a
@@ -78,25 +109,23 @@ pub fn admit(arena: &Arena, root: Address, shape: fn(KindId) -> Option<RecordSha
         let record = shape(kind).ok_or(malformed("record kind", header[0]))?;
         let words = arena.words(at, record.words.max(HEADER_WORDS))?;
         SideRecord::read(arena, Address(words[1]))?;
-        for cell in record.cells {
-            let start = cell.word as usize;
-            let mut admit_cell = |words: &[u32]| -> Result<(), ArenaError> {
-                match Cell::decode(words)?.below(at)? {
-                    Cell::Child { kind, at: child, link: None, .. } | Cell::BuiltLeaf { kind, record: child, .. } => pending.push((child, kind)),
-                    _ => {}
+        for_each_cell(arena, at, record, |cell| {
+            match cell {
+                Cell::Child {
+                    kind,
+                    at: child,
+                    link: None,
+                    ..
                 }
-                Ok(())
-            };
-            match cell.run {
-                None => admit_cell(words.get(start..start + cell.width as usize).ok_or(malformed("cell word", cell.word))?)?,
-                Some(run) => {
-                    let list = ListCell::decode(words.get(start..start + ListCell::WIDTH as usize).ok_or(malformed("cell word", cell.word))?)?;
-                    for item in list.items(arena, run)? {
-                        admit_cell(item)?;
-                    }
-                }
+                | Cell::BuiltLeaf {
+                    kind,
+                    record: child,
+                    ..
+                } => pending.push((child, kind)),
+                _ => {}
             }
-        }
+            Ok(())
+        })?;
     }
     Ok(())
 }

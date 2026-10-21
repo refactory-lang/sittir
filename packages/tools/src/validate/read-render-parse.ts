@@ -10,9 +10,11 @@
 
 import { writeSync } from 'node:fs';
 
-import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
+import type { AnyUntypedNode, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
+	decodeIndex,
+	encodeHandle,
 	nodeText,
 	carryPlace,
 	isCoordinate,
@@ -61,6 +63,7 @@ import {
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
 import { importGrammarModule } from '../grammar-internals.ts';
+import { measureRoundtrip, type RoundtripProfile } from './roundtrip-profile.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -684,6 +687,7 @@ export interface RoundTripFixture {
 export type ParityFixture = RenderFixture | RoundTripFixture;
 
 export interface ValidateReadRenderParseOptions {
+	profile?: RoundtripProfile;
 	/** Called once per successfully validated kind — emits a
 	 *  `RenderFixture` then a `RoundTripFixture`. When omitted,
 	 *  validator runs its normal pass/fail accounting without
@@ -721,6 +725,7 @@ export interface ReadRenderParseFailure {
 
 /** What rendering a node and reparsing it needs from its grammar: the parser, the native render, and the reparse wrappers. */
 export interface RenderReparseContext {
+	readonly profile?: RoundtripProfile;
 	readonly grammar: string;
 	readonly parser: { parse(text: string): unknown };
 	readonly render: (node: AnyUntypedNode) => string;
@@ -803,7 +808,7 @@ export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => 
  * and reparse dumps for one entry.
  */
 export function renderReparse(
-	data: AnyUntypedNode,
+	data: AnyUntypedNode | (() => string),
 	renderedKind: string,
 	targetKind: string,
 	source: TSNode | null,
@@ -812,8 +817,12 @@ export function renderReparse(
 	tolerance?: AstTolerance,
 	dumpLabel?: string
 ): RenderReparseOutcome {
-	data = candidateData(data, ctx.triviaOf);
-	const rendered = ctx.render(data);
+	const rendered = measureRoundtrip(ctx.profile, 'render', () => {
+		if (typeof data === 'function') return data();
+		data = candidateData(data, ctx.triviaOf);
+		return ctx.render(data);
+	});
+	ctx.profile?.output(renderedKind, targetKind, rendered);
 	if (dumpLabel !== undefined) {
 		writeSync(2, `[dump-render] ${dumpLabel} data=${JSON.stringify(data)}\n`);
 		writeSync(2, `[dump-render] ${dumpLabel} rendered=${JSON.stringify(rendered)}\n`);
@@ -821,7 +830,7 @@ export function renderReparse(
 	const wrapped = wrapRendered(rendered, renderedKind, targetKind, ctx);
 	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
-	const tree2 = ctx.parser.parse(wrapped.text) as TSTree;
+	const tree2 = measureRoundtrip(ctx.profile, 'parse', () => ctx.parser.parse(wrapped.text)) as TSTree;
 	if (dumpLabel !== undefined) {
 		writeSync(
 			2,
@@ -831,7 +840,8 @@ export function renderReparse(
 	if (tree2.rootNode.hasError) {
 		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`, rendered };
 	}
-	const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.readers);
+	const triviaOffsetAdjust =
+		typeof data === 'function' ? 0 : leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.readers);
 	const reparsed = treeRoot
 		? tree2.rootNode
 		: source !== null
@@ -932,12 +942,14 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 export async function loadRenderReparseContext(
 	grammar: string,
 	parser: RenderReparseContext['parser'],
-	nativeEngine: Awaited<ReturnType<typeof loadNativeEngine>>
+	nativeEngine: Awaited<ReturnType<typeof loadNativeEngine>>,
+	profile?: RoundtripProfile
 ): Promise<RenderReparseContext> {
 	await loadReparseHosts(grammar);
 	await deriveHostsFor(grammar, parser);
 	const model = await loadNodeModel(grammar);
 	return {
+		profile,
 		grammar,
 		visibleKinds: new Set(loadRawEntries(grammar).filter((entry: { named: boolean }) => entry.named).map((entry: { type: string }) => entry.type)),
 		parser,
@@ -965,7 +977,7 @@ export async function validateReadRenderParse(
 	const readers = await loadSlotReaders(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
-	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine);
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine, options.profile);
 	const view = kindViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
@@ -1035,36 +1047,58 @@ export async function validateReadRenderParse(
 			// the WASM `.type` seams. Build the native read handle and walk the
 			// WRAPPED tree ONCE.
 			const handle = await buildReadHandle(grammar, entry.source);
+			let deepRoot: TypedNode | undefined;
+			if (recursive === true) {
+				measureRoundtrip(options.profile, 'read', () => {
+					if (handle.records !== undefined) handle.records.hydrate(0, Infinity);
+					else if (readNode && handle.read) deepRoot = readNode(handle, undefined, Infinity) as TypedNode;
+				});
+			}
 			const candidatesByKind = new Map<
 				string,
-				{ start: number; end: number; node: TypedNode; displayKind: string }[]
+				{
+					start: number;
+					end: number;
+					node: TypedNode;
+					displayKind: string;
+					coordinate?: NodeCoordinate;
+					address?: number;
+				}[]
 			>();
-			if (readNode && handle.read) {
-				const wrappedRoot = readNode(handle) as TypedNode;
-				const seen = new Set<string>();
-				walkWrappedTree(
-					wrappedRoot,
-					readers,
-					(w: TypedNode) => {
-						if (w.$named === false) return;
-						const displayKind = kindNameFromId?.(w.$type);
-						const sourceKind = canonicalKindNameFromId?.(w.$type);
-						// Testable-surface filter is CANONICAL-keyed, like the bucketing:
-						// template filenames carry canonical spellings, so hidden minted
-						// kinds (whose display name differs) are admitted and probed
-						// against their own templates rather than silently skipped.
-						if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
-						const span = spanOf(w);
-						if (span == null) return;
-						const dedup = `${sourceKind}@${span.start}:${span.end}`;
-						if (seen.has(dedup)) return;
-						seen.add(dedup);
-						const list = candidatesByKind.get(sourceKind) ?? [];
-						list.push({ start: span.start, end: span.end, node: w, displayKind });
-						candidatesByKind.set(sourceKind, list);
-					},
-					onAccessorThrow
-				);
+			const seen = new Set<string>();
+			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate, address?: number): void => {
+				if (node.$named === false) return;
+				const displayKind = kindNameFromId?.(node.$type);
+				const kind = canonicalKindNameFromId?.(node.$type);
+				if (displayKind === undefined || kind === undefined || !ruleKinds.has(kind)) return;
+				const span = spanOf(node);
+				if (span == null) return;
+				const { start, end } = span;
+				const key = `${kind}@${start}:${end}`;
+				if (seen.has(key)) return;
+				seen.add(key);
+				const list = candidatesByKind.get(kind) ?? [];
+				list.push({
+					start,
+					end,
+					node,
+					displayKind,
+					...(coordinate === undefined ? {} : { coordinate }),
+					...(address === undefined ? {} : { address })
+				});
+				candidatesByKind.set(kind, list);
+			};
+			if (recursive === true && handle.records !== undefined) {
+				if (handle.id === undefined) throw new Error('native arena validation needs a tree id');
+				const root = encodeHandle(handle.id, 0);
+				for (const [metadata, address] of handle.records.candidates(0)) {
+					const coordinate =
+						metadata.$treeHandle === root ? { ...metadata, $span: { start: 0, end: spans.byteLength } } : metadata;
+					visitCandidate(coordinate as unknown as TypedNode, coordinate, address ?? undefined);
+				}
+			} else if (readNode && handle.read) {
+				const wrappedRoot = deepRoot ?? (readNode(handle) as TypedNode);
+				walkWrappedTree(wrappedRoot, readers, visitCandidate, onAccessorThrow);
 			}
 			const refusals = refusalsOf(entry);
 			errors.push(...refusals);
@@ -1136,13 +1170,20 @@ export async function validateReadRenderParse(
 					// Falls back to deep materialization when the wrapped node carries
 					// no coordinate.
 					const treeRoot = cand.displayKind === tree1.rootNode.type;
-					let data: AnyUntypedNode;
+					options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
+					let data: AnyUntypedNode | (() => string);
 					try {
-						const at = (cand.node as AnyUntypedNode).$_layout?.at;
-						data =
-							recursive !== true && at !== undefined
-								? materializeShallow(cand.node, readers, onAccessorThrow)
-								: (materializeDetached(cand.node, readers, onAccessorThrow) as AnyUntypedNode);
+						if (cand.coordinate !== undefined) {
+							const at = measureRoundtrip(options.profile, 'read', () => cand.address);
+							data = () => handle.records!.renderCandidate(decodeIndex(cand.coordinate!.$treeHandle), at);
+						} else {
+							const at = (cand.node as AnyUntypedNode).$_layout?.at;
+							data = measureRoundtrip(options.profile, 'read', () =>
+								recursive !== true && at !== undefined
+									? materializeShallow(cand.node, readers, onAccessorThrow)
+									: (materializeDetached(cand.node, readers, onAccessorThrow) as AnyUntypedNode)
+							);
+						}
 					} catch (e) {
 						reportThrown({
 							name: `${entry.name} [${kind}]`,
@@ -1246,7 +1287,21 @@ export async function validateReadRenderParse(
 									kind: 'render',
 									grammar,
 									pattern: renderedKind,
-									input: selfContainedRenderInput(candidateData(data, renderReparseContext.triviaOf), entry.source, isLeafKind, view),
+									input: selfContainedRenderInput(
+										candidateData(
+											typeof data === 'function'
+												? (materializeDetached(
+														readNode!(handle, cand.coordinate) as TypedNode,
+														readers,
+														onAccessorThrow
+													) as AnyUntypedNode)
+												: data,
+											renderReparseContext.triviaOf
+										),
+										entry.source,
+										isLeafKind,
+										view
+									),
 									expectedOutput: rendered,
 									...(Object.keys(inferred).length === 0 ? {} : { options: inferred })
 								});

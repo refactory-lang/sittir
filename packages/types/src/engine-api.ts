@@ -217,6 +217,7 @@ export interface ParsedRoot {
 
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
+	/** Parses and retains a tree; accessing `root` performs its first read. Keeping only `tree` exports no root data. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
 

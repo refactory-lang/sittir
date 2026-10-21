@@ -684,7 +684,15 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
+export {
+	decodeIndex,
+	decodeTree,
+	encodeHandle,
+	isCoordinate,
+	readNode,
+	type TreeHandle,
+	type TriviaSideName
+} from './read.ts';
 export type { Role } from './identity.ts';
 export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';

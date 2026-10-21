@@ -32,6 +32,36 @@ async function reportFor(args: string[]) {
 
 const allGrammars = ['python', 'regex', 'rust', 'scm', 'typescript'];
 
+it('profiles the canonical validation buckets in paired fresh storage workers', async () => {
+	const report = await reportFor(['regex', '--validation', '--rounds', '2', '--warmup', '0', '--iterations', '1']);
+	expect(report.mode).toBe('validation-storage');
+	expect(report.validationSamples.map((row: { storage: string }) => row.storage)).toEqual([
+		'object',
+		'arena',
+		'arena',
+		'object'
+	]);
+	expect(new Set(report.validationSamples.map((row: { pid: number }) => row.pid)).size).toBe(4);
+	expect(report.validationSummary.map((row: { bucket: string }) => row.bucket)).toEqual([
+		'read-render-parse',
+		'factory-render-parse',
+		'ir-render-parse'
+	]);
+	for (const row of report.validationSummary) {
+		expect(row.work.cases).toBeGreaterThan(0);
+		expect(row.render.object.calls).toBeGreaterThan(0);
+		expect(row.render.arena.calls).toBe(row.render.object.calls);
+		expect(row.resultSha256).toMatch(/^[a-f\d]{64}$/);
+		expect(row.timings.map((phase: { phase: string }) => phase.phase)).toEqual([
+			'validator',
+			'read',
+			'build',
+			'render',
+			'parse'
+		]);
+	}
+}, 90_000);
+
 it.each([
 	{ label: 'default', args: ['regex'], depth: 'all', grammars: ['regex'], rounds: 2 },
 	{
