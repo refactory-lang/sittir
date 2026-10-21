@@ -1217,7 +1217,7 @@ A wrapped tree as plain data with no coordinates: `materialize` resolves every a
 
 Detaching removes the hold on the tree with the coordinates, and a leaf whose slots are projected from its text keeps a text-only coordinate that a render still slices. The result is therefore given the tree of the root it was made from (`holdingTreeOf`), so it renders for as long as it is held.
 
-Each copied node keeps the source identity of the node it copies (`carrySource`), as a live rebuild does. A copy is not sliced, but its sides and its list slots' stored layouts are still read from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
+Each copied node keeps the source identity of the node it copies (`carryPlace`), as a live rebuild does. A copy is not sliced, but its sides and its list slots' stored layouts are still read from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
 
 ### `packages/tools/src/validate/common.ts::holdingTreeOf`
 
@@ -1653,7 +1653,7 @@ The render-and-reparse step every rendering row shares. It renders a node with t
 
 Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
 
-A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`sourceOf` on it or any node under it) is a render failure.
+A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`placeOf` on it or any node under it) is a render failure.
 
 ### `packages/tools/src/validate/built-render.ts::combineBuiltRender`
 

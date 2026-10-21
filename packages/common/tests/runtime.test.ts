@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { GrammarTypeMap } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
 import { withMembers } from './support/members.ts';
+import { stampBuilt } from '../src/source-stamp.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import {
 	admitAliasContent,
@@ -19,21 +20,22 @@ import {
 describe('bindRuntime', () => {
 	const runtime = bindRuntime<GrammarTypeMap>();
 
-	it('isNode recognises node data only', () => {
-		expect(runtime.isNode({ $type: 2, $source: 2 })).toBe(true);
+	it('isNode recognises a node by its source stamp, never by its shape', () => {
+		expect(runtime.isNode(stampBuilt({ $type: 2 }))).toBe(true);
+		expect(runtime.isNode({ $type: 2, $source: 2 })).toBe(false);
 		expect(runtime.isNode('text')).toBe(false);
 		expect(runtime.isNode({ kind: 'leaf' })).toBe(false);
 	});
 
 	it('members render through the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const node = inEngine(liveHandle({ render }), () => withMembers({ $type: 2, $source: 2 }));
+		const node = inEngine(liveHandle({ render }), () => withMembers(stampBuilt({ $type: 2 })));
 		expect(node.$render()).toBe('rendered');
 		expect(render).toHaveBeenCalledWith(node);
 	});
 
 	it('members on a node built outside any engine cannot render', () => {
-		const node = withMembers({ $type: 2, $source: 2 });
+		const node = withMembers(stampBuilt({ $type: 2 }));
 		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
 	});
 });
@@ -72,7 +74,7 @@ describe('grammar-free runtime helpers', () => {
 	it('coerceKindEnumStorage maps text and node text to ids and refuses unknown text', () => {
 		const byText = [['pub', 20] as const];
 		expect(coerceKindEnumStorage('pub', byText)).toBe(20);
-		expect(coerceKindEnumStorage({ $type: 3, $source: 2, $text: 'pub' }, byText)).toBe(20);
+		expect(coerceKindEnumStorage(stampBuilt({ $type: 3, $text: 'pub' }), byText)).toBe(20);
 		expect(coerceKindEnumStorage({ $type: 21 }, byText)).toBe(21);
 		expect(() => coerceKindEnumStorage('priv', byText)).toThrow('kind-enum slot: "priv" is not a valid value (expected one of: pub)');
 	});

@@ -45,7 +45,6 @@ const classes: Record<string, () => object> = {
 
 const TRANSPORT_METADATA = new Set([
 	'$type',
-	'$source',
 	'$named',
 	'$text',
 	'$other',

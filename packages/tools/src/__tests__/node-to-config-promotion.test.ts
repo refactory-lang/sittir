@@ -24,12 +24,12 @@ const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1]
 
 describe('nodeToConfig field promotion', () => {
 	it('uses named slot metadata instead of payload shape for singular and repeated config slots', () => {
-		const leaf = { $type: id('identifier'), $source: 0, $named: true, $text: 'x' };
+		const leaf = { $type: id('identifier'), $named: true, $text: 'x' };
 
 		const singularConfig = nodeToConfig(
 			{
 				$type: id('single_field_parent'),
-				$source: 0,
+				
 				$named: true,
 				_value: [leaf]
 			} as never,
@@ -50,7 +50,7 @@ describe('nodeToConfig field promotion', () => {
 		const repeatedConfig = nodeToConfig(
 			{
 				$type: id('repeat_field_parent'),
-				$source: 0,
+				
 				$named: true,
 				_items: leaf
 			} as never,

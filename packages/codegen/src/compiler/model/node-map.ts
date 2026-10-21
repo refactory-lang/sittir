@@ -1070,9 +1070,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return undefined;
 	}
 
-	get stampChildExpression(): string | undefined {
-		return this.stampExpression;
-	}
 	protected readonly rule: R;
 
 	get ruleMetadata(): RuleMetadata | undefined {
@@ -1122,7 +1119,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		({ renamedFrom: this.renamedFrom, splitFrom: this.splitFrom, variantOf: this.variantOf } = provenanceOf(kind, opts));
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
-
 
 	get surfaceHidden(): boolean {
 		return surfaceHiddenOf(this.kindEntry, this.kind);
@@ -2109,11 +2105,6 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
 
-	override get stampChildExpression(): string {
-		const kind = JSON.stringify(this.kind);
-		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: true as const }`;
-	}
 }
 
 export class AssembledPunctuation extends AssembledLeaf<StringRule> {
@@ -2153,11 +2144,6 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 		return this.rule.value;
 	}
 
-	override get stampChildExpression(): string {
-		const kind = JSON.stringify(this.kind);
-		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: ${!this.hidden} as const }`;
-	}
 }
 
 export function enumLiteralMembersOf(rule: ChoiceRule): readonly RenderRule[] {

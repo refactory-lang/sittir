@@ -1,13 +1,14 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carrySource, holdsSlots, indexOf, isRead, hasNodeText, isStorageKey, markRebuilt, nodeText, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { register, registered, type Role } from './identity.ts';
-import { treeOf } from './tree-token.ts';
+import { treeOf, treeTokenOf } from './tree-token.ts';
+import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 
@@ -66,7 +67,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	if (!isNode(result)) return result;
 	markRebuilt(result);
 	carryRead(node, result);
-	carrySource(node, result);
+	carryPlace(node, result);
 	const facts = handle?.current.trivia;
 	if (facts !== undefined) {
 		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
@@ -168,9 +169,9 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		const freshNode = fresh as Record<string, unknown>;
 		const heldNode = held as Record<string, unknown>;
 		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !stands(freshNode.$type)) continue;
-		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
+		if (placeOf(freshNode) !== undefined || placeOf(heldNode) === undefined) continue;
 		carryRead(heldNode, freshNode);
-		carrySource(heldNode, freshNode);
+		carryPlace(heldNode, freshNode);
 	}
 }
 
@@ -521,16 +522,8 @@ export function seatWith(
 
 export function isNode(v: unknown): v is AnyUntypedNode {
 	if (v === null || typeof v !== 'object') return false;
-	const o = v as Record<string, unknown>;
-	if (typeof o.$type !== 'number') return false;
-	return (
-		holdsSlots(o) ||
-		hasNodeText(o) ||
-		o.$_layout !== undefined ||
-		o.$source === Source.Ts ||
-		o.$source === Source.Sg ||
-		o.$source === Source.Factory
-	);
+	if (typeof (v as { readonly $type?: unknown }).$type !== 'number') return false;
+	return sourceOf(v) !== undefined || treeTokenOf(v) !== undefined;
 }
 
 export function describeValue(v: unknown): string {
@@ -681,8 +674,9 @@ export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './eng
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, placeOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
 	interiorPattern,

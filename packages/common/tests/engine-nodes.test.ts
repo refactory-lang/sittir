@@ -6,6 +6,7 @@ import { inTreeEngine } from '../src/engine-scope.ts';
 import { languageGuards } from '../src/language.ts';
 import { ERROR_KIND_ID } from '../src/error-kind.ts';
 import { Source } from '../src/source.ts';
+import { stampBuilt } from '../src/source-stamp.ts';
 import { withMembers as withMethods } from './support/members.ts';
 import { asRead, triviaFacts } from './support/fake-engine.ts';
 
@@ -20,6 +21,7 @@ const trivia: TriviaFacts = {
 };
 
 const node = (data: Record<string, unknown>): AnyUntypedNode => withMethods(data as unknown as AnyUntypedNode);
+const built = (data: Record<string, unknown>): AnyUntypedNode => stampBuilt(node(data));
 
 function fakeLanguage(name: string) {
 	const trees: object[] = [];
@@ -28,11 +30,11 @@ function fakeLanguage(name: string) {
 		name,
 		renderModuleHash: `hash-${name}`,
 		build: {
-			leaf: Object.assign((text: string) => node({ $type: 1, $text: text, $source: Source.Factory }), {
-				strict: (text: string) => node({ $type: 1, $text: text, $source: Source.Factory })
+			leaf: Object.assign((text: string) => built({ $type: 1, $text: text }), {
+				strict: (text: string) => built({ $type: 1, $text: text })
 			}),
-			group: (...items: unknown[]) => node({ $type: 3, _items: items, $source: Source.Factory }),
-			number: { bigint: (v: bigint) => node({ $type: 2, $text: String(v), $source: Source.Factory }) }
+			group: (...items: unknown[]) => built({ $type: 3, _items: items }),
+			number: { bigint: (v: bigint) => built({ $type: 2, $text: String(v) }) }
 		},
 		trivia,
 		createNative: (opts?: { options?: Options }) => {

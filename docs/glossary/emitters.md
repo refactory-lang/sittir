@@ -597,28 +597,6 @@ The runtime guard statements of a text-leaf factory, each a complete `if (…) t
 A pattern value contributes `string`; a slot holding only pattern values never types as `never`.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::autoStampExpression`
-
-```text
-/**
- * Build the TypeScript stamp expression for an auto-stamp-eligible field.
- *
- * @remarks
- * Two cases:
- *
- * - **Source A** (`field.literalValues.length === 1`): the field content is an
- *   inline string literal. Stamp the string directly, e.g. `'pub' as const`.
- *
- * - **Source B** (`field.contentTypes.length === 1` and the referenced kind is
- *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
- *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
- *   UntypedNode object whose shape matches `Terminal<kind, text>`:
- *   `{ $type: '_kw_async', $text: 'async', $source: 2, $named: true }`.
- *
- * Returns `undefined` when the field is NOT auto-stamp-eligible.
- */
-```
-
 ### `packages/codegen/src/emitters/factories.ts::setterValueSignature`
 
 ```text
@@ -4129,31 +4107,6 @@ machines.
  */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::stampExpressionFor`
-
-```text
-/**
- * Build the TypeScript stamp expression for an auto-stamp-eligible REQUIRED slot.
- *
- * Returns `undefined` when:
- * - The slot is optional (no stamp needed — omit the key from the factory call).
- * - The slot is not auto-stamp-eligible.
- *
- * Two expression shapes:
- * - **Inline literal** (TerminalValue): `JSON.stringify(value) + " as const"`
- * - **Referenced keyword** (hidden AssembledKeyword NodeRef): UntypedNode object literal
- *   `{ $type: '...', $text: '...', $source: 2 as const, $named: true as const }`
- * - **Referenced parameterless compound**: factory call expression from
- *   `ref.stampExpression` — e.g. `"breakExpression()"`.
- *
- * @remarks
- * This function replaces the field-only `autoStampExpression()` inside factories.ts
- * for the general case. The factories.ts private function is kept as-is for backwards
- * compat; this helper is the authoritative version for emitters that need to handle
- * children slots too.
- */
-```
-
 ### `packages/codegen/src/emitters/shared.ts::fieldTypeComponents`
 
 ```text
@@ -5913,9 +5866,9 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
  * envelope, polymorph, or list alike — no separate case for a hoisted kind).
  *
  * @remarks
- * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $source,
- * $named }` stubs (this is what native's node `FromNapiValue` expects
- * for those shapes). Compound kinds additionally require every required
+ * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $named }`
+ * stubs, stamped built (`dummyNodeLiteral`), which is what native's node
+ * `FromNapiValue` expects for those shapes. Compound kinds additionally require every required
  * field to be present and correctly shaped — a flat stub is rejected with
  * "Missing field `_x`" by the native node. A hoisted kind (the
  * synthesized single-field wrapper kinds, e.g. `_match_arm_with_comma`) is
@@ -5930,7 +5883,7 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
  * too: an empty list is `[]`, and the node refuses a missing list key.
  *
  * When recursion bottoms out (depth limit or cycle) the stub still declares
- * `$type`/`$text`/`$source`/`$named` but omits nested required single fields —
+ * `$type`/`$text`/`$named`, stamped built, but omits nested required single fields —
  * this may still fail construction for pathological kinds, matching the
  * existing "skip when no safe sample found" precedent elsewhere in this
  * emitter (see {@link pickSampleForPattern}) rather than guessing further.
@@ -5971,8 +5924,8 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
 #### body
 
 ```text
-// Splice the recursively-built required fields into the base literal —
-// `base` always ends in `} as any`; insert before the closing brace.
+// The recursively-built required fields join the literal's own members
+// (`dummyNodeLiteral`'s `storage`), inside its stamp.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::dummyTextForKind`
@@ -7870,7 +7823,7 @@ prints through it.
 /** Maximum branch-recursion depth for synthesized dummy stubs. Bounds
  * self-referential grammars (e.g. `expression` containing `expression`);
  * beyond this depth `buildDummyStub` falls back to the flat base literal
- * (`$type`/`$text`/`$source`/`$named`, omitting nested required fields —
+ * (`$type`/`$text`/`$named`, omitting nested required fields —
  * see its docstring) rather than looping forever. */
 ```
 
@@ -11274,6 +11227,8 @@ The structure table the emitter recorded while emitting builders: each emitted c
 ### `packages/codegen/src/emitters/test.ts::emitTests`
 
 An alias kind gets no test of its own: it is not on `ir`, and every parent test that seats one exercises its builder.
+
+Every node a test builds passes through the file's `expectBuiltNode`: `sourceOf` gives `Factory`, it has no `$source` member, `isNode` takes it, and its string-key twin (`Object.fromEntries(Object.entries(node))`), the same keys without the stamp, is no node. That pins the node fact for every built kind of the grammar.
 
 #### body
 
@@ -15208,6 +15163,10 @@ The one place a text guard's type refusal is worded: `<label>: text must be a st
 ### `packages/codegen/src/emitters/test.ts::delimiterSamples`
 
 The sample text of every leaf that ends a delimited composite: the shortest text its pattern accepts, so the generated tests build a string with a matching start and end instead of `test` on both sides.
+
+### `packages/codegen/src/emitters/test.ts::dummyNodeLiteral`
+
+The literal of one dummy node in a generated test: its `$type`, `$text` and `$named`, then the storage members `buildDummyStub` filled (`storage`), wrapped in `stampBuilt(...)`. A dummy stands where a test passes a node, and only a stamped object is one; unstamped, the same literal is a config, which the builder coerces or refuses.
 
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 
