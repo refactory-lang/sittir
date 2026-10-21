@@ -1,8 +1,7 @@
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type TreeHandle } from './read.ts';
 import { decodeCell, decodeListCell, decodeSideDelimiter, decodeSideRow, wordOf, type RecordCell } from './record-cell.ts';
-import { carryRead, coordinateOf } from './node-data.ts';
-import { carryTree } from './tree-token.ts';
+import { carryReadTree, coordinateOf } from './node-data.ts';
 
 /** The own key of a record stub and of the view made from it: the record's address. */
 export const RECORD = Symbol.for('sittir.record');
@@ -138,12 +137,12 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 		case 'coordinate':
 			return coordinateAt(tree, cell.index, cell.span);
 		case 'parsedLeaf':
-			return carryTree(holder, carryRead(holder, leafData(tree, cell.kind, cell.span, cell.row)));
+			return carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row));
 		case 'parsedText':
 			return tree.text?.(cell.span);
 		case 'child':
 			if (cell.link !== undefined && cell.link !== idOf(tree)) throw new Error(`a parsed record names a record of tree ${cell.link}`);
-			return carryTree(holder, carryRead(holder, recordStub(tree, cell.at)));
+			return carryReadTree(holder, recordStub(tree, cell.at));
 		case 'unit':
 			return cell.kind;
 		case 'builtLeaf':

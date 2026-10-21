@@ -1,8 +1,8 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
-import { stampSource } from './source-stamp.ts';
+import { carrySourceStamp, stampSource } from './source-stamp.ts';
 import { Source } from './source.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -121,6 +121,13 @@ export function isRead(node: object): boolean {
 export function carryRead<T>(from: object, to: T): T {
 	if (readObjects.has(from) && to !== null && typeof to === 'object') readObjects.add(to);
 	return to;
+}
+
+/** `holdReadTree` for one object a read of `from` produced: `to` holds `from`'s tree, provenance and read, and is returned. */
+export function carryReadTree<T extends object>(from: object, to: T): T {
+	carryTree(from, to);
+	carrySourceStamp(from, to);
+	return carryRead(from, to);
 }
 
 const rebuiltObjects = new WeakSet<object>();

@@ -5,7 +5,7 @@ import {
 	admitSlot,
 	markEdited as $edited,
 	asTextNode,
-	carryRead,
+	carryReadTree,
 	treeHandleOf,
 	hydrateWith,
 	hydrateSlotWith,
@@ -17572,7 +17572,7 @@ function viewShorthandFieldIdentifier(data: RecordStub, tree: TreeHandle): T.Sho
 	return node as unknown as T.ShorthandFieldIdentifier.Parsed;
 }
 
-function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
+function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -17590,7 +17590,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	return node;
 }
 
-const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
+const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => object> = {
 	[TSKindId.SourceFile]: (d, t) => wrapSourceFile(d as unknown as T.SourceFile, t),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.MacroRule]: (d, t) => wrapMacroRule(d as unknown as T.MacroRule, t),
@@ -17862,7 +17862,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ErrorSentinel]: (d, t) => wrapLeaf(d, t)
 };
 
-const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => unknown> = {
+const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {
 	[TSKindId.SourceFile]: viewSourceFile,
 	[TSKindId.ExpressionStatement]: viewExpressionStatement,
 	[TSKindId.MacroRule]: viewMacroRule,
@@ -18104,7 +18104,7 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	if (recordOf(data) !== undefined) {
 		const view = _viewTable[data.$type as unknown as number];
 		if (view === undefined) return wrapNode(rowData(data, tree) as _UntypedNode, tree);
-		return carryRead(
+		return carryReadTree(
 			data,
 			inTreeEngine(tree, () => view(data as unknown as RecordStub, tree))
 		);
@@ -18112,7 +18112,7 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	const fn = _wrapTable[data.$type as unknown as number];
 	return fn === undefined
 		? asTextNode(data)
-		: carryRead(
+		: carryReadTree(
 				data,
 				inTreeEngine(tree, () => fn(data, tree))
 			);

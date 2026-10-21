@@ -17,7 +17,8 @@ interface Parser {
 
 const GRAMMARS: readonly string[] = ['python', 'regex', 'rust', 'scm', 'typescript'];
 const WIRES: Readonly<Record<string, (language: Language<LanguageAPI>) => Promise<Parser>>> = {
-	object: (language) => createEngine(language)
+	object: (language) => createEngine(language),
+	arena: (language) => createEngine(language, { nodeStorage: 'arena' })
 };
 
 function readNodeFact(

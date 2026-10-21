@@ -582,11 +582,11 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 ### `packages/common/src/node-data.ts::holdReadTree`
 
-`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`), and is stamped `Source.Ts` (`stampSource`), so it stays a node after an edit drops its tree token. The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
+`holdTree` for the objects a read returned, which is where read provenance starts (`carryReadTree` passes it from a record view to the child objects its cells hold): every object it visits also counts as read (`isRead`), and is stamped `Source.Ts` (`stampSource`), so it stays a node after an edit drops its tree token. The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
 
 ### `packages/common/src/node-data.ts::carryRead`
 
-Carries read provenance from a read object to the object rebuilt from it, which is the same node in another shape. The wrap's `wrapNode` carries it to every wrapped node, and the validator's `materialize` carries it to every plain node it resolves. Every other copy is not read.
+Carries read provenance from a read object to an object made from it that is the same node in another shape but holds no tree: a `$with` rebuild (`rebuilt`, `carryRebuiltSlots`), since an edit drops the tree token, and the validator's `materialize` copy, which is detached data and must not cross as a coordinate. An object that is itself read, and so holds the tree too, takes `carryReadTree` instead. Every other copy is not read.
 
 ### `packages/common/src/node-data.ts::markRebuilt`
 
@@ -897,6 +897,10 @@ A read value given a node's text member: an object whose `$text` is a string get
 ### `packages/common/src/node-data.ts::hasNodeText`
 
 Whether a value has a text member in either form, a node's `$text()` method or native data's `$text` string, decided by the member's type alone. It never calls the method: a node's text is made strictly on access, and a method backed by the tree's native `text(span)` would otherwise cost a native call and a string on every check. `isNode`, which every coercer runs, tests text presence here; code that needs the text itself reads it through `nodeText`.
+
+### `packages/common/src/node-data.ts::carryReadTree`
+
+`holdReadTree` for one object that a read of `from` produced. `to` gets `from`'s tree token (`carryTree`), its source stamp (`carrySourceStamp`) and its read provenance (`carryRead`), and is returned. A record view reads each child leaf and child record stub out of its holder's cells (`cellData`) instead of through the engine's read sites. This gives those objects the same three facts a read object holds, so a view of a child is a `Source.Ts` node on the arena wire just as a read node is on the object wire.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 

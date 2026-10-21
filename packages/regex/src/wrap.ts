@@ -5,7 +5,7 @@ import {
 	admitSlot,
 	markEdited as $edited,
 	asTextNode,
-	carryRead,
+	carryReadTree,
 	treeHandleOf,
 	hydrateWith,
 	hydrateSlotWith,
@@ -2135,7 +2135,7 @@ function viewUnicodePropertyName(data: RecordStub, tree: TreeHandle): T.UnicodeP
 	return node as unknown as T.UnicodePropertyName.Parsed;
 }
 
-function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
+function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 	const handle = currentHandle();
 	const node = {
 		...data,
@@ -2153,7 +2153,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	return node;
 }
 
-const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
+const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => object> = {
 	[TSKindId.Pattern]: (d, t) => wrapPattern(d as unknown as T.Pattern, t),
 	[TSKindId.Alternation]: (d, t) => wrapAlternation(d as unknown as T.Alternation, t),
 	[TSKindId.Term]: (d, t) => wrapTerm(d as unknown as T.Term, t),
@@ -2206,7 +2206,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t)
 };
 
-const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => unknown> = {
+const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {
 	[TSKindId.Pattern]: viewPattern,
 	[TSKindId.Alternation]: viewAlternation,
 	[TSKindId.Term]: viewTerm,
@@ -2257,7 +2257,7 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	if (recordOf(data) !== undefined) {
 		const view = _viewTable[data.$type as unknown as number];
 		if (view === undefined) return wrapNode(rowData(data, tree) as _UntypedNode, tree);
-		return carryRead(
+		return carryReadTree(
 			data,
 			inTreeEngine(tree, () => view(data as unknown as RecordStub, tree))
 		);
@@ -2265,7 +2265,7 @@ export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	const fn = _wrapTable[data.$type as unknown as number];
 	return fn === undefined
 		? asTextNode(data)
-		: carryRead(
+		: carryReadTree(
 				data,
 				inTreeEngine(tree, () => fn(data, tree))
 			);
