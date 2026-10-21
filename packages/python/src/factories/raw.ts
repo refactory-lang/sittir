@@ -36,6 +36,7 @@ import {
 	STORED_SLOT_READERS,
 	rebuilt,
 	renderText,
+	stampBuilt,
 	hydrateStoredSlot,
 	hydrateStoredSlots,
 	triviaSide,
@@ -148,7 +149,6 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Module as const,
-		$source: 2 as const,
 		$named: true as const,
 		_statements,
 		$with: {
@@ -165,7 +165,7 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Module.Bound;
+	return stampBuilt(node) as unknown as T.Module.Bound;
 }
 
 export function buildSimpleStatements<V extends Admit<T.SimpleStatementsElements>>(
@@ -202,7 +202,6 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimpleStatements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -233,7 +232,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.SimpleStatements.Bound;
+	return stampBuilt(node) as unknown as T.SimpleStatements.Bound;
 }
 
 export function buildImportStatement<V extends Admit<T.Names | T.Names.Types>>(
@@ -264,7 +263,6 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_names,
 		$with: {
@@ -279,7 +277,7 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ImportStatement.Bound;
+	return stampBuilt(node) as unknown as T.ImportStatement.Bound;
 }
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
@@ -290,7 +288,6 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportPrefix as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -301,7 +298,7 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ImportPrefix.Bound;
+	return stampBuilt(node) as unknown as T.ImportPrefix.Bound;
 }
 
 export function buildRelativeImport<
@@ -314,7 +311,6 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RelativeImport as const,
-		$source: 2 as const,
 		$named: true as const,
 		_prefix,
 		_name,
@@ -334,7 +330,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.RelativeImport.Bound;
+	return stampBuilt(node) as unknown as T.RelativeImport.Bound;
 }
 
 export function buildFutureImportStatement<V extends Admit<T.ImportList | T.ParenthesizedImportList>>(
@@ -347,7 +343,6 @@ export function buildFutureImportStatement(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FutureImportStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -363,7 +358,7 @@ export function buildFutureImportStatement(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FutureImportStatement.Bound;
+	return stampBuilt(node) as unknown as T.FutureImportStatement.Bound;
 }
 
 export function buildImportFromStatement<
@@ -378,7 +373,6 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportFromStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_module_name,
 		_content,
@@ -398,7 +392,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ImportFromStatement.Bound;
+	return stampBuilt(node) as unknown as T.ImportFromStatement.Bound;
 }
 
 export function buildImportList<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
@@ -433,7 +427,6 @@ function _buildImportList(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportList as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_delimiter,
@@ -461,7 +454,7 @@ function _buildImportList(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ImportList.Bound;
+	return stampBuilt(node) as unknown as T.ImportList.Bound;
 }
 
 export function buildAliasedImport<
@@ -474,7 +467,6 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AliasedImport as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_alias,
@@ -493,7 +485,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AliasedImport.Bound;
+	return stampBuilt(node) as unknown as T.AliasedImport.Bound;
 }
 
 export const buildWildcardImport: TSKindId.WildcardImport = TSKindId.WildcardImport;
@@ -508,7 +500,6 @@ export function buildPrintStatement(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -524,7 +515,7 @@ export function buildPrintStatement(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.PrintStatement.Bound;
+	return stampBuilt(node) as unknown as T.PrintStatement.Bound;
 }
 
 export function buildChevron<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.Chevron.Bound;
@@ -533,7 +524,6 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Chevron as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -548,7 +538,7 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Chevron.Bound;
+	return stampBuilt(node) as unknown as T.Chevron.Bound;
 }
 
 export function buildAssertStatement<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -559,7 +549,6 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssertStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -575,7 +564,7 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AssertStatement.Bound;
+	return stampBuilt(node) as unknown as T.AssertStatement.Bound;
 }
 
 export function buildExpressionStatement<
@@ -588,7 +577,6 @@ export function buildExpressionStatement(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -607,7 +595,7 @@ export function buildExpressionStatement(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ExpressionStatement.Bound;
+	return stampBuilt(node) as unknown as T.ExpressionStatement.Bound;
 }
 
 export function buildNamedExpression<
@@ -620,7 +608,6 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedExpression as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_value,
@@ -640,7 +627,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NamedExpression.Bound;
+	return stampBuilt(node) as unknown as T.NamedExpression.Bound;
 }
 
 export function buildNamedExpressionLhs<IdentifierSlot extends T.NamedExpressionLhs.Config['identifier']>(
@@ -651,7 +638,6 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedExpressionLhs as const,
-		$source: 2 as const,
 		$named: true as const,
 		_identifier,
 		$with: {
@@ -667,7 +653,7 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NamedExpressionLhs.Bound;
+	return stampBuilt(node) as unknown as T.NamedExpressionLhs.Bound;
 }
 
 export function buildReturnStatement<V extends Admit<T.Expression | T.ExpressionList>>(
@@ -678,7 +664,6 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ReturnStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expressions,
 		$with: {
@@ -694,7 +679,7 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ReturnStatement.Bound;
+	return stampBuilt(node) as unknown as T.ReturnStatement.Bound;
 }
 
 export function buildDeleteStatement<V extends Admit<T.Expression | T.ExpressionList>>(
@@ -705,7 +690,6 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DeleteStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expressions,
 		$with: {
@@ -721,7 +705,7 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DeleteStatement.Bound;
+	return stampBuilt(node) as unknown as T.DeleteStatement.Bound;
 }
 
 export function buildRaiseStatement<
@@ -736,7 +720,6 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RaiseStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expressions,
 		_cause,
@@ -756,7 +739,7 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.RaiseStatement.Bound;
+	return stampBuilt(node) as unknown as T.RaiseStatement.Bound;
 }
 
 export const buildPassStatement: TSKindId.PassStatement = TSKindId.PassStatement;
@@ -782,7 +765,6 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IfStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_condition,
 		_consequence,
@@ -806,7 +788,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IfStatement.Bound;
+	return stampBuilt(node) as unknown as T.IfStatement.Bound;
 }
 
 export function buildElifClause<
@@ -821,7 +803,6 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ElifClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_condition,
 		_consequence,
@@ -841,7 +822,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ElifClause.Bound;
+	return stampBuilt(node) as unknown as T.ElifClause.Bound;
 }
 
 export function buildElseClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.ElseClause.Bound;
@@ -850,7 +831,6 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ElseClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		$with: {
@@ -865,7 +845,7 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ElseClause.Bound;
+	return stampBuilt(node) as unknown as T.ElseClause.Bound;
 }
 
 export function buildMatchStatement<
@@ -878,7 +858,6 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_subjects,
 		_body,
@@ -903,7 +882,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.MatchStatement.Bound;
+	return stampBuilt(node) as unknown as T.MatchStatement.Bound;
 }
 
 export function buildCaseClause<
@@ -923,7 +902,6 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_case_patterns,
 		_guard,
@@ -952,7 +930,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CaseClause.Bound;
+	return stampBuilt(node) as unknown as T.CaseClause.Bound;
 }
 
 export function buildForStatement<
@@ -975,7 +953,6 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_async,
 		_left,
@@ -1006,7 +983,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ForStatement.Bound;
+	return stampBuilt(node) as unknown as T.ForStatement.Bound;
 }
 
 export function buildWhileStatement<
@@ -1026,7 +1003,6 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WhileStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_condition,
 		_body,
@@ -1049,7 +1025,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.WhileStatement.Bound;
+	return stampBuilt(node) as unknown as T.WhileStatement.Bound;
 }
 
 export function buildTryStatement<
@@ -1071,7 +1047,6 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TryStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		_except_clauses,
@@ -1100,7 +1075,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.TryStatement.Bound;
+	return stampBuilt(node) as unknown as T.TryStatement.Bound;
 }
 
 export function buildExceptClause<
@@ -1114,7 +1089,6 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_group,
 		_exception,
@@ -1137,7 +1111,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ExceptClause.Bound;
+	return stampBuilt(node) as unknown as T.ExceptClause.Bound;
 }
 
 export function buildFinallyClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.FinallyClause.Bound;
@@ -1146,7 +1120,6 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FinallyClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_block,
 		$with: {
@@ -1161,7 +1134,7 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FinallyClause.Bound;
+	return stampBuilt(node) as unknown as T.FinallyClause.Bound;
 }
 
 export function buildWithStatement<
@@ -1177,7 +1150,6 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_async,
 		_with_clause,
@@ -1200,7 +1172,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.WithStatement.Bound;
+	return stampBuilt(node) as unknown as T.WithStatement.Bound;
 }
 
 export function buildWithItem<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.WithItem.Bound;
@@ -1209,7 +1181,6 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithItem as const,
-		$source: 2 as const,
 		$named: true as const,
 		_value,
 		$with: {
@@ -1224,7 +1195,7 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.WithItem.Bound;
+	return stampBuilt(node) as unknown as T.WithItem.Bound;
 }
 
 export function buildFunctionDefinition<
@@ -1255,7 +1226,6 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FunctionDefinition as const,
-		$source: 2 as const,
 		$named: true as const,
 		_async,
 		_name,
@@ -1302,7 +1272,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FunctionDefinition.Bound;
+	return stampBuilt(node) as unknown as T.FunctionDefinition.Bound;
 }
 
 export function buildParameters(): T.EmptyParameters;
@@ -1338,7 +1308,6 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Parameters as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -1370,7 +1339,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.Parameters.Bound;
+	return stampBuilt(node) as unknown as T.Parameters.Bound;
 }
 
 export function buildLambdaParameters<V extends Admit<T.ParametersElements>>(
@@ -1407,7 +1376,6 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LambdaParameters as const,
-		$source: 2 as const,
 		$named: true as const,
 		_parameters_elements,
 		$with: {
@@ -1438,7 +1406,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.LambdaParameters.Bound;
+	return stampBuilt(node) as unknown as T.LambdaParameters.Bound;
 }
 
 export function buildListSplat<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.ListSplat.Bound;
@@ -1447,7 +1415,6 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplat as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -1462,7 +1429,7 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ListSplat.Bound;
+	return stampBuilt(node) as unknown as T.ListSplat.Bound;
 }
 
 export function buildDictionarySplat<V extends Admit<T.Expression>>(
@@ -1473,7 +1440,6 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplat as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -1488,7 +1454,7 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DictionarySplat.Bound;
+	return stampBuilt(node) as unknown as T.DictionarySplat.Bound;
 }
 
 export function buildGlobalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1499,7 +1465,6 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GlobalStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_names,
 		$with: {
@@ -1515,7 +1480,7 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.GlobalStatement.Bound;
+	return stampBuilt(node) as unknown as T.GlobalStatement.Bound;
 }
 
 export function buildNonlocalStatement<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1526,7 +1491,6 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NonlocalStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_names,
 		$with: {
@@ -1542,7 +1506,7 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NonlocalStatement.Bound;
+	return stampBuilt(node) as unknown as T.NonlocalStatement.Bound;
 }
 
 export function buildExecStatement<
@@ -1555,7 +1519,6 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExecStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_code,
 		_in_clause,
@@ -1575,7 +1538,7 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ExecStatement.Bound;
+	return stampBuilt(node) as unknown as T.ExecStatement.Bound;
 }
 
 export function buildTypeAliasStatement<
@@ -1590,7 +1553,6 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeAliasStatement as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_right,
@@ -1608,7 +1570,7 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.TypeAliasStatement.Bound;
+	return stampBuilt(node) as unknown as T.TypeAliasStatement.Bound;
 }
 
 export function buildClassDefinition<
@@ -1630,7 +1592,6 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassDefinition as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_type_parameters,
@@ -1669,7 +1630,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ClassDefinition.Bound;
+	return stampBuilt(node) as unknown as T.ClassDefinition.Bound;
 }
 
 export function buildTypeParameter<V extends Admit<T.Types>>(
@@ -1704,7 +1665,6 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeParameter as const,
-		$source: 2 as const,
 		$named: true as const,
 		_types,
 		$with: {
@@ -1735,7 +1695,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.TypeParameter.Bound;
+	return stampBuilt(node) as unknown as T.TypeParameter.Bound;
 }
 
 export function buildParenthesizedListSplat<V extends Admit<T.ParenthesizedListSplat | T.ListSplat>>(
@@ -1748,7 +1708,6 @@ export function buildParenthesizedListSplat(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParenthesizedListSplat as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -1764,7 +1723,7 @@ export function buildParenthesizedListSplat(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ParenthesizedListSplat.Bound;
+	return stampBuilt(node) as unknown as T.ParenthesizedListSplat.Bound;
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;
@@ -1806,7 +1765,6 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArgumentList as const,
-		$source: 2 as const,
 		$named: true as const,
 		_arguments,
 		$with: {
@@ -1838,7 +1796,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.ArgumentList.Bound;
+	return stampBuilt(node) as unknown as T.ArgumentList.Bound;
 }
 
 export function buildDecoratedDefinition<
@@ -1853,7 +1811,6 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DecoratedDefinition as const,
-		$source: 2 as const,
 		$named: true as const,
 		_decorator,
 		_definition,
@@ -1875,7 +1832,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DecoratedDefinition.Bound;
+	return stampBuilt(node) as unknown as T.DecoratedDefinition.Bound;
 }
 
 export function buildDecorator<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.Decorator.Bound;
@@ -1884,7 +1841,6 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Decorator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -1899,7 +1855,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Decorator.Bound;
+	return stampBuilt(node) as unknown as T.Decorator.Bound;
 }
 
 export function buildBlock<A extends Admit<T.Statement[]>>(...children: A & RefuseUndeclared<A>): T.Block.Bound;
@@ -1908,7 +1864,6 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Block as const,
-		$source: 2 as const,
 		$named: true as const,
 		_statements,
 		$with: {
@@ -1924,7 +1879,7 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Block.Bound;
+	return stampBuilt(node) as unknown as T.Block.Bound;
 }
 
 export function buildExpressionList<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -1957,7 +1912,6 @@ function _buildExpressionList(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionList as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -1985,7 +1939,7 @@ function _buildExpressionList(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ExpressionList.Bound;
+	return stampBuilt(node) as unknown as T.ExpressionList.Bound;
 }
 
 export function buildDottedName<A extends NonEmptyArray<Admit<T.Identifier>>>(
@@ -1996,7 +1950,6 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DottedName as const,
-		$source: 2 as const,
 		$named: true as const,
 		_names,
 		$with: {
@@ -2012,7 +1965,7 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DottedName.Bound;
+	return stampBuilt(node) as unknown as T.DottedName.Bound;
 }
 
 export function buildCasePattern<V extends Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>>(
@@ -2025,7 +1978,6 @@ export function buildCasePattern(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CasePattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -2041,7 +1993,7 @@ export function buildCasePattern(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CasePattern.Bound;
+	return stampBuilt(node) as unknown as T.CasePattern.Bound;
 }
 
 export function buildSimplePattern<
@@ -2086,7 +2038,6 @@ export function buildSimplePattern(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimplePattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -2121,7 +2072,7 @@ export function buildSimplePattern(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SimplePattern.Bound;
+	return stampBuilt(node) as unknown as T.SimplePattern.Bound;
 }
 
 export function buildCaseAsPattern<
@@ -2136,7 +2087,6 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseAsPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_case_pattern,
 		_identifier,
@@ -2156,7 +2106,7 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CaseAsPattern.Bound;
+	return stampBuilt(node) as unknown as T.CaseAsPattern.Bound;
 }
 
 export function buildUnionPattern<
@@ -2205,7 +2155,6 @@ export function buildUnionPattern(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnionPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_patterns,
 		$with: {
@@ -2247,7 +2196,7 @@ export function buildUnionPattern(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnionPattern.Bound;
+	return stampBuilt(node) as unknown as T.UnionPattern.Bound;
 }
 
 export function buildDictPattern(): T.EmptyDictPattern;
@@ -2283,7 +2232,6 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -2315,7 +2263,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.DictPattern.Bound;
+	return stampBuilt(node) as unknown as T.DictPattern.Bound;
 }
 
 export function buildKeyValuePattern<
@@ -2328,7 +2276,6 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeyValuePattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_key,
 		_value,
@@ -2348,7 +2295,7 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.KeyValuePattern.Bound;
+	return stampBuilt(node) as unknown as T.KeyValuePattern.Bound;
 }
 
 export function buildKeywordPattern<
@@ -2361,7 +2308,6 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeywordPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_value,
@@ -2381,7 +2327,7 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.KeywordPattern.Bound;
+	return stampBuilt(node) as unknown as T.KeywordPattern.Bound;
 }
 
 export function buildSplatPattern<NameSlot extends T.SplatPattern.Config['name']>(
@@ -2398,7 +2344,6 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SplatPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_operator,
 		_name,
@@ -2418,7 +2363,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SplatPattern.Bound;
+	return stampBuilt(node) as unknown as T.SplatPattern.Bound;
 }
 
 export function buildClassPattern<
@@ -2431,7 +2376,6 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_arguments,
@@ -2456,7 +2400,7 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ClassPattern.Bound;
+	return stampBuilt(node) as unknown as T.ClassPattern.Bound;
 }
 
 export function buildComplexPattern<
@@ -2473,7 +2417,6 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComplexPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_sign,
 		_real,
@@ -2501,7 +2444,7 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ComplexPattern.Bound;
+	return stampBuilt(node) as unknown as T.ComplexPattern.Bound;
 }
 
 export function buildParametersElements<A extends NonEmptyArray<Admit<T.Parameter>>>(
@@ -2534,7 +2477,6 @@ function _buildParametersElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParametersElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -2562,7 +2504,7 @@ function _buildParametersElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ParametersElements.Bound;
+	return stampBuilt(node) as unknown as T.ParametersElements.Bound;
 }
 
 export function buildPatterns<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -2593,7 +2535,6 @@ function _buildPatterns(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Patterns as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -2620,7 +2561,7 @@ function _buildPatterns(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.Patterns.Bound;
+	return stampBuilt(node) as unknown as T.Patterns.Bound;
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
@@ -2656,7 +2597,6 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TuplePattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -2688,7 +2628,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.TuplePattern.Bound;
+	return stampBuilt(node) as unknown as T.TuplePattern.Bound;
 }
 
 export function buildListPattern(): T.EmptyListPattern;
@@ -2724,7 +2664,6 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_patterns,
 		$with: {
@@ -2756,7 +2695,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.ListPattern.Bound;
+	return stampBuilt(node) as unknown as T.ListPattern.Bound;
 }
 
 export function buildDefaultParameter<
@@ -2769,7 +2708,6 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DefaultParameter as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_value,
@@ -2789,7 +2727,7 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DefaultParameter.Bound;
+	return stampBuilt(node) as unknown as T.DefaultParameter.Bound;
 }
 
 export function buildTypedDefaultParameter<
@@ -2806,7 +2744,6 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypedDefaultParameter as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_type,
@@ -2830,7 +2767,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.TypedDefaultParameter.Bound;
+	return stampBuilt(node) as unknown as T.TypedDefaultParameter.Bound;
 }
 
 export function buildListSplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
@@ -2843,7 +2780,6 @@ export function buildListSplatPattern(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplatPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_target,
 		$with: {
@@ -2859,7 +2795,7 @@ export function buildListSplatPattern(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ListSplatPattern.Bound;
+	return stampBuilt(node) as unknown as T.ListSplatPattern.Bound;
 }
 
 export function buildDictionarySplatPattern<V extends Admit<T.Identifier | T.Subscript | T.Attribute>>(
@@ -2872,7 +2808,6 @@ export function buildDictionarySplatPattern(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplatPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_target,
 		$with: {
@@ -2888,7 +2823,7 @@ export function buildDictionarySplatPattern(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DictionarySplatPattern.Bound;
+	return stampBuilt(node) as unknown as T.DictionarySplatPattern.Bound;
 }
 
 export function buildAsPattern<
@@ -2909,7 +2844,6 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AsPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		_alias,
@@ -2929,7 +2863,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AsPattern.Bound;
+	return stampBuilt(node) as unknown as T.AsPattern.Bound;
 }
 
 export function buildNotOperator<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.NotOperator.Bound;
@@ -2938,7 +2872,6 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NotOperator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_argument,
 		$with: {
@@ -2953,7 +2886,7 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NotOperator.Bound;
+	return stampBuilt(node) as unknown as T.NotOperator.Bound;
 }
 
 export function buildBooleanOperator<
@@ -2967,7 +2900,6 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.BooleanOperator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_operator,
@@ -2991,7 +2923,7 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.BooleanOperator.Bound;
+	return stampBuilt(node) as unknown as T.BooleanOperator.Bound;
 }
 
 export function buildBinaryOperator<
@@ -3005,7 +2937,6 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.BinaryOperator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_operator,
@@ -3029,7 +2960,7 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.BinaryOperator.Bound;
+	return stampBuilt(node) as unknown as T.BinaryOperator.Bound;
 }
 
 export function buildUnaryOperator<ArgumentSlot extends T.UnaryOperator.Config['argument']>(
@@ -3041,7 +2972,6 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnaryOperator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_operator,
 		_argument,
@@ -3061,7 +2991,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnaryOperator.Bound;
+	return stampBuilt(node) as unknown as T.UnaryOperator.Bound;
 }
 
 export function buildComparisonOperator<
@@ -3076,7 +3006,6 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComparisonOperator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_comparators,
@@ -3103,7 +3032,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ComparisonOperator.Bound;
+	return stampBuilt(node) as unknown as T.ComparisonOperator.Bound;
 }
 
 export function buildLambda<
@@ -3116,7 +3045,6 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Lambda as const,
-		$source: 2 as const,
 		$named: true as const,
 		_parameters,
 		_body,
@@ -3142,7 +3070,7 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Lambda.Bound;
+	return stampBuilt(node) as unknown as T.Lambda.Bound;
 }
 
 export function buildLambdaWithinForInClause<
@@ -3159,7 +3087,6 @@ export function buildLambdaWithinForInClause(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LambdaWithinForInClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_parameters,
 		_body,
@@ -3185,7 +3112,7 @@ export function buildLambdaWithinForInClause(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.LambdaWithinForInClause.Bound;
+	return stampBuilt(node) as unknown as T.LambdaWithinForInClause.Bound;
 }
 
 export function buildAugmentedAssignment<
@@ -3201,7 +3128,6 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AugmentedAssignment as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_operator,
@@ -3225,7 +3151,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AugmentedAssignment.Bound;
+	return stampBuilt(node) as unknown as T.AugmentedAssignment.Bound;
 }
 
 export function buildPatternList<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -3256,7 +3182,6 @@ function _buildPatternList(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PatternList as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -3283,7 +3208,7 @@ function _buildPatternList(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.PatternList.Bound;
+	return stampBuilt(node) as unknown as T.PatternList.Bound;
 }
 
 export function buildYield<V extends Admit<T.YieldFromClause | T.Expression | T.ExpressionList>>(
@@ -3294,7 +3219,6 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Yield as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -3310,7 +3234,7 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Yield.Bound;
+	return stampBuilt(node) as unknown as T.Yield.Bound;
 }
 
 export function buildAttribute<
@@ -3323,7 +3247,6 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Attribute as const,
-		$source: 2 as const,
 		$named: true as const,
 		_object,
 		_attribute,
@@ -3343,7 +3266,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Attribute.Bound;
+	return stampBuilt(node) as unknown as T.Attribute.Bound;
 }
 
 export function buildSubscript<
@@ -3356,7 +3279,6 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscript as const,
-		$source: 2 as const,
 		$named: true as const,
 		_value,
 		_subscripts,
@@ -3382,7 +3304,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Subscript.Bound;
+	return stampBuilt(node) as unknown as T.Subscript.Bound;
 }
 
 export function buildSlice<
@@ -3400,7 +3322,6 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Slice as const,
-		$source: 2 as const,
 		$named: true as const,
 		_start,
 		_stop,
@@ -3441,7 +3362,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Slice.Bound;
+	return stampBuilt(node) as unknown as T.Slice.Bound;
 }
 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;
@@ -3456,7 +3377,6 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Call as const,
-		$source: 2 as const,
 		$named: true as const,
 		_function,
 		_arguments,
@@ -3476,7 +3396,7 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Call.Bound;
+	return stampBuilt(node) as unknown as T.Call.Bound;
 }
 
 export function buildTypedParameter<
@@ -3489,7 +3409,6 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypedParameter as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_type,
@@ -3508,7 +3427,7 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.TypedParameter.Bound;
+	return stampBuilt(node) as unknown as T.TypedParameter.Bound;
 }
 
 export function buildType<
@@ -3521,7 +3440,6 @@ export function buildType(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Type as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -3540,7 +3458,7 @@ export function buildType(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Type.Bound;
+	return stampBuilt(node) as unknown as T.Type.Bound;
 }
 
 export function buildSplatType<NameSlot extends T.SplatType.Config['name']>(
@@ -3552,7 +3470,6 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SplatType as const,
-		$source: 2 as const,
 		$named: true as const,
 		_operator,
 		_name,
@@ -3571,7 +3488,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SplatType.Bound;
+	return stampBuilt(node) as unknown as T.SplatType.Bound;
 }
 
 export function buildGenericType<
@@ -3586,7 +3503,6 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GenericType as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_type_parameter,
@@ -3611,7 +3527,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.GenericType.Bound;
+	return stampBuilt(node) as unknown as T.GenericType.Bound;
 }
 
 export function buildUnionType<
@@ -3624,7 +3540,6 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnionType as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_right,
@@ -3642,7 +3557,7 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnionType.Bound;
+	return stampBuilt(node) as unknown as T.UnionType.Bound;
 }
 
 export function buildConstrainedType<
@@ -3657,7 +3572,6 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConstrainedType as const,
-		$source: 2 as const,
 		$named: true as const,
 		_base_type,
 		_constraint,
@@ -3677,7 +3591,7 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ConstrainedType.Bound;
+	return stampBuilt(node) as unknown as T.ConstrainedType.Bound;
 }
 
 export function buildMemberType<
@@ -3690,7 +3604,6 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MemberType as const,
-		$source: 2 as const,
 		$named: true as const,
 		_base_type,
 		_name,
@@ -3708,7 +3621,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.MemberType.Bound;
+	return stampBuilt(node) as unknown as T.MemberType.Bound;
 }
 
 export function buildKeywordArgument<
@@ -3721,7 +3634,6 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeywordArgument as const,
-		$source: 2 as const,
 		$named: true as const,
 		_name,
 		_value,
@@ -3741,7 +3653,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.KeywordArgument.Bound;
+	return stampBuilt(node) as unknown as T.KeywordArgument.Bound;
 }
 
 export function buildList(): T.EmptyList;
@@ -3779,7 +3691,6 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.List as const,
-		$source: 2 as const,
 		$named: true as const,
 		_collection_elements,
 		$with: {
@@ -3811,7 +3722,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.List.Bound;
+	return stampBuilt(node) as unknown as T.List.Bound;
 }
 
 export function buildSet<V extends Admit<T.CollectionElements>>(
@@ -3846,7 +3757,6 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Set as const,
-		$source: 2 as const,
 		$named: true as const,
 		_collection_elements,
 		$with: {
@@ -3877,7 +3787,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.Set.Bound;
+	return stampBuilt(node) as unknown as T.Set.Bound;
 }
 
 export function buildTuple(): T.EmptyTuple;
@@ -3913,7 +3823,6 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Tuple as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -3945,7 +3854,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.Tuple.Bound;
+	return stampBuilt(node) as unknown as T.Tuple.Bound;
 }
 
 export function buildDictionary(): T.EmptyDictionary;
@@ -3981,7 +3890,6 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Dictionary as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -4013,7 +3921,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.Dictionary.Bound;
+	return stampBuilt(node) as unknown as T.Dictionary.Bound;
 }
 
 export function buildPair<KeySlot extends T.Pair.Config['key'], ValueSlot extends T.Pair.Config['value']>(
@@ -4025,7 +3933,6 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Pair as const,
-		$source: 2 as const,
 		$named: true as const,
 		_key,
 		_value,
@@ -4045,7 +3952,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Pair.Bound;
+	return stampBuilt(node) as unknown as T.Pair.Bound;
 }
 
 export function buildListComprehension<
@@ -4060,7 +3967,6 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListComprehension as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		_clauses,
@@ -4080,7 +3986,7 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ListComprehension.Bound;
+	return stampBuilt(node) as unknown as T.ListComprehension.Bound;
 }
 
 export function buildDictionaryComprehension<
@@ -4097,7 +4003,6 @@ export function buildDictionaryComprehension(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionaryComprehension as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		_clauses,
@@ -4117,7 +4022,7 @@ export function buildDictionaryComprehension(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DictionaryComprehension.Bound;
+	return stampBuilt(node) as unknown as T.DictionaryComprehension.Bound;
 }
 
 export function buildSetComprehension<
@@ -4132,7 +4037,6 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SetComprehension as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		_clauses,
@@ -4152,7 +4056,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SetComprehension.Bound;
+	return stampBuilt(node) as unknown as T.SetComprehension.Bound;
 }
 
 export function buildGeneratorExpression<
@@ -4167,7 +4071,6 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GeneratorExpression as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		_clauses,
@@ -4187,7 +4090,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.GeneratorExpression.Bound;
+	return stampBuilt(node) as unknown as T.GeneratorExpression.Bound;
 }
 
 export function buildParenthesizedExpression<V extends Admit<T.Expression | T.Yield>>(
@@ -4198,7 +4101,6 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParenthesizedExpression as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -4214,7 +4116,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ParenthesizedExpression.Bound;
+	return stampBuilt(node) as unknown as T.ParenthesizedExpression.Bound;
 }
 
 export function buildCollectionElements<
@@ -4254,7 +4156,6 @@ function _buildCollectionElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CollectionElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -4282,7 +4183,7 @@ function _buildCollectionElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.CollectionElements.Bound;
+	return stampBuilt(node) as unknown as T.CollectionElements.Bound;
 }
 
 export function buildForInClause<
@@ -4303,7 +4204,6 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForInClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_async,
 		_left,
@@ -4331,7 +4231,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ForInClause.Bound;
+	return stampBuilt(node) as unknown as T.ForInClause.Bound;
 }
 
 export function buildIfClause<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.IfClause.Bound;
@@ -4340,7 +4240,6 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IfClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_condition,
 		$with: {
@@ -4355,7 +4254,7 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IfClause.Bound;
+	return stampBuilt(node) as unknown as T.IfClause.Bound;
 }
 
 export function buildConditionalExpression<
@@ -4375,7 +4274,6 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConditionalExpression as const,
-		$source: 2 as const,
 		$named: true as const,
 		_body,
 		_condition,
@@ -4399,7 +4297,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ConditionalExpression.Bound;
+	return stampBuilt(node) as unknown as T.ConditionalExpression.Bound;
 }
 
 export function buildConcatenatedString<A extends NonEmptyArray<Admit<T.String>>>(
@@ -4410,7 +4308,6 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConcatenatedString as const,
-		$source: 2 as const,
 		$named: true as const,
 		_string,
 		$with: {
@@ -4426,7 +4323,7 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ConcatenatedString.Bound;
+	return stampBuilt(node) as unknown as T.ConcatenatedString.Bound;
 }
 
 export function buildString<
@@ -4446,7 +4343,6 @@ export function buildString(config: T.String.Config): T.String.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.String as const,
-		$source: 2 as const,
 		$named: true as const,
 		_string_start,
 		_content,
@@ -4471,7 +4367,7 @@ export function buildString(config: T.String.Config): T.String.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
-	return node as unknown as T.String.Bound;
+	return stampBuilt(node) as unknown as T.String.Bound;
 }
 
 export function buildStringContent<
@@ -4488,7 +4384,6 @@ export function buildStringContent(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringContent as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -4507,7 +4402,7 @@ export function buildStringContent(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.StringContent.Bound;
+	return stampBuilt(node) as unknown as T.StringContent.Bound;
 }
 
 export function buildInterpolation<
@@ -4528,7 +4423,6 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Interpolation as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		_debug,
@@ -4556,7 +4450,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Interpolation.Bound;
+	return stampBuilt(node) as unknown as T.Interpolation.Bound;
 }
 
 export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEscapeSequence;
@@ -4573,7 +4467,6 @@ export function buildFormatSpecifier(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormatSpecifier as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -4589,7 +4482,7 @@ export function buildFormatSpecifier(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FormatSpecifier.Bound;
+	return stampBuilt(node) as unknown as T.FormatSpecifier.Bound;
 }
 
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
@@ -4600,7 +4493,6 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeConversion as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -4611,7 +4503,7 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.TypeConversion.Bound;
+	return stampBuilt(node) as unknown as T.TypeConversion.Bound;
 }
 
 export function buildIdentifier<const W extends string>(
@@ -4625,7 +4517,6 @@ export function buildIdentifier<const W extends string>(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Identifier as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -4636,7 +4527,7 @@ export function buildIdentifier<const W extends string>(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Identifier.Bound;
+	return stampBuilt(node) as unknown as T.Identifier.Bound;
 }
 
 export const buildTrue: TSKindId.True = TSKindId.True;
@@ -4651,7 +4542,6 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Await as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -4666,7 +4556,7 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Await.Bound;
+	return stampBuilt(node) as unknown as T.Await.Bound;
 }
 
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
@@ -4685,7 +4575,6 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Comment as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -4700,7 +4589,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Comment.Bound;
+	return stampBuilt(node) as unknown as T.Comment.Bound;
 }
 
 export const buildPositionalSeparator: TSKindId.PositionalSeparator = TSKindId.PositionalSeparator;
@@ -4737,7 +4626,6 @@ function _buildSimpleStatementsElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimpleStatementsElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -4765,7 +4653,7 @@ function _buildSimpleStatementsElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.SimpleStatementsElements.Bound;
+	return stampBuilt(node) as unknown as T.SimpleStatementsElements.Bound;
 }
 
 export function buildSubjects<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -4796,7 +4684,6 @@ function _buildSubjects(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subjects as const,
-		$source: 2 as const,
 		$named: true as const,
 		_subject,
 		_delimiter,
@@ -4824,7 +4711,7 @@ function _buildSubjects(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.Subjects.Bound;
+	return stampBuilt(node) as unknown as T.Subjects.Bound;
 }
 
 export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
@@ -4857,7 +4744,6 @@ function _buildCasePatterns(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CasePatterns as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -4885,7 +4771,7 @@ function _buildCasePatterns(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.CasePatterns.Bound;
+	return stampBuilt(node) as unknown as T.CasePatterns.Bound;
 }
 
 export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
@@ -4918,7 +4804,6 @@ function _buildWithClauseWithItems(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseWithItems as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -4946,7 +4831,7 @@ function _buildWithClauseWithItems(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.WithClauseWithItems.Bound;
+	return stampBuilt(node) as unknown as T.WithClauseWithItems.Bound;
 }
 
 export function buildTypes<A extends NonEmptyArray<Admit<T.Type>>>(
@@ -4977,7 +4862,6 @@ function _buildTypes(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Types as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5004,7 +4888,7 @@ function _buildTypes(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.Types.Bound;
+	return stampBuilt(node) as unknown as T.Types.Bound;
 }
 
 export function buildArgumentListElements<
@@ -5050,7 +4934,6 @@ function _buildArgumentListElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArgumentListElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5081,7 +4964,7 @@ function _buildArgumentListElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ArgumentListElements.Bound;
+	return stampBuilt(node) as unknown as T.ArgumentListElements.Bound;
 }
 
 export function buildListPatternCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
@@ -5114,7 +4997,6 @@ function _buildListPatternCasePatterns(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListPatternCasePatterns as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5142,7 +5024,7 @@ function _buildListPatternCasePatterns(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ListPatternCasePatterns.Bound;
+	return stampBuilt(node) as unknown as T.ListPatternCasePatterns.Bound;
 }
 
 export function buildDictPatternElements<A extends NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>>(
@@ -5177,7 +5059,6 @@ function _buildDictPatternElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictPatternElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5205,7 +5086,7 @@ function _buildDictPatternElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.DictPatternElements.Bound;
+	return stampBuilt(node) as unknown as T.DictPatternElements.Bound;
 }
 
 export function buildSubscripts<A extends NonEmptyArray<Admit<T.Expression | T.Slice>>>(
@@ -5238,7 +5119,6 @@ function _buildSubscripts(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscripts as const,
-		$source: 2 as const,
 		$named: true as const,
 		_subscript,
 		_delimiter,
@@ -5266,7 +5146,7 @@ function _buildSubscripts(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.Subscripts.Bound;
+	return stampBuilt(node) as unknown as T.Subscripts.Bound;
 }
 
 export function buildDictionaryElements<A extends NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>>(
@@ -5299,7 +5179,6 @@ function _buildDictionaryElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionaryElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5327,7 +5206,7 @@ function _buildDictionaryElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.DictionaryElements.Bound;
+	return stampBuilt(node) as unknown as T.DictionaryElements.Bound;
 }
 
 export function buildSliceGroup<V extends Admit<T.Expression>>(
@@ -5338,7 +5217,6 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SliceGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -5353,7 +5231,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SliceGroup.Bound;
+	return stampBuilt(node) as unknown as T.SliceGroup.Bound;
 }
 
 export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
@@ -5364,7 +5242,6 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormatSpecifierText as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -5375,7 +5252,7 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FormatSpecifierText.Bound;
+	return stampBuilt(node) as unknown as T.FormatSpecifierText.Bound;
 }
 
 export function buildTuplePatternElements<A extends NonEmptyArray<Admit<T.Pattern>>>(
@@ -5408,7 +5285,6 @@ function _buildTuplePatternElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TuplePatternElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5436,7 +5312,7 @@ function _buildTuplePatternElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.TuplePatternElements.Bound;
+	return stampBuilt(node) as unknown as T.TuplePatternElements.Bound;
 }
 
 export function buildTupleElements<
@@ -5476,7 +5352,6 @@ function _buildTupleElements(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleElements as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5504,7 +5379,7 @@ function _buildTupleElements(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.TupleElements.Bound;
+	return stampBuilt(node) as unknown as T.TupleElements.Bound;
 }
 
 export function buildExceptClauseExceptionAs<
@@ -5521,7 +5396,6 @@ export function buildExceptClauseExceptionAs(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClauseExceptionAs as const,
-		$source: 2 as const,
 		$named: true as const,
 		_value,
 		_alias,
@@ -5541,7 +5415,7 @@ export function buildExceptClauseExceptionAs(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ExceptClauseExceptionAs.Bound;
+	return stampBuilt(node) as unknown as T.ExceptClauseExceptionAs.Bound;
 }
 
 export function buildCaseTuplePattern(): T.EmptyCaseTuplePattern;
@@ -5579,7 +5453,6 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseTuplePattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -5611,7 +5484,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.CaseTuplePattern.Bound;
+	return stampBuilt(node) as unknown as T.CaseTuplePattern.Bound;
 }
 
 export function buildCaseListPattern(): T.EmptyCaseListPattern;
@@ -5649,7 +5522,6 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseListPattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -5681,7 +5553,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.CaseListPattern.Bound;
+	return stampBuilt(node) as unknown as T.CaseListPattern.Bound;
 }
 
 export function buildPrintArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -5714,7 +5586,6 @@ function _buildPrintArguments(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintArguments as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5742,7 +5613,7 @@ function _buildPrintArguments(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.PrintArguments.Bound;
+	return stampBuilt(node) as unknown as T.PrintArguments.Bound;
 }
 
 export function buildPrintChevronArguments<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -5775,7 +5646,6 @@ function _buildPrintChevronArguments(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintChevronArguments as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -5803,7 +5673,7 @@ function _buildPrintChevronArguments(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.PrintChevronArguments.Bound;
+	return stampBuilt(node) as unknown as T.PrintChevronArguments.Bound;
 }
 
 export function buildPrintStatementChevron<
@@ -5823,7 +5693,6 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementChevron as const,
-		$source: 2 as const,
 		$named: true as const,
 		_chevron,
 		_print_chevron_arguments,
@@ -5850,7 +5719,7 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.PrintStatementChevron.Bound;
+	return stampBuilt(node) as unknown as T.PrintStatementChevron.Bound;
 }
 
 export function buildPrintStatementPlain<V extends Admit<T.PrintArguments>>(
@@ -5887,7 +5756,6 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatementPlain as const,
-		$source: 2 as const,
 		$named: true as const,
 		_print_arguments,
 		$with: {
@@ -5918,7 +5786,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.PrintStatementPlain.Bound;
+	return stampBuilt(node) as unknown as T.PrintStatementPlain.Bound;
 }
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
@@ -5957,7 +5825,6 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParenthesizedImportList as const,
-		$source: 2 as const,
 		$named: true as const,
 		_import_list,
 		$with: {
@@ -5988,7 +5855,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.ParenthesizedImportList.Bound;
+	return stampBuilt(node) as unknown as T.ParenthesizedImportList.Bound;
 }
 
 export function buildComprehensionClauses<A extends NonEmptyArray<Admit<T.ForInClause | T.IfClause>>>(
@@ -6001,7 +5868,6 @@ export function buildComprehensionClauses(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComprehensionClauses as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6017,7 +5883,7 @@ export function buildComprehensionClauses(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ComprehensionClauses.Bound;
+	return stampBuilt(node) as unknown as T.ComprehensionClauses.Bound;
 }
 
 export function buildIntegerHex<const N extends string | number | bigint>(
@@ -6041,7 +5907,6 @@ export function buildIntegerHex(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerHex as const,
-		$source: 2 as const,
 		$named: true as const,
 		_prefix,
 		_content,
@@ -6060,7 +5925,7 @@ export function buildIntegerHex(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IntegerHex.Bound;
+	return stampBuilt(node) as unknown as T.IntegerHex.Bound;
 }
 
 export function buildIntegerOctal<const N extends string | number | bigint>(
@@ -6084,7 +5949,6 @@ export function buildIntegerOctal(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerOctal as const,
-		$source: 2 as const,
 		$named: true as const,
 		_prefix,
 		_content,
@@ -6104,7 +5968,7 @@ export function buildIntegerOctal(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IntegerOctal.Bound;
+	return stampBuilt(node) as unknown as T.IntegerOctal.Bound;
 }
 
 export function buildIntegerBinary<const N extends string | number | bigint>(
@@ -6128,7 +5992,6 @@ export function buildIntegerBinary(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerBinary as const,
-		$source: 2 as const,
 		$named: true as const,
 		_prefix,
 		_content,
@@ -6148,7 +6011,7 @@ export function buildIntegerBinary(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IntegerBinary.Bound;
+	return stampBuilt(node) as unknown as T.IntegerBinary.Bound;
 }
 
 export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Bound {
@@ -6159,7 +6022,6 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerDecimalLong as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -6170,7 +6032,7 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IntegerDecimalLong.Bound;
+	return stampBuilt(node) as unknown as T.IntegerDecimalLong.Bound;
 }
 
 export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImaginary.Bound {
@@ -6182,7 +6044,6 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerDecimalImaginary as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -6193,7 +6054,7 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IntegerDecimalImaginary.Bound;
+	return stampBuilt(node) as unknown as T.IntegerDecimalImaginary.Bound;
 }
 
 export function buildIntegerDecimalPlain<const N extends string | number | bigint>(
@@ -6208,7 +6069,6 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IntegerDecimalPlain as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -6219,7 +6079,7 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IntegerDecimalPlain.Bound;
+	return stampBuilt(node) as unknown as T.IntegerDecimalPlain.Bound;
 }
 
 export function buildFloatPoint<
@@ -6291,7 +6151,6 @@ export function buildFloatPoint(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FloatPoint as const,
-		$source: 2 as const,
 		$named: true as const,
 		_integer,
 		_fraction,
@@ -6327,7 +6186,7 @@ export function buildFloatPoint(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FloatPoint.Bound;
+	return stampBuilt(node) as unknown as T.FloatPoint.Bound;
 }
 
 export function buildFloatLeadingPoint<
@@ -6399,7 +6258,6 @@ export function buildFloatLeadingPoint(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FloatLeadingPoint as const,
-		$source: 2 as const,
 		$named: true as const,
 		_integer,
 		_fraction,
@@ -6435,7 +6293,7 @@ export function buildFloatLeadingPoint(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FloatLeadingPoint.Bound;
+	return stampBuilt(node) as unknown as T.FloatLeadingPoint.Bound;
 }
 
 export function buildFloatScientific<
@@ -6489,7 +6347,6 @@ export function buildFloatScientific(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FloatScientific as const,
-		$source: 2 as const,
 		$named: true as const,
 		_integer,
 		_marker,
@@ -6521,7 +6378,7 @@ export function buildFloatScientific(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FloatScientific.Bound;
+	return stampBuilt(node) as unknown as T.FloatScientific.Bound;
 }
 
 export function buildEscapeSequenceUnicodeFixed(content: string, affix?: true): T.EscapeSequenceUnicodeFixed.Bound;
@@ -6544,7 +6401,6 @@ export function buildEscapeSequenceUnicodeFixed(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeFixed as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6559,7 +6415,7 @@ export function buildEscapeSequenceUnicodeFixed(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceUnicodeFixed.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceUnicodeFixed.Bound;
 }
 
 export function buildEscapeSequenceUnicodeWide(content: string, affix?: true): T.EscapeSequenceUnicodeWide.Bound;
@@ -6582,7 +6438,6 @@ export function buildEscapeSequenceUnicodeWide(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceUnicodeWide as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6597,7 +6452,7 @@ export function buildEscapeSequenceUnicodeWide(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceUnicodeWide.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceUnicodeWide.Bound;
 }
 
 export function buildEscapeSequenceHex(content: string, affix?: true): T.EscapeSequenceHex.Bound;
@@ -6617,7 +6472,6 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceHex as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6632,7 +6486,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceHex.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceHex.Bound;
 }
 
 export function buildEscapeSequenceOctal<const N extends string | number | bigint>(
@@ -6658,7 +6512,6 @@ export function buildEscapeSequenceOctal(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceOctal as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6673,7 +6526,7 @@ export function buildEscapeSequenceOctal(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceOctal.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceOctal.Bound;
 }
 
 export function buildEscapeSequenceLineBreak(content: string, affix?: true): T.EscapeSequenceLineBreak.Bound;
@@ -6693,7 +6546,6 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceLineBreak as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6708,7 +6560,7 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceLineBreak.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceLineBreak.Bound;
 }
 
 export function buildEscapeSequenceSimple(content: string, affix?: true): T.EscapeSequenceSimple.Bound;
@@ -6728,7 +6580,6 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceSimple as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6743,7 +6594,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceSimple.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceSimple.Bound;
 }
 
 export function buildEscapeSequenceNamed(content: string, affix?: true): T.EscapeSequenceNamed.Bound;
@@ -6763,7 +6614,6 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeSequenceNamed as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6778,7 +6628,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeSequenceNamed.Bound;
+	return stampBuilt(node) as unknown as T.EscapeSequenceNamed.Bound;
 }
 
 export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Bound {
@@ -6790,7 +6640,6 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LineContinuationNewline as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -6801,7 +6650,7 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.LineContinuationNewline.Bound;
+	return stampBuilt(node) as unknown as T.LineContinuationNewline.Bound;
 }
 
 export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
@@ -6815,7 +6664,6 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimplePatternNegative as const,
-		$source: 2 as const,
 		$named: true as const,
 		_sign,
 		_value,
@@ -6835,7 +6683,7 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SimplePatternNegative.Bound;
+	return stampBuilt(node) as unknown as T.SimplePatternNegative.Bound;
 }
 
 export function buildExceptClauseExceptionList<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -6848,7 +6696,6 @@ export function buildExceptClauseExceptionList(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClauseExceptionList as const,
-		$source: 2 as const,
 		$named: true as const,
 		_value,
 		$with: {
@@ -6864,7 +6711,7 @@ export function buildExceptClauseExceptionList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ExceptClauseExceptionList.Bound;
+	return stampBuilt(node) as unknown as T.ExceptClauseExceptionList.Bound;
 }
 
 export function buildExceptClauseException<V extends Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>>(
@@ -6877,7 +6724,6 @@ export function buildExceptClauseException(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClauseException as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -6893,7 +6739,7 @@ export function buildExceptClauseException(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ExceptClauseException.Bound;
+	return stampBuilt(node) as unknown as T.ExceptClauseException.Bound;
 }
 
 export function buildAssignmentEq<
@@ -6906,7 +6752,6 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentEq as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_right,
@@ -6926,7 +6771,7 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AssignmentEq.Bound;
+	return stampBuilt(node) as unknown as T.AssignmentEq.Bound;
 }
 
 export function buildAssignmentType<
@@ -6939,7 +6784,6 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentType as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_type,
@@ -6958,7 +6802,7 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AssignmentType.Bound;
+	return stampBuilt(node) as unknown as T.AssignmentType.Bound;
 }
 
 export function buildAssignmentTyped<
@@ -6975,7 +6819,6 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentTyped as const,
-		$source: 2 as const,
 		$named: true as const,
 		_left,
 		_type,
@@ -6998,7 +6841,7 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AssignmentTyped.Bound;
+	return stampBuilt(node) as unknown as T.AssignmentTyped.Bound;
 }
 
 export function buildExpressionStatementTuple<A extends NonEmptyArray<Admit<T.Expression>>>(
@@ -7031,7 +6874,6 @@ function _buildExpressionStatementTuple(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionStatementTuple as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -7059,7 +6901,7 @@ function _buildExpressionStatementTuple(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.ExpressionStatementTuple.Bound;
+	return stampBuilt(node) as unknown as T.ExpressionStatementTuple.Bound;
 }
 
 export function buildWithClauseBare<A extends NonEmptyArray<Admit<T.WithItem>>>(
@@ -7092,7 +6934,6 @@ function _buildWithClauseBare(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseBare as const,
-		$source: 2 as const,
 		$named: true as const,
 		_item,
 		_delimiter,
@@ -7120,7 +6961,7 @@ function _buildWithClauseBare(
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listedStored.length);
-	return node as unknown as T.WithClauseBare.Bound;
+	return stampBuilt(node) as unknown as T.WithClauseBare.Bound;
 }
 
 export function buildWithClauseParen<V extends Admit<T.WithClauseWithItems>>(
@@ -7157,7 +6998,6 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseParen as const,
-		$source: 2 as const,
 		$named: true as const,
 		_with_items,
 		$with: {
@@ -7188,7 +7028,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.WithClauseParen.Bound;
+	return stampBuilt(node) as unknown as T.WithClauseParen.Bound;
 }
 
 export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
@@ -7200,7 +7040,6 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlockBlock as const,
-		$source: 2 as const,
 		$named: true as const,
 		_alternative,
 		$with: {
@@ -7217,7 +7056,7 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.MatchBlockBlock.Bound;
+	return stampBuilt(node) as unknown as T.MatchBlockBlock.Bound;
 }
 
 export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
@@ -7244,7 +7083,6 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlockEmpty as const,
-		$source: 2 as const,
 		$named: true as const,
 		_newline,
 		$with: {
@@ -7260,7 +7098,7 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.MatchBlockEmpty.Bound;
+	return stampBuilt(node) as unknown as T.MatchBlockEmpty.Bound;
 }
 
 export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements>>(
@@ -7297,7 +7135,6 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SuiteInline as const,
-		$source: 2 as const,
 		$named: true as const,
 		_elements,
 		$with: {
@@ -7328,7 +7165,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 		$engine: handle && (() => handle.current)
 	};
 	defineListIndices(node, listView.stored?.length ?? 0);
-	return node as unknown as T.SuiteInline.Bound;
+	return stampBuilt(node) as unknown as T.SuiteInline.Bound;
 }
 
 export function buildSuiteBlock<V extends Admit<T.Block>>(
@@ -7358,7 +7195,6 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SuiteBlock as const,
-		$source: 2 as const,
 		$named: true as const,
 		_block,
 		$with: {
@@ -7373,7 +7209,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SuiteBlock.Bound;
+	return stampBuilt(node) as unknown as T.SuiteBlock.Bound;
 }
 
 export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
@@ -7400,7 +7236,6 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SuiteEmpty as const,
-		$source: 2 as const,
 		$named: true as const,
 		_newline,
 		$with: {
@@ -7415,7 +7250,7 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.SuiteEmpty.Bound;
+	return stampBuilt(node) as unknown as T.SuiteEmpty.Bound;
 }
 
 export function buildComparisonOperatorComparator<
@@ -7433,7 +7268,6 @@ export function buildComparisonOperatorComparator(
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComparisonOperatorComparator as const,
-		$source: 2 as const,
 		$named: true as const,
 		_operators,
 		_primary_expression,
@@ -7453,7 +7287,7 @@ export function buildComparisonOperatorComparator(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ComparisonOperatorComparator.Bound;
+	return stampBuilt(node) as unknown as T.ComparisonOperatorComparator.Bound;
 }
 
 export function buildYieldFromClause<V extends Admit<T.Expression>>(
@@ -7464,7 +7298,6 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.YieldFromClause as const,
-		$source: 2 as const,
 		$named: true as const,
 		_expression,
 		$with: {
@@ -7479,7 +7312,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.YieldFromClause.Bound;
+	return stampBuilt(node) as unknown as T.YieldFromClause.Bound;
 }
 
 export function buildStringStart(text: string): T.StringStart.Bound {
@@ -7490,7 +7323,6 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringStart as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -7501,7 +7333,7 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.StringStart.Bound;
+	return stampBuilt(node) as unknown as T.StringStart.Bound;
 }
 
 export function buildStringFragment(text: string): T.StringFragment.Bound {
@@ -7512,7 +7344,6 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringFragment as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -7523,7 +7354,7 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.StringFragment.Bound;
+	return stampBuilt(node) as unknown as T.StringFragment.Bound;
 }
 
 export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bound {
@@ -7534,7 +7365,6 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EscapeInterpolation as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -7545,7 +7375,7 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.EscapeInterpolation.Bound;
+	return stampBuilt(node) as unknown as T.EscapeInterpolation.Bound;
 }
 
 export function buildStringEnd(text: string): T.StringEnd.Bound {
@@ -7556,7 +7386,6 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringEnd as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -7567,7 +7396,7 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.StringEnd.Bound;
+	return stampBuilt(node) as unknown as T.StringEnd.Bound;
 }
 
 export const buildIndent: TSKindId.Indent = TSKindId.Indent;
@@ -7592,7 +7421,6 @@ export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Names as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -7614,7 +7442,7 @@ export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Names.Bound;
+	return stampBuilt(node) as unknown as T.Names.Bound;
 }
 
 export function buildAsPatternTarget<V extends Admit<T.Expression>>(
@@ -7625,7 +7453,6 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AsPatternTarget as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -7640,7 +7467,7 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AsPatternTarget.Bound;
+	return stampBuilt(node) as unknown as T.AsPatternTarget.Bound;
 }
 
 export function buildFormatExpression<V extends Admit<T.Interpolation>>(
@@ -7651,7 +7478,6 @@ export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatEx
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormatExpression as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -7666,7 +7492,7 @@ export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatEx
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FormatExpression.Bound;
+	return stampBuilt(node) as unknown as T.FormatExpression.Bound;
 }
 
 export type FluentKindMap = {

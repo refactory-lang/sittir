@@ -1,10 +1,12 @@
-import type { AnyUntypedNode, TriviaSetter } from './core-types.ts';
-import type { NodeMethods } from './engine-api.ts';
+import type { TriviaSetter } from './core-types.ts';
 import type { KeysOfUnion } from 'type-fest';
 import type { IsExactly } from './type-utils.ts';
 
 /** The member a parsed object holds its `TreeToken` under. Type-only: no value of it is exported. */
 export declare const TreeMember: unique symbol;
+
+/** The member a node holds its source stamp under. Type-only: no value of it is exported. */
+export declare const SourceMember: unique symbol;
 
 /** The brand a `Snapshot` carries. Type-only: no value of it is exported. */
 export declare const SnapshotBrand: unique symbol;
@@ -27,6 +29,11 @@ export interface TreeToken {
 /** An object read from a parse, holding that parse's tree. Every `.Parsed` node is one, a parsed leaf included. */
 export interface HoldsTree {
 	readonly [TreeMember]: TreeToken;
+}
+
+/** A node: an object a factory built, a parse read, or a validator copied, stamped with which of them produced it. Every `.Bound` and `.Parsed` node is one. */
+export interface HoldsSource {
+	readonly [SourceMember]: 0 | 1 | 2;
 }
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
@@ -159,7 +166,7 @@ export type Admit<V> = V extends unknown
 			: V
 	: never;
 
-type NodeMarker = { readonly $render: NodeMethods['$render'] } | HoldsTree;
+type NodeMarker = HoldsSource | HoldsTree;
 
 type IsOneOf<V, U> = true extends (U extends unknown ? IsExactly<V, U> : never) ? true : false;
 
@@ -439,7 +446,6 @@ export type FlatShapesOf<Surface, N, ByChild> = ShapesOf<Surface, N, FlatOf<N>, 
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &
 	ListPart<N, ByChild> & {
-		readonly $source?: AnyUntypedNode['$source'];
 		readonly __slotHints__?: HintsOf<N>;
 		readonly __flags__?: FlagsHintOf<N>;
 		readonly __slotFlags__?: SlotFlagsHintOf<N>;

@@ -1,8 +1,9 @@
 // Run with `node --import tsx <this> <leaf JSON>`: a process handed read data
 // another process parsed. Tree ids count from 0 in every process, so it
 // first parses trees of its own until the copy's tree id names one of them:
-// a lookup alone would then answer the copy from the wrong source. Prints
-// one JSON line: what it rendered, from the copy's own data, or a refusal.
+// a lookup alone would then answer the copy from the wrong source. The copy
+// holds no tree and no source stamp, so it is no node. Prints one JSON line:
+// what it rendered, or the refusal.
 import { createEngine } from '../../src/index.ts';
 import rust from '../../../rust/src/index.ts';
 

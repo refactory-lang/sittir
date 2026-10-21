@@ -2,6 +2,8 @@ import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, 
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { stampSource } from './source-stamp.ts';
+import { Source } from './source.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -84,6 +86,7 @@ export function holdTree(value: unknown, token: TreeToken): void {
 export function holdReadTree(value: unknown, token: TreeToken): void {
 	forEachParsedObject(value, (node) => {
 		holdTreeOn(node, token);
+		stampSource(node, Source.Ts);
 		readObjects.add(node);
 	});
 }
@@ -134,7 +137,7 @@ export function treeHandleOf(node: object): number | undefined {
 
 /** The handle a node names its tree by: its own coordinate's, or, for a node rebuilt from a read one, its source's. */
 export function sourceHandleOf(node: object): number | undefined {
-	return coordinateOf(node)?.$treeHandle ?? sourceOf(node)?.treeHandle;
+	return coordinateOf(node)?.$treeHandle ?? placeOf(node)?.treeHandle;
 }
 
 /** The descendant index a read node or a coordinate names itself by, in its tree. */
@@ -212,15 +215,15 @@ export interface SourceIdentity {
 	readonly kind: number;
 }
 
-const SOURCE = Symbol('sittir.source');
+const PLACE = Symbol('sittir.place');
 
 /**
  * The source identity of a node: a read node's own coordinate and tree, or
  * the identity an edit carried forward from the node it rebuilt
- * (`carrySource`). Evidence of layout only; nothing slices it.
+ * (`carryPlace`). Evidence of layout only; nothing slices it.
  */
-export function sourceOf(node: object): SourceIdentity | undefined {
-	const carried = (node as { [SOURCE]?: SourceIdentity })[SOURCE];
+export function placeOf(node: object): SourceIdentity | undefined {
+	const carried = (node as { [PLACE]?: SourceIdentity })[PLACE];
 	if (carried !== undefined) return carried;
 	const token = treeTokenOf(node);
 	const at = coordinateOf(node);
@@ -229,9 +232,9 @@ export function sourceOf(node: object): SourceIdentity | undefined {
 }
 
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
-export function carrySource(from: object, to: object): void {
-	const source = sourceOf(from);
-	if (source !== undefined) Object.defineProperty(to, SOURCE, { value: source, enumerable: false, configurable: true });
+export function carryPlace(from: object, to: object): void {
+	const source = placeOf(from);
+	if (source !== undefined) Object.defineProperty(to, PLACE, { value: source, enumerable: false, configurable: true });
 }
 
 /** A tree whose trivia table answers for a node: the tree and the node's index in it. */
@@ -259,7 +262,7 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
 /**
  * The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it
  * holds, else its tree's for a parsed node, else those of the node it was rebuilt from
- * (`sourceOf`); `undefined` when none answers.
+ * (`placeOf`); `undefined` when none answers.
  */
 export function unitSidesOf(node: object): readonly unknown[] | undefined {
 	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units;
@@ -267,14 +270,14 @@ export function unitSidesOf(node: object): readonly unknown[] | undefined {
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
-	const source = sourceOf(node);
+	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
 	return source === undefined || from === undefined ? undefined : carriedUnitSides(node as Record<string, unknown>, decodeIndex(source.treeHandle), from);
 }
 
 /**
  * The stored layout of a node's list slots (`NodeLayout.slots`): the ones it holds, else its
- * tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), which apply to
+ * tree's for a parsed node, else those of the node it was rebuilt from (`placeOf`), which apply to
  * every gap of the slot, kept or inserted; `undefined` when none answers.
  */
 export function slotsOf(node: object): readonly unknown[] | undefined {
@@ -283,7 +286,7 @@ export function slotsOf(node: object): readonly unknown[] | undefined {
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree?.slotLayouts !== undefined && index !== undefined) return tree.slotLayouts(index);
-	const source = sourceOf(node);
+	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
 	return source === undefined ? undefined : from?.slotLayouts?.(decodeIndex(source.treeHandle));
 }
@@ -291,7 +294,7 @@ export function slotsOf(node: object): readonly unknown[] | undefined {
 /**
  * The separator a node's source spells before it as a list item where it is not its slot's
  * (`NodeLayout.separator`): the one it holds, else its tree's for a parsed node, else that of
- * the node it was rebuilt from (`sourceOf`); `undefined` when none answers.
+ * the node it was rebuilt from (`placeOf`); `undefined` when none answers.
  */
 export function separatorOf(node: object): number | undefined {
 	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.separator;
@@ -299,7 +302,7 @@ export function separatorOf(node: object): number | undefined {
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree?.separatorBefore !== undefined && index !== undefined) return tree.separatorBefore(index);
-	const source = sourceOf(node);
+	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
 	return source === undefined ? undefined : from?.separatorBefore?.(decodeIndex(source.treeHandle));
 }
@@ -307,13 +310,13 @@ export function separatorOf(node: object): number | undefined {
 /**
  * The separator a list writes between its items, as a grammar id: its tree's for a parsed list
  * (its slot's stored one, else the one the read-time options render), else that of the list it
- * was rebuilt from (`sourceOf`); `undefined` when none answers.
+ * was rebuilt from (`placeOf`); `undefined` when none answers.
  */
 export function slotSeparatorOf(node: object): number | undefined {
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree?.slotSeparator !== undefined && index !== undefined) return tree.slotSeparator(index);
-	const source = sourceOf(node);
+	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
 	return source === undefined ? undefined : from?.slotSeparator?.(decodeIndex(source.treeHandle));
 }
@@ -429,14 +432,14 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 /**
  * The entries of `side` of `node`: a parsed node's from its tree's trivia table, the written ones
  * or else the ones the table assigns it; a built node's stored side, else the side of the node it
- * was rebuilt from (`sourceOf`).
+ * was rebuilt from (`placeOf`).
  */
 export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
 	const at = tableAt(node);
 	if (at !== undefined) return at.tree.triviaSide(at.index, side) as TriviaEntry[];
 	const stored = triviaOf(node)?.[side];
 	if (stored !== undefined) return stored;
-	const source = sourceOf(node);
+	const source = placeOf(node);
 	const table = source === undefined ? undefined : tableOf(sourceTree(source), decodeIndex(source.treeHandle));
 	return table === undefined ? [] : (table.tree.triviaSide(table.index, side) as TriviaEntry[]);
 }
@@ -503,7 +506,7 @@ const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
  * unless it is its tree's root, whose edges are the document's.
  */
 function rootEdges(node: object): ChangedEdges {
-	const source = sourceOf(node);
+	const source = placeOf(node);
 	return source !== undefined && decodeIndex(source.treeHandle) === 0 ? NO_EDGES : BOTH_EDGES;
 }
 
@@ -534,13 +537,13 @@ function keepsNeighbour(span: Siblings['previous'], neighbour: unknown, token: T
 	if (span === null) return neighbour === undefined;
 	if (typeof neighbour === 'number') return neighbour === span.kind;
 	if (!isRecord(neighbour)) return false;
-	const other = sourceOf(evidenceOf(neighbour, view));
+	const other = placeOf(evidenceOf(neighbour, view));
 	return other !== undefined && other.token === token && other.span.start === span.start && other.span.end === span.end;
 }
 
 function changedEdges(list: readonly unknown[], index: number, view: KindView): ChangedEdges {
 	const entry = list[index];
-	const source = isRecord(entry) ? sourceOf(evidenceOf(entry, view)) : undefined;
+	const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
 	const siblings = source === undefined ? undefined : siblingsOf(source);
 	if (source === undefined || siblings === undefined) return NO_EDGES;
 	return {
@@ -559,7 +562,7 @@ function isPresent(value: unknown): boolean {
  * (`KindView.isWrapper`) that holds exactly one present node, that node.
  */
 function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<string, unknown> {
-	if (sourceOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
+	if (placeOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
 	const held = Object.keys(entry).flatMap((key) => (isSlotKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
 	const [only] = held;
 	return held.length === 1 && isRecord(only) ? evidenceOf(only, view) : entry;
@@ -653,7 +656,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	}
 	const units = fold || sided ? unitSidesOf(value) : undefined;
 	if (units !== undefined && units.length > 0) setLayout(out, 'units', units.map((unit) => ({ ...(unit as object), ...entriesData(unit as TriviaSides<unknown>) })));
-	const source = fold ? sourceOf(value) : undefined;
+	const source = fold ? placeOf(value) : undefined;
 	if (source !== undefined && sourceTree(source) !== undefined) {
 		setLayout(out, 'sides', plainCoordinate({ $treeHandle: source.treeHandle, $end: source.end, $span: source.span, $type: source.kind }));
 	}
