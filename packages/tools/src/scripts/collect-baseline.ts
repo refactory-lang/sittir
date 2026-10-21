@@ -38,8 +38,8 @@ import { combineBuiltRender } from '../validate/built-render.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
-import { fixtureReplayOf, type FixtureReplay, readNodeModelFile } from '../validate/common.ts';
-import { kindCount, type CensusModel } from '../census/hoisted.ts';
+import { fixtureReplayOf, type FixtureReplay } from '../validate/common.ts';
+import { deriveRuleKinds } from '../validate/render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
@@ -91,15 +91,8 @@ export interface GrammarEntry {
 		builtRenderParse: RoundtripResult;
 	};
 	parityFixtures: ParityFixtures;
-	/**
-	 * Every kind of the grammar's node model, one stamped count. The
-	 * regression checker reads a FALL here as the number of kinds that left
-	 * the grammar: a kind-denominated validator's total may shrink by no
-	 * more than that. Optional because a baseline committed before this
-	 * field existed has none; a missing count on either side explains no
-	 * drop.
-	 */
 	kindCount?: number;
+	kindCountBasis?: 'render-bodies';
 }
 
 export interface CounterPair {
@@ -360,9 +353,7 @@ function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['
 }
 
 function computeKindCount(grammar: GrammarName): number {
-	const raw = readNodeModelFile(grammar);
-	if (raw === undefined) throw new Error(`collect-baseline: no node-model.json5 for grammar '${grammar}'`);
-	return kindCount(JSON.parse(raw) as CensusModel);
+	return deriveRuleKinds(grammar).size;
 }
 
 async function collectGrammarEntry(grammar: GrammarName, backend: Backend): Promise<GrammarEntry> {
@@ -373,7 +364,8 @@ async function collectGrammarEntry(grammar: GrammarName, backend: Backend): Prom
 	return {
 		validators,
 		parityFixtures,
-		kindCount: computeKindCount(grammar)
+		kindCount: computeKindCount(grammar),
+		kindCountBasis: 'render-bodies'
 	};
 }
 

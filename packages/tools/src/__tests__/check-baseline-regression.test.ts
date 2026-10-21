@@ -394,6 +394,21 @@ describe('checkRegression', () => {
 			head.grammars.typescript!.kindCount = 299;
 			expectFail(checkRegression(base, head));
 		});
+
+		it('changing the counted population explains no departure', () => {
+			const { base, head } = dropping('coverage', [202, 202], [201, 201]);
+			head.grammars.typescript!.kindCount = 162;
+			head.grammars.typescript!.kindCountBasis = 'render-bodies';
+			expectFail(checkRegression(base, head));
+		});
+
+		it('a render-body departure is compared only with the same population', () => {
+			const { base, head } = dropping('coverage', [202, 202], [201, 201]);
+			base.grammars.typescript!.kindCountBasis = 'render-bodies';
+			head.grammars.typescript!.kindCountBasis = 'render-bodies';
+			head.grammars.typescript!.kindCount = 299;
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
 	});
 
 	it('totals.pass alone dropping (every per-validator/parityFixtures pass unchanged) — passes (rule 1 no longer double-checks the aggregate)', () => {
@@ -409,7 +424,9 @@ describe('checkRegression', () => {
 		['kindCount', '40'],
 		['kindCount', -1],
 		['kindCount', 1.5],
-		['kindCount', null]
+		['kindCount', null],
+		['kindCountBasis', 'unknown'],
+		['kindCountBasis', null]
 	] as const)('schema violation detected: a %s of %j is rejected, on either side', (key, value) => {
 		for (const side of ['base', 'head'] as const) {
 			const base = baseline();
