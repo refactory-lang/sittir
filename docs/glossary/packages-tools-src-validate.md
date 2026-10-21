@@ -1091,10 +1091,10 @@ The node's kind id (`TSKindId`); a reader resolves it to a kind name through the
 
 ```text
 /**
- * The bytes a read node stands for: its captured text when the reader kept
- * one (an anonymous token, a text kind), otherwise the text of the span it
- * was read at, by the tree's native text call (`spannedTextOf`). Empty only
- * when neither is known.
+ * The bytes a read node stands for: its source text (`sourceTextOf`), its
+ * captured text or else the text of the span it was read at. A node with
+ * none reads through its sole wrapped child. Empty only when nothing is
+ * known.
  */
 ```
 

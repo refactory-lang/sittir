@@ -1,6 +1,6 @@
 import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { anchored, holds, slotItems } from '../query-holds.ts';
-import { nodeText, spannedTextOf } from '../node-data.ts';
+import { sourceTextOf } from '../node-data.ts';
 import { portablePathHasFacts } from './facts.ts';
 
 type Node = { readonly $type: number };
@@ -77,7 +77,7 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 			: typeof item === 'number'
 				? table.fixedText[item]
 				: hasKind(item)
-					? (nodeText(item) ?? spannedTextOf(item))
+					? sourceTextOf(item)
 					: undefined;
 	const typeOf = (item: unknown): readonly number[] =>
 		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];

@@ -23,7 +23,7 @@ import {
 	sidesOf,
 	nodeText,
 	spanOf,
-	spannedTextOf,
+	sourceTextOf,
 	treeTokenOf,
 	type KindView
 } from '@sittir/common/utils';
@@ -1180,10 +1180,8 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 }
 
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
-	const own = nodeText(node);
-	if (own !== undefined) return own;
-	const spanned = spannedTextOf(node as object, opts.tree ?? treeOf(node as object));
-	if (spanned !== undefined) return spanned;
+	const text = sourceTextOf(node as object, opts.tree);
+	if (text !== undefined) return text;
 	const rec = node as unknown as Record<string, unknown>;
 	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
 	const wrapped = keys.length === 1 ? rec[keys[0]!] : undefined;

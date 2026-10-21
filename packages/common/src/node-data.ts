@@ -25,9 +25,11 @@ export function spanOf(node: object): ByteSpan | undefined {
 }
 
 /**
- * The text a parsed node spans in the source of `tree`, its own tree by default, as the tree's native text call answers it: one string of the node's characters, never the source. `undefined` for a built node, and for a node with no tree.
+ * A node's source text: its `$text` when it holds one, else the text its coordinate spans in `tree` (its own tree by default), read by the tree's native text call. `undefined` for a node with neither, a built or edited compound: rendered text is not source text.
  */
-export function spannedTextOf(node: object, tree: TreeHandle | undefined = treeOf(node)): string | undefined {
+export function sourceTextOf(node: object, tree: TreeHandle | undefined = treeOf(node)): string | undefined {
+	const own = nodeText(node);
+	if (own !== undefined) return own;
 	const span = spanOf(node);
 	return span === undefined ? undefined : tree?.text?.(span);
 }

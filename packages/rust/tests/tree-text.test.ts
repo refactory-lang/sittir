@@ -5,7 +5,7 @@
 // refused rather than read.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { spanOf, spannedTextOf, treeOf } from '@sittir/common/utils';
+import { spanOf, treeOf } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const SOURCE = '// é ✓\r\nfn after() {}\r\n';
@@ -21,7 +21,7 @@ describe("a parsed tree's text", () => {
 		const name = await nameOfFirstFunction();
 		const span = spanOf(name)!;
 		expect(span).toEqual({ start: Buffer.byteLength('// é ✓\r\nfn '), end: Buffer.byteLength('// é ✓\r\nfn after') });
-		expect(spannedTextOf(name)).toBe('after');
+		expect(treeOf(name)!.text!(span)).toBe('after');
 		expect(treeOf(name)!.text!({ start: 0, end: span.end })).toBe('// é ✓\r\nfn after');
 	});
 

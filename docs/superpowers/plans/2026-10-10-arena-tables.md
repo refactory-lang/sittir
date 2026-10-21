@@ -577,8 +577,8 @@ Ruling 1.1 removes the tree handle's JavaScript copy of the source. A census on 
 | site | use | where it moves |
 | --- | --- | --- |
 | `packages/common/src/engine.ts`, `parseAndRead`'s tree handle | writes `source` | drops it, and adds `text(span)`, the native call (Interfaces) |
-| `packages/tools/src/validate/common.ts`, `readNodeText` | slices `tree.source` by a node's span when the node has no `$text` | reads the span's text (`spannedTextOf`) |
-| `packages/common/src/portable/classify.ts`, the classifier's text of an item | slices `tree.source` by a node's span when the node has no `$text` | reads the span's text (`spannedTextOf`) |
+| `packages/tools/src/validate/common.ts`, `readNodeText` | slices `tree.source` by a node's span when the node has no `$text` | reads the node's source text (`sourceTextOf`) |
+| `packages/common/src/portable/classify.ts`, the classifier's text of an item | slices `tree.source` by a node's span when the node has no `$text` | reads the node's source text (`sourceTextOf`) |
 | `packages/rust/tests/tree-identity-and-verbatim.test.ts` | pins `tree.source` equal to the parsed source | pins the text of the root's span equal to it |
 
 Each reader wants one node's text, so none needs the source in bulk. Nothing else reads it. The span helpers (`sourceSpans`, `spanSlicer`, `sliceSpan` in `packages/common/src/span.ts`) and their callers slice a string the caller holds itself: a corpus entry's source in the validators (`from.ts`, `factory-storage.ts`, `read-render-parse.ts`, `gap-census.ts`), an inventory file (`inventory/bindings.ts`) or a probe's input (`probe/kind.ts`). The same goes for the host-template reparse (`reparse.ts`), which reparses rendered text. None of these is the tree's copy, so they stay. The removal is small enough for Task 9.

@@ -690,7 +690,7 @@ export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type 
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, spannedTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
