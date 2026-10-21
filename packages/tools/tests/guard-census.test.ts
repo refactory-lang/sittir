@@ -4,13 +4,12 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { AssembledEnum } from '../../codegen/src/compiler/model/node-map.ts';
-import { armIsForm, armRoutesOf, buildsHost, flattenedVariantParents, formRoutesOf, seatedFormKinds } from '../../codegen/src/compiler/model/ir-surface.ts';
+import { armIsForm, armRoutesOf, buildsHost, flattenedVariantParents, formRoutesOf, seatedFormKinds, type FormRoute } from '../../codegen/src/compiler/model/ir-surface.ts';
 import { findOwnKindEntry } from '../../codegen/src/dsl/symbol-table.ts';
 import { collectCatalogKinds, collectKindEntries } from '../../codegen/src/emitters/kind-discriminant.ts';
 import { isDeclaredSupertype } from '../../codegen/src/emitters/shared.ts';
 
 type Guard = (node: unknown) => boolean;
-type FormRouteLike = { readonly name: string; readonly child: { readonly kind: string }; readonly seat?: string; readonly forms?: readonly FormRouteLike[] };
 type Tree = Record<string, unknown>;
 
 const GRAMMARS = ['python', 'regex', 'rust', 'scm', 'typescript'] as const;
@@ -111,7 +110,7 @@ async function censusOf(grammar: string): Promise<Census> {
 		readonly name: string;
 		readonly child: string;
 		readonly seated: boolean;
-		readonly forms?: readonly FormRouteLike[];
+		readonly forms?: readonly FormRoute[];
 	}
 	const hopsOfKind = (kind: string): Hop[] => {
 		const parent = flatByKind.get(kind);
@@ -122,15 +121,15 @@ async function censusOf(grammar: string): Promise<Census> {
 				seated: false
 			}));
 		}
-		return ((forms.get(kind) ?? []) as FormRouteLike[]).map((r) => ({
+		return (forms.get(kind) ?? []).map((r) => ({
 			name: r.name,
 			child: r.child.kind,
-			seated: buildsHost(r as never),
+			seated: buildsHost(r),
 			forms: r.forms
 		}));
 	};
-	const hopsOfForms = (routes: readonly FormRouteLike[]): Hop[] =>
-		routes.map((r) => ({ name: r.name, child: r.child.kind, seated: buildsHost(r as never), forms: r.forms }));
+	const hopsOfForms = (routes: readonly FormRoute[]): Hop[] =>
+		routes.map((r) => ({ name: r.name, child: r.child.kind, seated: buildsHost(r), forms: r.forms }));
 	const starts = new Map<string, string>();
 	for (const p of flat) starts.set(p.key, p.node.kind);
 	for (const kind of forms.keys()) {

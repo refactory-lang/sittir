@@ -64,7 +64,7 @@ describe('a recursive form is cut once and still emits', () => {
 
 	it('nests a seated route under its own host only as far as the host settles', async () => {
 		const nodeMap = await modelOf(mutual);
-		const aForms = formRoutesOf(nodeMap).get('a') as Array<{ name: string; forms?: Array<{ name: string }> }>;
+		const aForms = formRoutesOf(nodeMap).get('a') ?? [];
 		const b = aForms.find((route) => route.name === 'b');
 		expect(b?.forms?.map((route) => route.name)).toEqual(['a', 'x']);
 	});
