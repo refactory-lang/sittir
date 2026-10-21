@@ -15,6 +15,11 @@ const mutual = {
 	rules: "source: ($) => repeat(choice($.a, $.b)), a: ($) => seq('(', choice($.b, $.x), ')'), b: ($) => seq('[', choice($.a, $.x), ']'), x: () => /x/"
 };
 
+const dollarNamed = {
+	extras: '/\\s/',
+	rules: "source: ($) => repeat($.outer), outer: ($) => choice($.inner, $.z), inner: ($) => choice($.x$y, $.w), 'x$y': () => /x/, w: () => /w/, z: () => /z/"
+};
+
 const modelOf = async (upstream: unknown) => {
 	const raw = await evaluateTempGrammar(upstream as never, '');
 	const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
@@ -33,7 +38,8 @@ describe('a recursive form is cut once and still emits', () => {
 
 	it.each([
 		['direct', direct],
-		['mutual', mutual]
+		['mutual', mutual],
+		['dollar-named', dollarNamed]
 	])('%s: the form tree joined with $ is exactly the settled form paths', async (_label, upstream) => {
 		const nodeMap = await modelOf(upstream);
 		const arms = armRoutesOf(nodeMap);

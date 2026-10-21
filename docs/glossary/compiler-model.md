@@ -6131,7 +6131,7 @@ One sub-factory of a host as a route: a value arm whose value is a form (`armIsF
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::nestedFormsOf`
 
-The forms a seated route reaches inside its child, read from the host's own settled entries: a child sub-factory is a nested form when the host carries the entry `<prefix>$<name>` for it and the sub is a form of the child (`armIsForm`). These are the entries `ir` emits under the route, and they stop where `nestedArmsOf` stops at a kind already on the derivation path, so a recursive form (`group` inside `group`) nests once and `ir` and `is` reach the same paths. The child's alias wires are never entries, so nothing nests through an alias wire.
+The forms a seated route reaches inside its child, read from the host's own settled entries: a direct child sub-factory (a value arm, or a node arm with no path; read from the arm, never from the name, since a rule name may itself hold `$`) is a nested form when the host carries the entry `<prefix>$<name>` for it and the sub is a form of the child (`armIsForm`). These are the entries `ir` emits under the route, and they stop where `nestedArmsOf` stops at a kind already on the derivation path, so a recursive form (`group` inside `group`) nests once and `ir` and `is` reach the same paths. The child's alias wires are never entries, so nothing nests through an alias wire.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::formRouteOf`
 

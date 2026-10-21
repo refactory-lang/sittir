@@ -266,7 +266,7 @@ function nestedFormsOf(set: ArmRouteSet, prefix: string, child: AssembledNode, a
 	if (childSet === undefined) return [];
 	return childSet.subs.flatMap((inner): FormRoute[] => {
 		const name = `${prefix}$${inner.name}`;
-		if (inner.name.includes('$') || !set.subs.some((sub) => sub.name === name)) return [];
+		if ((inner.arm.via === 'node' && inner.arm.path.length > 0) || !set.subs.some((sub) => sub.name === name)) return [];
 		const route = hostRouteOf(childSet.node, inner, armRoutes.kindEntries, nodeMap);
 		return route?.form === true ? [formRouteOf(set, route, name, armRoutes, nodeMap)] : [];
 	});
