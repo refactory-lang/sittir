@@ -38,19 +38,49 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The read's refusal, naming the kind, and what the record writer
     /// refuses.
     pub fn read_record<N: ReadNode + WriteCell<G::Trivia>>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
-        if let Some(at) = self.tree_arena().record(index) {
-            return Ok(Some(at));
+        self.materialize_record::<N>(index, depth, false)
+    }
+
+    /// Materializes records to `depth` without exporting their words. A
+    /// deeper request reaches children of records already written; published
+    /// records and their addresses remain unchanged.
+    ///
+    /// # Errors
+    ///
+    /// What the native read or a record writer refuses.
+    pub fn hydrate_record<N: ReadNode + WriteCell<G::Trivia>>(
+        &self,
+        index: NodeIndex,
+        depth: Depth,
+    ) -> Result<Option<Address>, String> {
+        self.materialize_record::<N>(index, depth, true)
+    }
+
+    fn materialize_record<N: ReadNode + WriteCell<G::Trivia>>(
+        &self,
+        index: NodeIndex,
+        depth: Depth,
+        hydrate: bool,
+    ) -> Result<Option<Address>, String> {
+        if !hydrate {
+            if let Some(at) = self.tree_arena().record(index) {
+                return Ok(Some(at));
+            }
         }
         if self.read_error(index).is_some() {
             return Ok(None);
         }
         let grammar = self.grammar();
         let node: N = self.read(index, depth).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
-        let cell = node.write_cell(&mut super::RecordSink::parsed(self.tree_id(), &mut self.tree_arena())).map_err(|refusal| refusal.to_string())?;
-        Ok(match cell {
-            Cell::Child { at, .. } => Some(at),
-            _ => None,
-        })
+        let mut arena = self.tree_arena();
+        let mut sink = super::RecordSink::parsed(self.tree_id(), &mut arena);
+        if hydrate {
+            node.hydrate_records(&mut sink)
+        } else {
+            node.write_cell(&mut sink).map(|_| ())
+        }
+        .map_err(|refusal| refusal.to_string())?;
+        Ok(arena.record(index))
     }
 
     /// The words of chunk `n` of the tree's arena that records fill, copied:

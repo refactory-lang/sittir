@@ -1,4 +1,4 @@
-# Object and arena corpus benchmark
+# Object, arena and native workflow corpus benchmarks
 
 `sittir tool bench-storage` compares parsed object nodes and arena views using
 the upstream and local corpora that the storage parity test uses. Both modes
@@ -102,7 +102,107 @@ or a precise native bytes-per-node figure. Those require the fuller native
 measurement work. Root rendering can take the unchanged-source fast path;
 it does not isolate native record decode cost.
 
-## Recorded run
+## Native hydration without exporting records
+
+The native Rust method `ParsedTree::hydrate_record::<AnyNode>(index, depth)`
+and raw addon method `hydrateRecord(treeId, index, depth?)` materialize
+parsed records without fetching chunks or creating JavaScript node views.
+The addon returns only a record address, or null for a leaf or error node.
+Depth defaults to one; the addon accepts a positive integer or `Infinity`
+for all levels. Rust uses the reader's existing `Depth` type. Grammar minimum
+depths apply as they do to ordinary reads.
+
+A deeper hydration request also reaches children of cached parents. Existing
+records keep their words and addresses; new child records enter the tree's
+append-only row index. `readRecord` remains the cached read/address path;
+explicit `hydrateRecord` ensures the requested depth. The generated writer
+traverses the values the native reader produced, including lists and envelope
+content. It still creates temporary typed values in Rust; this is not an
+allocation-free read or a direct view of Tree-sitter memory.
+
+`hydrateSlot` is the JavaScript accessor helper that reads and wraps a slot.
+Native hydration supplies the materialization operation without that wrapping
+or chunk transfer. Fetching an arena copy remains an explicit `chunk` call.
+
+To benchmark native parse, hydration and render in fresh workers:
+
+```sh
+node packages/cli/dist/cli.js tool bench-storage --native-depth all \
+  --idle-gate docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh \
+  --output native-workflow.json
+```
+
+Use `--native-depth 2` for a bounded read. This selects a separate run:
+`nativeSamples` and `nativeSummary` contain its results; the object/arena
+sample arrays are empty. Native and JS-inspection measurements never share
+a worker process. Reports use schema version 2; the earlier recorded report
+below retains its original version and provenance.
+
+Each native worker samples GC-settled memory with all parsed syntax trees
+and their successfully hydrated arenas retained. Inputs that refuse the
+requested depth remain listed by stage; their syntax trees are included in
+retained memory. Memory is sampled before the render preflight. The complete
+workflow times only roots that both hydrate to a record and render successfully;
+roots with no record are listed as render refusals. The report counts these
+eligible roots and the retained roots with a record, not individual records
+or native allocations.
+
+Each iteration parses fresh trees, hydrates their roots to the requested
+depth, then renders using the returned arena addresses. It records separate
+`parse`, `hydrate` and `render` durations and their complete `pipeline`
+duration on the same population. A separate `afterShallow` timer measures
+hydration after a depth-one native read. Shallow preparation, assertions,
+output hashing, warmup samples, explicit GC and tree disposal are outside
+recorded durations. Parsing includes the addon's small tree-ID JSON result;
+rendering includes the resulting string transfer to JS. No object reads,
+JS node wrappers, text requests or chunk copies occur. Output bytes and hashes,
+depth and refusal populations must agree across iterations and rounds.
+
+Rendering uses the record entry point with normal options, so unchanged
+regions may still use source slices. This measures the actual hydrated
+workflow; it does not force every record through template reconstruction
+or isolate native decode cost.
+
+## Recorded native workflow runs
+
+[Full-depth raw samples](results/2026-10-21-native-depth-all-darwin-arm64.json), [depth-2 raw samples](results/2026-10-21-native-depth-2-darwin-arm64.json), and [source/native provenance](results/2026-10-21-native-provenance.json).
+
+Recorded 2026-10-21T19:09:32.297Z to 2026-10-21T19:11:57.985Z on the same Apple M4 Pro / Darwin 27.2.0 arm64 / Node v26.12.0 host. Each depth used five rounds per grammar, two warmup batches and three measured batches per operation, in 25 fresh workers. All 50 workers passed the unchanged idle gate (77–89% idle). The source base was `d179620aac5a6039151142956bcf4ba80769e80e`; the overlay, implementation files, compiled harness and rebuilt native binaries are fingerprinted in the provenance.
+
+Both depths completed all 440 corpus entries, with zero hydration or render refusals. Corpus fingerprints match the earlier object/arena run. Output bytes and hashes match across iterations, rounds and depths. This establishes a native workflow measurement without JS inspection; the earlier public-slot walks measure different work and are not used as a timing ratio here.
+
+### Native timing medians
+
+Milliseconds per complete corpus batch. Each pipeline duration covers the same iteration as its parse, hydrate and render components. Independently summarized medians need not add exactly. `afterShallow` measures only hydration after a depth-one read prepared outside its timer. Ranges and nanoseconds per entry remain in the raw reports.
+
+| Grammar | Depth | Roots | Parse ms | Hydrate ms | Render ms | Pipeline ms | After shallow ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| python | all | 116 | 2.636 | 3.549 | 1.629 | 7.751 | 3.424 |
+| regex | all | 37 | 0.279 | 0.439 | 0.222 | 0.932 | 0.432 |
+| rust | all | 149 | 2.739 | 3.687 | 1.690 | 8.125 | 3.541 |
+| scm | all | 19 | 0.343 | 0.483 | 0.239 | 1.084 | 0.446 |
+| typescript | all | 119 | 2.500 | 3.096 | 1.321 | 6.879 | 2.921 |
+| python | 2 | 116 | 2.529 | 0.724 | 1.643 | 4.874 | 0.607 |
+| regex | 2 | 37 | 0.261 | 0.110 | 0.229 | 0.601 | 0.082 |
+| rust | 2 | 149 | 2.818 | 0.882 | 1.725 | 5.426 | 0.777 |
+| scm | 2 | 19 | 0.344 | 0.156 | 0.244 | 0.770 | 0.129 |
+| typescript | 2 | 119 | 2.468 | 0.723 | 1.336 | 4.541 | 0.579 |
+
+### Native retained-memory deltas
+
+Median signed process deltas from the loaded-engine baseline, MiB, sampled after hydration and before the render preflight. All roots remain native; the small V8 heap delta includes the harness's tree IDs, addresses and bookkeeping. RSS includes retained native state, allocator reuse and temporary-read high-water effects. These observations do not count native allocations or isolate arena capacity, and are not a total-memory comparison with the public-slot benchmark. All five memory fields remain in the raw reports.
+
+| Grammar | All: heapUsed MiB | All: RSS MiB | Depth 2: heapUsed MiB | Depth 2: RSS MiB |
+| --- | ---: | ---: | ---: | ---: |
+| python | 0.106 | 2.453 | 0.106 | 2.141 |
+| regex | 0.100 | 0.453 | 0.100 | 0.391 |
+| rust | 0.109 | 3.047 | 0.109 | 2.609 |
+| scm | 0.086 | 0.391 | 0.086 | 0.344 |
+| typescript | 0.106 | 2.250 | 0.106 | 1.984 |
+
+Native hydration still constructs temporary typed Rust values. Normal render folding remains enabled, so these runs do not isolate record decoding or force reconstruction of every node. Eager built/edit workloads and precise native allocation/capacity measurements remain separate.
+
+## Recorded object/arena run
 
 [Raw samples](results/2026-10-21-darwin-arm64.json) and [source/native provenance](results/2026-10-21-provenance.json).
 

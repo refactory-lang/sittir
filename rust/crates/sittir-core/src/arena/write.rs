@@ -55,6 +55,28 @@ impl<'a, T: Clone> RecordSink<'a, T> {
         Self { to: Target::Parsed { tree, arena }, holder: None, nested: false }
     }
 
+    /// Hydrates children in their holder's row context. Returns whether the
+    /// value is its envelope's content, which its envelope writes itself.
+    ///
+    /// # Errors
+    ///
+    /// Refuses a non-parsed sink, a foreign row, or a refused child.
+    pub fn hydrate_children(
+        &mut self,
+        layout: Option<&NodeLayout<T>>,
+        children: impl FnOnce(&mut Self) -> Result<(), ArenaError>,
+    ) -> Result<bool, ArenaError> {
+        let tree = self
+            .tree()
+            .ok_or(ArenaError::Unwritable("hydration needs a parsed arena"))?;
+        let row = Self::row(tree, layout, "a hydrated record with no row")?;
+        let holder = self.holder.replace(row);
+        let result = children(self);
+        self.holder = holder;
+        result?;
+        Ok(holder == Some(row))
+    }
+
     /// A built write's sink, its trivia kept in `store`.
     pub fn built(arena: &'a mut Arena, store: &'a TriviaStore<T>, link: &'a mut Link<'a>) -> Self {
         Self { to: Target::Built { arena, store, link }, holder: None, nested: false }
@@ -146,17 +168,36 @@ pub trait WriteCell<T> {
     /// What the arena refuses, or `ArenaError::Unwritable` for a value no
     /// record of the sink holds.
     fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<Cell, ArenaError>;
+
+    /// Materializes this parsed value and its already-read children, including
+    /// children whose parent has a record. Coordinates stay coordinates.
+    ///
+    /// # Errors
+    ///
+    /// What this value's record writer or a child refuses.
+    fn hydrate_records(&self, sink: &mut RecordSink<'_, T>) -> Result<(), ArenaError> {
+        self.write_cell(sink).map(|_| ())
+    }
 }
 
 impl<T, C: WriteCell<T>> WriteCell<T> for Option<C> {
     fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<Cell, ArenaError> {
         self.as_ref().map_or(Ok(Cell::Absent), |value| value.write_cell(sink))
     }
+
+    fn hydrate_records(&self, sink: &mut RecordSink<'_, T>) -> Result<(), ArenaError> {
+        self.as_ref()
+            .map_or(Ok(()), |value| value.hydrate_records(sink))
+    }
 }
 
 impl<T, C: WriteCell<T> + ?Sized> WriteCell<T> for Box<C> {
     fn write_cell(&self, sink: &mut RecordSink<'_, T>) -> Result<Cell, ArenaError> {
         (**self).write_cell(sink)
+    }
+
+    fn hydrate_records(&self, sink: &mut RecordSink<'_, T>) -> Result<(), ArenaError> {
+        (**self).hydrate_records(sink)
     }
 }
 
@@ -165,6 +206,13 @@ impl<T: Clone, C: WriteCell<T>, const ADJACENT: bool> WriteCell<T> for SlotValue
         match self {
             SlotValue::Coord(coord) => coordinate_cell(sink, coord),
             SlotValue::Node(node) => node.write_cell(sink),
+        }
+    }
+
+    fn hydrate_records(&self, sink: &mut RecordSink<'_, T>) -> Result<(), ArenaError> {
+        match self {
+            SlotValue::Coord(_) => Ok(()),
+            SlotValue::Node(node) => node.hydrate_records(sink),
         }
     }
 }

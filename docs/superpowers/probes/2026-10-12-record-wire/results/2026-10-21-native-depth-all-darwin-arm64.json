@@ -1,0 +1,1938 @@
+{
+  "schemaVersion": 2,
+  "mode": "native-hydration",
+  "startedAt": "2026-10-21T19:09:32.297Z",
+  "finishedAt": "2026-10-21T19:10:46.333Z",
+  "environment": {
+    "node": "v26.12.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "os": "27.2.0",
+    "cpu": "Apple M4 Pro",
+    "cpuCount": 14,
+    "cwd": "/private/tmp/sittir-native-workflow-xj7m1nqb",
+    "nodeEnv": "production",
+    "idleGated": true,
+    "harnessSha256": "f81544e323609a83be97fe1f32f460461d162dbf4f67911cab23fdc0387f8d4e"
+  },
+  "options": {
+    "grammars": [
+      "python",
+      "regex",
+      "rust",
+      "scm",
+      "typescript"
+    ],
+    "rounds": 5,
+    "warmup": 2,
+    "iterations": 3,
+    "limit": null,
+    "nativeDepth": "all"
+  },
+  "summary": [],
+  "samples": [],
+  "nativeSummary": [
+    {
+      "grammar": "python",
+      "depth": "all",
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "entries": 116,
+      "rootsWithRecord": 116,
+      "refused": [],
+      "render": {
+        "bytes": 11765,
+        "sha256": "1e5c1e5c12d4163d6ad2026c4a9b99b4e7806d3e0d74cc7f7c0768c4c4fa025c"
+      },
+      "timings": [
+        {
+          "phase": "parse",
+          "milliseconds": 2.635667000000012,
+          "range": [
+            2.5361669999999776,
+            2.713375000000042
+          ],
+          "nsPerEntry": 22721.267241379413
+        },
+        {
+          "phase": "hydrate",
+          "milliseconds": 3.5488330000000587,
+          "range": [
+            3.415625000000034,
+            3.6726249999999823
+          ],
+          "nsPerEntry": 30593.387931034988
+        },
+        {
+          "phase": "render",
+          "milliseconds": 1.6288750000001073,
+          "range": [
+            1.5691659999999956,
+            1.6680830000000242
+          ],
+          "nsPerEntry": 14042.025862069891
+        },
+        {
+          "phase": "pipeline",
+          "milliseconds": 7.751250000000027,
+          "range": [
+            7.506958999999938,
+            8.024417000000028
+          ],
+          "nsPerEntry": 66821.1206896554
+        },
+        {
+          "phase": "afterShallow",
+          "milliseconds": 3.423791999999935,
+          "range": [
+            3.27541599999995,
+            3.542124999999942
+          ],
+          "nsPerEntry": 29515.44827586151
+        }
+      ],
+      "memoryBytes": {
+        "heapUsed": 110824,
+        "heapTotal": -262144,
+        "external": 65630,
+        "arrayBuffers": 0,
+        "rss": 2572312
+      }
+    },
+    {
+      "grammar": "regex",
+      "depth": "all",
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "entries": 37,
+      "rootsWithRecord": 37,
+      "refused": [],
+      "render": {
+        "bytes": 703,
+        "sha256": "45aa68ac32f74cfc2a7a09d27de0893f5d1ad0e4d4c133e3158bedc68dfa4fc1"
+      },
+      "timings": [
+        {
+          "phase": "parse",
+          "milliseconds": 0.2785840000000235,
+          "range": [
+            0.266125000000045,
+            0.30333400000000665
+          ],
+          "nsPerEntry": 7529.297297297931
+        },
+        {
+          "phase": "hydrate",
+          "milliseconds": 0.4392080000000078,
+          "range": [
+            0.4278749999999718,
+            0.4488340000000335
+          ],
+          "nsPerEntry": 11870.486486486698
+        },
+        {
+          "phase": "render",
+          "milliseconds": 0.2217499999999859,
+          "range": [
+            0.21095900000000256,
+            0.22733299999998735
+          ],
+          "nsPerEntry": 5993.243243242862
+        },
+        {
+          "phase": "pipeline",
+          "milliseconds": 0.9315409999999815,
+          "range": [
+            0.9127909999999702,
+            0.9987920000000372
+          ],
+          "nsPerEntry": 25176.783783783285
+        },
+        {
+          "phase": "afterShallow",
+          "milliseconds": 0.4321669999999358,
+          "range": [
+            0.3975830000000542,
+            0.4442500000000109
+          ],
+          "nsPerEntry": 11680.189189187455
+        }
+      ],
+      "memoryBytes": {
+        "heapUsed": 104648,
+        "heapTotal": 0,
+        "external": 65630,
+        "arrayBuffers": 0,
+        "rss": 475136
+      }
+    },
+    {
+      "grammar": "rust",
+      "depth": "all",
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "entries": 149,
+      "rootsWithRecord": 149,
+      "refused": [],
+      "render": {
+        "bytes": 14652,
+        "sha256": "79595ad8a1f77781cfd2a3dfad0a805a0e2bbf0e62fe848bb416c089a70bc490"
+      },
+      "timings": [
+        {
+          "phase": "parse",
+          "milliseconds": 2.738584000000003,
+          "range": [
+            2.6527909999999792,
+            2.8700000000000045
+          ],
+          "nsPerEntry": 18379.758389261762
+        },
+        {
+          "phase": "hydrate",
+          "milliseconds": 3.686625000000049,
+          "range": [
+            3.5798340000000053,
+            3.9552079999999705
+          ],
+          "nsPerEntry": 24742.44966442986
+        },
+        {
+          "phase": "render",
+          "milliseconds": 1.6902919999999995,
+          "range": [
+            1.6719160000000102,
+            1.7822079999999687
+          ],
+          "nsPerEntry": 11344.241610738252
+        },
+        {
+          "phase": "pipeline",
+          "milliseconds": 8.124874999999975,
+          "range": [
+            7.94116699999995,
+            8.399375000000077
+          ],
+          "nsPerEntry": 54529.362416107215
+        },
+        {
+          "phase": "afterShallow",
+          "milliseconds": 3.5413750000000164,
+          "range": [
+            3.4770839999999907,
+            3.6539999999999964
+          ],
+          "nsPerEntry": 23767.61744966454
+        }
+      ],
+      "memoryBytes": {
+        "heapUsed": 114536,
+        "heapTotal": 0,
+        "external": 65630,
+        "arrayBuffers": 0,
+        "rss": 3194904
+      }
+    },
+    {
+      "grammar": "scm",
+      "depth": "all",
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "entries": 19,
+      "rootsWithRecord": 19,
+      "refused": [],
+      "render": {
+        "bytes": 2380,
+        "sha256": "dc4c19e9e77b6b1d0248615275cb4b6ab15a1e5890ae1cd9c0bc346560f53bad"
+      },
+      "timings": [
+        {
+          "phase": "parse",
+          "milliseconds": 0.34254200000009405,
+          "range": [
+            0.337791999999979,
+            0.35929100000004155
+          ],
+          "nsPerEntry": 18028.526315794425
+        },
+        {
+          "phase": "hydrate",
+          "milliseconds": 0.4825000000000159,
+          "range": [
+            0.47524999999996,
+            0.4970419999999649
+          ],
+          "nsPerEntry": 25394.7368421061
+        },
+        {
+          "phase": "render",
+          "milliseconds": 0.23925000000002683,
+          "range": [
+            0.23116700000002766,
+            0.24754200000000992
+          ],
+          "nsPerEntry": 12592.105263159307
+        },
+        {
+          "phase": "pipeline",
+          "milliseconds": 1.08400000000006,
+          "range": [
+            1.0692919999999617,
+            1.0898329999999987
+          ],
+          "nsPerEntry": 57052.63157895053
+        },
+        {
+          "phase": "afterShallow",
+          "milliseconds": 0.44641699999999673,
+          "range": [
+            0.42399999999997817,
+            0.4573750000000132
+          ],
+          "nsPerEntry": 23495.631578947196
+        }
+      ],
+      "memoryBytes": {
+        "heapUsed": 90448,
+        "heapTotal": 0,
+        "external": 65630,
+        "arrayBuffers": 0,
+        "rss": 409600
+      }
+    },
+    {
+      "grammar": "typescript",
+      "depth": "all",
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "entries": 119,
+      "rootsWithRecord": 119,
+      "refused": [],
+      "render": {
+        "bytes": 13428,
+        "sha256": "270bcc0d89c2ebf3429634a1263ff4cd7219fa2965c69f73bc4335f037b2db4d"
+      },
+      "timings": [
+        {
+          "phase": "parse",
+          "milliseconds": 2.500417000000084,
+          "range": [
+            2.40054200000003,
+            2.62079099999994
+          ],
+          "nsPerEntry": 21011.907563025914
+        },
+        {
+          "phase": "hydrate",
+          "milliseconds": 3.0956659999999374,
+          "range": [
+            2.923999999999978,
+            3.172625000000039
+          ],
+          "nsPerEntry": 26013.999999999476
+        },
+        {
+          "phase": "render",
+          "milliseconds": 1.3212909999999738,
+          "range": [
+            1.307875000000081,
+            1.3775420000000622
+          ],
+          "nsPerEntry": 11103.285714285494
+        },
+        {
+          "phase": "pipeline",
+          "milliseconds": 6.879042000000027,
+          "range": [
+            6.712832999999989,
+            7.108582999999953
+          ],
+          "nsPerEntry": 57807.07563025233
+        },
+        {
+          "phase": "afterShallow",
+          "milliseconds": 2.920749999999998,
+          "range": [
+            2.765916999999945,
+            3.066665999999941
+          ],
+          "nsPerEntry": 24544.117647058807
+        }
+      ],
+      "memoryBytes": {
+        "heapUsed": 111232,
+        "heapTotal": 0,
+        "external": 65630,
+        "arrayBuffers": 0,
+        "rss": 2359296
+      }
+    }
+  ],
+  "nativeSamples": [
+    {
+      "depth": "all",
+      "entries": 116,
+      "rootsWithRecord": 116,
+      "refused": [],
+      "render": {
+        "bytes": 11765,
+        "sha256": "1e5c1e5c12d4163d6ad2026c4a9b99b4e7806d3e0d74cc7f7c0768c4c4fa025c"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 189076120,
+          "heapTotal": 101056512,
+          "heapUsed": 36388608,
+          "external": 4491684,
+          "arrayBuffers": 1871882
+        },
+        "native": {
+          "rss": 191648432,
+          "heapTotal": 101056512,
+          "heapUsed": 36491960,
+          "external": 3878395,
+          "arrayBuffers": 1192963
+        }
+      },
+      "timings": {
+        "parse": [
+          2.5361669999999776,
+          2.709541000000172,
+          2.378582999999935
+        ],
+        "hydrate": [
+          3.5488330000000587,
+          3.638249999999971,
+          3.5010839999999916
+        ],
+        "render": [
+          1.666249999999991,
+          1.5632920000000468,
+          1.6288750000001073
+        ],
+        "pipeline": [
+          7.751250000000027,
+          7.91108300000019,
+          7.508542000000034
+        ],
+        "afterShallow": [
+          3.792459000000008,
+          3.47791600000005,
+          3.4995409999999083
+        ]
+      },
+      "grammar": "python",
+      "pid": 65774,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "round": 0,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 116,
+      "rootsWithRecord": 116,
+      "refused": [],
+      "render": {
+        "bytes": 11765,
+        "sha256": "1e5c1e5c12d4163d6ad2026c4a9b99b4e7806d3e0d74cc7f7c0768c4c4fa025c"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 118011776,
+          "heapTotal": 71172096,
+          "heapUsed": 36097832,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 120682392,
+          "heapTotal": 71172096,
+          "heapUsed": 36208656,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.635667000000012,
+          2.619166000000007,
+          2.740542000000005
+        ],
+        "hydrate": [
+          3.664541999999983,
+          3.556209000000024,
+          3.725667000000044
+        ],
+        "render": [
+          1.6680830000000242,
+          1.6480409999999779,
+          1.7782079999999496
+        ],
+        "pipeline": [
+          7.9682920000000195,
+          7.823416000000009,
+          8.244416999999999
+        ],
+        "afterShallow": [
+          3.37662499999999,
+          3.6657089999999926,
+          3.542124999999942
+        ]
+      },
+      "grammar": "python",
+      "pid": 65787,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "round": 1,
+      "idle": "idle 82%"
+    },
+    {
+      "depth": "all",
+      "entries": 116,
+      "rootsWithRecord": 116,
+      "refused": [],
+      "render": {
+        "bytes": 11765,
+        "sha256": "1e5c1e5c12d4163d6ad2026c4a9b99b4e7806d3e0d74cc7f7c0768c4c4fa025c"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 117847984,
+          "heapTotal": 71172096,
+          "heapUsed": 36098080,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 120420248,
+          "heapTotal": 70909952,
+          "heapUsed": 36208928,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.564624999999978,
+          2.3514579999999796,
+          2.544583999999986
+        ],
+        "hydrate": [
+          3.7486660000000143,
+          3.532791999999972,
+          3.4296249999999873
+        ],
+        "render": [
+          1.893000000000029,
+          1.6015410000000543,
+          1.5327499999999645
+        ],
+        "pipeline": [
+          8.206291000000022,
+          7.485791000000006,
+          7.506958999999938
+        ],
+        "afterShallow": [
+          3.232709,
+          3.319499999999948,
+          3.27541599999995
+        ]
+      },
+      "grammar": "python",
+      "pid": 65798,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "round": 2,
+      "idle": "idle 81%"
+    },
+    {
+      "depth": "all",
+      "entries": 116,
+      "rootsWithRecord": 116,
+      "refused": [],
+      "render": {
+        "bytes": 11765,
+        "sha256": "1e5c1e5c12d4163d6ad2026c4a9b99b4e7806d3e0d74cc7f7c0768c4c4fa025c"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 116536952,
+          "heapTotal": 70385664,
+          "heapUsed": 36080824,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 119404152,
+          "heapTotal": 70123520,
+          "heapUsed": 36191608,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.5233329999999796,
+          2.717540999999983,
+          2.6646670000000086
+        ],
+        "hydrate": [
+          4.181167000000016,
+          3.415625000000034,
+          3.4154170000000477
+        ],
+        "render": [
+          1.6538329999999632,
+          1.5300419999999804,
+          1.5691659999999956
+        ],
+        "pipeline": [
+          8.35833299999996,
+          7.663207999999997,
+          7.649250000000052
+        ],
+        "afterShallow": [
+          3.330665999999951,
+          3.4313339999999926,
+          3.110292000000072
+        ]
+      },
+      "grammar": "python",
+      "pid": 65810,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "round": 3,
+      "idle": "idle 81%"
+    },
+    {
+      "depth": "all",
+      "entries": 116,
+      "rootsWithRecord": 116,
+      "refused": [],
+      "render": {
+        "bytes": 11765,
+        "sha256": "1e5c1e5c12d4163d6ad2026c4a9b99b4e7806d3e0d74cc7f7c0768c4c4fa025c"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 116684672,
+          "heapTotal": 69074944,
+          "heapUsed": 36094328,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 119256960,
+          "heapTotal": 68812800,
+          "heapUsed": 36205152,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.713375000000042,
+          2.439542000000017,
+          2.7315830000000005
+        ],
+        "hydrate": [
+          3.6726249999999823,
+          3.3638749999999504,
+          3.7065000000000055
+        ],
+        "render": [
+          1.638417000000004,
+          1.6048750000000496,
+          1.763834000000088
+        ],
+        "pipeline": [
+          8.024417000000028,
+          7.408292000000017,
+          8.201917000000094
+        ],
+        "afterShallow": [
+          3.343291000000022,
+          3.423791999999935,
+          3.822416999999973
+        ]
+      },
+      "grammar": "python",
+      "pid": 65821,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "round": 4,
+      "idle": "idle 81%"
+    },
+    {
+      "depth": "all",
+      "entries": 37,
+      "rootsWithRecord": 37,
+      "refused": [],
+      "render": {
+        "bytes": 703,
+        "sha256": "45aa68ac32f74cfc2a7a09d27de0893f5d1ad0e4d4c133e3158bedc68dfa4fc1"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 112162400,
+          "heapTotal": 64356352,
+          "heapUsed": 29441888,
+          "external": 3812765,
+          "arrayBuffers": 1193027
+        },
+        "native": {
+          "rss": 112621152,
+          "heapTotal": 64356352,
+          "heapUsed": 29542872,
+          "external": 3878395,
+          "arrayBuffers": 1193027
+        }
+      },
+      "timings": {
+        "parse": [
+          0.27379099999996015,
+          0.2454169999999749,
+          0.2713330000000269
+        ],
+        "hydrate": [
+          0.45125000000007276,
+          0.4278749999999718,
+          0.42233299999998053
+        ],
+        "render": [
+          0.21812499999998636,
+          0.22366600000009385,
+          0.2191249999999627
+        ],
+        "pipeline": [
+          0.9431660000000193,
+          0.8969580000000406,
+          0.9127909999999702
+        ],
+        "afterShallow": [
+          0.42708300000003874,
+          0.3937919999999622,
+          0.444541000000072
+        ]
+      },
+      "grammar": "regex",
+      "pid": 65832,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "round": 0,
+      "idle": "idle 83%"
+    },
+    {
+      "depth": "all",
+      "entries": 37,
+      "rootsWithRecord": 37,
+      "refused": [],
+      "render": {
+        "bytes": 703,
+        "sha256": "45aa68ac32f74cfc2a7a09d27de0893f5d1ad0e4d4c133e3158bedc68dfa4fc1"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 96071920,
+          "heapTotal": 64094208,
+          "heapUsed": 29146968,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 96530672,
+          "heapTotal": 64094208,
+          "heapUsed": 29251592,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.2587499999999636,
+          0.27224999999998545,
+          0.266125000000045
+        ],
+        "hydrate": [
+          0.43204100000002654,
+          0.4585830000000328,
+          0.4392080000000078
+        ],
+        "render": [
+          0.21112499999998136,
+          0.22374999999999545,
+          0.22191699999996217
+        ],
+        "pipeline": [
+          0.9019159999999715,
+          0.9545830000000137,
+          0.927250000000015
+        ],
+        "afterShallow": [
+          0.3975830000000542,
+          0.39591699999994034,
+          0.4234169999999722
+        ]
+      },
+      "grammar": "regex",
+      "pid": 65844,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "round": 1,
+      "idle": "idle 83%"
+    },
+    {
+      "depth": "all",
+      "entries": 37,
+      "rootsWithRecord": 37,
+      "refused": [],
+      "render": {
+        "bytes": 703,
+        "sha256": "45aa68ac32f74cfc2a7a09d27de0893f5d1ad0e4d4c133e3158bedc68dfa4fc1"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 97038864,
+          "heapTotal": 64618496,
+          "heapUsed": 29152520,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 97514000,
+          "heapTotal": 64618496,
+          "heapUsed": 29257176,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.30333400000000665,
+          0.31604099999998425,
+          0.26524999999998045
+        ],
+        "hydrate": [
+          0.4972500000000082,
+          0.40570900000000165,
+          0.4442500000000109
+        ],
+        "render": [
+          0.2217499999999859,
+          0.20554099999998243,
+          0.22204099999999016
+        ],
+        "pipeline": [
+          1.0223340000000007,
+          0.9272909999999683,
+          0.9315409999999815
+        ],
+        "afterShallow": [
+          0.4799160000000029,
+          0.4442500000000109,
+          0.3907090000000153
+        ]
+      },
+      "grammar": "regex",
+      "pid": 65858,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "round": 2,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 37,
+      "rootsWithRecord": 37,
+      "refused": [],
+      "render": {
+        "bytes": 703,
+        "sha256": "45aa68ac32f74cfc2a7a09d27de0893f5d1ad0e4d4c133e3158bedc68dfa4fc1"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 95580184,
+          "heapTotal": 64618496,
+          "heapUsed": 29145752,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 96415792,
+          "heapTotal": 64618496,
+          "heapUsed": 29250400,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.2407079999999837,
+          0.2865419999999972,
+          0.36612499999995407
+        ],
+        "hydrate": [
+          0.4271250000000464,
+          0.4591670000000363,
+          0.4389580000000137
+        ],
+        "render": [
+          0.2099579999999719,
+          0.2530830000000037,
+          0.21095900000000256
+        ],
+        "pipeline": [
+          0.877791000000002,
+          0.9987920000000372,
+          1.0160419999999704
+        ],
+        "afterShallow": [
+          0.44075000000003683,
+          0.4284579999999778,
+          0.4321669999999358
+        ]
+      },
+      "grammar": "regex",
+      "pid": 65870,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "round": 3,
+      "idle": "idle 83%"
+    },
+    {
+      "depth": "all",
+      "entries": 37,
+      "rootsWithRecord": 37,
+      "refused": [],
+      "render": {
+        "bytes": 703,
+        "sha256": "45aa68ac32f74cfc2a7a09d27de0893f5d1ad0e4d4c133e3158bedc68dfa4fc1"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 96694560,
+          "heapTotal": 64618496,
+          "heapUsed": 29152384,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 97186104,
+          "heapTotal": 64618496,
+          "heapUsed": 29257048,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.2785840000000235,
+          0.33379100000001927,
+          0.2732090000000085
+        ],
+        "hydrate": [
+          0.4471659999999815,
+          0.4488340000000335,
+          0.4632080000000087
+        ],
+        "render": [
+          0.23287500000003547,
+          0.221541000000002,
+          0.22733299999998735
+        ],
+        "pipeline": [
+          0.9586250000000405,
+          1.0041660000000547,
+          0.9637500000000045
+        ],
+        "afterShallow": [
+          0.41345799999999144,
+          0.4477080000000342,
+          0.4424589999999853
+        ]
+      },
+      "grammar": "regex",
+      "pid": 65896,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "round": 4,
+      "idle": "idle 82%"
+    },
+    {
+      "depth": "all",
+      "entries": 149,
+      "rootsWithRecord": 149,
+      "refused": [],
+      "render": {
+        "bytes": 14652,
+        "sha256": "79595ad8a1f77781cfd2a3dfad0a805a0e2bbf0e62fe848bb416c089a70bc490"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 200185264,
+          "heapTotal": 105725952,
+          "heapUsed": 39880080,
+          "external": 5349855,
+          "arrayBuffers": 2730005
+        },
+        "native": {
+          "rss": 203511216,
+          "heapTotal": 105725952,
+          "heapUsed": 39979168,
+          "external": 3878395,
+          "arrayBuffers": 1192915
+        }
+      },
+      "timings": {
+        "parse": [
+          2.8050419999999576,
+          2.450207999999975,
+          2.935208999999986
+        ],
+        "hydrate": [
+          3.860500000000002,
+          3.686625000000049,
+          3.6075000000000728
+        ],
+        "render": [
+          1.726541999999995,
+          1.632249999999999,
+          1.6719160000000102
+        ],
+        "pipeline": [
+          8.392083999999954,
+          7.769083000000023,
+          8.21462500000007
+        ],
+        "afterShallow": [
+          3.484166999999843,
+          3.4892500000000837,
+          3.9244579999999587
+        ]
+      },
+      "grammar": "rust",
+      "pid": 65907,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "round": 0,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 149,
+      "rootsWithRecord": 149,
+      "refused": [],
+      "render": {
+        "bytes": 14652,
+        "sha256": "79595ad8a1f77781cfd2a3dfad0a805a0e2bbf0e62fe848bb416c089a70bc490"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123909800,
+          "heapTotal": 72171520,
+          "heapUsed": 39543072,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 127104704,
+          "heapTotal": 72171520,
+          "heapUsed": 39657624,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.5911669999999845,
+          2.693708000000015,
+          2.6527909999999792
+        ],
+        "hydrate": [
+          3.581416000000047,
+          3.7500840000000153,
+          3.781791999999996
+        ],
+        "render": [
+          1.6573339999999916,
+          1.8571660000000065,
+          1.6902919999999995
+        ],
+        "pipeline": [
+          7.829917000000023,
+          8.300958000000037,
+          8.124874999999975
+        ],
+        "afterShallow": [
+          3.8240410000000793,
+          3.5413750000000164,
+          3.2987499999999272
+        ]
+      },
+      "grammar": "rust",
+      "pid": 65919,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "round": 1,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 149,
+      "rootsWithRecord": 149,
+      "refused": [],
+      "render": {
+        "bytes": 14652,
+        "sha256": "79595ad8a1f77781cfd2a3dfad0a805a0e2bbf0e62fe848bb416c089a70bc490"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 121747400,
+          "heapTotal": 74006528,
+          "heapUsed": 39539552,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 124876744,
+          "heapTotal": 73744384,
+          "heapUsed": 39654024,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.7555419999999913,
+          2.738584000000003,
+          2.488166999999976
+        ],
+        "hydrate": [
+          4.059292000000028,
+          3.436458000000016,
+          3.59800000000007
+        ],
+        "render": [
+          1.7822079999999687,
+          1.6889580000000137,
+          1.8549999999999045
+        ],
+        "pipeline": [
+          8.597041999999988,
+          7.864000000000033,
+          7.94116699999995
+        ],
+        "afterShallow": [
+          3.465832999999975,
+          3.4770839999999907,
+          3.580249999999978
+        ]
+      },
+      "grammar": "rust",
+      "pid": 65973,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "round": 2,
+      "idle": "idle 77%"
+    },
+    {
+      "depth": "all",
+      "entries": 149,
+      "rootsWithRecord": 149,
+      "refused": [],
+      "render": {
+        "bytes": 14652,
+        "sha256": "79595ad8a1f77781cfd2a3dfad0a805a0e2bbf0e62fe848bb416c089a70bc490"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 121583464,
+          "heapTotal": 72957952,
+          "heapUsed": 39552368,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 125564800,
+          "heapTotal": 72957952,
+          "heapUsed": 39666904,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.731375000000014,
+          2.6934159999999565,
+          2.916665999999964
+        ],
+        "hydrate": [
+          3.5798340000000053,
+          3.6463750000000346,
+          3.4594170000000304
+        ],
+        "render": [
+          1.6965829999999755,
+          1.686166999999955,
+          1.6451250000000073
+        ],
+        "pipeline": [
+          8.007791999999995,
+          8.025957999999946,
+          8.021208000000001
+        ],
+        "afterShallow": [
+          3.5865830000000187,
+          3.922374999999988,
+          3.4670830000000024
+        ]
+      },
+      "grammar": "rust",
+      "pid": 65984,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "round": 3,
+      "idle": "idle 86%"
+    },
+    {
+      "depth": "all",
+      "entries": 149,
+      "rootsWithRecord": 149,
+      "refused": [],
+      "render": {
+        "bytes": 14652,
+        "sha256": "79595ad8a1f77781cfd2a3dfad0a805a0e2bbf0e62fe848bb416c089a70bc490"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 121845656,
+          "heapTotal": 74268672,
+          "heapUsed": 39561664,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 124909464,
+          "heapTotal": 74006528,
+          "heapUsed": 39676224,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.8700000000000045,
+          2.744792000000075,
+          2.8958750000000464
+        ],
+        "hydrate": [
+          4.165166999999997,
+          3.9552079999999705,
+          3.73433399999999
+        ],
+        "render": [
+          1.8168749999999818,
+          1.6993750000000318,
+          1.7245000000000346
+        ],
+        "pipeline": [
+          8.852041999999983,
+          8.399375000000077,
+          8.35470900000007
+        ],
+        "afterShallow": [
+          3.6539999999999964,
+          3.8507909999999583,
+          3.4937079999999696
+        ]
+      },
+      "grammar": "rust",
+      "pid": 65995,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "round": 4,
+      "idle": "idle 83%"
+    },
+    {
+      "depth": "all",
+      "entries": 19,
+      "rootsWithRecord": 19,
+      "refused": [],
+      "render": {
+        "bytes": 2380,
+        "sha256": "dc4c19e9e77b6b1d0248615275cb4b6ab15a1e5890ae1cd9c0bc346560f53bad"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 108230168,
+          "heapTotal": 63946752,
+          "heapUsed": 28953064,
+          "external": 3812765,
+          "arrayBuffers": 1193027
+        },
+        "native": {
+          "rss": 108639768,
+          "heapTotal": 63946752,
+          "heapUsed": 29045960,
+          "external": 3878395,
+          "arrayBuffers": 1193027
+        }
+      },
+      "timings": {
+        "parse": [
+          0.4079580000000078,
+          0.34254200000009405,
+          0.30808300000001054
+        ],
+        "hydrate": [
+          0.4572499999999309,
+          0.4777079999998932,
+          0.47524999999996
+        ],
+        "render": [
+          0.23116700000002766,
+          0.26375000000007276,
+          0.21370899999999438
+        ],
+        "pipeline": [
+          1.0963749999999663,
+          1.08400000000006,
+          0.9970419999999649
+        ],
+        "afterShallow": [
+          0.44641699999999673,
+          0.39908300000001873,
+          0.4712920000000622
+        ]
+      },
+      "grammar": "scm",
+      "pid": 66022,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "round": 0,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 19,
+      "rootsWithRecord": 19,
+      "refused": [],
+      "render": {
+        "bytes": 2380,
+        "sha256": "dc4c19e9e77b6b1d0248615275cb4b6ab15a1e5890ae1cd9c0bc346560f53bad"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 94023728,
+          "heapTotal": 63946752,
+          "heapUsed": 28668496,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 94646320,
+          "heapTotal": 63946752,
+          "heapUsed": 28758968,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.34254199999998036,
+          0.3369999999999891,
+          0.3522079999999619
+        ],
+        "hydrate": [
+          0.48020800000000463,
+          0.48924999999997,
+          0.49379200000004175
+        ],
+        "render": [
+          0.24654199999997672,
+          0.23883299999999963,
+          0.25799999999998136
+        ],
+        "pipeline": [
+          1.0692919999999617,
+          1.0650829999999587,
+          1.103999999999985
+        ],
+        "afterShallow": [
+          0.4573750000000132,
+          0.4451670000000263,
+          0.46100000000001273
+        ]
+      },
+      "grammar": "scm",
+      "pid": 66034,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "round": 1,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 19,
+      "rootsWithRecord": 19,
+      "refused": [],
+      "render": {
+        "bytes": 2380,
+        "sha256": "dc4c19e9e77b6b1d0248615275cb4b6ab15a1e5890ae1cd9c0bc346560f53bad"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 94728264,
+          "heapTotal": 63422464,
+          "heapUsed": 28669024,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 95137864,
+          "heapTotal": 63422464,
+          "heapUsed": 28759472,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.3526249999999891,
+          0.34700000000003683,
+          0.32233300000001464
+        ],
+        "hydrate": [
+          0.4472499999999968,
+          0.4970419999999649,
+          0.5255839999999807
+        ],
+        "render": [
+          0.231708000000026,
+          0.24816700000002356,
+          0.23620799999997644
+        ],
+        "pipeline": [
+          1.031583000000012,
+          1.0922090000000253,
+          1.0841249999999718
+        ],
+        "afterShallow": [
+          0.5529169999999795,
+          0.4390000000000214,
+          0.4073750000000018
+        ]
+      },
+      "grammar": "scm",
+      "pid": 66072,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "round": 2,
+      "idle": "idle 82%"
+    },
+    {
+      "depth": "all",
+      "entries": 19,
+      "rootsWithRecord": 19,
+      "refused": [],
+      "render": {
+        "bytes": 2380,
+        "sha256": "dc4c19e9e77b6b1d0248615275cb4b6ab15a1e5890ae1cd9c0bc346560f53bad"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 93237320,
+          "heapTotal": 63684608,
+          "heapUsed": 28648104,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 93794376,
+          "heapTotal": 63684608,
+          "heapUsed": 28738552,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.3625839999999698,
+          0.35929100000004155,
+          0.3424580000000219
+        ],
+        "hydrate": [
+          0.4984160000000202,
+          0.48216699999994717,
+          0.4761249999999677
+        ],
+        "render": [
+          0.23866700000002083,
+          0.24837500000001,
+          0.23925000000002683
+        ],
+        "pipeline": [
+          1.0996670000000108,
+          1.0898329999999987,
+          1.0578330000000165
+        ],
+        "afterShallow": [
+          0.4528750000000059,
+          0.43787500000001955,
+          0.450458000000026
+        ]
+      },
+      "grammar": "scm",
+      "pid": 66107,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "round": 3,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 19,
+      "rootsWithRecord": 19,
+      "refused": [],
+      "render": {
+        "bytes": 2380,
+        "sha256": "dc4c19e9e77b6b1d0248615275cb4b6ab15a1e5890ae1cd9c0bc346560f53bad"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 95203400,
+          "heapTotal": 63684608,
+          "heapUsed": 28674304,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 95580232,
+          "heapTotal": 63684608,
+          "heapUsed": 28764752,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          0.3294999999999959,
+          0.337791999999979,
+          0.37095799999997325
+        ],
+        "hydrate": [
+          0.48075000000000045,
+          0.4825000000000159,
+          0.484875000000045
+        ],
+        "render": [
+          0.261291999999969,
+          0.24754200000000992,
+          0.21949999999998226
+        ],
+        "pipeline": [
+          1.0715419999999654,
+          1.0678340000000048,
+          1.0753330000000005
+        ],
+        "afterShallow": [
+          0.41366699999997536,
+          0.42399999999997817,
+          0.47316699999998946
+        ]
+      },
+      "grammar": "scm",
+      "pid": 66144,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "round": 4,
+      "idle": "idle 81%"
+    },
+    {
+      "depth": "all",
+      "entries": 119,
+      "rootsWithRecord": 119,
+      "refused": [],
+      "render": {
+        "bytes": 13428,
+        "sha256": "270bcc0d89c2ebf3429634a1263ff4cd7219fa2965c69f73bc4335f037b2db4d"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 191402864,
+          "heapTotal": 102088704,
+          "heapUsed": 40027640,
+          "external": 5338258,
+          "arrayBuffers": 2718408
+        },
+        "native": {
+          "rss": 193549168,
+          "heapTotal": 102088704,
+          "heapUsed": 40123416,
+          "external": 3878395,
+          "arrayBuffers": 1192915
+        }
+      },
+      "timings": {
+        "parse": [
+          2.758209000000079,
+          2.475999999999999,
+          2.62079099999994
+        ],
+        "hydrate": [
+          3.0956659999999374,
+          2.8768749999999272,
+          3.127166999999986
+        ],
+        "render": [
+          1.3205420000000458,
+          1.3022500000000719,
+          1.3606250000000273
+        ],
+        "pipeline": [
+          7.174417000000062,
+          6.655124999999998,
+          7.108582999999953
+        ],
+        "afterShallow": [
+          2.765916999999945,
+          2.9813329999999496,
+          2.7131250000002183
+        ]
+      },
+      "grammar": "typescript",
+      "pid": 66179,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "round": 0,
+      "idle": "idle 85%"
+    },
+    {
+      "depth": "all",
+      "entries": 119,
+      "rootsWithRecord": 119,
+      "refused": [],
+      "render": {
+        "bytes": 13428,
+        "sha256": "270bcc0d89c2ebf3429634a1263ff4cd7219fa2965c69f73bc4335f037b2db4d"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123729936,
+          "heapTotal": 72728576,
+          "heapUsed": 39728768,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 126072848,
+          "heapTotal": 72466432,
+          "heapUsed": 39840000,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.4392089999999484,
+          2.5920829999999455,
+          2.500417000000084
+        ],
+        "hydrate": [
+          3.002625000000023,
+          2.9435829999999896,
+          3.1316249999999854
+        ],
+        "render": [
+          1.3004999999999995,
+          1.307875000000081,
+          1.542291999999975
+        ],
+        "pipeline": [
+          6.742333999999971,
+          6.843541000000016,
+          7.174334000000044
+        ],
+        "afterShallow": [
+          3.0486660000000256,
+          2.920749999999998,
+          2.90300000000002
+        ]
+      },
+      "grammar": "typescript",
+      "pid": 66193,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "round": 1,
+      "idle": "idle 86%"
+    },
+    {
+      "depth": "all",
+      "entries": 119,
+      "rootsWithRecord": 119,
+      "refused": [],
+      "render": {
+        "bytes": 13428,
+        "sha256": "270bcc0d89c2ebf3429634a1263ff4cd7219fa2965c69f73bc4335f037b2db4d"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123959024,
+          "heapTotal": 73252864,
+          "heapUsed": 39727752,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 126498568,
+          "heapTotal": 73252864,
+          "heapUsed": 39839008,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.524791999999991,
+          2.40054200000003,
+          2.3561670000000277
+        ],
+        "hydrate": [
+          2.923999999999978,
+          2.9909999999999854,
+          2.896916000000033
+        ],
+        "render": [
+          1.2887499999999932,
+          1.3212909999999738,
+          1.3242500000000064
+        ],
+        "pipeline": [
+          6.737541999999962,
+          6.712832999999989,
+          6.577333000000067
+        ],
+        "afterShallow": [
+          2.897207999999978,
+          3.3502919999999676,
+          3.066665999999941
+        ]
+      },
+      "grammar": "typescript",
+      "pid": 66210,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "round": 2,
+      "idle": "idle 83%"
+    },
+    {
+      "depth": "all",
+      "entries": 119,
+      "rootsWithRecord": 119,
+      "refused": [],
+      "render": {
+        "bytes": 13428,
+        "sha256": "270bcc0d89c2ebf3429634a1263ff4cd7219fa2965c69f73bc4335f037b2db4d"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 122910328,
+          "heapTotal": 72990720,
+          "heapUsed": 39721560,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 125269624,
+          "heapTotal": 72990720,
+          "heapUsed": 39835056,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.5882910000000265,
+          2.540666999999985,
+          2.5012500000000273
+        ],
+        "hydrate": [
+          3.210333999999989,
+          3.115624999999966,
+          3.172625000000039
+        ],
+        "render": [
+          1.3388329999999655,
+          1.4487500000000182,
+          1.3571669999998903
+        ],
+        "pipeline": [
+          7.137457999999981,
+          7.105041999999969,
+          7.031041999999957
+        ],
+        "afterShallow": [
+          3.2773750000000064,
+          2.8790420000000267,
+          2.86754099999996
+        ]
+      },
+      "grammar": "typescript",
+      "pid": 66221,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "round": 3,
+      "idle": "idle 84%"
+    },
+    {
+      "depth": "all",
+      "entries": 119,
+      "rootsWithRecord": 119,
+      "refused": [],
+      "render": {
+        "bytes": 13428,
+        "sha256": "270bcc0d89c2ebf3429634a1263ff4cd7219fa2965c69f73bc4335f037b2db4d"
+      },
+      "memory": {
+        "baseline": {
+          "rss": 122042072,
+          "heapTotal": 73777152,
+          "heapUsed": 39710800,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "native": {
+          "rss": 124434136,
+          "heapTotal": 73515008,
+          "heapUsed": 39822008,
+          "external": 3878395,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": {
+        "parse": [
+          2.6057500000000005,
+          2.330791999999974,
+          2.43649999999991
+        ],
+        "hydrate": [
+          3.200125000000014,
+          3.1707079999999905,
+          3.0679999999999836
+        ],
+        "render": [
+          1.5658750000000055,
+          1.3775420000000622,
+          1.3422500000000355
+        ],
+        "pipeline": [
+          7.37175000000002,
+          6.879042000000027,
+          6.846749999999929
+        ],
+        "afterShallow": [
+          2.8271250000000236,
+          3.00750000000005,
+          3.082416999999964
+        ]
+      },
+      "grammar": "typescript",
+      "pid": 66232,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "round": 4,
+      "idle": "idle 84%"
+    }
+  ]
+}

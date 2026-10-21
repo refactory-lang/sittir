@@ -198,6 +198,14 @@ dispose(): void
  */
 readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
 /**
+ * r" Materializes the node at `index` in the live tree `treeId`
+ * r" to `depth` (one when absent, `Infinity` for all), including
+ * r" children of records already present. Returns only the root
+ * r" address, or null for a leaf or `ERROR`; record words remain
+ * r" native until a separate `chunk` call requests a copy.
+ */
+hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+/**
  * r" The nodes at `indexes` of the live tree `treeId`, in order:
  * r" each read as `read` reads it when `wire` is `object`, and,
  * r" when it is `record`, each record's address as `readRecord`

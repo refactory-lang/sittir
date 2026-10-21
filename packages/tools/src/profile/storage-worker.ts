@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
-import { setImmediate } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { nodeText } from '@sittir/common/utils';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { languageByName } from '../languages.ts';
 import { loadCorpusEntries, loadSlotReaders, walkWrappedTree, type SlotReaders } from '../validate/common.ts';
+import { collectGarbage, corpusFingerprint } from './storage-common.ts';
 
 export const STORAGE_PHASES = [
 	'parse-read',
@@ -63,14 +63,6 @@ function walk(roots: Roots, readers: SlotReaders, text: boolean): WalkResult {
 		);
 	}
 	return result;
-}
-
-async function collectGarbage(): Promise<void> {
-	if (typeof globalThis.gc !== 'function') throw new Error('bench-storage workers require --expose-gc');
-	for (let i = 0; i < 3; i++) {
-		globalThis.gc();
-		await setImmediate();
-	}
 }
 
 async function retainedPopulation(
@@ -155,13 +147,7 @@ async function timePhase(phase: StoragePhase, ctx: TimingContext): Promise<Stora
 export async function sampleStorage(options: StorageWorkerOptions): Promise<StorageSample> {
 	const entries = loadCorpusEntries(options.grammar).slice(0, options.limit);
 	const readers = await loadSlotReaders(options.grammar);
-	const corpus = {
-		entries: entries.length,
-		bytes: entries.reduce((sum, entry) => sum + Buffer.byteLength(entry.source), 0),
-		sha256: createHash('sha256')
-			.update(JSON.stringify(entries.map(({ name, source }) => [name, source])))
-			.digest('hex')
-	};
+	const corpus = corpusFingerprint(entries);
 	const engine = await engineFor(options);
 	try {
 		const retained = await retainedPopulation(engine, entries, readers);

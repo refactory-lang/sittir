@@ -10,6 +10,10 @@ export const benchStorage: CommandModule = {
 			.option('--warmup <n>', 'Warmup batches per timed phase', '2')
 			.option('--iterations <n>', 'Measured corpus batches per phase and round', '3')
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
+			.option(
+				'--native-depth <depth>',
+				'Measure native parse, hydrate and render: a positive depth or all; no chunk copies'
+			)
 			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
 			.option('--output <path>', 'Write the complete JSON report to this file')
 			.action(
@@ -20,6 +24,7 @@ export const benchStorage: CommandModule = {
 						warmup: string;
 						iterations: string;
 						limit?: string;
+						nativeDepth?: string;
 						idleGate?: string;
 						output?: string;
 					}
@@ -31,6 +36,12 @@ export const benchStorage: CommandModule = {
 						warmup: Number(opts.warmup),
 						iterations: Number(opts.iterations),
 						limit: opts.limit === undefined ? undefined : Number(opts.limit),
+						nativeDepth:
+							opts.nativeDepth === undefined
+								? undefined
+								: opts.nativeDepth === 'all'
+									? 'all'
+									: Number(opts.nativeDepth),
 						idleGate: opts.idleGate,
 						output: opts.output
 					});

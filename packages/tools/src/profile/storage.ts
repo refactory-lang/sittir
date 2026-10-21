@@ -5,6 +5,8 @@ import { cpus, release } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
+import { nativePhases, type HydrationDepth } from './native-hydration.ts';
+import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydration-worker.ts';
 import { STORAGE_PHASES, type StorageMode, type StorageSample, type StorageWorkerOptions } from './storage-worker.ts';
 
 const execute = promisify(execFile);
@@ -14,6 +16,7 @@ export interface StorageBenchOptions {
 	warmup?: number;
 	iterations?: number;
 	limit?: number;
+	nativeDepth?: HydrationDepth;
 	idleGate?: string;
 	output?: string;
 }
@@ -40,6 +43,54 @@ export function validatePair(object: StorageSample, arena: StorageSample): void 
 		});
 	if (fingerprint(object) !== fingerprint(arena))
 		throw new Error(`object/arena workload mismatch for ${object.grammar}`);
+}
+
+function retainedMemory(rows: readonly { baseline: NodeJS.MemoryUsage; current: NodeJS.MemoryUsage }[]) {
+	return Object.fromEntries(
+		(['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'] as const).map((field) => [
+			field,
+			median(rows.map((row) => row.current[field] - row.baseline[field]))
+		])
+	);
+}
+
+export function summarizeNativeHydration(samples: readonly NativeHydrationRun[]) {
+	return [...new Set(samples.map(({ grammar }) => grammar))].map((grammar) => {
+		const rows = samples.filter((sample) => sample.grammar === grammar);
+		const first = rows[0]!;
+		const fingerprint = (row: NativeHydrationRun) =>
+			JSON.stringify([
+				row.depth,
+				row.corpus,
+				row.entries,
+				row.rootsWithRecord,
+				row.render,
+				row.refused.map(({ entry, stage }) => [entry, stage])
+			]);
+		for (const row of rows)
+			if (fingerprint(row) !== fingerprint(first)) throw new Error(`native hydration workload mismatch for ${grammar}`);
+		const timings = nativePhases.map((phase) => {
+			const rounds = rows.map((row) => median(row.timings[phase]));
+			const milliseconds = median(rounds);
+			return {
+				phase,
+				milliseconds,
+				range: [Math.min(...rounds), Math.max(...rounds)],
+				nsPerEntry: first.entries ? (milliseconds * 1e6) / first.entries : null
+			};
+		});
+		return {
+			grammar,
+			depth: first.depth,
+			corpus: first.corpus,
+			entries: first.entries,
+			rootsWithRecord: first.rootsWithRecord,
+			refused: first.refused,
+			render: first.render,
+			timings,
+			memoryBytes: retainedMemory(rows.map((row) => ({ baseline: row.memory.baseline, current: row.memory.native })))
+		};
+	});
 }
 
 export function summarize(samples: readonly StorageSample[]) {
@@ -74,16 +125,32 @@ export function summarize(samples: readonly StorageSample[]) {
 		const memory = (['object', 'arena'] as const).map((storage) => {
 			const rows = group.filter((sample) => sample.storage === storage);
 			const retained = (state: 'structure' | 'text') =>
-				Object.fromEntries(
-					(['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'] as const).map((field) => [
-						field,
-						median(rows.map((sample) => sample.memory[state][field] - sample.memory.baseline[field]))
-					])
-				);
+				retainedMemory(rows.map((sample) => ({ baseline: sample.memory.baseline, current: sample.memory[state] })));
 			return { storage, nodes: rows[0]!.nodes, structureBytes: retained('structure'), textBytes: retained('text') };
 		});
 		return { grammar, corpus: group[0]!.corpus, timings, memory, refused: group[0]!.render.refused };
 	});
+}
+
+async function runWorker<T>(
+	mode: StorageMode | 'native',
+	args: StorageWorkerOptions | NativeHydrationOptions,
+	round: number,
+	idleGate?: string
+): Promise<T & { round: number; idle: string | null }> {
+	const idle = idleGate ? (await execute('bash', [idleGate, process.cwd()], { timeout: 120_000 })).stdout.trim() : null;
+	process.stderr.write(`bench-storage: ${args.grammar} round ${round + 1} ${mode}\n`);
+	const extension = import.meta.url.endsWith('.ts') ? 'ts' : 'js';
+	const worker = new URL(
+		`./${mode === 'native' ? 'native-hydration' : 'storage'}-worker.${extension}`,
+		import.meta.url
+	);
+	const { stdout } = await execute(
+		process.execPath,
+		['--expose-gc', '--import', 'tsx', fileURLToPath(worker), JSON.stringify(args)],
+		{ maxBuffer: 8 * 1024 * 1024, timeout: 300_000, env: { ...process.env, NODE_ENV: 'production' } }
+	);
+	return { ...JSON.parse(stdout), round, idle };
 }
 
 function integer(name: string, value: number, minimum: number): number {
@@ -96,34 +163,36 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const warmup = integer('warmup', options.warmup ?? 2, 0);
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
 	if (options.limit !== undefined) integer('limit', options.limit, 1);
+	if (options.nativeDepth !== undefined && options.nativeDepth !== 'all') {
+		integer('native-depth', options.nativeDepth, 1);
+		if (options.nativeDepth > 0xffffffff) throw new Error('native-depth exceeds the native depth range');
+	}
 	const grammars: GrammarName[] = [];
 	for (const name of options.grammars?.length ? options.grammars : stableGrammars()) {
 		const grammar = stableGrammars().find((known) => known === name);
 		if (!grammar) throw new Error(`unknown grammar: ${name}`);
 		if (!grammars.includes(grammar)) grammars.push(grammar);
 	}
-	const worker = new URL(
-		import.meta.url.endsWith('.ts') ? './storage-worker.ts' : './storage-worker.js',
-		import.meta.url
-	);
 	const samples: (StorageSample & { round: number; idle: string | null })[] = [];
+	const nativeSamples: (NativeHydrationRun & { round: number; idle: string | null })[] = [];
 	const startedAt = new Date().toISOString();
 	for (const grammar of grammars) {
 		for (let round = 0; round < rounds; round++) {
+			if (options.nativeDepth !== undefined) {
+				nativeSamples.push(
+					await runWorker<NativeHydrationRun>(
+						'native',
+						{ grammar, depth: options.nativeDepth, warmup, iterations, limit: options.limit },
+						round,
+						options.idleGate
+					)
+				);
+				continue;
+			}
 			const order: StorageMode[] = round % 2 === 0 ? ['object', 'arena'] : ['arena', 'object'];
 			for (const storage of order) {
-				const idle = options.idleGate
-					? (await execute('bash', [options.idleGate, process.cwd()], { timeout: 120_000 })).stdout.trim()
-					: null;
-				process.stderr.write(`bench-storage: ${grammar} round ${round + 1}/${rounds} ${storage}\n`);
 				const args: StorageWorkerOptions = { grammar, storage, warmup, iterations, limit: options.limit };
-				const { stdout } = await execute(
-					process.execPath,
-					['--expose-gc', '--import', 'tsx', fileURLToPath(worker), JSON.stringify(args)],
-					{ maxBuffer: 8 * 1024 * 1024, timeout: 300_000, env: { ...process.env, NODE_ENV: 'production' } }
-				);
-				const sample: StorageSample = JSON.parse(stdout);
-				samples.push({ ...sample, round, idle });
+				samples.push(await runWorker<StorageSample>(storage, args, round, options.idleGate));
 			}
 			const pair = samples.slice(-2);
 			validatePair(
@@ -133,8 +202,14 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 		}
 	}
 	const summary = summarize(samples);
+	const nativeSummary = summarizeNativeHydration(nativeSamples);
+	const extension = import.meta.url.endsWith('.ts') ? 'ts' : 'js';
+	const harness = createHash('sha256').update(await readFile(fileURLToPath(import.meta.url)));
+	for (const file of ['storage-worker', 'storage-common', 'native-hydration-worker', 'native-hydration'])
+		harness.update(await readFile(new URL(`./${file}.${extension}`, import.meta.url)));
 	const report = {
-		schemaVersion: 1,
+		schemaVersion: 2,
+		mode: options.nativeDepth === undefined ? 'object-arena' : 'native-hydration',
 		startedAt,
 		finishedAt: new Date().toISOString(),
 		environment: {
@@ -147,23 +222,33 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			cwd: process.cwd(),
 			nodeEnv: 'production',
 			idleGated: Boolean(options.idleGate),
-			harnessSha256: createHash('sha256')
-				.update(await readFile(fileURLToPath(import.meta.url)))
-				.update(await readFile(worker))
-				.digest('hex')
+			harnessSha256: harness.digest('hex')
 		},
-		options: { grammars, rounds, warmup, iterations, limit: options.limit ?? null },
+		options: {
+			grammars,
+			rounds,
+			warmup,
+			iterations,
+			limit: options.limit ?? null,
+			nativeDepth: options.nativeDepth ?? null
+		},
 		summary,
-		samples
+		samples,
+		nativeSummary,
+		nativeSamples
 	};
 	const json = `${JSON.stringify(report, null, 2)}\n`;
 	if (options.output) await writeFile(options.output, json);
 	else process.stdout.write(json);
-	process.stderr.write('\ngrammar\tphase\tobject ms\tarena ms\tarena/object\n');
+	if (summary.length) process.stderr.write('\ngrammar\tphase\tobject ms\tarena ms\tarena/object\n');
 	for (const row of summary)
 		for (const timing of row.timings)
 			process.stderr.write(
 				`${row.grammar}\t${timing.phase}\t${timing.objectMs.toFixed(3)}\t${timing.arenaMs.toFixed(3)}\t${timing.arenaOverObject?.toFixed(3) ?? 'n/a'}\n`
 			);
+	if (nativeSummary.length) process.stderr.write('\ngrammar\tphase\tnative ms\n');
+	for (const row of nativeSummary)
+		for (const timing of row.timings)
+			process.stderr.write(`${row.grammar}\tnative-${timing.phase}\t${timing.milliseconds.toFixed(3)}\n`);
 	return 0;
 }

@@ -549,6 +549,119 @@ fn a_node_s_record_is_written_on_its_first_read_and_answered_by_every_later_one(
 }
 
 #[test]
+fn native_hydration_deepens_a_cached_record_without_rewriting_it() {
+    let mut engine = rust().engine();
+    let tree = RustRenders::parse(&mut engine, EDITED);
+    let root = RustRenders::first_read(&tree, Depth::ONE).expect("a shallow root");
+    let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 0);
+    assert_eq!(
+        tree.tree_arena().record(statement),
+        None,
+        "the shallow read leaves the statement unmaterialized"
+    );
+    let before: Vec<_> = (0..).map_while(|n| tree.record_chunk(n)).collect();
+    assert_eq!(
+        tree.hydrate_record::<sittir_rust::render::AnyNode>(NodeIndex::ROOT, Depth::All),
+        Ok(Some(root))
+    );
+    assert!(
+        tree.tree_arena().record(statement).is_some(),
+        "hydration must reach children of a cached root"
+    );
+    for (n, words) in before.iter().enumerate() {
+        let chunk = u32::try_from(n).expect("the chunk index fits");
+        assert_eq!(
+            &tree.record_chunk(chunk).expect("the chunk remains")[..words.len()],
+            words,
+            "published words stay immutable"
+        );
+    }
+    let hydrated: Vec<_> = (0..).map_while(|n| tree.record_chunk(n)).collect();
+    assert_eq!(
+        tree.hydrate_record::<sittir_rust::render::AnyNode>(NodeIndex::ROOT, Depth::All),
+        Ok(Some(root))
+    );
+    assert_eq!(
+        (0..)
+            .map_while(|n| tree.record_chunk(n))
+            .collect::<Vec<_>>(),
+        hydrated,
+        "a repeated hydration appends no records or list runs"
+    );
+}
+
+#[test]
+fn native_hydration_uses_the_readers_depth_boundary() {
+    let mut engine = rust().engine();
+    let mut previous = 0;
+    for depth in [
+        Depth::ONE,
+        Depth::Levels(std::num::NonZeroU32::new(2).unwrap()),
+        Depth::Levels(std::num::NonZeroU32::new(3).unwrap()),
+        Depth::All,
+    ] {
+        let expected = RustRenders::parse(&mut engine, EDITED);
+        expected
+            .read_record::<sittir_rust::render::AnyNode>(NodeIndex::ROOT, depth)
+            .expect("a native read");
+        let tree = RustRenders::parse(&mut engine, EDITED);
+        RustRenders::first_read(&tree, Depth::ONE).expect("a shallow root");
+        tree.hydrate_record::<sittir_rust::render::AnyNode>(NodeIndex::ROOT, depth)
+            .expect("hydration");
+        let rows = |tree: &ParsedTree<sittir_rust::RustGrammar>| {
+            (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+                .map(NodeIndex::new)
+                .filter(|&index| tree.tree_arena().record(index).is_some())
+                .collect::<Vec<_>>()
+        };
+        let got = rows(&tree);
+        assert_eq!(
+            got,
+            rows(&expected),
+            "hydration and the generated reader agree at {depth:?}"
+        );
+        assert!(got.len() >= previous);
+        previous = got.len();
+    }
+    assert!(previous > 1, "the probe exercises deeper materialization");
+}
+
+#[test]
+fn native_hydration_keeps_envelope_content_unindexed_and_writes_it_once() {
+    let source = "def h():\n    t = (f(x), b, g(y))\n";
+    let mut engine = python().engine();
+    let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(
+        &mut engine,
+        source,
+    );
+    let root = tree
+        .read_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::ONE)
+        .expect("a shallow read");
+    tree.hydrate_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::All)
+        .expect("all records hydrated");
+    let words: Vec<_> = (0..).map_while(|n| tree.record_chunk(n)).collect();
+    assert_eq!(
+        tree.hydrate_record::<sittir_python::render::AnyNode>(NodeIndex::ROOT, Depth::All),
+        Ok(root)
+    );
+    assert_eq!(
+        (0..)
+            .map_while(|n| tree.record_chunk(n))
+            .collect::<Vec<_>>(),
+        words
+    );
+    assert_eq!(
+        tree.render_record(
+            root.expect("a record"),
+            ChangedEdges::default(),
+            engine.options()
+        )
+        .expect("render"),
+        source
+    );
+}
+
+#[test]
 fn an_error_node_has_no_record() {
     let mut engine = rust().engine();
     let tree = RustRenders::parse(&mut engine, "fn f( {\n");

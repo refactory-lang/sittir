@@ -208,6 +208,7 @@ Compare object and arena corpus timing and retained memory
 - `--warmup <n>` — Warmup batches per timed phase (default: `2`)
 - `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
+- `--native-depth <depth>` — Measure native parse, hydrate and render: a positive depth or all; no chunk copies
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 

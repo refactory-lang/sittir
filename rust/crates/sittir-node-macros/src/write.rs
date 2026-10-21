@@ -61,12 +61,13 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         .ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` has a record, so it has a `#[layout]` field")))?;
     let (layout_name, layout_ty) = (layout.ident, layout.ty);
     let trivia = quote!(<#layout_ty as ::sittir_core::arena::LayoutField>::Trivia);
-    let writer = |body: TokenStream| {
+    let writer = |body: TokenStream, hydrate: TokenStream| {
         gated(&quote! {
             impl ::sittir_core::arena::WriteCell<#trivia> for #ident {
                 fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<::sittir_core::arena::Cell, ::sittir_core::arena::ArenaError> {
                     #body
                 }
+                #hydrate
             }
         })
     };
@@ -77,17 +78,31 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             .find(|field| matches!(field.role, Role::Text))
             .ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf has a `#[text]` field"))?
             .ident;
-        return Ok(writer(quote!(::sittir_core::arena::leaf_cell(__sink, __KIND, &self.#text, #layout_of))));
+        return Ok(writer(
+            quote!(::sittir_core::arena::leaf_cell(__sink, __KIND, &self.#text, #layout_of)),
+            TokenStream::new(),
+        ));
     }
     let captures: Vec<&Ident> = if attrs.interior.is_some() { capture_fields(fields)?.into_iter().map(|(field, _)| field.ident).collect() } else { Vec::new() };
     let mut writes = Vec::new();
+    let mut hydrates = Vec::new();
     let mut settings = Vec::new();
     let mut slot_words = Vec::new();
     for field in fields {
         let name = field.ident;
         match &field.role {
             Role::Slot(slot) => {
-                writes.push(slot_write(field, slot, captures.iter().position(|capture| *capture == name), &layout_of)?);
+                let capture = captures.iter().position(|capture| *capture == name);
+                writes.push(slot_write(field, slot, capture, &layout_of)?);
+                if slot.cell.bit.is_none() && capture.is_none() {
+                    let hydrate = |value: TokenStream| quote!(::sittir_core::arena::WriteCell::hydrate_records(#value, __sink)?;);
+                    hydrates.push(if slot.cell.run.is_some() {
+                        let item = hydrate(quote!(__item));
+                        quote!(for __item in self.#name.iter() { #item })
+                    } else {
+                        hydrate(quote!(&self.#name))
+                    });
+                }
                 if let (Some(key), Some(word)) = (&field.key, slot.cell.word) {
                     slot_words.push(quote!(#key => ::core::option::Option::Some(#word),));
                 }
@@ -130,6 +145,17 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     ::core::result::Result::Ok(())
                 },
             )
+    }, quote! {
+        fn hydrate_records(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<(), ::sittir_core::arena::ArenaError> {
+            let __content = __sink.hydrate_children(#layout_of, |__sink| {
+                #(#hydrates)*
+                ::core::result::Result::Ok(())
+            })?;
+            if !__content {
+                ::sittir_core::arena::WriteCell::write_cell(self, __sink)?;
+            }
+            ::core::result::Result::Ok(())
+        }
     }))
 }
 
@@ -138,25 +164,42 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
 /// first kind; a blank arm the blank kind.
 pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenStream> {
     let mut arms = Vec::new();
+    let mut hydrates = Vec::new();
     let mut bounds = Vec::new();
     for variant in variants {
         let name = variant.name;
         let unit = |kind: TokenStream| quote!(::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: #kind, row: ::core::option::Option::None }));
-        arms.push(match (variant.payload, &variant.first) {
+        let (write, hydrate) = match (variant.payload, &variant.first) {
             _ if variant.blank => {
                 let cell = unit(quote!(::sittir_core::types::KindId::BLANK));
-                quote!(Self::#name => #cell,)
+                (
+                    quote!(Self::#name => #cell,),
+                    quote!(Self::#name => ::core::result::Result::Ok(()),),
+                )
             }
             (Some(payload), _) => {
                 bounds.push(quote!(#payload: ::sittir_core::arena::WriteCell<__T>,));
-                quote!(Self::#name(payload) => ::sittir_core::arena::WriteCell::<__T>::write_cell(payload, __sink),)
+                (
+                    quote!(Self::#name(payload) => ::sittir_core::arena::WriteCell::<__T>::write_cell(payload, __sink),),
+                    quote!(Self::#name(payload) => ::sittir_core::arena::WriteCell::<__T>::hydrate_records(payload, __sink),),
+                )
             }
             (None, Some(first)) => {
                 let cell = unit(quote!(#first));
-                if variant.edged { quote!(Self::#name(_) => #cell,) } else { quote!(Self::#name => #cell,) }
+                let pattern = if variant.edged {
+                    quote!(Self::#name(_))
+                } else {
+                    quote!(Self::#name)
+                };
+                (
+                    quote!(#pattern => #cell,),
+                    quote!(#pattern => ::core::result::Result::Ok(()),),
+                )
             }
             (None, None) => return Err(syn::Error::new_spanned(name, format!("`{name}` is a unit arm that names no kind to write: `#[kind(…)]`"))),
-        });
+        };
+        arms.push(write);
+        hydrates.push(hydrate);
     }
     Ok(gated(&quote! {
         impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for #ident
@@ -167,6 +210,9 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 match self {
                     #(#arms)*
                 }
+            }
+            fn hydrate_records(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<(), ::sittir_core::arena::ArenaError> {
+                match self { #(#hydrates)* }
             }
         }
     }))

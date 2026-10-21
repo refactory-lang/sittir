@@ -626,9 +626,12 @@ macro_rules! napi_engine {
                 parsed: &$crate::ParsedTree<$grammar>,
                 index: $crate::types::NodeIndex,
                 depth: $crate::read::Depth,
+                hydrate: bool,
             ) -> ::napi::Result<Option<u32>> {
                 $crate::napi_engine::check_node(parsed, index)?;
-                ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read_record::<$any>(index, depth)))
+                ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                    if hydrate { parsed.hydrate_record::<$any>(index, depth) } else { parsed.read_record::<$any>(index, depth) }
+                }))
                     .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
                     .map(|at| at.map(|at| at.0))
                     .map_err(::napi::Error::from_reason)
@@ -650,7 +653,22 @@ macro_rules! napi_engine {
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                        record_of(parsed, index, depth)
+                        record_of(parsed, index, depth, false)
+                    })
+                }
+
+                /// Materializes the node at `index` in the live tree `treeId`
+                /// to `depth` (one when absent, `Infinity` for all), including
+                /// children of records already present. Returns only the root
+                /// address, or null for a leaf or `ERROR`; record words remain
+                /// native until a separate `chunk` call requests a copy.
+                #[::napi_derive::napi]
+                pub fn hydrate_record(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<Option<u32>> {
+                    let depth = $crate::napi_engine::depth_from_wire(depth)?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        record_of(parsed, index, depth, true)
                     })
                 }
 
@@ -676,7 +694,7 @@ macro_rules! napi_engine {
                             "object" => indexes.into_iter().map(|index| read_node(parsed, index, depth)).collect::<::napi::Result<_>>().map(::napi::Either::A),
                             "record" => indexes
                                 .into_iter()
-                                .map(|index| record_of(parsed, index, depth).map(|at| at.unwrap_or(0)))
+                                .map(|index| record_of(parsed, index, depth, false).map(|at| at.unwrap_or(0)))
                                 .collect::<::napi::Result<Vec<u32>>>()
                                 .map(|addresses| ::napi::Either::B(::napi::bindgen_prelude::Uint32Array::new(addresses))),
                             other => Err(::napi::Error::from_reason(format!("{other:?} is not a read wire (object or record)"))),

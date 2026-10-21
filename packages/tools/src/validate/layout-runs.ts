@@ -31,10 +31,10 @@ interface NativeBackend {
 	readonly native?: { readonly SittirEngine: new () => NativeEngineLike; disposeTree(treeId: number): void };
 }
 
-async function nativeBackendOf(grammar: string): Promise<Required<NativeBackend>['native']> {
+export async function nativeBackendOf(grammar: string): Promise<Required<NativeBackend>['native']> {
 	const { getActiveBackend } = (await import(`../../../${grammar}/src/backend.ts`)) as { getActiveBackend: () => NativeBackend };
 	const status = getActiveBackend();
-	if (status.name !== 'native' || status.native === undefined) throw new Error(`layout runs: the native backend of '${grammar}' is not active`);
+	if (status.name !== 'native' || status.native === undefined) throw new Error(`the native backend of '${grammar}' is not active`);
 	return status.native;
 }
 

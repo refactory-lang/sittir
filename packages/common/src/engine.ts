@@ -184,6 +184,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	text(treeId: number, span: ByteSpan): string;
 	/** The address of the record of the node at `index`, read `depth` levels down, `null` for a node with none. Present when the addon carries the record codec. */
 	readRecord?(treeId: number, index: number, depth?: number): number | null;
+	/** Materializes parsed records to `depth` (default one, Infinity for all), including children of cached parents. Returns only an address; chunk copies are requested separately. Present when the addon carries the record codec. */
+	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** The words records fill in chunk `n` of the tree's arena, copied. Present when the addon carries the record codec. */
 	chunk?(treeId: number, n: number): Uint32Array;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */

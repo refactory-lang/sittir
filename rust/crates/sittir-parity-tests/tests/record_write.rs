@@ -36,6 +36,21 @@ fn write<Root: ReadRoot + WriteCell<Trivia>, Trivia: Clone>(language: &tree_sitt
     if again != cell || written(&arena) != before {
         return Err("a second read of the tree wrote records".to_owned());
     }
+    if let Ok(whole) = Root::read_root(&mut tree.walk(), &mut ctx, Depth::All) {
+        whole.hydrate_records(&mut RecordSink::<Trivia>::parsed(TREE, &mut arena)).map_err(|e| format!("hydrate: {e}"))?;
+        let mut expected = TreeArena::new();
+        whole.write_cell(&mut RecordSink::<Trivia>::parsed(TREE, &mut expected)).map_err(|e| format!("whole write: {e}"))?;
+        for row in (0..sittir_core::read::descendant_count(&tree.root_node())).map(NodeIndex::new) {
+            if arena.record(row).is_some() != expected.record(row).is_some() {
+                return Err(format!("native hydration disagrees with a whole read at row {row:?}"));
+            }
+        }
+        let hydrated = written(&arena);
+        whole.hydrate_records(&mut RecordSink::<Trivia>::parsed(TREE, &mut arena)).map_err(|e| format!("rehydrate: {e}"))?;
+        if written(&arena) != hydrated {
+            return Err("a repeated native hydration appended records or list runs".to_owned());
+        }
+    }
     Ok(())
 }
 
