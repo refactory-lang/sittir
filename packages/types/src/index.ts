@@ -38,7 +38,7 @@ export type {
 	PortableSurface,
 	PortableTable
 } from './portable.ts';
-import type { Admit } from './node-surface.ts';
+import type { Admit, HoldsSource } from './node-surface.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
 export type { BooleanKeyword } from './keyword-presence.ts';
 
@@ -1155,7 +1155,7 @@ export interface NodeNs<
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Bound = T & NodeMethods,
+	Bound = T & NodeMethods & HoldsSource,
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,

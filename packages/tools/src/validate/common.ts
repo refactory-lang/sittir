@@ -16,7 +16,8 @@ import { coordinateOf, hydrateTriviaEntry } from '@sittir/common/utils';
 import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
-	carrySource,
+	carryPlace,
+	carrySourceStamp,
 	holdTree,
 	sideOf,
 	sidesOf,
@@ -873,7 +874,8 @@ function materializeValue(
 	for (const [storageKey, resolved] of slotValuesOf(value, readers, onAccessorThrow)) {
 		if (resolved !== undefined) materialized[storageKey] = slotValue(resolved);
 	}
-	carrySource(value, materialized);
+	carryPlace(value, materialized);
+	carrySourceStamp(value, materialized);
 	return carryRead(value, materialized);
 }
 

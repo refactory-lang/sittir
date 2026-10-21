@@ -6,7 +6,7 @@ const LIST_ITEMS = Symbol('items');
 
 const leaf = (text: string) => ({
 	$type: 3,
-	$source: 0,
+	
 	$named: true,
 	$text: text,
 	$render: () => text,
@@ -16,7 +16,7 @@ const leaf = (text: string) => ({
 
 const owner = (child: ReturnType<typeof leaf>) => ({
 	$type: 7,
-	$source: 0,
+	
 	$named: true,
 	_body: child,
 	$with: { body: () => undefined },
@@ -39,9 +39,9 @@ describe('the tools walkers read a node through its model slots\' accessors', ()
 	it('materialize copies $ metadata and each model slot as its accessor reads it', () => {
 		expect(materialize(owner(leaf('a')), readers)).toEqual({
 			$type: 7,
-			$source: 0,
+			
 			$named: true,
-			_body: { $type: 3, $source: 0, $named: true, $text: 'a' }
+			_body: { $type: 3, $named: true, $text: 'a' }
 		});
 	});
 

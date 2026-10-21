@@ -379,19 +379,19 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 ### `packages/common/src/source.ts::Source`
 
-Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
+Where a node came from, the value of its source stamp as `sourceOf` reports it: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. It is stamped once, where the node is created: by the reader (`holdReadTree`), by the builders (`stampBuilt`), and onto a validator's copy made by string keys (`carrySourceStamp`). An edit keeps it (`$with` and `detachCoordinate` drop only coordinates), and so does a spread copy, so it records the node's origin, not whether it still holds a live tree handle. A node carries no `$source` member; `sourceOf` is the one read path. Rust's `enum Source` in sittir-core mirrors the values. The object `satisfies` a record of `HoldsSource`'s member type, so the type-level `0 | 1 | 2` union there stays the one declaration of the values.
 
 ### `packages/common/src/utils.ts::isNode`
 
-Whether a value is a sittir node, built or read: an object with a numeric `$type` that carries storage (`_` keys), text (`$text`), a whitespace-kind `$other`, or a `$source` stamp. A bare `{ $type }` is a factory config, not a node.
+Whether a value is a sittir node, built or read: an object with a numeric `$type` that holds a source stamp (`sourceOf`) or a tree token (`treeTokenOf`). Nothing structural counts: storage (`_` keys), text, `$_layout` or a `$source` key make no node, so a factory config, a JSON copy or a string-key copy of a node is not one. It is the run-time side of the fact the types admit by (`NodeMarker`), so the two cannot disagree. A spread copy keeps the stamp, which is an enumerable symbol member. `isNodeValue` adds coordinates.
 
 ### `packages/common/src/utils.ts::isParsedNode`
 
-A node that originated from a parse: `$source` is `Source.Ts` or `Source.Sg`. It holds before the read root is wrapped and after the node is edited, since both keep the stamp.
+A node a read produced (`isRead`). It holds before the read root is wrapped and after the node is edited, since both carry the read; its provenance (`sourceOf`) is `Source.Ts` or `Source.Sg`.
 
 ### `packages/common/src/utils.ts::isFactoryNode`
 
-A node that did not originate from a parse. It is defined as the complement of `isParsedNode` among nodes, so the two never disagree; every generated builder stamps `Source.Factory`.
+A node that did not originate from a parse. It is defined as the complement of `isParsedNode` among nodes, so the two never disagree; every generated builder stamps `Source.Factory` (`stampBuilt`).
 
 ### `packages/common/src/runtime.ts::module`
 
@@ -417,7 +417,7 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
-`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those stamped `$source: Source.Factory`, and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
 
 ### `packages/common/src/runtime.ts::strictBooleanStorage`
 
@@ -497,17 +497,17 @@ The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which pa
 
 ### `packages/common/src/node-data.ts::sourceHandleOf`
 
-The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
+The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`placeOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
 
 ### `packages/common/src/node-data.ts::unitSidesOf`
 
-The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
+The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`placeOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
 
 ### `packages/common/src/node-data.ts::slotsOf`
 
 The stored layout of a node's list slots (`NodeLayout.slots`): the ones
 it holds, else its live tree's for a parsed node, else those of the node it
-was rebuilt from (`sourceOf`), which apply to every gap of the slot, kept or
+was rebuilt from (`placeOf`), which apply to every gap of the slot, kept or
 inserted. A detached crossing and a snapshot of a built node carry them as
 data, since neither leaves the render a tree to measure them from.
 
@@ -574,7 +574,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carryPlace`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -582,7 +582,7 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 ### `packages/common/src/node-data.ts::holdReadTree`
 
-`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`). The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
+`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`), and is stamped `Source.Ts` (`stampSource`), so it stays a node after an edit drops its tree token. The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
 
 ### `packages/common/src/node-data.ts::carryRead`
 
@@ -602,7 +602,7 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. Every other key a node's `$_layout` holds crosses as it is (`DECIDED_LAYOUT_KEYS` names the ones the walk decides), so a fact the native read writes, such as a snapshot's `span` and `flanks`, crosses back without the walk naming it; a fold crosses the `slots` and `separator` it already holds: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. Every other key a node's `$_layout` holds crosses as it is (`DECIDED_LAYOUT_KEYS` names the ones the walk decides), so a fact the native read writes, such as a snapshot's `span` and `flanks`, crosses back without the walk naming it; a fold crosses the `slots` and `separator` it already holds: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
 
 ### `packages/common/src/node-data.ts::evidenceOf`
 
@@ -613,13 +613,13 @@ The node whose source identity stands for a list entry. A rebuild constructs som
 
 An entry with its own source identity is its own evidence. Adjacency is judged on these nodes on both sides of a gap.
 
-### `packages/common/src/node-data.ts::sourceOf`
+### `packages/common/src/node-data.ts::placeOf`
 
-Where a node sits in its source: a read node's own tree token, tree handle, end, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced (`carrySource`). It is evidence of layout only: an edited node never slices, but its missing sides are its source's (`sideOf`, `$_layout.sides`) and it can be judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
+Where a node sits in its source: a read node's own tree token, tree handle, end, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced (`carryPlace`). It is evidence of layout only: an edited node never slices, but its missing sides are its source's (`sideOf`, `$_layout.sides`) and it can be judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
 
 ### `packages/common/src/utils.ts::carryRebuiltSlots`
 
-For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carrySource`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). A node the caller built and passed in, of another kind or already carrying source, is left as it is.
+For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carryPlace`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). A node the caller built and passed in, of another kind or already carrying source, is left as it is.
 
 ### `packages/common/src/utils.ts::NodeAddress`
 
@@ -848,7 +848,7 @@ The role an alias envelope's content accessor hydrates in: `aliasContent` when t
 
 ### `packages/common/src/node-data.ts::sideOf`
 
-The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`sourceOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
+The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
 
 ### `packages/common/src/node-data.ts::sidesOf`
 
@@ -941,3 +941,19 @@ The cell tags and the address packing a record's words are read with, taken from
 ### `packages/common/src/record-cell.ts::decodeCell`
 
 One slot's cell read from a record's words, as `arena::cell::Cell::decode` reads it. Kind 0 under the parsed-leaf tag is a captured string's span (`parsedText`), and under the built-leaf tag its string-table text (`builtText`). A child's tree word is the tree plus one, 0 for the cell's own arena. A unit's row word is the row plus one, 0 for a built unit or a blank arm. A child's last word is its site's changed edges, leading in bit 0 and trailing in bit 1. The words come from a chunk copy native wrote, so the decoder refuses only what it can't read (an unknown tag, a cell running past the words) and leaves bounds and kind checks to the native codec, which never writes a malformed cell.
+
+### `packages/common/src/source-stamp.ts::stampSource`
+
+Stamps `node` with where it came from (`Source`), which makes it a node (`isNode`). The stamp is a member under a module-private symbol, so no literal, JSON value or string-key copy can carry it, while a spread copy keeps it (the member is enumerable, as the tree token's is). The node gets no `$source` member: `sourceOf` is the one way to read the stamp. Stamping again replaces the stamp.
+
+### `packages/common/src/source-stamp.ts::stampBuilt`
+
+`stampSource` with `Source.Factory`: what every generated builder returns its node through, and what a test stamps a hand-written built node with. It is exported through `@sittir/common/utils`, so code can call it on purpose; what it rules out is a node by accident or by literal.
+
+### `packages/common/src/source-stamp.ts::sourceOf`
+
+The one read of a node's provenance, public through `@sittir/common`: the stamp the node holds, or `undefined` for anything that is no node. It answers for every node sittir hands out, read, built or rebuilt, and for a spread copy of one, because it reads the stamp member itself rather than a member set per object. `isNode`, `verifyStructure` and `carrySourceStamp` read the stamp through it. It is distinct from `placeOf`, which says where in its source text a node sits.
+
+### `packages/common/src/source-stamp.ts::carrySourceStamp`
+
+Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised copies, `materializeValue`) loses the stamp with every other symbol member, and this puts it back, so the copy is the node it stands for. A spread copy keeps the stamp and needs no carry. Beside `carryPlace`, which carries a different fact: where in its source a node sits.

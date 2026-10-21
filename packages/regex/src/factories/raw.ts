@@ -9,6 +9,7 @@ import {
 	elementsWith,
 	rebuilt,
 	renderText,
+	stampBuilt,
 	hydrateStoredSlot,
 	hydrateStoredSlots,
 	triviaSide,
@@ -46,7 +47,6 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 	if (handle !== undefined) admitChildren(handle, 'pattern', { content: _content });
 	const node = {
 		$type: TSKindId.Pattern as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -61,7 +61,7 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Pattern.Bound;
+	return stampBuilt(node) as unknown as T.Pattern.Bound;
 }
 
 export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
@@ -73,7 +73,6 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 	if (handle !== undefined) admitChildren(handle, 'alternation', { terms: _terms });
 	const node = {
 		$type: TSKindId.Alternation as const,
-		$source: 2 as const,
 		$named: true as const,
 		_terms,
 		$with: {
@@ -89,7 +88,7 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Alternation.Bound;
+	return stampBuilt(node) as unknown as T.Alternation.Bound;
 }
 
 export function buildTerm<A extends NonEmptyArray<Admit<T.TermGroup>>>(
@@ -101,7 +100,6 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 	if (handle !== undefined) admitChildren(handle, 'term', { termGroup: _term_group });
 	const node = {
 		$type: TSKindId.Term as const,
-		$source: 2 as const,
 		$named: true as const,
 		_term_group,
 		$with: {
@@ -123,7 +121,7 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Term.Bound;
+	return stampBuilt(node) as unknown as T.Term.Bound;
 }
 
 export const buildAnyCharacter: TSKindId.AnyCharacter = TSKindId.AnyCharacter;
@@ -147,7 +145,6 @@ export function buildLookaroundAssertion(
 	if (handle !== undefined) admitChildren(handle, 'lookaround_assertion', { content: _content });
 	const node = {
 		$type: TSKindId.LookaroundAssertion as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -163,7 +160,7 @@ export function buildLookaroundAssertion(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.LookaroundAssertion.Bound;
+	return stampBuilt(node) as unknown as T.LookaroundAssertion.Bound;
 }
 
 export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion.Config['pattern']>(
@@ -176,7 +173,6 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { content: _content, pattern: _pattern });
 	const node = {
 		$type: TSKindId.LookaheadAssertion as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		_pattern,
@@ -196,7 +192,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.LookaheadAssertion.Bound;
+	return stampBuilt(node) as unknown as T.LookaheadAssertion.Bound;
 }
 
 export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAssertion.Config['pattern']>(
@@ -209,7 +205,6 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { content: _content, pattern: _pattern });
 	const node = {
 		$type: TSKindId.LookbehindAssertion as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		_pattern,
@@ -229,7 +224,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.LookbehindAssertion.Bound;
+	return stampBuilt(node) as unknown as T.LookbehindAssertion.Bound;
 }
 
 export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
@@ -240,7 +235,6 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PatternCharacter as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -251,7 +245,7 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.PatternCharacter.Bound;
+	return stampBuilt(node) as unknown as T.PatternCharacter.Bound;
 }
 
 export function buildCharacterClass(): T.EmptyCharacterClass;
@@ -276,7 +270,6 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 		});
 	const node = {
 		$type: TSKindId.CharacterClass as const,
-		$source: 2 as const,
 		$named: true as const,
 		_negation,
 		_leading,
@@ -305,7 +298,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CharacterClass.Bound;
+	return stampBuilt(node) as unknown as T.CharacterClass.Bound;
 }
 
 export function buildPosixCharacterClass<V extends Admit<T.PosixClassName>>(
@@ -317,7 +310,6 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 	if (handle !== undefined) admitChildren(handle, 'posix_character_class', { posixClassName: _posix_class_name });
 	const node = {
 		$type: TSKindId.PosixCharacterClass as const,
-		$source: 2 as const,
 		$named: true as const,
 		_posix_class_name,
 		$with: {
@@ -332,7 +324,7 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.PosixCharacterClass.Bound;
+	return stampBuilt(node) as unknown as T.PosixCharacterClass.Bound;
 }
 
 export function buildPosixClassName(text: string): T.PosixClassName.Bound {
@@ -343,7 +335,6 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PosixClassName as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -354,7 +345,7 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.PosixClassName.Bound;
+	return stampBuilt(node) as unknown as T.PosixClassName.Bound;
 }
 
 export function buildClassRange<
@@ -368,7 +359,6 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 	if (handle !== undefined) admitChildren(handle, 'class_range', { start: _start, end: _end });
 	const node = {
 		$type: TSKindId.ClassRange as const,
-		$source: 2 as const,
 		$named: true as const,
 		_start,
 		_end,
@@ -388,7 +378,7 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ClassRange.Bound;
+	return stampBuilt(node) as unknown as T.ClassRange.Bound;
 }
 
 export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
@@ -399,7 +389,6 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassCharacter as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -410,7 +399,7 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ClassCharacter.Bound;
+	return stampBuilt(node) as unknown as T.ClassCharacter.Bound;
 }
 
 export function buildAnonymousCapturingGroup<V extends Admit<T.Pattern>>(
@@ -440,7 +429,6 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 	if (handle !== undefined) admitChildren(handle, 'anonymous_capturing_group', { pattern: _pattern });
 	const node = {
 		$type: TSKindId.AnonymousCapturingGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_pattern,
 		$with: {
@@ -455,7 +443,7 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.AnonymousCapturingGroup.Bound;
+	return stampBuilt(node) as unknown as T.AnonymousCapturingGroup.Bound;
 }
 
 export function buildNamedCapturingGroup<
@@ -473,7 +461,6 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 		admitChildren(handle, 'named_capturing_group', { content: _content, groupName: _group_name, pattern: _pattern });
 	const node = {
 		$type: TSKindId.NamedCapturingGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		_group_name,
@@ -497,7 +484,7 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NamedCapturingGroup.Bound;
+	return stampBuilt(node) as unknown as T.NamedCapturingGroup.Bound;
 }
 
 export function buildNonCapturingGroup<V extends Admit<T.Pattern>>(
@@ -527,7 +514,6 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 	if (handle !== undefined) admitChildren(handle, 'non_capturing_group', { pattern: _pattern });
 	const node = {
 		$type: TSKindId.NonCapturingGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_pattern,
 		$with: {
@@ -542,7 +528,7 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NonCapturingGroup.Bound;
+	return stampBuilt(node) as unknown as T.NonCapturingGroup.Bound;
 }
 
 export function buildFlags(text: string): T.Flags.Bound {
@@ -552,7 +538,6 @@ export function buildFlags(text: string): T.Flags.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Flags as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -563,7 +548,7 @@ export function buildFlags(text: string): T.Flags.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Flags.Bound;
+	return stampBuilt(node) as unknown as T.Flags.Bound;
 }
 
 export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.ZeroOrMore.Bound {
@@ -572,7 +557,6 @@ export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.Ze
 	if (handle !== undefined) admitChildren(handle, 'zero_or_more', { lazy: _lazy });
 	const node = {
 		$type: TSKindId.ZeroOrMore as const,
-		$source: 2 as const,
 		$named: true as const,
 		_lazy,
 		$with: {
@@ -588,7 +572,7 @@ export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.Ze
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ZeroOrMore.Bound;
+	return stampBuilt(node) as unknown as T.ZeroOrMore.Bound;
 }
 
 export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
@@ -597,7 +581,6 @@ export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneO
 	if (handle !== undefined) admitChildren(handle, 'one_or_more', { lazy: _lazy });
 	const node = {
 		$type: TSKindId.OneOrMore as const,
-		$source: 2 as const,
 		$named: true as const,
 		_lazy,
 		$with: {
@@ -613,7 +596,7 @@ export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneO
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.OneOrMore.Bound;
+	return stampBuilt(node) as unknown as T.OneOrMore.Bound;
 }
 
 export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
@@ -622,7 +605,6 @@ export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Option
 	if (handle !== undefined) admitChildren(handle, 'optional', { lazy: _lazy });
 	const node = {
 		$type: TSKindId.Optional as const,
-		$source: 2 as const,
 		$named: true as const,
 		_lazy,
 		$with: {
@@ -638,7 +620,7 @@ export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Option
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Optional.Bound;
+	return stampBuilt(node) as unknown as T.Optional.Bound;
 }
 
 export function buildCountQuantifier<ContentSlot extends T.CountQuantifier.Config['content']>(
@@ -651,7 +633,6 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 	if (handle !== undefined) admitChildren(handle, 'count_quantifier', { content: _content, lazy: _lazy });
 	const node = {
 		$type: TSKindId.CountQuantifier as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		_lazy,
@@ -671,7 +652,7 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CountQuantifier.Bound;
+	return stampBuilt(node) as unknown as T.CountQuantifier.Bound;
 }
 
 export function buildBackreferenceEscape<V extends Admit<T.GroupName>>(
@@ -683,7 +664,6 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 	if (handle !== undefined) admitChildren(handle, 'backreference_escape', { groupName: _group_name });
 	const node = {
 		$type: TSKindId.BackreferenceEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		_group_name,
 		$with: {
@@ -698,7 +678,7 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.BackreferenceEscape.Bound;
+	return stampBuilt(node) as unknown as T.BackreferenceEscape.Bound;
 }
 
 export function buildNamedGroupBackreference<V extends Admit<T.GroupName>>(
@@ -710,7 +690,6 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 	if (handle !== undefined) admitChildren(handle, 'named_group_backreference', { groupName: _group_name });
 	const node = {
 		$type: TSKindId.NamedGroupBackreference as const,
-		$source: 2 as const,
 		$named: true as const,
 		_group_name,
 		$with: {
@@ -725,7 +704,7 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.NamedGroupBackreference.Bound;
+	return stampBuilt(node) as unknown as T.NamedGroupBackreference.Bound;
 }
 
 export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
@@ -736,7 +715,6 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DecimalEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -747,7 +725,7 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DecimalEscape.Bound;
+	return stampBuilt(node) as unknown as T.DecimalEscape.Bound;
 }
 
 export function buildCharacterClassEscape<
@@ -761,7 +739,6 @@ export function buildCharacterClassEscape(
 	if (handle !== undefined) admitChildren(handle, 'character_class_escape', { content: _content });
 	const node = {
 		$type: TSKindId.CharacterClassEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -777,7 +754,7 @@ export function buildCharacterClassEscape(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CharacterClassEscape.Bound;
+	return stampBuilt(node) as unknown as T.CharacterClassEscape.Bound;
 }
 
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
@@ -789,7 +766,6 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnicodeCharacterEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -800,7 +776,7 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnicodeCharacterEscape.Bound;
+	return stampBuilt(node) as unknown as T.UnicodeCharacterEscape.Bound;
 }
 
 export function buildUnicodePropertyValueExpression<
@@ -829,7 +805,6 @@ export function buildUnicodePropertyValueExpression(
 		});
 	const node = {
 		$type: TSKindId.UnicodePropertyValueExpression as const,
-		$source: 2 as const,
 		$named: true as const,
 		_unicode_property_value_expression_group,
 		_unicode_property_value,
@@ -851,7 +826,7 @@ export function buildUnicodePropertyValueExpression(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnicodePropertyValueExpression.Bound;
+	return stampBuilt(node) as unknown as T.UnicodePropertyValueExpression.Bound;
 }
 
 export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.Bound {
@@ -863,7 +838,6 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnicodePropertyValue as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -874,7 +848,7 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnicodePropertyValue.Bound;
+	return stampBuilt(node) as unknown as T.UnicodePropertyValue.Bound;
 }
 
 export function buildControlEscape(text: string): T.ControlEscape.Bound {
@@ -885,7 +859,6 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ControlEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -896,7 +869,7 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ControlEscape.Bound;
+	return stampBuilt(node) as unknown as T.ControlEscape.Bound;
 }
 
 export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bound {
@@ -907,7 +880,6 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ControlLetterEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -918,7 +890,7 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.ControlLetterEscape.Bound;
+	return stampBuilt(node) as unknown as T.ControlLetterEscape.Bound;
 }
 
 export function buildIdentityEscape(content: string, affix?: true): T.IdentityEscape.Bound;
@@ -939,7 +911,6 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 	if (handle !== undefined) admitChildren(handle, 'identity_escape', { content: _content });
 	const node = {
 		$type: TSKindId.IdentityEscape as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -954,7 +925,7 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.IdentityEscape.Bound;
+	return stampBuilt(node) as unknown as T.IdentityEscape.Bound;
 }
 
 export function buildGroupName(text: string): T.GroupName.Bound {
@@ -965,7 +936,6 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GroupName as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -976,7 +946,7 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.GroupName.Bound;
+	return stampBuilt(node) as unknown as T.GroupName.Bound;
 }
 
 export function buildDecimalDigits<const N extends string | number | bigint>(
@@ -991,7 +961,6 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DecimalDigits as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -1002,7 +971,7 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.DecimalDigits.Bound;
+	return stampBuilt(node) as unknown as T.DecimalDigits.Bound;
 }
 
 export function buildTermGroup<
@@ -1016,7 +985,6 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	if (handle !== undefined) admitChildren(handle, 'term_group', { content: _content, quantifier: _quantifier });
 	const node = {
 		$type: TSKindId.TermGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		_quantifier,
@@ -1036,7 +1004,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.TermGroup.Bound;
+	return stampBuilt(node) as unknown as T.TermGroup.Bound;
 }
 
 export function buildCountQuantifierGroup<V extends Admit<T.DecimalDigits>>(
@@ -1048,7 +1016,6 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 	if (handle !== undefined) admitChildren(handle, 'count_quantifier_group', { decimalDigits: _decimal_digits });
 	const node = {
 		$type: TSKindId.CountQuantifierGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_decimal_digits,
 		$with: {
@@ -1063,7 +1030,7 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CountQuantifierGroup.Bound;
+	return stampBuilt(node) as unknown as T.CountQuantifierGroup.Bound;
 }
 
 export function buildCountQuantifierArm<
@@ -1086,7 +1053,6 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 		});
 	const node = {
 		$type: TSKindId.CountQuantifierArm as const,
-		$source: 2 as const,
 		$named: true as const,
 		_decimal_digits,
 		_count_quantifier_group,
@@ -1106,7 +1072,7 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CountQuantifierArm.Bound;
+	return stampBuilt(node) as unknown as T.CountQuantifierArm.Bound;
 }
 
 export function buildCharacterClassEscapeArm<
@@ -1134,7 +1100,6 @@ export function buildCharacterClassEscapeArm(
 		});
 	const node = {
 		$type: TSKindId.CharacterClassEscapeArm as const,
-		$source: 2 as const,
 		$named: true as const,
 		_character_class_escape_text2,
 		_unicode_property_value_expression,
@@ -1154,7 +1119,7 @@ export function buildCharacterClassEscapeArm(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CharacterClassEscapeArm.Bound;
+	return stampBuilt(node) as unknown as T.CharacterClassEscapeArm.Bound;
 }
 
 export function buildUnicodePropertyValueExpressionGroup<
@@ -1195,7 +1160,6 @@ function _buildUnicodePropertyValueExpressionGroup(
 		admitChildren(handle, 'unicode_property_value_expression_group', { unicodePropertyName: _unicode_property_name });
 	const node = {
 		$type: TSKindId.UnicodePropertyValueExpressionGroup as const,
-		$source: 2 as const,
 		$named: true as const,
 		_unicode_property_name,
 		$with: {
@@ -1211,7 +1175,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
+	return stampBuilt(node) as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
 }
 
 export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
@@ -1223,7 +1187,6 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CharacterClassEscapeText1 as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -1234,7 +1197,7 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CharacterClassEscapeText1.Bound;
+	return stampBuilt(node) as unknown as T.CharacterClassEscapeText1.Bound;
 }
 
 export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
@@ -1246,7 +1209,6 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CharacterClassEscapeText2 as const,
-		$source: 2 as const,
 		$named: true as const,
 		$text: () => text,
 		$render: () => renderText(handle, node),
@@ -1257,7 +1219,7 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.CharacterClassEscapeText2.Bound;
+	return stampBuilt(node) as unknown as T.CharacterClassEscapeText2.Bound;
 }
 
 export const buildNegation: TSKindId.Negation = TSKindId.Negation;
@@ -1276,7 +1238,6 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 		admitChildren(handle, 'inline_flags_group_enable', { enabled: _enabled, pattern: _pattern });
 	const node = {
 		$type: TSKindId.InlineFlagsGroupEnable as const,
-		$source: 2 as const,
 		$named: true as const,
 		_enabled,
 		_pattern,
@@ -1296,7 +1257,7 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.InlineFlagsGroupEnable.Bound;
+	return stampBuilt(node) as unknown as T.InlineFlagsGroupEnable.Bound;
 }
 
 export function buildInlineFlagsGroupToggle<
@@ -1318,7 +1279,6 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 		admitChildren(handle, 'inline_flags_group_toggle', { enabled: _enabled, disabled: _disabled, pattern: _pattern });
 	const node = {
 		$type: TSKindId.InlineFlagsGroupToggle as const,
-		$source: 2 as const,
 		$named: true as const,
 		_enabled,
 		_disabled,
@@ -1342,7 +1302,7 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.InlineFlagsGroupToggle.Bound;
+	return stampBuilt(node) as unknown as T.InlineFlagsGroupToggle.Bound;
 }
 
 export function buildInlineFlagsGroupDisable<
@@ -1361,7 +1321,6 @@ export function buildInlineFlagsGroupDisable(
 		admitChildren(handle, 'inline_flags_group_disable', { disabled: _disabled, pattern: _pattern });
 	const node = {
 		$type: TSKindId.InlineFlagsGroupDisable as const,
-		$source: 2 as const,
 		$named: true as const,
 		_disabled,
 		_pattern,
@@ -1381,7 +1340,7 @@ export function buildInlineFlagsGroupDisable(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.InlineFlagsGroupDisable.Bound;
+	return stampBuilt(node) as unknown as T.InlineFlagsGroupDisable.Bound;
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -1399,7 +1358,6 @@ export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
 	if (handle !== undefined) admitChildren(handle, 'lazy', { content: _content });
 	const node = {
 		$type: TSKindId.Lazy as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -1414,7 +1372,7 @@ export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.Lazy.Bound;
+	return stampBuilt(node) as unknown as T.Lazy.Bound;
 }
 
 export function buildUnicodePropertyName<V extends Admit<T.UnicodePropertyValue>>(
@@ -1426,7 +1384,6 @@ export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): 
 	if (handle !== undefined) admitChildren(handle, 'unicode_property_name', { content: _content });
 	const node = {
 		$type: TSKindId.UnicodePropertyName as const,
-		$source: 2 as const,
 		$named: true as const,
 		_content,
 		$with: {
@@ -1441,7 +1398,7 @@ export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.UnicodePropertyName.Bound;
+	return stampBuilt(node) as unknown as T.UnicodePropertyName.Bound;
 }
 
 export type FluentKindMap = {

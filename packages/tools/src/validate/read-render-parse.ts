@@ -14,7 +14,7 @@ import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
 	nodeText,
-	carrySource,
+	carryPlace,
 	isCoordinate,
 	isDataKey,
 	isStorageKey,
@@ -447,7 +447,7 @@ export function leadingTriviaRenderedWidth(
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
 		const copy = markEdited({ ...storageOf(data, readers), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
-		carrySource(node, copy);
+		carryPlace(node, copy);
 		return copy;
 	};
 	const childSlots = (node: AnyUntypedNode): { key: string; index: number | undefined; child: AnyUntypedNode }[] =>
@@ -791,7 +791,7 @@ export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => 
 	const trivia = triviaOf(data);
 	if (trivia?.leading === undefined && trivia?.trailing === undefined) return data;
 	const candidate = markEdited({ ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [], trailing: [] } } } as AnyUntypedNode);
-	carrySource(data, candidate);
+	carryPlace(data, candidate);
 	return candidate;
 }
 

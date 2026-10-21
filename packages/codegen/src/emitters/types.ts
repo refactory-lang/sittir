@@ -493,6 +493,7 @@ const VOCABULARY_IMPORTS = [
 	'GrammarTypeMap',
 	'NodeMethods',
 	'HoldsTree',
+	'HoldsSource',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
 	'SlotHint',
@@ -969,13 +970,13 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		lines.push(`${indent}}`);
 	};
 	if (surface.mainType === undefined) {
-		emit('Bound', 'NodeMethodsOf', false);
-		emit('Parsed', 'NodeMethodsOf, HoldsTree', false);
+		emit('Bound', 'NodeMethodsOf, HoldsSource', false);
+		emit('Parsed', 'NodeMethodsOf, HoldsSource, HoldsTree', false);
 		return;
 	}
 	for (const [name, of, byKindId, held] of [
-		['Bound', 'BoundOf', 'BoundByKindId', ''],
-		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsTree']
+		['Bound', 'BoundOf', 'BoundByKindId', ', HoldsSource'],
+		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsSource, HoldsTree']
 	] as const) {
 		if (!seated) {
 			emit(name, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf${held}`, true);

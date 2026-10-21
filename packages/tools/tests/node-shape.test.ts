@@ -45,7 +45,6 @@ const classes: Record<string, () => object> = {
 
 const NODE_METADATA = new Set([
 	'$type',
-	'$source',
 	'$named',
 	'$text',
 	'$other',
