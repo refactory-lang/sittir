@@ -10,6 +10,7 @@ import { collectCatalogKinds, collectKindEntries } from '../../codegen/src/emitt
 import { isDeclaredSupertype } from '../../codegen/src/emitters/shared.ts';
 
 type Guard = (node: unknown) => boolean;
+type FormRouteLike = { readonly name: string; readonly child: { readonly kind: string }; readonly seat?: string; readonly forms?: readonly FormRouteLike[] };
 type Tree = Record<string, unknown>;
 
 const GRAMMARS = ['python', 'regex', 'rust', 'scm', 'typescript'] as const;
@@ -110,8 +111,9 @@ async function censusOf(grammar: string): Promise<Census> {
 		readonly name: string;
 		readonly child: string;
 		readonly seated: boolean;
+		readonly forms?: readonly FormRouteLike[];
 	}
-	const hops = (kind: string): Hop[] => {
+	const hopsOfKind = (kind: string): Hop[] => {
 		const parent = flatByKind.get(kind);
 		if (parent) {
 			return parent.variants.map((v: any) => ({
@@ -120,8 +122,15 @@ async function censusOf(grammar: string): Promise<Census> {
 				seated: false
 			}));
 		}
-		return ((forms.get(kind) ?? []) as any[]).map((r) => ({ name: r.name, child: r.child.kind, seated: buildsHost(r) }));
+		return ((forms.get(kind) ?? []) as FormRouteLike[]).map((r) => ({
+			name: r.name,
+			child: r.child.kind,
+			seated: buildsHost(r as never),
+			forms: r.forms
+		}));
 	};
+	const hopsOfForms = (routes: readonly FormRouteLike[]): Hop[] =>
+		routes.map((r) => ({ name: r.name, child: r.child.kind, seated: buildsHost(r as never), forms: r.forms }));
 	const starts = new Map<string, string>();
 	for (const p of flat) starts.set(p.key, p.node.kind);
 	for (const kind of forms.keys()) {
@@ -129,16 +138,15 @@ async function censusOf(grammar: string): Promise<Census> {
 		if (bp !== undefined) starts.set(bp.join('.'), kind);
 	}
 	const closure = new Set<string>();
-	const visit = (kind: string, path: string[], afterSeat: boolean) => {
+	const visit = (hops: Hop[], path: string[]) => {
 		if (path.length > 8) return;
-		for (const hop of hops(kind)) {
-			if (afterSeat && !hop.seated) continue;
+		for (const hop of hops) {
 			const next = [...path, hop.name];
 			closure.add(next.join('.'));
-			visit(hop.child, next, hop.seated);
+			visit(hop.seated ? hopsOfForms(hop.forms ?? []) : hopsOfKind(hop.child), next);
 		}
 	};
-	for (const [key, kind] of starts) visit(kind, key.split('.'), false);
+	for (const [key, kind] of starts) visit(hopsOfKind(kind), key.split('.'));
 
 	const irMissing = [...closure].filter((p) => get(ir, p.split('.')) === undefined).sort();
 	const isMissing = [...closure].filter((p) => typeof get(is, p.split('.')) !== 'function').sort();
