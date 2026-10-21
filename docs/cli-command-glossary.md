@@ -194,6 +194,29 @@ Benchmark codemod on a corpus directory
 pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
 ```
 
+### `tool bench-storage`
+
+Compare object and arena corpus timing and retained memory
+
+**Arguments**
+
+- `grammars…` (optional) — Defaults to all stable grammars
+
+**Options**
+
+- `--rounds <n>` — Alternating fresh-process rounds per storage (default: `5`)
+- `--warmup <n>` — Warmup batches per timed phase (default: `2`)
+- `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
+- `--limit <n>` — Use only the first n corpus entries (smoke runs)
+- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
+- `--output <path>` — Write the complete JSON report to this file
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool bench-storage [grammars] [options]
+```
+
 ### `tool bootstrap-grammar`
 
 Scaffold a new grammar package from an upstream tree-sitter grammar (its native crate is scaffolded by the first gen --all)

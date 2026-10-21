@@ -1,0 +1,5379 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-21T17:40:47.230Z",
+  "finishedAt": "2026-10-21T17:45:59.148Z",
+  "environment": {
+    "node": "v26.12.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "os": "27.2.0",
+    "cpu": "Apple M4 Pro",
+    "cpuCount": 14,
+    "cwd": "/private/tmp/sittir-arena-bench-ffhqmxo4",
+    "nodeEnv": "production",
+    "idleGated": true,
+    "harnessSha256": "c2247dd805f2dfc1f24c4721b0059c18b247909efb446d3844bed0724701014b"
+  },
+  "options": {
+    "grammars": [
+      "python",
+      "regex",
+      "rust",
+      "scm",
+      "typescript"
+    ],
+    "rounds": 5,
+    "warmup": 2,
+    "iterations": 3,
+    "limit": null
+  },
+  "summary": [
+    {
+      "grammar": "python",
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "work": 116,
+          "unit": "entry",
+          "objectMs": 4.140416999999957,
+          "arenaMs": 4.146165999999994,
+          "objectNsPerUnit": 35693.24999999963,
+          "arenaNsPerUnit": 35742.810344827536,
+          "arenaOverObject": 1.0013885074860907,
+          "objectRange": [
+            3.9459170000000086,
+            4.233624999999961
+          ],
+          "arenaRange": [
+            4.000334000000066,
+            4.4487080000000105
+          ]
+        },
+        {
+          "phase": "walk-structure-cold",
+          "work": 5635,
+          "unit": "node",
+          "objectMs": 36.14045900000008,
+          "arenaMs": 46.84062499999993,
+          "objectNsPerUnit": 6413.5685891748135,
+          "arenaNsPerUnit": 8312.444543034593,
+          "arenaOverObject": 1.2960716685972316,
+          "objectRange": [
+            35.56012499999997,
+            36.34004200000004
+          ],
+          "arenaRange": [
+            46.03729199999998,
+            48.333541999999966
+          ]
+        },
+        {
+          "phase": "walk-text-cold",
+          "work": 5635,
+          "unit": "node",
+          "objectMs": 35.98154099999988,
+          "arenaMs": 48.26645800000006,
+          "objectNsPerUnit": 6385.366637089597,
+          "arenaNsPerUnit": 8565.476131322104,
+          "arenaOverObject": 1.3414227589641095,
+          "objectRange": [
+            34.997084000000086,
+            37.42399999999998
+          ],
+          "arenaRange": [
+            47.495750000000044,
+            49.093624999999975
+          ]
+        },
+        {
+          "phase": "walk-text-warm",
+          "work": 5635,
+          "unit": "node",
+          "objectMs": 5.168957999999975,
+          "arenaMs": 6.781708999999864,
+          "objectNsPerUnit": 917.2951197870408,
+          "arenaNsPerUnit": 1203.4976042590708,
+          "arenaOverObject": 1.3120069847733136,
+          "objectRange": [
+            4.9845000000000255,
+            5.526624999999967
+          ],
+          "arenaRange": [
+            6.511459000000059,
+            7.21329199999991
+          ]
+        },
+        {
+          "phase": "render",
+          "work": 116,
+          "unit": "rendered-root",
+          "objectMs": 1.9155419999999594,
+          "arenaMs": 1.8632920000000013,
+          "objectNsPerUnit": 16513.293103447926,
+          "arenaNsPerUnit": 16062.862068965529,
+          "arenaOverObject": 0.9727231248388397,
+          "objectRange": [
+            1.8888750000000982,
+            1.9657909999998537
+          ],
+          "arenaRange": [
+            1.7545410000000174,
+            1.95900000000006
+          ]
+        }
+      ],
+      "memory": [
+        {
+          "storage": "object",
+          "nodes": 5635,
+          "structureBytes": {
+            "heapUsed": 19592528,
+            "heapTotal": 34619392,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 41129024
+          },
+          "textBytes": {
+            "heapUsed": 19640832,
+            "heapTotal": 34619392,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 41161792
+          }
+        },
+        {
+          "storage": "arena",
+          "nodes": 5635,
+          "structureBytes": {
+            "heapUsed": 4552632,
+            "heapTotal": 14958592,
+            "external": 254256,
+            "arrayBuffers": 0,
+            "rss": 42488320
+          },
+          "textBytes": {
+            "heapUsed": 4953560,
+            "heapTotal": 6832128,
+            "external": 254256,
+            "arrayBuffers": 0,
+            "rss": 42603056
+          }
+        }
+      ],
+      "refused": []
+    },
+    {
+      "grammar": "regex",
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "work": 37,
+          "unit": "entry",
+          "objectMs": 0.6608330000000251,
+          "arenaMs": 0.7493749999999864,
+          "objectNsPerUnit": 17860.35135135203,
+          "arenaNsPerUnit": 20253.37837837801,
+          "arenaOverObject": 1.133985439589061,
+          "objectRange": [
+            0.6541250000000218,
+            0.6862919999999804
+          ],
+          "arenaRange": [
+            0.7271250000000009,
+            0.7961659999999711
+          ]
+        },
+        {
+          "phase": "walk-structure-cold",
+          "work": 674,
+          "unit": "node",
+          "objectMs": 3.3910000000000764,
+          "arenaMs": 4.4211669999999685,
+          "objectNsPerUnit": 5031.157270029787,
+          "arenaNsPerUnit": 6559.594955489567,
+          "arenaOverObject": 1.3037944559126715,
+          "objectRange": [
+            3.2746250000000146,
+            3.581874999999968
+          ],
+          "arenaRange": [
+            4.347916999999995,
+            4.887458000000038
+          ]
+        },
+        {
+          "phase": "walk-text-cold",
+          "work": 674,
+          "unit": "node",
+          "objectMs": 3.397874999999999,
+          "arenaMs": 4.2800829999999905,
+          "objectNsPerUnit": 5041.357566765577,
+          "arenaNsPerUnit": 6350.271513353102,
+          "arenaOverObject": 1.2596352131847086,
+          "objectRange": [
+            3.361458000000084,
+            3.4529170000000704
+          ],
+          "arenaRange": [
+            4.231625000000008,
+            4.535499999999956
+          ]
+        },
+        {
+          "phase": "walk-text-warm",
+          "work": 674,
+          "unit": "node",
+          "objectMs": 0.2999170000000504,
+          "arenaMs": 0.7411250000000109,
+          "objectNsPerUnit": 444.9807121662469,
+          "arenaNsPerUnit": 1099.59198813058,
+          "arenaOverObject": 2.4711003377597347,
+          "objectRange": [
+            0.2870829999999387,
+            0.34124999999994543
+          ],
+          "arenaRange": [
+            0.7236660000000938,
+            0.8210840000000417
+          ]
+        },
+        {
+          "phase": "render",
+          "work": 37,
+          "unit": "rendered-root",
+          "objectMs": 0.32075000000008913,
+          "arenaMs": 0.28770799999995234,
+          "objectNsPerUnit": 8668.918918921327,
+          "arenaNsPerUnit": 7775.891891890604,
+          "arenaOverObject": 0.8969851909582927,
+          "objectRange": [
+            0.3139169999999467,
+            0.32283299999994597
+          ],
+          "arenaRange": [
+            0.2801249999999982,
+            0.3163330000000997
+          ]
+        }
+      ],
+      "memory": [
+        {
+          "storage": "object",
+          "nodes": 674,
+          "structureBytes": {
+            "heapUsed": 2581320,
+            "heapTotal": 524288,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 1212416
+          },
+          "textBytes": {
+            "heapUsed": 2601048,
+            "heapTotal": 524288,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 1245184
+          }
+        },
+        {
+          "storage": "arena",
+          "nodes": 674,
+          "structureBytes": {
+            "heapUsed": 835344,
+            "heapTotal": 262144,
+            "external": 31752,
+            "arrayBuffers": 0,
+            "rss": 2326840
+          },
+          "textBytes": {
+            "heapUsed": 913512,
+            "heapTotal": 524288,
+            "external": 31752,
+            "arrayBuffers": 0,
+            "rss": 2638136
+          }
+        }
+      ],
+      "refused": []
+    },
+    {
+      "grammar": "rust",
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "work": 149,
+          "unit": "entry",
+          "objectMs": 4.582583,
+          "arenaMs": 4.500957999999969,
+          "objectNsPerUnit": 30755.590604026846,
+          "arenaNsPerUnit": 30207.771812080326,
+          "arenaOverObject": 0.9821879931034461,
+          "objectRange": [
+            4.493833999999993,
+            4.757749999999987
+          ],
+          "arenaRange": [
+            4.408207999999945,
+            4.583041999999978
+          ]
+        },
+        {
+          "phase": "walk-structure-cold",
+          "work": 5058,
+          "unit": "node",
+          "objectMs": 30.59400000000005,
+          "arenaMs": 40.727957999999944,
+          "objectNsPerUnit": 6048.6358244365465,
+          "arenaNsPerUnit": 8052.186239620393,
+          "arenaOverObject": 1.3312400470680485,
+          "objectRange": [
+            30.038958999999977,
+            33.32104199999992
+          ],
+          "arenaRange": [
+            39.93866700000001,
+            41.32566699999995
+          ]
+        },
+        {
+          "phase": "walk-text-cold",
+          "work": 5058,
+          "unit": "node",
+          "objectMs": 31.300666999999976,
+          "arenaMs": 41.29879200000005,
+          "objectNsPerUnit": 6188.348556741791,
+          "arenaNsPerUnit": 8165.043890865965,
+          "arenaOverObject": 1.3194221068835397,
+          "objectRange": [
+            30.51408399999991,
+            32.587541999999985
+          ],
+          "arenaRange": [
+            39.95499999999993,
+            42.41995799999995
+          ]
+        },
+        {
+          "phase": "walk-text-warm",
+          "work": 5058,
+          "unit": "node",
+          "objectMs": 2.679582999999866,
+          "arenaMs": 6.917875000000095,
+          "objectNsPerUnit": 529.771253459839,
+          "arenaNsPerUnit": 1367.7095689996233,
+          "arenaOverObject": 2.5816983463473386,
+          "objectRange": [
+            2.4645419999999376,
+            3.2205830000000333
+          ],
+          "arenaRange": [
+            6.714958000000024,
+            7.026875000000018
+          ]
+        },
+        {
+          "phase": "render",
+          "work": 149,
+          "unit": "rendered-root",
+          "objectMs": 2.0375420000000304,
+          "arenaMs": 1.913541000000123,
+          "objectNsPerUnit": 13674.778523490137,
+          "arenaNsPerUnit": 12842.557046980692,
+          "arenaOverObject": 0.9391418679958963,
+          "objectRange": [
+            1.9951660000001539,
+            2.185457999999926
+          ],
+          "arenaRange": [
+            1.8357499999999618,
+            2.0031659999999647
+          ]
+        }
+      ],
+      "memory": [
+        {
+          "storage": "object",
+          "nodes": 5058,
+          "structureBytes": {
+            "heapUsed": 18631168,
+            "heapTotal": 28327936,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 32837712
+          },
+          "textBytes": {
+            "heapUsed": 18700472,
+            "heapTotal": 28327936,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 32968856
+          }
+        },
+        {
+          "storage": "arena",
+          "nodes": 5058,
+          "structureBytes": {
+            "heapUsed": 5269672,
+            "heapTotal": 10764288,
+            "external": 255612,
+            "arrayBuffers": 0,
+            "rss": 34442912
+          },
+          "textBytes": {
+            "heapUsed": 5546848,
+            "heapTotal": 11550720,
+            "external": 255612,
+            "arrayBuffers": 0,
+            "rss": 35163832
+          }
+        }
+      ],
+      "refused": []
+    },
+    {
+      "grammar": "scm",
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "work": 19,
+          "unit": "entry",
+          "objectMs": 0.5995419999999854,
+          "arenaMs": 0.6351250000000164,
+          "objectNsPerUnit": 31554.842105262385,
+          "arenaNsPerUnit": 33427.63157894823,
+          "arenaOverObject": 1.0593503040654897,
+          "objectRange": [
+            0.5445000000000277,
+            0.6435000000000173
+          ],
+          "arenaRange": [
+            0.6066250000000082,
+            0.6522919999999885
+          ]
+        },
+        {
+          "phase": "walk-structure-cold",
+          "work": 671,
+          "unit": "node",
+          "objectMs": 3.8549579999999537,
+          "arenaMs": 4.897624999999948,
+          "objectNsPerUnit": 5745.093889716772,
+          "arenaNsPerUnit": 7298.994038748059,
+          "arenaOverObject": 1.2704742827288928,
+          "objectRange": [
+            3.7908330000000205,
+            3.8909590000000662
+          ],
+          "arenaRange": [
+            4.774374999999964,
+            5.005125000000021
+          ]
+        },
+        {
+          "phase": "walk-text-cold",
+          "work": 671,
+          "unit": "node",
+          "objectMs": 3.8465830000000096,
+          "arenaMs": 5.073666000000003,
+          "objectNsPerUnit": 5732.612518628926,
+          "arenaNsPerUnit": 7561.350223546949,
+          "arenaOverObject": 1.3190059853121563,
+          "objectRange": [
+            3.720874999999978,
+            3.886250000000018
+          ],
+          "arenaRange": [
+            4.940457999999921,
+            5.102500000000077
+          ]
+        },
+        {
+          "phase": "walk-text-warm",
+          "work": 671,
+          "unit": "node",
+          "objectMs": 0.32929200000000947,
+          "arenaMs": 0.7687499999999545,
+          "objectNsPerUnit": 490.748137108807,
+          "arenaNsPerUnit": 1145.678092399336,
+          "arenaOverObject": 2.3345541343243457,
+          "objectRange": [
+            0.32504199999993943,
+            0.3393750000000182
+          ],
+          "arenaRange": [
+            0.7498329999999669,
+            0.9545829999999569
+          ]
+        },
+        {
+          "phase": "render",
+          "work": 19,
+          "unit": "rendered-root",
+          "objectMs": 0.28929199999993216,
+          "arenaMs": 0.26233300000001236,
+          "objectNsPerUnit": 15225.894736838532,
+          "arenaNsPerUnit": 13807.00000000065,
+          "arenaOverObject": 0.9068104199219954,
+          "objectRange": [
+            0.2574579999999287,
+            0.2927500000000691
+          ],
+          "arenaRange": [
+            0.2476249999999709,
+            0.29099999999994
+          ]
+        }
+      ],
+      "memory": [
+        {
+          "storage": "object",
+          "nodes": 671,
+          "structureBytes": {
+            "heapUsed": 2542984,
+            "heapTotal": 1048576,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 1491088
+          },
+          "textBytes": {
+            "heapUsed": 2564576,
+            "heapTotal": 1048576,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 1540216
+          }
+        },
+        {
+          "storage": "arena",
+          "nodes": 671,
+          "structureBytes": {
+            "heapUsed": 1039376,
+            "heapTotal": 786432,
+            "external": 30880,
+            "arrayBuffers": 0,
+            "rss": 2851032
+          },
+          "textBytes": {
+            "heapUsed": 1081016,
+            "heapTotal": 524288,
+            "external": 30880,
+            "arrayBuffers": 0,
+            "rss": 3080312
+          }
+        }
+      ],
+      "refused": []
+    },
+    {
+      "grammar": "typescript",
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "work": 119,
+          "unit": "entry",
+          "objectMs": 3.984625000000051,
+          "arenaMs": 3.9345839999999725,
+          "objectNsPerUnit": 33484.24369747942,
+          "arenaNsPerUnit": 33063.73109243674,
+          "arenaOverObject": 0.9874414781817417,
+          "objectRange": [
+            3.778332999999975,
+            4.0607499999999845
+          ],
+          "arenaRange": [
+            3.826583000000028,
+            4.030374999999935
+          ]
+        },
+        {
+          "phase": "walk-structure-cold",
+          "work": 4081,
+          "unit": "node",
+          "objectMs": 24.567125000000033,
+          "arenaMs": 29.852709000000004,
+          "objectNsPerUnit": 6019.878706199469,
+          "arenaNsPerUnit": 7315.047537368293,
+          "arenaOverObject": 1.2151486590311225,
+          "objectRange": [
+            24.156875000000014,
+            27.698415999999952
+          ],
+          "arenaRange": [
+            29.37770899999998,
+            30.840125000000057
+          ]
+        },
+        {
+          "phase": "walk-text-cold",
+          "work": 4081,
+          "unit": "node",
+          "objectMs": 24.01966600000003,
+          "arenaMs": 30.05641700000001,
+          "objectNsPerUnit": 5885.730458221032,
+          "arenaNsPerUnit": 7364.963734378832,
+          "arenaOverObject": 1.251325351484903,
+          "objectRange": [
+            23.785041999999976,
+            26.233416999999918
+          ],
+          "arenaRange": [
+            29.63929200000007,
+            31.14479199999994
+          ]
+        },
+        {
+          "phase": "walk-text-warm",
+          "work": 4081,
+          "unit": "node",
+          "objectMs": 2.376166000000012,
+          "arenaMs": 8.50654099999997,
+          "objectNsPerUnit": 582.2509188924313,
+          "arenaNsPerUnit": 2084.4256309727934,
+          "arenaOverObject": 3.5799439096426457,
+          "objectRange": [
+            2.3285000000000764,
+            2.9189590000000862
+          ],
+          "arenaRange": [
+            8.19441699999993,
+            9.59070799999995
+          ]
+        },
+        {
+          "phase": "render",
+          "work": 119,
+          "unit": "rendered-root",
+          "objectMs": 1.5914169999998649,
+          "arenaMs": 1.5352919999997994,
+          "objectNsPerUnit": 13373.252100839201,
+          "arenaNsPerUnit": 12901.613445376464,
+          "arenaOverObject": 0.9647326879126776,
+          "objectRange": [
+            1.561958999999888,
+            1.707290999999941
+          ],
+          "arenaRange": [
+            1.498209000000088,
+            1.5774579999999787
+          ]
+        }
+      ],
+      "memory": [
+        {
+          "storage": "object",
+          "nodes": 4081,
+          "structureBytes": {
+            "heapUsed": 15198872,
+            "heapTotal": 19677184,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 24005728
+          },
+          "textBytes": {
+            "heapUsed": 15238616,
+            "heapTotal": 19677184,
+            "external": 40,
+            "arrayBuffers": 0,
+            "rss": 24071264
+          }
+        },
+        {
+          "storage": "arena",
+          "nodes": 4081,
+          "structureBytes": {
+            "heapUsed": 4406536,
+            "heapTotal": 17842176,
+            "external": 209584,
+            "arrayBuffers": 0,
+            "rss": 38605288
+          },
+          "textBytes": {
+            "heapUsed": 4538312,
+            "heapTotal": 29638656,
+            "external": 209584,
+            "arrayBuffers": 0,
+            "rss": 50747368
+          }
+        }
+      ],
+      "refused": []
+    }
+  ],
+  "samples": [
+    {
+      "grammar": "python",
+      "storage": "object",
+      "pid": 4764,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 115062608,
+          "heapTotal": 70385664,
+          "heapUsed": 36235464,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 155667248,
+          "heapTotal": 105005056,
+          "heapUsed": 56071080,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 155716400,
+          "heapTotal": 105005056,
+          "heapUsed": 55876744,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.780124999999998,
+            3.9459170000000086,
+            4.178999999999974
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            36.07895799999994,
+            35.56012499999997,
+            34.65829199999996
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            35.028540999999905,
+            34.997084000000086,
+            34.67066699999987
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            4.952041000000008,
+            4.9845000000000255,
+            5.122000000000071
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.9599169999999049,
+            1.8888750000000982,
+            1.7798749999999472
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 83%"
+    },
+    {
+      "grammar": "python",
+      "storage": "arena",
+      "pid": 4775,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 121354136,
+          "heapTotal": 71172096,
+          "heapUsed": 36240168,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 163449048,
+          "heapTotal": 85868544,
+          "heapUsed": 41196808,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 163596528,
+          "heapTotal": 78004224,
+          "heapUsed": 41193744,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.4487080000000105,
+            5.121582999999987,
+            4.233042000000069
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            47.88245800000004,
+            46.20195899999999,
+            45.46754099999998
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            47.93704200000002,
+            48.13979199999994,
+            47.88037499999996
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.893750000000182,
+            6.873124999999845,
+            7.866125000000011
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.7090829999999642,
+            1.7583329999999933,
+            1.7545410000000174
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 85%"
+    },
+    {
+      "grammar": "python",
+      "storage": "arena",
+      "pid": 4786,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 121321224,
+          "heapTotal": 70909952,
+          "heapUsed": 36240120,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 163809544,
+          "heapTotal": 86130688,
+          "heapUsed": 40792752,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 163924280,
+          "heapTotal": 78004224,
+          "heapUsed": 41193680,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.000334000000066,
+            4.051500000000033,
+            3.8238750000000437
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            46.84062499999993,
+            47.43674999999996,
+            46.48141700000008
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            47.86383300000011,
+            47.495750000000044,
+            45.907457999999906
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            7.244167000000061,
+            6.781708999999864,
+            6.710334000000103
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.836917000000085,
+            1.8007910000001175,
+            1.8520840000001044
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "python",
+      "storage": "object",
+      "pid": 4851,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 119830352,
+          "heapTotal": 70385664,
+          "heapUsed": 36235624,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 160681064,
+          "heapTotal": 105529344,
+          "heapUsed": 55828152,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 160779368,
+          "heapTotal": 105791488,
+          "heapUsed": 55876456,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.140416999999957,
+            4.198292000000038,
+            3.8595419999999194
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            36.67483299999992,
+            35.834292000000005,
+            34.865999999999985
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            35.07558300000005,
+            35.54204099999993,
+            36.37300000000005
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            4.7934999999999945,
+            5.168957999999975,
+            5.838666999999987
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.9107919999999012,
+            1.9179579999999987,
+            1.899874999999838
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 82%"
+    },
+    {
+      "grammar": "python",
+      "storage": "object",
+      "pid": 5888,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 120797032,
+          "heapTotal": 70909952,
+          "heapUsed": 36235200,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 162090088,
+          "heapTotal": 105791488,
+          "heapUsed": 55827896,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 162139240,
+          "heapTotal": 105791488,
+          "heapUsed": 55876200,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.502500000000055,
+            4.233624999999961,
+            4.165707999999995
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            36.44220900000005,
+            36.14045900000008,
+            35.84258299999999
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            36.97779199999991,
+            37.35412500000007,
+            34.55362500000001
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            5.1605409999999665,
+            5.2872500000000855,
+            5.145166999999901
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.921999999999798,
+            1.9155419999999594,
+            1.8582499999999982
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "python",
+      "storage": "arena",
+      "pid": 5899,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 119387816,
+          "heapTotal": 70909952,
+          "heapUsed": 36240752,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 162515256,
+          "heapTotal": 85606400,
+          "heapUsed": 40793384,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 162498824,
+          "heapTotal": 77742080,
+          "heapUsed": 41194312,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.427125000000046,
+            4.139165999999932,
+            3.994000000000028
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            47.720500000000015,
+            48.86749999999995,
+            47.31650000000002
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            48.49870800000008,
+            49.093624999999975,
+            49.87979199999995
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.621791999999914,
+            6.678584000000001,
+            7.735333999999966
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.8632920000000013,
+            1.9150830000000951,
+            1.7321249999999964
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 84%"
+    },
+    {
+      "grammar": "python",
+      "storage": "arena",
+      "pid": 6089,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 119420752,
+          "heapTotal": 71172096,
+          "heapUsed": 36242080,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 161433672,
+          "heapTotal": 86130688,
+          "heapUsed": 40794480,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 161400856,
+          "heapTotal": 78004224,
+          "heapUsed": 41195448,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.155458000000067,
+            4.0884170000000495,
+            4.146165999999994
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            47.800749999999994,
+            48.333541999999966,
+            52.652000000000044
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            48.954792,
+            48.26645800000006,
+            47.784417000000076
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.974915999999894,
+            6.511459000000059,
+            6.393207999999959
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.95900000000006,
+            1.9632920000001377,
+            1.8140839999998661
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 85%"
+    },
+    {
+      "grammar": "python",
+      "storage": "object",
+      "pid": 6100,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 120469304,
+          "heapTotal": 70909952,
+          "heapUsed": 36235504,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 161991952,
+          "heapTotal": 105529344,
+          "heapUsed": 55827904,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 162024720,
+          "heapTotal": 105529344,
+          "heapUsed": 55876208,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.232374999999934,
+            4.083459000000062,
+            3.9957079999999223
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            38.13274999999999,
+            36.34004200000004,
+            35.19191699999999
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            35.29054199999996,
+            36.50708400000008,
+            35.98154099999988
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            5.664541999999983,
+            5.526624999999967,
+            5.139582999999902
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.9292920000000322,
+            1.9584579999998368,
+            1.8042920000000322
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 85%"
+    },
+    {
+      "grammar": "python",
+      "storage": "object",
+      "pid": 6113,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 118994672,
+          "heapTotal": 70909952,
+          "heapUsed": 36234696,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 160123696,
+          "heapTotal": 105529344,
+          "heapUsed": 55827080,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 160156464,
+          "heapTotal": 105529344,
+          "heapUsed": 55875384,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.238416000000029,
+            4.076542000000018,
+            4.152625000000057
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            36.24062500000002,
+            36.25150000000008,
+            37.232916000000046
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            38.41149999999993,
+            37.42399999999998,
+            35.01416700000004
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            5.155166999999892,
+            5.490207999999939,
+            5.788957999999866
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.9657909999998537,
+            1.944833000000017,
+            2.113792000000103
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "python",
+      "storage": "arena",
+      "pid": 6161,
+      "corpus": {
+        "entries": 116,
+        "bytes": 11765,
+        "sha256": "2abf53da26f017b874c6e85a80077efbdc4a950dcf9f04c7d3b9b5bceee2a50b"
+      },
+      "nodes": 5635,
+      "walk": {
+        "nodes": 5635,
+        "kinds": 891849,
+        "textUnits": 4387
+      },
+      "memory": {
+        "baseline": {
+          "rss": 119404344,
+          "heapTotal": 70123520,
+          "heapUsed": 36239752,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 162318600,
+          "heapTotal": 86130688,
+          "heapUsed": 40792952,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 162531544,
+          "heapTotal": 77742080,
+          "heapUsed": 41193864,
+          "external": 4067021,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.188250000000039,
+            4.372584000000074,
+            4.363000000000056
+          ],
+          "work": 116
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            47.23912500000006,
+            46.03729199999998,
+            45.83954200000005
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            60.11416699999995,
+            48.58066699999995,
+            46.067999999999984
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            7.134874999999965,
+            7.21329199999991,
+            7.648124999999936
+          ],
+          "work": 5635
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.860792000000174,
+            1.917791999999963,
+            2.3250000000000455
+          ],
+          "work": 116
+        }
+      ],
+      "render": {
+        "entries": 116,
+        "sha256": "e0e86b70268f0e21f9ef4098f1c444bdf37a3347cc4af0dfd8ad14e26d75d934",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 83%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "object",
+      "pid": 6185,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 96514120,
+          "heapTotal": 64618496,
+          "heapUsed": 29138296,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97497208,
+          "heapTotal": 65404928,
+          "heapUsed": 31721352,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97497208,
+          "heapTotal": 65404928,
+          "heapUsed": 31738336,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6099169999999958,
+            0.7635419999999726,
+            0.6862919999999804
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.2945829999999887,
+            3.581874999999968,
+            3.6356250000000045
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.604916000000003,
+            3.4529170000000704,
+            3.4189590000000862
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.29120799999998326,
+            0.31095799999991414,
+            0.31599999999991724
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.3139169999999467,
+            0.328708000000006,
+            0.3122919999999567
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 85%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "arena",
+      "pid": 6216,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 96202920,
+          "heapTotal": 64094208,
+          "heapUsed": 29139072,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 98152760,
+          "heapTotal": 64356352,
+          "heapUsed": 29974344,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 98611512,
+          "heapTotal": 64356352,
+          "heapUsed": 30052464,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.8248749999999063,
+            0.7961659999999711,
+            0.6999579999999241
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.4211669999999685,
+            4.842417000000069,
+            4.418916999999965
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.529374999999959,
+            4.566500000000019,
+            4.399499999999989
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7837920000000622,
+            0.7857920000000149,
+            0.7917079999999714
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2791670000000295,
+            0.3163330000000997,
+            0.33008300000005875
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "arena",
+      "pid": 6228,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 97677744,
+          "heapTotal": 64356352,
+          "heapUsed": 29142344,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 100004584,
+          "heapTotal": 64618496,
+          "heapUsed": 29977688,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 100315880,
+          "heapTotal": 64618496,
+          "heapUsed": 30055856,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6727080000000001,
+            0.7955420000000117,
+            0.7795419999999922
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.997582999999963,
+            4.6352079999999205,
+            4.887458000000038
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.535499999999956,
+            4.519374999999968,
+            4.845000000000027
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7236660000000938,
+            0.799082999999996,
+            0.7214579999999842
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2933339999999589,
+            0.28712499999994634,
+            0.26920800000004874
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 84%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "object",
+      "pid": 6267,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 96940584,
+          "heapTotal": 63832064,
+          "heapUsed": 29141944,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97923648,
+          "heapTotal": 64356352,
+          "heapUsed": 31724016,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97923648,
+          "heapTotal": 64356352,
+          "heapUsed": 31744912,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6525839999999903,
+            0.7490000000000236,
+            0.6586250000000291
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.4001670000000104,
+            3.415208000000007,
+            3.4441659999999956
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.484583999999927,
+            3.3648339999999735,
+            3.244083000000046
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.2999170000000504,
+            0.2917089999999689,
+            0.3061249999999518
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.31245899999998983,
+            0.32283299999994597,
+            0.32629099999996924
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 82%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "object",
+      "pid": 6280,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 97038408,
+          "heapTotal": 64356352,
+          "heapUsed": 29138320,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 98562312,
+          "heapTotal": 64880640,
+          "heapUsed": 31718472,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 98562312,
+          "heapTotal": 64880640,
+          "heapUsed": 31739368,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.8337919999999599,
+            0.6148750000000405,
+            0.6801659999999856
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.264708999999982,
+            3.428250000000048,
+            3.2746250000000146
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.361458000000084,
+            3.446749999999952,
+            3.3071670000000495
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.34124999999994543,
+            0.3494590000000244,
+            0.3072910000000775
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.32075000000008913,
+            0.3930409999999256,
+            0.3040000000000873
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 81%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "arena",
+      "pid": 6307,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 97972632,
+          "heapTotal": 64618496,
+          "heapUsed": 29142512,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 100086360,
+          "heapTotal": 65142784,
+          "heapUsed": 29977904,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 100381272,
+          "heapTotal": 65142784,
+          "heapUsed": 30056024,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6816669999999476,
+            0.7271250000000009,
+            0.7402500000000032
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.4790420000000495,
+            4.194000000000074,
+            4.348250000000007
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.417166999999949,
+            4.218124999999986,
+            4.231625000000008
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7378749999999172,
+            0.7901659999999993,
+            0.7359579999999823
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.28770799999995234,
+            0.30549999999993815,
+            0.2832499999999527
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 79%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "arena",
+      "pid": 6340,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 94908800,
+          "heapTotal": 63832064,
+          "heapUsed": 29145280,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97677912,
+          "heapTotal": 64094208,
+          "heapUsed": 29981248,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 98021976,
+          "heapTotal": 64356352,
+          "heapUsed": 30059368,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.7375830000000292,
+            0.6634169999999813,
+            0.8319999999999936
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.536999999999978,
+            4.347916999999995,
+            4.321541000000025
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.4254589999999325,
+            4.2800829999999905,
+            4.255124999999907
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7411250000000109,
+            0.7336669999999685,
+            0.7794999999999845
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.27183400000001257,
+            0.30237499999998363,
+            0.2801249999999982
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "object",
+      "pid": 6351,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 97300600,
+          "heapTotal": 64618496,
+          "heapUsed": 29137840,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 98939216,
+          "heapTotal": 65142784,
+          "heapUsed": 31717992,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 98939216,
+          "heapTotal": 65142784,
+          "heapUsed": 31738888,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6608330000000251,
+            0.6623339999999871,
+            0.6407080000000178
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.3476670000000013,
+            3.486167000000023,
+            3.3910000000000764
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.405832999999916,
+            3.5169590000000426,
+            3.2843339999999444
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.2977500000000646,
+            0.2878330000000915,
+            0.30570799999998144
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.3127080000000433,
+            0.3220420000000104,
+            0.32270900000003166
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 88%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "object",
+      "pid": 6362,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 96792816,
+          "heapTotal": 64094208,
+          "heapUsed": 29137704,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 98005232,
+          "heapTotal": 65142784,
+          "heapUsed": 31719024,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 98038000,
+          "heapTotal": 65142784,
+          "heapUsed": 31739920,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.5865000000000009,
+            0.6662500000000477,
+            0.6541250000000218
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.33629099999996,
+            3.4413749999999936,
+            3.327875000000006
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.397874999999999,
+            3.421375000000012,
+            3.2447499999999536
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.28683300000000145,
+            0.2870829999999387,
+            0.3127080000000433
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.31158400000003894,
+            0.3332500000000209,
+            0.32000000000005
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 82%"
+    },
+    {
+      "grammar": "regex",
+      "storage": "arena",
+      "pid": 6373,
+      "corpus": {
+        "entries": 37,
+        "bytes": 703,
+        "sha256": "5fff296077803dc00227dbabe5e99527590570e499345fef31d52e1af82e3e83"
+      },
+      "nodes": 674,
+      "walk": {
+        "nodes": 674,
+        "kinds": 35852,
+        "textUnits": 411
+      },
+      "memory": {
+        "baseline": {
+          "rss": 97071536,
+          "heapTotal": 64356352,
+          "heapUsed": 29143096,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 99414736,
+          "heapTotal": 64880640,
+          "heapUsed": 29977360,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 99791568,
+          "heapTotal": 64880640,
+          "heapUsed": 30055480,
+          "external": 3844517,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.7493749999999864,
+            0.8125830000000178,
+            0.692875000000015
+          ],
+          "work": 37
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.693915999999945,
+            4.1845839999999725,
+            4.528874999999971
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.245415999999977,
+            4.420582999999965,
+            4.2719999999999345
+          ],
+          "work": 674
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.8055830000000697,
+            0.9199590000000626,
+            0.8210840000000417
+          ],
+          "work": 674
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.28833400000007714,
+            0.29166700000007495,
+            0.2769159999999147
+          ],
+          "work": 37
+        }
+      ],
+      "render": {
+        "entries": 37,
+        "sha256": "2f1229d42de445134acc7e3b2a7a0bf45150ca635f8c363db6dac90037210547",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 94%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "object",
+      "pid": 6445,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 194073504,
+          "heapTotal": 103890944,
+          "heapUsed": 40075976,
+          "external": 5349847,
+          "arrayBuffers": 2730037
+        },
+        "structure": {
+          "rss": 214768848,
+          "heapTotal": 119898112,
+          "heapUsed": 58692752,
+          "external": 3812805,
+          "arrayBuffers": 1192955
+        },
+        "text": {
+          "rss": 214818000,
+          "heapTotal": 119898112,
+          "heapUsed": 58760992,
+          "external": 3812805,
+          "arrayBuffers": 1192955
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.600250000000187,
+            4.414500000000089,
+            4.53979100000015
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            32.650499999999965,
+            30.489874999999984,
+            31.202916999999843
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            31.98700000000008,
+            32.11508299999991,
+            30.99587500000007
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.6130840000000717,
+            5.165874999999687,
+            2.662334000000101
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.1715829999998277,
+            1.9895830000000387,
+            2.13287500000024
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 77%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "arena",
+      "pid": 6523,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 127809648,
+          "heapTotal": 74792960,
+          "heapUsed": 39765192,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 162252560,
+          "heapTotal": 85032960,
+          "heapUsed": 45136656,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 162973480,
+          "heapTotal": 85557248,
+          "heapUsed": 45312040,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.534416999999962,
+            4.357792000000018,
+            4.408207999999945
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            41.20566599999995,
+            40.659625000000005,
+            40.727957999999944
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            41.36241599999994,
+            42.347125000000005,
+            40.69241699999998
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.773415999999997,
+            7.126375000000053,
+            6.638707999999951
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.8812089999998989,
+            1.881167000000005,
+            1.8635420000000522
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 80%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "arena",
+      "pid": 6536,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 125089544,
+          "heapTotal": 73482240,
+          "heapUsed": 39761272,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 160695552,
+          "heapTotal": 84770816,
+          "heapUsed": 45030944,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 161236200,
+          "heapTotal": 85557248,
+          "heapUsed": 45308216,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.582041000000004,
+            4.539582999999993,
+            4.566082999999935
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            40.47037499999999,
+            41.90558299999998,
+            40.28287499999999
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            41.29879200000005,
+            41.529832999999826,
+            40.29820900000004
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.714958000000024,
+            6.970458000000008,
+            6.677791999999954
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.0031659999999647,
+            2.0313330000001315,
+            1.9069159999999101
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 87%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "object",
+      "pid": 6548,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 125482952,
+          "heapTotal": 74268672,
+          "heapUsed": 39758696,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 158320664,
+          "heapTotal": 102072320,
+          "heapUsed": 58389168,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 158451808,
+          "heapTotal": 102334464,
+          "heapUsed": 58458528,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.584958000000029,
+            4.757124999999974,
+            4.619957999999997
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            30.518249999999966,
+            30.139583000000016,
+            31.261667000000102
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            31.269416999999976,
+            31.56229200000007,
+            31.300666999999976
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.486208999999917,
+            4.71875,
+            2.701583000000028
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.152917000000116,
+            2.0375420000000304,
+            2.035250000000133
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 91%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "object",
+      "pid": 6559,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123009040,
+          "heapTotal": 74006528,
+          "heapUsed": 39756688,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 157092032,
+          "heapTotal": 102334464,
+          "heapUsed": 58387856,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 157157568,
+          "heapTotal": 102334464,
+          "heapUsed": 58457160,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.755665999999906,
+            4.582583,
+            4.42937500000005
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            30.858708999999976,
+            30.36516699999993,
+            30.59400000000005
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            31.64695800000004,
+            30.52195800000004,
+            30.772083000000066
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.679582999999866,
+            4.866708999999901,
+            2.5725830000001224
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.0714159999999993,
+            1.994499999999789,
+            1.9951660000001539
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 82%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "arena",
+      "pid": 6577,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 126154816,
+          "heapTotal": 75055104,
+          "heapUsed": 39764856,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 159843896,
+          "heapTotal": 85295104,
+          "heapUsed": 45035120,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 160187936,
+          "heapTotal": 85819392,
+          "heapUsed": 45312376,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.583041999999978,
+            4.696749999999952,
+            4.570875000000001
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            41.32566699999995,
+            40.283166999999935,
+            41.43679200000008
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            41.01604199999997,
+            41.23308300000008,
+            41.29908300000011
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.917875000000095,
+            7.204208000000108,
+            6.88350000000014
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.959875000000011,
+            1.8357499999999618,
+            1.7709999999999582
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 93%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "arena",
+      "pid": 6597,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 125204232,
+          "heapTotal": 74530816,
+          "heapUsed": 39762200,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 159401312,
+          "heapTotal": 85295104,
+          "heapUsed": 45031720,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 159827272,
+          "heapTotal": 86081536,
+          "heapUsed": 45308976,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.462832999999932,
+            4.480500000000006,
+            4.538209000000052
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            41.707250000000045,
+            40.058667000000014,
+            40.74375000000009
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            42.41995799999995,
+            42.75274999999988,
+            41.150499999999965
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            6.985915999999861,
+            7.147999999999911,
+            6.833957999999939
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.965832999999975,
+            1.9502910000001066,
+            1.9258339999998952
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "object",
+      "pid": 6636,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123205336,
+          "heapTotal": 73482240,
+          "heapUsed": 39763336,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 157271944,
+          "heapTotal": 101810176,
+          "heapUsed": 58394536,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 157419424,
+          "heapTotal": 102072320,
+          "heapUsed": 58464008,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.757749999999987,
+            4.311207999999965,
+            4.7942090000000235
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            33.96616699999993,
+            32.399125000000026,
+            33.32104199999992
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            32.773291999999856,
+            32.587541999999985,
+            32.03258300000016
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            3.2205830000000333,
+            5.50995799999987,
+            2.844000000000051
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.185457999999926,
+            2.1920829999999114,
+            2.1267919999997957
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 77%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "object",
+      "pid": 6665,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 125581112,
+          "heapTotal": 74006528,
+          "heapUsed": 39758088,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 158303968,
+          "heapTotal": 102334464,
+          "heapUsed": 58389256,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 158500648,
+          "heapTotal": 102334464,
+          "heapUsed": 58458616,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.550457999999935,
+            4.493833999999993,
+            4.443125000000009
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            30.077125000000024,
+            29.429959000000053,
+            30.038958999999977
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            30.51408399999991,
+            30.70399999999995,
+            29.947208000000046
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.299208000000135,
+            4.9871250000001055,
+            2.4645419999999376
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.148083999999926,
+            2.036000000000058,
+            1.9836659999998574
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 92%"
+    },
+    {
+      "grammar": "rust",
+      "storage": "arena",
+      "pid": 6677,
+      "corpus": {
+        "entries": 149,
+        "bytes": 14652,
+        "sha256": "da58b8fd927326ee63049299d1ef7786590c74607c25ab4258299312581b12e7"
+      },
+      "nodes": 5058,
+      "walk": {
+        "nodes": 5058,
+        "kinds": 1162490,
+        "textUnits": 4457
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123958880,
+          "heapTotal": 72957952,
+          "heapUsed": 39761984,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 160073104,
+          "heapTotal": 85295104,
+          "heapUsed": 45031576,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 160466320,
+          "heapTotal": 86081536,
+          "heapUsed": 45308832,
+          "external": 4068377,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.500957999999969,
+            4.307374999999979,
+            4.591665999999918
+          ],
+          "work": 149
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            40.308208000000036,
+            39.69454200000007,
+            39.93866700000001
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            39.95499999999993,
+            41.03558399999997,
+            39.64858299999992
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            7.026875000000018,
+            7.132916000000023,
+            6.57529199999999
+          ],
+          "work": 5058
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            2.080791999999974,
+            1.833750000000009,
+            1.913541000000123
+          ],
+          "work": 149
+        }
+      ],
+      "render": {
+        "entries": 149,
+        "sha256": "a3abeda4b926491f48e03fd395f5b98b90de1a13c23eee44a550c2f1b9e7d37d",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 93%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "object",
+      "pid": 6714,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 108262720,
+          "heapTotal": 63684608,
+          "heapUsed": 28941632,
+          "external": 3812765,
+          "arrayBuffers": 1193027
+        },
+        "structure": {
+          "rss": 109753808,
+          "heapTotal": 64471040,
+          "heapUsed": 31480832,
+          "external": 3812805,
+          "arrayBuffers": 1193027
+        },
+        "text": {
+          "rss": 109770192,
+          "heapTotal": 64471040,
+          "heapUsed": 31500888,
+          "external": 3812805,
+          "arrayBuffers": 1193027
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6256660000000238,
+            0.6376669999999649,
+            0.6261670000000095
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.8909590000000662,
+            3.921124999999961,
+            3.796375000000012
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.8465830000000096,
+            3.8714160000000675,
+            3.8017919999999776
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.32170799999994415,
+            0.3299170000000231,
+            0.35591600000009294
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2712499999998954,
+            0.2983750000000782,
+            0.28312499999992724
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 93%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "arena",
+      "pid": 6726,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 95006720,
+          "heapTotal": 63684608,
+          "heapUsed": 28654096,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97906808,
+          "heapTotal": 64208896,
+          "heapUsed": 29693120,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 98414760,
+          "heapTotal": 63946752,
+          "heapUsed": 29734760,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.5578750000000241,
+            0.6066250000000082,
+            0.6232499999999845
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            5.036250000000052,
+            4.978916999999967,
+            4.923290999999949
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.940457999999921,
+            5.108958999999913,
+            4.819624999999974
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7687499999999545,
+            0.7821669999999585,
+            0.7500840000000153
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2680409999999256,
+            0.2704590000000735,
+            0.27825000000007094
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 95%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "arena",
+      "pid": 6738,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 94056472,
+          "heapTotal": 63946752,
+          "heapUsed": 28653112,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 96907504,
+          "heapTotal": 64733184,
+          "heapUsed": 29692496,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97120496,
+          "heapTotal": 64471040,
+          "heapUsed": 29734136,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.5878329999999892,
+            0.6782079999999837,
+            0.6492910000000052
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            5.1927499999999895,
+            4.720499999999959,
+            4.774374999999964
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            5.123166999999967,
+            5.082957999999962,
+            4.976541999999995
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7509590000000799,
+            0.7706249999999955,
+            0.7709159999999429
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2593340000000808,
+            0.26470800000004147,
+            0.24920899999995072
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 83%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "object",
+      "pid": 6750,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 93007776,
+          "heapTotal": 63422464,
+          "heapUsed": 28645520,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 94498840,
+          "heapTotal": 64471040,
+          "heapUsed": 31189248,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 94547992,
+          "heapTotal": 64471040,
+          "heapUsed": 31210840,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.5472079999999551,
+            0.5902500000000259,
+            0.5521669999999972
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.854582999999991,
+            3.828042000000039,
+            3.849333999999999
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.8304170000000113,
+            3.720874999999978,
+            3.663917000000083
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.31574999999998,
+            0.32929200000000947,
+            0.35158400000000256
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2908750000000282,
+            0.2937500000000455,
+            0.2772499999999809
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 83%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "object",
+      "pid": 6801,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 95825944,
+          "heapTotal": 63946752,
+          "heapUsed": 28649512,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97710392,
+          "heapTotal": 64995328,
+          "heapUsed": 31192496,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97710392,
+          "heapTotal": 64995328,
+          "heapUsed": 31214088,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.5445000000000277,
+            0.5444170000000099,
+            0.6215829999999869
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.8549579999999537,
+            3.941249999999968,
+            3.5569999999999595
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.826416999999992,
+            3.7986250000000155,
+            3.943125000000009
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.3201250000000755,
+            0.3393750000000182,
+            0.3400840000000471
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.30508399999996527,
+            0.2574579999999287,
+            0.24870900000007623
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 90%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "arena",
+      "pid": 6812,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 93728768,
+          "heapTotal": 63684608,
+          "heapUsed": 28653896,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97268168,
+          "heapTotal": 64733184,
+          "heapUsed": 29692920,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97710560,
+          "heapTotal": 64208896,
+          "heapUsed": 29734560,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.5547919999999635,
+            0.6224999999999454,
+            0.6082079999999905
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            5.097000000000037,
+            4.865040999999962,
+            5.005125000000021
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            4.710915999999997,
+            5.191291000000092,
+            5.073666000000003
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7273749999999382,
+            0.764583000000016,
+            0.7520000000000664
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.24158399999998892,
+            0.2577079999999796,
+            0.2476249999999709
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 92%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "arena",
+      "pid": 6867,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 94842880,
+          "heapTotal": 63684608,
+          "heapUsed": 28654000,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97546360,
+          "heapTotal": 64471040,
+          "heapUsed": 29693376,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97923192,
+          "heapTotal": 64733184,
+          "heapUsed": 29735016,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.672292000000084,
+            0.6351250000000164,
+            0.6264580000000706
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.89754199999993,
+            4.897624999999948,
+            5.224125000000072
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            5.049666000000002,
+            5.252083000000084,
+            5.102500000000077
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.9764589999999771,
+            0.9545829999999569,
+            0.8458329999999705
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.2908749999999145,
+            0.29099999999994,
+            0.30570799999998144
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 82%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "object",
+      "pid": 6928,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 95006648,
+          "heapTotal": 63422464,
+          "heapUsed": 28649792,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 96546864,
+          "heapTotal": 64471040,
+          "heapUsed": 31193080,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 96546864,
+          "heapTotal": 64471040,
+          "heapUsed": 31214672,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6197499999999536,
+            0.5842920000000049,
+            0.5995419999999854
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.7908330000000205,
+            3.918041999999957,
+            3.686916999999994
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.8982919999999694,
+            3.8017079999999623,
+            3.886250000000018
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.32054200000004585,
+            0.32558300000005147,
+            0.33895800000004783
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.3094579999999496,
+            0.2927500000000691,
+            0.2693340000000717
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "object",
+      "pid": 6956,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 93630488,
+          "heapTotal": 62898176,
+          "heapUsed": 28648952,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 95039608,
+          "heapTotal": 63946752,
+          "heapUsed": 31191928,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 95039608,
+          "heapTotal": 63946752,
+          "heapUsed": 31213520,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.6435000000000173,
+            0.5715000000000146,
+            0.6469170000000304
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            3.8634999999999877,
+            3.7919169999999554,
+            3.9224589999999466
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            3.8681249999999636,
+            3.9648750000000064,
+            3.8657089999999243
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.31749999999999545,
+            0.32504199999993943,
+            0.35712499999999636
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.28929199999993216,
+            0.2973749999999882,
+            0.2820830000000569
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 81%"
+    },
+    {
+      "grammar": "scm",
+      "storage": "arena",
+      "pid": 6971,
+      "corpus": {
+        "entries": 19,
+        "bytes": 2380,
+        "sha256": "96200794e7336709c110341bdbdd46b3803d49ea57f18b68f77fcd6ce3bc256b"
+      },
+      "nodes": 671,
+      "walk": {
+        "nodes": 671,
+        "kinds": 24889,
+        "textUnits": 1347
+      },
+      "memory": {
+        "baseline": {
+          "rss": 94892128,
+          "heapTotal": 64208896,
+          "heapUsed": 28657992,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 97562912,
+          "heapTotal": 64208896,
+          "heapUsed": 29697616,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 97890640,
+          "heapTotal": 64208896,
+          "heapUsed": 29739256,
+          "external": 3843645,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            0.8288749999999823,
+            0.6138329999999996,
+            0.6522919999999885
+          ],
+          "work": 19
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            4.990834000000007,
+            4.884250000000009,
+            4.722041999999988
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            5.055458999999928,
+            4.9556669999999485,
+            5.022291999999993
+          ],
+          "work": 671
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            0.7249160000000074,
+            0.8298750000000155,
+            0.7498329999999669
+          ],
+          "work": 671
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            0.25116700000000947,
+            0.2756660000000011,
+            0.26233300000001236
+          ],
+          "work": 19
+        }
+      ],
+      "render": {
+        "entries": 19,
+        "sha256": "8f54c0d38422351be60d00835b3ce054ed36a7d551b25f63aae10a69d142e84d",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 86%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "object",
+      "pid": 6987,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 195597096,
+          "heapTotal": 103661568,
+          "heapUsed": 40260856,
+          "external": 5338250,
+          "arrayBuffers": 2718400
+        },
+        "structure": {
+          "rss": 209344784,
+          "heapTotal": 114163712,
+          "heapUsed": 55442896,
+          "external": 3812805,
+          "arrayBuffers": 1192915
+        },
+        "text": {
+          "rss": 209377552,
+          "heapTotal": 114163712,
+          "heapUsed": 55490576,
+          "external": 3812805,
+          "arrayBuffers": 1192915
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.075417000000016,
+            4.0101660000000265,
+            3.7959170000000313
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            24.69179199999985,
+            24.835665999999947,
+            24.426917000000003
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            23.725875000000087,
+            24.574749999999995,
+            23.816084000000046
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.3285000000000764,
+            2.1746250000001055,
+            2.8161669999999503
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.5914169999998649,
+            1.6620840000000499,
+            1.5447090000000117
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 78%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "arena",
+      "pid": 7000,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 125761384,
+          "heapTotal": 72728576,
+          "heapUsed": 39937456,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 164497744,
+          "heapTotal": 90832896,
+          "heapUsed": 44344104,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 176508752,
+          "heapTotal": 102367232,
+          "heapUsed": 44475936,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.9215409999999906,
+            3.9356670000000804,
+            3.9345839999999725
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            30.031166999999982,
+            29.819875000000025,
+            30.121917000000053
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            29.887292000000002,
+            29.95995800000003,
+            29.527041999999938
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            9.023666000000048,
+            9.59070799999995,
+            9.717125000000124
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.7345840000000408,
+            1.5774579999999787,
+            1.5561250000000655
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 0,
+      "idle": "idle 87%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "arena",
+      "pid": 7336,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 124090360,
+          "heapTotal": 73777152,
+          "heapUsed": 39938560,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 162253256,
+          "heapTotal": 90832896,
+          "heapUsed": 44345096,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 173887528,
+          "heapTotal": 102105088,
+          "heapUsed": 44476928,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.993083000000013,
+            4.038915999999972,
+            4.030374999999935
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            29.885125000000016,
+            29.852709000000004,
+            29.718875000000025
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            30.44374999999991,
+            30.694541999999956,
+            29.351625000000013
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            8.657958999999892,
+            8.270416999999952,
+            8.50654099999997
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.5737919999999122,
+            1.4446250000000873,
+            1.498209000000088
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 88%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "object",
+      "pid": 7353,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 124827376,
+          "heapTotal": 72728576,
+          "heapUsed": 39938688,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 149013424,
+          "heapTotal": 92667904,
+          "heapUsed": 55138240,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 149095392,
+          "heapTotal": 92667904,
+          "heapUsed": 55178000,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.778332999999975,
+            4.051500000000033,
+            3.733875000000012
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            24.567125000000033,
+            24.511416999999938,
+            24.56987499999991
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            24.01966600000003,
+            24.181707999999958,
+            23.94466699999998
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.467916999999943,
+            2.227333000000044,
+            2.619957999999997
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.7770000000000437,
+            1.5461250000000746,
+            1.6070419999998649
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 1,
+      "idle": "idle 91%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "object",
+      "pid": 7409,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 124122912,
+          "heapTotal": 73777152,
+          "heapUsed": 39933688,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 148128640,
+          "heapTotal": 93454336,
+          "heapUsed": 55132544,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 148194176,
+          "heapTotal": 93454336,
+          "heapUsed": 55172304,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.0607499999999845,
+            5.476374999999962,
+            3.886459000000059
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            27.698415999999952,
+            35.20925,
+            27.165917000000036
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            26.233416999999918,
+            35.812374999999975,
+            25.366874999999936
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.9189590000000862,
+            2.9124159999998938,
+            2.9347090000001117
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.707290999999941,
+            1.8809999999998581,
+            1.5491669999998976
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 81%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "arena",
+      "pid": 7448,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 125581208,
+          "heapTotal": 72728576,
+          "heapUsed": 39937496,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 164300992,
+          "heapTotal": 90570752,
+          "heapUsed": 44343904,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 176885656,
+          "heapTotal": 102629376,
+          "heapUsed": 44475808,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            4.060999999999922,
+            3.7788750000000846,
+            4.005124999999907
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            30.42608299999995,
+            29.728791,
+            29.761375000000044
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            29.63929200000007,
+            29.89737500000001,
+            29.419999999999845
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            8.45204200000012,
+            8.34699999999998,
+            8.207791999999927
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.5352919999997994,
+            1.521125000000211,
+            1.5356249999999818
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 2,
+      "idle": "idle 93%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "arena",
+      "pid": 7459,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 123516968,
+          "heapTotal": 74039296,
+          "heapUsed": 39938872,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 161270048,
+          "heapTotal": 91619328,
+          "heapUsed": 44345368,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 173051776,
+          "heapTotal": 102891520,
+          "heapUsed": 44477184,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.804208000000017,
+            3.9296249999999873,
+            3.826583000000028
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            29.89041700000007,
+            29.37770899999998,
+            29.360500000000002
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            29.68895800000007,
+            30.05641700000001,
+            30.489750000000072
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            8.286000000000058,
+            8.074957999999924,
+            8.19441699999993
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.528291999999965,
+            1.528374999999869,
+            1.5228750000001128
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 95%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "object",
+      "pid": 7473,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 124548968,
+          "heapTotal": 72990720,
+          "heapUsed": 39932408,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 149062480,
+          "heapTotal": 92667904,
+          "heapUsed": 55131584,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 149128064,
+          "heapTotal": 92667904,
+          "heapUsed": 55171456,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.7868330000000014,
+            3.937417000000096,
+            3.9795839999999316
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            24.65758399999993,
+            24.156875000000014,
+            23.93825000000004
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            23.722208000000023,
+            24.371708000000012,
+            23.785041999999976
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.4314589999999043,
+            2.143208000000186,
+            2.376166000000012
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.6048329999998714,
+            1.589708999999857,
+            1.5305839999998625
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 3,
+      "idle": "idle 89%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "object",
+      "pid": 7484,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 124401416,
+          "heapTotal": 73777152,
+          "heapUsed": 39934136,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 148062984,
+          "heapTotal": 93454336,
+          "heapUsed": 55133008,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 148079368,
+          "heapTotal": 93454336,
+          "heapUsed": 55172712,
+          "external": 3812805,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.6307910000000447,
+            4.015582999999992,
+            3.984625000000051
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            24.616166999999905,
+            24.300292000000013,
+            24.39441599999998
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            25.728917000000024,
+            24.289125000000013,
+            23.95270800000003
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            2.3631659999998647,
+            2.200417000000016,
+            2.466458999999986
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.6196669999999358,
+            1.561958999999888,
+            1.5506250000000819
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 93%"
+    },
+    {
+      "grammar": "typescript",
+      "storage": "arena",
+      "pid": 7514,
+      "corpus": {
+        "entries": 119,
+        "bytes": 13428,
+        "sha256": "51ae155744a85bbd1e117b0e3ccb64d9c5a3159d334ffef5a5e57daeaf0ac798"
+      },
+      "nodes": 4081,
+      "walk": {
+        "nodes": 4081,
+        "kinds": 1081430,
+        "textUnits": 3561
+      },
+      "memory": {
+        "baseline": {
+          "rss": 124253936,
+          "heapTotal": 72466432,
+          "heapUsed": 39937656,
+          "external": 3812765,
+          "arrayBuffers": 1192899
+        },
+        "structure": {
+          "rss": 162859224,
+          "heapTotal": 90308608,
+          "heapUsed": 44344320,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        },
+        "text": {
+          "rss": 175312816,
+          "heapTotal": 102367232,
+          "heapUsed": 44474896,
+          "external": 4022349,
+          "arrayBuffers": 1192899
+        }
+      },
+      "timings": [
+        {
+          "phase": "parse-read",
+          "milliseconds": [
+            3.639791999999943,
+            4.062750000000051,
+            3.8326659999999038
+          ],
+          "work": 119
+        },
+        {
+          "phase": "walk-structure-cold",
+          "milliseconds": [
+            31.561541000000034,
+            30.840125000000057,
+            29.96033299999999
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-cold",
+          "milliseconds": [
+            31.14479199999994,
+            32.111000000000104,
+            31.086208999999826
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "walk-text-warm",
+          "milliseconds": [
+            8.932332999999971,
+            8.691084000000046,
+            8.424166000000014
+          ],
+          "work": 4081
+        },
+        {
+          "phase": "render",
+          "milliseconds": [
+            1.4755420000001322,
+            1.653041999999914,
+            1.5381670000001577
+          ],
+          "work": 119
+        }
+      ],
+      "render": {
+        "entries": 119,
+        "sha256": "404e914e2fa34934dc81184555537428119d2cbc26c3cf844e8698a600934bde",
+        "refused": []
+      },
+      "round": 4,
+      "idle": "idle 75%"
+    }
+  ]
+}
