@@ -1455,31 +1455,63 @@ export function guardsWith(test: KindTest): IsGuards {
 		importList: _at(_kind_ImportFromStatement_guard, 'content', _kind_ImportList_guard),
 		parenthesizedImportList: _at(_kind_ImportFromStatement_guard, 'content', _kind_ParenthesizedImportList_guard)
 	});
-	const _form_PrintStatementChevron_guard = _vg(_g(TSKindId.PrintStatementChevron), {
-		printChevronArguments: _at(
-			_kind_PrintStatementChevron_guard,
-			'printChevronArguments',
-			_kind_PrintChevronArguments_guard
-		)
-	});
 	const _form_PrintStatement_guard = _vg(_g(TSKindId.PrintStatement), {
-		chevron: _at(_kind_PrintStatement_guard, 'content', _form_PrintStatementChevron_guard),
+		chevron: _at(
+			_kind_PrintStatement_guard,
+			'content',
+			_vg(_g(TSKindId.PrintStatementChevron), {
+				printChevronArguments: _at(
+					_kind_PrintStatementChevron_guard,
+					'printChevronArguments',
+					_kind_PrintChevronArguments_guard
+				)
+			})
+		),
 		plain: _at(_kind_PrintStatement_guard, 'content', _kind_PrintStatementPlain_guard)
-	});
-	const _form_Yield_guard = _vg(_g(TSKindId.Yield), {
-		fromClause: _at(_kind_Yield_guard, 'content', _kind_YieldFromClause_guard)
 	});
 	const _form_ExpressionStatement_guard = _vg(_g(TSKindId.ExpressionStatement), {
 		tuple: _at(_kind_ExpressionStatement_guard, 'content', _kind_ExpressionStatementTuple_guard),
 		augmentedAssignment: _at(_kind_ExpressionStatement_guard, 'content', _kind_AugmentedAssignment_guard),
-		yield: _at(_kind_ExpressionStatement_guard, 'content', _form_Yield_guard)
-	});
-	const _form_ExceptClauseException_guard = _vg(_g(TSKindId.ExceptClauseException), {
-		as: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionAs_guard),
-		list: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionList_guard)
+		yield: _at(
+			_kind_ExpressionStatement_guard,
+			'content',
+			_vg(_g(TSKindId.Yield), { fromClause: _at(_kind_Yield_guard, 'content', _kind_YieldFromClause_guard) })
+		)
 	});
 	const _form_ExceptClause_guard = _vg(_g(TSKindId.ExceptClause), {
-		exception: _at(_kind_ExceptClause_guard, 'exception', _form_ExceptClauseException_guard)
+		exception: _at(
+			_kind_ExceptClause_guard,
+			'exception',
+			_vg(_g(TSKindId.ExceptClauseException), {
+				as: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionAs_guard),
+				list: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionList_guard)
+			})
+		)
+	});
+	const _form_CasePattern_guard = _vg(_g(TSKindId.CasePattern), {
+		caseAsPattern: _at(_kind_CasePattern_guard, 'content', _kind_CaseAsPattern_guard),
+		keywordPattern: _at(_kind_CasePattern_guard, 'content', _kind_KeywordPattern_guard),
+		simplePattern: _at(
+			_kind_CasePattern_guard,
+			'content',
+			_vg(_g(TSKindId.SimplePattern), {
+				classPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ClassPattern_guard),
+				splatPattern: _at(_kind_SimplePattern_guard, 'content', _kind_SplatPattern_guard),
+				unionPattern: _at(_kind_SimplePattern_guard, 'content', _kind_UnionPattern_guard),
+				caseListPattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseListPattern_guard),
+				caseTuplePattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseTuplePattern_guard),
+				dictPattern: _at(_kind_SimplePattern_guard, 'content', _kind_DictPattern_guard),
+				string: _at(_kind_SimplePattern_guard, 'content', _kind_String_guard),
+				concatenatedString: _at(_kind_SimplePattern_guard, 'content', _kind_ConcatenatedString_guard),
+				true: _at(_kind_SimplePattern_guard, 'content', _kind_True_guard),
+				false: _at(_kind_SimplePattern_guard, 'content', _kind_False_guard),
+				none: _at(_kind_SimplePattern_guard, 'content', _kind_None_guard),
+				negative: _at(_kind_SimplePattern_guard, 'content', _kind_SimplePatternNegative_guard),
+				complexPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ComplexPattern_guard),
+				dottedName: _at(_kind_SimplePattern_guard, 'content', _kind_DottedName_guard),
+				wildcardPattern: _at(_kind_SimplePattern_guard, 'content', _kind_WildcardPattern_guard)
+			})
+		)
 	});
 	const _form_SimplePattern_guard = _vg(_g(TSKindId.SimplePattern), {
 		classPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ClassPattern_guard),
@@ -1498,10 +1530,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		dottedName: _at(_kind_SimplePattern_guard, 'content', _kind_DottedName_guard),
 		wildcardPattern: _at(_kind_SimplePattern_guard, 'content', _kind_WildcardPattern_guard)
 	});
-	const _form_CasePattern_guard = _vg(_g(TSKindId.CasePattern), {
-		caseAsPattern: _at(_kind_CasePattern_guard, 'content', _kind_CaseAsPattern_guard),
-		keywordPattern: _at(_kind_CasePattern_guard, 'content', _kind_KeywordPattern_guard),
-		simplePattern: _at(_kind_CasePattern_guard, 'content', _form_SimplePattern_guard)
+	const _form_Yield_guard = _vg(_g(TSKindId.Yield), {
+		fromClause: _at(_kind_Yield_guard, 'content', _kind_YieldFromClause_guard)
 	});
 	const _form_Type_guard = _vg(_g(TSKindId.Type), {
 		splatType: _at(_kind_Type_guard, 'content', _kind_SplatType_guard),
@@ -1509,6 +1539,13 @@ export function guardsWith(test: KindTest): IsGuards {
 		unionType: _at(_kind_Type_guard, 'content', _kind_UnionType_guard),
 		constrainedType: _at(_kind_Type_guard, 'content', _kind_ConstrainedType_guard),
 		memberType: _at(_kind_Type_guard, 'content', _kind_MemberType_guard)
+	});
+	const _form_PrintStatementChevron_guard = _vg(_g(TSKindId.PrintStatementChevron), {
+		printChevronArguments: _at(
+			_kind_PrintStatementChevron_guard,
+			'printChevronArguments',
+			_kind_PrintChevronArguments_guard
+		)
 	});
 	const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
 		futureImport: _form_FutureImportStatement_guard,

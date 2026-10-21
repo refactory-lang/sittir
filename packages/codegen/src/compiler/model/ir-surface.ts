@@ -224,6 +224,7 @@ export interface FormRoute {
 	readonly name: string;
 	readonly child: AssembledNode;
 	readonly seat?: string;
+	readonly forms?: readonly FormRoute[];
 }
 
 export function buildsHost(route: FormRoute): boolean {
@@ -248,21 +249,39 @@ export function armIsForm(host: AssembledNode, sub: SubFactory, kindEntries: Arm
 	return row !== undefined && row.anon !== true;
 }
 
+function hostRouteOf(host: AssembledNode, sub: SubFactory, kindEntries: ArmRoutes['kindEntries'], nodeMap: NodeMap): HostRoute | undefined {
+	const form = armIsForm(host, sub, kindEntries);
+	const seat = sub.slot.propertyName;
+	if (sub.arm.via === 'value') return form ? { name: sub.name, child: valueKindOf(host, sub.name, sub.arm.storage, nodeMap), seat, via: 'value', form } : undefined;
+	return sub.arm.path.length === 0 && !isNamespaceArm(sub) ? { name: sub.name, child: sub.arm.child, seat, via: 'arm', form } : undefined;
+}
+
 function hostRoutesOf(set: ArmRouteSet, kindEntries: ArmRoutes['kindEntries'], nodeMap: NodeMap): readonly HostRoute[] {
-	const arms = set.subs.flatMap((sub): HostRoute[] => {
-		const form = armIsForm(set.node, sub, kindEntries);
-		const seat = sub.slot.propertyName;
-		if (sub.arm.via === 'value') return form ? [{ name: sub.name, child: valueKindOf(set.node, sub.name, sub.arm.storage, nodeMap), seat, via: 'value', form }] : [];
-		return sub.arm.path.length === 0 && !isNamespaceArm(sub) ? [{ name: sub.name, child: sub.arm.child, seat, via: 'arm', form }] : [];
-	});
+	const arms = set.subs.flatMap((sub) => hostRouteOf(set.node, sub, kindEntries, nodeMap) ?? []);
 	return [...arms, ...set.aliases.map((alias): HostRoute => ({ name: alias.name, child: alias.child, via: 'alias', form: true }))];
+}
+
+function nestedFormsOf(set: ArmRouteSet, prefix: string, child: AssembledNode, armRoutes: ArmRoutes, nodeMap: NodeMap): readonly FormRoute[] {
+	const childSet = armRoutes.byKind.get(child.kind);
+	if (childSet === undefined) return [];
+	return childSet.subs.flatMap((inner): FormRoute[] => {
+		const name = `${prefix}$${inner.name}`;
+		if (inner.name.includes('$') || !set.subs.some((sub) => sub.name === name)) return [];
+		const route = hostRouteOf(childSet.node, inner, armRoutes.kindEntries, nodeMap);
+		return route?.form === true ? [formRouteOf(set, route, name, armRoutes, nodeMap)] : [];
+	});
+}
+
+function formRouteOf(set: ArmRouteSet, route: HostRoute, entry: string, armRoutes: ArmRoutes, nodeMap: NodeMap): FormRoute {
+	const forms = route.via === 'arm' ? nestedFormsOf(set, entry, route.child, armRoutes, nodeMap) : [];
+	return { name: route.name, child: route.child, ...(route.seat === undefined ? {} : { seat: route.seat }), ...(forms.length === 0 ? {} : { forms }) };
 }
 
 function deriveFormRoutes(armRoutes: ArmRoutes, nodeMap: NodeMap): ReadonlyMap<string, readonly FormRoute[]> {
 	const routes = new Map<string, readonly FormRoute[]>();
 	for (const set of armRoutes.byKind.values()) {
 		const forms = hostRoutesOf(set, armRoutes.kindEntries, nodeMap).filter((route) => route.form);
-		if (forms.length > 0) routes.set(set.node.kind, forms.map(({ name, child, seat }) => ({ name, child, ...(seat === undefined ? {} : { seat }) })));
+		if (forms.length > 0) routes.set(set.node.kind, forms.map((route) => formRouteOf(set, route, route.name, armRoutes, nodeMap)));
 	}
 	return routes;
 }

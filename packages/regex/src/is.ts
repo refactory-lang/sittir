@@ -333,26 +333,32 @@ export function guardsWith(test: KindTest): IsGuards {
 		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
 		term: _at(_kind_Pattern_guard, 'content', _kind_Term_guard)
 	});
-	const _form_LookaroundAssertion_guard = _vg(_g(TSKindId.LookaroundAssertion), {
-		lookaheadAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookaheadAssertion_guard),
-		lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
-	});
-	const _form_CharacterClassEscape_guard = _vg(_g(TSKindId.CharacterClassEscape), {
-		arm: _at(_kind_CharacterClassEscape_guard, 'content', _kind_CharacterClassEscapeArm_guard),
-		unicodeCharacterEscape: _at(_kind_CharacterClassEscape_guard, 'content', _kind_UnicodeCharacterEscape_guard)
-	});
 	const _form_TermGroup_guard = _vg(_g(TSKindId.TermGroup), {
 		startAssertion: _at(_kind_TermGroup_guard, 'content', _kind_StartAssertion_guard),
 		endAssertion: _at(_kind_TermGroup_guard, 'content', _kind_EndAssertion_guard),
 		boundaryAssertion: _at(_kind_TermGroup_guard, 'content', _kind_BoundaryAssertion_guard),
 		nonBoundaryAssertion: _at(_kind_TermGroup_guard, 'content', _kind_NonBoundaryAssertion_guard),
-		lookaroundAssertion: _at(_kind_TermGroup_guard, 'content', _form_LookaroundAssertion_guard),
+		lookaroundAssertion: _at(
+			_kind_TermGroup_guard,
+			'content',
+			_vg(_g(TSKindId.LookaroundAssertion), {
+				lookaheadAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookaheadAssertion_guard),
+				lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
+			})
+		),
 		patternCharacter: _at(_kind_TermGroup_guard, 'content', _kind_PatternCharacter_guard),
 		characterClass: _at(_kind_TermGroup_guard, 'content', _kind_CharacterClass_guard),
 		posixCharacterClass: _at(_kind_TermGroup_guard, 'content', _kind_PosixCharacterClass_guard),
 		anyCharacter: _at(_kind_TermGroup_guard, 'content', _kind_AnyCharacter_guard),
 		decimalEscape: _at(_kind_TermGroup_guard, 'content', _kind_DecimalEscape_guard),
-		characterClassEscape: _at(_kind_TermGroup_guard, 'content', _form_CharacterClassEscape_guard),
+		characterClassEscape: _at(
+			_kind_TermGroup_guard,
+			'content',
+			_vg(_g(TSKindId.CharacterClassEscape), {
+				arm: _at(_kind_CharacterClassEscape_guard, 'content', _kind_CharacterClassEscapeArm_guard),
+				unicodeCharacterEscape: _at(_kind_CharacterClassEscape_guard, 'content', _kind_UnicodeCharacterEscape_guard)
+			})
+		),
 		backreferenceEscape: _at(_kind_TermGroup_guard, 'content', _kind_BackreferenceEscape_guard),
 		namedGroupBackreference: _at(_kind_TermGroup_guard, 'content', _kind_NamedGroupBackreference_guard),
 		anonymousCapturingGroup: _at(_kind_TermGroup_guard, 'content', _kind_AnonymousCapturingGroup_guard),
@@ -360,8 +366,16 @@ export function guardsWith(test: KindTest): IsGuards {
 		nonCapturingGroup: _at(_kind_TermGroup_guard, 'content', _kind_NonCapturingGroup_guard)
 	});
 	const _form_Term_guard = _vg(_g(TSKindId.Term), { group: _form_TermGroup_guard });
+	const _form_LookaroundAssertion_guard = _vg(_g(TSKindId.LookaroundAssertion), {
+		lookaheadAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookaheadAssertion_guard),
+		lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
+	});
 	const _form_CountQuantifier_guard = _vg(_g(TSKindId.CountQuantifier), {
 		arm: _at(_kind_CountQuantifier_guard, 'content', _kind_CountQuantifierArm_guard)
+	});
+	const _form_CharacterClassEscape_guard = _vg(_g(TSKindId.CharacterClassEscape), {
+		arm: _at(_kind_CharacterClassEscape_guard, 'content', _kind_CharacterClassEscapeArm_guard),
+		unicodeCharacterEscape: _at(_kind_CharacterClassEscape_guard, 'content', _kind_UnicodeCharacterEscape_guard)
 	});
 	const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
 		enable: _kind_InlineFlagsGroupEnable_guard,

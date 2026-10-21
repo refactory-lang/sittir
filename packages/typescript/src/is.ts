@@ -1843,34 +1843,36 @@ export function guardsWith(test: KindTest): IsGuards {
 		nsFrom: _at(_kind_ExportStatementDefaultFrom_guard, 'content', _kind_ExportStatementDefaultFromNsFrom_guard),
 		clauseFrom: _at(_kind_ExportStatementDefaultFrom_guard, 'content', _kind_ExportStatementDefaultFromClauseFrom_guard)
 	});
-	const _form_ExportStatementDefaultDeclarationDefaultKw_guard = _vg(
-		_g(TSKindId.ExportStatementDefaultDeclarationDefaultKw),
-		{
-			value: _at(
-				_kind_ExportStatementDefaultDeclarationDefaultKw_guard,
-				'content',
-				_kind_ExportStatementDefaultDeclarationDefaultKwValue_guard
-			)
-		}
-	);
 	const _form_ExportStatementDefaultDeclaration_guard = _vg(_g(TSKindId.ExportStatementDefaultDeclaration), {
 		defaultKw: _at(
 			_kind_ExportStatementDefaultDeclaration_guard,
 			'content',
-			_form_ExportStatementDefaultDeclarationDefaultKw_guard
+			_vg(_g(TSKindId.ExportStatementDefaultDeclarationDefaultKw), {
+				value: _at(
+					_kind_ExportStatementDefaultDeclarationDefaultKw_guard,
+					'content',
+					_kind_ExportStatementDefaultDeclarationDefaultKwValue_guard
+				)
+			})
 		)
-	});
-	const _form_ImportClauseGroup_guard = _vg(_g(TSKindId.ImportClauseGroup), {
-		namespaceImport: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamespaceImport_guard),
-		namedImports: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamedImports_guard)
-	});
-	const _form_ImportClauseDefaultImport_guard = _vg(_g(TSKindId.ImportClauseDefaultImport), {
-		importClauseGroup: _at(_kind_ImportClauseDefaultImport_guard, 'importClauseGroup', _form_ImportClauseGroup_guard)
 	});
 	const _form_ImportClause_guard = _vg(_g(TSKindId.ImportClause), {
 		namespaceImport: _at(_kind_ImportClause_guard, 'content', _kind_NamespaceImport_guard),
 		namedImports: _at(_kind_ImportClause_guard, 'content', _kind_NamedImports_guard),
-		defaultImport: _at(_kind_ImportClause_guard, 'content', _form_ImportClauseDefaultImport_guard)
+		defaultImport: _at(
+			_kind_ImportClause_guard,
+			'content',
+			_vg(_g(TSKindId.ImportClauseDefaultImport), {
+				importClauseGroup: _at(
+					_kind_ImportClauseDefaultImport_guard,
+					'importClauseGroup',
+					_vg(_g(TSKindId.ImportClauseGroup), {
+						namespaceImport: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamespaceImport_guard),
+						namedImports: _at(_kind_ImportClauseGroup_guard, 'content', _kind_NamedImports_guard)
+					})
+				)
+			})
+		)
 	});
 	const _form_YieldExpression_guard = _vg(_g(TSKindId.YieldExpression), {
 		delegate: _at(_kind_YieldExpression_guard, 'expression', _kind_YieldExpressionDelegate_guard)

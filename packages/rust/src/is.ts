@@ -1997,18 +1997,24 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _form_Attribute_guard = _vg(_g(TSKindId.Attribute), {
 		input: _at(_kind_Attribute_guard, 'input', _kind_AttributeInput_guard)
 	});
-	const _form_VisibilityModifierPubScope_guard = _vg(_g(TSKindId.VisibilityModifierPubScope), {
-		self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Self_guard),
-		super: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Super_guard),
-		crate: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Crate_guard),
-		inPath: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_VisibilityModifierPubScopeInPath_guard)
-	});
-	const _form_VisibilityModifierPub_guard = _vg(_g(TSKindId.VisibilityModifierPub), {
-		scope: _at(_kind_VisibilityModifierPub_guard, 'visibilityModifierPubScope', _form_VisibilityModifierPubScope_guard)
-	});
 	const _form_VisibilityModifier_guard = _vg(_g(TSKindId.VisibilityModifier), {
 		crate: _at(_kind_VisibilityModifier_guard, 'content', _kind_CrateVisibilityModifier_guard),
-		pub: _at(_kind_VisibilityModifier_guard, 'content', _form_VisibilityModifierPub_guard)
+		pub: _at(
+			_kind_VisibilityModifier_guard,
+			'content',
+			_vg(_g(TSKindId.VisibilityModifierPub), {
+				scope: _at(
+					_kind_VisibilityModifierPub_guard,
+					'visibilityModifierPubScope',
+					_vg(_g(TSKindId.VisibilityModifierPubScope), {
+						self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Self_guard),
+						super: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Super_guard),
+						crate: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Crate_guard),
+						inPath: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_VisibilityModifierPubScopeInPath_guard)
+					})
+				)
+			})
+		)
 	});
 	const _form_FunctionType_guard = _vg(_g(TSKindId.FunctionType), {
 		traitForm: _at(_kind_FunctionType_guard, 'content', _kind_FunctionTypeTraitForm_guard),

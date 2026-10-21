@@ -6123,7 +6123,7 @@ The stamped `ir` surface; a node map that was never stamped throws rather than d
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::FormRoute`
 
-A form of a host: the member name `ir` and `is` both nest it under (`name`), the child kind it builds and tests (`child`), and, when the route seats the child in one of the host's arms instead of building the child's own node, that arm's property name (`seat`), which the host's form guard reads. An alias wire builds its own node and has no seat.
+A form of a host: the member name `ir` and `is` both nest it under (`name`), the child kind it builds and tests (`child`), and, when the route seats the child in one of the host's arms instead of building the child's own node, that arm's property name (`seat`), which the host's form guard reads, and the forms nested under it (`forms`, `nestedFormsOf`). An alias wire builds its own node and has no seat.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::HostRoute`
 
@@ -6135,7 +6135,7 @@ A host's direct routes, in sub-factory order and then its alias wires: its direc
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::deriveFormRoutes`
 
-Each host's forms from `hostRoutesOf`, keyed by host kind, each with its `seat` when it has one; a host with none is absent.
+Each host's forms from `hostRoutesOf`, keyed by host kind, each with its `seat` when it has one and the forms nested under it (`formRouteOf`); a host with none is absent. The nesting is a tree per host, read from the host's own settled entries, so `is` builds a guard per route from it, not one shared guard per kind.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::formRoutesOf`
 
@@ -6163,4 +6163,16 @@ A parent's variant children that no slot arm claims. A parent's `variantChildKin
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::buildsHost`
 
-Whether a form route builds its host rather than the form's own node: a route with a seat builds the host with the form in that seat, and one without (an alias wire) builds the form's node. Under a seat only routes that build the seat's kind continue a chain, since the seat holds the host's kind, not the form's. `is` lifts those alone under `_at`, and `seatedFormKinds` reads it to tell a seated hop on a builder path. `ir` agrees by construction: a child's nested arms are its own sub-factories, which all sit in a seat.
+Whether a form route builds its host rather than the form's own node: a route with a seat builds the host with the form in that seat, and one without (an alias wire) builds the form's node. `seatedFormKinds` reads it to tell a seated hop on a builder path. What continues under a seat is read from the host's entries (`nestedFormsOf`), which are all seated.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::hostRouteOf`
+
+One sub-factory of a host as a route: a value arm whose value is a form (`armIsForm`), with the node of the kind its storage holds as its child (`valueKindOf`), or a direct node arm (no path, not a namespace arm). Both carry the property name of the slot they sit in (`seat`). Anything else is no route of the host.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::nestedFormsOf`
+
+The forms a seated route reaches inside its child, read from the host's own settled entries: a child sub-factory is a nested form when the host carries the entry `<prefix>$<name>` for it and the sub is a form of the child (`armIsForm`). These are the entries `ir` emits under the route, and they stop where `nestedArmsOf` stops at a kind already on the derivation path, so a recursive form (`group` inside `group`) nests once and `ir` and `is` reach the same paths. The child's alias wires are never entries, so nothing nests through an alias wire.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::formRouteOf`
+
+A route as a `FormRoute`: its name, child and seat, and, for a direct node arm, the forms nested under it (`nestedFormsOf`, keyed by the route's entry name).
