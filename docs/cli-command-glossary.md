@@ -196,7 +196,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
 
 ### `tool bench-storage`
 
-Compare object and arena corpus timing and retained memory
+Measure native corpus parse, hydration, render and retained memory
 
 **Arguments**
 
@@ -204,11 +204,11 @@ Compare object and arena corpus timing and retained memory
 
 **Options**
 
-- `--rounds <n>` — Alternating fresh-process rounds per storage (default: `5`)
+- `--rounds <n>` — Fresh-process rounds per grammar (default: `5`)
 - `--warmup <n>` — Warmup batches per timed phase (default: `2`)
 - `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
-- `--native-depth <depth>` — Measure native parse, hydrate and render: a positive depth or all; no chunk copies
+- `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 

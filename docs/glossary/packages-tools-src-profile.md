@@ -22,19 +22,11 @@ A read node as the timing calls it: a node the slot readers reach (`wrappedNodes
 
 ### `packages/tools/src/profile/storage.ts::run`
 
-Runs paired parsed-corpus storage measurements, or a native parse/hydrate/render workflow selected by nativeDepth, in separate fresh GC-enabled processes. Validates settings before spawning; alternates which storage runs first, optionally gates each worker on machine idleness, refuses mismatched work, and writes raw samples plus per-round median summaries. Process startup and import costs are excluded from worker timers.
-
-### `packages/tools/src/profile/storage.ts::validatePair`
-
-Admits a timing comparison only when corpus fingerprints, visited kinds/text counts, per-phase work units, root-render output digest and refused root population match. Timing and memory values deliberately differ and are excluded from this equivalence check.
+Runs the native parsed-corpus workflow in fresh GC-enabled processes, defaulting to full-depth hydration. Validates settings before spawning, optionally gates each worker on machine idleness, refuses mismatched work across rounds, and writes native raw samples plus per-round median summaries. Process startup and imports are excluded from worker timers.
 
 ### `packages/tools/src/profile/storage.ts::median`
 
 The middle value of a sorted sample, or the mean of its two middle values. An empty sample is an error.
-
-### `packages/tools/src/profile/storage.ts::summarize`
-
-Requires an identical workload fingerprint across every round of a grammar, then summarizes each phase using the median batch duration within each worker round, then the median across rounds, preserving ranges of round medians. Reports normalized time per work unit and signed retained-memory deltas; external memory and array buffers overlap and are not summed.
 
 ### `packages/tools/src/profile/storage.ts::integer`
 
@@ -42,19 +34,19 @@ Refuses non-integer or out-of-range benchmark settings before any subprocess is 
 
 ### `packages/tools/src/profile/storage.ts::StorageBenchOptions`
 
-Configuration for the object/arena corpus comparison: grammar selection, rounds, warmup and measured batches, optional smoke limit, per-worker idle-gate script and JSON output path. Omitted values use the command's documented defaults.
+Configuration for native corpus parse, hydration and render: grammar selection, rounds, warmup and measured batches, hydration depth (all by default), optional smoke limit, per-worker idle-gate script and JSON output path.
 
 ### `packages/tools/src/profile/storage.ts::retainedMemory`
 
-Summarizes signed baseline-to-retained deltas for the five process memory fields across worker rounds. Shared by JS-inspection and native-only reports; external memory and array buffers overlap and must not be added.
+Summarizes signed baseline-to-retained deltas for the five process memory fields across native worker rounds. External memory and array buffers overlap and must not be added.
 
 ### `packages/tools/src/profile/storage.ts::summarizeNativeHydration`
 
-Requires identical corpus, depth, eligible/root-record counts, render bytes/hash and stage-labelled refusal populations across native rounds. Summarizes each phase's per-round batch medians and retained-memory deltas without comparing them as object/arena timings.
+Requires identical corpus, depth, eligible/root-record counts, render bytes/hash and stage-labelled refusal populations across native rounds. Summarizes each phase's per-round batch medians and signed retained-memory deltas, preserving ranges and time per eligible root.
 
 ### `packages/tools/src/profile/storage.ts::runWorker`
 
-Runs the chosen JS-inspection or native-only worker in a fresh GC-enabled production Node process, after the optional idle gate. Adds round and idle observations; startup and imports remain outside worker timers.
+Runs the native hydration worker in a fresh GC-enabled production Node process, after the optional idle gate. Adds round and idle observations; startup and imports remain outside worker timers.
 
 ### `packages/tools/src/profile/storage-common.ts::collectGarbage`
 
@@ -62,43 +54,7 @@ Requires exposed GC and gives native finalizers three GC/event-loop turns to set
 
 ### `packages/tools/src/profile/storage-common.ts::corpusFingerprint`
 
-The shared corpus-entry count, UTF-8 byte count and SHA-256 of names/sources used by both JS-inspection and native-only workers. Population fingerprints use the same ordered input encoding.
-
-### `packages/tools/src/profile/storage-worker.ts::walk`
-
-Consumes nodes through the shared public-slot walker, optionally accessing their text. Counts nodes, kind ids and text units as observable work; an accessor refusal fails the sample.
-
-### `packages/tools/src/profile/storage-worker.ts::engineFor`
-
-Creates the selected grammar's engine with explicit object or arena parsed-node storage.
-
-### `packages/tools/src/profile/storage-worker.ts::retainedPopulation`
-
-Measures GC-settled memory for one held corpus population before and after text access. Records root-render refusals and a digest of successfully rendered text outside timers. Returned data contains counts and samples, not the held roots.
-
-### `packages/tools/src/profile/storage-worker.ts::timePhase`
-
-Times corpus parse/root read, cold public-slot walks, warm text walks, or root render calls. Every iteration has fresh roots; the warm phase traverses those roots first. GC, preparation, warmup samples and work verification are outside recorded durations.
-
-### `packages/tools/src/profile/storage-worker.ts::sampleStorage`
-
-Loads the matched upstream/local corpus and slot readers, records retained memory before timed workloads, and measures each phase with the same native engine. Always disposes the engine, including when sampling fails. The worker reports its PID and corpus digest for provenance.
-
-### `packages/tools/src/profile/storage-worker.ts::StorageWorkerOptions`
-
-A fresh worker's grammar, storage mode, warmup and measured batch counts, with an optional corpus-entry limit for smoke runs. The parent validates these settings before starting the worker.
-
-### `packages/tools/src/profile/storage-worker.ts::WalkResult`
-
-Consumed public-walk work: visited-node count, sum of kind IDs, and accessed text length. These checksums must agree across storage modes and rounds; they are not elapsed-time measurements.
-
-### `packages/tools/src/profile/storage-worker.ts::StorageSample`
-
-One fresh process's raw parsed-corpus measurement, including corpus/render fingerprints, walk work, GC-settled memory samples, per-phase batch durations and render refusals. The parent verifies workload equality before aggregation.
-
-### `packages/tools/src/profile/storage-worker.ts::TimingContext`
-
-Prepared engine, corpus, slot readers, retained-population facts and worker settings used by each timed phase. Preparation and correctness checks remain outside the phase timer.
+The corpus-entry count, UTF-8 byte count and SHA-256 of ordered names and sources used by native workflow workers. Round aggregation requires the same population fingerprint.
 
 ### `packages/tools/src/profile/native-hydration.ts::NativeHydrationSample`
 
@@ -142,7 +98,7 @@ A fresh worker's grammar, explicit positive hydration depth or all, warmup and m
 
 ### `packages/tools/src/profile/native-hydration-worker.ts::NativeHydrationRun`
 
-A native hydration sample with grammar, fresh worker PID and the same ordered corpus fingerprint as the object/arena benchmark. The parent adds round and idle-gate provenance.
+A native hydration sample with grammar, fresh worker PID and ordered corpus fingerprint. The parent adds round and idle-gate provenance.
 
 ### `packages/tools/src/profile/native-hydration-worker.ts::sampleNative`
 

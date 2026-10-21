@@ -2,18 +2,15 @@ import { type CommandModule, defineCommand } from '../../framework/command-modul
 
 export const benchStorage: CommandModule = {
 	name: 'bench-storage',
-	describe: 'Compare object and arena corpus timing and retained memory',
+	describe: 'Measure native corpus parse, hydration, render and retained memory',
 	register: (program) => {
 		defineCommand(program, benchStorage)
 			.argument('[grammars...]', 'Defaults to all stable grammars')
-			.option('--rounds <n>', 'Alternating fresh-process rounds per storage', '5')
+			.option('--rounds <n>', 'Fresh-process rounds per grammar', '5')
 			.option('--warmup <n>', 'Warmup batches per timed phase', '2')
 			.option('--iterations <n>', 'Measured corpus batches per phase and round', '3')
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
-			.option(
-				'--native-depth <depth>',
-				'Measure native parse, hydrate and render: a positive depth or all; no chunk copies'
-			)
+			.option('--native-depth <depth>', 'Native hydration depth: a positive integer or all', 'all')
 			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
 			.option('--output <path>', 'Write the complete JSON report to this file')
 			.action(
@@ -24,7 +21,7 @@ export const benchStorage: CommandModule = {
 						warmup: string;
 						iterations: string;
 						limit?: string;
-						nativeDepth?: string;
+						nativeDepth: string;
 						idleGate?: string;
 						output?: string;
 					}
@@ -36,12 +33,7 @@ export const benchStorage: CommandModule = {
 						warmup: Number(opts.warmup),
 						iterations: Number(opts.iterations),
 						limit: opts.limit === undefined ? undefined : Number(opts.limit),
-						nativeDepth:
-							opts.nativeDepth === undefined
-								? undefined
-								: opts.nativeDepth === 'all'
-									? 'all'
-									: Number(opts.nativeDepth),
+						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
 						idleGate: opts.idleGate,
 						output: opts.output
 					});

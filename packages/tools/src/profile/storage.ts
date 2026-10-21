@@ -7,7 +7,6 @@ import { promisify } from 'node:util';
 import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { nativePhases, type HydrationDepth } from './native-hydration.ts';
 import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydration-worker.ts';
-import { STORAGE_PHASES, type StorageMode, type StorageSample, type StorageWorkerOptions } from './storage-worker.ts';
 
 const execute = promisify(execFile);
 export interface StorageBenchOptions {
@@ -26,23 +25,6 @@ export function median(values: readonly number[]): number {
 	const sorted = [...values].sort((a, b) => a - b);
 	const middle = Math.floor(sorted.length / 2);
 	return sorted.length % 2 ? sorted[middle]! : (sorted[middle - 1]! + sorted[middle]!) / 2;
-}
-
-export function validatePair(object: StorageSample, arena: StorageSample): void {
-	const fingerprint = (sample: StorageSample) =>
-		JSON.stringify({
-			grammar: sample.grammar,
-			corpus: sample.corpus,
-			walk: sample.walk,
-			work: sample.timings.map(({ phase, work }) => [phase, work]),
-			render: {
-				entries: sample.render.entries,
-				sha256: sample.render.sha256,
-				refused: sample.render.refused.map(({ entry }) => entry)
-			}
-		});
-	if (fingerprint(object) !== fingerprint(arena))
-		throw new Error(`object/arena workload mismatch for ${object.grammar}`);
 }
 
 function retainedMemory(rows: readonly { baseline: NodeJS.MemoryUsage; current: NodeJS.MemoryUsage }[]) {
@@ -93,58 +75,15 @@ export function summarizeNativeHydration(samples: readonly NativeHydrationRun[])
 	});
 }
 
-export function summarize(samples: readonly StorageSample[]) {
-	return [...new Set(samples.map(({ grammar }) => grammar))].map((grammar) => {
-		const group = samples.filter((sample) => sample.grammar === grammar);
-		for (const sample of group) validatePair(group[0]!, sample);
-		const timings = STORAGE_PHASES.map((phase) => {
-			const values = (storage: StorageMode) =>
-				group
-					.filter((sample) => sample.storage === storage)
-					.flatMap((sample) =>
-						sample.timings.filter((timing) => timing.phase === phase).map((timing) => median(timing.milliseconds))
-					);
-			const object = values('object');
-			const arena = values('arena');
-			const objectMs = median(object);
-			const arenaMs = median(arena);
-			const work = group[0]!.timings.find((timing) => timing.phase === phase)!.work;
-			return {
-				phase,
-				work,
-				unit: phase === 'parse-read' ? 'entry' : phase === 'render' ? 'rendered-root' : 'node',
-				objectMs,
-				arenaMs,
-				objectNsPerUnit: work ? (objectMs * 1e6) / work : null,
-				arenaNsPerUnit: work ? (arenaMs * 1e6) / work : null,
-				arenaOverObject: work && objectMs ? arenaMs / objectMs : null,
-				objectRange: [Math.min(...object), Math.max(...object)],
-				arenaRange: [Math.min(...arena), Math.max(...arena)]
-			};
-		});
-		const memory = (['object', 'arena'] as const).map((storage) => {
-			const rows = group.filter((sample) => sample.storage === storage);
-			const retained = (state: 'structure' | 'text') =>
-				retainedMemory(rows.map((sample) => ({ baseline: sample.memory.baseline, current: sample.memory[state] })));
-			return { storage, nodes: rows[0]!.nodes, structureBytes: retained('structure'), textBytes: retained('text') };
-		});
-		return { grammar, corpus: group[0]!.corpus, timings, memory, refused: group[0]!.render.refused };
-	});
-}
-
-async function runWorker<T>(
-	mode: StorageMode | 'native',
-	args: StorageWorkerOptions | NativeHydrationOptions,
+async function runWorker(
+	args: NativeHydrationOptions,
 	round: number,
 	idleGate?: string
-): Promise<T & { round: number; idle: string | null }> {
+): Promise<NativeHydrationRun & { round: number; idle: string | null }> {
 	const idle = idleGate ? (await execute('bash', [idleGate, process.cwd()], { timeout: 120_000 })).stdout.trim() : null;
-	process.stderr.write(`bench-storage: ${args.grammar} round ${round + 1} ${mode}\n`);
+	process.stderr.write(`bench-storage: ${args.grammar} round ${round + 1} native\n`);
 	const extension = import.meta.url.endsWith('.ts') ? 'ts' : 'js';
-	const worker = new URL(
-		`./${mode === 'native' ? 'native-hydration' : 'storage'}-worker.${extension}`,
-		import.meta.url
-	);
+	const worker = new URL(`./native-hydration-worker.${extension}`, import.meta.url);
 	const { stdout } = await execute(
 		process.execPath,
 		['--expose-gc', '--import', 'tsx', fileURLToPath(worker), JSON.stringify(args)],
@@ -163,9 +102,10 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const warmup = integer('warmup', options.warmup ?? 2, 0);
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
 	if (options.limit !== undefined) integer('limit', options.limit, 1);
-	if (options.nativeDepth !== undefined && options.nativeDepth !== 'all') {
-		integer('native-depth', options.nativeDepth, 1);
-		if (options.nativeDepth > 0xffffffff) throw new Error('native-depth exceeds the native depth range');
+	const nativeDepth = options.nativeDepth ?? 'all';
+	if (nativeDepth !== 'all') {
+		integer('native-depth', nativeDepth, 1);
+		if (nativeDepth > 0xffffffff) throw new Error('native-depth exceeds the native depth range');
 	}
 	const grammars: GrammarName[] = [];
 	for (const name of options.grammars?.length ? options.grammars : stableGrammars()) {
@@ -173,43 +113,27 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 		if (!grammar) throw new Error(`unknown grammar: ${name}`);
 		if (!grammars.includes(grammar)) grammars.push(grammar);
 	}
-	const samples: (StorageSample & { round: number; idle: string | null })[] = [];
 	const nativeSamples: (NativeHydrationRun & { round: number; idle: string | null })[] = [];
 	const startedAt = new Date().toISOString();
 	for (const grammar of grammars) {
 		for (let round = 0; round < rounds; round++) {
-			if (options.nativeDepth !== undefined) {
-				nativeSamples.push(
-					await runWorker<NativeHydrationRun>(
-						'native',
-						{ grammar, depth: options.nativeDepth, warmup, iterations, limit: options.limit },
-						round,
-						options.idleGate
-					)
-				);
-				continue;
-			}
-			const order: StorageMode[] = round % 2 === 0 ? ['object', 'arena'] : ['arena', 'object'];
-			for (const storage of order) {
-				const args: StorageWorkerOptions = { grammar, storage, warmup, iterations, limit: options.limit };
-				samples.push(await runWorker<StorageSample>(storage, args, round, options.idleGate));
-			}
-			const pair = samples.slice(-2);
-			validatePair(
-				pair.find((sample) => sample.storage === 'object')!,
-				pair.find((sample) => sample.storage === 'arena')!
+			nativeSamples.push(
+				await runWorker(
+					{ grammar, depth: nativeDepth, warmup, iterations, limit: options.limit },
+					round,
+					options.idleGate
+				)
 			);
 		}
 	}
-	const summary = summarize(samples);
 	const nativeSummary = summarizeNativeHydration(nativeSamples);
 	const extension = import.meta.url.endsWith('.ts') ? 'ts' : 'js';
 	const harness = createHash('sha256').update(await readFile(fileURLToPath(import.meta.url)));
-	for (const file of ['storage-worker', 'storage-common', 'native-hydration-worker', 'native-hydration'])
+	for (const file of ['storage-common', 'native-hydration-worker', 'native-hydration'])
 		harness.update(await readFile(new URL(`./${file}.${extension}`, import.meta.url)));
 	const report = {
-		schemaVersion: 2,
-		mode: options.nativeDepth === undefined ? 'object-arena' : 'native-hydration',
+		schemaVersion: 3,
+		mode: 'native-hydration',
 		startedAt,
 		finishedAt: new Date().toISOString(),
 		environment: {
@@ -230,22 +154,14 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			warmup,
 			iterations,
 			limit: options.limit ?? null,
-			nativeDepth: options.nativeDepth ?? null
+			nativeDepth
 		},
-		summary,
-		samples,
 		nativeSummary,
 		nativeSamples
 	};
 	const json = `${JSON.stringify(report, null, 2)}\n`;
 	if (options.output) await writeFile(options.output, json);
 	else process.stdout.write(json);
-	if (summary.length) process.stderr.write('\ngrammar\tphase\tobject ms\tarena ms\tarena/object\n');
-	for (const row of summary)
-		for (const timing of row.timings)
-			process.stderr.write(
-				`${row.grammar}\t${timing.phase}\t${timing.objectMs.toFixed(3)}\t${timing.arenaMs.toFixed(3)}\t${timing.arenaOverObject?.toFixed(3) ?? 'n/a'}\n`
-			);
 	if (nativeSummary.length) process.stderr.write('\ngrammar\tphase\tnative ms\n');
 	for (const row of nativeSummary)
 		for (const timing of row.timings)
