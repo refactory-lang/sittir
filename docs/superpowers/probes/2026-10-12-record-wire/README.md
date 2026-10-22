@@ -6,6 +6,11 @@ hydrates records to the requested depth in Rust, then renders using native
 record addresses. It never constructs JavaScript node views or requests node
 text or arena chunks. Built-node construction and edits need separate workloads.
 
+The [eager construction probe](eager/README.md#measured-results) compares direct
+immutable record construction with object construction using equivalent wrappers.
+Its small-function workload measures build, render, native deep reparse and
+sharing edits separately from the corpus validator comparisons below.
+
 ## Running
 
 Build workspace packages first (`pnpm run build`). From the repository root:
