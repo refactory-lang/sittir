@@ -6,6 +6,22 @@ import { TSKindId } from '../../../../../packages/rust/src/kinds.ts';
 assert.equal(typeof native.registerArena, 'function');
 assert.equal(native.heldArenaReferences(), 0);
 
+{
+  const { store, build } = setup('arena', 16);
+  const first = build.identifier('repeated café');
+  const occupied = store.memory().stringBytes;
+  const second = build.identifier('repeated café');
+  assert.equal(store.memory().stringBytes, occupied, 'equal text is encoded once per arena');
+  assert.equal(typeof first._r, 'number', 'arena views own their numeric address');
+  assert.notEqual(first._r, second._r, 'deduplicating text does not merge records');
+  const original = 'unpaired\ud800';
+  const leaf = build.identifier(original);
+  assert.equal(leaf.text(), original, 'text access retains the original builder string');
+  const parent = functionCase(build, '');
+  assert.equal(parent.name().text(), '', 'empty text survives a shared zero offset');
+  assert.equal(parent.$with.name(leaf).name().text(), original, 'child views retain the original string');
+}
+
 function registeredFixture(retainArrays = false) {
   const { store, build } = setup('arena');
   const root = functionCase(build, 'held');

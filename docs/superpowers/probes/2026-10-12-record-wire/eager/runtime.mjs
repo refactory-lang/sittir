@@ -5,6 +5,12 @@ const nodes = new WeakMap();
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
 
+export function ownerOf(node) {
+	const owner = nodes.get(node);
+	if (owner === undefined) throw new Error('a view has no storage owner');
+	return owner;
+}
+
 export function check(store, value, admitted, shape, required, many) {
 	if (many) {
 		if (!Array.isArray(value) || (required && value.length === 0)) throw new Error('expected a nonempty list');
@@ -23,7 +29,7 @@ export function check(store, value, admitted, shape, required, many) {
 		if (typeof value !== 'string') throw new Error('expected text');
 		return;
 	}
-	const kind = typeof value === 'number' ? value : store.ref(value).kind;
+	const kind = typeof value === 'number' ? value : store.ref(value).$type;
 	if (!admitted.includes(kind)) throw new Error(`kind ${kind} is not admitted by this slot`);
 }
 
@@ -97,6 +103,8 @@ export class Storage {
 	#registration;
 	#registeredWords = -1;
 	#registeredStrings = -1;
+	#textByValue = new Map();
+	#textByOffset = new Map();
 	records = 0;
 	wrappers = 0;
 
@@ -113,20 +121,23 @@ export class Storage {
 		}
 	}
 
-	register(node, ref) {
-		nodes.set(node, { store: this, ref });
-		this.wrappers++;
+	register(node, record = true) {
+		nodes.set(node, this);
+		if (record) this.wrappers++;
 		return node;
 	}
 
 	ref(node) {
 		const known = nodes.get(node);
-		if (known?.store !== this) throw new Error('a builder child belongs to another storage owner');
-		return known.ref;
+		if (known !== this) throw new Error('a builder child belongs to another storage owner');
+		return node;
 	}
 
 	identity(node) {
-		const ref = this.ref(node);
+		return this.ref(node)._r;
+	}
+
+	address(ref) {
 		return this.#mode === 'arena' ? ref.at : ref.data;
 	}
 
@@ -137,15 +148,17 @@ export class Storage {
 	#allocate(size) {
 		const location = this.#words.alloc(size);
 		this.#packet = undefined;
-		return { ...location, at: addressOf(location.chunk, location.word, this.#format) };
+		location.at = addressOf(location.chunk, location.word, this.#format);
+		return location;
 	}
 
 	begin(kind, size) {
 		this.records++;
 		if (this.#mode === 'object') return { kind, data: { $type: kind } };
-		const { data, word, at } = this.#allocate(size);
-		data[word] = kind;
-		return { kind, at };
+		const cursor = this.#allocate(size);
+		cursor.kind = kind;
+		cursor.data[cursor.word] = kind;
+		return cursor;
 	}
 
 	leaf(kind, text) {
@@ -157,16 +170,25 @@ export class Storage {
 	}
 
 	#text(text) {
+		const known = this.#textByValue.get(text);
+		if (known !== undefined) return known;
 		const target = this.#strings.alloc(text.length * 3);
 		const { read, written } = encoder.encodeInto(text, target.data.subarray(target.word));
 		if (read !== text.length) throw new Error('string did not fit its reservation');
 		this.#strings.used[target.chunk] = target.word + written;
 		this.#packet = undefined;
-		return { offset: addressOf(target.chunk, target.word, this.#format), len: written };
+		const entry = { offset: addressOf(target.chunk, target.word, this.#format), len: written, text };
+		this.#textByValue.set(text, entry);
+		if (written !== 0) this.#textByOffset.set(entry.offset, entry);
+		return entry;
 	}
 
 	text(ref) {
 		if (this.#mode === 'object') return ref.data.$text;
+		if (ref.text !== undefined) return ref.text;
+		if (ref.len === 0) return '';
+		const known = this.#textByOffset.get(ref.offset);
+		if (known?.len === ref.len) return known.text;
 		const chunk = this.#strings.chunk(chunkOf(ref.offset, this.#format));
 		const at = wordOf(ref.offset, this.#format);
 		return decoder.decode(chunk.subarray(at, at + ref.len));
@@ -174,11 +196,12 @@ export class Storage {
 
 	copy(ref, size) {
 		this.records++;
-		if (this.#mode === 'object') return { kind: ref.kind, data: { ...ref.data } };
-		const before = this.#location(ref.at);
+		if (this.#mode === 'object') return { kind: ref._r.$type, data: { ...ref._r } };
+		const before = this.#location(ref._r);
 		const after = this.#allocate(size);
 		after.data.set(before.data.subarray(before.word, before.word + size), after.word);
-		return { kind: ref.kind, at: after.at };
+		after.kind = before.data[before.word];
+		return after;
 	}
 
 	prepare(value, run) {
@@ -192,7 +215,7 @@ export class Storage {
 	#raw(value) {
 		if (value === undefined || typeof value !== 'object') return value;
 		if (Array.isArray(value)) return value.map((item) => this.#raw(item));
-		return this.ref(value).data;
+		return this.ref(value)._r;
 	}
 
 	put(ref, key, word, width, run, bit, value) {
@@ -201,7 +224,7 @@ export class Storage {
 			ref.data[key] = this.#raw(value);
 			return;
 		}
-		const at = this.#location(ref.at);
+		const at = ref;
 		if (bit !== undefined) {
 			const mask = 2 ** bit;
 			at.data[at.word + word] = (at.data[at.word + word] & ~mask) | (value ? mask : 0);
@@ -222,15 +245,15 @@ export class Storage {
 		}
 		const text = typeof value === 'string';
 		const ref = text ? this.#text(value) : this.ref(value);
-		const leaf = text || ref.offset !== undefined;
+		const leaf = text || ref._offset !== undefined;
 		const words = leaf ? (text ? 4 : 5) : 5;
 		if (width < words) throw new Error('cell is too narrow');
 		data[at] = leaf ? this.#format.builtLeaf : this.#format.child;
-		data[at + 1] = text ? 0 : ref.kind;
-		data[at + 2] = leaf ? ref.offset : ref.at;
+		data[at + 1] = text ? 0 : ref.$type;
+		data[at + 2] = leaf ? (text ? ref.offset : ref._offset) : ref._r;
 		if (leaf) {
-			data[at + 3] = ref.len;
-			if (!text) data[at + 4] = ref.at;
+			data[at + 3] = text ? ref.len : ref._len;
+			if (!text) data[at + 4] = ref._r;
 		}
 	}
 
@@ -260,8 +283,8 @@ export class Storage {
 	}
 
 	get(ref, key, word, run, bit) {
-		if (this.#mode === 'object') return this.#fromRaw(ref.data[key]);
-		const at = this.#location(ref.at);
+		if (this.#mode === 'object') return this.#fromRaw(ref._r[key]);
+		const at = this.#location(ref._r);
 		if (bit !== undefined) return (at.data[at.word + word] & (2 ** bit)) !== 0;
 		if (run === undefined) return this.#fromCell(at.data, at.word + word);
 		const start = at.data[at.word + word];
@@ -277,7 +300,7 @@ export class Storage {
 	}
 
 	renderRef(ref) {
-		if (this.#mode === 'object') return this.#native.renderObject(ref.data);
+		if (this.#mode === 'object') return this.#native.renderObject(ref._r);
 		if (this.#registeredWords !== this.#words.used.length || this.#registeredStrings !== this.#strings.used.length) {
 			const words = this.#words.registryViews();
 			const strings = this.#strings.registryViews();
@@ -289,9 +312,9 @@ export class Storage {
 		}
 		const words = this.#words.written();
 		const bytes = this.#strings.written();
-		return ref.offset === undefined
-			? this.#registration.renderRecord(ref.at, words, bytes)
-			: this.#registration.render(ref.at, ref.offset, ref.len, words, bytes);
+		return ref._offset === undefined
+			? this.#registration.renderRecord(ref._r, words, bytes)
+			: this.#registration.render(ref._r, ref._offset, ref._len, words, bytes);
 	}
 
 	render(node) {

@@ -8,6 +8,7 @@ import { performance } from 'node:perf_hooks';
 import os from 'node:os';
 import { median } from '../../../../../packages/tools/src/profile/storage-common.ts';
 import { setup, native, functionCase, parseDeep, disposeTrees } from './load.mjs';
+import { Arena as LegacyEncoder } from '../../2026-10-01-shared-arena/2026-10-01/encode-runtime.mts';
 
 const { values } = parseArgs({
 	options: {
@@ -90,6 +91,18 @@ async function iteration(mode) {
 		assert.equal(store.identity(roots[n].body()), store.identity(edited[n].body()));
 	}
 	assert.equal(store.records, count * 5 + 1);
+	let legacyEncode;
+	if (mode === 'object') {
+		const encoder = new LegacyEncoder();
+		const encodeStart = performance.now();
+		for (const root of roots) encoder.node(store.identity(root));
+		legacyEncode = {
+			ms: performance.now() - encodeStart,
+			words: encoder.next,
+			bytes: encoder.nextByte,
+			capacityBytes: encoder.words.byteLength + encoder.bytes.byteLength
+		};
+	}
 	return {
 		phases: {
 			build: built - start,
@@ -108,6 +121,7 @@ async function iteration(mode) {
 		bodyAllocatedBytes,
 		allocations,
 		editAllocations,
+		legacyEncode,
 		storage: store.memory()
 	};
 }
@@ -115,17 +129,24 @@ async function iteration(mode) {
 async function memory(mode) {
 	const { store, build } = setup(mode);
 	await collect();
+	const allocationBaseline = native.allocatorTotals();
 	const baseline = process.memoryUsage();
 	const empty = store.memory();
 	const roots = names.map((name) => functionCase(build, name));
 	await collect();
 	const built = process.memoryUsage();
 	const builtStorage = store.memory();
+	for (const root of roots) root.render();
+	await collect();
+	const rendered = process.memoryUsage();
+	const renderedAllocations = difference(allocationBaseline, native.allocatorTotals());
 	const child = build.identifier('updated');
 	const edited = roots.map((root) => root.$with.name(child));
+	for (const root of edited) root.render();
 	await collect();
 	const retainedSnapshots = process.memoryUsage();
 	const editedStorage = store.memory();
+	const editedAllocations = difference(allocationBaseline, native.allocatorTotals());
 	globalThis.eagerProbeRetained = { store, roots, edited };
 	assert.equal(roots.length + edited.length, count * 2);
 	return {
@@ -133,9 +154,15 @@ async function memory(mode) {
 		empty,
 		built,
 		builtStorage,
+		rendered,
+		renderedAllocations,
+		renderedRustRetainedBytes: renderedAllocations.bytes - renderedAllocations.freedBytes,
 		retainedSnapshots,
 		editedStorage,
+		editedAllocations,
+		snapshotsRustRetainedBytes: editedAllocations.bytes - editedAllocations.freedBytes,
 		builtDelta: difference(baseline, built),
+		renderedDelta: difference(baseline, rendered),
 		snapshotsDelta: difference(baseline, retainedSnapshots)
 	};
 }
@@ -225,7 +252,7 @@ if (values.worker !== undefined) {
 		])
 	);
 	const report = {
-		schemaVersion: 1,
+		schemaVersion: 2,
 		startedAt: start,
 		finishedAt: new Date().toISOString(),
 		machine: {

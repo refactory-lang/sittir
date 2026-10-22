@@ -1,6 +1,13 @@
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type TreeHandle } from './read.ts';
-import { decodeCell, decodeListCell, decodeSideDelimiter, decodeSideRow, wordOf, type RecordCell } from './record-cell.ts';
+import {
+	decodeCell,
+	decodeListCell,
+	decodeSideDelimiter,
+	decodeSideRow,
+	wordOf,
+	type RecordCell
+} from './record-cell.ts';
 import { aliasContentOf, carryReadTree, coordinateOf } from './node-data.ts';
 
 /** The own key of a record stub and of the view made from it: the record's address. */
@@ -12,9 +19,6 @@ export interface RecordStub {
 	readonly [RECORD]: number;
 	readonly $_layout: { readonly at: NodeCoordinate };
 }
-
-/** A slot's place in its record, as the generated `records` table stamps it. */
-export type RecordPlace = { readonly word: number; readonly width: number; readonly run?: number } | { readonly word: number; readonly bit: number };
 
 /** The address a record stub or view holds, `undefined` for any other value. */
 export function recordOf(value: unknown): number | undefined {
@@ -34,7 +38,11 @@ function idOf(tree: TreeHandle): number {
 }
 
 /** The words of the record at `at`, `length` of them, and where the record starts in them. */
-function wordsAt(records: RecordReader, at: number, length: number): { readonly words: Uint32Array; readonly start: number } {
+function wordsAt(
+	records: RecordReader,
+	at: number,
+	length: number
+): { readonly words: Uint32Array; readonly start: number } {
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
@@ -42,7 +50,10 @@ function wordsAt(records: RecordReader, at: number, length: number): { readonly 
 function sideWordsAt(records: RecordReader, side: number): { readonly words: Uint32Array; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;
-	const length = records.format.sideBeforeDelimiter.reduce((sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words), 1);
+	const length = records.format.sideBeforeDelimiter.reduce(
+		(sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words),
+		1
+	);
 	return wordsAt(records, side, (mask & records.format.sideDelimiter) === 0 ? length : length + 1);
 }
 
@@ -86,16 +97,14 @@ export function recordDelimiter(holder: object, tree: TreeHandle): number | unde
 	return decodeSideDelimiter(words, start, records.format);
 }
 
-/** The value of the slot at `place` of the record `holder` views, for a slot that stores values rather than nodes: a presence bit, a unit's kind id, a captured string, or a list of them. */
-export function recordValue(holder: object, tree: TreeHandle, place: RecordPlace): unknown {
-	if ('bit' in place) return recordFlag(holder, tree, place);
-	return place.run === undefined ? recordSlot(holder, tree, place) : recordSlots(holder, tree, place);
-}
-
 const rows = new WeakMap<object, Record<string, unknown>>();
 
 /** The object node of the row the view `node` reads, read once and kept: what a view's writes, queries and snapshots go through. */
-export function rowOf(node: object, tree: TreeHandle, wrap: (data: object, tree: TreeHandle) => unknown): Record<string, unknown> {
+export function rowOf(
+	node: object,
+	tree: TreeHandle,
+	wrap: (data: object, tree: TreeHandle) => unknown
+): Record<string, unknown> {
 	const known = rows.get(node);
 	if (known !== undefined) return known;
 	const row = wrap(rowData(node, tree) as object, tree) as Record<string, unknown>;
@@ -119,12 +128,24 @@ export function rowData(stub: object, tree: TreeHandle): unknown {
 type Members = Readonly<Record<string, (...args: unknown[]) => unknown>>;
 
 /** A view's setter `name` called with `args`, through its row's `$with`. */
-export function rowWith(node: object, tree: TreeHandle, wrap: (data: object, tree: TreeHandle) => unknown, name: string, args: readonly unknown[]): unknown {
+export function rowWith(
+	node: object,
+	tree: TreeHandle,
+	wrap: (data: object, tree: TreeHandle) => unknown,
+	name: string,
+	args: readonly unknown[]
+): unknown {
 	return (rowOf(node, tree, wrap).$with as Members)[name]!(...args);
 }
 
 /** A view's trivia `side` read or written with `items`, through its row's `$trivia`. */
-export function rowTrivia(node: object, tree: TreeHandle, wrap: (data: object, tree: TreeHandle) => unknown, side: string, items: readonly unknown[]): unknown {
+export function rowTrivia(
+	node: object,
+	tree: TreeHandle,
+	wrap: (data: object, tree: TreeHandle) => unknown,
+	side: string,
+	items: readonly unknown[]
+): unknown {
 	return (rowOf(node, tree, wrap).$trivia as Members)[side]!(...items);
 }
 
@@ -147,7 +168,8 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 		case 'parsedText':
 			return tree.text?.(cell.span);
 		case 'child':
-			if (cell.link !== undefined && cell.link !== idOf(tree)) throw new Error(`a parsed record names a record of tree ${cell.link}`);
+			if (cell.link !== undefined && cell.link !== idOf(tree))
+				throw new Error(`a parsed record names a record of tree ${cell.link}`);
 			return carryReadTree(holder, recordStub(tree, cell.at));
 		case 'unit':
 			return cell.kind;
@@ -157,64 +179,70 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 	}
 }
 
-function placeOf(place: RecordPlace): { readonly word: number; readonly width: number; readonly run?: number } {
-	if ('bit' in place) throw new Error(`word ${place.word} bit ${place.bit} is a presence bit, not a cell`);
-	return place;
-}
-
-/** The value of the one-cell slot at `place` of the record `holder` views, as read data. */
-export function recordSlot(holder: object, tree: TreeHandle, place: RecordPlace): unknown {
+/** The value of the one-cell slot at the generated `word` offset of the record `holder` views, as read data. */
+export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number): unknown {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
-	const { word, width } = placeOf(place);
 	const { words, start } = wordsAt(records, at, word + width);
 	return cellData(holder, tree, decodeCell(words, start + word, records.format));
 }
 
-/** The items of the list slot at `place` of the record `holder` views, each as read data. */
-export function recordSlots(holder: object, tree: TreeHandle, place: RecordPlace): readonly unknown[] {
+/** The items of the list slot at the generated `word` offset of the record `holder` views, each as read data. */
+export function recordSlots(
+	holder: object,
+	tree: TreeHandle,
+	word: number,
+	width: number,
+	run?: number
+): readonly unknown[] {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
-	const { word, width, run } = placeOf(place);
-	if (run === undefined) return [recordSlot(holder, tree, place)].filter((item) => item !== undefined);
+	if (run === undefined) return [recordSlot(holder, tree, word, width)].filter((item) => item !== undefined);
 	const { words, start } = wordsAt(records, at, word + width);
 	const list = decodeListCell(words, start + word);
 	if (list.len === 0) return [];
 	const items = wordsAt(records, list.run, list.len * run);
-	return Array.from({ length: list.len }, (_, n) => cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format)));
+	return Array.from({ length: list.len }, (_, n) =>
+		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format))
+	);
 }
 
 const itemsRead = new WeakMap<object, Map<number, readonly unknown[]>>();
 
-/** The items of the list slot at `place` of the record `holder` views, each hydrated by `hydrateOne` once and kept frozen, so every read returns the same array. */
-export function recordItems(holder: object, tree: TreeHandle, place: RecordPlace, hydrateOne: (data: unknown) => unknown): readonly unknown[] {
+/** The items of the list slot at the generated `word` offset of the record `holder` views, each hydrated by `hydrateOne` once and kept frozen, so every read returns the same array. */
+export function recordItems(
+	holder: object,
+	tree: TreeHandle,
+	word: number,
+	width: number,
+	run: number | undefined,
+	hydrateOne: (data: unknown) => unknown
+): readonly unknown[] {
 	let read = itemsRead.get(holder);
 	if (read === undefined) itemsRead.set(holder, (read = new Map()));
-	const known = read.get(place.word);
+	const known = read.get(word);
 	if (known !== undefined) return known;
-	const items = Object.freeze(recordSlots(holder, tree, place).map(hydrateOne));
-	read.set(place.word, items);
+	const items = Object.freeze(recordSlots(holder, tree, word, width, run).map(hydrateOne));
+	read.set(word, items);
 	return items;
 }
 
-/** The number of items the list slot at `place` of the record `holder` views holds. */
-export function recordLength(holder: object, tree: TreeHandle, place: RecordPlace): number {
+/** The number of items the list slot at the generated `word` offset of the record `holder` views holds. */
+export function recordLength(holder: object, tree: TreeHandle, word: number, width: number, run?: number): number {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
-	const { word, width, run } = placeOf(place);
-	if (run === undefined) return recordSlot(holder, tree, place) === undefined ? 0 : 1;
+	if (run === undefined) return recordSlot(holder, tree, word, width) === undefined ? 0 : 1;
 	const { words, start } = wordsAt(records, at, word + width);
 	return decodeListCell(words, start + word).len;
 }
 
-/** Whether the presence bit at `place` of the record `holder` views is set. */
-export function recordFlag(holder: object, tree: TreeHandle, place: RecordPlace): boolean {
+/** Whether the presence bit at the generated `word` offset of the record `holder` views is set. */
+export function recordFlag(holder: object, tree: TreeHandle, word: number, bit: number): boolean {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
-	if (!('bit' in place)) throw new Error(`word ${place.word} is a cell, not a presence bit`);
-	const { words, start } = wordsAt(recordsOf(tree), at, place.word + 1);
-	return ((words[start + place.word]! >>> place.bit) & 1) === 1;
+	const { words, start } = wordsAt(recordsOf(tree), at, word + 1);
+	return ((words[start + word]! >>> bit) & 1) === 1;
 }

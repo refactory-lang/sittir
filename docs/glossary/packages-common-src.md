@@ -1005,3 +1005,23 @@ The one read of a node's provenance, public through `@sittir/common`: the stamp 
 ### `packages/common/src/source-stamp.ts::carrySourceStamp`
 
 Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised copies, `materializeValue`) loses the stamp with every other symbol member, and this puts it back, so the copy is the node it stands for. A spread copy keeps the stamp and needs no carry. Beside `carryPlace`, which carries a different fact: where in its source a node sits.
+
+### `packages/common/src/record-view.ts::recordSlot`
+
+Reads one cell using the emitted numeric word offset and cell width. The width bounds the word slice before the shared decoder maps the cell to read data; it does not consult generated layout descriptors at runtime.
+
+### `packages/common/src/record-view.ts::recordSlots`
+
+Reads a list cell using emitted word, cell width and run stride. An absent stride admits the scalar form as zero or one item. The shared cell decoder preserves coordinate, leaf and child semantics.
+
+### `packages/common/src/record-view.ts::recordItems`
+
+Hydrates a list slot once per holder and emitted word offset, then caches the frozen items. Distinct slots have distinct word offsets; every accessor reuses the same item identities.
+
+### `packages/common/src/record-view.ts::recordLength`
+
+Reads the item count using emitted numeric cell arguments without hydrating items. A scalar cell counts as zero when absent and one otherwise.
+
+### `packages/common/src/record-view.ts::recordFlag`
+
+Reads the emitted presence word and bit directly after checking the word slice. Kind-specific placement is resolved at generation rather than looked up through a runtime table.

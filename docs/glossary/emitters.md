@@ -12118,7 +12118,7 @@ What `slotAccessorBody` needs to know about a slot beyond its model: the element
 
 The body of one slot accessor. A scalar slot (one whose storage holds no node, `storesNodes`: a flag, a set of flags, a kind id) returns its storage as it is; a node slot hydrates through `hydrateSlots` (`many`) or `hydrateSlot`, typed by the slot's element type. An alias envelope's content slot (`aliasContent`) passes the role `contentRole` gives its stored content, so a content that shares the envelope's parser node is registered apart from the envelope.
 
-A record view's accessor reads the slot's cell at its place instead (`WrapStorage`): a scalar slot through `recordValue`, a node slot through `viewSlots` or `viewSlot`, and an alias envelope's content with the role `contentRole` gives the cell's value (`recordSlot`).
+A record view's accessor reads the slot's cell at its place instead (`WrapStorage`): a presence bit through `recordFlag`, another scalar slot through `recordSlot` or `recordSlots`, and a node slot through `viewSlots` or `viewSlot`, and an alias envelope's content with the role `contentRole` gives the cell's value (`recordSlot`).
 
 
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorLines`
@@ -12323,7 +12323,7 @@ The value a parsed node's `$with` setter writes into its slot, through `admitSlo
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapStorage`
 
-What a wrap reads a node's slots from: the read object node's storage keys (`object`, `OBJECT`), or a record, whose `places` map each slot's storage key to its stamped place in the generated `records` table (`R.<Struct>.<field>`). One emitter writes both forms (`emitFieldCarryingWrap`, `emitSeparatedListWrap`); only the slot reads, the header and the members that need the node's data differ.
+What a wrap reads a node's slots from: the read object node's storage keys (`object`, `OBJECT`), or a record, whose `places` map each slot's storage key to the canonical layout's stamped word, width, run stride or presence bit. These facts are consumed during generation; accessors receive literal numeric arguments and never consult a runtime layout table. One emitter writes both forms (`emitFieldCarryingWrap`, `emitSeparatedListWrap`); only the slot reads, the header and the members that need the node's data differ.
 
 ### `packages/codegen/src/emitters/wrap.ts::OBJECT`
 
@@ -12335,7 +12335,11 @@ The record form of a kind's wrap: each model slot's place, from the layout its n
 
 ### `packages/codegen/src/emitters/wrap.ts::placeOf`
 
-The place expression of the slot stored under `storageKey` in a record wrap. `recordStorageOf` gives every model slot a place, so a missing one is a codegen fault and is refused.
+The canonical layout place of the slot stored under `storageKey` in a record wrap. `recordStorageOf` gives every model slot a place, so a missing one is a codegen fault and is refused.
+
+### `packages/codegen/src/emitters/wrap.ts::cellArgs`
+
+Formats the canonical cell place as literal numeric word, width and optional list stride arguments. A presence place is refused because its bit is read by the separate flag helper. Keeping this formatting shared makes slot accessors, list lengths and owner views consume the same stamped facts.
 
 ### `packages/codegen/src/emitters/wrap.ts::wrapHeader`
 

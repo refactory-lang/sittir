@@ -5,11 +5,19 @@ import { coordinateOf, decodeIndex, isCoordinate, nodeText, treeOf } from '@sitt
 import { stableGrammars } from '@sittir/codegen/grammars';
 import type { NodeCoordinate } from '@sittir/types';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries, loadSlotReaders, slotValuesOf, wrappedNodesOf, type SlotReaders, type TypedNode } from '../src/validate/common.ts';
+import {
+	loadCorpusEntries,
+	loadSlotReaders,
+	slotValuesOf,
+	wrappedNodesOf,
+	type SlotReaders,
+	type TypedNode
+} from '../src/validate/common.ts';
 
 const RECORD = Symbol.for('sittir.record');
 
-const placeOf = (at: NodeCoordinate | undefined) => at && { row: decodeIndex(at.$treeHandle), end: at.$end, span: at.$span, kind: at.$type };
+const placeOf = (at: NodeCoordinate | undefined) =>
+	at && { row: decodeIndex(at.$treeHandle), end: at.$end, span: at.$span, kind: at.$type };
 
 /** What the public surface says of a read value: each node's kind, text and coordinate, and its slots as the slot readers read them. */
 function surfaceOf(value: unknown, readers: SlotReaders): unknown {
@@ -27,16 +35,47 @@ function surfaceOf(value: unknown, readers: SlotReaders): unknown {
 
 async function engines(grammar: string) {
 	const language = await languageByName(grammar);
-	return { object: await createEngine(language, { nodeStorage: 'object' }), arena: await createEngine(language, { nodeStorage: 'arena' }), readers: await loadSlotReaders(grammar) };
+	return {
+		object: await createEngine(language, { nodeStorage: 'object' }),
+		arena: await createEngine(language, { nodeStorage: 'arena' }),
+		readers: await loadSlotReaders(grammar)
+	};
 }
 
 describe('a read on the arena wire says what the object wire says', () => {
 	for (const grammar of stableGrammars()) {
+		it(`${grammar}: public accessors are independent of runtime layout tables`, async () => {
+			const { object, arena, readers } = await engines(grammar);
+			const { records } = await import(`../../${grammar}/src/records.ts`);
+			const descriptors = Object.getOwnPropertyDescriptors(records);
+			try {
+				for (const key of Object.keys(descriptors)) {
+					Object.defineProperty(records, key, {
+						configurable: true,
+						get() {
+							throw new Error(`runtime record layout lookup: ${key}`);
+						}
+					});
+				}
+				for (const entry of loadCorpusEntries(grammar)) {
+					expect(surfaceOf(arena.parse(entry.source), readers), entry.name).toEqual(
+						surfaceOf(object.parse(entry.source), readers)
+					);
+				}
+			} finally {
+				Object.defineProperties(records, descriptors);
+				object.dispose();
+				arena.dispose();
+			}
+		}, 600_000);
+
 		it(`${grammar}: every corpus node's kinds, texts, coordinates and slots`, async () => {
 			const { object, arena, readers } = await engines(grammar);
 			let compared = 0;
 			for (const entry of loadCorpusEntries(grammar)) {
-				expect(surfaceOf(arena.parse(entry.source), readers), entry.name).toEqual(surfaceOf(object.parse(entry.source), readers));
+				expect(surfaceOf(arena.parse(entry.source), readers), entry.name).toEqual(
+					surfaceOf(object.parse(entry.source), readers)
+				);
 				compared++;
 			}
 			expect(compared).toBeGreaterThan(0);
@@ -52,7 +91,10 @@ describe('a read on the arena wire says what the object wire says', () => {
 	] as const) {
 		it(`${grammar}: a leaf after a multi-byte character and a CRLF reads the same text`, async () => {
 			const { object, arena, readers } = await engines(grammar);
-			const texts = (root: unknown) => wrappedNodesOf(root, readers).map(nodeText).filter((text) => text !== undefined);
+			const texts = (root: unknown) =>
+				wrappedNodesOf(root, readers)
+					.map(nodeText)
+					.filter((text) => text !== undefined);
 			const read = texts(arena.parse(source));
 			expect(read).toEqual(texts(object.parse(source)));
 			expect(read).toContain(leaf);
@@ -82,4 +124,3 @@ describe('an arena view held across a later read', () => {
 		arena.dispose();
 	}, 120_000);
 });
-

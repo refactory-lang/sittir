@@ -719,15 +719,15 @@ export * from './runtime.ts';
 export {
 	RECORD,
 	recordDelimiter,
+	recordFlag,
 	recordItems,
 	recordLength,
 	recordOf,
 	recordSlot,
-	recordValue,
+	recordSlots,
 	rowData,
 	rowOf,
 	rowTrivia,
 	rowWith,
-	type RecordPlace,
 	type RecordStub
 } from './record-view.ts';
