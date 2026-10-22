@@ -8,8 +8,8 @@ layout, admission sets and renderer.
 
 It generates 243 Rust grammar builders and views, including `function_item`
 and its slot kinds. Object and arena builders use the same own-literal
-accessor and `$with` surface. There are no node prototypes. The record form
-writes directly into JS-owned word and UTF-8 chunks at construction. A native
+accessor and `$with` surface. Views own their address and resolve the owner through one weak registry; their methods do not capture a per-node store/reference pair. There are no node prototypes. The record form
+writes directly into JS-owned word and UTF-8 chunks at construction. Each record receives one writable cursor, reused at its literal slot offsets. Published views retain no writable cursor. Built text is interned once per arena, and text access retains the original builder string, including strings whose UTF-8 form replaces a lone surrogate. A native
 registration retains the typed arrays; each synchronous render borrows fresh
 spans from only the chunks it visits, bounded by their current written prefixes.
 No borrowed span survives the call. The object form
@@ -43,7 +43,7 @@ the generated `records.ts` and consumes the existing `slotStoredIds`
 derivation. Generated builders are script-owned.
 
 Verification covers paired render bytes, native full-depth reparses, Unicode,
-presence bits, receiver-new-node `$with`, explicit ancestor replacement,
+text deduplication, original-string retention, own numeric addresses, presence bits, receiver-new-node `$with`, explicit ancestor replacement,
 unchanged child identity, retained views across 10,000 builds, oversized
 list runs, stable chunks, and an empty string following a full string chunk.
 The native entries reject malformed words, invalid numeric addresses and
@@ -99,16 +99,22 @@ automatic Rust-side N-API conversion; per-call body counts isolate the native
 borrow/admission/decode/prepare/render work. Counts do not include V8 or C++
 allocations. It creates no worker threads and measurement processes run alone.
 
-A separate untimed memory population retains all 10,000 original roots, then
-also all 10,000 edited roots. It records GC-settled `heapUsed`, `heapTotal`,
-external memory, array buffers and RSS beside exact occupied word/string bytes
-and chunk capacity. Inputs are held in both baselines. Array buffers are part
-of external memory, so these fields must not be summed. RSS reflects allocator
-reuse and is not precise native retained memory. The process deltas and
-allocator counters do not supply complete native memory attribution. This
-population is never rendered, so it excludes native registration and reference
-metadata allocated by the first render. Rust registration metadata can remain
-live between renders; allocated and freed bytes need not balance per call.
+A separate untimed memory population retains all 10,000 original roots before
+and after rendering, then all originals plus 10,000 rendered edited roots.
+It records GC-settled process memory beside exact occupied bytes and chunk
+capacity. The rendered snapshots include registration metadata. The signed
+Rust allocated-minus-freed delta records live bytes attributed to the measurement
+addon's allocator; it excludes V8, C++, and the parser addon. Array buffers are
+part of external memory and must not be added again. RSS includes allocator
+reuse and does not precisely attribute native retained storage.
+
+An additional untimed-pipeline reference measures the historical generic encoder
+against the same object roots after deep parsing and disposal. Its encoding
+time is measured separately and does not enter build, render, parse, pipeline,
+or edit times. The encoder is shared with the older feasibility probe: it
+walks object storage, looks up slot names, and grows buffers by copying. Its
+wire format has no current native renderer, so this row measures encoding only;
+it is not an end-to-end alternative or an API inspection benchmark.
 
 ## Render optimization status
 
@@ -137,6 +143,90 @@ The final five-pair run below confirms render parity for this prototype.
 Public eager builders and definitive cutover remain further work.
 
 ## Current paired measurements
+
+Runtime revision `7327f49790bd2dcdb2bf81a5421e67fb19873f17`, Apple M4 Pro,
+Darwin 27.2.0 arm64, Node v26.12.0. This run includes literal public accessor
+arguments, one construction cursor, V2 own-address probe views, and built-text
+deduplication/original-string retention. Both storages use the same unchanged
+native addon and workspace-derived release profile as the previous optimized run.
+Ten distinct fresh workers ran five alternating pairs, two warmups and three
+measured batches each. Every worker passed the unchanged idle gate at 84–86%
+idle. All 30 batches match input and complete-render fingerprints (128,890 bytes).
+The isolated copy matches 2,244 source, 2,270 compiled and 16 native/WASM files;
+all hashes remained unchanged before/after timing. No local builds, tests or
+source writes ran during measurement. Host concurrency is a session attestation.
+
+Times are milliseconds per 10,000 four-node functions, the median of five
+worker medians. Ranges are worker medians, not confidence intervals. Independent
+phase medians need not sum to the pipeline median. Arena/object below one favors arena.
+
+| Phase | Objects ms | Arena ms | Arena/object | Object range | Arena range |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Build | 17.025 | 14.771 | 0.868 | 16.593–18.726 | 14.657–15.414 |
+| Render | 24.144 | 23.373 | 0.968 | 23.714–24.847 | 23.124–23.638 |
+| Native deep reparse | 94.413 | 97.440 | 1.032 | 93.094–96.120 | 96.927–99.150 |
+| Build → render → deep reparse | 135.937 | 136.794 | 1.006 | 132.854–136.396 | 135.535–137.327 |
+| `$with.name(sharedChild)` | 7.391 | 4.139 | 0.560 | 7.158–7.837 | 3.920–4.579 |
+
+Arena uses 13.2% less build time, 3.2% less render time and 44.0% less immutable
+edit time than the updated object path. Complete pipeline time is effectively
+tied (arena 0.6% higher). Deep parsing uses the same native full-depth path under
+both modes; no JS node inspection runs inside the pipeline.
+
+**Absolute construction regressed in both paths:** the preceding optimized run
+built objects in 6.965 ms and arenas in 11.227 ms, versus 17.025 ms and 14.771 ms
+here. The matched wrapper/storage changes affect both paths. These separate
+runs, with several changes and different host conditions, do not isolate a
+cause. Further construction profiling remains necessary; the relative arena
+win alone does not establish an overall construction improvement.
+
+The separately timed historical generic encoder takes **5.670 ms** per object
+batch (worker-median range 5.402–5.941 ms). It emits 370,001 words and 48,890
+UTF-8 bytes, reserving 2,162,688 bytes. This is the old encoder's wire, with no
+current native renderer. Its time is excluded from all five phases above.
+
+Native render bodies take 1.836 µs per object root and 1.554 µs per arena root.
+Whole Rust-boundary allocations remain 10 calls / 1,781.889 bytes per object
+root and 8.0016 calls / 368.1464 bytes per arena root. Body-only counts remain
+9 / 1,717.889 bytes and 6.0006 / 240.0648 bytes respectively. Construction and
+immutable edits make zero Rust allocator calls. These counters exclude V8/C++
+and the separate parser addon.
+
+The memory populations below have all been rendered before GC-settled snapshots,
+so native registration is included. Deltas are median MiB across five workers;
+inputs and an empty owner are held in the baseline. Array buffers are part of
+external memory. RSS includes allocator reuse and is not native attribution.
+
+| Process field | Objects: rendered originals | Arena: rendered originals | Objects: rendered originals + edits | Arena: rendered originals + edits |
+| --- | ---: | ---: | ---: | ---: |
+| `heapUsed` | 14.721 | 12.519 | 27.089 | 23.750 |
+| `heapTotal` | 14.750 | 12.656 | 26.750 | 12.656 |
+| `external` | 0.000 | 4.027 | 0.000 | 8.027 |
+| `arrayBuffers` (within `external`) | 0.000 | 4.027 | 0.000 | 8.027 |
+| RSS | 0.141 | 8.048 | 5.407 | 8.345 |
+| `heapUsed` + `external` | 14.721 | 16.547 | 27.089 | 31.777 |
+
+Arena lowers JS heap but retains more heap plus external memory: about 12.4%
+more for rendered originals and 17.3% more for originals plus edits. The signed
+measurement-addon Rust allocated-minus-freed deltas are 208 and 216 bytes for
+those arena populations, versus zero for objects. Those tiny deltas measure
+Rust registration metadata; they exclude C++ reference metadata and the parser
+addon. Complete native attribution and per-record reclamation remain open.
+Exact arena occupied bytes and capacity are unchanged from the earlier tables.
+
+Fresh checks pass: five-grammar regeneration, all TypeScript lanes, lint,
+812 Vitest files (8,204 ordinary passes, seven expected failures, 19 skipped,
+four todo), 451 object Rust tests, 564 arena Rust tests and 29 reader-debug
+tests. Both complete validation reports match the pinned baseline and each
+other: 193 normalized rows, +0/−0, all 29 raw count fields per grammar unchanged.
+The source review found no blocking issue for this prototype and the production
+literal-accessor change. Public eager cutover remains further work.
+
+[Raw paired samples](../results/2026-10-22-eager-literal-slots-storage-darwin-arm64.json),
+[independently recomputed statistics](../results/2026-10-22-eager-literal-slots-analysis.json),
+and [source/native provenance and checks](../results/2026-10-22-eager-literal-slots-provenance.json).
+
+## Previous paired measurements
 
 Runtime revision `aa21d998231dfac8b0c9c7649cb4140e4da98b1c`, Apple M4 Pro,
 Darwin 27.2.0 arm64, Node v26.12.0. Both modes use the same freshly built
