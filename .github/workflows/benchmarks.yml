@@ -1,7 +1,9 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }})
+run-name: Arena benchmarks (${{ inputs.benchmark || 'all' }})
 
 on:
+  push:
+    branches: [bench/arena-linux-20261022-ba89dd1d8]
   workflow_dispatch:
     inputs:
       benchmark:
@@ -17,16 +19,16 @@ jobs:
   build:
     uses: ./.github/workflows/benchmark-build.yml
     with:
-      benchmark: ${{ inputs.benchmark }}
+      benchmark: ${{ inputs.benchmark || 'all' }}
   eager:
     needs: build
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
+    if: github.event_name == 'push' || inputs.benchmark == 'all' || inputs.benchmark == 'eager'
     uses: ./.github/workflows/benchmark-eager.yml
     with:
       runtime-prefix: ${{ needs.build.outputs.prefix }}
   corpus:
     needs: build
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
+    if: github.event_name == 'push' || inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
       runtime-prefix: ${{ needs.build.outputs.prefix }}
