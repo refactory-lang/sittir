@@ -9,8 +9,10 @@ layout, admission sets and renderer.
 It generates 243 Rust grammar builders and views, including `function_item`
 and its slot kinds. Object and arena builders use the same own-literal
 accessor and `$with` surface. There are no node prototypes. The record form
-writes directly into JS-owned word and UTF-8 chunks at construction; its
-render borrows those chunks for one synchronous native call. The object form
+writes directly into JS-owned word and UTF-8 chunks at construction. A native
+registration retains the typed arrays; each synchronous render borrows fresh
+spans from only the chunks it visits, bounded by their current written prefixes.
+No borrowed span survives the call. The object form
 holds plain node data for the current generated N-API decoder. No record
 encoder or JS inspection walk runs at render.
 
@@ -44,8 +46,11 @@ Verification covers paired render bytes, native full-depth reparses, Unicode,
 presence bits, receiver-new-node `$with`, explicit ancestor replacement,
 unchanged child identity, retained views across 10,000 builds, oversized
 list runs, stable chunks, and an empty string following a full string chunk.
-The native entry rejects malformed words, invalid numeric addresses and
-shared buffers. A typed-array view's byte offset is respected.
+The native entries reject malformed words, invalid numeric addresses and
+shared buffers. Registered buffers are checked again for detach, resize and
+current written bounds on every render. Verification also covers registration
+reuse, explicit disposal, GC finalization and conflicting kinds on shared
+children. A typed-array view's byte offset is respected.
 
 `$with` returns a new receiver. Editing a child leaves every existing parent
 pointing at the original child; a parent changes only when explicitly rebuilt.
@@ -100,9 +105,41 @@ external memory, array buffers and RSS beside exact occupied word/string bytes
 and chunk capacity. Inputs are held in both baselines. Array buffers are part
 of external memory, so these fields must not be summed. RSS reflects allocator
 reuse and is not precise native retained memory. The process deltas and
-allocator counters do not supply complete native memory attribution.
+allocator counters do not supply complete native memory attribution. This
+population is never rendered, so it excludes native registration and reference
+metadata allocated by the first render. Rust registration metadata can remain
+live between renders; allocated and freed bytes need not balance per call.
 
-## Measured results
+## Render optimization status
+
+The current renderer caches computed record layouts, keeps small scratch
+collections inline, avoids scalar-slot vectors and reuses prepared-node
+lookups. Registered arenas reuse typed-array identity while reacquiring spans
+per call. Admission still runs on every render, including validation of shared
+addresses and their kinds. Stored layout settings retain precedence over
+prepared defaults.
+
+The measurement addon's build derives its release settings from the root
+workspace profile: fat LTO and one codegen unit. Both storage modes use that
+same addon. The historical baseline below used LTO off and 16 codegen units;
+absolute old/new timings cannot isolate the effect of the runtime changes.
+
+Source review found no actionable issues for this measurement prototype.
+The full project checks pass: five-grammar regeneration, TypeScript, lint,
+four Clippy configurations, 451 object Rust tests, 564 arena Rust tests,
+29 reader-debug tests and 812 Vitest files (8,199 ordinary passes, seven
+expected-failure cases, 19 skipped, four todo). Complete reports equal the
+pinned baseline and both storages: 193 normalized rows, +0/−0, with all 29
+raw count fields per grammar unchanged. Focused core/macro/Clippy checks and
+fresh native builds also passed after formatting the new scratch helper.
+
+Final performance acceptance remains pending a fresh five-pair run. System
+cleanup kept the machine below the unchanged 75% idle gate, so the attempted
+run produced no accepted report. Exploratory candidate timings do not replace
+that final-source check. Public eager builders and definitive cutover remain
+further work.
+
+## Historical baseline
 
 Baseline runtime revision `651faa3103309a0c0203c2203037a9c4432fa960`, Apple M4 Pro,
 Darwin 27.2.0 arm64, Node v26.12.0. The run used ten distinct fresh workers,
@@ -133,8 +170,9 @@ versus 3.678 µs per arena root. Input and complete render fingerprints match
 across all 30 measured batches; each renders 128,890 bytes. Deep reparsing
 stays native under both modes. No JS node inspection runs inside the pipeline.
 
-The build increase is accepted for this stage. The render regression is a
-blocker and must be addressed; the measurements below preserve its baseline.
+The build increase is accepted for this stage. This revision's render
+regression prompted the optimization work above; the measurements below
+preserve its baseline. Final-source render acceptance remains pending.
 
 This does not supersede the separate corpus validator results. Those measure
 parsed storage, while both public factory settings still construct objects.
