@@ -25,5 +25,8 @@ runs:
           labels+=("native-$grammar")
         done
         if [[ "$REQUIRE_EAGER" == true ]]; then labels+=(native-eager); fi
+        if [[ "$REQUIRE_EAGER" != true ]]; then
+          rm -f "$RUNNER_TEMP/arena-runtime/native-eager.tar.gz" "$RUNNER_TEMP/arena-runtime/native-eager.manifest.json"
+        fi
         node scripts/ci/arena-benchmark-runtime.mjs restore "$RUNNER_TEMP/arena-runtime" "${labels[@]}"
         cp "$RUNNER_TEMP/arena-runtime/"*.manifest.json "$RUNNER_TEMP/arena-benchmarks/"

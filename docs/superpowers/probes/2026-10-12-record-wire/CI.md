@@ -33,6 +33,13 @@ platform, architecture, Node ABI, Rust version, Cargo configuration and Rust fla
 before restoration. Both benchmark workflows download the same build artifacts;
 measurement runners do not compile or regenerate the runtime.
 
+Eager generator verification restores both the public Rust addon and private
+probe on a separate verification runner. It loads the cached bootstrap tooling
+there before checking format metadata. Corpus depends only on public addon
+builds and can proceed while eager verification runs; it does not wait for the
+private probe. Corpus restoration excludes that optional addon so every grammar
+shard fingerprints the same runtime even when uploads finish at different times.
+
 Each job runs object and arena storage on that same runner in alternating fresh
 workers, under the existing 75% idle gate. Eager construction uses 10,000
 four-node functions, five pairs, two warmups and three measured batches. The

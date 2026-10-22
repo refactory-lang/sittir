@@ -14,20 +14,35 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  prepare:
     uses: ./.github/workflows/benchmark-build.yml
+  native:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        grammar: ${{ fromJSON(needs.prepare.outputs.grammars) }}
+    uses: ./.github/workflows/benchmark-native.yml
     with:
-      benchmark: ${{ inputs.benchmark }}
+      grammar: ${{ matrix.grammar }}
+      prefix: ${{ needs.prepare.outputs.prefix }}
+  eager-native:
+    needs: prepare
+    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
+    uses: ./.github/workflows/benchmark-native.yml
+    with:
+      grammar: eager
+      prefix: ${{ needs.prepare.outputs.prefix }}
   eager:
-    needs: build
+    needs: [prepare, native, eager-native]
     if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
     uses: ./.github/workflows/benchmark-eager.yml
     with:
-      runtime-prefix: ${{ needs.build.outputs.prefix }}
+      runtime-prefix: ${{ needs.prepare.outputs.prefix }}
   corpus:
-    needs: build
+    needs: [prepare, native]
     if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
-      runtime-prefix: ${{ needs.build.outputs.prefix }}
-      grammars: ${{ needs.build.outputs.grammars }}
+      runtime-prefix: ${{ needs.prepare.outputs.prefix }}
+      grammars: ${{ needs.prepare.outputs.grammars }}
