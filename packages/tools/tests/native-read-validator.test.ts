@@ -1,6 +1,4 @@
 import { createRequire } from 'node:module';
-import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 import { afterEach, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import type { NativeModuleLike } from '@sittir/common/engine';
@@ -9,6 +7,7 @@ import { languageByName } from '../src/languages.ts';
 import { useValidationNodeStorage } from '../src/validate/common.ts';
 import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { RoundtripProfile } from '../src/validate/roundtrip-profile.ts';
+import { reportFor, storageBenchTestTimeout } from './storage-bench.helpers.ts';
 
 const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as NativeModuleLike;
 
@@ -81,31 +80,11 @@ it('deep-reads each arena root before enumeration and render, without object rea
 
 it.each(['python', 'regex', 'rust', 'scm', 'typescript'])(
 	'%s deep arena validation covers the same typed candidates and outcomes as objects',
-	(grammar) => {
-		const report = JSON.parse(
-			execFileSync(
-				process.execPath,
-				[
-					'--import',
-					'tsx',
-					fileURLToPath(new URL('../../cli/src/cli.ts', import.meta.url)),
-					'tool',
-					'bench-storage',
-					grammar,
-					'--validation',
-					'--rounds',
-					'1',
-					'--warmup',
-					'0',
-					'--iterations',
-					'1'
-				],
-				{ encoding: 'utf8', timeout: 60_000, stdio: ['ignore', 'pipe', 'pipe'] }
-			)
-		);
+	async (grammar) => {
+		const report = await reportFor([grammar, '--validation', '--rounds', '1', '--warmup', '0', '--iterations', '1']);
 		expect(report.mode).toBe('validation-storage');
 		expect(report.validationSamples).toHaveLength(2);
 		expect(report.validationSamples.every((sample: { grammar: string }) => sample.grammar === grammar)).toBe(true);
 	},
-	60_000
+	storageBenchTestTimeout
 );
