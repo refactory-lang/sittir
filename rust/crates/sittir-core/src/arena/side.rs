@@ -161,20 +161,22 @@ fn read_edge(word: u32) -> Result<Option<EdgeArm>, ArenaError> {
 /// The words of a side record as it is read: a cursor over its fields.
 struct Fields<'a> {
     arena: &'a Arena,
-    next: Address,
+    at: Address,
+    offset: u32,
 }
 
 impl<'a> Fields<'a> {
     fn take(&mut self, n: u32) -> Result<&'a [u32], ArenaError> {
-        let words = self.arena.words(self.next, n)?;
-        self.next = self.next.offset(n).ok_or(ArenaError::OutOfBounds { chunk: self.next.chunk(), word: self.next.word(), len: n })?;
+        let end = self.offset.checked_add(n).ok_or(ArenaError::OutOfBounds { chunk: self.at.chunk(), word: self.at.word().saturating_add(self.offset), len: n })?;
+        let words = &self.arena.words(self.at, end)?[self.offset as usize..];
+        self.offset = end;
         Ok(words)
     }
 
     fn array<const N: usize>(&mut self) -> Result<[u32; N], ArenaError> {
         let n = u32::try_from(N).map_err(|_| ArenaError::Full)?;
         let words = self.take(n)?;
-        <[u32; N]>::try_from(words).map_err(|_| ArenaError::OutOfBounds { chunk: self.next.chunk(), word: self.next.word(), len: n })
+        <[u32; N]>::try_from(words).map_err(|_| ArenaError::OutOfBounds { chunk: self.at.chunk(), word: self.at.word().saturating_add(self.offset), len: n })
     }
 }
 
@@ -258,7 +260,7 @@ impl SideRecord {
         if at == Address::NONE {
             return Ok(SideRecord::default());
         }
-        let mut fields = Fields { arena, next: at };
+        let mut fields = Fields { arena, at, offset: 0 };
         let [flags] = fields.array()?;
         if flags & !mask::ALL != 0 || flags == 0 {
             return Err(malformed("side record mask", flags));
@@ -370,6 +372,17 @@ mod tests {
         let mut arena = Arena::new();
         let record = full();
         let at = record.write(&mut arena).expect("room");
+        assert_eq!(SideRecord::read(&arena, at), Ok(record));
+    }
+
+    #[test]
+    fn a_side_record_ending_at_the_packed_word_boundary_reads_back() {
+        let mut arena = Arena::new();
+        arena.alloc(crate::arena::CHUNK_WORDS).expect("a full chunk");
+        arena.alloc(crate::arena::CHUNK_WORDS - 2).expect("leave two words");
+        let record = SideRecord { separator: Some(KindId(7)), ..SideRecord::default() };
+        let at = record.write(&mut arena).expect("room");
+        assert_eq!(at.word(), crate::arena::CHUNK_WORDS - 2);
         assert_eq!(SideRecord::read(&arena, at), Ok(record));
     }
 

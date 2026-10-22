@@ -10,7 +10,11 @@ type Assignment = Node & { right(): { properties(): readonly Pair[] } };
 
 function keysOf(source: string): readonly Node[] {
 	const statement = ts.parse(source).statements()[0] as unknown as { expression(): Assignment };
-	return statement.expression().right().properties().map((pair) => pair.key());
+	return statement
+		.expression()
+		.right()
+		.properties()
+		.map((pair) => pair.key());
 }
 
 describe('an alias envelope is seated by the kind the parser shows', () => {
@@ -38,7 +42,8 @@ describe("a trivia write on a content that shares its envelope's parser node", (
 	it.each(['leading', 'trailing'] as const)('%s: the envelope unfolds and the written comment renders', (side) => {
 		const root = ts.parse('interface A { x: number }\nlet b = 1;\n');
 		const declaration = root.statements()[0];
-		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration)) throw new Error('expected an interface declaration');
+		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration))
+			throw new Error('expected an interface declaration');
 		const envelope = declaration.body();
 		const content = envelope.content();
 		expect(content).not.toBe(envelope);
@@ -47,5 +52,27 @@ describe("a trivia write on a content that shares its envelope's parser node", (
 		expect(out).toContain('// c\n');
 		expect(out.endsWith('let b = 1;\n')).toBe(true);
 		expect(ts.parse(out).$errors).toEqual([]);
+	});
+});
+
+describe("edits on content that shares its envelope's parser row", () => {
+	it.each(['object', 'arena'] as const)('%s: edits the content through its own setters', async (nodeStorage) => {
+		const engine = await createEngine(typescript, { nodeStorage });
+		try {
+			const root = engine.parse('interface A { x: number }\nlet b = 1;\n');
+			const declaration = root.statements()[0];
+			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
+				throw new Error('expected an interface declaration');
+			const content = declaration.body().content();
+			const edited = content.$with.members();
+			expect(edited.$type).toBe(engine.kinds.ObjectType);
+			expect(edited.$render()).toBe('{}');
+			const out = declaration.$with.body(declaration.body().$with.content(edited)).$render();
+			expect(out).not.toContain('x: number');
+			expect(engine.parse(out).$errors).toEqual([]);
+			expect(root.$render()).toBe('interface A { x: number }\nlet b = 1;\n');
+		} finally {
+			engine.dispose();
+		}
 	});
 });

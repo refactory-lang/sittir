@@ -551,8 +551,18 @@ function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknow
 }
 
 /** Whether `child` is the content of the alias envelope `holder`, the same parser node: its coordinate carries the envelope's display id. */
-function isAliasContent(holder: Record<string, unknown>, child: unknown): boolean {
+function isAliasContent(holder: Record<string, unknown>, child: unknown): child is Record<string, unknown> {
 	return isRecord(child) && child.$type !== holder.$type && coordinateOf(child)?.$type === holder.$type;
+}
+
+/** The stored content that shares an envelope's parser row, regardless of its slot's name. */
+export function aliasContentOf(holder: object): Record<string, unknown> | undefined {
+	const data = holder as Record<string, unknown>;
+	for (const key of Object.keys(data)) {
+		const child = data[key];
+		if (isStorageKey(key) && isAliasContent(data, child)) return child;
+	}
+	return undefined;
 }
 
 /** The siblings beside the node a source identity names, while its tree lives. */
@@ -682,7 +692,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
 	if (separator !== undefined) setLayout(out, 'separator', separator);
-	const content = fold ? undefined : Object.keys(value).flatMap((key) => (isStorageKey(key) && isAliasContent(value, value[key]) ? [value[key] as object] : []))[0];
+	const content = fold ? undefined : aliasContentOf(value);
 	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);

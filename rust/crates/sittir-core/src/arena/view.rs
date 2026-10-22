@@ -631,10 +631,9 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> crate::view::Sl
 
     fn item(&self, index: usize) -> Option<Self::Item> {
         let item = u32::try_from(index).ok().filter(|&item| item < self.list.len)?;
-        let at = self.list.run.offset(item.checked_mul(self.run)?)?;
         let site = Site { holder: self.holder, word: self.word, item: ItemIndex(item) };
-        Some(match self.ctx.arena.words(at, self.run) {
-            Ok(words) => RecordSlot::of(self.ctx, site, words),
+        Some(match self.list.items(self.ctx.arena, self.run) {
+            Ok(mut items) => RecordSlot::of(self.ctx, site, items.nth(index)?),
             Err(refused) => RecordSlot { ctx: self.ctx, site, cell: SlotCell::Refused(refused) },
         })
     }
@@ -773,6 +772,26 @@ mod tests {
         assert_eq!(rendered(&items.item(1).expect("an item")).expect("rendered"), "b");
         assert_eq!(items.item(1).expect("an item").site, site(1));
         assert!(items.item(2).is_none());
+    }
+
+    #[test]
+    fn a_list_run_past_the_packed_word_boundary_keeps_all_its_items() {
+        let mut fixture = Fixture::new();
+        let text = fixture.arena.intern("x").expect("room");
+        let len = crate::arena::CHUNK_WORDS / 5 + 2;
+        let cells = vec![Cell::BuiltText { text }; len as usize];
+        let list = ListCell::write(&mut fixture.arena, 5, &cells).expect("written");
+        let mut words = [0; 2];
+        list.encode(&mut words).expect("it fits");
+        let items = RecordItems::<TriviaText, Word<'_>>::of(fixture.ctx(), Place::Record(Address(1)).into(), 2, 5, &words).expect("a list");
+        assert_eq!(items.count(), len as usize);
+        for index in [0, len / 2, len - 1] {
+            let item = items.item(index as usize).expect("an item in the oversized run");
+            assert_eq!(rendered(&item).expect("rendered"), "x");
+            assert_eq!(item.site, site(index));
+        }
+        assert_eq!((0..items.count()).filter_map(|index| items.item(index)).count(), len as usize);
+        assert!(items.item(len as usize).is_none());
     }
 
     #[test]

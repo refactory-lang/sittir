@@ -1,7 +1,7 @@
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type TreeHandle } from './read.ts';
 import { decodeCell, decodeListCell, decodeSideDelimiter, decodeSideRow, wordOf, type RecordCell } from './record-cell.ts';
-import { carryReadTree, coordinateOf } from './node-data.ts';
+import { aliasContentOf, carryReadTree, coordinateOf } from './node-data.ts';
 
 /** The own key of a record stub and of the view made from it: the record's address. */
 export const RECORD = Symbol.for('sittir.record');
@@ -107,7 +107,13 @@ export function rowOf(node: object, tree: TreeHandle, wrap: (data: object, tree:
 export function rowData(stub: object, tree: TreeHandle): unknown {
 	const at = coordinateOf(stub);
 	if (at === undefined) throw new Error('a record view names no row');
-	return recordsOf(tree).object(decodeIndex(at.$treeHandle), 1);
+	const kind = (stub as { readonly $type?: number }).$type;
+	let row = recordsOf(tree).object(decodeIndex(at.$treeHandle), 1);
+	while (row !== null && typeof row === 'object') {
+		if ((row as { readonly $type?: number }).$type === kind) return row;
+		row = aliasContentOf(row);
+	}
+	throw new Error(`the row of a record of kind ${kind} holds no node of that kind`);
 }
 
 type Members = Readonly<Record<string, (...args: unknown[]) => unknown>>;
