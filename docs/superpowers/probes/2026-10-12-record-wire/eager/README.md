@@ -133,11 +133,87 @@ pinned baseline and both storages: 193 normalized rows, +0/−0, with all 29
 raw count fields per grammar unchanged. Focused core/macro/Clippy checks and
 fresh native builds also passed after formatting the new scratch helper.
 
-Final performance acceptance remains pending a fresh five-pair run. System
-cleanup kept the machine below the unchanged 75% idle gate, so the attempted
-run produced no accepted report. Exploratory candidate timings do not replace
-that final-source check. Public eager builders and definitive cutover remain
-further work.
+The final five-pair run below confirms render parity for this prototype.
+Public eager builders and definitive cutover remain further work.
+
+## Current paired measurements
+
+Runtime revision `aa21d998231dfac8b0c9c7649cb4140e4da98b1c`, Apple M4 Pro,
+Darwin 27.2.0 arm64, Node v26.12.0. Both modes use the same freshly built
+measurement addon and workspace-derived release profile. The ten distinct
+fresh workers ran in five alternating pairs, with two warmups and three
+measured batches each. Every worker passed the unchanged idle gate at
+88–92% idle. Source, compiled outputs, native addons and WASMs matched the
+unwatched copy and remained unchanged before and after timing. No local
+builds, tests or source writes ran during timing; concurrency is a session
+attestation, not continuous host-process monitoring.
+
+Times are milliseconds per 10,000 four-node functions: the median of five
+worker medians. Ranges are worker medians, not confidence intervals. Phase
+medians are independent and need not add to the pipeline median. Arena/object
+above one favors objects.
+
+| Phase | Objects ms | Arena ms | Arena/object | Object range | Arena range |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Build | 6.965 | 11.227 | 1.612 | 6.829–7.180 | 10.545–12.025 |
+| Render | 23.662 | 23.628 | 0.999 | 23.347–24.739 | 23.499–23.880 |
+| Native deep reparse | 95.241 | 95.702 | 1.005 | 94.791–96.339 | 94.539–96.558 |
+| Build → render → deep reparse | 126.164 | 130.741 | 1.036 | 125.621–126.772 | 130.101–131.398 |
+| `$with.name(sharedChild)` | 4.266 | 4.456 | 1.045 | 4.208–4.332 | 4.232–4.616 |
+
+**Arena render time is effectively tied with objects.** Construction takes
+61.2% more time and the complete pipeline takes 3.6% more time. Deep reparse
+is effectively tied; the separately timed immutable edit takes 4.5% more
+time in this run. These small descriptive samples do not establish a
+statistically significant render speedup. All 30 measured batches have the
+same input and complete-render fingerprints; each renders 128,890 bytes.
+Deep reparse stays native in both modes, with no JS node inspection in the
+pipeline.
+
+Native render-body time is 1.884 µs per object root versus 1.514 µs per arena
+root. The JS-inclusive render phase above also includes boundary conversion,
+loop and instrumentation overhead. Rust allocations per root are identical
+across the 15 measured batches within each mode:
+
+| Render scope | Object calls/root | Arena calls/root | Object bytes/root | Arena bytes/root |
+| --- | ---: | ---: | ---: | ---: |
+| Whole Rust boundary | 10 | 8.0016 | 1,781.889 | 368.1464 |
+| Native body | 9 | 6.0006 | 1,717.889 | 240.0648 |
+
+These are cumulative allocation calls and bytes, not retained bytes. Arena
+whole-boundary frees are 8.0012 calls and 368.1256 bytes per root; registration
+metadata can outlive a render call. Object allocation and deallocation totals
+match. Build and immutable edit make no Rust allocation calls. The counters
+exclude V8/C++ and the separate parser addon.
+
+Untimed GC-settled memory deltas are medians of five workers, in MiB. The
+second population retains all original roots plus edited roots sharing their
+unchanged children. Neither population is rendered, so it excludes native
+registration metadata allocated by first render.
+
+| Process field | Objects: built | Arena: built | Objects: originals + edits | Arena: originals + edits |
+| --- | ---: | ---: | ---: | ---: |
+| `heapUsed` | 15.742 | 12.287 | 29.170 | 24.562 |
+| `heapTotal` | 18.250 | 19.750 | 29.750 | 32.000 |
+| `external` | 0.000 | 4.027 | 0.000 | 8.027 |
+| `arrayBuffers` (part of `external`) | 0.000 | 4.027 | 0.000 | 8.027 |
+| RSS | 0.016 | 0.391 | 2.625 | 6.798 |
+| `heapUsed` + `external` | 15.742 | 16.314 | 29.170 | 32.589 |
+
+Arena lowers JS heap usage, but heap plus external memory is 3.6% higher for
+built roots and 11.7% higher with both snapshots. These process observations
+do not provide complete native retained-memory accounting. RSS reflects
+allocator reuse; array buffers must not be added to external memory again.
+Exact occupied bytes, capacity and chunk slack equal the historical table
+below. Generic cell size, chunk slack, registration accounting, bounded
+inline children and broader workloads remain open before public cutover.
+
+[Raw paired samples](../results/2026-10-22-eager-optimized-storage-darwin-arm64.json),
+[independently recomputed statistics](../results/2026-10-22-eager-optimized-analysis.json),
+and [source/native provenance and checks](../results/2026-10-22-eager-optimized-provenance.json)
+retain this run separately from the historical baseline. Its absolute
+old/new timings include both runtime changes and a different native release
+profile, so they cannot isolate the effect of either change.
 
 ## Historical baseline
 
@@ -172,7 +248,8 @@ stays native under both modes. No JS node inspection runs inside the pipeline.
 
 The build increase is accepted for this stage. This revision's render
 regression prompted the optimization work above; the measurements below
-preserve its baseline. Final-source render acceptance remains pending.
+preserve its baseline. The current paired run above confirms render parity
+for the optimized prototype.
 
 This does not supersede the separate corpus validator results. Those measure
 parsed storage, while both public factory settings still construct objects.
