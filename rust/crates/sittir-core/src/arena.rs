@@ -33,7 +33,7 @@ pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
-pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
+pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot, write_inline_slot};
 pub use rows::TreeArena;
 pub use side::{Row, SideRecord, SideSlot, Sides};
 

@@ -180,12 +180,16 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 }
 
 /** The value of the one-cell slot at the generated `word` offset of the record `holder` views, as read data. */
-export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number): unknown {
+export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): unknown {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
 	const { words, start } = wordsAt(records, at, word + width);
-	return cellData(holder, tree, decodeCell(words, start + word, records.format));
+	return cellData(
+		holder,
+		tree,
+		decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word)
+	);
 }
 
 /** The items of the list slot at the generated `word` offset of the record `holder` views, each as read data. */
@@ -194,12 +198,13 @@ export function recordSlots(
 	tree: TreeHandle,
 	word: number,
 	width: number,
-	run?: number
+	run?: number,
+	inline = 0
 ): readonly unknown[] {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
-	if (run === undefined) return [recordSlot(holder, tree, word, width)].filter((item) => item !== undefined);
+	if (run === undefined) return [recordSlot(holder, tree, word, width, inline)].filter((item) => item !== undefined);
 	const { words, start } = wordsAt(records, at, word + width);
 	const list = decodeListCell(words, start + word);
 	if (list.len === 0) return [];
@@ -218,23 +223,31 @@ export function recordItems(
 	word: number,
 	width: number,
 	run: number | undefined,
-	hydrateOne: (data: unknown) => unknown
+	hydrateOne: (data: unknown) => unknown,
+	inline = 0
 ): readonly unknown[] {
 	let read = itemsRead.get(holder);
 	if (read === undefined) itemsRead.set(holder, (read = new Map()));
 	const known = read.get(word);
 	if (known !== undefined) return known;
-	const items = Object.freeze(recordSlots(holder, tree, word, width, run).map(hydrateOne));
+	const items = Object.freeze(recordSlots(holder, tree, word, width, run, inline).map(hydrateOne));
 	read.set(word, items);
 	return items;
 }
 
 /** The number of items the list slot at the generated `word` offset of the record `holder` views holds. */
-export function recordLength(holder: object, tree: TreeHandle, word: number, width: number, run?: number): number {
+export function recordLength(
+	holder: object,
+	tree: TreeHandle,
+	word: number,
+	width: number,
+	run?: number,
+	inline = 0
+): number {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
-	if (run === undefined) return recordSlot(holder, tree, word, width) === undefined ? 0 : 1;
+	if (run === undefined) return recordSlot(holder, tree, word, width, inline) === undefined ? 0 : 1;
 	const { words, start } = wordsAt(records, at, word + width);
 	return decodeListCell(words, start + word).len;
 }

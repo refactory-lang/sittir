@@ -293,7 +293,7 @@ impl<'r, T> RecordAt<'r, T> {
     /// some.
     #[must_use]
     pub fn slot<N>(&self, word: u32, width: u32, run: Option<u32>) -> SlotAt<'r, T, N> {
-        SlotAt { key: self.key, word, width, run, node: PhantomData }
+        SlotAt { key: self.key, word, width, run, inline: 0, node: PhantomData }
     }
 
     /// The handle of one of the record's print settings.
@@ -460,7 +460,16 @@ pub struct SlotAt<'r, T, N> {
     word: u32,
     width: u32,
     run: Option<u32>,
+    inline: u32,
     node: Marker<'r, (T, N)>,
+}
+
+impl<T, N> SlotAt<'_, T, N> {
+    #[must_use]
+    pub fn inlined(mut self, capacity: u32) -> Self {
+        self.inline = capacity;
+        self
+    }
 }
 
 /// One present item of a slot: its cell, its site, and its row when it names
@@ -525,7 +534,7 @@ impl<T, N> SlotAt<'_, T, N> {
             Ok(Some(Item { at, site, row: view.parsed_row(cell)? }))
         };
         match self.run {
-            None => Ok(Items::One([item(Cell::decode(view.words(at, self.width)?)?, 0)?])),
+            None => Ok(Items::One([item(Cell::decode_slot(view.words(at, self.width)?, at, self.inline)?, 0)?])),
             Some(run) => {
                 let list = ListCell::decode(view.words(at, ListCell::WIDTH)?)?;
                 list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(Cell::decode(words)?, at)).collect::<Result<_, _>>().map(Items::Many)
@@ -763,9 +772,10 @@ pub fn own_seat<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, table: &[
 /// content's seat (`coord_seat`) fills the wrapper's own edges; a built
 /// one's is its type's.
 #[must_use]
-pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, word: u32, width: u32, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
+pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, cell: super::CellShape, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
+    if cell.run.is_some() { return None; }
     let key = RecordKey::of(prep, at, kind).ok()?;
-    let slot = SlotAt::<T, C> { key, word, width, run: None, node: PhantomData };
+    let slot = SlotAt::<T, C> { key, word: cell.word, width: cell.width, run: None, inline: cell.inline, node: PhantomData };
     let content = *slot.present(prep).first()?;
     match content.row {
         Some(row) => {

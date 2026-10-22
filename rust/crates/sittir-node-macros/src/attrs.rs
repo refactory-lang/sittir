@@ -63,6 +63,7 @@ pub struct CellStamp {
     pub width: Option<u32>,
     pub run: Option<u32>,
     pub bit: Option<u32>,
+    pub inline: Option<u32>,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -228,6 +229,7 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "width" => out.cell.width = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "run" => out.cell.run = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "bit" => out.cell.bit = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "inline" => out.cell.inline = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "seated" => out.seated = true,
             "defaulted" => out.defaulted = true,
             _ => return Err(meta.error("unknown `slot` attribute")),

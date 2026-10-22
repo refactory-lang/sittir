@@ -988,7 +988,23 @@ The cell tags and the address packing a record's words are read with, taken from
 
 ### `packages/common/src/record-cell.ts::decodeCell`
 
-One slot's cell read from a record's words, as `arena::cell::Cell::decode` reads it. Kind 0 under the parsed-leaf tag is a captured string's span (`parsedText`), and under the built-leaf tag its string-table text (`builtText`). A child's tree word is the tree plus one, 0 for the cell's own arena. A unit's row word is the row plus one, 0 for a built unit or a blank arm. A child's last word is its site's changed edges, leading in bit 0 and trailing in bit 1. The words come from a chunk copy native wrote, so the decoder refuses only what it can't read (an unknown tag, a cell running past the words) and leaves bounds and kind checks to the native codec, which never writes a malformed cell.
+Decodes a slot from its bounded word slice using the constants of the loaded native codec. An inline tag requires the emitted child capacity and the scalar cell's packed address; it resolves the embedded record relative to that address, within the same chunk. Native admission checks the child's actual shape against the capacity and enforces allocation ordering before render. Ordinary leaf, coordinate, pointer, text and unit forms retain their existing meanings. Public record accessors bound the slice to the emitted width so a field cannot read a neighboring cell.
+
+### `packages/common/src/record-cell.ts::RecordCodecConstants`
+
+The required numeric codec exports supplied by each native addon. JavaScript validates this complete surface before decoding; inline tag/header constants and side-field sizes therefore come from the native representation rather than a second table.
+
+### `packages/common/src/record-cell.ts::CellFormat`
+
+The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing and ordered side fields. Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
+
+### `packages/common/src/record-cell.ts::RecordCell`
+
+The decoded cell forms consumed by record views. Ordinary and bounded-inline compound cells both resolve to a child address, with origin-link and changed-edge information retained; byte spans and built-text references keep their distinct provenance.
+
+### `packages/common/src/record-cell.ts::decodeSideDelimiter`
+
+Reads an optional delimiter setting from a side record. Its offset is the mask-selected sum of the preceding native-stamped side fields. It returns undefined when the field is absent and rejects truncated records.
 
 ### `packages/common/src/source-stamp.ts::stampSource`
 
@@ -1008,7 +1024,7 @@ Stamps `to` with the source stamp `from` holds, when it holds one, and returns `
 
 ### `packages/common/src/record-view.ts::recordSlot`
 
-Reads one cell using the emitted numeric word offset and cell width. The width bounds the word slice before the shared decoder maps the cell to read data; it does not consult generated layout descriptors at runtime.
+Reads a scalar using emitted literal word, width and optional inline capacity. The slot's bounded word slice and packed address go to the shared decoder; no runtime layout descriptor is read. The resulting coordinate, leaf, unit or child is mapped to the same read data as the object path.
 
 ### `packages/common/src/record-view.ts::recordSlots`
 

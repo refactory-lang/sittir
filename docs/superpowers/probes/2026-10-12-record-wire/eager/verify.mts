@@ -163,6 +163,13 @@ for (const mode of ['object', 'arena']) {
   allocationRoot.render();
   allocationCalls[mode] = allocationRoot.render().allocationCalls;
   const { store, build } = setup(mode, 16);
+  const refuseGenericWrite = () => {
+    throw new Error('generated construction must use direct stores');
+  };
+  Object.defineProperties(store, {
+    put: { value: refuseGenericWrite },
+    prepare: { value: refuseGenericWrite }
+  });
   const name = build.identifier('shared');
   const parameters = build.parameters();
   const body = build.block({ trailing_expression: build.identifier('x') });
@@ -175,7 +182,20 @@ for (const mode of ['object', 'arena']) {
   assert.equal(second.name().text(), 'shared');
   const replaced = first.$with.name(renamed);
   assert.notEqual(store.identity(first), store.identity(replaced));
-  assert.equal(store.identity(replaced.parameters()), store.identity(parameters));
+  if (mode === 'arena') {
+    assert.equal(
+      store.identity(replaced.parameters()),
+      store.identity(replaced) + records.FunctionItemNode.parameters.word + grammarNative.CELL_INLINE_HEADER_WORDS
+    );
+    assert.notEqual(store.identity(replaced.parameters()), store.identity(parameters));
+    assert.equal(
+      replaced.parameters().render().text,
+      parameters.render().text,
+      'a bounded child copies its immutable value'
+    );
+  } else {
+    assert.equal(store.identity(replaced.parameters()), store.identity(parameters));
+  }
   assert.equal(store.identity(replaced.body()), store.identity(body));
   assert.equal(first.render().text, original);
   assert.equal(second.render().text, original);

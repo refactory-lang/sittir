@@ -2338,13 +2338,13 @@ fn prepare_capture<N: CapturePrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 7, fields = StringFields, prepare = StringPrepare, view = StringNodeRecord, prepare_fn = prepare_string)]
+#[node(kind = kind::STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 8, fields = StringFields, prepare = StringPrepare, view = StringNodeRecord, prepare_fn = prepare_string)]
 pub struct StringNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_string_content")]
-    #[slot(field = field::STRING_CONTENT, word = 2, width = 5)]
+    #[slot(field = field::STRING_CONTENT, word = 2, width = 6, inline = 4)]
     pub string_content: Option<::sittir_core::SlotValue<StringContentNode>>,
 }
 
@@ -2411,13 +2411,13 @@ fn prepare_string<N: StringPrepare + ?Sized>(node: &mut N, overlay: &mut N::Over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 7, fields = ImmediateStringFields, prepare = ImmediateStringPrepare, view = ImmediateStringNodeRecord, prepare_fn = prepare_immediate_string)]
+#[node(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE | kind::DQUOTE2], words = 8, fields = ImmediateStringFields, prepare = ImmediateStringPrepare, view = ImmediateStringNodeRecord, prepare_fn = prepare_immediate_string)]
 pub struct ImmediateStringNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_string_content")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 6, inline = 4)]
     pub string_content: Option<::sittir_core::SlotValue<StringContentNode>>,
 }
 
@@ -2885,19 +2885,19 @@ fn prepare_grouping<N: GroupingPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], words = 9, fields = MissingNodeFields, prepare = MissingNodePrepare, view = MissingNodeNodeRecord, prepare_fn = prepare_missing_node)]
+#[node(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], words = 14, fields = MissingNodeFields, prepare = MissingNodePrepare, view = MissingNodeNodeRecord, prepare_fn = prepare_missing_node)]
 pub struct MissingNodeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5)]
+    #[slot(field = field::NAME, word = 2, width = 10, inline = 8)]
     pub name: Option<::sittir_core::SlotValue<MissingNodeNameNodeSlot>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 7, width = 2, run = 5, seated)]
+    #[slot(field = field::ELEMENTS, word = 12, width = 2, run = 5, seated)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementNode>>,
     #[wire(key = "_elements_separator_space")]
-    #[space(slot = 7, side = after, site = options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 12, side = after, site = options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE)]
     pub elements_separator_space: Option<KindId>,
 }
 
@@ -2968,19 +2968,19 @@ fn prepare_missing_node<N: MissingNodePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ANONYMOUS_NODE, words = 9, fields = AnonymousNodeFields, prepare = AnonymousNodePrepare, view = AnonymousNodeNodeRecord, prepare_fn = prepare_anonymous_node)]
+#[node(kind = kind::ANONYMOUS_NODE, words = 14, fields = AnonymousNodeFields, prepare = AnonymousNodePrepare, view = AnonymousNodeNodeRecord, prepare_fn = prepare_anonymous_node)]
 pub struct AnonymousNodeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5)]
+    #[slot(field = field::NAME, word = 2, width = 10, inline = 8)]
     pub name: ::sittir_core::SlotValue<AnonymousNodeNameNodeSlot>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 7, width = 2, run = 5, seated)]
+    #[slot(field = field::ELEMENTS, word = 12, width = 2, run = 5, seated)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementNode>>,
     #[wire(key = "_elements_separator_space")]
-    #[space(slot = 7, side = after, site = options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 12, side = after, site = options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE)]
     pub elements_separator_space: Option<KindId>,
 }
 
@@ -3201,7 +3201,7 @@ fn prepare_negated_field<N: NegatedFieldPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PREDICATE, layout = [kind::LPAREN, kind::RPAREN], words = 22, fields = PredicateFields, prepare = PredicatePrepare, view = PredicateNodeRecord, prepare_fn = prepare_predicate)]
+#[node(kind = kind::PREDICATE, layout = [kind::LPAREN, kind::RPAREN], words = 23, fields = PredicateFields, prepare = PredicatePrepare, view = PredicateNodeRecord, prepare_fn = prepare_predicate)]
 pub struct PredicateNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3216,7 +3216,7 @@ pub struct PredicateNode {
     #[slot(field = field::TYPE, word = 12, width = 5)]
     pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 17, width = 5)]
+    #[slot(field = field::PARAMETERS, word = 17, width = 6, inline = 4)]
     pub parameters: Option<::sittir_core::SlotValue<ParametersNode>>,
 }
 
@@ -3810,7 +3810,7 @@ fn prepare_named_node_plain<N: NamedNodePlainPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN], words = 19, fields = NamedNodeSupertypedFields, prepare = NamedNodeSupertypedPrepare, view = NamedNodeSupertypedNodeRecord, prepare_fn = prepare_named_node_supertyped)]
+#[node(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN], words = 24, fields = NamedNodeSupertypedFields, prepare = NamedNodeSupertypedPrepare, view = NamedNodeSupertypedNodeRecord, prepare_fn = prepare_named_node_supertyped)]
 pub struct NamedNodeSupertypedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3819,16 +3819,16 @@ pub struct NamedNodeSupertypedNode {
     #[slot(field = field::SUPERTYPE, word = 2, width = 5)]
     pub supertype: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 7, width = 5)]
+    #[slot(field = field::NAME, word = 7, width = 10, inline = 8)]
     pub name: ::sittir_core::SlotValue<NamedNodeSupertypedNameNodeSlot, true>,
     #[wire(key = "_named_node_group")]
-    #[slot(word = 12, width = 5)]
+    #[slot(word = 17, width = 5)]
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupNode>>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 17, width = 2, run = 5, seated)]
+    #[slot(field = field::ELEMENTS, word = 22, width = 2, run = 5, seated)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementNode>>,
     #[wire(key = "_elements_separator_space")]
-    #[space(slot = 17, side = after, site = options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 22, side = after, site = options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE)]
     pub elements_separator_space: Option<KindId>,
 }
 

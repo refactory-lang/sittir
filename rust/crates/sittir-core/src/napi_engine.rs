@@ -591,6 +591,12 @@ macro_rules! napi_engine {
             /// The tag word of a built leaf's cell, and of a built captured string's.
             #[::napi_derive::napi]
             pub const CELL_TAG_BUILT_LEAF: u32 = $crate::arena::cell::tag::BUILT_LEAF;
+            /// The tag word of an embedded bounded child's record.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::tag::INLINE;
+            /// Words before an embedded child's own record header.
+            #[::napi_derive::napi]
+            pub const CELL_INLINE_HEADER_WORDS: u32 = $crate::arena::cell::INLINE_HEADER_WORDS;
             /// The bits of a packed record address or string offset below its
             /// chunk (`arena::CHUNK_SHIFT`).
             #[::napi_derive::napi]

@@ -36,6 +36,9 @@ fn slot_write(field: &Field<'_>, slot: &SlotAttrs, capture: Option<usize>, layou
         return Ok(quote!(::sittir_core::arena::write_list(__sink, #run, self.#name.iter(), #layout_of, #key)?.encode(&mut __words[#at..#end])?;));
     }
     let Some(capture) = capture else {
+          if slot.cell.inline.is_some() {
+              return Ok(quote!(::sittir_core::arena::write_inline_slot(__sink, &self.#name, #layout_of, #key, #word, &mut __words[#at..#end])?;));
+          }
         return Ok(quote!(::sittir_core::arena::write_slot(__sink, &self.#name, #layout_of, #key)?.encode(&mut __words[#at..#end])?;));
     };
     let span = quote!(__spans.get(#capture).copied().flatten());
@@ -147,14 +150,10 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             )
     }, quote! {
         fn hydrate_records(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<(), ::sittir_core::arena::ArenaError> {
-            let __content = __sink.hydrate_children(#layout_of, |__sink| {
+            __sink.hydrate_record(#layout_of, |__sink| ::sittir_core::arena::WriteCell::write_cell(self, __sink), |__sink| {
                 #(#hydrates)*
                 ::core::result::Result::Ok(())
-            })?;
-            if !__content {
-                ::sittir_core::arena::WriteCell::write_cell(self, __sink)?;
-            }
-            ::core::result::Result::Ok(())
+            })
         }
     }))
 }

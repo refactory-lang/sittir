@@ -89,12 +89,17 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
             let (word, start, end) = cell_at(slot)?;
             let (node, adjacent) = held(ty).ok_or_else(|| syn::Error::new_spanned(ty, "a child slot holds a `SlotValue<…>`"))?;
             let view = view_of(node);
+              let read = if let Some(inline) = slot.cell.inline {
+                  quote!(::sittir_core::arena::RecordSlot::of_inline(self.__layout.context(), site, &self.__words[#start..#end], self.__at.offset(#word).unwrap_or(::sittir_core::arena::Address::NONE), #inline))
+              } else {
+                  quote!(::sittir_core::arena::RecordSlot::of(self.__layout.context(), site, &self.__words[#start..#end]))
+              };
             ViewField {
                 accessor: quote! {
                     type #assoc<'b> = ::sittir_core::arena::RecordSlot<'a, #trivia, #view, #adjacent> where Self: 'b;
                     fn #name(&self) -> Self::#assoc<'_> {
                         let site = ::sittir_core::trivia_store::Site { holder: self.__layout.place(), word: #word, item: ::sittir_core::types::ItemIndex(0) };
-                        ::sittir_core::arena::RecordSlot::of(self.__layout.context(), site, &self.__words[#start..#end])
+                        #read
                     }
                 },
                 ..ViewField::default()
@@ -234,7 +239,10 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         )
     } else {
         let refused = malformed("child cell");
-        let (words_member, words_init) = if reads_words { (quote!(__words: &'a [u32],), quote!(__words: words,)) } else { (TokenStream::new(), TokenStream::new()) };
+        let reads_inline = fields.iter().any(|field| matches!(&field.role, Role::Slot(slot) if slot.cell.inline.is_some()));
+        let at_member = reads_inline.then(|| quote!(__at: ::sittir_core::arena::Address,));
+        let at_init = reads_inline.then(|| quote!(__at: at,));
+        let (words_member, words_init) = if reads_words { (quote!(__words: &'a [u32], #at_member), quote!(__words: words, #at_init)) } else { (TokenStream::new(), TokenStream::new()) };
         (
             quote!(#common #words_member #(#members)*),
             quote! {
@@ -263,8 +271,9 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let cells = fields.iter().filter_map(|field| match (&field.role, shape(field)) {
         (Role::Slot(slot), Ok(Shape::Child | Shape::OptionalChild | Shape::Items | Shape::Text | Shape::OptionalText)) => slot.cell.word.map(|word| {
             let width = slot.cell.width.unwrap_or(1);
+              let inline = slot.cell.inline.unwrap_or(0);
             let run = slot.cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-            quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run })
+              quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, inline: #inline })
         }),
         _ => None,
     });

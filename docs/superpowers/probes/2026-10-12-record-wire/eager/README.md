@@ -9,7 +9,7 @@ layout, admission sets and renderer.
 It generates 243 Rust grammar builders and views, including `function_item`
 and its slot kinds. Object and arena builders use the same own-literal
 accessor and `$with` surface. Views own their address and resolve the owner through one weak registry; their methods do not capture a per-node store/reference pair. There are no node prototypes. The record form
-writes directly into JS-owned word and UTF-8 chunks at construction. Each record receives one writable cursor, reused at its literal slot offsets. Published views retain no writable cursor. Built text is interned once per arena, and text access retains the original builder string, including strings whose UTF-8 form replaces a lone surrogate. A native
+writes directly into JS-owned word and UTF-8 chunks at construction. Each record receives one writable cursor; generated stores write literal slot offsets, widths, flags and admitted forms directly. List runs are allocated before the parent record, and shared helpers handle allocation, ownership and text interning. Published views retain no writable cursor. Built text is interned once per arena, and text access retains the original builder string, including strings whose UTF-8 form replaces a lone surrogate. A native
 registration retains the typed arrays; each synchronous render borrows fresh
 spans from only the chunks it visits, bounded by their current written prefixes.
 No borrowed span survives the call. The object form
@@ -19,9 +19,11 @@ encoder or JS inspection walk runs at render.
 This is measurement code, separate from the public engine builders. Inputs
 are already validated strict inputs; the probe reuses requiredness and slot
 admission, but does not reproduce loose coercion, lexical guards, queries,
-trivia or the complete public node API. It uses the current packed cell
-layout, including its five-word child cells; bounded inline children, parsed
-links and record reclamation remain further work. Object storage remains the
+trivia or the complete public node API. It uses the canonical packed layout: bounded child records occupy stamped
+inline capacities, while list runs, recursive children and string bytes remain
+out of line. Inline records retain a side address for metadata; they do not
+store a child pointer. Parsed links and record reclamation remain further work
+for this eager probe. Object storage remains the
 public construction path. These results cannot establish definitive cutover
 readiness or replace the full corpus validator comparisons.
 
@@ -44,7 +46,7 @@ derivation. Generated builders are script-owned.
 
 Verification covers paired render bytes, native full-depth reparses, Unicode,
 text deduplication, original-string retention, own numeric addresses, presence bits, receiver-new-node `$with`, explicit ancestor replacement,
-unchanged child identity, retained views across 10,000 builds, oversized
+recursive child identity, bounded-child value copies, retained views across 10,000 builds, oversized
 list runs, stable chunks, and an empty string following a full string chunk.
 The native entries reject malformed words, invalid numeric addresses and
 shared buffers. Registered buffers are checked again for detach, resize and
@@ -54,7 +56,9 @@ children. A typed-array view's byte offset is respected.
 
 `$with` returns a new receiver. Editing a child leaves every existing parent
 pointing at the original child; a parent changes only when explicitly rebuilt.
-Unchanged child addresses are shared. There is no in-place record update.
+Unchanged recursive child addresses are shared. Bounded child records are
+copied into the new parent, including immutable replacement. There is no
+in-place record update.
 The JS storage owner retains its append-only chunks while any of its views
 remain live; this probe does not reclaim individual dead records.
 
@@ -130,19 +134,30 @@ workspace profile: fat LTO and one codegen unit. Both storage modes use that
 same addon. The historical baseline below used LTO off and 16 codegen units;
 absolute old/new timings cannot isolate the effect of the runtime changes.
 
-Source review found no actionable issues for this measurement prototype.
-The full project checks pass: five-grammar regeneration, TypeScript, lint,
-four Clippy configurations, 451 object Rust tests, 564 arena Rust tests,
-29 reader-debug tests and 812 Vitest files (8,199 ordinary passes, seven
-expected-failure cases, 19 skipped, four todo). Complete reports equal the
-pinned baseline and both storages: 193 normalized rows, +0/−0, with all 29
-raw count fields per grammar unchanged. Focused core/macro/Clippy checks and
-fresh native builds also passed after formatting the new scratch helper.
+The current inline milestone stamps 428 bounded slots across all five grammars
+(Rust 152, Python 79, TypeScript 171, regex 20, scm 6). The largest record is
+88 words. Rust's function record is now 77 words, so replacing its name copies
+308 bytes of root record rather than the preceding layout's 168 bytes. This
+fixed capacity includes absent bounded variants. Already built bounded inputs
+also remain in the append-only owner after their values are copied into parents;
+inline storage does not guarantee lower retained memory.
 
-The final five-pair run below confirms render parity for this prototype.
-Public eager builders and definitive cutover remain further work.
+Source review found no actionable issues for this milestone. Fresh checks pass:
+five-grammar regeneration, the full workspace release build, all TypeScript
+lanes, root and scoped probe lint/format, four strict workspace Clippy
+configurations plus probe Clippy, 451 object Rust tests, 571 arena Rust tests,
+29 reader-debug tests, and 812 Vitest files (8,206 ordinary passes, seven expected
+failures, 19 skipped, four todo). Complete compiled-runtime reports match the
+pinned baseline and each other: 193 normalized rows, +0/−0, and all 29 numeric
+count fields per grammar remain unchanged. The private addon passes paired
+rendering, native full-depth reparse and retained-view checks across 10,000 builds.
 
-## Current paired measurements
+The preceding measurements below predate bounded inline storage and fully
+specialized stores. Public eager builders and definitive cutover remain further
+work. Native parsed hydration still uses the typed Rust reader followed by
+record encoding; the eager builder itself writes records directly.
+
+## Previous literal-slot measurements
 
 Runtime revision `7327f49790bd2dcdb2bf81a5421e67fb19873f17`, Apple M4 Pro,
 Darwin 27.2.0 arm64, Node v26.12.0. This run includes literal public accessor

@@ -148,7 +148,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     let record = N::shape(kind)
                         .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
                     let first = pending.len();
-                    super::admit::for_each_cell(self.tree_arena().arena(), at, record, |child| {
+                    super::admit::for_each_cell(self.tree_arena().arena(), at, record, at, |child, _| {
                         pending.push(child);
                         Ok(())
                     })

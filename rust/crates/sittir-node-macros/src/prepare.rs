@@ -67,7 +67,8 @@ fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenS
                 return Err(syn::Error::new_spanned(ident, format!("`{ident}` is a prepared slot of a record, so it has its cell's word and width")));
             };
             let run = slot.cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-            Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#word, #width, #run))))
+            let inline = slot.cell.inline.map(|inline| quote!(.inlined(#inline)));
+            Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#word, #width, #run)#inline)))
         }
         Role::Flank(_) => setting(quote!(Delimiter)),
         Role::SeparatorKind(_) => setting(quote!(SeparatorKind)),

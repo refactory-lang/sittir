@@ -37,7 +37,7 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
     }
     for &(ident, ty, stamp) in slots {
         let Some(word) = stamp.word else {
-            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() {
+            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.inline.is_some() {
                 return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `word`")));
             }
             continue;
@@ -47,6 +47,13 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
         };
         let message = format!("{owner}.{ident}: its record cell overlaps the header");
         asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
+        if let Some(inline) = stamp.inline {
+            let Some(width) = stamp.width.filter(|_| stamp.bit.is_none() && stamp.run.is_none()) else {
+                return Err(syn::Error::new_spanned(ident, "only a scalar child has inline record capacity"));
+            };
+            let message = format!("{owner}.{ident}: its inline record capacity fits its cell");
+            asserts.push(quote!(::sittir_core::records_codec! { const _: () = assert!(#inline >= ::sittir_core::record::HEADER_WORDS && #inline <= #width.saturating_sub(::sittir_core::arena::cell::INLINE_HEADER_WORDS), #message); }));
+        }
         let place = match (stamp.bit, stamp.width) {
             (Some(bit), None) if bit < 32 => {
                 let message = format!("{owner}.{ident}: a stamped bit holds only a presence");

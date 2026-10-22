@@ -487,8 +487,11 @@ fn envelope_and_content(tree: &ParsedTree<sittir_typescript::TypeScriptGrammar>)
         .expect("an interface body");
     let arena = tree.tree_arena();
     let envelope = arena.record(row).expect("the envelope's record");
-    let words = arena.arena().words(envelope, 7).expect("its words");
-    let Ok(Cell::Child { at, .. }) = Cell::decode(&words[2..7]) else { panic!("its content is a record") };
+    let shape = <sittir_typescript::render::AnyNode as sittir_core::arena::RecordCells>::shape(ts::_INTERFACE_BODY).expect("the envelope's generated shape");
+    let [place] = shape.cells else { panic!("an envelope has one content cell") };
+    let slot = envelope.offset(place.word).expect("the content slot");
+    let words = arena.arena().words(slot, place.width).expect("its stamped cell");
+    let Ok(Cell::Child { at, .. }) = Cell::decode_slot(words, slot, place.inline) else { panic!("its content is a record") };
     (row, envelope, at)
 }
 

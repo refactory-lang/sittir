@@ -71,18 +71,32 @@ function hydrateSlot<T>(node: object, key: string, tree: TreeHandle, role?: Role
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];
 }
-function viewSlot<T>(view: object, tree: TreeHandle, word: number, width: number, role?: Role): ParsedOfData<T> {
-	return hydrateWith(recordSlot(view, tree, word, width), tree, _wrap, undefined, role) as ParsedOfData<T>;
+function viewSlot<T>(
+	view: object,
+	tree: TreeHandle,
+	word: number,
+	width: number,
+	inline = 0,
+	role?: Role
+): ParsedOfData<T> {
+	return hydrateWith(recordSlot(view, tree, word, width, inline), tree, _wrap, undefined, role) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: object,
 	tree: TreeHandle,
 	word: number,
 	width: number,
-	run?: number
+	run?: number,
+	inline = 0
 ): readonly ParsedOfData<T>[] {
-	return recordItems(view, tree, word, width, run, (data) =>
-		hydrateWith(data, tree, _wrap)
+	return recordItems(
+		view,
+		tree,
+		word,
+		width,
+		run,
+		(data) => hydrateWith(data, tree, _wrap),
+		inline
 	) as readonly ParsedOfData<T>[];
 }
 
@@ -10194,10 +10208,10 @@ function viewProgram(data: RecordStub, tree: TreeHandle): T.Program.Parsed {
 		...data,
 		$type: TSKindId.Program as const,
 		hashBangLine() {
-			return viewSlot<T.HashBangLine | undefined>(this, tree, 2, 5);
+			return viewSlot<T.HashBangLine | undefined>(this, tree, 2, 8, 6);
 		},
 		statements() {
-			return viewSlots<T.Statement>(this, tree, 7, 2, 5);
+			return viewSlots<T.Statement>(this, tree, 10, 2, 5, 0);
 		},
 		$with: {
 			hashBangLine: (...args: unknown[]) => rowWith(node, tree, _wrap, 'hashBangLine', args),
@@ -10223,7 +10237,7 @@ function viewHashBangLine(data: RecordStub, tree: TreeHandle): T.HashBangLine.Pa
 		...data,
 		$type: TSKindId.HashBangLine as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -10247,7 +10261,7 @@ function viewNamespaceExport(data: RecordStub, tree: TreeHandle): T.NamespaceExp
 		...data,
 		$type: TSKindId.NamespaceExport as const,
 		moduleExportName() {
-			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			moduleExportName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'moduleExportName', args)
@@ -10267,12 +10281,12 @@ function viewNamespaceExport(data: RecordStub, tree: TreeHandle): T.NamespaceExp
 
 function viewExportClause(data: RecordStub, tree: TreeHandle): T.ExportClause.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ExportClause as const,
 		exportSpecifiers() {
-			return viewSlot<T.ExportSpecifiers | undefined>(this, tree, 2, 5);
+			return viewSlot<T.ExportSpecifiers | undefined>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			exportSpecifiers: (...args: unknown[]) => rowWith(node, tree, _wrap, 'exportSpecifiers', args)
@@ -10311,13 +10325,13 @@ function viewExportSpecifier(data: RecordStub, tree: TreeHandle): T.ExportSpecif
 		...data,
 		$type: TSKindId.ExportSpecifier as const,
 		exportKind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, tree, 7, 5);
+			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, tree, 7, 6, 4);
 		},
 		alias() {
-			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword | undefined>(this, tree, 12, 5);
+			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword | undefined>(this, tree, 13, 6, 4);
 		},
 		$with: {
 			exportKind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'exportKind', args),
@@ -10343,16 +10357,16 @@ function viewImportStatement(data: RecordStub, tree: TreeHandle): T.ImportStatem
 		...data,
 		$type: TSKindId.ImportStatement as const,
 		importClause() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		fromClause() {
-			return viewSlot<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>(this, tree, 7, 5);
+			return viewSlot<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>(this, tree, 7, 37, 35);
 		},
 		importAttribute() {
-			return viewSlot<T.ImportAttribute | undefined>(this, tree, 12, 5);
+			return viewSlot<T.ImportAttribute | undefined>(this, tree, 44, 15, 13);
 		},
 		terminator() {
-			return recordSlot(this, tree, 17, 5);
+			return recordSlot(this, tree, 59, 5, 0);
 		},
 		$with: {
 			importClause: (...args: unknown[]) => rowWith(node, tree, _wrap, 'importClause', args),
@@ -10379,7 +10393,7 @@ function viewImportClause(data: RecordStub, tree: TreeHandle): T.ImportClause.Pa
 		...data,
 		$type: TSKindId.ImportClause as const,
 		content() {
-			return viewSlot<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(this, tree, 2, 5);
+			return viewSlot<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(this, tree, 2, 23, 21);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -10403,7 +10417,7 @@ function viewNamespaceImport(data: RecordStub, tree: TreeHandle): T.NamespaceImp
 		...data,
 		$type: TSKindId.NamespaceImport as const,
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
@@ -10423,12 +10437,12 @@ function viewNamespaceImport(data: RecordStub, tree: TreeHandle): T.NamespaceImp
 
 function viewNamedImports(data: RecordStub, tree: TreeHandle): T.NamedImports.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.NamedImports as const,
 		importSpecifiers() {
-			return viewSlot<T.ImportSpecifiers | undefined>(this, tree, 2, 5);
+			return viewSlot<T.ImportSpecifiers | undefined>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			importSpecifiers: (...args: unknown[]) => rowWith(node, tree, _wrap, 'importSpecifiers', args)
@@ -10462,10 +10476,10 @@ function viewImportAttribute(data: RecordStub, tree: TreeHandle): T.ImportAttrib
 		...data,
 		$type: TSKindId.ImportAttribute as const,
 		attributeKind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		object() {
-			return viewSlot<T.Object>(this, tree, 7, 5);
+			return viewSlot<T.Object>(this, tree, 7, 6, 4);
 		},
 		$with: {
 			attributeKind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributeKind', args),
@@ -10490,10 +10504,10 @@ function viewExpressionStatement(data: RecordStub, tree: TreeHandle): T.Expressi
 		...data,
 		$type: TSKindId.ExpressionStatement as const,
 		expression() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -10518,10 +10532,10 @@ function viewVariableDeclaration(data: RecordStub, tree: TreeHandle): T.Variable
 		...data,
 		$type: TSKindId.VariableDeclaration as const,
 		declarators() {
-			return viewSlots<T.VariableDeclarator>(this, tree, 2, 2, 5);
+			return viewSlots<T.VariableDeclarator>(this, tree, 2, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 4, 5);
+			return recordSlot(this, tree, 4, 5, 0);
 		},
 		$with: {
 			declarators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'declarators', args),
@@ -10546,13 +10560,13 @@ function viewLexicalDeclaration(data: RecordStub, tree: TreeHandle): T.LexicalDe
 		...data,
 		$type: TSKindId.LexicalDeclaration as const,
 		kind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		declarators() {
-			return viewSlots<T.VariableDeclarator>(this, tree, 7, 2, 5);
+			return viewSlots<T.VariableDeclarator>(this, tree, 7, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 9, 5);
+			return recordSlot(this, tree, 9, 5, 0);
 		},
 		$with: {
 			kind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'kind', args),
@@ -10578,13 +10592,13 @@ function viewUsingDeclaration(data: RecordStub, tree: TreeHandle): T.UsingDeclar
 		...data,
 		$type: TSKindId.UsingDeclaration as const,
 		kind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		variableDeclarators() {
-			return viewSlots<T.VariableDeclarator>(this, tree, 7, 2, 5);
+			return viewSlots<T.VariableDeclarator>(this, tree, 7, 2, 5, 0);
 		},
 		automaticSemicolon() {
-			return recordSlot(this, tree, 9, 5);
+			return recordSlot(this, tree, 9, 5, 0);
 		},
 		$with: {
 			kind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'kind', args),
@@ -10610,10 +10624,10 @@ function viewStatementBlock(data: RecordStub, tree: TreeHandle): T.StatementBloc
 		...data,
 		$type: TSKindId.StatementBlock as const,
 		statements() {
-			return viewSlots<T.Statement>(this, tree, 2, 2, 5);
+			return viewSlots<T.Statement>(this, tree, 2, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 4, 5);
+			return recordSlot(this, tree, 4, 5, 0);
 		},
 		$with: {
 			statements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'statements', args),
@@ -10639,7 +10653,7 @@ function viewElseClause(data: RecordStub, tree: TreeHandle): T.ElseClause.Parsed
 		...data,
 		$type: TSKindId.ElseClause as const,
 		body() {
-			return viewSlot<T.Statement>(this, tree, 2, 5);
+			return viewSlot<T.Statement>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args)
@@ -10663,13 +10677,13 @@ function viewIfStatement(data: RecordStub, tree: TreeHandle): T.IfStatement.Pars
 		...data,
 		$type: TSKindId.IfStatement as const,
 		condition() {
-			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5);
+			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5, 0);
 		},
 		consequence() {
-			return viewSlot<T.Statement>(this, tree, 7, 5);
+			return viewSlot<T.Statement>(this, tree, 7, 5, 0);
 		},
 		alternative() {
-			return viewSlot<T.ElseClause | undefined>(this, tree, 12, 5);
+			return viewSlot<T.ElseClause | undefined>(this, tree, 12, 5, 0);
 		},
 		$with: {
 			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args),
@@ -10695,10 +10709,10 @@ function viewSwitchStatement(data: RecordStub, tree: TreeHandle): T.SwitchStatem
 		...data,
 		$type: TSKindId.SwitchStatement as const,
 		value() {
-			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5);
+			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5, 0);
 		},
 		body() {
-			return viewSlot<T.SwitchBody>(this, tree, 7, 5);
+			return viewSlot<T.SwitchBody>(this, tree, 7, 6, 4);
 		},
 		$with: {
 			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
@@ -10725,16 +10739,16 @@ function viewForStatement(data: RecordStub, tree: TreeHandle): T.ForStatement.Pa
 		initializer() {
 			return viewSlot<
 				T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		condition() {
-			return viewSlot<T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(this, tree, 7, 5);
+			return viewSlot<T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(this, tree, 7, 5, 0);
 		},
 		increment() {
-			return viewSlot<T.Expression | T.SequenceExpression | undefined>(this, tree, 12, 5);
+			return viewSlot<T.Expression | T.SequenceExpression | undefined>(this, tree, 12, 5, 0);
 		},
 		body() {
-			return viewSlot<T.Statement>(this, tree, 17, 5);
+			return viewSlot<T.Statement>(this, tree, 17, 5, 0);
 		},
 		$with: {
 			initializer: (...args: unknown[]) => rowWith(node, tree, _wrap, 'initializer', args),
@@ -10764,10 +10778,10 @@ function viewForInStatement(data: RecordStub, tree: TreeHandle): T.ForInStatemen
 			return recordFlag(this, tree, 2, 0);
 		},
 		header() {
-			return viewSlot<T.ForHeader>(this, tree, 3, 5);
+			return viewSlot<T.ForHeader>(this, tree, 3, 30, 28);
 		},
 		body() {
-			return viewSlot<T.Statement>(this, tree, 8, 5);
+			return viewSlot<T.Statement>(this, tree, 33, 5, 0);
 		},
 		$with: {
 			await: (...args: unknown[]) => rowWith(node, tree, _wrap, 'await', args),
@@ -10793,10 +10807,10 @@ function viewWhileStatement(data: RecordStub, tree: TreeHandle): T.WhileStatemen
 		...data,
 		$type: TSKindId.WhileStatement as const,
 		condition() {
-			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5);
+			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5, 0);
 		},
 		body() {
-			return viewSlot<T.Statement>(this, tree, 7, 5);
+			return viewSlot<T.Statement>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args),
@@ -10821,13 +10835,13 @@ function viewDoStatement(data: RecordStub, tree: TreeHandle): T.DoStatement.Pars
 		...data,
 		$type: TSKindId.DoStatement as const,
 		body() {
-			return viewSlot<T.Statement>(this, tree, 2, 5);
+			return viewSlot<T.Statement>(this, tree, 2, 5, 0);
 		},
 		condition() {
-			return viewSlot<T.ParenthesizedExpression>(this, tree, 7, 5);
+			return viewSlot<T.ParenthesizedExpression>(this, tree, 7, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 12, 5);
+			return recordSlot(this, tree, 12, 5, 0);
 		},
 		$with: {
 			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args),
@@ -10853,13 +10867,13 @@ function viewTryStatement(data: RecordStub, tree: TreeHandle): T.TryStatement.Pa
 		...data,
 		$type: TSKindId.TryStatement as const,
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 2, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 2, 11, 9);
 		},
 		handler() {
-			return viewSlot<T.CatchClause | undefined>(this, tree, 7, 5);
+			return viewSlot<T.CatchClause | undefined>(this, tree, 13, 34, 32);
 		},
 		finalizer() {
-			return viewSlot<T.FinallyClause | undefined>(this, tree, 12, 5);
+			return viewSlot<T.FinallyClause | undefined>(this, tree, 47, 15, 13);
 		},
 		$with: {
 			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args),
@@ -10885,10 +10899,10 @@ function viewWithStatement(data: RecordStub, tree: TreeHandle): T.WithStatement.
 		...data,
 		$type: TSKindId.WithStatement as const,
 		object() {
-			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5);
+			return viewSlot<T.ParenthesizedExpression>(this, tree, 2, 5, 0);
 		},
 		body() {
-			return viewSlot<T.Statement>(this, tree, 7, 5);
+			return viewSlot<T.Statement>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -10913,10 +10927,10 @@ function viewBreakStatement(data: RecordStub, tree: TreeHandle): T.BreakStatemen
 		...data,
 		$type: TSKindId.BreakStatement as const,
 		label() {
-			return viewSlot<T.StatementIdentifier | undefined>(this, tree, 2, 5);
+			return viewSlot<T.StatementIdentifier | undefined>(this, tree, 2, 9, 7);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 11, 5, 0);
 		},
 		$with: {
 			label: (...args: unknown[]) => rowWith(node, tree, _wrap, 'label', args),
@@ -10941,10 +10955,10 @@ function viewContinueStatement(data: RecordStub, tree: TreeHandle): T.ContinueSt
 		...data,
 		$type: TSKindId.ContinueStatement as const,
 		label() {
-			return viewSlot<T.StatementIdentifier | undefined>(this, tree, 2, 5);
+			return viewSlot<T.StatementIdentifier | undefined>(this, tree, 2, 9, 7);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 11, 5, 0);
 		},
 		$with: {
 			label: (...args: unknown[]) => rowWith(node, tree, _wrap, 'label', args),
@@ -10969,7 +10983,7 @@ function viewDebuggerStatement(data: RecordStub, tree: TreeHandle): T.DebuggerSt
 		...data,
 		$type: TSKindId.DebuggerStatement as const,
 		terminator() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		$with: {
 			terminator: (...args: unknown[]) => rowWith(node, tree, _wrap, 'terminator', args)
@@ -10993,10 +11007,10 @@ function viewReturnStatement(data: RecordStub, tree: TreeHandle): T.ReturnStatem
 		...data,
 		$type: TSKindId.ReturnStatement as const,
 		expression() {
-			return viewSlot<T.Expression | T.SequenceExpression | undefined>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.SequenceExpression | undefined>(this, tree, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -11021,10 +11035,10 @@ function viewThrowStatement(data: RecordStub, tree: TreeHandle): T.ThrowStatemen
 		...data,
 		$type: TSKindId.ThrowStatement as const,
 		expression() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -11049,10 +11063,10 @@ function viewLabeledStatement(data: RecordStub, tree: TreeHandle): T.LabeledStat
 		...data,
 		$type: TSKindId.LabeledStatement as const,
 		label() {
-			return viewSlot<T.StatementIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.StatementIdentifier>(this, tree, 2, 9, 7);
 		},
 		body() {
-			return viewSlot<T.Statement>(this, tree, 7, 5);
+			return viewSlot<T.Statement>(this, tree, 11, 5, 0);
 		},
 		$with: {
 			label: (...args: unknown[]) => rowWith(node, tree, _wrap, 'label', args),
@@ -11077,7 +11091,7 @@ function viewSwitchBody(data: RecordStub, tree: TreeHandle): T.SwitchBody.Parsed
 		...data,
 		$type: TSKindId.SwitchBody as const,
 		cases() {
-			return viewSlots<T.SwitchCase | T.SwitchDefault>(this, tree, 2, 2, 5);
+			return viewSlots<T.SwitchCase | T.SwitchDefault>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			cases: (...args: unknown[]) => rowWith(node, tree, _wrap, 'cases', args)
@@ -11102,10 +11116,10 @@ function viewSwitchCase(data: RecordStub, tree: TreeHandle): T.SwitchCase.Parsed
 		...data,
 		$type: TSKindId.SwitchCase as const,
 		value() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5, 0);
 		},
 		bodies() {
-			return viewSlots<T.Statement>(this, tree, 7, 2, 5);
+			return viewSlots<T.Statement>(this, tree, 7, 2, 5, 0);
 		},
 		$with: {
 			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
@@ -11130,7 +11144,7 @@ function viewSwitchDefault(data: RecordStub, tree: TreeHandle): T.SwitchDefault.
 		...data,
 		$type: TSKindId.SwitchDefault as const,
 		bodies() {
-			return viewSlots<T.Statement>(this, tree, 2, 2, 5);
+			return viewSlots<T.Statement>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			bodies: (...args: unknown[]) => rowWith(node, tree, _wrap, 'bodies', args)
@@ -11154,7 +11168,7 @@ function viewFinallyClause(data: RecordStub, tree: TreeHandle): T.FinallyClause.
 		...data,
 		$type: TSKindId.FinallyClause as const,
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 2, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 2, 11, 9);
 		},
 		$with: {
 			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args)
@@ -11178,7 +11192,7 @@ function viewYieldExpression(data: RecordStub, tree: TreeHandle): T.YieldExpress
 		...data,
 		$type: TSKindId.YieldExpression as const,
 		expression() {
-			return viewSlot<T.YieldExpressionDelegate | T.Expression | undefined>(this, tree, 2, 5);
+			return viewSlot<T.YieldExpressionDelegate | T.Expression | undefined>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -11207,7 +11221,8 @@ function viewObject(data: RecordStub, tree: TreeHandle): T.Object.Parsed {
 				tree,
 				2,
 				2,
-				5
+				5,
+				0
 			);
 		},
 		$with: {
@@ -11235,7 +11250,7 @@ function viewObjectPattern(data: RecordStub, tree: TreeHandle): T.ObjectPattern.
 		properties() {
 			return viewSlots<
 				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
-			>(this, tree, 2, 2, 5);
+			>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			properties: (...args: unknown[]) => rowWith(node, tree, _wrap, 'properties', args)
@@ -11260,10 +11275,10 @@ function viewAssignmentPattern(data: RecordStub, tree: TreeHandle): T.Assignment
 		...data,
 		$type: TSKindId.AssignmentPattern as const,
 		left() {
-			return viewSlot<T.Pattern>(this, tree, 2, 5);
+			return viewSlot<T.Pattern>(this, tree, 2, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -11288,10 +11303,10 @@ function viewObjectAssignmentPattern(data: RecordStub, tree: TreeHandle): T.Obje
 		...data,
 		$type: TSKindId.ObjectAssignmentPattern as const,
 		left() {
-			return viewSlot<T.ShorthandPropertyIdentifierPattern | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 5);
+			return viewSlot<T.ShorthandPropertyIdentifierPattern | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 9, 7);
 		},
 		right() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 11, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -11316,7 +11331,7 @@ function viewArray(data: RecordStub, tree: TreeHandle): T.Array.Parsed {
 		...data,
 		$type: TSKindId.Array as const,
 		elements() {
-			return viewSlots<T.Expression | T.SpreadElement>(this, tree, 2, 2, 5);
+			return viewSlots<T.Expression | T.SpreadElement>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -11341,7 +11356,7 @@ function viewArrayPattern(data: RecordStub, tree: TreeHandle): T.ArrayPattern.Pa
 		...data,
 		$type: TSKindId.ArrayPattern as const,
 		elements() {
-			return viewSlots<T.Pattern | T.AssignmentPattern>(this, tree, 2, 2, 5);
+			return viewSlots<T.Pattern | T.AssignmentPattern>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -11366,10 +11381,10 @@ function viewNestedIdentifier(data: RecordStub, tree: TreeHandle): T.NestedIdent
 		...data,
 		$type: TSKindId.NestedIdentifier as const,
 		object() {
-			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 2, 5, 0);
 		},
 		property() {
-			return viewSlot<T.PropertyIdentifier>(this, tree, 7, 5);
+			return viewSlot<T.PropertyIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -11394,19 +11409,19 @@ function viewClass(data: RecordStub, tree: TreeHandle): T.Class.Parsed {
 		...data,
 		$type: TSKindId.Class as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 2, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 2, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.TypeIdentifier | undefined>(this, tree, 4, 5);
+			return viewSlot<T.TypeIdentifier | undefined>(this, tree, 4, 9, 7);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 9, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 13, 10, 8);
 		},
 		heritage() {
-			return viewSlot<T.ClassHeritage | undefined>(this, tree, 14, 5);
+			return viewSlot<T.ClassHeritage | undefined>(this, tree, 23, 20, 18);
 		},
 		body() {
-			return viewSlot<T.ClassBody>(this, tree, 19, 5);
+			return viewSlot<T.ClassBody>(this, tree, 43, 6, 4);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -11434,22 +11449,22 @@ function viewClassDeclaration(data: RecordStub, tree: TreeHandle): T.ClassDeclar
 		...data,
 		$type: TSKindId.ClassDeclaration as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 2, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 2, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 4, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 4, 9, 7);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 9, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 13, 10, 8);
 		},
 		heritage() {
-			return viewSlot<T.ClassHeritage | undefined>(this, tree, 14, 5);
+			return viewSlot<T.ClassHeritage | undefined>(this, tree, 23, 20, 18);
 		},
 		body() {
-			return viewSlot<T.ClassBody>(this, tree, 19, 5);
+			return viewSlot<T.ClassBody>(this, tree, 43, 6, 4);
 		},
 		terminator() {
-			return recordSlot(this, tree, 24, 5);
+			return recordSlot(this, tree, 49, 5, 0);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -11478,7 +11493,7 @@ function viewClassHeritage(data: RecordStub, tree: TreeHandle): T.ClassHeritage.
 		...data,
 		$type: TSKindId.ClassHeritage as const,
 		content() {
-			return viewSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, tree, 2, 5);
+			return viewSlot<T.ClassHeritageExtendsClause | T.ImplementsClause>(this, tree, 2, 16, 14);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -11505,24 +11520,25 @@ function viewFunctionExpression(data: RecordStub, tree: TreeHandle): T.FunctionE
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier | undefined>(this, tree, 3, 5);
+			return viewSlot<T.Identifier | undefined>(this, tree, 3, 5, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 13, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 18, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				18,
-				5
+				28,
+				9,
+				7
 			);
 		},
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 23, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 37, 11, 9);
 		},
 		$with: {
 			async: (...args: unknown[]) => rowWith(node, tree, _wrap, 'async', args),
@@ -11554,27 +11570,28 @@ function viewFunctionDeclaration(data: RecordStub, tree: TreeHandle): T.Function
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 3, 5);
+			return viewSlot<T.Identifier>(this, tree, 3, 5, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 13, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 18, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				18,
-				5
+				28,
+				9,
+				7
 			);
 		},
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 23, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 37, 11, 9);
 		},
 		terminator() {
-			return recordSlot(this, tree, 28, 5);
+			return recordSlot(this, tree, 48, 5, 0);
 		},
 		$with: {
 			async: (...args: unknown[]) => rowWith(node, tree, _wrap, 'async', args),
@@ -11607,24 +11624,25 @@ function viewGeneratorFunction(data: RecordStub, tree: TreeHandle): T.GeneratorF
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier | undefined>(this, tree, 3, 5);
+			return viewSlot<T.Identifier | undefined>(this, tree, 3, 5, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 13, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 18, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				18,
-				5
+				28,
+				9,
+				7
 			);
 		},
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 23, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 37, 11, 9);
 		},
 		$with: {
 			async: (...args: unknown[]) => rowWith(node, tree, _wrap, 'async', args),
@@ -11656,27 +11674,28 @@ function viewGeneratorFunctionDeclaration(data: RecordStub, tree: TreeHandle): T
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 3, 5);
+			return viewSlot<T.Identifier>(this, tree, 3, 5, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 13, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 18, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				18,
-				5
+				28,
+				9,
+				7
 			);
 		},
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 23, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 37, 11, 9);
 		},
 		terminator() {
-			return recordSlot(this, tree, 28, 5);
+			return recordSlot(this, tree, 48, 5, 0);
 		},
 		$with: {
 			async: (...args: unknown[]) => rowWith(node, tree, _wrap, 'async', args),
@@ -11709,10 +11728,10 @@ function viewArrowFunction(data: RecordStub, tree: TreeHandle): T.ArrowFunction.
 			return recordFlag(this, tree, 2, 0);
 		},
 		content() {
-			return viewSlot<T.ArrowFunctionParameter | T.CallSignature>(this, tree, 3, 5);
+			return viewSlot<T.ArrowFunctionParameter | T.CallSignature>(this, tree, 3, 33, 31);
 		},
 		body() {
-			return viewSlot<T.Expression | T.StatementBlock>(this, tree, 8, 5);
+			return viewSlot<T.Expression | T.StatementBlock>(this, tree, 36, 5, 0);
 		},
 		$with: {
 			async: (...args: unknown[]) => rowWith(node, tree, _wrap, 'async', args),
@@ -11738,13 +11757,13 @@ function viewNewExpression(data: RecordStub, tree: TreeHandle): T.NewExpression.
 		...data,
 		$type: TSKindId.NewExpression as const,
 		constructor_() {
-			return viewSlot<T.PrimaryExpression>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryExpression>(this, tree, 2, 5, 0);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 10, 8);
 		},
 		arguments() {
-			return viewSlot<T.Arguments | undefined>(this, tree, 12, 5);
+			return viewSlot<T.Arguments | undefined>(this, tree, 17, 6, 4);
 		},
 		$with: {
 			constructor_: (...args: unknown[]) => rowWith(node, tree, _wrap, 'constructor_', args),
@@ -11770,7 +11789,7 @@ function viewAwaitExpression(data: RecordStub, tree: TreeHandle): T.AwaitExpress
 		...data,
 		$type: TSKindId.AwaitExpression as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -11794,13 +11813,13 @@ function viewMemberExpression(data: RecordStub, tree: TreeHandle): T.MemberExpre
 		...data,
 		$type: TSKindId.MemberExpression as const,
 		object() {
-			return viewSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.PrimaryExpression | TSKindId.Import>(this, tree, 2, 5, 0);
 		},
 		separator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		property() {
-			return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, tree, 12, 5);
+			return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, tree, 12, 9, 7);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -11826,13 +11845,13 @@ function viewSubscriptExpression(data: RecordStub, tree: TreeHandle): T.Subscrip
 		...data,
 		$type: TSKindId.SubscriptExpression as const,
 		object() {
-			return viewSlot<T.Expression | T.PrimaryExpression>(this, tree, 3, 5);
+			return viewSlot<T.Expression | T.PrimaryExpression>(this, tree, 3, 5, 0);
 		},
 		optionalChain() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		index() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 8, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 8, 5, 0);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -11866,7 +11885,7 @@ function viewLhsExpression(data: RecordStub, tree: TreeHandle): T.LhsExpression.
 				| T.ObjectPattern
 				| T.ArrayPattern
 				| T.NonNullExpression
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -11893,10 +11912,10 @@ function viewAssignmentExpression(data: RecordStub, tree: TreeHandle): T.Assignm
 			return recordFlag(this, tree, 2, 0);
 		},
 		left() {
-			return viewSlot<T.ParenthesizedExpression | T.LhsExpression>(this, tree, 3, 5);
+			return viewSlot<T.ParenthesizedExpression | T.LhsExpression>(this, tree, 3, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression>(this, tree, 8, 5);
+			return viewSlot<T.Expression>(this, tree, 8, 5, 0);
 		},
 		$with: {
 			using: (...args: unknown[]) => rowWith(node, tree, _wrap, 'using', args),
@@ -11924,13 +11943,13 @@ function viewAugmentedAssignmentExpression(data: RecordStub, tree: TreeHandle): 
 		left() {
 			return viewSlot<
 				T.MemberExpression | T.SubscriptExpression | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression>(this, tree, 12, 5);
+			return viewSlot<T.Expression>(this, tree, 12, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -11956,7 +11975,7 @@ function viewSpreadElement(data: RecordStub, tree: TreeHandle): T.SpreadElement.
 		...data,
 		$type: TSKindId.SpreadElement as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -11980,13 +11999,13 @@ function viewTernaryExpression(data: RecordStub, tree: TreeHandle): T.TernaryExp
 		...data,
 		$type: TSKindId.TernaryExpression as const,
 		condition() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		consequence() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 7, 5, 0);
 		},
 		alternative() {
-			return viewSlot<T.Expression>(this, tree, 12, 5);
+			return viewSlot<T.Expression>(this, tree, 12, 5, 0);
 		},
 		$with: {
 			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args),
@@ -12012,16 +12031,16 @@ function viewBinaryExpression(data: RecordStub, tree: TreeHandle): T.BinaryExpre
 		...data,
 		$type: TSKindId.BinaryExpression as const,
 		left() {
-			return viewSlot<T.Expression | undefined>(this, tree, 2, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression | undefined>(this, tree, 12, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 12, 5, 0);
 		},
 		binaryExpressionIn() {
-			return viewSlot<T.BinaryExpressionIn | undefined>(this, tree, 17, 5);
+			return viewSlot<T.BinaryExpressionIn | undefined>(this, tree, 17, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -12048,10 +12067,10 @@ function viewUnaryExpression(data: RecordStub, tree: TreeHandle): T.UnaryExpress
 		...data,
 		$type: TSKindId.UnaryExpression as const,
 		operator() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		argument() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			operator: (...args: unknown[]) => rowWith(node, tree, _wrap, 'operator', args),
@@ -12076,7 +12095,7 @@ function viewSequenceExpression(data: RecordStub, tree: TreeHandle): T.SequenceE
 		...data,
 		$type: TSKindId.SequenceExpression as const,
 		expressions() {
-			return viewSlots<T.Expression>(this, tree, 2, 2, 5);
+			return viewSlots<T.Expression>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			expressions: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expressions', args)
@@ -12100,7 +12119,7 @@ function viewEscapeSequence(data: RecordStub, tree: TreeHandle): T.EscapeSequenc
 		...data,
 		$type: TSKindId.EscapeSequence as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -12124,7 +12143,7 @@ function viewTemplateString(data: RecordStub, tree: TreeHandle): T.TemplateStrin
 		...data,
 		$type: TSKindId.TemplateString as const,
 		elements() {
-			return viewSlots<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this, tree, 2, 2, 5);
+			return viewSlots<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -12148,7 +12167,7 @@ function viewTemplateSubstitution(data: RecordStub, tree: TreeHandle): T.Templat
 		...data,
 		$type: TSKindId.TemplateSubstitution as const,
 		expression() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -12172,10 +12191,10 @@ function viewRegex(data: RecordStub, tree: TreeHandle): T.Regex.Parsed {
 		...data,
 		$type: TSKindId.Regex as const,
 		pattern() {
-			return viewSlot<T.RegexPattern>(this, tree, 2, 5);
+			return viewSlot<T.RegexPattern>(this, tree, 2, 5, 0);
 		},
 		flags() {
-			return viewSlot<T.RegexFlags | undefined>(this, tree, 7, 5);
+			return viewSlot<T.RegexFlags | undefined>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
@@ -12200,7 +12219,7 @@ function viewPrivatePropertyIdentifier(data: RecordStub, tree: TreeHandle): T.Pr
 		...data,
 		$type: TSKindId.PrivatePropertyIdentifier as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -12224,7 +12243,7 @@ function viewArguments(data: RecordStub, tree: TreeHandle): T.Arguments.Parsed {
 		...data,
 		$type: TSKindId.Arguments as const,
 		elements() {
-			return viewSlots<T.Expression | T.SpreadElement>(this, tree, 2, 2, 5);
+			return viewSlots<T.Expression | T.SpreadElement>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -12251,7 +12270,7 @@ function viewDecorator(data: RecordStub, tree: TreeHandle): T.Decorator.Parsed {
 		expression() {
 			return viewSlot<
 				T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -12275,10 +12294,10 @@ function viewDecoratorMemberExpression(data: RecordStub, tree: TreeHandle): T.De
 		...data,
 		$type: TSKindId.DecoratorMemberExpression as const,
 		object() {
-			return viewSlot<T.Identifier | TSKindId.Super | T.DecoratorMemberExpression>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | TSKindId.Super | T.DecoratorMemberExpression>(this, tree, 2, 5, 0);
 		},
 		property() {
-			return viewSlot<T.PropertyIdentifier>(this, tree, 7, 5);
+			return viewSlot<T.PropertyIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -12303,13 +12322,13 @@ function viewDecoratorCallExpression(data: RecordStub, tree: TreeHandle): T.Deco
 		...data,
 		$type: TSKindId.DecoratorCallExpression as const,
 		function() {
-			return viewSlot<T.Identifier | T.DecoratorMemberExpression>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.DecoratorMemberExpression>(this, tree, 2, 5, 0);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 10, 8);
 		},
 		arguments() {
-			return viewSlot<T.Arguments>(this, tree, 12, 5);
+			return viewSlot<T.Arguments>(this, tree, 17, 6, 4);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -12335,7 +12354,7 @@ function viewClassBody(data: RecordStub, tree: TreeHandle): T.ClassBody.Parsed {
 		...data,
 		$type: TSKindId.ClassBody as const,
 		members() {
-			return viewSlots<T.ClassBodyMember>(this, tree, 2, 2, 5);
+			return viewSlots<T.ClassBodyMember>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			members: (...args: unknown[]) => rowWith(node, tree, _wrap, 'members', args)
@@ -12356,12 +12375,12 @@ function viewClassBody(data: RecordStub, tree: TreeHandle): T.ClassBody.Parsed {
 
 function viewFormalParameters(data: RecordStub, tree: TreeHandle): T.FormalParameters.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.FormalParameters as const,
 		elements() {
-			return viewSlot<T.FormalParametersElements | undefined>(this, tree, 2, 5);
+			return viewSlot<T.FormalParametersElements | undefined>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -12395,10 +12414,10 @@ function viewClassStaticBlock(data: RecordStub, tree: TreeHandle): T.ClassStatic
 		...data,
 		$type: TSKindId.ClassStaticBlock as const,
 		terminator() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 7, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 7, 11, 9);
 		},
 		$with: {
 			terminator: (...args: unknown[]) => rowWith(node, tree, _wrap, 'terminator', args),
@@ -12431,7 +12450,7 @@ function viewRestPattern(data: RecordStub, tree: TreeHandle): T.RestPattern.Pars
 				| T.ObjectPattern
 				| T.ArrayPattern
 				| T.NonNullExpression
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			lhsExpression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lhsExpression', args)
@@ -12455,7 +12474,7 @@ function viewMethodDefinition(data: RecordStub, tree: TreeHandle): T.MethodDefin
 		...data,
 		$type: TSKindId.MethodDefinition as const,
 		accessibilityModifier() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		static() {
 			return recordFlag(this, tree, 2, 0);
@@ -12470,32 +12489,33 @@ function viewMethodDefinition(data: RecordStub, tree: TreeHandle): T.MethodDefin
 			return recordFlag(this, tree, 2, 3);
 		},
 		accessorKind() {
-			return recordSlot(this, tree, 8, 5);
+			return recordSlot(this, tree, 8, 5, 0);
 		},
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 13, 5);
+			>(this, tree, 13, 24, 22);
 		},
 		optional() {
 			return recordFlag(this, tree, 2, 4);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 18, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 37, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 23, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 47, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				28,
-				5
+				57,
+				9,
+				7
 			);
 		},
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 33, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 66, 11, 9);
 		},
 		$with: {
 			accessibilityModifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'accessibilityModifier', args),
@@ -12532,10 +12552,10 @@ function viewPair(data: RecordStub, tree: TreeHandle): T.Pair.Parsed {
 		key() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 24, 22);
 		},
 		value() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 26, 5, 0);
 		},
 		$with: {
 			key: (...args: unknown[]) => rowWith(node, tree, _wrap, 'key', args),
@@ -12562,10 +12582,10 @@ function viewPairPattern(data: RecordStub, tree: TreeHandle): T.PairPattern.Pars
 		key() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 24, 22);
 		},
 		value() {
-			return viewSlot<T.Pattern | T.AssignmentPattern>(this, tree, 7, 5);
+			return viewSlot<T.Pattern | T.AssignmentPattern>(this, tree, 26, 5, 0);
 		},
 		$with: {
 			key: (...args: unknown[]) => rowWith(node, tree, _wrap, 'key', args),
@@ -12590,7 +12610,7 @@ function viewComputedPropertyName(data: RecordStub, tree: TreeHandle): T.Compute
 		...data,
 		$type: TSKindId.ComputedPropertyName as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -12614,13 +12634,13 @@ function viewPublicFieldDefinition(data: RecordStub, tree: TreeHandle): T.Public
 		...data,
 		$type: TSKindId.PublicFieldDefinition as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 3, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 3, 2, 5, 0);
 		},
 		declare() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		accessibilityModifier() {
-			return recordSlot(this, tree, 5, 5);
+			return recordSlot(this, tree, 5, 5, 0);
 		},
 		static() {
 			return recordFlag(this, tree, 2, 1);
@@ -12640,16 +12660,16 @@ function viewPublicFieldDefinition(data: RecordStub, tree: TreeHandle): T.Public
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 10, 5);
+			>(this, tree, 10, 24, 22);
 		},
 		optionality() {
-			return recordSlot(this, tree, 15, 5);
+			return recordSlot(this, tree, 34, 5, 0);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 20, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 39, 9, 7);
 		},
 		value() {
-			return viewSlot<T.Expression | undefined>(this, tree, 25, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 48, 5, 0);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -12684,7 +12704,7 @@ function viewNonNullExpression(data: RecordStub, tree: TreeHandle): T.NonNullExp
 		...data,
 		$type: TSKindId.NonNullExpression as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -12708,7 +12728,7 @@ function viewMethodSignature(data: RecordStub, tree: TreeHandle): T.MethodSignat
 		...data,
 		$type: TSKindId.MethodSignature as const,
 		accessibilityModifier() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		static() {
 			return recordFlag(this, tree, 2, 0);
@@ -12723,28 +12743,29 @@ function viewMethodSignature(data: RecordStub, tree: TreeHandle): T.MethodSignat
 			return recordFlag(this, tree, 2, 3);
 		},
 		accessorKind() {
-			return recordSlot(this, tree, 8, 5);
+			return recordSlot(this, tree, 8, 5, 0);
 		},
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 13, 5);
+			>(this, tree, 13, 24, 22);
 		},
 		optional() {
 			return recordFlag(this, tree, 2, 4);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 18, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 37, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 23, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 47, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				28,
-				5
+				57,
+				9,
+				7
 			);
 		},
 		$with: {
@@ -12779,34 +12800,35 @@ function viewAbstractMethodSignature(data: RecordStub, tree: TreeHandle): T.Abst
 		...data,
 		$type: TSKindId.AbstractMethodSignature as const,
 		accessibilityModifier() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		override() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		accessorKind() {
-			return recordSlot(this, tree, 8, 5);
+			return recordSlot(this, tree, 8, 5, 0);
 		},
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 13, 5);
+			>(this, tree, 13, 24, 22);
 		},
 		optional() {
 			return recordFlag(this, tree, 2, 1);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 18, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 37, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 23, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 47, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				28,
-				5
+				57,
+				9,
+				7
 			);
 		},
 		$with: {
@@ -12841,24 +12863,25 @@ function viewFunctionSignature(data: RecordStub, tree: TreeHandle): T.FunctionSi
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 3, 5);
+			return viewSlot<T.Identifier>(this, tree, 3, 5, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 8, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 13, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 18, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				18,
-				5
+				28,
+				9,
+				7
 			);
 		},
 		terminator() {
-			return recordSlot(this, tree, 23, 5);
+			return recordSlot(this, tree, 37, 5, 0);
 		},
 		$with: {
 			async: (...args: unknown[]) => rowWith(node, tree, _wrap, 'async', args),
@@ -12890,7 +12913,7 @@ function viewDecoratorParenthesizedExpression(
 		...data,
 		$type: TSKindId.DecoratorParenthesizedExpression as const,
 		expression() {
-			return viewSlot<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -12914,10 +12937,10 @@ function viewTypeAssertion(data: RecordStub, tree: TreeHandle): T.TypeAssertion.
 		...data,
 		$type: TSKindId.TypeAssertion as const,
 		typeArguments() {
-			return viewSlot<T.TypeArguments>(this, tree, 2, 5);
+			return viewSlot<T.TypeArguments>(this, tree, 2, 10, 8);
 		},
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 12, 5, 0);
 		},
 		$with: {
 			typeArguments: (...args: unknown[]) => rowWith(node, tree, _wrap, 'typeArguments', args),
@@ -12942,10 +12965,10 @@ function viewAsExpression(data: RecordStub, tree: TreeHandle): T.AsExpression.Pa
 		...data,
 		$type: TSKindId.AsExpression as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		typeAnnotation() {
-			return viewSlot<TSKindId.ConstKeyword | T.Type>(this, tree, 7, 5);
+			return viewSlot<TSKindId.ConstKeyword | T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -12970,10 +12993,10 @@ function viewSatisfiesExpression(data: RecordStub, tree: TreeHandle): T.Satisfie
 		...data,
 		$type: TSKindId.SatisfiesExpression as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		typeAnnotation() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -12998,10 +13021,10 @@ function viewInstantiationExpression(data: RecordStub, tree: TreeHandle): T.Inst
 		...data,
 		$type: TSKindId.InstantiationExpression as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments>(this, tree, 7, 10, 8);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -13026,10 +13049,10 @@ function viewImportRequireClause(data: RecordStub, tree: TreeHandle): T.ImportRe
 		...data,
 		$type: TSKindId.ImportRequireClause as const,
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		source() {
-			return viewSlot<T.String>(this, tree, 7, 5);
+			return viewSlot<T.String>(this, tree, 7, 6, 4);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13054,7 +13077,7 @@ function viewExtendsClause(data: RecordStub, tree: TreeHandle): T.ExtendsClause.
 		...data,
 		$type: TSKindId.ExtendsClause as const,
 		types() {
-			return viewSlots<T.ExtendsClauseSingle>(this, tree, 2, 2, 5);
+			return viewSlots<T.ExtendsClauseSingle>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			types: (...args: unknown[]) => rowWith(node, tree, _wrap, 'types', args)
@@ -13078,10 +13101,10 @@ function viewExtendsClauseSingle(data: RecordStub, tree: TreeHandle): T.ExtendsC
 		...data,
 		$type: TSKindId.ExtendsClauseSingle as const,
 		value() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 10, 8);
 		},
 		$with: {
 			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
@@ -13106,7 +13129,7 @@ function viewImplementsClause(data: RecordStub, tree: TreeHandle): T.ImplementsC
 		...data,
 		$type: TSKindId.ImplementsClause as const,
 		types() {
-			return viewSlots<T.Type>(this, tree, 2, 2, 5);
+			return viewSlots<T.Type>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			types: (...args: unknown[]) => rowWith(node, tree, _wrap, 'types', args)
@@ -13130,7 +13153,7 @@ function viewAmbientDeclaration(data: RecordStub, tree: TreeHandle): T.AmbientDe
 		...data,
 		$type: TSKindId.AmbientDeclaration as const,
 		content() {
-			return viewSlot<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(this, tree, 2, 5);
+			return viewSlot<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -13154,19 +13177,19 @@ function viewAbstractClassDeclaration(data: RecordStub, tree: TreeHandle): T.Abs
 		...data,
 		$type: TSKindId.AbstractClassDeclaration as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 2, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 2, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 4, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 4, 9, 7);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 9, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 13, 10, 8);
 		},
 		heritage() {
-			return viewSlot<T.ClassHeritage | undefined>(this, tree, 14, 5);
+			return viewSlot<T.ClassHeritage | undefined>(this, tree, 23, 20, 18);
 		},
 		body() {
-			return viewSlot<T.ClassBody>(this, tree, 19, 5);
+			return viewSlot<T.ClassBody>(this, tree, 43, 6, 4);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -13194,10 +13217,10 @@ function viewModule(data: RecordStub, tree: TreeHandle): T.Module.Parsed {
 		...data,
 		$type: TSKindId.Module as const,
 		name() {
-			return viewSlot<T.String | T.Identifier | T.NestedIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.String | T.Identifier | T.NestedIdentifier>(this, tree, 2, 5, 0);
 		},
 		body() {
-			return viewSlot<T.StatementBlock | undefined>(this, tree, 7, 5);
+			return viewSlot<T.StatementBlock | undefined>(this, tree, 7, 11, 9);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13222,10 +13245,10 @@ function viewInternalModule(data: RecordStub, tree: TreeHandle): T.InternalModul
 		...data,
 		$type: TSKindId.InternalModule as const,
 		name() {
-			return viewSlot<T.String | T.Identifier | T.NestedIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.String | T.Identifier | T.NestedIdentifier>(this, tree, 2, 5, 0);
 		},
 		body() {
-			return viewSlot<T.StatementBlock | undefined>(this, tree, 7, 5);
+			return viewSlot<T.StatementBlock | undefined>(this, tree, 7, 11, 9);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13250,13 +13273,13 @@ function viewImportAlias(data: RecordStub, tree: TreeHandle): T.ImportAlias.Pars
 		...data,
 		$type: TSKindId.ImportAlias as const,
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		value() {
-			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 7, 5);
+			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 7, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 12, 5);
+			return recordSlot(this, tree, 12, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13282,10 +13305,10 @@ function viewNestedTypeIdentifier(data: RecordStub, tree: TreeHandle): T.NestedT
 		...data,
 		$type: TSKindId.NestedTypeIdentifier as const,
 		module() {
-			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 7, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			module: (...args: unknown[]) => rowWith(node, tree, _wrap, 'module', args),
@@ -13310,16 +13333,16 @@ function viewInterfaceDeclaration(data: RecordStub, tree: TreeHandle): T.Interfa
 		...data,
 		$type: TSKindId.InterfaceDeclaration as const,
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 2, 9, 7);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 11, 10, 8);
 		},
 		extendsTypeClause() {
-			return viewSlot<T.ExtendsTypeClause | undefined>(this, tree, 12, 5);
+			return viewSlot<T.ExtendsTypeClause | undefined>(this, tree, 21, 6, 4);
 		},
 		body() {
-			return viewSlot<T.InterfaceBody>(this, tree, 17, 5);
+			return viewSlot<T.InterfaceBody>(this, tree, 27, 24, 22);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13346,7 +13369,7 @@ function viewExtendsTypeClause(data: RecordStub, tree: TreeHandle): T.ExtendsTyp
 		...data,
 		$type: TSKindId.ExtendsTypeClause as const,
 		types() {
-			return viewSlots<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this, tree, 2, 2, 5);
+			return viewSlots<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			types: (...args: unknown[]) => rowWith(node, tree, _wrap, 'types', args)
@@ -13373,10 +13396,10 @@ function viewEnumDeclaration(data: RecordStub, tree: TreeHandle): T.EnumDeclarat
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 3, 5);
+			return viewSlot<T.Identifier>(this, tree, 3, 5, 0);
 		},
 		body() {
-			return viewSlot<T.EnumBody>(this, tree, 8, 5);
+			return viewSlot<T.EnumBody>(this, tree, 8, 10, 8);
 		},
 		$with: {
 			const: (...args: unknown[]) => rowWith(node, tree, _wrap, 'const', args),
@@ -13398,12 +13421,12 @@ function viewEnumDeclaration(data: RecordStub, tree: TreeHandle): T.EnumDeclarat
 
 function viewEnumBody(data: RecordStub, tree: TreeHandle): T.EnumBody.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.EnumBody as const,
 		elements() {
-			return viewSlot<T.EnumBodyElements | undefined>(this, tree, 2, 5);
+			return viewSlot<T.EnumBodyElements | undefined>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -13439,10 +13462,10 @@ function viewEnumAssignment(data: RecordStub, tree: TreeHandle): T.EnumAssignmen
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 24, 22);
 		},
 		value() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 26, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13467,16 +13490,16 @@ function viewTypeAliasDeclaration(data: RecordStub, tree: TreeHandle): T.TypeAli
 		...data,
 		$type: TSKindId.TypeAliasDeclaration as const,
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 2, 9, 7);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 11, 10, 8);
 		},
 		value() {
-			return viewSlot<T.Type>(this, tree, 12, 5);
+			return viewSlot<T.Type>(this, tree, 21, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 17, 5);
+			return recordSlot(this, tree, 26, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13503,10 +13526,10 @@ function viewRequiredParameter(data: RecordStub, tree: TreeHandle): T.RequiredPa
 		...data,
 		$type: TSKindId.RequiredParameter as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 3, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 3, 2, 5, 0);
 		},
 		accessibilityModifier() {
-			return recordSlot(this, tree, 5, 5);
+			return recordSlot(this, tree, 5, 5, 0);
 		},
 		override() {
 			return recordFlag(this, tree, 2, 0);
@@ -13515,13 +13538,13 @@ function viewRequiredParameter(data: RecordStub, tree: TreeHandle): T.RequiredPa
 			return recordFlag(this, tree, 2, 1);
 		},
 		pattern() {
-			return viewSlot<T.Pattern | TSKindId.This>(this, tree, 10, 5);
+			return viewSlot<T.Pattern | TSKindId.This>(this, tree, 10, 5, 0);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 15, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 15, 9, 7);
 		},
 		value() {
-			return viewSlot<T.Expression | undefined>(this, tree, 20, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 24, 5, 0);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -13551,10 +13574,10 @@ function viewOptionalParameter(data: RecordStub, tree: TreeHandle): T.OptionalPa
 		...data,
 		$type: TSKindId.OptionalParameter as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 3, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 3, 2, 5, 0);
 		},
 		accessibilityModifier() {
-			return recordSlot(this, tree, 5, 5);
+			return recordSlot(this, tree, 5, 5, 0);
 		},
 		override() {
 			return recordFlag(this, tree, 2, 0);
@@ -13563,13 +13586,13 @@ function viewOptionalParameter(data: RecordStub, tree: TreeHandle): T.OptionalPa
 			return recordFlag(this, tree, 2, 1);
 		},
 		pattern() {
-			return viewSlot<T.Pattern | TSKindId.This>(this, tree, 10, 5);
+			return viewSlot<T.Pattern | TSKindId.This>(this, tree, 10, 5, 0);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 15, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 15, 9, 7);
 		},
 		value() {
-			return viewSlot<T.Expression | undefined>(this, tree, 20, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 24, 5, 0);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -13599,7 +13622,7 @@ function viewOmittingTypeAnnotation(data: RecordStub, tree: TreeHandle): T.Omitt
 		...data,
 		$type: TSKindId.OmittingTypeAnnotation as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13623,7 +13646,7 @@ function viewAddingTypeAnnotation(data: RecordStub, tree: TreeHandle): T.AddingT
 		...data,
 		$type: TSKindId.AddingTypeAnnotation as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13647,7 +13670,7 @@ function viewOptingTypeAnnotation(data: RecordStub, tree: TreeHandle): T.OptingT
 		...data,
 		$type: TSKindId.OptingTypeAnnotation as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13671,7 +13694,7 @@ function viewTypeAnnotation(data: RecordStub, tree: TreeHandle): T.TypeAnnotatio
 		...data,
 		$type: TSKindId.TypeAnnotation as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13700,10 +13723,10 @@ function viewTypeQueryMemberExpressionInTypeAnnotation(
 		object() {
 			return viewSlot<
 				TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		property() {
-			return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, tree, 7, 5);
+			return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -13731,10 +13754,10 @@ function viewTypeQueryCallExpressionInTypeAnnotation(
 		...data,
 		$type: TSKindId.TypeQueryCallExpressionInTypeAnnotation as const,
 		function() {
-			return viewSlot<TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(this, tree, 2, 5);
+			return viewSlot<TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(this, tree, 2, 5, 0);
 		},
 		arguments() {
-			return viewSlot<T.Arguments>(this, tree, 7, 5);
+			return viewSlot<T.Arguments>(this, tree, 7, 6, 4);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -13759,7 +13782,7 @@ function viewAsserts(data: RecordStub, tree: TreeHandle): T.Asserts.Parsed {
 		...data,
 		$type: TSKindId.Asserts as const,
 		value() {
-			return viewSlot<T.TypePredicate | T.Identifier | TSKindId.This>(this, tree, 2, 5);
+			return viewSlot<T.TypePredicate | T.Identifier | TSKindId.This>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args)
@@ -13783,7 +13806,7 @@ function viewAssertsAnnotation(data: RecordStub, tree: TreeHandle): T.AssertsAnn
 		...data,
 		$type: TSKindId.AssertsAnnotation as const,
 		asserts() {
-			return viewSlot<T.Asserts>(this, tree, 2, 5);
+			return viewSlot<T.Asserts>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			asserts: (...args: unknown[]) => rowWith(node, tree, _wrap, 'asserts', args)
@@ -13807,10 +13830,10 @@ function viewTupleParameter(data: RecordStub, tree: TreeHandle): T.TupleParamete
 		...data,
 		$type: TSKindId.TupleParameter as const,
 		name() {
-			return viewSlot<T.Identifier | T.RestPattern>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.RestPattern>(this, tree, 2, 9, 7);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation>(this, tree, 7, 5);
+			return viewSlot<T.TypeAnnotation>(this, tree, 11, 9, 7);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13835,10 +13858,10 @@ function viewOptionalTupleParameter(data: RecordStub, tree: TreeHandle): T.Optio
 		...data,
 		$type: TSKindId.OptionalTupleParameter as const,
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation>(this, tree, 7, 5);
+			return viewSlot<T.TypeAnnotation>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -13863,7 +13886,7 @@ function viewOptionalType(data: RecordStub, tree: TreeHandle): T.OptionalType.Pa
 		...data,
 		$type: TSKindId.OptionalType as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13887,7 +13910,7 @@ function viewRestType(data: RecordStub, tree: TreeHandle): T.RestType.Parsed {
 		...data,
 		$type: TSKindId.RestType as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13914,13 +13937,13 @@ function viewConstructorType(data: RecordStub, tree: TreeHandle): T.ConstructorT
 			return recordFlag(this, tree, 2, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 3, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 3, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 8, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 13, 10, 8);
 		},
 		type() {
-			return viewSlot<T.Type>(this, tree, 13, 5);
+			return viewSlot<T.Type>(this, tree, 23, 5, 0);
 		},
 		$with: {
 			abstract: (...args: unknown[]) => rowWith(node, tree, _wrap, 'abstract', args),
@@ -13947,7 +13970,7 @@ function viewTemplateType(data: RecordStub, tree: TreeHandle): T.TemplateType.Pa
 		...data,
 		$type: TSKindId.TemplateType as const,
 		type() {
-			return viewSlot<T.PrimaryType | T.InferType>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryType | T.InferType>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -13971,7 +13994,7 @@ function viewTemplateLiteralType(data: RecordStub, tree: TreeHandle): T.Template
 		...data,
 		$type: TSKindId.TemplateLiteralType as const,
 		elements() {
-			return viewSlots<T.TemplateChars | T.TemplateType>(this, tree, 2, 2, 5);
+			return viewSlots<T.TemplateChars | T.TemplateType>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -13995,10 +14018,10 @@ function viewInferType(data: RecordStub, tree: TreeHandle): T.InferType.Parsed {
 		...data,
 		$type: TSKindId.InferType as const,
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 2, 9, 7);
 		},
 		type() {
-			return viewSlot<T.Type | undefined>(this, tree, 7, 5);
+			return viewSlot<T.Type | undefined>(this, tree, 11, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -14023,16 +14046,16 @@ function viewConditionalType(data: RecordStub, tree: TreeHandle): T.ConditionalT
 		...data,
 		$type: TSKindId.ConditionalType as const,
 		left() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		consequence() {
-			return viewSlot<T.Type>(this, tree, 12, 5);
+			return viewSlot<T.Type>(this, tree, 12, 5, 0);
 		},
 		alternative() {
-			return viewSlot<T.Type>(this, tree, 17, 5);
+			return viewSlot<T.Type>(this, tree, 17, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -14059,10 +14082,10 @@ function viewGenericType(data: RecordStub, tree: TreeHandle): T.GenericType.Pars
 		...data,
 		$type: TSKindId.GenericType as const,
 		name() {
-			return viewSlot<T.TypeIdentifier | T.NestedTypeIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.TypeIdentifier | T.NestedTypeIdentifier>(this, tree, 2, 18, 16);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments>(this, tree, 20, 10, 8);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -14100,10 +14123,10 @@ function viewTypePredicate(data: RecordStub, tree: TreeHandle): T.TypePredicate.
 				| TSKindId.UnknownKeyword
 				| TSKindId.NeverKeyword
 				| TSKindId.ObjectKeyword
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		type() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -14128,7 +14151,7 @@ function viewTypePredicateAnnotation(data: RecordStub, tree: TreeHandle): T.Type
 		...data,
 		$type: TSKindId.TypePredicateAnnotation as const,
 		typePredicate() {
-			return viewSlot<T.TypePredicate>(this, tree, 2, 5);
+			return viewSlot<T.TypePredicate>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			typePredicate: (...args: unknown[]) => rowWith(node, tree, _wrap, 'typePredicate', args)
@@ -14158,13 +14181,13 @@ function viewTypeQueryMemberExpression(data: RecordStub, tree: TreeHandle): T.Ty
 				| T.TypeQuerySubscriptExpression
 				| T.TypeQueryMemberExpression
 				| T.TypeQueryCallExpression
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		content() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		property() {
-			return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, tree, 12, 5);
+			return viewSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, tree, 12, 9, 7);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -14196,7 +14219,7 @@ function viewTypeQuerySubscriptExpression(data: RecordStub, tree: TreeHandle): T
 				| T.TypeQuerySubscriptExpression
 				| T.TypeQueryMemberExpression
 				| T.TypeQueryCallExpression
-			>(this, tree, 3, 5);
+			>(this, tree, 3, 5, 0);
 		},
 		optionalChain() {
 			return recordFlag(this, tree, 2, 0);
@@ -14215,7 +14238,7 @@ function viewTypeQuerySubscriptExpression(data: RecordStub, tree: TreeHandle): T
 				| TSKindId.ObjectKeyword
 				| T.String
 				| T.Number
-			>(this, tree, 8, 5);
+			>(this, tree, 8, 24, 22);
 		},
 		$with: {
 			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
@@ -14245,11 +14268,12 @@ function viewTypeQueryCallExpression(data: RecordStub, tree: TreeHandle): T.Type
 				this,
 				tree,
 				2,
-				5
+				5,
+				0
 			);
 		},
 		arguments() {
-			return viewSlot<T.Arguments>(this, tree, 7, 5);
+			return viewSlot<T.Arguments>(this, tree, 7, 6, 4);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -14281,11 +14305,12 @@ function viewTypeQueryInstantiationExpression(
 				this,
 				tree,
 				2,
-				5
+				5,
+				0
 			);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments>(this, tree, 7, 10, 8);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -14317,7 +14342,7 @@ function viewTypeQuery(data: RecordStub, tree: TreeHandle): T.TypeQuery.Parsed {
 				| T.TypeQueryInstantiationExpression
 				| T.Identifier
 				| TSKindId.This
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -14341,7 +14366,7 @@ function viewIndexTypeQuery(data: RecordStub, tree: TreeHandle): T.IndexTypeQuer
 		...data,
 		$type: TSKindId.IndexTypeQuery as const,
 		type() {
-			return viewSlot<T.PrimaryType>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryType>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -14365,10 +14390,10 @@ function viewLookupType(data: RecordStub, tree: TreeHandle): T.LookupType.Parsed
 		...data,
 		$type: TSKindId.LookupType as const,
 		type() {
-			return viewSlot<T.PrimaryType>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryType>(this, tree, 2, 5, 0);
 		},
 		indexType() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args),
@@ -14393,13 +14418,13 @@ function viewMappedTypeClause(data: RecordStub, tree: TreeHandle): T.MappedTypeC
 		...data,
 		$type: TSKindId.MappedTypeClause as const,
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 2, 9, 7);
 		},
 		type() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 11, 5, 0);
 		},
 		alias() {
-			return viewSlot<T.Type | undefined>(this, tree, 12, 5);
+			return viewSlot<T.Type | undefined>(this, tree, 16, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -14433,7 +14458,7 @@ function viewLiteralType(data: RecordStub, tree: TreeHandle): T.LiteralType.Pars
 				| TSKindId.False
 				| TSKindId.Null
 				| TSKindId.Undefined
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 28, 26);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -14457,7 +14482,7 @@ function viewFlowMaybeType(data: RecordStub, tree: TreeHandle): T.FlowMaybeType.
 		...data,
 		$type: TSKindId.FlowMaybeType as const,
 		type() {
-			return viewSlot<T.PrimaryType>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryType>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -14481,7 +14506,7 @@ function viewParenthesizedType(data: RecordStub, tree: TreeHandle): T.Parenthesi
 		...data,
 		$type: TSKindId.ParenthesizedType as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -14501,12 +14526,12 @@ function viewParenthesizedType(data: RecordStub, tree: TreeHandle): T.Parenthesi
 
 function viewTypeArguments(data: RecordStub, tree: TreeHandle): T.TypeArguments.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeArguments as const,
 		types() {
-			return viewSlot<T.Types>(this, tree, 2, 5);
+			return viewSlot<T.Types>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			types: (...args: unknown[]) => rowWith(node, tree, _wrap, 'types', args)
@@ -14539,13 +14564,13 @@ function viewObjectType(data: RecordStub, tree: TreeHandle): T.ObjectType.Parsed
 		...data,
 		$type: TSKindId.ObjectType as const,
 		opening() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		members() {
-			return viewSlot<T.ObjectTypeContent | undefined>(this, tree, 7, 5);
+			return viewSlot<T.ObjectTypeContent | undefined>(this, tree, 7, 6, 4);
 		},
 		closing() {
-			return recordSlot(this, tree, 12, 5);
+			return recordSlot(this, tree, 13, 5, 0);
 		},
 		$with: {
 			opening: (...args: unknown[]) => rowWith(node, tree, _wrap, 'opening', args),
@@ -14571,17 +14596,18 @@ function viewCallSignature(data: RecordStub, tree: TreeHandle): T.CallSignature.
 		...data,
 		$type: TSKindId.CallSignature as const,
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 2, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 2, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 7, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 12, 10, 8);
 		},
 		returnType() {
 			return viewSlot<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(
 				this,
 				tree,
-				12,
-				5
+				22,
+				9,
+				7
 			);
 		},
 		$with: {
@@ -14608,7 +14634,7 @@ function viewPropertySignature(data: RecordStub, tree: TreeHandle): T.PropertySi
 		...data,
 		$type: TSKindId.PropertySignature as const,
 		accessibilityModifier() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		static() {
 			return recordFlag(this, tree, 2, 0);
@@ -14622,13 +14648,13 @@ function viewPropertySignature(data: RecordStub, tree: TreeHandle): T.PropertySi
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 8, 5);
+			>(this, tree, 8, 24, 22);
 		},
 		optional() {
 			return recordFlag(this, tree, 2, 3);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 13, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 32, 9, 7);
 		},
 		$with: {
 			accessibilityModifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'accessibilityModifier', args),
@@ -14654,12 +14680,12 @@ function viewPropertySignature(data: RecordStub, tree: TreeHandle): T.PropertySi
 
 function viewTypeParameters(data: RecordStub, tree: TreeHandle): T.TypeParameters.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameters as const,
 		elements() {
-			return viewSlot<T.TypeParametersElements>(this, tree, 2, 5);
+			return viewSlot<T.TypeParametersElements>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -14700,13 +14726,13 @@ function viewTypeParameter(data: RecordStub, tree: TreeHandle): T.TypeParameter.
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.TypeIdentifier>(this, tree, 3, 5);
+			return viewSlot<T.TypeIdentifier>(this, tree, 3, 9, 7);
 		},
 		constraint() {
-			return viewSlot<T.Constraint | undefined>(this, tree, 8, 5);
+			return viewSlot<T.Constraint | undefined>(this, tree, 12, 14, 12);
 		},
 		value() {
-			return viewSlot<T.DefaultType | undefined>(this, tree, 13, 5);
+			return viewSlot<T.DefaultType | undefined>(this, tree, 26, 9, 7);
 		},
 		$with: {
 			const: (...args: unknown[]) => rowWith(node, tree, _wrap, 'const', args),
@@ -14733,7 +14759,7 @@ function viewDefaultType(data: RecordStub, tree: TreeHandle): T.DefaultType.Pars
 		...data,
 		$type: TSKindId.DefaultType as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -14757,10 +14783,10 @@ function viewConstraint(data: RecordStub, tree: TreeHandle): T.Constraint.Parsed
 		...data,
 		$type: TSKindId.Constraint as const,
 		content() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		type() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
@@ -14788,13 +14814,13 @@ function viewConstructSignature(data: RecordStub, tree: TreeHandle): T.Construct
 			return recordFlag(this, tree, 2, 0);
 		},
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 3, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 3, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 8, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 13, 10, 8);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 13, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 23, 9, 7);
 		},
 		$with: {
 			abstract: (...args: unknown[]) => rowWith(node, tree, _wrap, 'abstract', args),
@@ -14821,7 +14847,7 @@ function viewArrayType(data: RecordStub, tree: TreeHandle): T.ArrayType.Parsed {
 		...data,
 		$type: TSKindId.ArrayType as const,
 		type() {
-			return viewSlot<T.PrimaryType>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryType>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -14841,12 +14867,12 @@ function viewArrayType(data: RecordStub, tree: TreeHandle): T.ArrayType.Parsed {
 
 function viewTupleType(data: RecordStub, tree: TreeHandle): T.TupleType.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 5), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TupleType as const,
 		tupleTypeMembers() {
-			return viewSlot<T.TupleTypeMembers | undefined>(this, tree, 2, 5);
+			return viewSlot<T.TupleTypeMembers | undefined>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			tupleTypeMembers: (...args: unknown[]) => rowWith(node, tree, _wrap, 'tupleTypeMembers', args)
@@ -14880,7 +14906,7 @@ function viewReadonlyType(data: RecordStub, tree: TreeHandle): T.ReadonlyType.Pa
 		...data,
 		$type: TSKindId.ReadonlyType as const,
 		type() {
-			return viewSlot<T.Type>(this, tree, 2, 5);
+			return viewSlot<T.Type>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
@@ -14904,10 +14930,10 @@ function viewUnionType(data: RecordStub, tree: TreeHandle): T.UnionType.Parsed {
 		...data,
 		$type: TSKindId.UnionType as const,
 		left() {
-			return viewSlot<T.Type | undefined>(this, tree, 2, 5);
+			return viewSlot<T.Type | undefined>(this, tree, 2, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -14932,10 +14958,10 @@ function viewIntersectionType(data: RecordStub, tree: TreeHandle): T.Intersectio
 		...data,
 		$type: TSKindId.IntersectionType as const,
 		left() {
-			return viewSlot<T.Type | undefined>(this, tree, 2, 5);
+			return viewSlot<T.Type | undefined>(this, tree, 2, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -14960,13 +14986,13 @@ function viewFunctionType(data: RecordStub, tree: TreeHandle): T.FunctionType.Pa
 		...data,
 		$type: TSKindId.FunctionType as const,
 		typeParameters() {
-			return viewSlot<T.TypeParameters | undefined>(this, tree, 2, 5);
+			return viewSlot<T.TypeParameters | undefined>(this, tree, 2, 10, 8);
 		},
 		parameters() {
-			return viewSlot<T.FormalParameters>(this, tree, 7, 5);
+			return viewSlot<T.FormalParameters>(this, tree, 12, 10, 8);
 		},
 		returnType() {
-			return viewSlot<T.Type | T.Asserts | T.TypePredicate>(this, tree, 12, 5);
+			return viewSlot<T.Type | T.Asserts | T.TypePredicate>(this, tree, 22, 5, 0);
 		},
 		$with: {
 			typeParameters: (...args: unknown[]) => rowWith(node, tree, _wrap, 'typeParameters', args),
@@ -14988,12 +15014,12 @@ function viewFunctionType(data: RecordStub, tree: TreeHandle): T.FunctionType.Pa
 
 function viewExportSpecifiers(data: RecordStub, tree: TreeHandle): T.ExportSpecifiers.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.ExportSpecifiers as const,
 		items() {
-			return viewSlots<T.ExportSpecifier>(this, tree, 2, 2, 5);
+			return viewSlots<T.ExportSpecifier>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15028,12 +15054,12 @@ function viewExportSpecifiers(data: RecordStub, tree: TreeHandle): T.ExportSpeci
 
 function viewImportSpecifiers(data: RecordStub, tree: TreeHandle): T.ImportSpecifiers.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.ImportSpecifiers as const,
 		items() {
-			return viewSlots<T.ImportSpecifier>(this, tree, 2, 2, 5);
+			return viewSlots<T.ImportSpecifier>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15063,12 +15089,12 @@ function viewImportSpecifiers(data: RecordStub, tree: TreeHandle): T.ImportSpeci
 
 function viewFormalParametersElements(data: RecordStub, tree: TreeHandle): T.FormalParametersElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.FormalParametersElements as const,
 		items() {
-			return viewSlots<T.RequiredParameter | T.OptionalParameter>(this, tree, 2, 2, 5);
+			return viewSlots<T.RequiredParameter | T.OptionalParameter>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15104,7 +15130,7 @@ function viewEnumBodyElementName(data: RecordStub, tree: TreeHandle): T.EnumBody
 		name() {
 			return viewSlot<
 				T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
-			>(this, tree, 2, 5);
+			>(this, tree, 2, 24, 22);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
@@ -15124,12 +15150,12 @@ function viewEnumBodyElementName(data: RecordStub, tree: TreeHandle): T.EnumBody
 
 function viewEnumBodyElements(data: RecordStub, tree: TreeHandle): T.EnumBodyElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.EnumBodyElements as const,
 		items() {
-			return viewSlots<T.EnumBodyElement>(this, tree, 2, 2, 5);
+			return viewSlots<T.EnumBodyElement>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15159,12 +15185,12 @@ function viewEnumBodyElements(data: RecordStub, tree: TreeHandle): T.EnumBodyEle
 
 function viewTypes(data: RecordStub, tree: TreeHandle): T.Types.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.Types as const,
 		items() {
-			return viewSlots<T.Type>(this, tree, 2, 2, 5);
+			return viewSlots<T.Type>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15194,12 +15220,12 @@ function viewTypes(data: RecordStub, tree: TreeHandle): T.Types.Parsed {
 
 function viewTypeParametersElements(data: RecordStub, tree: TreeHandle): T.TypeParametersElements.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.TypeParametersElements as const,
 		items() {
-			return viewSlots<T.TypeParameter>(this, tree, 2, 2, 5);
+			return viewSlots<T.TypeParameter>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15234,7 +15260,7 @@ function viewTypeParametersElements(data: RecordStub, tree: TreeHandle): T.TypeP
 
 function viewTupleTypeMembers(data: RecordStub, tree: TreeHandle): T.TupleTypeMembers.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.TupleTypeMembers as const,
@@ -15244,7 +15270,8 @@ function viewTupleTypeMembers(data: RecordStub, tree: TreeHandle): T.TupleTypeMe
 				tree,
 				2,
 				2,
-				5
+				5,
+				0
 			);
 		},
 		$with: {
@@ -15279,7 +15306,7 @@ function viewImportClauseGroup(data: RecordStub, tree: TreeHandle): T.ImportClau
 		...data,
 		$type: TSKindId.ImportClauseGroup as const,
 		content() {
-			return viewSlot<T.NamespaceImport | T.NamedImports>(this, tree, 2, 5);
+			return viewSlot<T.NamespaceImport | T.NamedImports>(this, tree, 2, 10, 8);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15303,10 +15330,10 @@ function viewCatchClauseGroup(data: RecordStub, tree: TreeHandle): T.CatchClause
 		...data,
 		$type: TSKindId.CatchClauseGroup as const,
 		parameter() {
-			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 6, 4);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 8, 9, 7);
 		},
 		$with: {
 			parameter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'parameter', args),
@@ -15331,7 +15358,7 @@ function viewAmbientDeclarationGlobal(data: RecordStub, tree: TreeHandle): T.Amb
 		...data,
 		$type: TSKindId.AmbientDeclarationGlobal as const,
 		body() {
-			return viewSlot<T.StatementBlock>(this, tree, 2, 5);
+			return viewSlot<T.StatementBlock>(this, tree, 2, 11, 9);
 		},
 		$with: {
 			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args)
@@ -15355,13 +15382,13 @@ function viewAmbientDeclarationModule(data: RecordStub, tree: TreeHandle): T.Amb
 		...data,
 		$type: TSKindId.AmbientDeclarationModule as const,
 		name() {
-			return viewSlot<T.PropertyIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.PropertyIdentifier>(this, tree, 2, 9, 7);
 		},
 		type() {
-			return viewSlot<T.Type>(this, tree, 7, 5);
+			return viewSlot<T.Type>(this, tree, 11, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 12, 5);
+			return recordSlot(this, tree, 16, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -15383,7 +15410,7 @@ function viewAmbientDeclarationModule(data: RecordStub, tree: TreeHandle): T.Amb
 
 function viewObjectTypeContent(data: RecordStub, tree: TreeHandle): T.ObjectTypeContent.Parsed {
 	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5);
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
 	const node = {
 		...data,
 		$type: TSKindId.ObjectTypeContent as const,
@@ -15395,7 +15422,7 @@ function viewObjectTypeContent(data: RecordStub, tree: TreeHandle): T.ObjectType
 				| T.ConstructSignature
 				| T.IndexSignature
 				| T.MethodSignature
-			>(this, tree, 2, 2, 5);
+			>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
@@ -15434,10 +15461,10 @@ function viewExportStatementNamespaceExport(
 		...data,
 		$type: TSKindId.ExportStatementNamespaceExport as const,
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -15462,10 +15489,10 @@ function viewExportStatementEqualsExport(data: RecordStub, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.ExportStatementEqualsExport as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -15490,7 +15517,7 @@ function viewCommentLine(data: RecordStub, tree: TreeHandle): T.CommentLine.Pars
 		...data,
 		$type: TSKindId.CommentLine as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15514,7 +15541,7 @@ function viewCommentBlock(data: RecordStub, tree: TreeHandle): T.CommentBlock.Pa
 		...data,
 		$type: TSKindId.CommentBlock as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15538,7 +15565,7 @@ function viewLiteralTypeNegativeNumber(data: RecordStub, tree: TreeHandle): T.Li
 		...data,
 		$type: TSKindId.LiteralTypeNegativeNumber as const,
 		argument() {
-			return viewSlot<T.Number>(this, tree, 2, 5);
+			return viewSlot<T.Number>(this, tree, 2, 24, 22);
 		},
 		$with: {
 			argument: (...args: unknown[]) => rowWith(node, tree, _wrap, 'argument', args)
@@ -15562,10 +15589,10 @@ function viewNumberHex(data: RecordStub, tree: TreeHandle): T.NumberHex.Parsed {
 		...data,
 		$type: TSKindId.NumberHex as const,
 		prefix() {
-			return viewSlot<'0x' | '0X'>(this, tree, 2, 4);
+			return viewSlot<'0x' | '0X'>(this, tree, 2, 4, 0);
 		},
 		content() {
-			return viewSlot<string>(this, tree, 6, 4);
+			return viewSlot<string>(this, tree, 6, 4, 0);
 		},
 		$with: {
 			prefix: (...args: unknown[]) => rowWith(node, tree, _wrap, 'prefix', args),
@@ -15590,19 +15617,19 @@ function viewNumberFloatPoint(data: RecordStub, tree: TreeHandle): T.NumberFloat
 		...data,
 		$type: TSKindId.NumberFloatPoint as const,
 		integer() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		fraction() {
-			return viewSlot<string | undefined>(this, tree, 6, 4);
+			return viewSlot<string | undefined>(this, tree, 6, 4, 0);
 		},
 		marker() {
-			return viewSlot<'e' | 'E' | undefined>(this, tree, 10, 4);
+			return viewSlot<'e' | 'E' | undefined>(this, tree, 10, 4, 0);
 		},
 		sign() {
-			return viewSlot<'-' | '+' | undefined>(this, tree, 14, 4);
+			return viewSlot<'-' | '+' | undefined>(this, tree, 14, 4, 0);
 		},
 		exponent() {
-			return viewSlot<string | undefined>(this, tree, 18, 4);
+			return viewSlot<string | undefined>(this, tree, 18, 4, 0);
 		},
 		$with: {
 			integer: (...args: unknown[]) => rowWith(node, tree, _wrap, 'integer', args),
@@ -15630,16 +15657,16 @@ function viewNumberFloatLeadingPoint(data: RecordStub, tree: TreeHandle): T.Numb
 		...data,
 		$type: TSKindId.NumberFloatLeadingPoint as const,
 		fraction() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		marker() {
-			return viewSlot<'e' | 'E' | undefined>(this, tree, 6, 4);
+			return viewSlot<'e' | 'E' | undefined>(this, tree, 6, 4, 0);
 		},
 		sign() {
-			return viewSlot<'-' | '+' | undefined>(this, tree, 10, 4);
+			return viewSlot<'-' | '+' | undefined>(this, tree, 10, 4, 0);
 		},
 		exponent() {
-			return viewSlot<string | undefined>(this, tree, 14, 4);
+			return viewSlot<string | undefined>(this, tree, 14, 4, 0);
 		},
 		$with: {
 			fraction: (...args: unknown[]) => rowWith(node, tree, _wrap, 'fraction', args),
@@ -15666,16 +15693,16 @@ function viewNumberFloatScientific(data: RecordStub, tree: TreeHandle): T.Number
 		...data,
 		$type: TSKindId.NumberFloatScientific as const,
 		integer() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		marker() {
-			return viewSlot<'e' | 'E'>(this, tree, 6, 4);
+			return viewSlot<'e' | 'E'>(this, tree, 6, 4, 0);
 		},
 		sign() {
-			return viewSlot<'-' | '+' | undefined>(this, tree, 10, 4);
+			return viewSlot<'-' | '+' | undefined>(this, tree, 10, 4, 0);
 		},
 		exponent() {
-			return viewSlot<string>(this, tree, 14, 4);
+			return viewSlot<string>(this, tree, 14, 4, 0);
 		},
 		$with: {
 			integer: (...args: unknown[]) => rowWith(node, tree, _wrap, 'integer', args),
@@ -15702,10 +15729,10 @@ function viewNumberBinary(data: RecordStub, tree: TreeHandle): T.NumberBinary.Pa
 		...data,
 		$type: TSKindId.NumberBinary as const,
 		prefix() {
-			return viewSlot<'0b' | '0B'>(this, tree, 2, 4);
+			return viewSlot<'0b' | '0B'>(this, tree, 2, 4, 0);
 		},
 		content() {
-			return viewSlot<string>(this, tree, 6, 4);
+			return viewSlot<string>(this, tree, 6, 4, 0);
 		},
 		$with: {
 			prefix: (...args: unknown[]) => rowWith(node, tree, _wrap, 'prefix', args),
@@ -15730,10 +15757,10 @@ function viewNumberOctal(data: RecordStub, tree: TreeHandle): T.NumberOctal.Pars
 		...data,
 		$type: TSKindId.NumberOctal as const,
 		prefix() {
-			return viewSlot<'0o' | '0O'>(this, tree, 2, 4);
+			return viewSlot<'0o' | '0O'>(this, tree, 2, 4, 0);
 		},
 		content() {
-			return viewSlot<string>(this, tree, 6, 4);
+			return viewSlot<string>(this, tree, 6, 4, 0);
 		},
 		$with: {
 			prefix: (...args: unknown[]) => rowWith(node, tree, _wrap, 'prefix', args),
@@ -15758,7 +15785,7 @@ function viewNumberBigintHex(data: RecordStub, tree: TreeHandle): T.NumberBigint
 		...data,
 		$type: TSKindId.NumberBigintHex as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15782,7 +15809,7 @@ function viewNumberBigintBinary(data: RecordStub, tree: TreeHandle): T.NumberBig
 		...data,
 		$type: TSKindId.NumberBigintBinary as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15806,7 +15833,7 @@ function viewNumberBigintOctal(data: RecordStub, tree: TreeHandle): T.NumberBigi
 		...data,
 		$type: TSKindId.NumberBigintOctal as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15830,7 +15857,7 @@ function viewNumberBigintDecimal(data: RecordStub, tree: TreeHandle): T.NumberBi
 		...data,
 		$type: TSKindId.NumberBigintDecimal as const,
 		content() {
-			return viewSlot<string>(this, tree, 2, 4);
+			return viewSlot<string>(this, tree, 2, 4, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -15854,10 +15881,10 @@ function viewBinaryExpressionIn(data: RecordStub, tree: TreeHandle): T.BinaryExp
 		...data,
 		$type: TSKindId.BinaryExpressionIn as const,
 		left() {
-			return viewSlot<T.Expression | T.PrivatePropertyIdentifier>(this, tree, 2, 5);
+			return viewSlot<T.Expression | T.PrivatePropertyIdentifier>(this, tree, 2, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -15882,13 +15909,13 @@ function viewClassBodyMemberMethod(data: RecordStub, tree: TreeHandle): T.ClassB
 		...data,
 		$type: TSKindId.ClassBodyMemberMethod as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 2, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 2, 2, 5, 0);
 		},
 		methodDefinition() {
-			return viewSlot<T.MethodDefinition>(this, tree, 4, 5);
+			return viewSlot<T.MethodDefinition>(this, tree, 4, 79, 77);
 		},
 		terminator() {
-			return recordSlot(this, tree, 9, 5);
+			return recordSlot(this, tree, 83, 5, 0);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -15914,10 +15941,10 @@ function viewClassBodyMemberMethodSig(data: RecordStub, tree: TreeHandle): T.Cla
 		...data,
 		$type: TSKindId.ClassBodyMemberMethodSig as const,
 		methodSignature() {
-			return viewSlot<T.MethodSignature>(this, tree, 2, 5);
+			return viewSlot<T.MethodSignature>(this, tree, 2, 68, 66);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 70, 5, 0);
 		},
 		$with: {
 			methodSignature: (...args: unknown[]) => rowWith(node, tree, _wrap, 'methodSignature', args),
@@ -15946,11 +15973,12 @@ function viewClassBodyMemberDeclaration(data: RecordStub, tree: TreeHandle): T.C
 				this,
 				tree,
 				2,
-				5
+				68,
+				66
 			);
 		},
 		terminator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 70, 5, 0);
 		},
 		$with: {
 			member: (...args: unknown[]) => rowWith(node, tree, _wrap, 'member', args),
@@ -15975,23 +16003,24 @@ function viewIndexSignatureColon(data: RecordStub, tree: TreeHandle): T.IndexSig
 		...data,
 		$type: TSKindId.IndexSignatureColon as const,
 		sign() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		readonly() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 8, 5);
+			return viewSlot<T.Identifier>(this, tree, 8, 5, 0);
 		},
 		indexType() {
-			return viewSlot<T.Type>(this, tree, 13, 5);
+			return viewSlot<T.Type>(this, tree, 13, 5, 0);
 		},
 		type() {
 			return viewSlot<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 				this,
 				tree,
 				18,
-				5
+				9,
+				7
 			);
 		},
 		$with: {
@@ -16023,20 +16052,21 @@ function viewIndexSignatureMappedTypeClause(
 		...data,
 		$type: TSKindId.IndexSignatureMappedTypeClause as const,
 		sign() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		readonly() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		mappedTypeClause() {
-			return viewSlot<T.MappedTypeClause>(this, tree, 8, 5);
+			return viewSlot<T.MappedTypeClause>(this, tree, 8, 23, 21);
 		},
 		type() {
 			return viewSlot<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 				this,
 				tree,
-				13,
-				5
+				31,
+				9,
+				7
 			);
 		},
 		$with: {
@@ -16064,10 +16094,10 @@ function viewImportStatementClauseFrom(data: RecordStub, tree: TreeHandle): T.Im
 		...data,
 		$type: TSKindId.ImportStatementClauseFrom as const,
 		importClause() {
-			return viewSlot<T.ImportClause>(this, tree, 2, 5);
+			return viewSlot<T.ImportClause>(this, tree, 2, 27, 25);
 		},
 		source() {
-			return viewSlot<T.String>(this, tree, 7, 5);
+			return viewSlot<T.String>(this, tree, 29, 6, 4);
 		},
 		$with: {
 			importClause: (...args: unknown[]) => rowWith(node, tree, _wrap, 'importClause', args),
@@ -16092,7 +16122,7 @@ function viewYieldExpressionDelegate(data: RecordStub, tree: TreeHandle): T.Yiel
 		...data,
 		$type: TSKindId.YieldExpressionDelegate as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
@@ -16116,10 +16146,10 @@ function viewImportSpecifierName(data: RecordStub, tree: TreeHandle): T.ImportSp
 		...data,
 		$type: TSKindId.ImportSpecifierName as const,
 		importKind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 7, 5);
+			return viewSlot<T.Identifier>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			importKind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'importKind', args),
@@ -16144,13 +16174,13 @@ function viewImportSpecifierAs(data: RecordStub, tree: TreeHandle): T.ImportSpec
 		...data,
 		$type: TSKindId.ImportSpecifierAs as const,
 		importKind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, tree, 7, 5);
+			return viewSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, tree, 7, 6, 4);
 		},
 		alias() {
-			return viewSlot<T.Identifier>(this, tree, 12, 5);
+			return viewSlot<T.Identifier>(this, tree, 13, 5, 0);
 		},
 		$with: {
 			importKind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'importKind', args),
@@ -16176,10 +16206,10 @@ function viewParenthesizedExpressionTyped(data: RecordStub, tree: TreeHandle): T
 		...data,
 		$type: TSKindId.ParenthesizedExpressionTyped as const,
 		expression() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args),
@@ -16207,7 +16237,7 @@ function viewParenthesizedExpressionSequence(
 		...data,
 		$type: TSKindId.ParenthesizedExpressionSequence as const,
 		sequenceExpression() {
-			return viewSlot<T.SequenceExpression>(this, tree, 2, 5);
+			return viewSlot<T.SequenceExpression>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			sequenceExpression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'sequenceExpression', args)
@@ -16231,13 +16261,13 @@ function viewCallExpressionCall(data: RecordStub, tree: TreeHandle): T.CallExpre
 		...data,
 		$type: TSKindId.CallExpressionCall as const,
 		function() {
-			return viewSlot<T.Expression | TSKindId.Import>(this, tree, 2, 5);
+			return viewSlot<T.Expression | TSKindId.Import>(this, tree, 2, 5, 0);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 10, 8);
 		},
 		arguments() {
-			return viewSlot<T.Arguments>(this, tree, 12, 5);
+			return viewSlot<T.Arguments>(this, tree, 17, 6, 4);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -16263,10 +16293,10 @@ function viewCallExpressionTemplateCall(data: RecordStub, tree: TreeHandle): T.C
 		...data,
 		$type: TSKindId.CallExpressionTemplateCall as const,
 		function() {
-			return viewSlot<T.PrimaryExpression | T.NewExpression>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryExpression | T.NewExpression>(this, tree, 2, 5, 0);
 		},
 		arguments() {
-			return viewSlot<T.TemplateString>(this, tree, 7, 5);
+			return viewSlot<T.TemplateString>(this, tree, 7, 6, 4);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -16291,13 +16321,13 @@ function viewCallExpressionMember(data: RecordStub, tree: TreeHandle): T.CallExp
 		...data,
 		$type: TSKindId.CallExpressionMember as const,
 		function() {
-			return viewSlot<T.PrimaryExpression>(this, tree, 2, 5);
+			return viewSlot<T.PrimaryExpression>(this, tree, 2, 5, 0);
 		},
 		typeArguments() {
-			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeArguments | undefined>(this, tree, 7, 10, 8);
 		},
 		arguments() {
-			return viewSlot<T.Arguments>(this, tree, 12, 5);
+			return viewSlot<T.Arguments>(this, tree, 17, 6, 4);
 		},
 		$with: {
 			function: (...args: unknown[]) => rowWith(node, tree, _wrap, 'function', args),
@@ -16323,7 +16353,7 @@ function viewStringDouble(data: RecordStub, tree: TreeHandle): T.StringDouble.Pa
 		...data,
 		$type: TSKindId.StringDouble as const,
 		elements() {
-			return viewSlots<T.UnescapedDoubleStringFragment | T.EscapeSequence>(this, tree, 2, 2, 5);
+			return viewSlots<T.UnescapedDoubleStringFragment | T.EscapeSequence>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -16347,7 +16377,7 @@ function viewStringSingle(data: RecordStub, tree: TreeHandle): T.StringSingle.Pa
 		...data,
 		$type: TSKindId.StringSingle as const,
 		elements() {
-			return viewSlots<T.UnescapedSingleStringFragment | T.EscapeSequence>(this, tree, 2, 2, 5);
+			return viewSlots<T.UnescapedSingleStringFragment | T.EscapeSequence>(this, tree, 2, 2, 5, 0);
 		},
 		$with: {
 			elements: (...args: unknown[]) => rowWith(node, tree, _wrap, 'elements', args)
@@ -16371,10 +16401,10 @@ function viewUpdateExpressionPostfix(data: RecordStub, tree: TreeHandle): T.Upda
 		...data,
 		$type: TSKindId.UpdateExpressionPostfix as const,
 		argument() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			argument: (...args: unknown[]) => rowWith(node, tree, _wrap, 'argument', args),
@@ -16399,10 +16429,10 @@ function viewUpdateExpressionPrefix(data: RecordStub, tree: TreeHandle): T.Updat
 		...data,
 		$type: TSKindId.UpdateExpressionPrefix as const,
 		operator() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		argument() {
-			return viewSlot<T.Expression>(this, tree, 7, 5);
+			return viewSlot<T.Expression>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			operator: (...args: unknown[]) => rowWith(node, tree, _wrap, 'operator', args),
@@ -16427,7 +16457,7 @@ function viewArrowFunctionParameter(data: RecordStub, tree: TreeHandle): T.Arrow
 		...data,
 		$type: TSKindId.ArrowFunctionParameter as const,
 		parameter() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			parameter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'parameter', args)
@@ -16451,10 +16481,10 @@ function viewClassHeritageExtendsClause(data: RecordStub, tree: TreeHandle): T.C
 		...data,
 		$type: TSKindId.ClassHeritageExtendsClause as const,
 		extendsClause() {
-			return viewSlot<T.ExtendsClause>(this, tree, 2, 5);
+			return viewSlot<T.ExtendsClause>(this, tree, 2, 6, 4);
 		},
 		implementsClause() {
-			return viewSlot<T.ImplementsClause | undefined>(this, tree, 7, 5);
+			return viewSlot<T.ImplementsClause | undefined>(this, tree, 8, 6, 4);
 		},
 		$with: {
 			extendsClause: (...args: unknown[]) => rowWith(node, tree, _wrap, 'extendsClause', args),
@@ -16479,10 +16509,10 @@ function viewImportClauseDefaultImport(data: RecordStub, tree: TreeHandle): T.Im
 		...data,
 		$type: TSKindId.ImportClauseDefaultImport as const,
 		identifier() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		importClauseGroup() {
-			return viewSlot<T.ImportClauseGroup | undefined>(this, tree, 7, 5);
+			return viewSlot<T.ImportClauseGroup | undefined>(this, tree, 7, 14, 12);
 		},
 		$with: {
 			identifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'identifier', args),
@@ -16514,10 +16544,10 @@ function viewExportStatementDefaultFrom(data: RecordStub, tree: TreeHandle): T.E
 				| T.ExportStatementDefaultFromStarFrom
 				| T.ExportStatementDefaultFromNsFrom
 				| T.ExportStatementDefaultFromClauseFrom
-			>(this, tree, 3, 5);
+			>(this, tree, 3, 20, 18);
 		},
 		terminator() {
-			return recordSlot(this, tree, 8, 5);
+			return recordSlot(this, tree, 23, 5, 0);
 		},
 		$with: {
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args),
@@ -16546,10 +16576,10 @@ function viewExportStatementDefaultDeclaration(
 		...data,
 		$type: TSKindId.ExportStatementDefaultDeclaration as const,
 		decorators() {
-			return viewSlots<T.Decorator>(this, tree, 2, 2, 5);
+			return viewSlots<T.Decorator>(this, tree, 2, 2, 5, 0);
 		},
 		content() {
-			return viewSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this, tree, 4, 5);
+			return viewSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(this, tree, 4, 5, 0);
 		},
 		$with: {
 			decorators: (...args: unknown[]) => rowWith(node, tree, _wrap, 'decorators', args),
@@ -16577,7 +16607,7 @@ function viewExportStatementDefaultFromStarFrom(
 		...data,
 		$type: TSKindId.ExportStatementDefaultFromStarFrom as const,
 		source() {
-			return viewSlot<T.String>(this, tree, 2, 5);
+			return viewSlot<T.String>(this, tree, 2, 6, 4);
 		},
 		$with: {
 			source: (...args: unknown[]) => rowWith(node, tree, _wrap, 'source', args)
@@ -16604,10 +16634,10 @@ function viewExportStatementDefaultFromNsFrom(
 		...data,
 		$type: TSKindId.ExportStatementDefaultFromNsFrom as const,
 		namespaceExport() {
-			return viewSlot<T.NamespaceExport>(this, tree, 2, 5);
+			return viewSlot<T.NamespaceExport>(this, tree, 2, 10, 8);
 		},
 		source() {
-			return viewSlot<T.String>(this, tree, 7, 5);
+			return viewSlot<T.String>(this, tree, 12, 6, 4);
 		},
 		$with: {
 			namespaceExport: (...args: unknown[]) => rowWith(node, tree, _wrap, 'namespaceExport', args),
@@ -16635,10 +16665,10 @@ function viewExportStatementDefaultFromClauseFrom(
 		...data,
 		$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
 		exportClause() {
-			return viewSlot<T.ExportClause>(this, tree, 2, 5);
+			return viewSlot<T.ExportClause>(this, tree, 2, 10, 8);
 		},
 		source() {
-			return viewSlot<T.String | undefined>(this, tree, 7, 5);
+			return viewSlot<T.String | undefined>(this, tree, 12, 6, 4);
 		},
 		$with: {
 			exportClause: (...args: unknown[]) => rowWith(node, tree, _wrap, 'exportClause', args),
@@ -16666,7 +16696,7 @@ function viewExportStatementDefaultDeclarationDefaultKw(
 		...data,
 		$type: TSKindId.ExportStatementDefaultDeclarationDefaultKw as const,
 		content() {
-			return viewSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(this, tree, 2, 5);
+			return viewSlot<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -16693,10 +16723,10 @@ function viewExportStatementDefaultDeclarationDefaultKwValue(
 		...data,
 		$type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue as const,
 		value() {
-			return viewSlot<T.Expression>(this, tree, 2, 5);
+			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		automaticSemicolon() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		$with: {
 			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
@@ -16721,13 +16751,13 @@ function viewVariableDeclaratorPlain(data: RecordStub, tree: TreeHandle): T.Vari
 		...data,
 		$type: TSKindId.VariableDeclaratorPlain as const,
 		name() {
-			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 6, 4);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 7, 5);
+			return viewSlot<T.TypeAnnotation | undefined>(this, tree, 8, 9, 7);
 		},
 		value() {
-			return viewSlot<T.Expression | undefined>(this, tree, 12, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 17, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -16753,10 +16783,10 @@ function viewVariableDeclaratorDefinite(data: RecordStub, tree: TreeHandle): T.V
 		...data,
 		$type: TSKindId.VariableDeclaratorDefinite as const,
 		name() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5);
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
 		type() {
-			return viewSlot<T.TypeAnnotation>(this, tree, 7, 5);
+			return viewSlot<T.TypeAnnotation>(this, tree, 7, 9, 7);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -16781,13 +16811,13 @@ function viewForHeaderLhs(data: RecordStub, tree: TreeHandle): T.ForHeaderLhs.Pa
 		...data,
 		$type: TSKindId.ForHeaderLhs as const,
 		left() {
-			return viewSlot<T.LhsExpression | T.ParenthesizedExpression>(this, tree, 2, 5);
+			return viewSlot<T.LhsExpression | T.ParenthesizedExpression>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5);
+			return recordSlot(this, tree, 7, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 12, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 12, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -16813,16 +16843,16 @@ function viewForHeaderVarKind(data: RecordStub, tree: TreeHandle): T.ForHeaderVa
 		...data,
 		$type: TSKindId.ForHeaderVarKind as const,
 		left() {
-			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 5);
+			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 2, 6, 4);
 		},
 		value() {
-			return viewSlot<T.Expression | undefined>(this, tree, 7, 5);
+			return viewSlot<T.Expression | undefined>(this, tree, 8, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 12, 5);
+			return recordSlot(this, tree, 13, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 17, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 18, 5, 0);
 		},
 		$with: {
 			left: (...args: unknown[]) => rowWith(node, tree, _wrap, 'left', args),
@@ -16849,19 +16879,19 @@ function viewForHeaderLetConstKind(data: RecordStub, tree: TreeHandle): T.ForHea
 		...data,
 		$type: TSKindId.ForHeaderLetConstKind as const,
 		kind() {
-			return recordSlot(this, tree, 2, 5);
+			return recordSlot(this, tree, 2, 5, 0);
 		},
 		left() {
-			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 7, 5);
+			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 7, 6, 4);
 		},
 		terminator() {
-			return recordSlot(this, tree, 12, 5);
+			return recordSlot(this, tree, 13, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 17, 5);
+			return recordSlot(this, tree, 18, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 22, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 23, 5, 0);
 		},
 		$with: {
 			kind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'kind', args),
@@ -16889,19 +16919,19 @@ function viewForHeaderUsingKind(data: RecordStub, tree: TreeHandle): T.ForHeader
 		...data,
 		$type: TSKindId.ForHeaderUsingKind as const,
 		kind() {
-			return recordSlot(this, tree, 3, 5);
+			return recordSlot(this, tree, 3, 5, 0);
 		},
 		left() {
-			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 8, 5);
+			return viewSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, tree, 8, 6, 4);
 		},
 		terminator() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 13, 5);
+			return recordSlot(this, tree, 14, 5, 0);
 		},
 		right() {
-			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 18, 5);
+			return viewSlot<T.Expression | T.SequenceExpression>(this, tree, 19, 5, 0);
 		},
 		$with: {
 			kind: (...args: unknown[]) => rowWith(node, tree, _wrap, 'kind', args),
@@ -16929,7 +16959,7 @@ function viewStatementIdentifier(data: RecordStub, tree: TreeHandle): T.Statemen
 		...data,
 		$type: TSKindId.StatementIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, contentRole(this, recordSlot(this, tree, 2, 5)));
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -16953,7 +16983,7 @@ function viewShorthandPropertyIdentifier(data: RecordStub, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, contentRole(this, recordSlot(this, tree, 2, 5)));
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -16980,7 +17010,7 @@ function viewShorthandPropertyIdentifierPattern(
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifierPattern as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, contentRole(this, recordSlot(this, tree, 2, 5)));
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -17004,7 +17034,7 @@ function viewPropertyIdentifier(data: RecordStub, tree: TreeHandle): T.PropertyI
 		...data,
 		$type: TSKindId.PropertyIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, contentRole(this, recordSlot(this, tree, 2, 5)));
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -17028,7 +17058,7 @@ function viewTypeIdentifier(data: RecordStub, tree: TreeHandle): T.TypeIdentifie
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, contentRole(this, recordSlot(this, tree, 2, 5)));
+			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -17052,7 +17082,7 @@ function viewInterfaceBody(data: RecordStub, tree: TreeHandle): T.InterfaceBody.
 		...data,
 		$type: TSKindId.InterfaceBody as const,
 		content() {
-			return viewSlot<T.ObjectType>(this, tree, 2, 5, contentRole(this, recordSlot(this, tree, 2, 5)));
+			return viewSlot<T.ObjectType>(this, tree, 2, 20, 18, contentRole(this, recordSlot(this, tree, 2, 20, 18)));
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)

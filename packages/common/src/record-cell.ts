@@ -8,6 +8,8 @@ export interface RecordCodecConstants {
 	readonly CELL_TAG_CHILD: number;
 	readonly CELL_TAG_UNIT: number;
 	readonly CELL_TAG_BUILT_LEAF: number;
+	readonly CELL_TAG_INLINE: number;
+	readonly CELL_INLINE_HEADER_WORDS: number;
 	readonly ARENA_CHUNK_SHIFT: number;
 	readonly SIDE_FIELD_AT: number;
 	readonly SIDE_WORDS_AT: number;
@@ -36,6 +38,8 @@ export interface CellFormat {
 	readonly child: number;
 	readonly unit: number;
 	readonly builtLeaf: number;
+	readonly inline: number;
+	readonly inlineHeaderWords: number;
 	readonly chunkShift: number;
 	/** The side record's `at`, its first field: a parsed node's row, its subtree's end and its byte span. */
 	readonly sideAt: SideField;
@@ -65,7 +69,13 @@ export type RecordCell =
 			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  }
 	| { readonly form: 'unit'; readonly kind: number; readonly row: number | undefined }
-	| { readonly form: 'builtLeaf'; readonly kind: number; readonly offset: number; readonly len: number; readonly record: number }
+	| {
+			readonly form: 'builtLeaf';
+			readonly kind: number;
+			readonly offset: number;
+			readonly len: number;
+			readonly record: number;
+	  }
 	| { readonly form: 'builtText'; readonly offset: number; readonly len: number };
 
 /** A list slot's cell: its run's address and the items in it. */
@@ -81,6 +91,8 @@ const CODEC_KEYS = [
 	'CELL_TAG_CHILD',
 	'CELL_TAG_UNIT',
 	'CELL_TAG_BUILT_LEAF',
+	'CELL_TAG_INLINE',
+	'CELL_INLINE_HEADER_WORDS',
 	'ARENA_CHUNK_SHIFT',
 	'SIDE_FIELD_AT',
 	'SIDE_WORDS_AT',
@@ -107,6 +119,8 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		child: codec.CELL_TAG_CHILD,
 		unit: codec.CELL_TAG_UNIT,
 		builtLeaf: codec.CELL_TAG_BUILT_LEAF,
+		inline: codec.CELL_TAG_INLINE,
+		inlineHeaderWords: codec.CELL_INLINE_HEADER_WORDS,
 		chunkShift: codec.ARENA_CHUNK_SHIFT,
 		sideAt: { bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },
 		sideBeforeDelimiter: [
@@ -150,15 +164,44 @@ function spanAt(words: ArrayLike<number>, at: number, tag: number): ByteSpan {
  *
  * @throws When the tag is none the codec writes, or the cell runs past `words`.
  */
-export function decodeCell(words: ArrayLike<number>, at: number, format: CellFormat): RecordCell {
+export function decodeCell(
+	words: ArrayLike<number>,
+	at: number,
+	format: CellFormat,
+	inline = 0,
+	address = 0
+): RecordCell {
 	const tag = words[at];
 	if (tag === undefined) throw new Error(`no cell at word ${at}`);
+	if (tag === format.inline) {
+		if (
+			address === 0 ||
+			inline < 2 ||
+			at + format.inlineHeaderWords + inline > words.length ||
+			wordOf(address, format) + format.inlineHeaderWords >= 2 ** format.chunkShift
+		) {
+			throw new Error(`inline cell at word ${at} exceeds its stamped capacity ${inline}`);
+		}
+		const changed = field(words, at, 1, tag);
+		return {
+			form: 'child',
+			kind: field(words, at, format.inlineHeaderWords, tag),
+			at: addressOf(chunkOf(address, format), wordOf(address, format) + format.inlineHeaderWords, format),
+			link: undefined,
+			changed: { leading: (changed & 1) !== 0, trailing: (changed & 2) !== 0 }
+		};
+	}
 	const kind = (): number => field(words, at, 1, tag);
 	switch (tag) {
 		case format.absent:
 			return { form: 'absent' };
 		case format.coordinate:
-			return { form: 'coordinate', kind: kind(), index: field(words, at, 2, tag), span: { start: field(words, at, 3, tag), end: field(words, at, 4, tag) } };
+			return {
+				form: 'coordinate',
+				kind: kind(),
+				index: field(words, at, 2, tag),
+				span: { start: field(words, at, 3, tag), end: field(words, at, 4, tag) }
+			};
 		case format.parsedLeaf:
 			return kind() === 0
 				? { form: 'parsedText', span: spanAt(words, at, tag) }
@@ -216,7 +259,10 @@ export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format
 	const mask = words[at];
 	if (mask === undefined) throw new Error(`no side record at word ${at}`);
 	if ((mask & format.sideDelimiter) === 0) return undefined;
-	const offset = format.sideBeforeDelimiter.reduce((sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words), 1);
+	const offset = format.sideBeforeDelimiter.reduce(
+		(sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words),
+		1
+	);
 	const delimiter = words[at + offset];
 	if (delimiter === undefined) throw new Error(`a side record's delimiters setting ends at word ${at + offset}`);
 	return delimiter;

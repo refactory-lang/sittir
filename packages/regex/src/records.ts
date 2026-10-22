@@ -6,12 +6,12 @@
 export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
-	PatternNode: { words: 7, content: { word: 2, width: 5 } },
+	PatternNode: { words: 8, content: { word: 2, width: 6, inline: 4 } },
 	AlternationNode: { words: 4, terms: { word: 2, width: 2, run: 5 } },
 	TermNode: { words: 4, term_group: { word: 2, width: 2, run: 5 } },
-	LookaroundAssertionNode: { words: 7, content: { word: 2, width: 5 } },
-	LookaheadAssertionNode: { words: 12, content: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	LookbehindAssertionNode: { words: 12, content: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	LookaroundAssertionNode: { words: 21, content: { word: 2, width: 19, inline: 17 } },
+	LookaheadAssertionNode: { words: 17, content: { word: 2, width: 5 }, pattern: { word: 7, width: 10, inline: 8 } },
+	LookbehindAssertionNode: { words: 17, content: { word: 2, width: 5 }, pattern: { word: 7, width: 10, inline: 8 } },
 	PatternCharacterNode: { words: 2 },
 	CharacterClassNode: {
 		words: 5,
@@ -22,30 +22,30 @@ export const records = {
 	},
 	PosixCharacterClassNode: { words: 7, posix_class_name: { word: 2, width: 5 } },
 	PosixClassNameNode: { words: 2 },
-	ClassRangeNode: { words: 12, start: { word: 2, width: 5 }, end: { word: 7, width: 5 } },
+	ClassRangeNode: { words: 72, start: { word: 2, width: 35, inline: 33 }, end: { word: 37, width: 35, inline: 33 } },
 	ClassCharacterNode: { words: 2 },
-	AnonymousCapturingGroupNode: { words: 7, pattern: { word: 2, width: 5 } },
+	AnonymousCapturingGroupNode: { words: 12, pattern: { word: 2, width: 10, inline: 8 } },
 	NamedCapturingGroupNode: {
-		words: 17,
+		words: 22,
 		content: { word: 2, width: 5 },
 		group_name: { word: 7, width: 5 },
-		pattern: { word: 12, width: 5 }
+		pattern: { word: 12, width: 10, inline: 8 }
 	},
-	NonCapturingGroupNode: { words: 7, pattern: { word: 2, width: 5 } },
+	NonCapturingGroupNode: { words: 12, pattern: { word: 2, width: 10, inline: 8 } },
 	FlagsNode: { words: 2 },
 	ZeroOrMoreNode: { words: 3, lazy: { word: 2, bit: 0 } },
 	OneOrMoreNode: { words: 3, lazy: { word: 2, bit: 0 } },
 	OptionalNode: { words: 3, lazy: { word: 2, bit: 0 } },
-	CountQuantifierNode: { words: 8, content: { word: 3, width: 5 }, lazy: { word: 2, bit: 0 } },
+	CountQuantifierNode: { words: 21, content: { word: 3, width: 18, inline: 16 }, lazy: { word: 2, bit: 0 } },
 	BackreferenceEscapeNode: { words: 7, group_name: { word: 2, width: 5 } },
 	NamedGroupBackreferenceNode: { words: 7, group_name: { word: 2, width: 5 } },
 	DecimalEscapeNode: { words: 2 },
-	CharacterClassEscapeNode: { words: 7, content: { word: 2, width: 5 } },
+	CharacterClassEscapeNode: { words: 33, content: { word: 2, width: 31, inline: 29 } },
 	UnicodeCharacterEscapeNode: { words: 2 },
 	UnicodePropertyValueExpressionNode: {
-		words: 12,
-		unicode_property_value_expression_group: { word: 2, width: 5 },
-		unicode_property_value: { word: 7, width: 5 }
+		words: 20,
+		unicode_property_value_expression_group: { word: 2, width: 13, inline: 11 },
+		unicode_property_value: { word: 15, width: 5 }
 	},
 	UnicodePropertyValueNode: { words: 2 },
 	ControlEscapeNode: { words: 2 },
@@ -53,29 +53,37 @@ export const records = {
 	IdentityEscapeNode: { words: 6, content: { word: 2, width: 4 } },
 	GroupNameNode: { words: 2 },
 	DecimalDigitsNode: { words: 2 },
-	TermGroupNode: { words: 12, content: { word: 2, width: 5 }, quantifier: { word: 7, width: 5 } },
+	TermGroupNode: {
+		words: 60,
+		content: { word: 2, width: 35, inline: 33 },
+		quantifier: { word: 37, width: 23, inline: 21 }
+	},
 	CountQuantifierGroupNode: { words: 7, decimal_digits: { word: 2, width: 5 } },
 	CountQuantifierArmNode: {
-		words: 12,
+		words: 16,
 		decimal_digits: { word: 2, width: 5 },
-		count_quantifier_group: { word: 7, width: 5 }
+		count_quantifier_group: { word: 7, width: 9, inline: 7 }
 	},
 	CharacterClassEscapeArmNode: {
-		words: 12,
+		words: 29,
 		character_class_escape_text2: { word: 2, width: 5 },
-		unicode_property_value_expression: { word: 7, width: 5 }
+		unicode_property_value_expression: { word: 7, width: 22, inline: 20 }
 	},
-	UnicodePropertyValueExpressionGroupNode: { words: 7, unicode_property_name: { word: 2, width: 5 } },
+	UnicodePropertyValueExpressionGroupNode: { words: 11, unicode_property_name: { word: 2, width: 9, inline: 7 } },
 	CharacterClassEscapeText1Node: { words: 2 },
 	CharacterClassEscapeText2Node: { words: 2 },
-	InlineFlagsGroupEnableNode: { words: 12, enabled: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	InlineFlagsGroupEnableNode: { words: 17, enabled: { word: 2, width: 5 }, pattern: { word: 7, width: 10, inline: 8 } },
 	InlineFlagsGroupToggleNode: {
-		words: 17,
+		words: 22,
 		enabled: { word: 2, width: 5 },
 		disabled: { word: 7, width: 5 },
-		pattern: { word: 12, width: 5 }
+		pattern: { word: 12, width: 10, inline: 8 }
 	},
-	InlineFlagsGroupDisableNode: { words: 12, disabled: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	InlineFlagsGroupDisableNode: {
+		words: 17,
+		disabled: { word: 2, width: 5 },
+		pattern: { word: 7, width: 10, inline: 8 }
+	},
 	LazyNode: { words: 7, content: { word: 2, width: 5 } },
 	UnicodePropertyNameNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

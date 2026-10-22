@@ -261,6 +261,9 @@ chunk(treeId: TreeId, n: number): Uint32Array
  */
 export const ARENA_CHUNK_SHIFT: number
 
+/** r" Words before an embedded child's own record header. */
+export const CELL_INLINE_HEADER_WORDS: number
+
 /** r" The tag word of an absent cell (`arena::cell::tag`). */
 export const CELL_TAG_ABSENT: number
 
@@ -272,6 +275,9 @@ export const CELL_TAG_CHILD: number
 
 /** r" The tag word of a coordinate cell. */
 export const CELL_TAG_COORDINATE: number
+
+/** r" The tag word of an embedded bounded child's record. */
+export const CELL_TAG_INLINE: number
 
 /** r" The tag word of a parsed leaf's cell, and of a parsed captured string's. */
 export const CELL_TAG_PARSED_LEAF: number

@@ -12339,7 +12339,7 @@ The canonical layout place of the slot stored under `storageKey` in a record wra
 
 ### `packages/codegen/src/emitters/wrap.ts::cellArgs`
 
-Formats the canonical cell place as literal numeric word, width and optional list stride arguments. A presence place is refused because its bit is read by the separate flag helper. Keeping this formatting shared makes slot accessors, list lengths and owner views consume the same stamped facts.
+Formats the canonical place as literal numeric arguments. A scalar carries word, width and inline capacity; a list carries word, width, run stride and optional scalar fallback capacity. Slot accessors, list lengths and owner views share this formatting and never consult layout descriptors at runtime. Presence bits use the separate flag helper.
 
 ### `packages/codegen/src/emitters/wrap.ts::wrapHeader`
 
@@ -12898,33 +12898,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderNodeDataStruct`
 
-Emits a kind's node struct. The struct's record layout
-(`recordLayoutOf`) is computed once from its slots, kept on
-`ReadPrint.records` for `records.ts`, and stamped as `words = …` on
-`#[node(…)]` and each slot's place on its `#[slot(…)]` (`slotAttr`). A
-leaf's record is its header alone: its text lives in the cell that holds the
-leaf. The fields that are not slots (a list's `delimiter` and
-`separator_kind`, a spacing site's per-node value) are layout and take no
-cell.
-
-`#[node(…)]` also names the struct's fields trait (`fields = <Kind>Fields`,
-`rustNodeFieldsTraitName`), which the derive emits and the kind's render
-function is generic over. The struct's `Render` calls that function, for a
-leaf as for a compound, so the node renders through the body a record's view
-shares. It names the view too (`viewArg`), whose `KindOf` and `Render` are
-the struct's, written for the view (`recordViewImpls`): the view renders
-through its `RecordLayout`, which its fields trait hands out. It names the prepare trait the same way (`prepare = <Kind>Prepare`,
-`rustNodePrepareTraitName`), over which the kind's prepare function is
-generic (`prepareStructImpl`), and that function (`prepare_fn = prepare_<kind>`,
-`rustTypedPrepareFnName`), which the derive's `PrepareRecord` runs over the
-record's handles, so a record prepares through the struct's one body. A
-wrapper whose seat descends into its content names that slot
-(`seatThroughArg`).
-
-Every field carries the one stamp the derive knows its role by: the layout
-`#[layout]`, a leaf's text `#[text]`, a slot `#[slot(…)]`, a list's
-delimiters `#[flank(…)]` and its chosen separator `#[separator_kind(…)]`,
-and a spacing setting `#[space(…)]` (`spaceAttr`).
+Emits a concrete native node struct and its typed render/prepare implementations. Its ordered fields come from the canonical struct slots; their record places and total word count come from nodeRecordLayout, shared with TypeScript metadata and literal accessors. Each slot carries that place beside its read facts in one attribute. Print settings remain in side metadata, and text leaves have only a record header. Fields and prepare traits let native structs and borrowed record views use the same render and prepare bodies.
 
 #### body
 
@@ -15388,11 +15362,15 @@ render function.
 
 ### `packages/codegen/src/emitters/render-module.ts::nodeRecordLayout`
 
-A node's record layout, the one the native node struct stamps (`renderNodeDataStruct`): `undefined` for an enum or a kind with no compound record. The wrap emitter reads its places from here (`recordStorageOf`), so a record view and the Rust view read the same words.
+The canonical record layout of a compound, cached per assembled node map and shared by native struct emission, TypeScript record metadata, public literal accessors and eager builders. The singular-reference SCC analysis supplies recursion facts. A scalar slot embeds compound records only when every admitted concrete kind is non-recursive; its capacity is the largest admitted record, computed recursively once. Lists keep run pointers. Presence bits, captured text and leaf cells retain their compact forms. Embedded slots also reserve enough room for lazy coordinates and parsed-arena links, which do not materialize a child. Enums and kinds with no compound record answer undefined.
 
 ### `packages/codegen/src/emitters/render-module.ts::recordLayoutOfSlots`
 
-The record layout of a struct's printed slots: each slot's field (`rustFieldIdent` of its storage name) and the record form its shape and arity need (`slotRecordForm`), placed by `recordLayoutOf`.
+Places the struct's ordered storage slots using their canonical shape and arity. The enclosing node-layout pass supplies each scalar slot's proven bounded-child capacity; this helper formats those facts and delegates placement to recordLayoutOf. It performs no independent recursion analysis.
+
+### `packages/codegen/src/emitters/render-module.ts::recordLayouts`
+
+Caches canonical record layouts by assembled node-map identity, together with that map's singular-reference recursion facts and the active layout walk. Node maps are settled before emission. The active set diagnoses an unexpected layout dependency cycle instead of allowing recursive size computation.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RECORD_HEADER_WORDS`
 
@@ -15437,8 +15415,7 @@ form.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RecordPlace`
 
-Where a slot sits in its record: a `bit` of presence word `word`, or a cell of
-`width` words at `word` (with its `run`).
+A placed field's literal word and bit, or word and width with an optional list stride or bounded-child inline capacity. The layout pass stamps the facts once; generated Rust attributes, TypeScript accessors and eager builders consume the same place.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RecordLayout`
 
@@ -15446,9 +15423,7 @@ A struct's record: its `words` and each placed slot.
 
 ### `packages/codegen/src/emitters/record-layout.ts::slotRecordForm`
 
-A slot's record form, from its stamped `NodeSlotShape` and whether it is
-a list: a presence is a bit, text a text cell, anything else a node cell; a
-list holds a list cell with runs of that width.
+The physical slot form from its canonical shape, arity and optional proven child capacity. A presence is a bit; captured text takes four words; a generic node cell takes five. A list takes two words and a separate run. A bounded scalar reserves the inline header plus the largest admitted child record, with at least five words for the lazy-coordinate, leaf and parsed-link forms.
 
 ### `packages/codegen/src/emitters/record-layout.ts::recordLayoutOf`
 
@@ -15470,8 +15445,11 @@ in the cell that holds it. A field added later lands by the same split.
 
 ### `packages/codegen/src/emitters/record-layout.ts::recordArgs`
 
-A slot's place, spelled as the derive reads it inside the slot's `#[slot(…)]`:
-`word` and `width` (and `run`) for a cell, `word` and `bit` for a presence.
+Formats the canonical place as the derive reads it: word and bit for a presence, otherwise word and width, with a list's run stride or a bounded scalar's inline capacity. All values are stamps, and the derive only checks their fit.
+
+### `packages/codegen/src/emitters/record-layout.ts::INLINE_HEADER_WORDS`
+
+The words before an embedded child's own record header: its inline tag and the child site's changed-edge flags. The native codec exports the same protocol width; the shared cell fixture and eager-generator check pin the two implementations.
 
 ### `packages/codegen/src/emitters/node-model-read.ts::module`
 

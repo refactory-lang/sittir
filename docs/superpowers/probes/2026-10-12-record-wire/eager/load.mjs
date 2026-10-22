@@ -1,13 +1,12 @@
 import { createRequire } from 'node:module';
-import { cellFormatOf } from '../../../../../packages/common/src/record-cell.ts';
 import { Storage } from './runtime.mjs';
 import { builders, wrap } from './builders.mjs';
+import { format, grammarNative } from './grammar-format.mjs';
+
+export { grammarNative } from './grammar-format.mjs';
 
 const require = createRequire(import.meta.url);
 export const native = require('./native/eager-builder-probe.node');
-export const grammarNative = require('../../../../../packages/rust/native/index.cjs');
-const format = cellFormatOf(grammarNative);
-if (format === undefined) throw new Error('the Rust addon must carry the record codec');
 
 export function setup(mode, firstWords = 4096) {
 	const store = new Storage(mode, format, wrap, native, firstWords);

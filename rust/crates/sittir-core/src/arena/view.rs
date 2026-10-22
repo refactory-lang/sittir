@@ -537,7 +537,13 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     /// the unit its prepare defaulted it to, when it took one.
     #[must_use]
     pub fn of(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, words: &[u32]) -> Self {
-        let cell = match Cell::decode(words) {
+        Self::of_inline(ctx, site, words, Address::NONE, 0)
+    }
+
+    /// A stamped scalar slot, whose embedded child is relative to `at`.
+    #[must_use]
+    pub fn of_inline(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, words: &[u32], at: Address, inline: u32) -> Self {
+        let cell = match Cell::decode_slot(words, at, inline) {
             Ok(Cell::Absent) => match ctx.prepared.node(site.holder).and_then(|node| node.slot(site.word)).and_then(|slot| slot.unit) {
                 Some(kind) => Self::cell(ctx, site, Cell::Unit { kind, row: None }),
                 None => SlotCell::Absent,

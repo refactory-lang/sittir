@@ -15,7 +15,11 @@ pub mod tag {
     pub const CHILD: u32 = 3;
     pub const UNIT: u32 = 4;
     pub const BUILT_LEAF: u32 = 5;
+    pub const INLINE: u32 = 6;
 }
+
+/// Words before an embedded child's own record header: tag and changed edges.
+pub const INLINE_HEADER_WORDS: u32 = 2;
 
 /// What one cell holds.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -106,6 +110,23 @@ fn record(word: u32) -> Result<Address, ArenaError> {
 }
 
 impl Cell {
+    /// Decodes a stamped scalar slot, resolving an embedded record relative
+    /// to the slot's address. Ordinary pointer cells retain their wire form.
+    pub fn decode_slot(words: &[u32], at: Address, inline: u32) -> Result<Cell, ArenaError> {
+        if words.first() != Some(&tag::INLINE) {
+            return Self::decode(words);
+        }
+        if at == Address::NONE || inline < crate::record::HEADER_WORDS || words.len() < (INLINE_HEADER_WORDS + inline) as usize {
+            return Err(malformed("inline cell width", inline));
+        }
+        Ok(Cell::Child {
+            kind: named_kind(words[INLINE_HEADER_WORDS as usize])?,
+            at: at.offset(INLINE_HEADER_WORDS).ok_or(malformed("inline record address", at.0))?,
+            link: None,
+            changed: read_changed(words[1])?,
+        })
+    }
+
     /// The cell, as one the record at `holder` holds: a writer writes a
     /// record's children before it, so a record a cell names in the
     /// holder's own arena lies below the holder. A cell that names one at
@@ -341,6 +362,15 @@ mod tests {
     fn every_form_is_written_as_the_shared_fixture_holds_it() {
         let fixture: serde_json::Value = serde_json::from_str(include_str!("cell-forms.json")).expect("the fixture parses");
         let cells = fixture["cells"].as_array().expect("cells");
+        assert_eq!(fixture["inlineHeaderWords"].as_u64(), Some(u64::from(INLINE_HEADER_WORDS)));
+        for entry in fixture["inlines"].as_array().expect("inline cells") {
+            let cell = Cell::Child {
+                kind: KindId(u16::try_from(fixture_number(entry, "kind")).expect("a kind")),
+                at: Address(fixture_number(entry, "at")), link: None,
+                changed: ChangedEdges { leading: entry["leading"].as_bool().expect("leading"), trailing: entry["trailing"].as_bool().expect("trailing") },
+            };
+            assert_eq!(Cell::decode_slot(&fixture_words(entry), Address(fixture_number(entry, "address")), fixture_number(entry, "capacity")), Ok(cell));
+        }
         let mut forms = std::collections::HashSet::new();
         for entry in cells {
             let cell = fixture_cell(entry);

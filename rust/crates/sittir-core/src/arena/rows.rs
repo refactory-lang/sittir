@@ -57,6 +57,10 @@ impl TreeArena {
         self.records.contains(&at)
     }
 
+    pub(super) fn keep_inline(&mut self, at: Address) {
+        self.records.insert(at);
+    }
+
     /// Holds `at` as `row`'s record, for every later read. The record writer
     /// calls it once it has written the record of a row that had none.
     ///

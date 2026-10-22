@@ -89,9 +89,12 @@ all levels; the benchmark defaults to all. Grammar minimum depths still apply.
 Deeper hydration reaches children of cached parents. Existing records retain
 their words and addresses; newly hydrated children enter the append-only row
 index. `readRecord` keeps its cached-read behavior. The generated writer
-traverses native values, lists and envelope content. Temporary typed values
-are still created in Rust; this is not an allocation-free read or a direct
-view of Tree-sitter memory.
+traverses native values, lists and envelope content. Materialization currently calls the typed Rust reader, then the generated
+record writer: Tree-sitter → typed Rust node graph → arena records. The
+writer converts named native layout metadata into side fields keyed by slot
+word. This path exports no intermediate JavaScript AST, but it still builds
+the native graph; it is not a direct Tree-sitter-to-record writer or an
+allocation-free read.
 
 `hydrateSlot` reads and wraps a slot in JavaScript. Native hydration performs
 materialization without that wrapping or chunk transfer. Fetching an arena

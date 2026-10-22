@@ -26,6 +26,7 @@ pub struct CellShape {
     pub word: u32,
     pub width: u32,
     pub run: Option<u32>,
+    pub inline: u32,
 }
 
 /// The record shapes a node type is written as, by the kind a record's
@@ -56,18 +57,25 @@ pub(super) fn for_each_cell(
     arena: &dyn ArenaRead,
     at: Address,
     record: RecordShape,
-    mut visit: impl FnMut(Cell) -> Result<(), ArenaError>,
+    floor: Address,
+    mut visit: impl FnMut(Cell, u32) -> Result<(), ArenaError>,
 ) -> Result<(), ArenaError> {
     let words = arena.words(at, record.words.max(HEADER_WORDS))?;
     for cell in record.cells {
         let start = cell.word as usize;
-        let mut read = |words: &[u32]| visit(Cell::decode(words)?.below(at)?);
         match cell.run {
-            None => read(
-                words
+            None => {
+                let words = words
                     .get(start..start + cell.width as usize)
-                    .ok_or(malformed("cell word", cell.word))?,
-            )?,
+                    .ok_or(malformed("cell word", cell.word))?;
+                let slot = at.offset(cell.word).ok_or(malformed("cell word", cell.word))?;
+                let decoded = Cell::decode_slot(words, slot, cell.inline)?;
+                if words.first() == Some(&super::cell::tag::INLINE) {
+                    visit(decoded, cell.inline)?;
+                } else {
+                    visit(decoded.below(floor)?, 0)?;
+                }
+            }
             Some(run) => {
                 let list = ListCell::decode(
                     words
@@ -75,7 +83,7 @@ pub(super) fn for_each_cell(
                         .ok_or(malformed("cell word", cell.word))?,
                 )?;
                 for item in list.items(arena, run)? {
-                    read(item)?;
+                    visit(Cell::decode(item)?.below(floor)?, 0)?;
                 }
             }
         }
@@ -97,11 +105,15 @@ pub(super) fn for_each_cell(
 pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>) -> Result<(), ArenaError> {
     let kind_of = |word: u32| u16::try_from(word).map(KindId).map_err(|_| malformed("record kind", word));
     let root_kind = kind_of(arena.word(root)?)?;
-    let mut seen = SmallMap::<Address, Option<KindId>>::new();
+    let mut seen = SmallMap::<(Address, Address), Option<KindId>>::new();
     let mut pending = SmallStack::new();
-    pending.push((root, root_kind));
-    while let Some((at, named)) = pending.pop() {
-        let verified = seen.entry(at).or_default();
+    pending.push((root, root_kind, 0, root));
+    while let Some((at, named, inline, floor)) = pending.pop() {
+        let record = shape(named).ok_or(malformed("record kind", u32::from(named.0)))?;
+        if inline != 0 && record.words > inline {
+            return Err(malformed("inline record width", record.words));
+        }
+        let verified = seen.entry((at, floor)).or_default();
         if let Some(kind) = verified {
             if *kind != named {
                 return Err(malformed("record kind", u32::from(kind.0)));
@@ -114,10 +126,9 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
             return Err(malformed("record kind", header[0]));
         }
         *verified = Some(kind);
-        let record = shape(kind).ok_or(malformed("record kind", header[0]))?;
         let words = arena.words(at, record.words.max(HEADER_WORDS))?;
         SideRecord::read(arena, Address(words[1]))?;
-        for_each_cell(arena, at, record, |cell| {
+        for_each_cell(arena, at, record, floor, |cell, inline| {
             match cell {
                 Cell::Child {
                     kind,
@@ -129,7 +140,7 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
                     kind,
                     record: child,
                     ..
-                } => pending.push((child, kind)),
+                  } => pending.push((child, kind, inline, if inline == 0 { child } else { floor })),
                 _ => {}
             }
             Ok(())
@@ -148,7 +159,7 @@ mod tests {
 
     /// A pair record holds one child cell at word 2; a leaf is its header.
     fn shape(kind: KindId) -> Option<RecordShape> {
-        const CELLS: &[CellShape] = &[CellShape { word: 2, width: 5, run: None }];
+        const CELLS: &[CellShape] = &[CellShape { word: 2, width: 5, run: None, inline: 0 }];
         match kind {
             PAIR => Some(RecordShape { words: 7, cells: CELLS }),
             LEAF => Some(RecordShape { words: HEADER_WORDS, cells: &[] }),
@@ -177,8 +188,8 @@ mod tests {
         const FORK: KindId = KindId(9);
         fn fork_shape(kind: KindId) -> Option<RecordShape> {
             const CELLS: &[CellShape] = &[
-                CellShape { word: 2, width: 5, run: None },
-                CellShape { word: 7, width: 5, run: None },
+            CellShape { word: 2, width: 5, run: None, inline: 0 },
+            CellShape { word: 7, width: 5, run: None, inline: 0 },
             ];
             if kind == FORK { Some(RecordShape { words: 12, cells: CELLS }) } else { shape(kind) }
         }
@@ -204,6 +215,30 @@ mod tests {
         arena.words_mut(inner.offset(4).expect("the cell's address word"), 1).expect("written")[0] = outer.0;
         arena.words_mut(inner.offset(3).expect("the cell's kind word"), 1).expect("written")[0] = u32::from(PAIR.0);
         assert_eq!(admit(&arena, outer, shape), Err(ArenaError::Malformed { what: "child record address", word: outer.0 }), "the inner record names the outer one: a cycle");
+    }
+
+    #[test]
+    fn an_embedded_child_cannot_point_back_to_its_enclosing_allocation() {
+        fn inline_shape(kind: KindId) -> Option<RecordShape> {
+            if kind == KindId(9) {
+                Some(RecordShape { words: 11, cells: &[CellShape { word: 2, width: 9, run: None, inline: 7 }] })
+            } else { shape(kind) }
+        }
+        let mut arena = Arena::new();
+        let root = arena.push(&[9, 0, super::super::cell::tag::INLINE, 0, u32::from(PAIR.0), 0, super::super::cell::tag::CHILD, 9, 0, 0, 0]).expect("a record image");
+        arena.words_mut(root.offset(8).expect("the pointer"), 1).expect("the pointer")[0] = root.0;
+        assert_eq!(admit(&arena, root, inline_shape), Err(ArenaError::Malformed { what: "child record address", word: root.0 }));
+    }
+
+    #[test]
+    fn an_embedded_variant_cannot_read_past_the_stamped_child_capacity() {
+        fn narrow_shape(kind: KindId) -> Option<RecordShape> {
+            if kind == KindId(9) { Some(RecordShape { words: 7, cells: &[CellShape { word: 2, width: 5, run: None, inline: 2 }] }) }
+            else { shape(kind) }
+        }
+        let mut arena = Arena::new();
+        let root = arena.push(&[9, 0, super::super::cell::tag::INLINE, 0, u32::from(PAIR.0), 0, 0]).expect("an inline image");
+        assert_eq!(admit(&arena, root, narrow_shape), Err(ArenaError::Malformed { what: "inline record width", word: 7 }));
     }
 
     #[test]

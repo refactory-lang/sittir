@@ -145,6 +145,10 @@ export class Storage {
 		return { data: this.#words.chunk(chunkOf(at, this.#format)), word: wordOf(at, this.#format) };
 	}
 
+	location(at) {
+		return this.#location(at);
+	}
+
 	#allocate(size) {
 		const location = this.#words.alloc(size);
 		this.#packet = undefined;
@@ -204,57 +208,19 @@ export class Storage {
 		return after;
 	}
 
-	prepare(value, run) {
-		if (run === undefined || this.#mode === 'object') return value;
-		if (value.length === 0) return { at: 0, len: 0 };
-		const location = this.#allocate(value.length * run);
-		for (let i = 0; i < value.length; i++) this.#cell(location.data, location.word + i * run, run, value[i]);
-		return { at: location.at, len: value.length };
+	get isArena() {
+		return this.#mode === 'arena';
 	}
 
-	#raw(value) {
-		if (value === undefined || typeof value !== 'object') return value;
-		if (Array.isArray(value)) return value.map((item) => this.#raw(item));
-		return this.ref(value)._r;
+	run(length, stride) {
+		if (length === 0) return { at: 0, len: 0 };
+		const cursor = this.#allocate(length * stride);
+		cursor.len = length;
+		return cursor;
 	}
 
-	put(ref, key, word, width, run, bit, value) {
-		if (bit !== undefined) value ??= false;
-		if (this.#mode === 'object') {
-			ref.data[key] = this.#raw(value);
-			return;
-		}
-		const at = ref;
-		if (bit !== undefined) {
-			const mask = 2 ** bit;
-			at.data[at.word + word] = (at.data[at.word + word] & ~mask) | (value ? mask : 0);
-		} else if (run !== undefined) {
-			at.data[at.word + word] = value.at;
-			at.data[at.word + word + 1] = value.len;
-		} else this.#cell(at.data, at.word + word, width, value);
-	}
-
-	#cell(data, at, width, value) {
-		data.fill(0, at, at + width);
-		if (value === undefined) return;
-		if (typeof value === 'number') {
-			if (width < 3) throw new Error('unit cell is too narrow');
-			data[at] = this.#format.unit;
-			data[at + 1] = value;
-			return;
-		}
-		const text = typeof value === 'string';
-		const ref = text ? this.#text(value) : this.ref(value);
-		const leaf = text || ref._offset !== undefined;
-		const words = leaf ? (text ? 4 : 5) : 5;
-		if (width < words) throw new Error('cell is too narrow');
-		data[at] = leaf ? this.#format.builtLeaf : this.#format.child;
-		data[at + 1] = text ? 0 : ref.$type;
-		data[at + 2] = leaf ? (text ? ref.offset : ref._offset) : ref._r;
-		if (leaf) {
-			data[at + 3] = text ? ref.len : ref._len;
-			if (!text) data[at + 4] = ref._r;
-		}
+	intern(text) {
+		return this.#text(text);
 	}
 
 	#fromRaw(value) {
@@ -263,8 +229,8 @@ export class Storage {
 		return this.#wrap(this, { kind: value.$type, data: value });
 	}
 
-	#fromCell(data, word) {
-		const cell = decodeCell(data, word, this.#format);
+	#fromCell(data, word, address = 0, inline = 0) {
+		const cell = decodeCell(data, word, this.#format, inline, address);
 		switch (cell.form) {
 			case 'absent':
 				return undefined;
@@ -282,11 +248,11 @@ export class Storage {
 		}
 	}
 
-	get(ref, key, word, run, bit) {
+	get(ref, key, word, run, bit, inline = 0) {
 		if (this.#mode === 'object') return this.#fromRaw(ref._r[key]);
 		const at = this.#location(ref._r);
 		if (bit !== undefined) return (at.data[at.word + word] & (2 ** bit)) !== 0;
-		if (run === undefined) return this.#fromCell(at.data, at.word + word);
+		if (run === undefined) return this.#fromCell(at.data, at.word + word, ref._r + word, inline);
 		const start = at.data[at.word + word];
 		const len = at.data[at.word + word + 1];
 		if (len === 0) return [];

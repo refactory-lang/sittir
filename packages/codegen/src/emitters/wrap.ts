@@ -215,9 +215,9 @@ function placeOf(storage: WrapStorage & { readonly mode: 'record' }, storageKey:
 	return place;
 }
 
-function cellArgs(place: RecordPlace): string {
+function cellArgs(place: RecordPlace, list = false): string {
 	if ('bit' in place) throw new Error(`emitWrap: presence word ${place.word} bit ${place.bit} is not a cell`);
-	return `${place.word}, ${place.width}${place.run === undefined ? '' : `, ${place.run}`}`;
+	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ${place.inline ?? 0}` : (place.run ?? place.inline ?? 0)}`;
 }
 
 function wrapHeader(node: { readonly typeName: string }, storage: WrapStorage, parsedType: string | undefined): string {
@@ -241,7 +241,7 @@ function slotAccessorBody(slot: SlotModel, config: SlotAccessorConfig, storage: 
 		const args = cellArgs(place);
 		if (!storesNodes(config.storageInfo))
 			return `return record${place.run === undefined ? 'Slot' : 'Slots'}(this, tree, ${args})`;
-		if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, tree, ${args})`;
+		if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, tree, ${cellArgs(place, true)})`;
 		const role = config.aliasContent === true ? `, contentRole(this, recordSlot(this, tree, ${args}))` : '';
 		return `return viewSlot<${one}>(this, tree, ${args}${role})`;
 	}
@@ -283,7 +283,7 @@ function emitSeparatedListWrap(
 		listSelfViewPlan(node, nodeMap, kindEntries),
 		storage.mode === 'object'
 			? { elements: dataAccessExpr('data', canonical.storageKey) }
-			: { length: `recordLength(data, tree, ${cellArgs(placeOf(storage, canonical.storageKey))})` },
+			: { length: `recordLength(data, tree, ${cellArgs(placeOf(storage, canonical.storageKey), true)})` },
 		canonical.propertyName,
 		storage.mode === 'object' ? 'wrap' : 'view'
 	);
@@ -654,11 +654,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'}',
 			...(keyed
 				? [
-						'function viewSlot<T>(view: object, tree: TreeHandle, word: number, width: number, role?: Role): ParsedOfData<T> {',
-						'  return hydrateWith(recordSlot(view, tree, word, width), tree, _wrap, undefined, role) as ParsedOfData<T>;',
+						'function viewSlot<T>(view: object, tree: TreeHandle, word: number, width: number, inline = 0, role?: Role): ParsedOfData<T> {',
+						'  return hydrateWith(recordSlot(view, tree, word, width, inline), tree, _wrap, undefined, role) as ParsedOfData<T>;',
 						'}',
-						'function viewSlots<T>(view: object, tree: TreeHandle, word: number, width: number, run?: number): readonly ParsedOfData<T>[] {',
-						'  return recordItems(view, tree, word, width, run, (data) => hydrateWith(data, tree, _wrap)) as readonly ParsedOfData<T>[];',
+						'function viewSlots<T>(view: object, tree: TreeHandle, word: number, width: number, run?: number, inline = 0): readonly ParsedOfData<T>[] {',
+						'  return recordItems(view, tree, word, width, run, (data) => hydrateWith(data, tree, _wrap), inline) as readonly ParsedOfData<T>[];',
 						'}'
 					]
 				: []),
