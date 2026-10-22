@@ -219,11 +219,11 @@ future eager packed builders. Normal native source folding remains enabled.
 
 ## Recorded paired validation run
 
-[Raw paired samples](results/2026-10-21-validation-storage-darwin-arm64.json) and [source, compiled harness, native/WASM provenance and verification](results/2026-10-21-validation-provenance.json).
+[Raw paired samples](results/2026-10-22-validation-storage-darwin-arm64.json) and [source, compiled harness, native/WASM provenance and verification](results/2026-10-22-validation-provenance.json).
 
-Recorded 2026-10-21T22:38:25.526Z to 2026-10-21T23:05:01.517Z on Apple M4 Pro / Darwin 27.2.0 arm64 / Node v26.12.0. Five rounds, two warmup runs and three measured runs per bucket used 50 distinct fresh workers. Storage order alternated each round. Every worker passed the unchanged idle gate (76–93% idle) in an unwatched snapshot. This session ran no builds or tests during measurement.
+Recorded 2026-10-22T00:07:51.401Z to 2026-10-22T00:36:09.651Z on Apple M4 Pro / Darwin 27.2.0 arm64 / Node v26.12.0. Five rounds, two warmup runs and three measured runs per bucket used 50 distinct fresh workers. Storage order alternated each round. Every worker passed the unchanged idle gate (76–92% idle) in an unwatched snapshot. This session ran no builds or tests during measurement.
 
-Source base `6746b2a5176cb37fc67ab7d5772128bf5de2198c`, the implementation overlay, complete runtime source, compiled runtime, five native addons and parser/upstream WASMs are fingerprinted in the provenance. Snapshot imports resolve inside the snapshot. Inputs were identical to the checked checkout and remained unchanged before and after timing. All reported timing medians, ranges and ratios were independently recomputed from raw batches.
+Runtime source commit `2bb3913330939af80fec8827febea938f1fcb847`, the complete runtime source, compiled runtime, five native addons and parser/upstream WASMs are fingerprinted in the provenance. Snapshot imports resolve inside the snapshot. Inputs were identical to the checked checkout and remained unchanged before and after timing. All reported timing medians, ranges and ratios were independently recomputed from raw batches.
 
 ### Whole-validator comparison
 
@@ -231,9 +231,9 @@ Each cell below sums the five grammar medians for a complete corpus batch. This 
 
 | Bucket | Object ms | Arena ms | Arena/object |
 | --- | ---: | ---: | ---: |
-| read-render-parse | 10,015.172 | 7,550.117 | 0.754× |
-| factory-render-parse | 10,018.379 | 10,135.117 | 1.012× |
-| ir-render-parse | 10,033.323 | 10,135.598 | 1.010× |
+| read-render-parse | 10,460.102 | 7,960.176 | 0.761× |
+| factory-render-parse | 10,397.063 | 10,440.357 | 1.004× |
+| ir-render-parse | 10,485.410 | 10,508.598 | 1.002× |
 
 Factory and IR construct object trees under both storage settings. Their ratios include the cost of reading parsed reference nodes under the selected storage; these runs do not measure eager packed builders. Deep read uses native hydration, typed-cell candidate enumeration and candidate rendering for arena storage, with normal source folding enabled. The object path retains its existing detached candidate rendering.
 
@@ -243,21 +243,21 @@ Milliseconds per corpus batch, median of each worker’s three batches, then med
 
 | Grammar | Bucket | Object ms [range] | Arena ms [range] | Arena/object |
 | --- | --- | ---: | ---: | ---: |
-| python | read-render-parse | 2,655.471 [2,645.749–2,684.393] | 1,742.709 [1,730.349–1,768.813] | 0.656× |
-| python | factory-render-parse | 2,695.803 [2,679.684–2,710.268] | 2,747.381 [2,738.308–2,801.538] | 1.019× |
-| python | ir-render-parse | 2,730.486 [2,727.049–2,740.104] | 2,791.680 [2,776.470–2,795.158] | 1.022× |
-| regex | read-render-parse | 350.636 [343.682–355.748] | 286.245 [280.259–296.032] | 0.816× |
-| regex | factory-render-parse | 360.225 [358.984–371.187] | 366.257 [363.712–369.231] | 1.017× |
-| regex | ir-render-parse | 359.162 [355.407–364.290] | 359.334 [355.571–365.339] | 1.000× |
-| rust | read-render-parse | 3,595.863 [3,590.993–3,610.322] | 2,837.084 [2,829.422–2,849.066] | 0.789× |
-| rust | factory-render-parse | 3,577.400 [3,560.432–3,598.147] | 3,610.759 [3,600.704–3,613.996] | 1.009× |
-| rust | ir-render-parse | 3,547.469 [3,544.142–3,570.981] | 3,566.302 [3,563.792–3,586.813] | 1.005× |
-| scm | read-render-parse | 261.619 [259.721–278.657] | 167.985 [163.782–169.447] | 0.642× |
-| scm | factory-render-parse | 231.103 [228.751–232.256] | 233.693 [232.033–235.162] | 1.011× |
-| scm | ir-render-parse | 229.827 [229.538–234.953] | 232.424 [230.475–234.668] | 1.011× |
-| typescript | read-render-parse | 3,151.582 [3,129.102–3,157.028] | 2,516.094 [2,511.870–2,539.397] | 0.798× |
-| typescript | factory-render-parse | 3,153.848 [3,145.123–3,238.026] | 3,177.027 [3,170.482–3,191.751] | 1.007× |
-| typescript | ir-render-parse | 3,166.379 [3,148.395–3,502.974] | 3,185.859 [3,175.612–3,194.228] | 1.006× |
+| python | read-render-parse | 2,878.888 [2,709.068–2,921.565] | 1,874.872 [1,796.500–2,134.296] | 0.651× |
+| python | factory-render-parse | 2,843.848 [2,768.506–2,965.729] | 2,838.362 [2,823.379–2,946.470] | 0.998× |
+| python | ir-render-parse | 2,904.547 [2,846.472–3,016.790] | 2,896.811 [2,835.779–3,042.548] | 0.997× |
+| regex | read-render-parse | 367.156 [359.131–371.552] | 305.446 [299.111–314.021] | 0.832× |
+| regex | factory-render-parse | 375.864 [367.635–399.468] | 383.314 [379.111–386.009] | 1.020× |
+| regex | ir-render-parse | 372.949 [368.314–375.105] | 379.996 [370.766–385.694] | 1.019× |
+| rust | read-render-parse | 3,669.175 [3,645.071–3,797.967] | 2,890.979 [2,857.063–2,904.555] | 0.788× |
+| rust | factory-render-parse | 3,646.297 [3,623.350–3,797.570] | 3,692.461 [3,664.220–3,744.782] | 1.013× |
+| rust | ir-render-parse | 3,636.435 [3,579.183–3,657.572] | 3,641.039 [3,623.025–3,790.280] | 1.001× |
+| scm | read-render-parse | 276.172 [271.028–293.476] | 172.754 [172.657–184.401] | 0.626× |
+| scm | factory-render-parse | 240.961 [237.349–244.359] | 243.280 [242.606–255.442] | 1.010× |
+| scm | ir-render-parse | 247.283 [239.105–248.401] | 249.979 [244.622–297.591] | 1.011× |
+| typescript | read-render-parse | 3,268.712 [3,225.339–3,432.160] | 2,716.124 [2,571.263–3,235.957] | 0.831× |
+| typescript | factory-render-parse | 3,290.094 [3,225.149–3,391.312] | 3,282.941 [3,261.006–3,412.835] | 0.998× |
+| typescript | ir-render-parse | 3,324.195 [3,223.621–3,389.126] | 3,340.773 [3,253.648–3,555.648] | 1.005× |
 
 ### Narrow phase comparison
 
@@ -265,18 +265,18 @@ Sums of grammar medians, milliseconds. These exclude initial parsing, enumeratio
 
 | Bucket | Phase | Object ms | Arena ms | Arena/object |
 | --- | --- | ---: | ---: | ---: |
-| read-render-parse | read | 264.513 | 31.623 | 0.120× |
+| read-render-parse | read | 278.391 | 33.701 | 0.121× |
 | read-render-parse | build | 0.000 | 0.000 | n/a |
-| read-render-parse | render | 834.262 | 50.177 | 0.060× |
-| read-render-parse | parse | 68.024 | 65.254 | 0.959× |
-| factory-render-parse | read | 79.014 | 133.477 | 1.689× |
-| factory-render-parse | build | 1,813.800 | 1,815.261 | 1.001× |
-| factory-render-parse | render | 110.570 | 110.800 | 1.002× |
-| factory-render-parse | parse | 33.531 | 33.653 | 1.004× |
-| ir-render-parse | read | 74.996 | 127.108 | 1.695× |
-| ir-render-parse | build | 1,813.142 | 1,814.898 | 1.001× |
-| ir-render-parse | render | 104.895 | 104.084 | 0.992× |
-| ir-render-parse | parse | 31.845 | 31.752 | 0.997× |
+| read-render-parse | render | 872.596 | 52.578 | 0.060× |
+| read-render-parse | parse | 71.404 | 68.226 | 0.955× |
+| factory-render-parse | read | 84.708 | 139.112 | 1.642× |
+| factory-render-parse | build | 1,885.851 | 1,871.802 | 0.993× |
+| factory-render-parse | render | 115.297 | 118.093 | 1.024× |
+| factory-render-parse | parse | 34.996 | 34.737 | 0.993× |
+| ir-render-parse | read | 82.635 | 136.175 | 1.648× |
+| ir-render-parse | build | 1,899.679 | 1,877.504 | 0.988× |
+| ir-render-parse | render | 112.571 | 111.377 | 0.989× |
+| ir-render-parse | parse | 32.862 | 32.795 | 0.998× |
 
 ### Workload parity
 

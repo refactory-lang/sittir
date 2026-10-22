@@ -1,0 +1,623 @@
+{
+  "snapshot": "/private/tmp/sittir-validation-review-7f9jpm62",
+  "baseCommit": "2bb3913330939af80fec8827febea938f1fcb847",
+  "reviewFixesCommit": "2bb3913330939af80fec8827febea938f1fcb847",
+  "overlayScope": [],
+  "completeRuntimeSource": {
+    "files": 2224,
+    "sha256": "88c605c58c296c642212a3a24535ad923af2e689f7219249b706d85ca82f31ab"
+  },
+  "runtimeSourceSelection": "Git tracked files under packages/, rust/, scripts/, plus root files ending .json, .yaml, .yml, .toml, .ts, .mts, .cjs or .js. Symlinks hash the UTF-8 string symlink: followed by their link target.",
+  "fingerprintAlgorithm": "SHA-256 of sorted relative path + NUL + file SHA-256 hex + newline entries.",
+  "compiledRuntime": {
+    "files": 2270,
+    "sha256": "f843ee7d59021acb077ef0193188cbcd7c8c24ca20e210fea0f961d026245722"
+  },
+  "compiledRuntimeSelection": "Every file under packages/*/dist.",
+  "nativeAndWasmSha256": {
+    "packages/python/.sittir/parser.wasm": "6e5c36355549a746f9d66909b9337b1563de6b30a4185061bfcf4176cb2995cd",
+    "packages/python/.sittir/upstream.wasm": "125f5a0d4c58434794f2fde1164fd8e16e0117655e469440737dbcae58924716",
+    "packages/python/native/sittir-python.darwin-arm64.node": "ae0d2c1d78aaea278d892a21ebbf23c4389c2573834e9d5d703c4cfb9e160526",
+    "packages/regex/.sittir/parser.wasm": "371e2e8f609170cf31749f7eb7c432da0609de2abf8d47f06f055dcec3ab7cca",
+    "packages/regex/.sittir/upstream.wasm": "7b03d1251d48be6856dd639a01edd3fa5b377a43e37ee9e7674c47cbd3c1a9da",
+    "packages/regex/native/sittir-regex.darwin-arm64.node": "d6e1442078c1b2d47d2b255dc54f8a7ff80f005937e56d6a7ad5d43450b144a7",
+    "packages/rust/.sittir/parser.wasm": "dd2b485de15a4ba53df3c9b2b51a18a99081b53dd793b7bd5ed31d0e3778d9ec",
+    "packages/rust/.sittir/upstream.wasm": "d2c6c2223bffb21c7adaf051305552029131d953493c7883a4014bd6836627af",
+    "packages/rust/native/sittir-rust.darwin-arm64.node": "014fc12bee2f96858ae400fb02d359cccc8d1767fa0a4929127223d86c069f43",
+    "packages/scm/.sittir/parser.wasm": "bb61d28a0cd4b158d09eace7bed6b68796b208b0194f5b3f105620cfa1c7f5b1",
+    "packages/scm/.sittir/upstream.wasm": "8e331f552ad6973c09ef81b331a64d57f95fda04a059db7e00e1a420b188a361",
+    "packages/scm/native/sittir-scm.darwin-arm64.node": "e6d3dc5e3eb9598327bbd96180b8ec496b6a8612a25864a525fb5ed42cc30419",
+    "packages/typescript/.sittir/parser.wasm": "ac8ce5467fcd0a17a5bd03131f59abe342a3ee7ea4bf06d393a4b237a40cc1d9",
+    "packages/typescript/.sittir/upstream.wasm": "dd6d9f0568433a24c5f607a3ad1ffdfb67746fcf8dbb7afae7035a6ec1c19047",
+    "packages/typescript/native/sittir-typescript.darwin-arm64.node": "5c73a6482280fcefb465f16f3e9046bbd4958d927047a2382c40dd10deefb216"
+  },
+  "command": [
+    "node",
+    "packages/cli/dist/cli.js",
+    "tool",
+    "bench-storage",
+    "--validation",
+    "--rounds",
+    "5",
+    "--warmup",
+    "2",
+    "--iterations",
+    "3",
+    "--idle-gate",
+    "docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh",
+    "--output",
+    "/private/tmp/sittir-validation-review-7f9jpm62/validation-storage.json"
+  ],
+  "snapshotGitIndex": {
+    "independent": true,
+    "commitCreated": false,
+    "sourceAndSnapshotVisiblePathsMatchAtInitialization": true,
+    "visiblePathCount": 4420,
+    "nonSourceOutputsCreatedAfterInitialization": [
+      "validation-preflight.json",
+      "validation-storage.json"
+    ]
+  },
+  "workspaceImportsResolveWithinSnapshot": true,
+  "workspaceResolutions": {
+    "node_modules/@sittir/python": "packages/python",
+    "node_modules/@sittir/typescript": "packages/typescript",
+    "node_modules/@sittir/rust": "packages/rust",
+    "node_modules/@sittir/common": "packages/common",
+    "packages/tools/node_modules/@sittir/types": "packages/types",
+    "packages/tools/node_modules/@sittir/python": "packages/python",
+    "packages/tools/node_modules/@sittir/typescript": "packages/typescript",
+    "packages/tools/node_modules/@sittir/rust": "packages/rust",
+    "packages/tools/node_modules/@sittir/regex": "packages/regex",
+    "packages/tools/node_modules/@sittir/codegen": "packages/codegen",
+    "packages/tools/node_modules/@sittir/common": "packages/common",
+    "packages/tools/node_modules/@sittir/scm": "packages/scm",
+    "packages/python/node_modules/@sittir/types": "packages/types",
+    "packages/python/node_modules/@sittir/common": "packages/common",
+    "packages/typescript/node_modules/@sittir/types": "packages/types",
+    "packages/typescript/node_modules/@sittir/common": "packages/common",
+    "packages/rust/node_modules/@sittir/types": "packages/types",
+    "packages/rust/node_modules/@sittir/common": "packages/common",
+    "packages/cli/node_modules/@sittir/tools": "packages/tools",
+    "packages/cli/node_modules/@sittir/codegen": "packages/codegen",
+    "packages/regex/node_modules/@sittir/types": "packages/types",
+    "packages/regex/node_modules/@sittir/common": "packages/common",
+    "packages/codegen/node_modules/@sittir/types": "packages/types",
+    "packages/codegen/node_modules/@sittir/typescript": "packages/typescript",
+    "packages/codegen/node_modules/@sittir/common": "packages/common",
+    "packages/codegen/node_modules/@sittir/scm": "packages/scm",
+    "packages/common/node_modules/@sittir/types": "packages/types",
+    "packages/scm/node_modules/@sittir/types": "packages/types",
+    "packages/scm/node_modules/@sittir/common": "packages/common"
+  },
+  "compiledHarnessFilesSha256": {
+    "packages/tools/dist/profile/storage.js": "5130c1986889977df6fe5eac59120bc9dc5e86a470de6cab2b2e37a1032a3121",
+    "packages/tools/dist/profile/storage-common.js": "b6451b960c2d71e058358c18a743d8754f2619ecf3e343adedfdffefa48a9998",
+    "packages/tools/dist/profile/validation-storage-worker.js": "5a0a4582ebd3694089c0db46e25b33c3160eec209faf90d94eea2b1cc7804727",
+    "packages/tools/dist/profile/validation-storage.js": "f3b8063cf496d0f5ce7c4dc5cd32cbf1a7f98c95a458926f4a7dc52d4cb11405",
+    "packages/tools/dist/validate/roundtrip-profile.js": "0716d1aadbe11000da37fc65ae9164940a23597619ed99d76fb58fc5efbfbc28",
+    "packages/tools/dist/validate/read-render-parse.js": "7f11edf629f6082469ade1c27236d71fb8f2a7eaefcc022ced296990df0edf9c",
+    "packages/tools/dist/validate/factory-storage.js": "6f50857d007c75cb0e8a8d8a757e1cec6afa0ab5cebb7e27800d38395fb180c7",
+    "packages/tools/dist/validate/common.js": "0db324aae2422c24a4554e5fd6811a30f6621f6f37c1dcd6b96c374f2280cfcb"
+  },
+  "compiledHarnessSha256": "59dd7c8241e3faaee10bd98df39a8f326bd7d7bf523293fcf5e9bb14b279f2ec",
+  "rawReportsSha256": {
+    "2026-10-22-validation-storage-darwin-arm64.json": "84cd191f9d464568d55c72931fbf5ff7d36d9d873561418eb8a435a39e536ef7"
+  },
+  "environment": {
+    "node": "v26.12.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "os": "27.2.0",
+    "cpu": "Apple M4 Pro",
+    "cpuCount": 14,
+    "cwd": "/private/tmp/sittir-validation-review-7f9jpm62",
+    "nodeEnv": "production",
+    "idleGated": true,
+    "harnessSha256": "59dd7c8241e3faaee10bd98df39a8f326bd7d7bf523293fcf5e9bb14b279f2ec"
+  },
+  "startedAt": "2026-10-22T00:07:51.401Z",
+  "finishedAt": "2026-10-22T00:36:09.651Z",
+  "verification": {
+    "allStatisticsIndependentlyRecomputed": true,
+    "allSourceCompiledNativeWasmHashesUnchangedBeforeAfter": true,
+    "acrossStorageRoundsWorkResultsCallsVerified": true,
+    "withinIterationParity": "enforced by the reviewed worker guards",
+    "stableRenderWithinMode": true,
+    "exactFactoryIrRenderAcrossModes": true,
+    "canonicalWorkAndResultsUnchangedFromPreviousRun": true,
+    "freshWorkers": 50,
+    "aggregates": {
+      "factory-render-parse": {
+        "validator": {
+          "objectMs": 10397.063248999995,
+          "arenaMs": 10440.356748999997,
+          "arenaOverObject": 1.004164012371875
+        },
+        "read": {
+          "objectMs": 84.70849100016994,
+          "arenaMs": 139.1119620000552,
+          "arenaOverObject": 1.642243420435575
+        },
+        "build": {
+          "objectMs": 1885.851477000183,
+          "arenaMs": 1871.8016259999754,
+          "arenaOverObject": 0.9925498634587298
+        },
+        "render": {
+          "objectMs": 115.29659000011952,
+          "arenaMs": 118.09258599983559,
+          "arenaOverObject": 1.024250465687781
+        },
+        "parse": {
+          "objectMs": 34.99639199973217,
+          "arenaMs": 34.73699300007752,
+          "arenaOverObject": 0.992587835921582
+        }
+      },
+      "ir-render-parse": {
+        "validator": {
+          "objectMs": 10485.409956999996,
+          "arenaMs": 10508.598124999997,
+          "arenaOverObject": 1.0022114698514502
+        },
+        "read": {
+          "objectMs": 82.63521800010858,
+          "arenaMs": 136.17490200004886,
+          "arenaOverObject": 1.6479039481673532
+        },
+        "build": {
+          "objectMs": 1899.6789599998556,
+          "arenaMs": 1877.5040299997972,
+          "arenaOverObject": 0.9883270118441171
+        },
+        "render": {
+          "objectMs": 112.57092400030615,
+          "arenaMs": 111.37744200003362,
+          "arenaOverObject": 0.9893979550148377
+        },
+        "parse": {
+          "objectMs": 32.86225699998704,
+          "arenaMs": 32.794828999813944,
+          "arenaOverObject": 0.9979481628369858
+        }
+      },
+      "read-render-parse": {
+        "validator": {
+          "objectMs": 10460.102125000001,
+          "arenaMs": 7960.176292000002,
+          "arenaOverObject": 0.7610036878105529
+        },
+        "read": {
+          "objectMs": 278.3907570000724,
+          "arenaMs": 33.70123600000966,
+          "arenaOverObject": 0.1210573093847397
+        },
+        "build": {
+          "objectMs": 0,
+          "arenaMs": 0,
+          "arenaOverObject": null
+        },
+        "render": {
+          "objectMs": 872.5960149999901,
+          "arenaMs": 52.57803399997215,
+          "arenaOverObject": 0.060254726237745596
+        },
+        "parse": {
+          "objectMs": 71.40409499999464,
+          "arenaMs": 68.22621800011825,
+          "arenaOverObject": 0.9554944712922049
+        }
+      }
+    },
+    "startedAt": "2026-10-22T00:07:51.401Z",
+    "finishedAt": "2026-10-22T00:36:09.651Z",
+    "compiledHarnessHashVerified": true,
+    "idlePercentRange": [
+      76,
+      92
+    ],
+    "corpusEntries": 440,
+    "acceptedDeepRoots": 436,
+    "timedMeasurements": 450
+  },
+  "method": "Canonical deep read/render/reparse, raw factory/render/reparse and IR/render/reparse, paired parsed storage modes. Explicit root Infinity read before candidate enumeration; arena hydration and typed-cell walk native with only coordinate/address metadata exported, no JS inspection or text access. Normal source folding enabled. Current factory and IR constructors build objects in both modes. Complete validator totals retain normal checking and instrumentation overhead; narrow phases exclude digest finalization.",
+  "concurrencyAttestation": "The root session launched no builds or tests and made no runtime source or compiled-artifact writes during timing. Idle was sampled before each worker; this is not a continuous host-process audit.",
+  "gates": {
+    "forcedFiveGrammarRegeneration": {
+      "exit": 0,
+      "generatedOutputDrift": false
+    },
+    "review-types": {
+      "exit": 0,
+      "seconds": 142.29,
+      "command": [
+        "pnpm",
+        "run",
+        "type-check"
+      ]
+    },
+    "review-lint": {
+      "exit": 0,
+      "seconds": 0.7,
+      "command": [
+        "pnpm",
+        "run",
+        "lint"
+      ]
+    },
+    "review-clippy-object-no-default": {
+      "exit": 0,
+      "seconds": 10.72,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--no-default-features",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "review-clippy-object-default": {
+      "exit": 0,
+      "seconds": 12.27,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "review-clippy-arena-no-default": {
+      "exit": 0,
+      "seconds": 18.0,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--no-default-features",
+        "--features",
+        "sittir-parity-tests/arena",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "review-clippy-arena-default": {
+      "exit": 0,
+      "seconds": 20.21,
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--features",
+        "sittir-parity-tests/arena",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "review-rust-object": {
+      "exit": 0,
+      "seconds": 27.49,
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-default-features"
+      ]
+    },
+    "review-rust-arena": {
+      "exit": 0,
+      "seconds": 67.68,
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-default-features",
+        "--features",
+        "sittir-parity-tests/arena"
+      ]
+    },
+    "review-rust-debug": {
+      "exit": 0,
+      "seconds": 12.86,
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "sittir-parity-tests",
+        "--no-default-features",
+        "--features",
+        "sittir-core/read-debug-checks",
+        "--test",
+        "typed_read"
+      ]
+    },
+    "review-vitest": {
+      "exit": 0,
+      "seconds": 186.33,
+      "command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "--maxWorkers",
+        "4",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile.json=/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/review-vitest.json"
+      ]
+    },
+    "review-counts-object": {
+      "exit": 0,
+      "seconds": 58.89,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "counts",
+        "--node-storage",
+        "object"
+      ]
+    },
+    "review-history-object": {
+      "exit": 0,
+      "seconds": 1.42,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "history",
+        "--diff",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/native-read-final-report-object.json",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/review-report-object.json"
+      ]
+    },
+    "review-counts-arena": {
+      "exit": 0,
+      "seconds": 55.31,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "counts",
+        "--node-storage",
+        "arena"
+      ]
+    },
+    "review-history-arena": {
+      "exit": 0,
+      "seconds": 1.44,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "history",
+        "--diff",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/native-read-final-report-object.json",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/review-report-arena.json"
+      ]
+    },
+    "review-history-cross": {
+      "exit": 0,
+      "seconds": 1.68,
+      "command": [
+        "pnpm",
+        "exec",
+        "tsx",
+        "packages/cli/src/cli.ts",
+        "validate",
+        "history",
+        "--diff",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/review-report-object.json",
+        "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratchpad/codex-arena-20261021/review-report-arena.json"
+      ]
+    }
+  },
+  "fullVitest": {
+    "filesPassed": 812,
+    "testsPassed": 8199,
+    "expectedFailures": 7,
+    "skipped": 19,
+    "todo": 4,
+    "total": 8229,
+    "reportSha256": "93b2430f5491fe4264048f7ba3b16f67365a45b61371318428ac33d41144ff73"
+  },
+  "rustTests": {
+    "object": {
+      "testsPassed": 451,
+      "suites": 37
+    },
+    "arena": {
+      "testsPassed": 556,
+      "suites": 37
+    },
+    "debug": {
+      "testsPassed": 29,
+      "suites": 1
+    }
+  },
+  "validationReportComparison": {
+    "allReportsEqual": true,
+    "serializedRows": 72,
+    "normalizedRows": 193,
+    "all29RawFieldsMatch": true,
+    "reportSha256": {
+      "object": "495dbccc906cc3e052f028ae7e544e7ff9db3c1bfa5aac3bad28af63b37cd0d8",
+      "arena": "495dbccc906cc3e052f028ae7e544e7ff9db3c1bfa5aac3bad28af63b37cd0d8"
+    },
+    "rawCounts": {
+      "python": {
+        "fromPass": 180,
+        "fromTotal": 180,
+        "fromTrivia": 0,
+        "covPass": 149,
+        "covTotal": 149,
+        "read-render-parsePass": 115,
+        "read-render-parseTotal": 116,
+        "read-render-parseAstMatchPass": 115,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 115,
+        "read-render-parse-shallowTotal": 116,
+        "read-render-parse-shallowAstMatchPass": 115,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 1404,
+        "factory-storageTotal": 1404,
+        "factory-storageAstMatchPass": 1404,
+        "ir-storagePass": 1387,
+        "ir-storageTotal": 1387,
+        "ir-storageAstMatchPass": 1387,
+        "built-render-parsePass": 2685,
+        "built-render-parseTotal": 2685,
+        "built-render-parseAstMatchPass": 2685,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 4245,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 158,
+        "layout-storedSlots": 16,
+        "layout-storedSeparators": 0
+      },
+      "regex": {
+        "fromPass": 50,
+        "fromTotal": 50,
+        "fromTrivia": 0,
+        "covPass": 28,
+        "covTotal": 28,
+        "read-render-parsePass": 37,
+        "read-render-parseTotal": 37,
+        "read-render-parseAstMatchPass": 37,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 37,
+        "read-render-parse-shallowTotal": 37,
+        "read-render-parse-shallowAstMatchPass": 37,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 183,
+        "factory-storageTotal": 183,
+        "factory-storageAstMatchPass": 183,
+        "ir-storagePass": 137,
+        "ir-storageTotal": 137,
+        "ir-storageAstMatchPass": 137,
+        "built-render-parsePass": 320,
+        "built-render-parseTotal": 320,
+        "built-render-parseAstMatchPass": 320,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 387,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 18,
+        "layout-storedSlots": 0,
+        "layout-storedSeparators": 0
+      },
+      "rust": {
+        "fromPass": 246,
+        "fromTotal": 246,
+        "fromTrivia": 0,
+        "covPass": 207,
+        "covTotal": 207,
+        "read-render-parsePass": 149,
+        "read-render-parseTotal": 149,
+        "read-render-parseAstMatchPass": 149,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 149,
+        "read-render-parse-shallowTotal": 149,
+        "read-render-parse-shallowAstMatchPass": 149,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 1681,
+        "factory-storageTotal": 1681,
+        "factory-storageAstMatchPass": 1681,
+        "ir-storagePass": 1383,
+        "ir-storageTotal": 1383,
+        "ir-storageAstMatchPass": 1383,
+        "built-render-parsePass": 3064,
+        "built-render-parseTotal": 3064,
+        "built-render-parseAstMatchPass": 3064,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 4547,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 284,
+        "layout-storedSlots": 18,
+        "layout-storedSeparators": 0
+      },
+      "scm": {
+        "fromPass": 27,
+        "fromTotal": 27,
+        "fromTrivia": 0,
+        "covPass": 21,
+        "covTotal": 21,
+        "read-render-parsePass": 19,
+        "read-render-parseTotal": 19,
+        "read-render-parseAstMatchPass": 19,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 19,
+        "read-render-parse-shallowTotal": 19,
+        "read-render-parse-shallowAstMatchPass": 19,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 123,
+        "factory-storageTotal": 123,
+        "factory-storageAstMatchPass": 123,
+        "ir-storagePass": 118,
+        "ir-storageTotal": 118,
+        "ir-storageAstMatchPass": 118,
+        "built-render-parsePass": 241,
+        "built-render-parseTotal": 241,
+        "built-render-parseAstMatchPass": 241,
+        "built-render-parseSeparatorTolerated": 0,
+        "layout-runsTotal": 729,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 68,
+        "layout-storedSlots": 0,
+        "layout-storedSeparators": 0
+      },
+      "typescript": {
+        "fromPass": 193,
+        "fromTotal": 193,
+        "fromTrivia": 0,
+        "covPass": 203,
+        "covTotal": 203,
+        "read-render-parsePass": 116,
+        "read-render-parseTotal": 119,
+        "read-render-parseAstMatchPass": 116,
+        "read-render-parseTrivia": 0,
+        "read-render-parse-shallowPass": 116,
+        "read-render-parse-shallowTotal": 119,
+        "read-render-parse-shallowAstMatchPass": 116,
+        "read-render-parse-shallowTrivia": 0,
+        "factory-storagePass": 1320,
+        "factory-storageTotal": 1320,
+        "factory-storageAstMatchPass": 1320,
+        "ir-storagePass": 1166,
+        "ir-storageTotal": 1166,
+        "ir-storageAstMatchPass": 1166,
+        "built-render-parsePass": 2486,
+        "built-render-parseTotal": 2486,
+        "built-render-parseAstMatchPass": 2486,
+        "built-render-parseSeparatorTolerated": 59,
+        "layout-runsTotal": 3931,
+        "layout-runsUnreached": 0,
+        "layout-runsRefused": 0,
+        "layout-storedDeviations": 259,
+        "layout-storedSlots": 20,
+        "layout-storedSeparators": 0
+      }
+    }
+  }
+}
