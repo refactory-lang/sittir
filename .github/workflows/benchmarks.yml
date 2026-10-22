@@ -14,9 +14,20 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    uses: ./.github/workflows/benchmark-build.yml
+    with:
+      benchmark: ${{ inputs.benchmark }}
   eager:
+    needs: build
     if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
     uses: ./.github/workflows/benchmark-eager.yml
+    with:
+      runtime-prefix: ${{ needs.build.outputs.prefix }}
   corpus:
+    needs: build
     if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
     uses: ./.github/workflows/benchmark-corpus.yml
+    with:
+      runtime-prefix: ${{ needs.build.outputs.prefix }}
+      grammars: ${{ needs.build.outputs.grammars }}

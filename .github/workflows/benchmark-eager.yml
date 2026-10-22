@@ -2,29 +2,33 @@ name: Eager builder benchmark
 
 on:
   workflow_call:
+    inputs:
+      runtime-prefix:
+        type: string
+        required: true
 
 permissions:
   contents: read
 
 jobs:
   measure:
-    name: Eager builders (macOS arm64)
-    runs-on: macos-26
+    name: Eager builders (Linux x64)
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       CARGO_NET_RETRY: '10'
       CARGO_HTTP_MULTIPLEXING: 'false'
-      CARGO_BUILD_JOBS: '2'
+      CARGO_BUILD_JOBS: '4'
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/arena-benchmark-setup
-      - name: Build the measurement addon
-        shell: bash
-        run: pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/build.mts | tee "$RUNNER_TEMP/arena-benchmarks/eager-build.log"
+      - uses: ./.github/actions/arena-benchmark-runtime
+        with:
+          prefix: ${{ inputs.runtime-prefix }}
+          eager: 'true'
       - name: Verify eager construction
         shell: bash
         run: |
-          pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts --check
           node --import tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/verify.mts | tee "$RUNNER_TEMP/arena-benchmarks/eager-verify.log"
       - name: Fingerprint the measured runtime
         run: node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/before.json"
@@ -35,7 +39,7 @@ jobs:
         run: |
           node --import tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/bench.mjs \
             --count 10000 --rounds 5 --warmup 2 --iterations 3 \
-            --idle-gate docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh \
+            --idle-gate scripts/ci/arena-benchmark-idle.sh \
             --output "$RUNNER_TEMP/arena-benchmarks/eager.json" \
             2>&1 | tee "$RUNNER_TEMP/arena-benchmarks/eager.log"
       - name: Check runtime stability

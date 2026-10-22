@@ -193,7 +193,59 @@ export function analyzeEager(data) {
 	return result;
 }
 
+export function mergeCorpusShards(shards, grammars) {
+	assert(Array.isArray(grammars) && grammars.length, 'expected grammars required');
+	assert.deepEqual(
+		shards.flatMap(({ report }) => report.options.grammars).sort(),
+		[...grammars].sort(),
+		'grammar shard coverage differs'
+	);
+	assert.equal(shards.length, grammars.length, 'grammar shard coverage differs');
+	for (const shard of shards) {
+		assert.equal(shard.report.options.grammars.length, 1, 'one grammar per runner required');
+		verify(shard.before, shard.after);
+		for (const field of [
+			'commit',
+			'sections',
+			'node',
+			'v8',
+			'rust',
+			'pnpm',
+			'releaseProfile',
+			'workingTreeDiffSha256'
+		]) {
+			assert.deepEqual(shard.before[field], shard.after[field], 'runtime identity changed during measurement');
+			assert.deepEqual(shard.before[field], shards[0].before[field], 'shards must measure the same runtime');
+		}
+		for (const field of ['node', 'platform', 'arch', 'nodeEnv', 'idleGated', 'harnessSha256'])
+			assert.deepEqual(
+				shard.report.environment[field],
+				shards[0].report.environment[field],
+				'shard environment differs'
+			);
+		analyzeCorpus(shard.report);
+	}
+	return { mode: 'validation-storage-shards', options: { grammars }, shards };
+}
+
 export function analyzeCorpus(data) {
+	if (data.shards) {
+		mergeCorpusShards(data.shards, data.options.grammars);
+		const result = { workers: 0, aggregates: {}, phases: [], memoryMiB: {} };
+		for (const { report } of data.shards) {
+			const part = analyzeCorpus(report);
+			result.workers += part.workers;
+			result.phases.push(...part.phases);
+			Object.assign(result.memoryMiB, part.memoryMiB);
+			for (const [bucket, times] of Object.entries(part.aggregates)) {
+				const aggregate = (result.aggregates[bucket] ??= { objectMs: 0, arenaMs: 0 });
+				aggregate.objectMs += times.objectMs;
+				aggregate.arenaMs += times.arenaMs;
+			}
+		}
+		for (const value of Object.values(result.aggregates)) value.ratio = value.arenaMs / value.objectMs;
+		return result;
+	}
 	assert.equal(data.options.rounds, 5);
 	assert.equal(data.options.warmup, 2);
 	assert.equal(data.options.iterations, 3);
@@ -318,6 +370,11 @@ export function summarize(data) {
 		'Native parsed hydration currently builds typed Rust nodes before record encoding. No intermediate JS AST crosses the bridge. Public factory/IR buckets still build objects under both storage settings.',
 		''
 	];
+	if (data.shards)
+		lines.push(
+			"Grammar shards ran on separate runners. Every object/arena pair and all five rounds for a grammar ran on that grammar's single runner; raw shard environments retain host details.",
+			''
+		);
 	if (eager) {
 		lines.push('| Retained population | Memory, MiB | Objects | Arena |', '| --- | --- | ---: | ---: |');
 		for (const population of ['renderedDelta', 'snapshotsDelta'])
@@ -332,7 +389,7 @@ export function summarize(data) {
 				);
 	} else {
 		lines.push(
-			'Corpus rows sum five grammar medians, rather than timing a combined run. Arena RRP performs native deep root hydration; no additional JS inspection benchmark is added.',
+			`Corpus rows sum ${data.options.grammars.length} grammar medians, rather than timing a combined run. Arena RRP performs native deep root hydration; no additional JS inspection benchmark is added.`,
 			''
 		);
 		if (Object.keys(analysis.memoryMiB).length) {
@@ -364,10 +421,18 @@ export function summarize(data) {
 }
 
 function main() {
-	const [action, first, second] = process.argv.slice(2);
+	const [action, first, ...rest] = process.argv.slice(2);
+	const [second] = rest;
 	if (action === 'capture') writeJson(first, capture());
 	else if (action === 'verify') verify(readJson(first), readJson(second));
-	else if (action === 'summarize') {
+	else if (action === 'merge') {
+		const shards = rest.map((path) => ({
+			report: readJson(path),
+			before: readJson(join(dirname(path), 'before.json')),
+			after: readJson(join(dirname(path), 'after.json'))
+		}));
+		writeJson(first, mergeCorpusShards(shards, JSON.parse(process.env.EXPECTED_GRAMMARS ?? 'null')));
+	} else if (action === 'summarize') {
 		const { analysis, markdown } = summarize(readJson(first));
 		writeJson(join(dirname(second), 'analysis.json'), analysis);
 		writeFileSync(second, markdown);
@@ -375,7 +440,7 @@ function main() {
 		process.stdout.write(markdown);
 	} else
 		throw new Error(
-			'usage: arena-benchmark-report.mjs capture <json> | verify <before> <after> | summarize <raw> <markdown>'
+			'usage: arena-benchmark-report.mjs capture <json> | verify <before> <after> | merge <output> <shard reports...> | summarize <raw> <markdown>'
 		);
 }
 

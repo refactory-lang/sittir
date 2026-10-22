@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { analyzeCorpus, analyzeEager, summarize, verify } from './arena-benchmark-report.mjs';
+import { analyzeCorpus, analyzeEager, mergeCorpusShards, summarize, verify } from './arena-benchmark-report.mjs';
 
 const result = (name) =>
 	JSON.parse(
@@ -121,4 +121,39 @@ test('eager summary includes heap, external and RSS beside milliseconds', () => 
 	assert.match(markdown, /RSS delta/);
 	assert.match(markdown, /External delta/);
 	assert.match(markdown, /Object ms/);
+});
+
+test('independent grammar runners preserve complete coverage, paired statistics and runtime identity', () => {
+	const data = corpus();
+	const before = {
+		commit: 'revision',
+		sections: { compiledRuntime: { hashes: { 'runtime.js': 'hash' } } },
+		workingTreeDiffSha256: 'clean'
+	};
+	const shards = data.options.grammars.map((grammar) => ({
+		report: {
+			...structuredClone(data),
+			options: { ...data.options, grammars: [grammar] },
+			validationSummary: data.validationSummary.filter((row) => row.grammar === grammar),
+			validationSamples: data.validationSamples
+				.filter((row) => row.grammar === grammar)
+				.map((row, index) => ({ ...row, pid: index + 1 }))
+		},
+		before: structuredClone(before),
+		after: structuredClone(before)
+	}));
+	const combined = mergeCorpusShards(shards, data.options.grammars);
+	const measured = analyzeCorpus(combined);
+	assert.equal(measured.workers, 50);
+	assert.equal(measured.phases.length, 75);
+	assert.deepEqual(measured.aggregates, analyzeCorpus(data).aggregates);
+	assert.match(summarize(combined).markdown, /separate runners/);
+	assert.throws(() => mergeCorpusShards(shards.slice(1), data.options.grammars), /grammar shard coverage/);
+	assert.throws(() => mergeCorpusShards([...shards, shards[0]], data.options.grammars), /grammar shard coverage/);
+	const changed = structuredClone(shards);
+	changed[0].before.sections.compiledRuntime.hashes['runtime.js'] = 'different';
+	changed[0].after.sections.compiledRuntime.hashes['runtime.js'] = 'different';
+	assert.throws(() => mergeCorpusShards(changed, data.options.grammars), /same runtime/);
+	changed[0].after.commit = 'changed';
+	assert.throws(() => mergeCorpusShards(changed, data.options.grammars), /commit changed/);
 });
