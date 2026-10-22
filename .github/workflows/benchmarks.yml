@@ -1,7 +1,9 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }})
+run-name: Arena benchmarks (${{ inputs.benchmark || 'all' }})
 
 on:
+  push:
+    branches: [bench/arena-manual-20261022-9011c15e2]
   workflow_dispatch:
     inputs:
       benchmark:
@@ -15,8 +17,8 @@ permissions:
 
 jobs:
   eager:
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
+    if: github.event_name == 'push' || inputs.benchmark == 'all' || inputs.benchmark == 'eager'
     uses: ./.github/workflows/benchmark-eager.yml
   corpus:
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
+    if: github.event_name == 'push' || inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
     uses: ./.github/workflows/benchmark-corpus.yml
