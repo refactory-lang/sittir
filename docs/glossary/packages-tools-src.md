@@ -170,7 +170,7 @@ Writes one already-terminated line to stdout; the sink for streamed and kept chi
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
 
-How many kinds left a grammar between the base and head baselines: the fall in its stamped `kindCount` (never negative). A baseline that never recorded the count, on either side, explains nothing, so the departed count is 0. The two counts must share `kindCountBasis`; switching from all node-model rows to render bodies explains no departure. `kindCount` is checked by `validateBaselineShape` before any arithmetic: a non-negative integer or absent, on the base and on the head; a count of another type would make every comparison false and let a drop through.
+How many kinds left a grammar between the base and head baselines: the fall in its stamped `kindCount` (never negative). A baseline that never recorded the count, on either side, explains nothing, so the departed count is 0. `kindCount` is checked by `validateBaselineShape` before any arithmetic: a non-negative integer or absent, on the base and on the head; a count of another type would make every comparison false and let a drop through.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::dropIsExplained`
 
@@ -182,27 +182,7 @@ The validators whose total is tied to the grammar's kinds, each with the largest
 
 ### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.kindCount`
 
-The validators' declared kind population, read through `deriveRuleKinds` from the emitted render-body catalog. A kind that becomes a supertype leaves this population because it has no render body of its own. Counting node-model rows would keep that supertype in the denominator and hide the departure.
-
-### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.kindCountBasis`
-
-The population a baseline's kind count measures. New collections stamp `render-bodies`; an absent stamp denotes the older node-model count. Counts from different populations are never subtracted to explain case loss, so migrating the population cannot excuse unrelated deletions.
-
-### `packages/tools/src/scripts/collect-baseline.ts::computeKindCount`
-
-Reads the size of the validators' renderable-kind catalog through `deriveRuleKinds`, so collection shares their declared population and their missing-artifact diagnostic.
-
-### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry`
-
-One grammar's validator results, replay results, and kind-population stamp. The population count explains departures only when the compared baseline uses the same basis.
-
-### `packages/tools/src/scripts/collect-baseline.ts::collectGrammarEntry`
-
-Collects validator and fixture-replay results together, then stamps their grammar's declared kind population. Collection failures propagate instead of producing an incomplete baseline.
-
-### `packages/tools/src/scripts/check-baseline-regression.ts::validateBaselineShape`
-
-Checks both baseline inputs before comparing metrics. Counts must be non-negative integers, and an optional kind-population basis must name a supported population; an unknown basis cannot affect departure arithmetic.
+Every kind of the grammar's node model, one stamped count (`kindCount` in `census/hoisted.ts`). It replaces the hoisted and supertype counts, which only explained part of the kinds that can leave.
 ### `packages/tools/src/scripts/check-baseline-regression.ts::baseValidators`
 
 The validators a base baseline is checked and compared on: those it records. A validator a change adds has no base to regress from, so the base may lack it, as it may lack a grammar new to head. Head is always checked for every validator.

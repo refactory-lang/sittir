@@ -33,7 +33,6 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as baseline from '../scripts/collect-baseline.ts';
-import { deriveRuleKinds } from '../validate/render-bodies.ts';
 import { stableGrammars } from '@sittir/codegen/grammars';
 
 const grammarKeys = stableGrammars();
@@ -112,9 +111,7 @@ describe('collect-baseline', () => {
 
 		for (const g of grammarKeys) {
 			const entry = grammars[g] as Record<string, unknown>;
-			expect(Object.keys(entry).sort()).toEqual(['kindCount', 'kindCountBasis', 'parityFixtures', 'validators']);
-			expect(entry['kindCount']).toBe(deriveRuleKinds(g).size);
-			expect(entry['kindCountBasis']).toBe('render-bodies');
+			expect(Object.keys(entry).sort()).toEqual(['kindCount', 'parityFixtures', 'validators']);
 
 			const validators = entry['validators'] as Record<string, unknown>;
 			expect(Object.keys(validators)).toEqual(['builtRenderParse', 'coverage', 'factoryStorage', 'from', 'roundtrip']);

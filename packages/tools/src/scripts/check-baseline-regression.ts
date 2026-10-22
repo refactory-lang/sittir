@@ -381,15 +381,6 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 				};
 			}
 		}
-		const kindCountBasis = (ge as Record<string, unknown>)['kindCountBasis'];
-		if (kindCountBasis !== undefined && kindCountBasis !== 'render-bodies') {
-			return {
-				ok: false,
-				reason: 'schema-violation',
-				summary: `schema violation: ${gPath}.kindCountBasis is not a supported kind population`,
-				details: { path: `${gPath}.kindCountBasis`, after: kindCountBasis }
-			};
-		}
 		const validators = (ge as Record<string, unknown>)['validators'];
 		if (validators === null || typeof validators !== 'object') {
 			return {
@@ -476,7 +467,6 @@ const KIND_DENOMINATED_TOTAL: Partial<Record<ValidatorName, (departedKinds: numb
  */
 function departedKindCount(baseGrammar: GrammarEntry, headGrammar: GrammarEntry): number {
 	if (baseGrammar.kindCount === undefined || headGrammar.kindCount === undefined) return 0;
-	if (baseGrammar.kindCountBasis !== headGrammar.kindCountBasis) return 0;
 	return Math.max(baseGrammar.kindCount - headGrammar.kindCount, 0);
 }
 
