@@ -108,7 +108,7 @@ sittir_core::records_codec! {
             self,
             root: sittir_core::arena::CellAt,
             trees: &mut dyn sittir_core::arena::RecordTrees,
-            built: &sittir_core::arena::Arena,
+            built: &dyn sittir_core::arena::ArenaRead,
             store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
             ctx: &sittir_core::prepare::RenderContext<'_>,
         ) -> std::result::Result<String, sittir_core::render::RenderError> {

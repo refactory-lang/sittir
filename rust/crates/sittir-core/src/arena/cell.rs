@@ -3,7 +3,7 @@
 //! refuses any word no writer writes, so a malformed cell is an error, never
 //! a read outside its record.
 
-use super::{Address, Arena, ArenaError, StringRef};
+use super::{Address, Arena, ArenaError, ArenaRead, StringRef};
 use crate::slot::ChangedEdges;
 use crate::types::{KindId, NodeIndex, Span, TreeId};
 
@@ -257,7 +257,7 @@ impl ListCell {
     }
 
     /// Each item's `item_width` words, read from the run in `arena`.
-    pub fn items(self, arena: &Arena, item_width: u32) -> Result<std::slice::ChunksExact<'_, u32>, ArenaError> {
+    pub fn items(self, arena: &dyn ArenaRead, item_width: u32) -> Result<std::slice::ChunksExact<'_, u32>, ArenaError> {
         if self.len == 0 {
             return Ok([].chunks_exact(item_width.max(1) as usize));
         }

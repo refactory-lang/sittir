@@ -4,7 +4,9 @@
 //! prepared overlay; every word it reads is bounds-checked, and a cell no
 //! writer writes renders as a record refusal (`RenderError::Record`).
 
-use super::{Address, Arena, ArenaError, Cell, ListCell, Prepared, PreparedNode, Sides, StringRef, TreeArena};
+use super::{Address, ArenaRead, ArenaError, Cell, ListCell, Prepared, PreparedNode, Sides, StringRef, TreeArena};
+#[cfg(test)]
+use super::Arena;
 use crate::layout::{list_units, render_framed, render_unit, BodyLayout, TriviaRole};
 use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink, SourceTable};
@@ -25,7 +27,7 @@ use crate::view::{KindOf, KindTest, Slot};
 ///
 /// `ArenaError::Malformed` for a root naming no arena of the render, or a
 /// parsed record whose side record names no row.
-pub fn source_root<T>(root: super::CellAt, built: &Arena, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable) -> Result<Option<NodeCoordinate>, ArenaError> {
+pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable) -> Result<Option<NodeCoordinate>, ArenaError> {
     let prepared = Prepared::new();
     let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared)?;
     let Some(row) = ctx.stamped_row(root.cell)? else { return Ok(None) };
@@ -43,7 +45,7 @@ pub trait RecordArenas {
 /// a parsed arena, its tree; the trees' arenas its links reach; the render's
 /// trees, its store of written sides and its prepared overlay.
 pub struct RecordCtx<'a, T> {
-    arena: &'a Arena,
+    arena: &'a dyn ArenaRead,
     tree: Option<TreeId>,
     arenas: &'a dyn RecordArenas,
     sources: &'a dyn SourceTable,
@@ -66,7 +68,7 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
 impl<'a, T> RecordCtx<'a, T> {
     /// The context of the built arena.
     #[must_use]
-    pub fn built(arena: &'a Arena, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Self {
+    pub fn built(arena: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Self {
         Self { arena, tree: None, arenas, sources, store, prepared }
     }
 
@@ -85,7 +87,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
-    pub fn of(tree: Option<TreeId>, built: &'a Arena, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Result<Self, ArenaError> {
+    pub fn of(tree: Option<TreeId>, built: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Result<Self, ArenaError> {
         match tree {
             None => Ok(Self::built(built, arenas, sources, store, prepared)),
             Some(tree) => Self::parsed(tree, arenas, sources, store, prepared),
@@ -102,7 +104,7 @@ impl<'a, T> RecordCtx<'a, T> {
     }
 
     #[must_use]
-    pub fn arena(self) -> &'a Arena {
+    pub fn arena(self) -> &'a dyn ArenaRead {
         self.arena
     }
 

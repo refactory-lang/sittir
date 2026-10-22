@@ -5,7 +5,7 @@
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
-use super::{Address, Arena, ArenaError};
+use super::{Address, Arena, ArenaError, ArenaRead};
 use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
@@ -160,7 +160,7 @@ fn read_edge(word: u32) -> Result<Option<EdgeArm>, ArenaError> {
 
 /// The words of a side record as it is read: a cursor over its fields.
 struct Fields<'a> {
-    arena: &'a Arena,
+    arena: &'a dyn ArenaRead,
     at: Address,
     offset: u32,
 }
@@ -256,7 +256,7 @@ impl SideRecord {
     }
 
     /// The side record at `at`; an empty one at `Address::NONE`.
-    pub fn read(arena: &Arena, at: Address) -> Result<SideRecord, ArenaError> {
+    pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
         if at == Address::NONE {
             return Ok(SideRecord::default());
         }

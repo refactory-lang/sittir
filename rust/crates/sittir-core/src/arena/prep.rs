@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, PrepPlace, Arena, ArenaError, Cell, ListCell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
+use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, ListCell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
 use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::prepare::{
@@ -68,7 +68,7 @@ impl RecordTrees for HeldArenas<'_> {
 /// # Errors
 ///
 /// What the root's prepare refuses.
-pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: &Arena, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>) -> Result<Prepared<T>, CoordinateError> {
+pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>) -> Result<Prepared<T>, CoordinateError> {
     let mut prepared = Prepared::new();
     N::prepare_record(&mut RecordPrep::new(&mut prepared, trees, built, ctx.sources, store), root, ctx)?;
     Ok(prepared)
@@ -81,14 +81,14 @@ pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: 
 pub struct RecordPrep<'r, T> {
     prepared: &'r mut Prepared<T>,
     trees: &'r mut dyn RecordTrees,
-    built: &'r Arena,
+    built: &'r dyn ArenaRead,
     sources: &'r dyn SourceTable,
     store: &'r TriviaStore<T>,
 }
 
 impl<'r, T> RecordPrep<'r, T> {
     #[must_use]
-    pub fn new(prepared: &'r mut Prepared<T>, trees: &'r mut dyn RecordTrees, built: &'r Arena, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>) -> Self {
+    pub fn new(prepared: &'r mut Prepared<T>, trees: &'r mut dyn RecordTrees, built: &'r dyn ArenaRead, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>) -> Self {
         Self { prepared, trees, built, sources, store }
     }
 

@@ -729,7 +729,7 @@ function kindIdsOf(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnu
 	return id === undefined ? [] : [id];
 }
 
-function slotStoredIds(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): number[] {
+export function slotStoredIds(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): number[] {
 	const nodeIds = expandAndDedupeContentTypes(slotKindNames(f), nodeMap).flatMap((kind) => kindIdsOf(kind, nodeMap, kindEntries));
 	const terminalIds = f.values.flatMap((value) =>
 		isTerminalValue(value) && value.resolvedKindId !== undefined ? [value.resolvedKindId] : []

@@ -10,7 +10,7 @@
 //! inner side written back, a test-only write that changes no text.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, Arena, Cell, CellAt, HeldArenas, Linked, RecordGrammar, RecordSink, RecordTrees, WriteCell};
+use sittir_core::arena::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, Linked, RecordGrammar, RecordSink, RecordTrees, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
@@ -37,7 +37,7 @@ enum Alike {
 type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut sittir_core::baseline::Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
 /// A grammar's render of a record (`render_record`).
-type RecordRender<T> = fn(CellAt, &mut dyn RecordTrees, &Arena, &TriviaStore<T>, &RenderContext<'_>) -> Result<String, RenderError>;
+type RecordRender<T> = fn(CellAt, &mut dyn RecordTrees, &dyn ArenaRead, &TriviaStore<T>, &RenderContext<'_>) -> Result<String, RenderError>;
 
 /// One grammar's two renders: a native root's, and a record's.
 struct Renders<G: EngineGrammar, N> {

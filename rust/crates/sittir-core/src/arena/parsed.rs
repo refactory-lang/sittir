@@ -4,7 +4,7 @@
 //! reads nothing once its tree is gone.
 
 use super::{
-    Address, Arena, Cell, CellAt, HeldArenas, RecordCells, RecordTrees, Row, SideRecord, WriteCell,
+    Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, RecordCells, RecordTrees, Row, SideRecord, WriteCell,
 };
 use crate::engine::{EngineGrammar, ParsedTree};
 use crate::options::ResolvedOptions;
@@ -26,7 +26,7 @@ pub trait RecordGrammar: EngineGrammar {
     /// # Errors
     ///
     /// What the record's prepare or render refuses.
-    fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &Arena, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
+    fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {

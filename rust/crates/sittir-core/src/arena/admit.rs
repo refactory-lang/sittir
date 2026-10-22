@@ -5,7 +5,9 @@
 
 use std::collections::HashSet;
 
-use super::{Address, Arena, ArenaError, Cell, ListCell, SideRecord};
+use super::{Address, ArenaError, ArenaRead, Cell, ListCell, SideRecord};
+#[cfg(test)]
+use super::Arena;
 use crate::record::HEADER_WORDS;
 use crate::types::KindId;
 
@@ -51,7 +53,7 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
 }
 
 pub(super) fn for_each_cell(
-    arena: &Arena,
+    arena: &dyn ArenaRead,
     at: Address,
     record: RecordShape,
     mut visit: impl FnMut(Cell) -> Result<(), ArenaError>,
@@ -92,7 +94,7 @@ pub(super) fn for_each_cell(
 ///
 /// The first word that breaks one of these: `ArenaError::OutOfBounds` for
 /// words the arena never wrote, `ArenaError::Malformed` for any other.
-pub fn admit(arena: &Arena, root: Address, shape: fn(KindId) -> Option<RecordShape>) -> Result<(), ArenaError> {
+pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>) -> Result<(), ArenaError> {
     let kind_of = |word: u32| u16::try_from(word).map(KindId).map_err(|_| malformed("record kind", word));
     let root_kind = kind_of(arena.word(root)?)?;
     let mut seen = HashSet::new();

@@ -12,6 +12,7 @@
 //! one record for as long as the arena lives.
 
 mod admit;
+mod borrowed;
 pub mod cell;
 mod parsed;
 mod prep;
@@ -25,6 +26,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
+pub use borrowed::{ArenaRead, BorrowedArena};
 pub use cell::{Cell, ListCell};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
@@ -197,6 +199,12 @@ fn next_chunk<T>(chunks: &[Chunk<T>]) -> Result<u32, ArenaError> {
     u32::try_from(chunks.len()).ok().filter(|&n| n < MAX_CHUNKS).ok_or(ArenaError::Full)
 }
 
+fn word_range(at: Address, len: u32, written: usize) -> Result<std::ops::Range<usize>, ArenaError> {
+    let word = at.word();
+    let end = word.checked_add(len).filter(|&end| end as usize <= written).ok_or(ArenaError::OutOfBounds { chunk: at.chunk(), word, len })?;
+    Ok(word as usize..end as usize)
+}
+
 /// One arena: word chunks for records and runs, and the string table.
 #[derive(Debug)]
 pub struct Arena {
@@ -254,17 +262,14 @@ impl Arena {
     }
 
     fn range(&self, at: Address, len: u32) -> Result<(usize, std::ops::Range<usize>), ArenaError> {
-        let (chunk, word) = (at.chunk(), at.word());
-        let refused = || ArenaError::OutOfBounds { chunk, word, len };
-        let written = self.chunks.get(chunk as usize).ok_or_else(refused)?.len();
-        let end = word.checked_add(len).filter(|&end| end <= written).ok_or_else(refused)?;
-        Ok((chunk as usize, word as usize..end as usize))
+        let chunk = at.chunk() as usize;
+        let words = self.chunks.get(chunk).ok_or(ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len })?;
+        Ok((chunk, word_range(at, len, words.data.len())?))
     }
 
     /// The `len` words at `at`, all of them written.
     pub fn words(&self, at: Address, len: u32) -> Result<&[u32], ArenaError> {
-        let (chunk, range) = self.range(at, len)?;
-        Ok(&self.chunks[chunk].data[range])
+        ArenaRead::words(self, at, len)
     }
 
     pub fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
@@ -273,7 +278,7 @@ impl Arena {
     }
 
     pub fn word(&self, at: Address) -> Result<u32, ArenaError> {
-        self.words(at, 1).map(|words| words[0])
+        ArenaRead::word(self, at)
     }
 
     /// Chunk `n`'s written words.
@@ -306,17 +311,65 @@ impl Arena {
 
     /// The string at `at`.
     pub fn text(&self, at: StringRef) -> Result<&str, ArenaError> {
-        let refused = || ArenaError::BadString(at);
-        let bytes = &self.strings.get(at.chunk as usize).ok_or_else(refused)?.data;
-        let end = at.byte.checked_add(at.len).ok_or_else(refused)?;
-        let slice = bytes.get(at.byte as usize..end as usize).ok_or_else(refused)?;
-        std::str::from_utf8(slice).map_err(|_| refused())
+        ArenaRead::text(self, at)
+    }
+}
+
+impl ArenaRead for Arena {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        self.chunk(n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        self.strings.get(n as usize).map(|chunk| chunk.data.as_slice())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn borrowed_words_and_utf8_use_the_callers_storage() {
+        let first = [0, 7, 11];
+        let second = [13, 17];
+        let text = "λ🦀".as_bytes();
+        let chunks = [first.as_slice(), second.as_slice()];
+        let strings = [text];
+        let arena = BorrowedArena::new(&chunks, &strings).expect("addressable chunks");
+        let at = Address::new(0, 1).expect("address");
+        let read = arena.words(at, 2).expect("written words");
+        assert_eq!(read, &[7, 11]);
+        assert!(std::ptr::eq(read.as_ptr(), first[1..].as_ptr()));
+        assert_eq!(arena.word(Address::new(1, 1).expect("address")).expect("word"), 17);
+        let value = arena.text(StringRef { chunk: 0, byte: 0, len: 6 }).expect("utf8");
+        assert_eq!(value, "λ🦀");
+        assert!(std::ptr::eq(value.as_ptr(), text.as_ptr()));
+    }
+
+    #[test]
+    fn borrowed_storage_checks_written_bounds_and_utf8_on_every_read() {
+        let words = [0, 3];
+        let invalid_utf8 = [0xff];
+        let chunks = [words.as_slice()];
+        let strings = [invalid_utf8.as_slice(), "λ".as_bytes()];
+        let arena = BorrowedArena::new(&chunks, &strings).expect("addressable chunks");
+        assert!(arena.words(Address::new(0, 1).expect("address"), 2).is_err());
+        assert!(arena.words(Address::new(1, 0).expect("address"), 1).is_err());
+        assert!(arena.words(Address::new(0, 1).expect("address"), u32::MAX).is_err());
+        for at in [
+            StringRef { chunk: 0, byte: 0, len: 1 },
+            StringRef { chunk: 1, byte: 0, len: 1 },
+            StringRef { chunk: 1, byte: 1, len: 1 },
+            StringRef { chunk: 1, byte: u32::MAX, len: 2 },
+            StringRef { chunk: 2, byte: 0, len: 0 },
+        ] {
+            assert!(arena.text(at).is_err(), "{at:?}");
+        }
+        let too_many = vec![&[][..]; MAX_CHUNKS as usize + 1];
+        assert!(BorrowedArena::new(&too_many, &[]).is_err());
+        assert!(BorrowedArena::new(&[], &too_many.iter().map(|_| &[][..]).collect::<Vec<&[u8]>>()).is_err());
+    }
 
     #[test]
     fn the_first_record_never_takes_the_reserved_address() {

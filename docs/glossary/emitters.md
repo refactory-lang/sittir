@@ -2789,6 +2789,10 @@ read through `AnyNode`'s record view over that overlay, and written through
 write lies in its rows, so a record renders as its node read one level down
 does, however deep the read that wrote it.
 
+Built input is an `ArenaRead` borrow: native-owned records and caller-owned
+chunks use the same checked prepare, view and render path without copying
+the chunks into an owned native arena.
+
 ### `packages/codegen/src/emitters/render-module.ts::TRIVIA_NODE`
 
 The name of the grammar's trivia choice, `TriviaNode`: the type its node
@@ -14569,6 +14573,9 @@ The parser ids one kind stores as: an enum's member ids, otherwise the kind's ow
 ### `packages/codegen/src/emitters/factories.ts::slotStoredIds`
 
 Every id a slot can store directly: its node kinds' ids after supertype expansion plus its terminal values' stamped ids.
+
+The eager construction probe consumes this same admission set when generating
+its paired object and record builders, so it adds no independent classifier.
 
 ### `packages/codegen/src/emitters/factories.ts::aliasContentAdmission`
 
