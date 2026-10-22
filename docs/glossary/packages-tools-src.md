@@ -168,24 +168,37 @@ The reason a fresh grammar is skipped: its generated files, native binary and fi
 
 Writes one already-terminated line to stdout; the sink for streamed and kept child output.
 
-### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
-
-How many kinds left a grammar between the base and head baselines: the fall in its stamped `kindCount` (never negative). A baseline that never recorded the count, on either side, explains nothing, so the departed count is 0. `kindCount` is checked by `validateBaselineShape` before any arithmetic: a non-negative integer or absent, on the base and on the head; a count of another type would make every comparison false and let a drop through.
-
-### `packages/tools/src/scripts/check-baseline-regression.ts::dropIsExplained`
-
-Whether a drop in one validator's `pass` (or `astMatchPass`) is no regression: its fail count (`total - metric`) did not rise, and its total fell by no more than the departed kinds explain (`KIND_DENOMINATED_TOTAL`). A deleted corpus case, or a lost coverage row for a kind that still exists, leaves the fail count alone and the total smaller, so the departure bound is what stops it passing.
-
-### `packages/tools/src/scripts/check-baseline-regression.ts::KIND_DENOMINATED_TOTAL`
-
-The validators whose total is tied to the grammar's kinds, each with the largest total drop a given departed count explains: `coverage` and `from` one per kind; `factoryStorage` and `builtRenderParse` have several cases per kind, so a departed kind explains the base's average cases per kind (`total / kindCount`, rounded up) and no more: the cases of kinds that still exist are not explained by an unrelated kind leaving. `roundtrip` counts corpus rows and is absent: no kind leaving explains its drop, which a declared counter change covers.
-
-### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.kindCount`
-
-Every kind of the grammar's node model, one stamped count (`kindCount` in `census/hoisted.ts`). It replaces the hoisted and supertype counts, which only explained part of the kinds that can leave.
 ### `packages/tools/src/scripts/check-baseline-regression.ts::baseValidators`
 
 The validators a base baseline is checked and compared on: those it records. A validator a change adds has no base to regress from, so the base may lack it, as it may lack a grammar new to head. Head is always checked for every validator.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::departure`
+
+The kinds that left a grammar and the kinds that appeared, by name: those in the base's `kinds` that the head's lacks, and the reverse. Undefined when either side records no `kinds`, as a baseline collected before the field existed does; then no departure explains a drop.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::explainDrop`
+
+Whether one row's pass drop is explained by kinds leaving, with the note the verdict prints. The row's fail count (`total - metric`) must not rise. Each departed kind explains the cases the base records for it in this row (`casesByKind`), less any the head still records, and nothing else explains a drop. The drop is the fall in the row's total plus the cases the head records for kinds that appeared, which are not credited against it. A row whose base or head records no cases by kind is explained by nothing; `roundtrip`, which counts corpus rows, records none.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::checkPassCounts`
+
+Rule 1 over `comparedCounts`. The first drop `explainDrop` does not explain is the verdict, its note naming the departed kinds and their cases. Each explained drop is added to `explained`, which the passing verdict carries and the CLI prints, one line per drop, so the departures a change relies on are visible in CI output.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::checkFailRise`
+
+Rule 3: the first row whose fail count (`total - metric`) rose without a declaration that covers it (`declarationMismatch`). A declaration names the row under its grammar by validator, or as `parityFixtures`. It runs after `checkPassCounts`, so a pass that fell beside the rise has already failed there. `totals.fail` is the sum of the rows, so no rise in it can pass this rule unless every row's rise is declared.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::declarationMismatch`
+
+Why a `baselineCounterChange` entry does not cover a row: there is none, its `from` is not the base's counters, or its `to` is not the head's. Undefined when it covers the row. The declared total drop (`declaredCounterChangeHolds`) and the declared fail rise (`checkFailRise`) both read a declaration this way.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::validateCasesByKind`
+
+The shape of a row's optional `casesByKind`: a plain object with sorted keys, each count a positive integer (a kind with no cases is left out), summing to the row's `total`. Every case is counted under its kind, so the inventory cannot drift from the count it explains.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::ComparedCount`
+
+One compared metric of one row: every validator's `pass`, a roundtrip validator's `astMatchPass` as well, and the parity fixtures' `pass`, with the row's path, its base and head records, and the metric's two values. `comparedCounts` yields them for a grammar in one order, so the pass-count rule and the fail-rise rule walk the same rows.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
@@ -206,3 +219,15 @@ Checks a grammar package as a consumer receives it. It packs `@sittir/types`, `@
 ### `packages/tools/src/probe/ast-diff.ts::run`
 
 Compares the tree-sitter parse trees of two files with the validator's comparison (`astStructuralDiff`), so two renderings of one source can be shown to have the same tree without a second comparer. Both files are parsed with the grammar's own parser (the sittir-built wasm, so the kinds are the grammar's, variant kinds included), and the diff walks visible children: kind, field names, named and anonymous children, leaf text. Whitespace and trivia between tokens are not nodes and do not count; comments are compared as extras. It exits non-zero and names the first differing path when the trees differ.
+
+### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry`
+
+One grammar's validator results and parity fixtures, with `kinds`: the validators' kind enumeration, sorted, as the render-body catalog `deriveRuleKinds` reads it (the kinds read-render-parse, factory storage and the corpus-coverage census test). A kind departs when it leaves `kinds`, so a kind that becomes a supertype, and so loses its render body, departs. `from` also tests leaf kinds that have no render body; a departure among those is not in `kinds` and explains nothing. `kinds` is optional so that a baseline collected before it existed still loads, explaining no drop.
+
+### `packages/tools/src/scripts/collect-baseline.ts::ValidatorResult`
+
+One validator's counts and failing kinds. `casesByKind` counts its cases under the kind each tests, every case once, summing to `total`: one per kind for `coverage` (under the render-body name it checks) and for `from`, one per corpus candidate for `factoryStorage`, and one per rendered built node, over both surfaces, for `builtRenderParse`. `roundtrip` counts corpus rows and records none. It is optional for the same reason as `GrammarEntry`'s `kinds`.
+
+### `packages/tools/src/scripts/collect-baseline.ts::ParityFixtures`
+
+The render fixtures replayed for a grammar: counts, failures by kind id, and the fixtures the regen left out. `casesByKind` counts the fixtures under their `pattern`, the kind each was generated for.

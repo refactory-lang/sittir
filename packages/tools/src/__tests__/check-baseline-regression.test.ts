@@ -11,18 +11,19 @@
  * filesystem access.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { stableGrammars } from '@sittir/codegen/grammars';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { checkRegression, run, type RegressionVerdict } from '../scripts/check-baseline-regression.ts';
-import type {
-	BackendBaseline,
-	GrammarEntry,
-	ParityFixtures,
-	RoundtripResult,
-	ValidatorResult
+import {
+	computeTotals,
+	type BackendBaseline,
+	type GrammarEntry,
+	type ParityFixtures,
+	type RoundtripResult,
+	type ValidatorResult
 } from '../scripts/collect-baseline.ts';
 
 // ---------------------------------------------------------------------------
@@ -75,8 +76,7 @@ function entry(): GrammarEntry {
 			from: vr(10, 10),
 			roundtrip: rt(10, 10, 10)
 		},
-		parityFixtures: pf(10, 10),
-		kindCount: 300
+		parityFixtures: pf(10, 10)
 	};
 }
 
@@ -303,96 +303,223 @@ describe('checkRegression', () => {
 		expect(verdict.details.after).toBe(9);
 	});
 
-	describe('a pass drop is explained by the kinds that left', () => {
-		function dropping(validator: 'coverage' | 'from' | 'factoryStorage' | 'roundtrip', from: [number, number], to: [number, number]) {
+	describe('a pass drop is explained by the kinds that left, by name', () => {
+		// typescript records kinds a, b and c; in the departing head, a has left.
+		function inventoried(): BackendBaseline {
 			const base = baseline();
-			const result = (counts: [number, number]) =>
-				validator === 'coverage' || validator === 'from'
-					? vr(counts[0], counts[1])
-					: rt(counts[0], counts[1], counts[0]);
-			(base.grammars.typescript!.validators as Record<string, ValidatorResult>)[validator] = result(from);
-			const head = clone(base);
-			(head.grammars.typescript!.validators as Record<string, ValidatorResult>)[validator] = result(to);
-			head.totals.pass = base.totals.pass - (from[0] - to[0]);
-			head.totals.total = base.totals.total - (from[1] - to[1]);
-			return { base, head };
+			const ts = base.grammars.typescript!;
+			ts.kinds = ['a', 'b', 'c'];
+			ts.validators.coverage = { ...vr(3, 3), casesByKind: { a: 1, b: 1, c: 1 } };
+			ts.validators.from = { ...vr(3, 3), casesByKind: { a: 1, b: 1, c: 1 } };
+			ts.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { a: 19, b: 6, c: 5 } };
+			ts.validators.builtRenderParse = { ...rt(60, 60, 60), casesByKind: { a: 38, b: 12, c: 10 } };
+			ts.parityFixtures = { ...pf(30, 30), casesByKind: { a: 19, b: 6, c: 5 } };
+			base.totals = computeTotals(base.grammars);
+			return base;
 		}
 
-		it('202/202 → 201/201 with one kind fewer passes', () => {
-			const { base, head } = dropping('coverage', [202, 202], [201, 201]);
-			head.grammars.typescript!.kindCount = 299;
-			expect(checkRegression(base, head).ok).toBe(true);
+		function departingA(base: BackendBaseline): BackendBaseline {
+			const head = clone(base);
+			const ts = head.grammars.typescript!;
+			ts.kinds = ['b', 'c'];
+			ts.validators.coverage = { ...vr(2, 2), casesByKind: { b: 1, c: 1 } };
+			ts.validators.from = { ...vr(2, 2), casesByKind: { b: 1, c: 1 } };
+			ts.validators.factoryStorage = { ...rt(11, 11, 11), casesByKind: { b: 6, c: 5 } };
+			ts.validators.builtRenderParse = { ...rt(22, 22, 22), casesByKind: { b: 12, c: 10 } };
+			ts.parityFixtures = { ...pf(11, 11), casesByKind: { b: 6, c: 5 } };
+			head.totals = computeTotals(head.grammars);
+			return head;
+		}
+
+		function retotal(head: BackendBaseline): BackendBaseline {
+			head.totals = computeTotals(head.grammars);
+			return head;
+		}
+
+		it('a departed kind explains the loss of exactly its own cases in each kind-tied row, and the verdict lists every one', () => {
+			const base = inventoried();
+			const verdict = checkRegression(base, departingA(base));
+			expect(verdict.ok).toBe(true);
+			if (!verdict.ok) return;
+			expect(verdict.explained).toEqual([
+				'grammars.typescript.validators.from.pass 3 → 2: total 3 → 2, explained by departed a (1 case)',
+				'grammars.typescript.validators.coverage.pass 3 → 2: total 3 → 2, explained by departed a (1 case)',
+				'grammars.typescript.validators.factoryStorage.pass 30 → 11: total 30 → 11, explained by departed a (19 cases)',
+				'grammars.typescript.validators.factoryStorage.astMatchPass 30 → 11: total 30 → 11, explained by departed a (19 cases)',
+				'grammars.typescript.validators.builtRenderParse.pass 60 → 22: total 60 → 22, explained by departed a (38 cases)',
+				'grammars.typescript.validators.builtRenderParse.astMatchPass 60 → 22: total 60 → 22, explained by departed a (38 cases)',
+				'grammars.typescript.parityFixtures.pass 30 → 11: total 30 → 11, explained by departed a (19 cases)'
+			]);
 		});
 
-		it('202/202 → 201/201 with the kind count unchanged fails — a case was lost for a kind that still exists', () => {
-			const { base, head } = dropping('coverage', [202, 202], [201, 201]);
-			const verdict = checkRegression(base, head);
+		it('the CLI prints each explained drop', async () => {
+			const base = inventoried();
+			const dir = mkdtempSync(join(tmpdir(), 'baseline-'));
+			const write = (name: string, value: unknown) => {
+				writeFileSync(join(dir, name), JSON.stringify(value));
+				return join(dir, name);
+			};
+			const out: string[] = [];
+			const spy = vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+				out.push(String(chunk));
+				return true;
+			});
+			try {
+				expect(await run(['--base', write('base.json', base), '--head', write('head.json', departingA(base))])).toBe(0);
+			} finally {
+				spy.mockRestore();
+			}
+			expect(out.join('')).toContain(
+				'  explained: grammars.typescript.validators.factoryStorage.pass 30 → 11: total 30 → 11, explained by departed a (19 cases)\n'
+			);
+		});
+
+		it('a drop larger than the departed kinds\' cases fails, naming them', () => {
+			const base = inventoried();
+			const head = departingA(base);
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(10, 10, 10), casesByKind: { b: 5, c: 5 } };
+			const verdict = checkRegression(base, retotal(head));
 			expectFail(verdict);
 			expect(verdict.reason).toBe('pass-count-drop');
-			expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
+			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
+			expect(verdict.details.note).toBe('total 30 → 10, more than departed a (19 cases) explains');
 		});
 
-		it('202/202 → 201/202 fails — a case went red', () => {
-			const { base, head } = dropping('coverage', [202, 202], [201, 202]);
-			head.grammars.typescript!.kindCount = 299;
-			head.totals.fail = 1;
-			const verdict = checkRegression(base, head);
+		it('the cases of a kind that appeared are not credited against a drop', () => {
+			const base = inventoried();
+			const head = departingA(base);
+			head.grammars.typescript!.kinds = ['b', 'c', 'd'];
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(16, 16, 16), casesByKind: { b: 1, c: 5, d: 10 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
+			expect(verdict.details.note).toBe(
+				'total 30 → 16 (a drop of 24, not crediting 10 cases of kinds that appeared), more than departed a (19 cases) explains'
+			);
+		});
+
+		it('a kind that still exists losing a case is no departure', () => {
+			const base = inventoried();
+			const head = clone(base);
+			head.grammars.typescript!.validators.coverage = { ...vr(2, 2), casesByKind: { a: 1, b: 1 } };
+			const verdict = checkRegression(base, retotal(head));
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
+			expect(verdict.details.note).toBe('total 3 → 2, and no departed kind has cases in this row');
 		});
 
 		it('a drop alongside a new failure fails even with a kind gone', () => {
-			const { base, head } = dropping('coverage', [202, 202], [199, 201]);
-			head.grammars.typescript!.kindCount = 299;
-			head.totals.fail = 2;
-			expectFail(checkRegression(base, head));
-		});
-
-		it('a from drop of one per departed kind passes; a larger one fails', () => {
-			const one = dropping('from', [245, 245], [244, 244]);
-			one.head.grammars.typescript!.kindCount = 299;
-			expect(checkRegression(one.base, one.head).ok).toBe(true);
-			const two = dropping('from', [245, 245], [243, 243]);
-			two.head.grammars.typescript!.kindCount = 299;
-			const verdict = checkRegression(two.base, two.head);
+			const base = inventoried();
+			base.grammars.rust!.validators.from = vr(9, 10, ['kind_x']);
+			base.totals = computeTotals(base.grammars);
+			const head = departingA(base);
+			head.grammars.rust!.validators.from = vr(10, 10);
+			head.grammars.typescript!.validators.coverage = { ...vr(1, 2), casesByKind: { b: 1, c: 1 } };
+			const verdict = checkRegression(base, retotal(head));
+			expect(head.totals.fail).toBe(base.totals.fail);
 			expectFail(verdict);
-			expect(verdict.details.path).toBe('grammars.typescript.validators.from.pass');
-		});
-
-		it('a from drop with the kind count unchanged fails', () => {
-			const { base, head } = dropping('from', [245, 245], [244, 244]);
-			const verdict = checkRegression(base, head);
-			expectFail(verdict);
-			expect(verdict.details.path).toBe('grammars.typescript.validators.from.pass');
-		});
-
-		it('a factoryStorage drop (astMatchPass too) passes when it is within the average cases of the kinds that left', () => {
-			const { base, head } = dropping('factoryStorage', [1390, 1390], [1368, 1368]);
-			head.grammars.typescript!.kindCount = 295;
-			expect(checkRegression(base, head).ok).toBe(true);
-		});
-
-		it('a factoryStorage drop beyond the cases of the kinds that left fails', () => {
-			const { base, head } = dropping('factoryStorage', [1390, 1390], [1100, 1100]);
-			head.grammars.typescript!.kindCount = 299;
-			const verdict = checkRegression(base, head);
-			expectFail(verdict);
-			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
+			expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
+			expect(verdict.details.note).toBe('its fail count rose 0 → 1');
 		});
 
 		it('a roundtrip total counts corpus rows: a kind leaving does not explain its drop', () => {
-			const { base, head } = dropping('roundtrip', [100, 100], [99, 99]);
-			head.grammars.typescript!.kindCount = 299;
-			const verdict = checkRegression(base, head);
+			const base = inventoried();
+			const head = departingA(base);
+			head.grammars.typescript!.validators.roundtrip = rt(9, 9, 9);
+			const verdict = checkRegression(base, retotal(head));
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.validators.roundtrip.pass');
 		});
 
-		it('a base that never recorded its kind count explains no drop', () => {
-			const { base, head } = dropping('coverage', [202, 202], [201, 201]);
-			delete base.grammars.typescript!.kindCount;
-			head.grammars.typescript!.kindCount = 299;
-			expectFail(checkRegression(base, head));
+		it('a base that never recorded its kinds explains no drop', () => {
+			const base = inventoried();
+			const head = departingA(base);
+			delete base.grammars.typescript!.kinds;
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.validators.from.pass');
+		});
+
+		it('a row whose base records no cases by kind explains no drop', () => {
+			const base = inventoried();
+			const head = departingA(base);
+			delete base.grammars.typescript!.validators.coverage.casesByKind;
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
+		});
+
+		it('a parity fixture lost for a kind that still exists fails', () => {
+			const base = inventoried();
+			const head = clone(base);
+			head.grammars.typescript!.parityFixtures = { ...pf(29, 29), casesByKind: { a: 19, b: 5, c: 5 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.parityFixtures.pass');
+		});
+	});
+
+	describe('a fail rise in any row', () => {
+		function rising(): { base: BackendBaseline; head: BackendBaseline } {
+			const base = baseline();
+			const head = clone(base);
+			head.grammars.typescript!.validators.roundtrip = rt(10, 11, 10);
+			head.grammars.typescript!.validators.from = vr(12, 12);
+			head.totals = computeTotals(head.grammars);
+			return { base, head };
+		}
+
+		const declaring = (row: string, to: { pass: number; total: number }): BackendBaseline['baselineCounterChange'] => ({
+			reason: 'a ruled grammar narrowing rejects one corpus entry',
+			grammars: { typescript: { [row]: { from: { pass: 10, total: 10 }, to } } }
+		});
+
+		it('fails even when the totals grew by more than the rise', () => {
+			const { base, head } = rising();
+			expect(head.totals.total - base.totals.total).toBeGreaterThan(head.totals.fail - base.totals.fail);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('fail-rise');
+			expect(verdict.details).toMatchObject({ path: 'grammars.typescript.validators.roundtrip.pass', before: 0, after: 1 });
+		});
+
+		it('passes when declared with from and to equal to the base and head counters', () => {
+			const { base, head } = rising();
+			head.baselineCounterChange = declaring('roundtrip', { pass: 10, total: 11 });
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('fails when the declared to is not the head', () => {
+			const { base, head } = rising();
+			head.baselineCounterChange = declaring('roundtrip', { pass: 10, total: 12 });
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.note).toBe('roundtrip head 10/11 is not the declared to 10/12');
+		});
+
+		it('a roundtrip validator\'s astMatchPass fail count is a row of its own, though totals.fail does not move', () => {
+			const base = baseline();
+			const head = clone(base);
+			head.grammars.typescript!.validators.roundtrip = rt(11, 11, 10);
+			head.totals = computeTotals(head.grammars);
+			expect(head.totals.fail).toBe(base.totals.fail);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.validators.roundtrip.astMatchPass');
+			head.baselineCounterChange = declaring('roundtrip', { pass: 11, total: 11 });
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('the parity fixtures are a row, declared by that name', () => {
+			const base = baseline();
+			const head = clone(base);
+			head.grammars.typescript!.parityFixtures = pf(10, 11);
+			head.totals = computeTotals(head.grammars);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.parityFixtures.pass');
+			head.baselineCounterChange = declaring('parityFixtures', { pass: 10, total: 11 });
+			expect(checkRegression(base, head).ok).toBe(true);
 		});
 	});
 
@@ -406,11 +533,11 @@ describe('checkRegression', () => {
 	});
 
 	it.each([
-		['kindCount', '40'],
-		['kindCount', -1],
-		['kindCount', 1.5],
-		['kindCount', null]
-	] as const)('schema violation detected: a %s of %j is rejected, on either side', (key, value) => {
+		['kinds', '40'],
+		['kinds', ['b', 'a']],
+		['kinds', ['a', 'a']],
+		['kinds', [1]]
+	] as const)('schema violation detected: %s of %j are rejected, on either side', (key, value) => {
 		for (const side of ['base', 'head'] as const) {
 			const base = baseline();
 			const head = clone(base);
@@ -423,12 +550,34 @@ describe('checkRegression', () => {
 		}
 	});
 
-	it('a malformed kind count never excuses a pass drop', () => {
+	it.each([
+		['that are not an object', [10]],
+		['with unsorted kinds', { b: 5, a: 5 }],
+		['listing a kind with no cases', { a: 10, b: 0 }],
+		['summing to other than the total', { a: 9 }]
+	] as const)('schema violation detected: cases by kind %s are rejected, for a validator and the parity fixtures, on either side', (_, value) => {
+		for (const side of ['base', 'head'] as const) {
+			for (const row of ['validators.coverage', 'parityFixtures'] as const) {
+				const base = baseline();
+				const head = clone(base);
+				const grammar = (side === 'base' ? base : head).grammars.python!;
+				const record = row === 'parityFixtures' ? grammar.parityFixtures : grammar.validators.coverage;
+				(record as unknown as Record<string, unknown>)['casesByKind'] = value;
+				const verdict = checkRegression(base, head);
+				expectFail(verdict);
+				expect(verdict.reason).toBe('schema-violation');
+				expect(verdict.details.path).toBe(`${side}.grammars.python.${row}.casesByKind`);
+			}
+		}
+	});
+
+	it('a malformed kind list never excuses a pass drop', () => {
 		const base = baseline();
-		base.grammars.python!.validators.from = vr(181, 181);
+		base.grammars.python!.kinds = ['a', 'b'];
+		base.grammars.python!.validators.from = { ...vr(181, 181), casesByKind: { a: 100, b: 81 } };
 		const head = clone(base);
-		(head.grammars.python as unknown as Record<string, unknown>)['kindCount'] = 'many';
-		head.grammars.python!.validators.from = vr(100, 100);
+		(head.grammars.python as unknown as Record<string, unknown>)['kinds'] = 'many';
+		head.grammars.python!.validators.from = { ...vr(81, 81), casesByKind: { b: 81 } };
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');

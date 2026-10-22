@@ -17,15 +17,18 @@
  *      per grammar, for each validator the base records (a validator the
  *      change adds has no base). This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it. A drop is a regression when the validator's fail count
+ *      top of it. A drop is a regression when the row's fail count
  *      (`total - pass`) rises, or when its total fell by more than the
- *      kinds that left the grammar explain (the fall in the stamped
- *      `kindCount`): `coverage` and `from` may shrink by one per departed
- *      kind, `factoryStorage` and `builtRenderParse` (several cases per
- *      kind) by the base's average cases per kind for each, and `roundtrip` (corpus rows)
- *      only through a declared counter change. The
- *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
- *      is rule 2/3's job, not re-checked here.
+ *      kinds that left the grammar explain. A kind departs by name: it is
+ *      in the base's `kinds` and missing from the head's. A departed kind
+ *      explains no more than the cases the row records for it
+ *      (`casesByKind`), and the cases of a kind that appeared are not
+ *      credited against the drop. `roundtrip` counts corpus rows and
+ *      records no cases by kind, so no departure explains its drop. Every
+ *      explained drop is listed, with its departed kinds and their cases,
+ *      in the passing verdict. The aggregate
+ *      `totals.pass`/`totals.fail`/`totals.total` relationship is rule 2's
+ *      job, not re-checked here.
  *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
  *      (either direction). A kind rename or split moves fixtures between
  *      validators (a flattened parent's own factory-level case disappears
@@ -44,7 +47,14 @@
       counters and `to` equal to the head's, and its `pass` did not fall
       (so the total fell no more than its fail count did). Once the head
       merges, the base equals `to` and the declaration is inert.
- *   3. Total-fail rise — `totals.fail` increased.
+ *   3. Fail rise — a row's fail count (`total - pass`, and for a roundtrip
+ *      validator `total - astMatchPass`) rose, for any validator or the
+ *      parity fixtures of any grammar, unless `baselineCounterChange`
+ *      declares that row with `from` equal to the base's counters and `to`
+ *      equal to the head's. A pass that falls alongside the rise is
+ *      already a pass-count drop under rule 1, which runs first.
+ *      `totals.fail` is the sum of the rows, so it cannot rise unless a
+ *      row does.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
  *   5. Format-deferred-count rise (within 016) — for any validator,
@@ -70,6 +80,7 @@ import { pathToFileURL } from 'node:url';
 
 import type {
 	BackendBaseline,
+	CounterPair,
 	GrammarEntry,
 	ParityFixtures,
 	RoundtripResult,
@@ -83,14 +94,14 @@ import type {
 export type RegressionVerdictReason =
 	| 'pass-count-drop'
 	| 'total-drop'
-	| 'total-fail-rise'
+	| 'fail-rise'
 	| 'schema-violation'
 	| 'format-deferred-rise'
 	| 'left-out-rise'
 	| 'grammar-dropped';
 
 export type RegressionVerdict =
-	| { ok: true; summary: string }
+	| { ok: true; summary: string; explained: readonly string[] }
 	| {
 			ok: false;
 			reason: RegressionVerdictReason;
@@ -213,6 +224,29 @@ function validateValidatorResultShape(v: unknown, path: string, isRoundtrip: boo
 	}
 	const fdv = validateSortedStringArray(obj['formatDeferredKinds'], `${path}.formatDeferredKinds`);
 	if (fdv) return fdv;
+	return validateCasesByKind(obj['casesByKind'], obj['total'] as number, `${path}.casesByKind`);
+}
+
+function validateCasesByKind(value: unknown, total: number, path: string): RegressionVerdict | null {
+	if (value === undefined) return null;
+	const fail = (summary: string, note?: string): RegressionVerdict => ({
+		ok: false,
+		reason: 'schema-violation',
+		summary: `schema violation: ${path} ${summary}`,
+		details: { path, after: value, ...(note === undefined ? {} : { note }) }
+	});
+	if (value === null || typeof value !== 'object' || Array.isArray(value)) return fail('is not a plain object');
+	const kinds = Object.keys(value);
+	if (!isSorted(kinds)) return fail('keys are not sorted ascending', 'object keys must be sorted ascending');
+	let sum = 0;
+	for (const kind of kinds) {
+		const count = (value as Record<string, unknown>)[kind];
+		if (!(typeof count === 'number' && Number.isInteger(count) && count > 0)) {
+			return fail(`.${kind} is not a positive integer`, 'a kind with no cases is not listed');
+		}
+		sum += count;
+	}
+	if (sum !== total) return fail(`sums to ${sum}, not the total ${total}`, 'every case is counted under its kind');
 	return null;
 }
 
@@ -299,7 +333,7 @@ function validateParityFixturesShape(v: unknown, path: string): RegressionVerdic
 			}
 		}
 	}
-	return null;
+	return validateCasesByKind(obj['casesByKind'], obj['total'] as number, `${path}.casesByKind`);
 }
 
 function validateBaselineShape(b: unknown, label: string): RegressionVerdict | null {
@@ -370,14 +404,16 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 				details: { path: gPath, after: ge }
 			};
 		}
-		for (const key of ['kindCount'] as const) {
-			const count = (ge as Record<string, unknown>)[key];
-			if (count !== undefined && !(typeof count === 'number' && Number.isInteger(count) && count >= 0)) {
+		const kinds = (ge as Record<string, unknown>)['kinds'];
+		if (kinds !== undefined) {
+			const kv = validateSortedStringArray(kinds, `${gPath}.kinds`);
+			if (kv) return kv;
+			if (new Set(kinds as string[]).size !== (kinds as string[]).length) {
 				return {
 					ok: false,
 					reason: 'schema-violation',
-					summary: `schema violation: ${gPath}.${key} is not a non-negative integer`,
-					details: { path: `${gPath}.${key}`, after: count, note: 'a kind count is a non-negative integer, or absent' }
+					summary: `schema violation: ${gPath}.kinds lists a kind twice`,
+					details: { path: `${gPath}.kinds`, after: kinds, note: 'each kind is listed once' }
 				};
 			}
 		}
@@ -443,75 +479,78 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // Pass-count drop — enumerate every monitored path and compare.
 // ---------------------------------------------------------------------------
 
-/**
- * The validators whose total is tied to the grammar's kinds, each with the
- * largest total drop a given number of departed kinds explains. `coverage`
- * and `from` have one case per kind. `factoryStorage` and `builtRenderParse`
- * have several, so a departed kind explains the base's average cases per
- * kind (`casesPerKind`, rounded up) and no more: losing the cases of kinds
- * that still exist is not explained by an unrelated kind leaving. `roundtrip`
- * counts corpus rows, which no kind leaving explains: its total may shrink
- * only through a declared counter change.
- */
-const KIND_DENOMINATED_TOTAL: Partial<Record<ValidatorName, (departedKinds: number, casesPerKind: number) => number>> = {
-	coverage: (departedKinds) => departedKinds,
-	from: (departedKinds) => departedKinds,
-	factoryStorage: (departedKinds, casesPerKind) => departedKinds * casesPerKind,
-	builtRenderParse: (departedKinds, casesPerKind) => departedKinds * casesPerKind
-};
+type CountedRow = Pick<ParityFixtures, 'pass' | 'total' | 'casesByKind'>;
 
-/**
- * How many kinds left the grammar between the two baselines: the fall in
- * its stamped `kindCount`. A baseline that never recorded the count, on
- * either side, explains nothing.
- */
-function departedKindCount(baseGrammar: GrammarEntry, headGrammar: GrammarEntry): number {
-	if (baseGrammar.kindCount === undefined || headGrammar.kindCount === undefined) return 0;
-	return Math.max(baseGrammar.kindCount - headGrammar.kindCount, 0);
+interface ComparedCount {
+	readonly row: string;
+	readonly path: string;
+	readonly b: CountedRow;
+	readonly h: CountedRow;
+	readonly before: number;
+	readonly after: number;
 }
 
-/**
- * Whether a drop in one metric (`pass` or, for a roundtrip validator,
- * `astMatchPass`) of `vName` is no new failure: the validator's fail count
- * (`total - metric`) did not rise, and its total fell by no more than the
- * kinds that left the grammar explain. A deleted corpus case or a lost
- * coverage row for a kind that still exists leaves the fail count alone and
- * the total smaller, so the departure bound is what stops it passing.
- */
-function dropIsExplained(
+function* comparedCounts(g: string, baseGrammar: GrammarEntry, headGrammar: GrammarEntry): Generator<ComparedCount> {
+	for (const vName of baseValidators(baseGrammar.validators)) {
+		const b = baseGrammar.validators[vName] as RoundtripResult;
+		const h = headGrammar.validators[vName] as RoundtripResult;
+		const path = `grammars.${g}.validators.${vName}`;
+		yield { row: vName, path: `${path}.pass`, b, h, before: b.pass, after: h.pass };
+		if (ROUNDTRIP_VALIDATORS.includes(vName)) {
+			yield { row: vName, path: `${path}.astMatchPass`, b, h, before: b.astMatchPass, after: h.astMatchPass };
+		}
+	}
+	const b = baseGrammar.parityFixtures;
+	const h = headGrammar.parityFixtures;
+	yield { row: 'parityFixtures', path: `grammars.${g}.parityFixtures.pass`, b, h, before: b.pass, after: h.pass };
+}
+
+function departure(
 	baseGrammar: GrammarEntry,
-	headGrammar: GrammarEntry,
-	vName: ValidatorName,
-	metric: 'pass' | 'astMatchPass'
-): boolean {
-	const b = baseGrammar.validators[vName] as RoundtripResult;
-	const h = headGrammar.validators[vName] as RoundtripResult;
-	if (h.total - h[metric] > b.total - b[metric]) return false;
-	const totalDrop = Math.max(b.total - h.total, 0);
-	if (totalDrop === 0) return true;
-	const largestExplainedDrop = KIND_DENOMINATED_TOTAL[vName];
-	if (largestExplainedDrop === undefined) return false;
-	const departed = departedKindCount(baseGrammar, headGrammar);
-	if (departed <= 0 || baseGrammar.kindCount === undefined) return false;
-	return totalDrop <= largestExplainedDrop(departed, Math.ceil(b.total / baseGrammar.kindCount));
-}
-
-function passCountFail(path: string, before: number, after: number): RegressionVerdict {
+	headGrammar: GrammarEntry
+): { readonly departed: readonly string[]; readonly appeared: readonly string[] } | undefined {
+	if (baseGrammar.kinds === undefined || headGrammar.kinds === undefined) return undefined;
+	const base = new Set(baseGrammar.kinds);
+	const head = new Set(headGrammar.kinds);
 	return {
-		ok: false,
-		reason: 'pass-count-drop',
-		summary: `pass-count drop at ${path}: ${before} → ${after}`,
-		details: { path, before, after }
+		departed: baseGrammar.kinds.filter((kind) => !head.has(kind)),
+		appeared: headGrammar.kinds.filter((kind) => !base.has(kind))
 	};
 }
 
-/**
- * `totals.pass`/`totals.fail`/`totals.total`'s aggregate relationship is
- * `checkTotalDrop`/`checkTotalFailRise`'s job (they run first, and reason
- * about the aggregate directly) — not duplicated here as a third,
- * conflicting floor on the same numbers. This function owns only the
- * per-grammar, per-validator, and per-grammar parity-fixture floors.
- */
+function casesText(count: number): string {
+	return count === 1 ? '1 case' : `${count} cases`;
+}
+
+function explainDrop(
+	baseGrammar: GrammarEntry,
+	headGrammar: GrammarEntry,
+	{ b, h, before, after }: ComparedCount
+): { readonly explained: boolean; readonly note: string } {
+	const failBefore = b.total - before;
+	const failAfter = h.total - after;
+	if (failAfter > failBefore) return { explained: false, note: `its fail count rose ${failBefore} → ${failAfter}` };
+	const kinds = departure(baseGrammar, headGrammar);
+	const baseCases = b.casesByKind;
+	const headCases = h.casesByKind;
+	if (kinds === undefined || baseCases === undefined || headCases === undefined) {
+		return { explained: false, note: 'no kind departure explains it: one side records no kinds or no cases by kind for this row' };
+	}
+	const departed = kinds.departed
+		.map((kind) => [kind, Math.max((baseCases[kind] ?? 0) - (headCases[kind] ?? 0), 0)] as const)
+		.filter(([, cases]) => cases > 0);
+	const appeared = kinds.appeared.reduce((sum, kind) => sum + Math.max((headCases[kind] ?? 0) - (baseCases[kind] ?? 0), 0), 0);
+	const explainable = departed.reduce((sum, [, cases]) => sum + cases, 0);
+	const drop = b.total - h.total + appeared;
+	const list = departed.map(([kind, cases]) => `${kind} (${casesText(cases)})`).join(', ');
+	const fell = `total ${b.total} → ${h.total}${appeared === 0 ? '' : ` (a drop of ${drop}, not crediting ${casesText(appeared)} of kinds that appeared)`}`;
+	if (drop <= explainable) return { explained: true, note: `${fell}, explained by departed ${list}` };
+	return {
+		explained: false,
+		note: departed.length === 0 ? `${fell}, and no departed kind has cases in this row` : `${fell}, more than departed ${list} explains`
+	};
+}
+
 function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	const baseGrammars = Object.keys(base.grammars);
 	const dropped = baseGrammars.filter((g) => head.grammars[g] === undefined);
@@ -540,37 +579,28 @@ function* comparedGrammars(
 	}
 }
 
-function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+function checkPassCounts(base: BackendBaseline, head: BackendBaseline, explained: string[]): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
-		for (const vName of baseValidators(baseGrammar.validators)) {
-			const b = baseGrammar.validators[vName] as ValidatorResult;
-			const h = headGrammar.validators[vName] as ValidatorResult;
-			const path = `grammars.${g}.validators.${vName}.pass`;
-			if (h.pass < b.pass && !dropIsExplained(baseGrammar, headGrammar, vName, 'pass')) {
-				return passCountFail(path, b.pass, h.pass);
+		for (const count of comparedCounts(g, baseGrammar, headGrammar)) {
+			if (count.after >= count.before) continue;
+			const drop = explainDrop(baseGrammar, headGrammar, count);
+			const line = `${count.path} ${count.before} → ${count.after}: ${drop.note}`;
+			if (!drop.explained) {
+				return {
+					ok: false,
+					reason: 'pass-count-drop',
+					summary: `pass-count drop at ${line}`,
+					details: { path: count.path, before: count.before, after: count.after, note: drop.note }
+				};
 			}
-			if (ROUNDTRIP_VALIDATORS.includes(vName)) {
-				const br = b as RoundtripResult;
-				const hr = h as RoundtripResult;
-				const astPath = `grammars.${g}.validators.${vName}.astMatchPass`;
-				if (hr.astMatchPass < br.astMatchPass && !dropIsExplained(baseGrammar, headGrammar, vName, 'astMatchPass')) {
-					return passCountFail(astPath, br.astMatchPass, hr.astMatchPass);
-				}
-			}
-		}
-		if (headGrammar.parityFixtures.pass < baseGrammar.parityFixtures.pass) {
-			return passCountFail(
-				`grammars.${g}.parityFixtures.pass`,
-				baseGrammar.parityFixtures.pass,
-				headGrammar.parityFixtures.pass
-			);
+			explained.push(line);
 		}
 	}
 	return null;
 }
 
 // ---------------------------------------------------------------------------
-// Total-drop / total-fail-rise (rules #2 / #3)
+// Total drop and fail rise (rules #2 / #3)
 // ---------------------------------------------------------------------------
 
 function sumByKind(byKind: Readonly<Record<string, number>>): number {
@@ -597,6 +627,19 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 	return null;
 }
 
+type DeclaredChange = { readonly from: CounterPair; readonly to: CounterPair };
+
+function declarationMismatch(declared: DeclaredChange | undefined, row: string, b: CounterPair, h: CounterPair): string | undefined {
+	if (declared === undefined) return `${row} has no baselineCounterChange declaration`;
+	if (declared.from.total !== b.total || declared.from.pass !== b.pass) {
+		return `${row} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`;
+	}
+	if (declared.to.total !== h.total || declared.to.pass !== h.pass) {
+		return `${row} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`;
+	}
+	return undefined;
+}
+
 function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
 		for (const vName of baseValidators(baseGrammar.validators)) {
@@ -604,17 +647,9 @@ function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline
 			const h = headGrammar.validators[vName] as ValidatorResult;
 			if (h.total >= b.total) continue;
 			const path = `grammars.${g}.validators.${vName}`;
-			const declared = head.baselineCounterChange?.grammars[g]?.[vName];
 			const note =
-				declared === undefined
-					? `${vName} total dropped without a baselineCounterChange declaration`
-					: declared.from.total !== b.total || declared.from.pass !== b.pass
-						? `${vName} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`
-						: declared.to.total !== h.total || declared.to.pass !== h.pass
-							? `${vName} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`
-							: h.pass < b.pass
-								? `${vName} pass fell under a declared counter change`
-								: undefined;
+				declarationMismatch(head.baselineCounterChange?.grammars[g]?.[vName], vName, b, h) ??
+				(h.pass < b.pass ? `${vName} pass fell under a declared counter change` : undefined);
 			if (note !== undefined) {
 				return {
 					ok: false,
@@ -645,29 +680,23 @@ function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): Regressio
 	return null;
 }
 
-function checkTotalFailRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	if (head.totals.fail <= base.totals.fail) return null;
-	// Total fail rose. Allowed only when the rise is FULLY accounted
-	// for by newly-discovered tests (total grew by ≥ the fail rise AND
-	// pass did not drop). Architectural commits that expand validator
-	// coverage — e.g. fixing a wrap-dispatch bug that masked subtree
-	// walks — surface previously-hidden test cases. Those are honest
-	// additions, not regressions; a per-validator pass-count drop would
-	// still be flagged by `checkPassCounts` independently.
-	const failRise = head.totals.fail - base.totals.fail;
-	const totalRise = head.totals.total - base.totals.total;
-	const passDelta = head.totals.pass - base.totals.pass;
-	if (totalRise >= failRise && passDelta >= 0) return null;
-	return {
-		ok: false,
-		reason: 'total-fail-rise',
-		summary: `totals.fail increased: ${base.totals.fail} → ${head.totals.fail} (totals.total: ${base.totals.total} → ${head.totals.total}, pass: ${base.totals.pass} → ${head.totals.pass})`,
-		details: {
-			path: 'totals.fail',
-			before: base.totals.fail,
-			after: head.totals.fail
+function checkFailRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
+		for (const count of comparedCounts(g, baseGrammar, headGrammar)) {
+			const before = count.b.total - count.before;
+			const after = count.h.total - count.after;
+			if (after <= before) continue;
+			const note = declarationMismatch(head.baselineCounterChange?.grammars[g]?.[count.row], count.row, count.b, count.h);
+			if (note === undefined) continue;
+			return {
+				ok: false,
+				reason: 'fail-rise',
+				summary: `fail count rose at ${count.path}: ${before} → ${after} (${note})`,
+				details: { path: count.path, before, after, note }
+			};
 		}
-	};
+	}
+	return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -753,7 +782,7 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
  *   4. left-out-rise
  *   5. total-drop
  *   6. pass-count-drop
- *   7. total-fail-rise
+ *   7. fail-rise
  *   8. format-deferred-rise
  *
  * The schema check runs first so subsequent checks may safely cast to
@@ -790,10 +819,11 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 	const totalDrop = checkTotalDrop(base, head);
 	if (totalDrop) return totalDrop;
 
-	const passDrop = checkPassCounts(base, head);
+	const explained: string[] = [];
+	const passDrop = checkPassCounts(base, head, explained);
 	if (passDrop) return passDrop;
 
-	const failRise = checkTotalFailRise(base, head);
+	const failRise = checkFailRise(base, head);
 	if (failRise) return failRise;
 
 	const formatRise = checkFormatDeferredRise(base, head);
@@ -801,7 +831,8 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 
 	return {
 		ok: true,
-		summary: `no regression: backend=${head.backend} totals.pass ${base.totals.pass}→${head.totals.pass}, totals.fail ${base.totals.fail}→${head.totals.fail}`
+		summary: `no regression: backend=${head.backend} totals.pass ${base.totals.pass}→${head.totals.pass}, totals.fail ${base.totals.fail}→${head.totals.fail}`,
+		explained
 	};
 }
 
@@ -860,6 +891,7 @@ export async function run(argv: string[]): Promise<number> {
 	const verdict = checkRegression(base, head);
 	if (verdict.ok) {
 		process.stdout.write(`${verdict.summary}\n`);
+		for (const line of verdict.explained) process.stdout.write(`  explained: ${line}\n`);
 		return 0;
 	} else {
 		process.stderr.write(

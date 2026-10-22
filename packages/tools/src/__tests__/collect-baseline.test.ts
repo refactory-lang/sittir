@@ -33,6 +33,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as baseline from '../scripts/collect-baseline.ts';
+import { deriveRuleKinds } from '../validate/render-bodies.ts';
 import { stableGrammars } from '@sittir/codegen/grammars';
 
 const grammarKeys = stableGrammars();
@@ -111,24 +112,53 @@ describe('collect-baseline', () => {
 
 		for (const g of grammarKeys) {
 			const entry = grammars[g] as Record<string, unknown>;
-			expect(Object.keys(entry).sort()).toEqual(['kindCount', 'parityFixtures', 'validators']);
+			expect(Object.keys(entry).sort()).toEqual(['kinds', 'parityFixtures', 'validators']);
 
 			const validators = entry['validators'] as Record<string, unknown>;
 			expect(Object.keys(validators)).toEqual(['builtRenderParse', 'coverage', 'factoryStorage', 'from', 'roundtrip']);
 
 			// Each validator entry has failingKinds AND formatDeferredKinds.
-			// Roundtrip variants additionally have astMatchPass.
-			for (const vname of ['coverage', 'factoryStorage', 'from', 'roundtrip'] as const) {
-				const v = validators[vname] as Record<string, unknown>;
-				const expected =
-					vname === 'from' || vname === 'coverage'
-						? ['failingKinds', 'formatDeferredKinds', 'pass', 'total']
-						: ['astMatchPass', 'failingKinds', 'formatDeferredKinds', 'pass', 'total'];
-				expect(Object.keys(v).sort()).toEqual(expected);
+			// Roundtrip variants additionally have astMatchPass; every
+			// validator but roundtrip counts its cases by kind.
+			const expectedKeys = {
+				builtRenderParse: ['astMatchPass', 'casesByKind', 'failingKinds', 'formatDeferredKinds', 'pass', 'total'],
+				coverage: ['casesByKind', 'failingKinds', 'formatDeferredKinds', 'pass', 'total'],
+				factoryStorage: ['astMatchPass', 'casesByKind', 'failingKinds', 'formatDeferredKinds', 'pass', 'total'],
+				from: ['casesByKind', 'failingKinds', 'formatDeferredKinds', 'pass', 'total'],
+				roundtrip: ['astMatchPass', 'failingKinds', 'formatDeferredKinds', 'pass', 'total']
+			};
+			for (const [vname, expected] of Object.entries(expectedKeys)) {
+				expect(Object.keys(validators[vname] as object).sort()).toEqual(expected);
 			}
 
 			const fixtures = entry['parityFixtures'] as Record<string, unknown>;
-			expect(Object.keys(fixtures).sort()).toEqual(['failingByKind', 'formatDeferredByKind', 'leftOutByKind', 'pass', 'total']);
+			expect(Object.keys(fixtures).sort()).toEqual([
+				'casesByKind',
+				'failingByKind',
+				'formatDeferredByKind',
+				'leftOutByKind',
+				'pass',
+				'total'
+			]);
+		}
+	});
+
+	it('kinds are the validators\' render-body catalog, and every case is counted under its kind', () => {
+		for (const g of grammarKeys) {
+			const entry = result.grammars[g]!;
+			expect(entry.kinds).toEqual([...deriveRuleKinds(g)].sort());
+			const rows = [
+				entry.validators.builtRenderParse,
+				entry.validators.coverage,
+				entry.validators.factoryStorage,
+				entry.validators.from,
+				entry.parityFixtures
+			];
+			for (const row of rows) {
+				const cases = Object.values(row.casesByKind ?? {});
+				expect(cases.every((count) => Number.isInteger(count) && count > 0)).toBe(true);
+				expect(cases.reduce((sum, count) => sum + count, 0)).toBe(row.total);
+			}
 		}
 	});
 

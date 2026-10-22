@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { type CensusModel, formatHoistedCensus, hoistedCensus, kindCount } from '../../src/census/hoisted.ts';
+import { type CensusModel, formatHoistedCensus, hoistedCensus } from '../../src/census/hoisted.ts';
 import { readNodeModelFile } from '../../src/validate/common.ts';
 
 describe('hoistedCensus', () => {
@@ -42,17 +42,6 @@ describe('hoistedCensus', () => {
 		expect(formatHoistedCensus('g', { hoisted: ['x', 'y'], seated: ['x'], unseated: ['y'] })).toBe(
 			'g: hoisted=2 seated=1 unseated=1\n  y\n'
 		);
-	});
-});
-
-describe('kindCount', () => {
-	it('counts every kind of the model, as an array or as a record', () => {
-		const asArray: CensusModel = {
-			nodes: [{ kind: 'a', seated: true }, { kind: 'a_items', modelType: 'list', seated: true }, { kind: 'b' }]
-		};
-		const asRecord: CensusModel = { nodes: { a: { kind: 'a', seated: true }, a_items: { kind: 'a_items' }, b: { kind: 'b' } } };
-		expect(kindCount(asArray)).toBe(3);
-		expect(kindCount(asRecord)).toBe(3);
 	});
 });
 

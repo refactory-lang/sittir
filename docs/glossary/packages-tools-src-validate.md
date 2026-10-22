@@ -1653,11 +1653,21 @@ The render-and-reparse step every rendering row shares. It renders a node with t
 
 Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
 
+Each candidate tested is one case of its kind, and `total` and `casesByKind` are read from that one count (`KindCases`). The render counts the built nodes it renders the same way, taking a case back out when the kind has no reparse host or the render is excluded.
+
 A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`placeOf` on it or any node under it) is a render failure.
 
 ### `packages/tools/src/validate/built-render.ts::combineBuiltRender`
 
-The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each failure's kind labeled with its surface (`factory: <kind>`, `ir: <kind>`).
+The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each kind's cases added across them (`casesByKind`), each failure's kind labeled with its surface (`factory: <kind>`, `ir: <kind>`).
+
+### `packages/tools/src/validate/built-render.ts::BuiltRenderRun`
+
+A storage run's render result while the run goes on: the counts and failures of `BuiltRenderResult`, with its cases in a `KindCases`, from which `finishBuiltRender` reads `total` and `casesByKind`.
+
+### `packages/tools/src/validate/built-render.ts::finishBuiltRender`
+
+The `BuiltRenderResult` of a run: its counts and failures, with `total` and `casesByKind` read from its cases.
 
 ### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
 
@@ -1685,7 +1695,7 @@ Shallow comparison of a `from()` result against the factory's: `$type`, the slot
 
 A read leaf whose stored kind differs from the kind the corpus shows (an in-place leaf alias reads as the shared anonymous token) is validated by its text: `from(node.$text)` is compared with `factory(nodeToConfig(node))`, and `from(node)` must return the same object. Either the read identity is kept or the row is an error. The scalarized text and constant leaves, which have no node, keep comparing `from(text)` with `factory(text)` through the same closure.
 
-An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). An extra is reported as trivia. Any other kind is retried in later entries, so it is tested directly wherever some entry reads it as a node. A kind no entry reads as a node did not leave the grammar, it is stored inside its parent, so after the walk it is tested through the nearest ancestor of its first occurrence that the read holds, and that ancestor's result is credited to it; it counts toward the total like any tested kind. An occurrence none of these explains stays an error.
+An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). An extra is reported as trivia. Any other kind is retried in later entries, so it is tested directly wherever some entry reads it as a node. A kind no entry reads as a node did not leave the grammar, it is stored inside its parent, so after the walk it is tested through the nearest ancestor of its first occurrence that the read holds, and that ancestor's result is credited to it; it counts toward the total like any tested kind. Each tested kind is one case, under its own name, and `total` and `casesByKind` are read from that one count (`KindCases`); a kind put back to be retried leaves it. An occurrence none of these explains stays an error.
 
 Each occurrence is compared by `validateAt`, which looks the node up by the kind it is read as and credits the pass or error to the kind being tested; the two differ only when an ancestor stands in.
 
@@ -1837,3 +1847,11 @@ The kind a node counts as: `storage` when it is one of the storage kinds sharing
 ### `packages/tools/src/validate/display-families.ts::sharedDisplayEntries`
 
 Node-types entries with each shared display's entry repeated once per storage kind (`sharedDisplayStorageKinds`), named for that kind. Template coverage walks these, so each storage kind's own template is checked against the display's node-types entry.
+
+### `packages/tools/src/validate/kind-cases.ts::KindCases`
+
+A validator's case counter, per kind. `add` counts a case (or several) of a kind, `remove` takes one back and throws when none is counted, and `total` and `byKind` read the same counts, so a result's `total` and its `casesByKind` cannot disagree. `byKind` sorts by kind and leaves out a kind whose last case was taken back.
+
+### `packages/tools/src/validate/kind-cases.ts::CasesByKind`
+
+Cases counted per kind, as a validator result and the baseline record them.
