@@ -1024,6 +1024,9 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
+		lines.push('  readonly __slotNames__?: {');
+		for (const f of slots) lines.push(`    readonly ${f.storageKey}: ${JSON.stringify(f.propertyName)};`);
+		lines.push('  };');
 		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
 		emitSlotHints(lines, node, nodeMap, kindEntries);
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
@@ -1393,7 +1396,7 @@ function nonEmptyProofLines(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const checks = node.slots
 		.filter((slot) => slot.registeredOption === undefined && needsNonEmptyHoist(slot, nodeMap))
 		.flatMap((slot) => {
-			const key = JSON.stringify(slot.configKey);
+			const key = JSON.stringify(slot.propertyName);
 			return [`KeyRefusesEmpty<Config, ${key}>`, `KeyRefusesEmpty<LooseConfig, ${key}>`, `SetterRefusesEmpty<Bound, ${JSON.stringify(slot.propertyName)}>`];
 		});
 	return checks.length === 0 ? [] : [`  type NonEmptySlots = Proven<[${checks.join(', ')}]>;`];
@@ -1415,7 +1418,7 @@ function emitRefineFormSubNamespaces(
 		const narrowed = form.narrowedFields;
 		const base =
 			narrowed.length > 0
-				? `Omit<ConfigFor<${nsKey}>, ${narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ')}>`
+				? `Omit<ConfigFor<${nsKey}>, ${narrowed.map((n) => JSON.stringify(node.slots.find((slot) => slot.name === n.fieldName)!.propertyName)).join(' | ')}>`
 				: `ConfigFor<${nsKey}>`;
 		lines.push(`    export type Config = ${omitRegistered(base, node)};`);
 		const formSpelling = spellingTypeOf(node, nodeMap, kindEntries);

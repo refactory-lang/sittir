@@ -69,19 +69,20 @@ const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (
 	.loadWebTreeSitter;
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
-const { pluralize, snakeToCamel } = await load('modelNodeMap');
+const { pluralize, slotPropertyName, snakeToCamel } = await load('modelNodeMap');
 const { factorySlotMetaOf, slotKindsOf, valueNameOf } = await load('nodeModelRead');
 
 type SlotArity = 'one' | 'many';
 type SlotOrigin = 'field' | 'kind';
 interface SlotModel {
 	readonly name: string;
+	readonly key: string;
 	readonly storageKey: string;
 	readonly arity: SlotArity;
 	readonly metadata: OpaqueFacts;
 }
-function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
-	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
+function createNamedSlotModel(name: string, key: string, arity: SlotArity): SlotModel {
+	return { name, key, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
 }
 
 export interface CorpusEntry {
@@ -561,6 +562,7 @@ interface ParsedNodeModel {
 
 interface ParsedSlotValue {
 	kind?: string;
+	multiplicity?: string;
 	seat?: Seat;
 	name?: string;
 	parseKind?: string;
@@ -678,23 +680,23 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 					if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
 					const valueName = valueNameOf(value);
 					if (value.default === true && valueName !== undefined) {
-						(slotDefaults[node.kind] ??= {})[snakeToCamel(slot.name)] = valueName;
+						(slotDefaults[node.kind] ??= {})[slotPropertyName(slot)] = valueName;
 					}
 				}
 			}
-			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [snakeToCamel(slot.name), slotKindsOf(slot)]));
+			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slotPropertyName(slot), slotKindsOf(slot)]));
 			slotNames[node.kind] = node.slots.map((slot) => slot.name);
 			if (node.factoryShape !== undefined) {
 				factorySlots[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.name, factorySlotMetaOf(slot)]));
 			}
 			slotRequired[node.kind] = Object.fromEntries(
-				node.slots.map((slot) => [snakeToCamel(slot.name), slot.required === true])
+				node.slots.map((slot) => [slotPropertyName(slot), slot.required === true])
 			);
 			slotMultiple[node.kind] = Object.fromEntries(
-				node.slots.map((slot) => [snakeToCamel(slot.name), slot.multiple === true])
+				node.slots.map((slot) => [slotPropertyName(slot), slot.multiple === true])
 			);
 			slotStorage[node.kind] = Object.fromEntries(
-				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[snakeToCamel(slot.name), slot.storage]]))
+				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slotPropertyName(slot), slot.storage]]))
 			);
 		}
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
@@ -1273,7 +1275,7 @@ function projectArmSlot(
 	out: Record<string, unknown>
 ): void {
 	if (seat.mount === undefined) throw new Error(`ir surface: arm seat ${seat.kind} on ${parentKind} has no mount`);
-	const key = slotConfigKey(slot);
+	const key = slot.key;
 	const setRoute = (mount: string, args: readonly unknown[] | undefined): void => {
 		const existing = armRouteOf(out);
 		const composed = existing === undefined ? mount : `${existing.mount}.${mount}`;
@@ -1327,7 +1329,7 @@ function projectSeatedSlot(
 	opts: NodeToConfigOpts,
 	out: Record<string, unknown>
 ): void {
-	const key = slotConfigKey(slot);
+	const key = slot.key;
 	switch (seat.shape) {
 		case 'flatten': {
 			const groupNode = hydrateForConfig(value as ReadNodeLike, opts);
@@ -1377,8 +1379,7 @@ function splitRegisteredSlots(
 ): { readonly base: Record<string, unknown>; readonly registered: Record<string, unknown> | undefined } {
 	const slotMeta = opts.factorySlots?.[kind];
 	if (slotMeta === undefined) return { base: config, registered: undefined };
-	const metaOf = (key: string): FactorySlotMeta | undefined =>
-		Object.entries(slotMeta).find(([name]) => name === key || snakeToCamel(name) === key)?.[1];
+	const metaOf = (key: string): FactorySlotMeta | undefined => Object.values(slotMeta).find((meta) => meta.propertyName === key);
 	const registeredKeys = Object.keys(config).filter((key) => metaOf(key)?.registered === true);
 	if (registeredKeys.length === 0) return { base: config, registered: undefined };
 	const base: Record<string, unknown> = { ...config };
@@ -1503,9 +1504,8 @@ function directFactoryValue(
 ): unknown {
 	const slotNames = Object.keys(factorySlots?.[kind] ?? {});
 	const rawName = slotNames.length === 1 ? slotNames[0] : factoryFields?.[kind]?.[0];
-	const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 	const record = config as Record<string, unknown>;
-	if (camelName !== undefined) return record[camelName];
+	if (rawName !== undefined) return record[slotKeyOf(factorySlots, kind, rawName)];
 	return getChildFactoryArgs(kind, record, factorySlots, factoryFields)[0];
 }
 
@@ -1517,8 +1517,10 @@ function slotOrigin(slot: SlotModel): SlotOrigin {
 	return readFacts<{ origin: SlotOrigin }>(slot.metadata).origin;
 }
 
-function slotConfigKey(slot: SlotModel): string {
-	return slotOrigin(slot) === 'kind' ? slot.name : snakeToCamel(slot.name);
+export function slotKeyOf(factorySlots: NodeToConfigOpts['factorySlots'], kind: string, name: string): string {
+	const key = factorySlots?.[kind]?.[name]?.propertyName;
+	if (key === undefined) throw new Error(`nodeToConfig: ${kind}.${name} has no slot in the node model`);
+	return key;
 }
 
 function memberValueOpts(
@@ -1554,8 +1556,8 @@ function createNamedConfigSlotModel(
 	name: string,
 	factorySlots: NodeToConfigOpts['factorySlots']
 ): SlotModel {
-	const slotMeta = parentKind ? factorySlots?.[parentKind]?.[name] : undefined;
-	return createNamedSlotModel(name, slotModelArityFromMeta(slotMeta, false));
+	if (parentKind === undefined) throw new Error(`nodeToConfig: slot ${name} has no parent kind`);
+	return createNamedSlotModel(name, slotKeyOf(factorySlots, parentKind, name), slotModelArityFromMeta(factorySlots?.[parentKind]?.[name], false));
 }
 
 function hasDeclaredFactorySlot(parentKind: string | undefined, name: string, opts: NodeToConfigOpts): boolean {
@@ -1647,8 +1649,7 @@ export function getChildFactoryArgs(
 	factoryFields?: Record<string, readonly string[]>
 ): readonly unknown[] {
 	const declaredField = factoryFields?.[kind]?.[0];
-	const configKey = declaredField ? snakeToCamel(declaredField) : 'children';
-	const childrenValue = childConfig[configKey];
+	const childrenValue = childConfig[declaredField ? slotKeyOf(factorySlots, kind, declaredField) : 'children'];
 	const childrenMeta = factorySlots?.[kind]?.[declaredField ?? 'children'];
 	if (slotModelArityFromMeta(childrenMeta, true) === 'one') {
 		return childrenValue == null ? [] : [childrenValue];
@@ -1665,19 +1666,17 @@ function assignSlotToConfig(
 ): void {
 	const normalized = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
 	if (normalized !== undefined) {
-		out[slotConfigKey(slot)] = normalized;
+		out[slot.key] = normalized;
 	}
 }
 
 function getMissingDeclaredFields(
-	declaredFields: readonly string[] | undefined,
+	parentKind: string,
+	declaredFields: readonly string[],
+	factorySlots: NodeToConfigOpts['factorySlots'],
 	out: Record<string, unknown>
 ): string[] {
-	if (!declaredFields) return [];
-	return declaredFields.filter((name) => {
-		const camel = snakeToCamel(name);
-		return out[camel] === undefined;
-	});
+	return declaredFields.filter((name) => out[slotKeyOf(factorySlots, parentKind, name)] === undefined);
 }
 
 function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
@@ -1700,7 +1699,7 @@ function promoteAnonymousTokenFields(
 	out: Record<string, unknown>
 ): void {
 	if (!declaredFields || !parentKind) return;
-	const missing = new Set(getMissingDeclaredFields(declaredFields, out));
+	const missing = new Set(getMissingDeclaredFields(parentKind, declaredFields, opts.factorySlots, out));
 	if (missing.size === 0) return;
 	const anonymousEntries = namedSlotEntries.filter(
 		([key, value]) => !isIdentifierShapedFieldKey(key) && isAnonymousTokenNode(value)
@@ -1710,7 +1709,7 @@ function promoteAnonymousTokenFields(
 		const entry = anonymousEntries[entryIndex]?.[1];
 		if (!entry) return;
 		assignSlotToConfig(
-			createNamedSlotModel(fieldName, 'one'),
+			createNamedSlotModel(fieldName, slotKeyOf(opts.factorySlots, parentKind, fieldName), 'one'),
 			entry,
 			memberValueOpts(opts, parentKind, fieldName),
 			out

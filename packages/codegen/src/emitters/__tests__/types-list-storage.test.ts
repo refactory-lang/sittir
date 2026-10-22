@@ -22,7 +22,7 @@ describe('list storage in the emitted types', () => {
 
 	it('proves a non-empty list refuses the empty list on its strict, loose and $with surfaces', () => {
 		expect(types).toContain(
-			'  type NonEmptySlots = Proven<[KeyRefusesEmpty<Config, "decorator">, KeyRefusesEmpty<LooseConfig, "decorator">, SetterRefusesEmpty<Bound, "decorators">]>;'
+			'  type NonEmptySlots = Proven<[KeyRefusesEmpty<Config, "decorators">, KeyRefusesEmpty<LooseConfig, "decorators">, SetterRefusesEmpty<Bound, "decorators">]>;'
 		);
 	});
 });

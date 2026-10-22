@@ -1461,8 +1461,8 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
  * `nodeToConfig`'s output. `nodeToConfig` only writes the literal
  * `children` key for genuinely UNNAMED ($other-derived) slots — a
  * spread-shape kind whose sole field has a real grammar name (e.g.
- * python `module`'s `statement`) gets that key instead
- * (`slotConfigKey`'s field-origin branch: `snakeToCamel(slot.name)`).
+ * python `module`'s `statement`) gets that slot's model name instead
+ * (`slotKeyOf`).
  * Without `factoryFields`, such kinds always read `undefined` here and
  * the spread call silently invokes the factory with zero arguments.
  *
@@ -1781,6 +1781,10 @@ A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `col
 ### `packages/tools/src/validate/common.ts::isLeafModelType`
 
 Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
+
+### `packages/tools/src/validate/common.ts::slotKeyOf`
+
+The key a config holds a kind's slot under: the slot's model name, read from the factory slot metadata (`FactorySlotMeta.propertyName`), which the node-model reader derives once (`slotPropertyName`). The validators build every config through it and never camel-case or pluralize a slot name themselves. A slot with no metadata throws, naming the kind and slot, instead of falling back to a guessed key.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

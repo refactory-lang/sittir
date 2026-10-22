@@ -751,17 +751,17 @@ export const buildContinueStatement: TSKindId.ContinueStatement = TSKindId.Conti
 export function buildIfStatement<
 	ConditionSlot extends T.IfStatement.Config['condition'],
 	ConsequenceSlot extends T.IfStatement.Config['consequence'],
-	AlternativeSlot extends T.IfStatement.Config['alternative']
+	AlternativesSlot extends T.IfStatement.Config['alternatives']
 >(
 	config: RefusingConfig<
 		T.IfStatement.Config,
-		{ condition: ConditionSlot; consequence: ConsequenceSlot; alternative: AlternativeSlot }
+		{ condition: ConditionSlot; consequence: ConsequenceSlot; alternatives: AlternativesSlot }
 	>
 ): T.IfStatement.Bound;
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bound {
 	const _condition = kindIdStorage<NonNullable<T.IfStatement['_condition']>>(config.condition);
 	const _consequence = config.consequence;
-	const _alternative = listStorage<NonNullable<T.IfStatement['_alternative']>>(config.alternative ?? []);
+	const _alternative = listStorage<NonNullable<T.IfStatement['_alternative']>>(config.alternatives ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IfStatement as const,
@@ -775,7 +775,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 			consequence: (value: Admit<T.Suite>) =>
 				rebuilt(node, handle, () => buildIfStatement({ ...config, consequence: value })),
 			alternatives: (...values: Admit<(T.ElifClause | T.ElseClause)[]>) =>
-				rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: restItems('alternatives', values) }))
+				rebuilt(node, handle, () => buildIfStatement({ ...config, alternatives: restItems('alternatives', values) }))
 		},
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		consequence: () => hydrateStoredSlot(node, '_consequence'),
@@ -1537,11 +1537,11 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 
 export function buildExecStatement<
 	CodeSlot extends T.ExecStatement.Config['code'],
-	InClauseSlot extends T.ExecStatement.Config['inClause']
->(config: RefusingConfig<T.ExecStatement.Config, { code: CodeSlot; inClause: InClauseSlot }>): T.ExecStatement.Bound;
+	InClausesSlot extends T.ExecStatement.Config['inClauses']
+>(config: RefusingConfig<T.ExecStatement.Config, { code: CodeSlot; inClauses: InClausesSlot }>): T.ExecStatement.Bound;
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Bound {
 	const _code = config.code;
-	const _in_clause = listStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], kindIdStorage);
+	const _in_clause = listStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClauses ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExecStatement as const,
@@ -1551,8 +1551,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 		$with: {
 			code: (value: Admit<T.String | T.Identifier>) =>
 				rebuilt(node, handle, () => buildExecStatement({ ...config, code: value })),
-			inClauses: (...values: Admit<NonNullable<NonNullable<T.ExecStatement.Config>['inClause']>[number][]>) =>
-				rebuilt(node, handle, () => buildExecStatement({ ...config, inClause: restItems('inClauses', values) }))
+			inClauses: (...values: Admit<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][]>) =>
+				rebuilt(node, handle, () => buildExecStatement({ ...config, inClauses: restItems('inClauses', values) }))
 		},
 		code: () => hydrateStoredSlot(node, '_code'),
 		inClauses: () => hydrateStoredSlots(node, '_in_clause'),
@@ -1826,13 +1826,13 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 }
 
 export function buildDecoratedDefinition<
-	DecoratorSlot extends T.DecoratedDefinition.Config['decorator'],
+	DecoratorsSlot extends T.DecoratedDefinition.Config['decorators'],
 	DefinitionSlot extends T.DecoratedDefinition.Config['definition']
 >(
-	config: RefusingConfig<T.DecoratedDefinition.Config, { decorator: DecoratorSlot; definition: DefinitionSlot }>
+	config: RefusingConfig<T.DecoratedDefinition.Config, { decorators: DecoratorsSlot; definition: DefinitionSlot }>
 ): T.DecoratedDefinition.Bound;
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
-	const _decorator = listStorage<NonNullable<T.DecoratedDefinition['_decorator']>>(config.decorator);
+	const _decorator = listStorage<NonNullable<T.DecoratedDefinition['_decorator']>>(config.decorators);
 	const _definition = config.definition;
 	const handle = currentHandle();
 	const node = {
@@ -1843,7 +1843,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 		$with: {
 			decorators: (...values: Admit<NonEmptyArray<T.Decorator>>) =>
 				rebuilt(node, handle, () =>
-					buildDecoratedDefinition({ ...config, decorator: restItems('decorators', values) })
+					buildDecoratedDefinition({ ...config, decorators: restItems('decorators', values) })
 				),
 			definition: (value: Admit<T.ClassDefinition | T.FunctionDefinition>) =>
 				rebuilt(node, handle, () => buildDecoratedDefinition({ ...config, definition: value }))
@@ -4214,15 +4214,15 @@ function _buildCollectionElements(
 
 export function buildForInClause<
 	LeftSlot extends T.ForInClause.Config['left'],
-	RightSlot extends T.ForInClause.Config['right']
+	RightsSlot extends T.ForInClause.Config['rights']
 >(
-	config: RefusingConfig<T.ForInClause.Config, { left: LeftSlot; right: RightSlot }>,
+	config: RefusingConfig<T.ForInClause.Config, { left: LeftSlot; rights: RightsSlot }>,
 	options?: T.ForInClause.Options
 ): T.ForInClause.Bound;
 export function buildForInClause(config: T.ForInClause.Config, options?: T.ForInClause.Options): T.ForInClause.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _left = config.left;
-	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.right, kindIdStorage);
+	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.rights, kindIdStorage);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.ForInClause['_trailing_comma']>>(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
 		[[',', TSKindId.Comma] as const]
@@ -4240,8 +4240,8 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 				rebuilt(node, handle, () => buildForInClause({ ...config, async: value }, options)),
 			left: (value: Admit<T.Pattern | T.PatternList>) =>
 				rebuilt(node, handle, () => buildForInClause({ ...config, left: value }, options)),
-			rights: (...values: Admit<NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>>) =>
-				rebuilt(node, handle, () => buildForInClause({ ...config, right: restItems('rights', values) }, options)),
+			rights: (...values: Admit<NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>>) =>
+				rebuilt(node, handle, () => buildForInClause({ ...config, rights: restItems('rights', values) }, options)),
 			trailingComma: (spelling: TSKindId.Comma | null) =>
 				rebuilt(node, handle, () => buildForInClause(config, { ...options, trailingComma: spelling }))
 		},
@@ -4354,17 +4354,17 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 
 export function buildString<
 	StringStartSlot extends T.String.Config['stringStart'],
-	ContentSlot extends T.String.Config['content'],
+	ContentsSlot extends T.String.Config['contents'],
 	StringEndSlot extends T.String.Config['stringEnd']
 >(
 	config: RefusingConfig<
 		T.String.Config,
-		{ stringStart: StringStartSlot; content: ContentSlot; stringEnd: StringEndSlot }
+		{ stringStart: StringStartSlot; contents: ContentsSlot; stringEnd: StringEndSlot }
 	>
 ): T.String.Bound;
 export function buildString(config: T.String.Config): T.String.Bound {
 	const _string_start = config.stringStart;
-	const _content = listStorage<NonNullable<T.String['_content']>>(config.content ?? []);
+	const _content = listStorage<NonNullable<T.String['_content']>>(config.contents ?? []);
 	const _string_end = config.stringEnd;
 	const handle = currentHandle();
 	const node = {
@@ -4377,7 +4377,7 @@ export function buildString(config: T.String.Config): T.String.Bound {
 			stringStart: (value: Admit<T.StringStart>) =>
 				rebuilt(node, handle, () => buildString({ ...config, stringStart: value })),
 			contents: (...values: Admit<(T.Interpolation | T.StringContent)[]>) =>
-				rebuilt(node, handle, () => buildString({ ...config, content: restItems('contents', values) })),
+				rebuilt(node, handle, () => buildString({ ...config, contents: restItems('contents', values) })),
 			stringEnd: (value: Admit<T.StringEnd>) =>
 				rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }))
 		},

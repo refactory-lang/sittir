@@ -107,7 +107,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					value: ts.build.parenthesizedExpressionTyped.strict({
 						expression: ts.build.number.decimal("1"),
 					}),
-					body: [ts.build.breakStatement.strict()],
+					bodies: [ts.build.breakStatement.strict()],
 				})),
 			}), ts.build.throwStatement.strict(ts.build.parenthesizedExpressionTyped.strict({
 				expression: ts.build.newExpression.strict({

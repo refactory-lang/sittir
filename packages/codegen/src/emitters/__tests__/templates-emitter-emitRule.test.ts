@@ -67,7 +67,6 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 	return {
 		name: 'value',
 		propertyName: 'value',
-		configKey: 'value',
 		storageName: 'value',
 		values: [SINGLE_REQUIRED_VALUE],
 		paramName: 'value',

@@ -553,7 +553,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
  *
  * For every AssembledNonterminal in each grammar's NodeMap, assert each legacy
  * projected slot name equals the value the §2 PROJECTION computes from the slot's
- * `values` + `fieldName` (`projectSlotNaming`): storageName, name, configKey,
+ * `values` + `fieldName` (`projectSlotNaming`): storageName, name,
  * propertyName, paramName. The probe drives `collect-slots` until 0 — proving
  * a swap to the projection's getters is byte-identical.
  *

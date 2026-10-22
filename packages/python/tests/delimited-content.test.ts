@@ -7,7 +7,7 @@ const py = await createEngine(python);
 const b = py.build;
 
 const quoted = (start: string, content: string, end: string) =>
-	b.string({ stringStart: b.stringStart(start), content: [b.stringContent.coerce(content)], stringEnd: b.stringEnd(end) });
+	b.string({ stringStart: b.stringStart(start), contents: [b.stringContent.coerce(content)], stringEnd: b.stringEnd(end) });
 
 describe('a string whose content or delimiters would not read back as one string', () => {
 	it.each([
@@ -38,7 +38,7 @@ describe('a string whose content or delimiters would not read back as one string
 		const raw = (start: string, content: string, end: string) =>
 			buildString({
 				stringStart: buildStringStart(start),
-				content: [buildStringContent(buildStringFragment(content))],
+				contents: [buildStringContent(buildStringFragment(content))],
 				stringEnd: buildStringEnd(end)
 			});
 		quoted('"', 'abc', '"');

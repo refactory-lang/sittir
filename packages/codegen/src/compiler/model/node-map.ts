@@ -1196,9 +1196,6 @@ export class AssembledNonterminal {
 	get name(): string {
 		return projectSlotNaming(this).name;
 	}
-	get configKey(): string {
-		return projectSlotNaming(this).configKey;
-	}
 	get propertyName(): string {
 		return projectSlotNaming(this).propertyName;
 	}
@@ -1416,7 +1413,6 @@ export interface SlotNamingInputs {
 export function projectSlotNaming(slot: SlotNamingInputs): {
 	storageName: string;
 	name: string;
-	configKey: string;
 	propertyName: string;
 	paramName: string;
 	parseNames: readonly string[];
@@ -1438,12 +1434,10 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
 			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
-	const configKey = snakeToCamel(storageName);
 	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
 		name: storageName,
-		configKey,
 		propertyName,
 		paramName: safeParamName(propertyName),
 		parseNames

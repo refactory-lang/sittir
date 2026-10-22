@@ -555,12 +555,6 @@ Distinct from `hidden`, which means "has no factory".
 /** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::configKey`
-
-```text
-/** Config key — matches ConfigOf projection (camelCase of storageName). Always singular. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::isUnnamed`
 
 ```text
@@ -1416,7 +1410,7 @@ literals are lexeme fragments and take no kind.
 /**
  * A fully-resolved slot produced by the collect-slots / assemble pipeline.
  *
- * Naming properties (`storageName`, `name`, `configKey`, `propertyName`,
+ * Naming properties (`storageName`, `name`, `propertyName`,
  * `paramName`, `parseNames`) are computed getters derived from `values` +
  * `fieldName` via {@link projectSlotNaming}. They are never stored or spread
  * — use `.with(overrides)` to create a modified copy.
@@ -5458,7 +5452,7 @@ The stamped delimited fact: `open` and `close` (a literal `text` or the `slot` h
 
 ### `packages/codegen/src/compiler/model/node-map.ts::slotPropertyName`
 
-A slot's property name: its camel-cased storage name, pluralized when any value is an array. `projectSlotNaming` names every slot by it, and `slotModelOf` derives a written slot's property name by it, so `node-model.json5` stores no property or parameter name.
+A slot's property name: its camel-cased storage name, pluralized when any value is an array. `projectSlotNaming` names every slot by it, and the readers of `node-model.json5` derive a written slot's property name by it (`slotModelOf`, `factorySlotMetaOf`, the tools' `parseNodeModel`), so the record stores no property or parameter name. It is the slot's one name: the accessor reads by it and a config builds by it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isPatternLeaf`
 
