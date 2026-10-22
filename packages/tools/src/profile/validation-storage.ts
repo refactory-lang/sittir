@@ -18,6 +18,11 @@ export interface ValidationStorageRun {
 	pid: number;
 	corpus: ReturnType<typeof corpusFingerprint>;
 	buckets: ValidationBucketSample[];
+	memory?: {
+		baseline: NodeJS.MemoryUsage;
+		after: NodeJS.MemoryUsage;
+		peakRssBytes: number;
+	};
 }
 
 export function bucketFingerprint(row: ValidationBucketSample, includeRenderedBytes = true): string {

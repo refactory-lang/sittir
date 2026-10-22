@@ -7,6 +7,7 @@ import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const PHASES = ['build', 'render', 'parse', 'pipeline', 'edit'];
+const MEMORY_FIELDS = ['heapUsed', 'heapTotal', 'external', 'arrayBuffers', 'rss'];
 const PROBE = 'docs/superpowers/probes/2026-10-12-record-wire/eager';
 const IDLE = 'docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh';
 const sha = (value) => createHash('sha256').update(value).digest('hex');
@@ -172,6 +173,7 @@ export function analyzeEager(data) {
 			result.memoryMiB[mode][population] = {
 				heapUsed: median(field('heapUsed')) / 1048576,
 				external: median(field('external')) / 1048576,
+				rss: median(field('rss')) / 1048576,
 				heapPlusExternal:
 					median(workers.map((worker) => worker.memory[population].heapUsed + worker.memory[population].external)) /
 					1048576
@@ -200,7 +202,38 @@ export function analyzeCorpus(data) {
 	const grammars = [...new Set(workers.map((worker) => worker.grammar))].sort();
 	assert.deepEqual(grammars, [...data.options.grammars].sort());
 	checkWorkers(workers, data.options.rounds, (worker) => worker.storage);
-	const result = { workers: workers.length, aggregates: {}, phases: [] };
+	const result = { workers: workers.length, aggregates: {}, phases: [], memoryMiB: {} };
+	const memoryWorkers = workers.filter((worker) => worker.memory !== undefined);
+	if (memoryWorkers.length) {
+		assert.equal(memoryWorkers.length, workers.length, 'incomplete worker memory');
+		for (const { memory } of memoryWorkers) {
+			for (const snapshot of [memory.baseline, memory.after])
+				for (const field of MEMORY_FIELDS)
+					assert(Number.isFinite(snapshot[field]) && snapshot[field] >= 0, `invalid memory ${field}`);
+			assert(
+				Number.isFinite(memory.peakRssBytes) && memory.peakRssBytes >= Math.max(memory.baseline.rss, memory.after.rss),
+				'invalid peak RSS'
+			);
+		}
+		for (const grammar of grammars) {
+			result.memoryMiB[grammar] = {};
+			for (const mode of ['object', 'arena']) {
+				const rows = memoryWorkers.filter((worker) => worker.grammar === grammar && worker.storage === mode);
+				const delta = (field) => rows.map(({ memory }) => (memory.after[field] - memory.baseline[field]) / 1048576);
+				result.memoryMiB[grammar][mode] = {
+					peakRss: stats(rows.map(({ memory }) => memory.peakRssBytes / 1048576)),
+					settledDelta: Object.fromEntries(MEMORY_FIELDS.map((field) => [field, median(delta(field))])),
+					heapPlusExternalDelta: median(
+						rows.map(
+							({ memory }) =>
+								(memory.after.heapUsed + memory.after.external - memory.baseline.heapUsed - memory.baseline.external) /
+								1048576
+						)
+					)
+				};
+			}
+		}
+	}
 	assert.equal(
 		new Set(data.validationSummary.map((row) => `${row.grammar}/${row.bucket}`)).size,
 		grammars.length * 3,
@@ -286,21 +319,47 @@ export function summarize(data) {
 		''
 	];
 	if (eager) {
-		lines.push('| Retained heap + external, MiB | Objects | Arena |', '| --- | ---: | ---: |');
+		lines.push('| Retained population | Memory, MiB | Objects | Arena |', '| --- | --- | ---: | ---: |');
 		for (const population of ['renderedDelta', 'snapshotsDelta'])
-			lines.push(
-				`| ${population} | ${analysis.memoryMiB.object[population].heapPlusExternal.toFixed(3)} | ${analysis.memoryMiB.arena[population].heapPlusExternal.toFixed(3)} |`
-			);
-		lines.push(
-			'',
-			'External memory includes array buffers; do not add them again. These fields do not provide complete native retained-memory attribution.',
-			''
-		);
-	} else
+			for (const [field, label] of [
+				['heapUsed', 'Heap delta'],
+				['external', 'External delta'],
+				['heapPlusExternal', 'Heap + external delta'],
+				['rss', 'RSS delta']
+			])
+				lines.push(
+					`| ${population} | ${label} | ${analysis.memoryMiB.object[population][field].toFixed(3)} | ${analysis.memoryMiB.arena[population][field].toFixed(3)} |`
+				);
+	} else {
 		lines.push(
 			'Corpus rows sum five grammar medians, rather than timing a combined run. Arena RRP performs native deep root hydration; no additional JS inspection benchmark is added.',
 			''
 		);
+		if (Object.keys(analysis.memoryMiB).length) {
+			lines.push('| Grammar | Worker memory, MiB | Objects | Arena |', '| --- | --- | ---: | ---: |');
+			for (const [grammar, modes] of Object.entries(analysis.memoryMiB))
+				for (const [label, field] of [
+					['Whole-worker peak RSS', (value) => value.peakRss.median],
+					['Settled heap delta', (value) => value.settledDelta.heapUsed],
+					['Settled external delta', (value) => value.settledDelta.external],
+					['Settled heap + external delta', (value) => value.heapPlusExternalDelta],
+					['Settled RSS delta', (value) => value.settledDelta.rss]
+				])
+					lines.push(
+						`| ${grammar} | ${label} | ${field(modes.object).toFixed(3)} | ${field(modes.arena).toFixed(3)} |`
+					);
+			lines.push(
+				'',
+				'Memory medians cover five fresh workers per mode. Peak RSS includes process startup, warmups and all three buckets; it is not a per-bucket peak and is not summed across grammars. Settled deltas compare GC-settled snapshots after loading the engine/corpus and after all validation has finished; they do not measure retained AST populations. Memory capture and GC stay outside timing.',
+				''
+			);
+		} else lines.push('Worker memory was not recorded in this historical report.', '');
+	}
+	lines.push(
+		'',
+		'External memory includes array buffers; do not add them again. RSS overlaps heap and external memory, so do not sum these columns. These fields do not provide complete native retained-memory attribution.',
+		''
+	);
 	return { analysis, markdown: lines.join('\n') };
 }
 

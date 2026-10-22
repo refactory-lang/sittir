@@ -110,7 +110,7 @@ One fresh worker's grammar, explicit parsed-node storage, warmup count and measu
 
 ### `packages/tools/src/profile/validation-storage-worker.ts::sampleValidationStorage`
 
-Selects storage through the canonical validation switch before loading an engine, then profiles the actual deep read, raw factory and IR validators. Warmup and GC are outside measured samples. Each sample records total validator time plus instrumented phases, semantic-result, candidate and rendered-output fingerprints. Drift between iterations fails the worker; worker exit bounds cached native engine lifetime.
+Selects storage through the canonical validation switch before loading an engine, then profiles the actual deep read, raw factory and IR validators. Warmup, GC and memory capture are outside measured samples. GC-settled process snapshots bracket the complete validation workload; peak RSS is the process-lifetime high-water mark, including startup, warmups and all three buckets. Settled deltas describe memory after validation rather than a retained AST population. Each timing sample records total validator time plus instrumented phases, semantic-result, candidate and rendered-output fingerprints. Drift between iterations fails the worker; worker exit bounds cached native engine lifetime.
 
 ### `packages/tools/src/profile/validation-storage.ts::ValidationBucketSample`
 
@@ -118,7 +118,7 @@ One canonical validator bucket's counts, semantic-result digest, ordered candida
 
 ### `packages/tools/src/profile/validation-storage.ts::ValidationStorageRun`
 
-One fresh process's grammar, selected storage, PID, full ordered corpus fingerprint and all three validation bucket samples. The parent adds round and idle-gate observations.
+One fresh process's grammar, selected storage, PID, full ordered corpus fingerprint, all three validation bucket samples, GC-settled baseline/after memory snapshots and peak RSS in bytes. Memory is optional for historical samples recorded before this instrumentation. The parent adds round and idle-gate observations.
 
 ### `packages/tools/src/profile/validation-storage.ts::bucketFingerprint`
 

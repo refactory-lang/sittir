@@ -36,6 +36,18 @@ are recorded. Repeat a run at the same revision when comparing host effects;
 compare paired ratios before comparing absolute times across different machines.
 A hosted VM still has timing variability.
 
+Both summaries report milliseconds and memory in MiB. Eager results show
+GC-settled heap, external, heap-plus-external and RSS deltas for retained original
+and edited populations. Corpus results show per-grammar worker peak RSS and
+GC-settled heap, external, heap-plus-external and RSS deltas. Corpus peak RSS
+includes process startup, warmups and all three buckets; it is not attributed to
+individual buckets or summed across grammars. Its settled snapshots are taken
+after loading the engine/corpus and after validation finishes, so they describe
+post-validation memory rather than retained AST populations. Memory sampling and
+GC stay outside timed sections. External memory already includes array buffers;
+RSS overlaps heap and external memory. Historical reports without worker memory
+are explicitly labeled rather than filled with zeroes.
+
 The eager benchmark measures direct JS-owned arena construction. Native parsed
 hydration currently goes through typed Rust nodes before record encoding.
 Corpus factory/IR builders still produce objects under both storage settings.

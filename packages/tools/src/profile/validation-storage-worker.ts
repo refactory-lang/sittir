@@ -26,6 +26,8 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 	useValidationNodeStorage(options.storage);
 	await loadNativeEngine(options.grammar);
 	const corpus = corpusFingerprint(loadCorpusEntries(options.grammar));
+	await collectGarbage();
+	const baseline = process.memoryUsage();
 	const buckets: ValidationBucketSample[] = [];
 	for (const bucket of validationBuckets) {
 		const run = (profile: RoundtripProfile) =>
@@ -71,7 +73,9 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 		}
 		buckets.push(first!);
 	}
-	return { grammar: options.grammar, storage: options.storage, pid: process.pid, corpus, buckets };
+	await collectGarbage();
+	const memory = { baseline, after: process.memoryUsage(), peakRssBytes: process.resourceUsage().maxRSS * 1024 };
+	return { grammar: options.grammar, storage: options.storage, pid: process.pid, corpus, buckets, memory };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

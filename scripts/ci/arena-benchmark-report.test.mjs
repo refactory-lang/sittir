@@ -75,3 +75,50 @@ test('interval verification rejects runtime or commit changes', () => {
 	after.sections.source.hashes['a.ts'] = 'modified';
 	assert.throws(() => verify(before, after), /runtime inputs changed/);
 });
+
+test('reports corpus peak RSS and signed settled deltas without summing process memory fields', () => {
+	const data = corpus();
+	for (const worker of data.validationSamples) {
+		worker.memory = {
+			baseline: { heapUsed: 10, heapTotal: 16, external: 1, arrayBuffers: 0.5, rss: 64 },
+			after: { heapUsed: 8, heapTotal: 16, external: 3, arrayBuffers: 2, rss: 72 },
+			peakRssBytes: (worker.storage === 'object' ? 96 : 128) * 1048576
+		};
+		for (const snapshot of [worker.memory.baseline, worker.memory.after])
+			for (const field of Object.keys(snapshot)) snapshot[field] *= 1048576;
+	}
+	const { analysis, markdown } = summarize(data);
+	const grammar = data.options.grammars[0];
+	assert.equal(analysis.memoryMiB[grammar].object.peakRss.median, 96);
+	assert.equal(analysis.memoryMiB[grammar].arena.peakRss.median, 128);
+	assert.equal(analysis.memoryMiB[grammar].arena.settledDelta.heapUsed, -2);
+	assert.equal(analysis.memoryMiB[grammar].arena.settledDelta.external, 2);
+	assert.equal(analysis.memoryMiB[grammar].arena.heapPlusExternalDelta, 0);
+	assert.match(markdown, /Whole-worker peak RSS/);
+	assert.match(markdown, /all three buckets/);
+	assert.match(markdown, /Object ms/);
+	assert.match(markdown, /MiB/);
+	delete data.validationSamples[0].memory;
+	assert.throws(() => analyzeCorpus(data), /incomplete worker memory/);
+});
+
+test('historical corpus reports mark absent memory rather than inventing zero usage', () => {
+	const { analysis, markdown } = summarize(corpus());
+	assert.deepEqual(analysis.memoryMiB, {});
+	assert.match(markdown, /Worker memory was not recorded/);
+});
+
+test('eager summary includes heap, external and RSS beside milliseconds', () => {
+	const data = eager();
+	const { analysis, markdown } = summarize(data);
+	assert.equal(
+		analysis.memoryMiB.arena.renderedDelta.rss,
+		data.workers
+			.filter((worker) => worker.mode === 'arena')
+			.map((worker) => worker.memory.renderedDelta.rss)
+			.sort((a, b) => a - b)[2] / 1048576
+	);
+	assert.match(markdown, /RSS delta/);
+	assert.match(markdown, /External delta/);
+	assert.match(markdown, /Object ms/);
+});
