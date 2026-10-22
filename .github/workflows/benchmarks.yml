@@ -1,0 +1,22 @@
+name: Arena benchmarks
+run-name: Arena benchmarks (${{ inputs.benchmark }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark:
+        description: Benchmark to run
+        type: choice
+        default: all
+        options: [all, eager, corpus]
+
+permissions:
+  contents: read
+
+jobs:
+  eager:
+    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
+    uses: ./.github/workflows/benchmark-eager.yml
+  corpus:
+    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
+    uses: ./.github/workflows/benchmark-corpus.yml

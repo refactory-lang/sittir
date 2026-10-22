@@ -23,10 +23,13 @@ per-arena built-text deduplication, and original builder-string retention.
 - [x] Regenerate all five grammars. Run targeted checks, full unit suites,
   types/lint and complete object/arena validator baseline comparisons. Preserve
   all failing states for review; never edit generated outputs by hand.
-- [ ] Rebuild and freeze an isolated measurement copy, rerun equivalent native
-  pipelines and retained-memory measurements under the idle gate, and publish
-  absolute results, capacity/slack and remaining regressions. Preserve prior
-  results. Request end-of-work review, then update the existing PR.
+- [x] Rebuild and freeze an isolated measurement copy; rerun paired eager
+  pipelines and retained-memory measurements under the idle gate. Publish
+  absolute results, capacity/slack and remaining regressions; preserve prior data.
+- [x] Add manual, non-gating CI workflows for eager and complete corpus
+  measurements, with shared setup, raw artifacts and provenance checks.
+- [ ] Complete the fresh full corpus timing run in CI when requested; the local
+  rerun was stopped during the move to CI and supplies no aggregate result.
 
 Public eager-builder cutover, reclamation and complete native attribution remain
 separate open requirements. Benchmark completion does not mark those complete.

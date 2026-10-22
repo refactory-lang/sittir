@@ -1,0 +1,50 @@
+name: Corpus storage benchmark
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    name: RRP, factory and IR (macOS arm64)
+    runs-on: macos-26
+    timeout-minutes: 180
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
+      CARGO_BUILD_JOBS: '2'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - name: Fingerprint the measured runtime
+        run: node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/before.json"
+      - name: Measure complete validation buckets
+        env:
+          NODE_ENV: production
+        shell: bash
+        run: |
+          node --import tsx packages/cli/dist/cli.js tool bench-storage --validation \
+            --idle-gate docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh \
+            --output "$RUNNER_TEMP/arena-benchmarks/corpus.json" \
+            2>&1 | tee "$RUNNER_TEMP/arena-benchmarks/corpus.log"
+      - name: Check runtime stability
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/arena-benchmarks/before.json" ]]; then
+            node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/after.json"
+            node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/arena-benchmarks/before.json" "$RUNNER_TEMP/arena-benchmarks/after.json"
+          fi
+      - name: Summarize paired measurements
+        shell: bash
+        run: node scripts/ci/arena-benchmark-report.mjs summarize "$RUNNER_TEMP/arena-benchmarks/corpus.json" "$RUNNER_TEMP/arena-benchmarks/summary.md"
+      - name: Upload raw samples and provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arena-corpus-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/arena-benchmarks/
+          retention-days: 30
+          if-no-files-found: warn

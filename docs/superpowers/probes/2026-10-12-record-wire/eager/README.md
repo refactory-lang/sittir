@@ -157,6 +157,68 @@ specialized stores. Public eager builders and definitive cutover remain further
 work. Native parsed hydration still uses the typed Rust reader followed by
 record encoding; the eager builder itself writes records directly.
 
+## Current inline measurements
+
+Runtime `566e90fbe59722840a466d79507eacd1d57007b0`, Apple M4 Pro,
+Darwin 27.2.0 arm64, Node v26.12.0. The complete eager run used ten distinct
+fresh workers in five alternating pairs, two warmups and three measured batches
+each. All workers passed the unchanged gate at 76–81% idle. All 30 batches
+match input/render fingerprints and render 128,890 bytes. The unwatched copy
+matches 2,245 source, 2,270 compiled and 16 native/WASM files; before/after
+fingerprints are unchanged.
+
+Milliseconds per 10,000 four-node functions; median of five worker medians.
+Ranges cover worker medians, not confidence intervals.
+
+| Phase | Objects ms | Arena ms | Arena/object | Object range | Arena range |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Build | 9.461 | 14.964 | 1.582 | 9.136–9.507 | 14.731–22.547 |
+| Render | 25.234 | 26.234 | 1.040 | 24.910–25.464 | 23.706–27.198 |
+| Native deep reparse | 92.360 | 90.237 | 0.977 | 91.736–93.127 | 89.092–91.361 |
+| Build → render → deep reparse | 127.315 | 135.088 | 1.061 | 126.574–127.845 | 133.364–136.559 |
+| Immutable name edit | 3.225 | 4.499 | 1.395 | 3.175–3.475 | 4.347–5.094 |
+
+Arena takes 58.2% more build time, 39.5% more edit time and 6.1% more pipeline
+time in this workload. Median render time is 4.0% higher, with overlapping
+worker ranges. Direct stores and bounded inlining do not establish a performance
+win. These separate timing sessions do not isolate the cause of absolute changes
+from the preceding run. Both modes use the same current binaries and build profile;
+the public parser addon now uses release rather than the earlier gate profile.
+
+GC-settled memory deltas retain all 10,000 rendered originals, then originals
+plus 10,000 rendered edits. Array buffers are included in external memory.
+
+| Field, MiB | Objects originals | Arena originals | Objects originals + edits | Arena originals + edits |
+| --- | ---: | ---: | ---: | ---: |
+| Heap used | 14.693 | 12.512 | 27.048 | 23.736 |
+| External | 0.000 | 8.027 | 0.000 | 8.027 |
+| Heap + external | 14.693 | 20.540 | 27.049 | 31.763 |
+| RSS | 0.156 | 10.970 | 2.922 | 11.220 |
+
+Arena retains 39.8% more heap plus external memory for originals and 17.4% more
+with edits. Its record occupancy is 4,200,004 / 8,372,224 reserved bytes before
+edits and 7,280,012 / 8,372,224 afterward. String occupancy is 48,890 and 48,897
+bytes, with 61,440 reserved in both populations. This includes fixed inline
+padding and append-only input records retained after bounded values are copied.
+Each edited root copies 308 bytes instead of the preceding layout's 168.
+
+Native render bodies take 1.897 microseconds per object root and 1.624 per arena
+root. Whole Rust-boundary allocation is 10 calls / 1,781.889 bytes for objects
+and 8.0018 / 368.186 for arena; body-only counts are 9 / 1,717.889 and
+6.0007 / 240.0756. Build and edit make zero Rust allocator calls. Signed Rust
+retained deltas are zero for objects and 216 bytes for both arena populations,
+excluding V8, C++ and the separate parser addon.
+
+The complete local corpus timing rerun was interrupted when measurement moved
+to [manual CI workflows](../CI.md); no new complete corpus performance result is
+claimed. Full object/arena validator counts and diagnostic comparisons did
+complete and remain identical. Native direct parsed encoding, construction/render
+performance, retained capacity, public eager semantics and reclamation remain open.
+
+[Raw paired samples](../results/2026-10-22-eager-inline-storage-darwin-arm64.json),
+[independent statistics](../results/2026-10-22-eager-inline-analysis.json), and
+[source/build provenance and checks](../results/2026-10-22-eager-inline-provenance.json).
+
 ## Previous literal-slot measurements
 
 Runtime revision `7327f49790bd2dcdb2bf81a5421e67fb19873f17`, Apple M4 Pro,
