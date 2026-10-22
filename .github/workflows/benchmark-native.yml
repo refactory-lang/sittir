@@ -1,0 +1,70 @@
+name: Build one benchmark addon
+
+on:
+  workflow_call:
+    inputs:
+      grammar:
+        type: string
+        required: true
+      prefix:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+  CARGO_BUILD_JOBS: '4'
+
+jobs:
+  build:
+    name: Build ${{ inputs.grammar }} release addon
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - uses: actions/cache@v4
+        id: binary
+        with:
+          path: ${{ runner.temp }}/arena-runtime-native-${{ inputs.grammar }}
+          key: arena-runtime-v1-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-native-${{ inputs.grammar }}
+      - uses: Swatinem/rust-cache@v2
+        if: steps.binary.outputs.cache-hit != 'true'
+        with:
+          shared-key: arena-benchmarks-linux
+          key: ${{ inputs.grammar }}
+          workspaces: |
+            . -> target
+            docs/superpowers/probes/2026-10-12-record-wire/eager/native -> target
+      - uses: actions/download-artifact@v4
+        if: steps.binary.outputs.cache-hit != 'true'
+        with:
+          name: ${{ inputs.prefix }}-typescript
+          path: ${{ runner.temp }}/arena-typescript
+      - name: Restore compiled TypeScript
+        if: steps.binary.outputs.cache-hit != 'true'
+        run: node scripts/ci/arena-benchmark-runtime.mjs restore "$RUNNER_TEMP/arena-typescript" typescript
+      - name: Build and archive the release addon
+        if: steps.binary.outputs.cache-hit != 'true'
+        env:
+          GRAMMAR: ${{ inputs.grammar }}
+        run: |
+          bundle="$RUNNER_TEMP/arena-runtime-native-$GRAMMAR"
+          if [[ "$GRAMMAR" == eager ]]; then
+            pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/build.mts
+            paths=(docs/superpowers/probes/2026-10-12-record-wire/eager/native/eager-builder-probe.node)
+          else
+            pnpm exec tsx scripts/build-native.mts "$GRAMMAR" --release
+            paths=("packages/$GRAMMAR/native" node_modules/.cache/sittir/native-build)
+          fi
+          git diff --exit-code -- packages rust docs/superpowers/probes/2026-10-12-record-wire/eager
+          node scripts/ci/arena-benchmark-runtime.mjs pack "$bundle" "native-$GRAMMAR" "${paths[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.prefix }}-native-${{ inputs.grammar }}
+          path: ${{ runner.temp }}/arena-runtime-native-${{ inputs.grammar }}/
+          retention-days: 7
+          if-no-files-found: error

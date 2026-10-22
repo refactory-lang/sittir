@@ -11,7 +11,36 @@ permissions:
   contents: read
 
 jobs:
+  verify:
+    name: Verify assembled eager runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
+      CARGO_BUILD_JOBS: '4'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - uses: ./.github/actions/arena-benchmark-runtime
+        with:
+          prefix: ${{ inputs.runtime-prefix }}
+          eager: 'true'
+      - uses: ./.github/actions/bootstrap
+      - name: Check builders against the public Rust format
+        run: |
+          pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts --check
+          node --import tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/verify.mts
+          git diff --exit-code -- packages rust docs/superpowers/probes/2026-10-12-record-wire/eager
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arena-eager-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/arena-benchmarks/
+          retention-days: 7
+          if-no-files-found: warn
   measure:
+    needs: verify
     name: Eager builders (Linux x64)
     runs-on: ubuntu-24.04
     timeout-minutes: 120

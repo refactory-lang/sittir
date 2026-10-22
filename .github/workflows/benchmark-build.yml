@@ -2,10 +2,6 @@ name: Build benchmark runtime
 
 on:
   workflow_call:
-    inputs:
-      benchmark:
-        type: string
-        required: true
     outputs:
       prefix:
         value: ${{ jobs.prepare.outputs.prefix }}
@@ -28,21 +24,17 @@ jobs:
     outputs:
       prefix: ${{ steps.plan.outputs.prefix }}
       grammars: ${{ steps.plan.outputs.grammars }}
-      native: ${{ steps.plan.outputs.native }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/arena-benchmark-setup
       - name: Plan canonical grammar builds
         id: plan
-        env:
-          BENCHMARK: ${{ inputs.benchmark }}
         run: |
           pnpm exec tsx packages/tools/src/scripts/list-grammars.ts stable > "$RUNNER_TEMP/grammars.txt"
           node --input-type=module <<'NODE' >> "$GITHUB_OUTPUT"
           import { readFileSync } from 'node:fs';
           const grammars = readFileSync(`${process.env.RUNNER_TEMP}/grammars.txt`, 'utf8').trim().split(/\s+/);
           console.log(`grammars=${JSON.stringify(grammars)}`);
-          console.log(`native=${JSON.stringify(process.env.BENCHMARK === 'corpus' ? grammars : [...grammars, 'eager'])}`);
           console.log(`prefix=arena-runtime-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`);
           NODE
       - uses: actions/cache@v4
@@ -59,63 +51,5 @@ jobs:
         with:
           name: ${{ steps.plan.outputs.prefix }}-typescript
           path: ${{ runner.temp }}/arena-runtime-typescript/
-          retention-days: 7
-          if-no-files-found: error
-
-  native:
-    name: Build ${{ matrix.grammar }} release addon
-    needs: prepare
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        grammar: ${{ fromJSON(needs.prepare.outputs.native) }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/arena-benchmark-setup
-      - uses: actions/cache@v4
-        id: binary
-        with:
-          path: ${{ runner.temp }}/arena-runtime-native-${{ matrix.grammar }}
-          key: arena-runtime-v1-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-native-${{ matrix.grammar }}
-      - uses: Swatinem/rust-cache@v2
-        if: steps.binary.outputs.cache-hit != 'true'
-        with:
-          shared-key: arena-benchmarks-linux
-          key: ${{ matrix.grammar }}
-          workspaces: |
-            . -> target
-            docs/superpowers/probes/2026-10-12-record-wire/eager/native -> target
-      - uses: actions/download-artifact@v4
-        if: steps.binary.outputs.cache-hit != 'true'
-        with:
-          name: ${{ needs.prepare.outputs.prefix }}-typescript
-          path: ${{ runner.temp }}/arena-typescript
-      - name: Restore compiled TypeScript
-        if: steps.binary.outputs.cache-hit != 'true'
-        run: node scripts/ci/arena-benchmark-runtime.mjs restore "$RUNNER_TEMP/arena-typescript" typescript
-      - uses: ./.github/actions/bootstrap
-        if: matrix.grammar == 'eager' && steps.binary.outputs.cache-hit != 'true'
-      - name: Build and archive the release addon
-        if: steps.binary.outputs.cache-hit != 'true'
-        env:
-          GRAMMAR: ${{ matrix.grammar }}
-        run: |
-          bundle="$RUNNER_TEMP/arena-runtime-native-$GRAMMAR"
-          if [[ "$GRAMMAR" == eager ]]; then
-            pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/build.mts
-            pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts --check
-            paths=(docs/superpowers/probes/2026-10-12-record-wire/eager/native/eager-builder-probe.node)
-          else
-            pnpm exec tsx scripts/build-native.mts "$GRAMMAR" --release
-            paths=("packages/$GRAMMAR/native" node_modules/.cache/sittir/native-build)
-          fi
-          git diff --exit-code -- packages rust docs/superpowers/probes/2026-10-12-record-wire/eager
-          node scripts/ci/arena-benchmark-runtime.mjs pack "$bundle" "native-$GRAMMAR" "${paths[@]}"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ needs.prepare.outputs.prefix }}-native-${{ matrix.grammar }}
-          path: ${{ runner.temp }}/arena-runtime-native-${{ matrix.grammar }}/
           retention-days: 7
           if-no-files-found: error
