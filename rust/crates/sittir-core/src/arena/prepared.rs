@@ -9,9 +9,11 @@
 //! holds at one site (a gap fill, a seat) is keyed by that site, so a node
 //! placed at two sites gets each site's facts, as each native copy does.
 
+#[cfg(test)]
 use std::collections::HashMap;
 
 use super::entry_by_word;
+use super::small::SmallMap;
 use crate::layout::UnitSides;
 use crate::options::Edges;
 use crate::slot::CoordinateEdges;
@@ -136,20 +138,20 @@ impl<T> PreparedNode<T> {
 /// One render's prepared overlay.
 #[derive(Debug, Clone)]
 pub struct Prepared<T> {
-    nodes: HashMap<PrepPlace, PreparedNode<T>>,
-    sites: HashMap<Site<PrepPlace>, Edges>,
+    nodes: SmallMap<PrepPlace, PreparedNode<T>>,
+    sites: SmallMap<Site<PrepPlace>, Edges>,
     /// The seams of the kind an untouched parsed child names, by its site:
     /// it renders its slice between them. A site prepare reached whose kind
     /// has no edge row holds none.
-    coordinates: HashMap<Site<PrepPlace>, Option<CoordinateEdges>>,
+    coordinates: SmallMap<Site<PrepPlace>, Option<CoordinateEdges>>,
     /// A unit child's own kind's edges, by its site: a unit has no place of
     /// its own to key them by.
-    units: HashMap<Site<PrepPlace>, Edges>,
+    units: SmallMap<Site<PrepPlace>, Edges>,
 }
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { nodes: HashMap::new(), sites: HashMap::new(), coordinates: HashMap::new(), units: HashMap::new() }
+        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new() }
     }
 }
 
@@ -192,30 +194,6 @@ impl<T> Prepared<T> {
         Edges { before: held.before.or(own.before), after: held.after.or(own.after) }
     }
 
-    /// A node's delimiters setting: the one its record stores, else the one
-    /// prepare filled.
-    #[must_use]
-    pub fn delimiter(&self, place: PrepPlace, stored: Option<Delimiter>) -> Option<Delimiter> {
-        stored.or_else(|| self.node(place)?.delimiter)
-    }
-
-    /// A node's chosen separator: the one its record stores, else the one
-    /// prepare filled.
-    #[must_use]
-    pub fn separator_kind(&self, place: PrepPlace, stored: Option<KindId>) -> Option<KindId> {
-        stored.or_else(|| self.node(place)?.separator_kind)
-    }
-
-    /// A list slot's separator spacing on one side: the one its record
-    /// stores, else the one prepare filled.
-    #[must_use]
-    pub fn space(&self, place: PrepPlace, word: u32, before: bool, stored: Option<KindId>) -> Option<KindId> {
-        stored.or_else(|| {
-            let slot = self.node(place)?.slot(word)?;
-            if before { slot.space_before } else { slot.space_after }
-        })
-    }
-
     /// The seams prepare resolved for the untouched parsed child at `site`.
     #[must_use]
     pub fn coordinate_edges(&self, site: Site<PrepPlace>) -> Option<CoordinateEdges> {
@@ -230,7 +208,7 @@ impl<T> Prepared<T> {
 
     /// The untouched parsed child at `site` renders between `edges`.
     pub fn set_coordinate_edges(&mut self, site: Site<PrepPlace>, edges: Option<CoordinateEdges>) {
-        self.coordinates.insert(site, edges);
+        *self.coordinates.entry(site).or_default() = edges;
     }
 
     /// The edges the node at `place` renders with, at `site` when a holder
@@ -239,9 +217,9 @@ impl<T> Prepared<T> {
     /// order: the wire's, then its holder's fills, which set only unset
     /// sides, then its own prepare's, which does too.
     #[must_use]
-    pub fn edges(&self, stored: Edges, site: Option<Site<PrepPlace>>, place: PrepPlace) -> Edges {
+    pub fn edges(&self, stored: Edges, site: Option<Site<PrepPlace>>, node: Option<&PreparedNode<T>>) -> Edges {
         let held = site.and_then(|site| self.sites.get(&site)).copied().unwrap_or(stored);
-        let own = self.node(place).map_or_else(Edges::default, |node| node.edges);
+        let own = node.map_or_else(Edges::default, |node| node.edges);
         Edges { before: held.before.or(own.before), after: held.after.or(own.after) }
     }
 }
@@ -253,6 +231,48 @@ mod tests {
     use crate::options::EdgeArm;
     use crate::trivia::TriviaText;
     use crate::types::{ItemIndex, NodeIndex, TreeId};
+
+    #[derive(Clone, Debug, PartialEq, Eq)]
+    struct HashBomb(u32);
+
+    impl std::hash::Hash for HashBomb {
+        fn hash<H: std::hash::Hasher>(&self, _: &mut H) {
+            panic!("a small overlay hashed its key");
+        }
+    }
+
+    #[test]
+    fn a_small_overlay_never_hashes_its_keys() {
+        let mut map = SmallMap::new();
+        assert_eq!(map.get(&HashBomb(0)), None);
+        for key in 0..4 {
+            assert_eq!(*map.entry(HashBomb(key)).or_insert(key + 7), key + 7);
+        }
+        *map.entry(HashBomb(2)).or_insert_with(|| panic!("existing value replaced")) = 99;
+        assert_eq!(map.get(&HashBomb(2)), Some(&99));
+        assert_eq!(map.clone().get(&HashBomb(2)), Some(&99));
+        assert_eq!(map.get(&HashBomb(4)), None);
+    }
+
+    #[test]
+    fn an_overlay_keeps_its_values_when_it_grows_and_updates_them_in_place() {
+        let mut map = SmallMap::new();
+        let mut expected = HashMap::new();
+        for index in 0..127 {
+            let key = index * 17 % 127;
+            *map.entry(key).or_default() = key + 3;
+            expected.insert(key, key + 3);
+        }
+        for key in 0..127 {
+            *map.entry(key).or_default() += 1;
+            *expected.get_mut(&key).expect("inserted key") += 1;
+        }
+        let cloned = map.clone();
+        for key in 0..128 {
+            assert_eq!(map.get(&key), expected.get(&key));
+            assert_eq!(cloned.get(&key), expected.get(&key));
+        }
+    }
 
     fn arm(kind: u16) -> EdgeArm {
         EdgeArm { arm: KindId(kind), strength: None }
@@ -274,9 +294,10 @@ mod tests {
         let held = prepared.site_edges_mut(site(5, 0), stored);
         held.before = held.before.or(Some(arm(7)));
         held.after = held.after.or(Some(arm(8)));
-        assert_eq!(prepared.edges(stored, Some(site(5, 0)), child()), Edges { before: Some(arm(9)), after: Some(arm(8)) }, "a holder's fill leaves a stored side alone");
-        assert_eq!(prepared.edges(stored, None, child()), Edges { before: Some(arm(9)), after: Some(arm(2)) }, "unheld, its own kind's fills what it stores nothing for");
-        assert_eq!(prepared.edges(Edges::default(), None, Place::Record(Address(6)).into()), Edges::default(), "a node prepare never reached has only what it stores");
+        let node = prepared.node(child());
+        assert_eq!(prepared.edges(stored, Some(site(5, 0)), node), Edges { before: Some(arm(9)), after: Some(arm(8)) }, "a holder's fill leaves a stored side alone");
+        assert_eq!(prepared.edges(stored, None, node), Edges { before: Some(arm(9)), after: Some(arm(2)) }, "unheld, its own kind's fills what it stores nothing for");
+        assert_eq!(prepared.edges(Edges::default(), None, prepared.node(Place::Record(Address(6)).into())), Edges::default(), "a node prepare never reached has only what it stores");
     }
 
     #[test]
@@ -284,9 +305,10 @@ mod tests {
         let mut prepared = Prepared::<TriviaText>::new();
         prepared.site_edges_mut(site(5, 0), Edges::default()).after = Some(arm(3));
         prepared.site_edges_mut(site(6, 1), Edges::default()).after = Some(arm(4));
-        assert_eq!(prepared.edges(Edges::default(), Some(site(5, 0)), child()).after, Some(arm(3)));
-        assert_eq!(prepared.edges(Edges::default(), Some(site(6, 1)), child()).after, Some(arm(4)));
-        assert_eq!(prepared.edges(Edges::default(), Some(site(5, 1)), child()).after, None, "another item of the same holder is another site");
+        let node = prepared.node(child());
+        assert_eq!(prepared.edges(Edges::default(), Some(site(5, 0)), node).after, Some(arm(3)));
+        assert_eq!(prepared.edges(Edges::default(), Some(site(6, 1)), node).after, Some(arm(4)));
+        assert_eq!(prepared.edges(Edges::default(), Some(site(5, 1)), node).after, None, "another item of the same holder is another site");
     }
 
     #[test]

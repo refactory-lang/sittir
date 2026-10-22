@@ -299,7 +299,35 @@ impl<'a, T> RecordLayout<'a, T> {
     #[must_use]
     pub fn new(ctx: RecordCtx<'a, T>, place: PrepPlace, site: Option<Site<PrepPlace>>, stored: Edges, changed: ChangedEdges, rebuilt_from: Option<Sides>) -> Self {
         let prepared = ctx.prepared;
-        Self { ctx, place, node: prepared.node(place), rebuilt_from, edges: prepared.edges(stored, site, place), changed }
+        let node = prepared.node(place);
+        Self { ctx, place, node, rebuilt_from, edges: prepared.edges(stored, site, node), changed }
+    }
+
+    #[must_use]
+    pub fn context(&self) -> RecordCtx<'a, T> { self.ctx }
+
+    #[must_use]
+    pub fn place(&self) -> PrepPlace { self.place }
+
+    /// The delimiters the record stores, else the ones prepare filled.
+    #[must_use]
+    pub fn delimiter(&self, stored: Option<crate::types::Delimiter>) -> Option<crate::types::Delimiter> {
+        stored.or_else(|| self.node?.delimiter)
+    }
+
+    /// The separator the record stores, else the one prepare filled.
+    #[must_use]
+    pub fn separator_kind(&self, stored: Option<KindId>) -> Option<KindId> {
+        stored.or_else(|| self.node?.separator_kind)
+    }
+
+    /// Separator spacing the record stores, else the spacing prepare filled.
+    #[must_use]
+    pub fn space(&self, word: u32, before: bool, stored: Option<KindId>) -> Option<KindId> {
+        stored.or_else(|| {
+            let slot = self.node?.slot(word)?;
+            if before { slot.space_before } else { slot.space_after }
+        })
     }
 
     /// Where a prepared node came from (`NodeLayout::at`, else
@@ -730,6 +758,23 @@ mod tests {
     }
 
     type WordSlot<'a> = RecordSlot<'a, TriviaText, Word<'a>>;
+
+    #[test]
+    fn a_layout_keeps_prepared_defaults_below_stored_settings() {
+        let mut fixture = Fixture::new();
+        let place = PrepPlace::Stored(Place::Record(Address(1)));
+        let node = fixture.prepared.node_mut(place);
+        node.separator_kind = Some(KindId(7));
+        node.slot_mut(2).space_before = Some(KindId(8));
+        node.slot_mut(2).space_after = Some(KindId(9));
+        let layout = RecordLayout::new(fixture.ctx(), place, None, Edges::default(), ChangedEdges::default(), None);
+        assert_eq!(layout.separator_kind(None), Some(KindId(7)));
+        assert_eq!(layout.separator_kind(Some(KindId(17))), Some(KindId(17)));
+        assert_eq!(layout.space(2, true, None), Some(KindId(8)));
+        assert_eq!(layout.space(2, false, None), Some(KindId(9)));
+        assert_eq!(layout.space(2, true, Some(KindId(18))), Some(KindId(18)));
+        assert_eq!(layout.space(3, false, None), None);
+    }
 
     #[test]
     fn a_slot_renders_its_cell_s_view_and_an_absent_one_writes_nothing() {

@@ -20,6 +20,7 @@ mod prepared;
 pub mod rows;
 mod view;
 pub mod side;
+mod small;
 mod write;
 
 use std::collections::HashMap;

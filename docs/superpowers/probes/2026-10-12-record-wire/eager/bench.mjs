@@ -38,18 +38,20 @@ const digest = (texts) => {
 };
 const difference = (before, after) =>
 	Object.fromEntries(Object.keys(after).map((key) => [key, after[key] - before[key]]));
-const collect = () => {
-	globalThis.gc();
-	globalThis.gc();
-	globalThis.gc();
+const collect = async () => {
+	for (let pass = 0; pass < 3; pass++) {
+		globalThis.gc();
+		await new Promise(setImmediate);
+	}
 };
 
-function iteration(mode) {
+async function iteration(mode) {
 	const { store, build } = setup(mode);
 	const roots = [];
 	const texts = [];
 	const trees = [];
-	collect();
+	await collect();
+	assert.equal(native.heldArenaReferences(), 0, 'previous native registrations finalized before timing');
 	const allocationBefore = native.allocatorTotals();
 	const start = performance.now();
 	for (const name of names) roots.push(functionCase(build, name));
@@ -110,18 +112,18 @@ function iteration(mode) {
 	};
 }
 
-function memory(mode) {
+async function memory(mode) {
 	const { store, build } = setup(mode);
-	collect();
+	await collect();
 	const baseline = process.memoryUsage();
 	const empty = store.memory();
 	const roots = names.map((name) => functionCase(build, name));
-	collect();
+	await collect();
 	const built = process.memoryUsage();
 	const builtStorage = store.memory();
 	const child = build.identifier('updated');
 	const edited = roots.map((root) => root.$with.name(child));
-	collect();
+	await collect();
 	const retainedSnapshots = process.memoryUsage();
 	const editedStorage = store.memory();
 	globalThis.eagerProbeRetained = { store, roots, edited };
@@ -141,15 +143,16 @@ function memory(mode) {
 if (values.worker !== undefined) {
 	assert(['object', 'arena'].includes(values.worker));
 	assert.equal(typeof globalThis.gc, 'function');
-	for (let n = 0; n < warmup; n++) iteration(values.worker);
-	const samples = Array.from({ length: iterations }, () => iteration(values.worker));
+	for (let n = 0; n < warmup; n++) await iteration(values.worker);
+	const samples = [];
+	for (let n = 0; n < iterations; n++) samples.push(await iteration(values.worker));
 	for (const sample of samples) {
 		assert.equal(sample.renderSha256, samples[0].renderSha256);
 		assert.equal(sample.casesSha256, samples[0].casesSha256);
 		assert.deepEqual(sample.renderAllocations, samples[0].renderAllocations);
 		assert.deepEqual(sample.editAllocations, { calls: 0, bytes: 0, frees: 0, freedBytes: 0 });
 	}
-	console.log(JSON.stringify({ mode: values.worker, pid: process.pid, samples, memory: memory(values.worker) }));
+	console.log(JSON.stringify({ mode: values.worker, pid: process.pid, samples, memory: await memory(values.worker) }));
 } else {
 	const workers = [];
 	const start = new Date().toISOString();

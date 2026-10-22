@@ -69,6 +69,15 @@ class Chunks {
 	views() {
 		return this.#chunks.map((chunk, n) => chunk.subarray(0, this.used[n]));
 	}
+	registryViews() {
+		return {
+			chunks: this.#chunks.map((chunk, n) => (n === this.#open ? chunk : chunk.subarray(0, this.used[n]))),
+			open: this.#open < 0 ? undefined : this.#open
+		};
+	}
+	written() {
+		return this.used[this.#open] ?? 0;
+	}
 	capacity() {
 		return this.#chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
 	}
@@ -85,6 +94,9 @@ export class Storage {
 	#wrap;
 	#native;
 	#packet;
+	#registration;
+	#registeredWords = -1;
+	#registeredStrings = -1;
 	records = 0;
 	wrappers = 0;
 
@@ -266,8 +278,20 @@ export class Storage {
 
 	renderRef(ref) {
 		if (this.#mode === 'object') return this.#native.renderObject(ref.data);
-		const packet = this.packet();
-		return this.#native.renderBuilt(packet.chunks, packet.strings, ref.at, ref.offset, ref.len);
+		if (this.#registeredWords !== this.#words.used.length || this.#registeredStrings !== this.#strings.used.length) {
+			const words = this.#words.registryViews();
+			const strings = this.#strings.registryViews();
+			const previous = this.#registration;
+			this.#registration = this.#native.registerArena(words.chunks, strings.chunks, words.open, strings.open);
+			this.#registeredWords = this.#words.used.length;
+			this.#registeredStrings = this.#strings.used.length;
+			previous?.dispose();
+		}
+		const words = this.#words.written();
+		const bytes = this.#strings.written();
+		return ref.offset === undefined
+			? this.#registration.renderRecord(ref.at, words, bytes)
+			: this.#registration.render(ref.at, ref.offset, ref.len, words, bytes);
 	}
 
 	render(node) {

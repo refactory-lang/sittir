@@ -211,6 +211,7 @@ struct RecordKey {
     tree: Option<TreeId>,
     /// The record; none for a parsed leaf, which has none.
     at: Option<Address>,
+    side_at: Address,
     place: PrepPlace,
     /// The edges whose neighbour the record's holder changed: its site's, or
     /// a root's own.
@@ -227,17 +228,17 @@ impl RecordKey {
                     Some(tree) => view.linked(tree)?,
                     None => view,
                 };
-                let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
+                let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record, &side, at.site)?;
-                Ok(Self { tree: view.tree(), at: Some(record), place, changed: if at.site.is_some() { changed } else { side.changed } })
+                Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: if at.site.is_some() { changed } else { side.changed } })
             }
             Cell::BuiltLeaf { kind: named, record, .. } if named == kind => {
-                let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                Ok(Self { tree: None, at: Some(record), place: Place::Record(record).into(), changed: side.changed })
+                let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
+                Ok(Self { tree: None, at: Some(record), side_at: Address(words[1]), place: Place::Record(record).into(), changed: side.changed })
             }
             Cell::ParsedLeaf { kind: named, row: leaf, .. } if named == kind => {
                 let place = super::leaf_place(view, leaf, at.site)?;
-                Ok(Self { tree: view.tree(), at: None, place, changed: ChangedEdges::default() })
+                Ok(Self { tree: view.tree(), at: None, side_at: Address::NONE, place, changed: ChangedEdges::default() })
             }
             _ => Err(malformed("prepared cell", u32::from(kind.0))),
         }
@@ -245,11 +246,8 @@ impl RecordKey {
 
     /// The record's side record; the default for a parsed leaf.
     fn side<T>(&self, prep: &RecordPrep<'_, T>) -> Result<super::SideRecord, ArenaError> {
-        let Some(record) = self.at else { return Ok(super::SideRecord::default()) };
-        let view = prep.view(self.tree)?;
-        let words = view.words(record, HEADER_WORDS)?;
-        let kind = u16::try_from(words[0]).map(KindId).map_err(|_| malformed("record kind", words[0]))?;
-        Ok(record_of(view, record, HEADER_WORDS, kind)?.1)
+        if self.side_at == Address::NONE { return Ok(super::SideRecord::default()) }
+        super::SideRecord::read(prep.view(self.tree)?.arena(), self.side_at)
     }
 }
 
@@ -474,10 +472,43 @@ struct Item {
     row: Option<ParsedRow>,
 }
 
+/// Scalar slots stay inline. Lists keep owned scratch so preparation can append to parsed arenas.
+enum Items<T> {
+    Empty,
+    One([T; 1]),
+    Many(Vec<T>),
+}
+
+impl<T> std::ops::Deref for Items<T> {
+    type Target = [T];
+
+    fn deref(&self) -> &[T] {
+        match self {
+            Self::Empty => &[],
+            Self::One(item) => item,
+            Self::Many(items) => items,
+        }
+    }
+}
+
+impl<T> IntoIterator for Items<T> {
+    type Item = T;
+    type IntoIter = std::iter::Chain<std::option::IntoIter<T>, std::vec::IntoIter<T>>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        let (one, many) = match self {
+            Self::Empty => (None, Vec::new()),
+            Self::One([item]) => (Some(item), Vec::new()),
+            Self::Many(items) => (None, items),
+        };
+        one.into_iter().chain(many)
+    }
+}
+
 impl<T, N> SlotAt<'_, T, N> {
     /// The slot's items, by item, an absent one `None`. An unset single slot
     /// holds the unit its prepare defaulted it to, when it took one.
-    fn items(&self, prep: &RecordPrep<'_, T>) -> Result<Vec<Option<Item>>, ArenaError> {
+    fn items(&self, prep: &RecordPrep<'_, T>) -> Result<Items<Option<Item>>, ArenaError> {
         let view = prep.view(self.key.tree)?;
         let at = self.key.at.and_then(|at| at.offset(self.word)).ok_or(malformed("slot word", self.word))?;
         let place = self.key.place;
@@ -494,16 +525,20 @@ impl<T, N> SlotAt<'_, T, N> {
             Ok(Some(Item { at, site, row: view.parsed_row(cell)? }))
         };
         match self.run {
-            None => Ok(vec![item(Cell::decode(view.words(at, self.width)?)?, 0)?]),
+            None => Ok(Items::One([item(Cell::decode(view.words(at, self.width)?)?, 0)?])),
             Some(run) => {
                 let list = ListCell::decode(view.words(at, ListCell::WIDTH)?)?;
-                list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(Cell::decode(words)?, at)).collect()
+                list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(Cell::decode(words)?, at)).collect::<Result<_, _>>().map(Items::Many)
             }
         }
     }
 
-    fn present(&self, prep: &RecordPrep<'_, T>) -> Vec<Item> {
-        self.items(prep).map_or_else(|_| Vec::new(), |items| items.into_iter().flatten().collect())
+    fn present(&self, prep: &RecordPrep<'_, T>) -> Items<Item> {
+        match self.items(prep) {
+            Ok(Items::One([Some(item)])) => Items::One([item]),
+            Ok(Items::Many(items)) => Items::Many(items.into_iter().flatten().collect()),
+            _ => Items::Empty,
+        }
     }
 }
 
@@ -586,7 +621,7 @@ fn edited_record<T: Clone + 'static, N: Prepare + WriteCell<T>>(prep: &mut Recor
 /// A slot's present items as the gap and seat fills write them.
 struct Fills<'p, 'r, T, N> {
     prep: &'p mut RecordPrep<'r, T>,
-    items: Vec<Item>,
+    items: Items<Item>,
     node: PhantomData<fn() -> N>,
 }
 
@@ -770,4 +805,54 @@ pub fn record_snapshot_edge<T: Prepare + Clone>(prep: &RecordPrep<'_, T>, at: Ce
 #[must_use]
 pub fn view_kind_in<'p, T, V: RecordView<'p, T> + KindOf>(prep: &'p RecordPrep<'_, T>, at: CellAt, kinds: &[KindId]) -> bool {
     prep.view(at.tree).and_then(|ctx| V::from_cell(ctx, at.cell, at.site)).is_ok_and(|view| view.kind_in(kinds))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::arena::Arena;
+    use std::cell::Cell as Counter;
+    use std::sync::Arc;
+
+    struct CountedArena {
+        arena: Arena,
+        reads: Counter<usize>,
+    }
+
+    impl ArenaRead for CountedArena {
+        fn chunk(&self, index: u32) -> Option<&[u32]> {
+            self.reads.set(self.reads.get() + 1);
+            self.arena.chunk(index)
+        }
+
+        fn string_chunk(&self, index: u32) -> Option<&[u8]> {
+            self.arena.string_chunk(index)
+        }
+    }
+
+    struct NoSources;
+
+    impl SourceTable for NoSources {
+        fn source_of(&self, _: TreeId) -> Option<&Arc<str>> { None }
+    }
+
+    #[test]
+    fn a_validated_key_without_side_data_does_not_reread_its_header() {
+        let kind = KindId(7);
+        let mut arena = Arena::new();
+        let at = arena.push(&[u32::from(kind.0), 0]).expect("room");
+        let arena = CountedArena { arena, reads: Counter::new(0) };
+        let mut prepared = Prepared::<()>::new();
+        let mut trees = HeldArenas::of([]);
+        let store = TriviaStore::new();
+        let prep = RecordPrep::new(&mut prepared, &mut trees, &arena, &NoSources, &store);
+        let key = RecordKey::of(&prep, CellAt {
+            cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() },
+            tree: None,
+            site: None,
+        }, kind).expect("valid record");
+        let reads = arena.reads.get();
+        assert_eq!(key.side(&prep).expect("empty side"), super::super::SideRecord::default());
+        assert_eq!(arena.reads.get(), reads);
+    }
 }

@@ -3,8 +3,149 @@ import { setup, native, grammarNative, functionCase, parseDeep, disposeTrees } f
 import { records } from '../../../../../packages/rust/src/records.ts';
 import { TSKindId } from '../../../../../packages/rust/src/kinds.ts';
 
+assert.equal(typeof native.registerArena, 'function');
+assert.equal(native.heldArenaReferences(), 0);
+
+function registeredFixture(retainArrays = false) {
+  const { store, build } = setup('arena');
+  const root = functionCase(build, 'held');
+  const at = store.identity(root);
+  const packet = store.packet();
+  const expected = native.renderBuilt(packet.chunks, packet.strings, at).text;
+  return {
+    owner: native.registerArena(packet.chunks, packet.strings),
+    at,
+    expected,
+    count: packet.chunks.length + packet.strings.length,
+    weak: new WeakRef(packet.chunks[0]),
+    arrays: retainArrays ? packet : undefined
+  };
+}
+
+async function settle() {
+  await new Promise(setImmediate);
+  global.gc?.();
+  await new Promise(setImmediate);
+}
+
+const held = registeredFixture();
+await settle();
+assert(held.weak.deref());
+assert.equal(held.owner.render(held.at).text, held.expected);
+assert.equal(native.heldArenaReferences(), held.count);
+held.owner.dispose();
+held.owner.dispose();
+assert.equal(native.heldArenaReferences(), 0);
+assert.throws(() => held.owner.render(held.at), /released/);
+
+registeredFixture();
+for (let attempt = 0; attempt < 20 && native.heldArenaReferences() !== 0; attempt++) await settle();
+assert.equal(native.heldArenaReferences(), 0, 'GC releases registration references');
+
+const mutable = registeredFixture(true);
+const firstChunk = mutable.arrays!.chunks[0];
+const word = mutable.at % 2 ** grammarNative.ARENA_CHUNK_SHIFT;
+const kind = firstChunk[word];
+firstChunk[word] = 65535;
+assert.throws(() => mutable.owner.render(mutable.at));
+firstChunk[word] = kind;
+assert.equal(mutable.owner.render(mutable.at).text, mutable.expected);
+mutable.owner.dispose();
+
+const detached = registeredFixture(true);
+structuredClone(detached.arrays!.chunks[0].buffer, { transfer: [detached.arrays!.chunks[0].buffer] });
+assert.throws(() => detached.owner.render(detached.at));
+detached.owner.dispose();
+assert.equal(native.heldArenaReferences(), 0);
+assert.throws(() => native.registerArena([new Uint32Array(new SharedArrayBuffer(16))], []), /ordinary/);
+assert.throws(
+  () => native.registerArena([new Uint32Array(2)], [new Uint8Array(new SharedArrayBuffer(16))]),
+  /ordinary/
+);
+assert.equal(native.heldArenaReferences(), 0, 'failed registration retains no buffers');
+
+const packetSource = registeredFixture(true);
+packetSource.owner.dispose();
+const sourcePacket = packetSource.arrays!;
+const shiftedWords = sourcePacket.chunks.map((chunk) => {
+  const padded = new Uint32Array(chunk.length + 2);
+  padded.set(chunk, 1);
+  return padded.subarray(1, chunk.length + 1);
+});
+const shiftedStrings = sourcePacket.strings.map((chunk) => {
+  const padded = new Uint8Array(chunk.length + 4);
+  padded.set(chunk, 3);
+  return padded.subarray(3, chunk.length + 3);
+});
+const shiftedOwner = native.registerArena(shiftedWords, shiftedStrings);
+assert.equal(shiftedOwner.render(packetSource.at).text, packetSource.expected);
+shiftedOwner.dispose();
+const resizable = new ArrayBuffer(sourcePacket.chunks[0].byteLength, {
+  maxByteLength: sourcePacket.chunks[0].byteLength + 16
+});
+new Uint32Array(resizable).set(sourcePacket.chunks[0]);
+const resizedOwner = native.registerArena([new Uint32Array(resizable)], sourcePacket.strings);
+assert.equal(resizedOwner.render(packetSource.at).text, packetSource.expected);
+resizable.resize(0);
+assert.throws(() => resizedOwner.render(packetSource.at));
+resizedOwner.dispose();
+assert.equal(native.heldArenaReferences(), 0);
+
+for (const open of [-1, 0.5, sourcePacket.chunks.length, Infinity]) {
+  assert.throws(() => native.registerArena(sourcePacket.chunks, sourcePacket.strings, open));
+}
+assert.equal(native.heldArenaReferences(), 0, 'invalid open indices retain no buffers');
+const growing = native.registerArena(sourcePacket.chunks, sourcePacket.strings, 0, 0);
+const renderPrefix = (words = sourcePacket.chunks[0].length, bytes = sourcePacket.strings[0].length) =>
+  growing.render(packetSource.at, undefined, undefined, words, bytes);
+assert.equal(renderPrefix().text, packetSource.expected);
+assert.equal(
+  growing.renderRecord(packetSource.at, sourcePacket.chunks[0].length, sourcePacket.strings[0].length).text,
+  packetSource.expected
+);
+assert.throws(() => growing.renderRecord(packetSource.at, 0.5, sourcePacket.strings[0].length), /exact u32/);
+assert.throws(() => growing.render(packetSource.at), /written length/);
+assert.throws(() => renderPrefix(0));
+assert.throws(() => renderPrefix(undefined, 0));
+assert.throws(() => renderPrefix(sourcePacket.chunks[0].length + 1), /written prefix/);
+assert.throws(() => renderPrefix(0.5), /exact u32/);
+growing.dispose();
+
+const sparseOwner = native.registerArena(
+  [...sourcePacket.chunks, ...Array.from({ length: 63 }, () => new Uint32Array(1))],
+  [...sourcePacket.strings, ...Array.from({ length: 63 }, () => new Uint8Array(0))]
+);
+const compactOwner = native.registerArena(sourcePacket.chunks, sourcePacket.strings);
+const compactRender = compactOwner.render(packetSource.at);
+compactOwner.dispose();
+const chunkReads = native.arenaChunkReadCount();
+const sparseRender = sparseOwner.render(packetSource.at);
+assert.equal(sparseRender.text, packetSource.expected);
+assert.equal(native.arenaChunkReadCount() - chunkReads, 2, 'render acquires only the referenced word and UTF-8 chunks');
+assert.equal(sparseRender.allocatedBytes, compactRender.allocatedBytes, 'unused chunks add no per-render allocation');
+sparseOwner.dispose();
+
+const registrationCount = native.arenaRegistrationCount();
+(() => {
+  const { build } = setup('arena', 16_384);
+  let first;
+  for (let index = 0; index < 100; index++) {
+    const root = functionCase(build, `interleaved${index}`);
+    first ??= root;
+    assert.match(root.render().text, new RegExp(`interleaved${index}\\(`));
+  }
+  assert.match(first.render().text, /interleaved0\(/);
+})();
+assert.equal(native.arenaRegistrationCount() - registrationCount, 1, 'appending within chunks reuses registration');
+await settle();
+assert.equal(native.heldArenaReferences(), 0);
+
 const output: Record<string, string[]> = {};
+const allocationCalls: Record<string, number> = {};
 for (const mode of ['object', 'arena']) {
+  const allocationRoot = functionCase(setup(mode).build, 'alloc');
+  allocationRoot.render();
+  allocationCalls[mode] = allocationRoot.render().allocationCalls;
   const { store, build } = setup(mode, 16);
   const name = build.identifier('shared');
   const parameters = build.parameters();
@@ -102,6 +243,10 @@ for (const mode of ['object', 'arena']) {
   console.log(JSON.stringify({ mode, memory: store.memory() }));
 }
 assert.deepEqual(output.arena, output.object);
+assert(
+  allocationCalls.arena <= allocationCalls.object,
+  `empty-function arena render allocates ${allocationCalls.arena} times versus ${allocationCalls.object} for objects`
+);
 const width = 2 ** grammarNative.ARENA_CHUNK_SHIFT;
 const { build: boundary } = setup('arena', width);
 boundary.identifier('x');

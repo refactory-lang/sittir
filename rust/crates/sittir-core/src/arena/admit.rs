@@ -3,7 +3,7 @@
 //! written elsewhere are walked once, when they cross in, and refused unless
 //! they hold to that order. Decode then trusts them, checking only bounds.
 
-use std::collections::HashSet;
+use super::small::{SmallMap, SmallStack};
 
 use super::{Address, ArenaError, ArenaRead, Cell, ListCell, SideRecord};
 #[cfg(test)]
@@ -97,10 +97,15 @@ pub(super) fn for_each_cell(
 pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>) -> Result<(), ArenaError> {
     let kind_of = |word: u32| u16::try_from(word).map(KindId).map_err(|_| malformed("record kind", word));
     let root_kind = kind_of(arena.word(root)?)?;
-    let mut seen = HashSet::new();
-    let mut pending = vec![(root, root_kind)];
+    let mut seen = SmallMap::<Address, Option<KindId>>::new();
+    let mut pending = SmallStack::new();
+    pending.push((root, root_kind));
     while let Some((at, named)) = pending.pop() {
-        if !seen.insert(at) {
+        let verified = seen.entry(at).or_default();
+        if let Some(kind) = verified {
+            if *kind != named {
+                return Err(malformed("record kind", u32::from(kind.0)));
+            }
             continue;
         }
         let header = arena.words(at, HEADER_WORDS)?;
@@ -108,6 +113,7 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         if kind != named {
             return Err(malformed("record kind", header[0]));
         }
+        *verified = Some(kind);
         let record = shape(kind).ok_or(malformed("record kind", header[0]))?;
         let words = arena.words(at, record.words.max(HEADER_WORDS))?;
         SideRecord::read(arena, Address(words[1]))?;
@@ -164,6 +170,29 @@ mod tests {
         let inner = pair(&mut arena, leaf, LEAF);
         let outer = pair(&mut arena, inner, PAIR);
         assert_eq!(admit(&arena, outer, shape), Ok(()));
+    }
+
+    #[test]
+    fn every_reference_to_a_shared_record_must_name_its_actual_kind() {
+        const FORK: KindId = KindId(9);
+        fn fork_shape(kind: KindId) -> Option<RecordShape> {
+            const CELLS: &[CellShape] = &[
+                CellShape { word: 2, width: 5, run: None },
+                CellShape { word: 7, width: 5, run: None },
+            ];
+            if kind == FORK { Some(RecordShape { words: 12, cells: CELLS }) } else { shape(kind) }
+        }
+        let mut arena = Arena::new();
+        let leaf = arena.push(&[u32::from(LEAF.0), 0]).expect("room");
+        let mut words = [0; 12];
+        words[0] = u32::from(FORK.0);
+        Cell::Child { kind: PAIR, at: leaf, link: None, changed: ChangedEdges::default() }.encode(&mut words[2..7]).expect("cell");
+        Cell::Child { kind: LEAF, at: leaf, link: None, changed: ChangedEdges::default() }.encode(&mut words[7..]).expect("cell");
+        let root = arena.push(&words).expect("room");
+        assert!(admit(&arena, root, fork_shape).is_err());
+        Cell::Child { kind: LEAF, at: leaf, link: None, changed: ChangedEdges::default() }.encode(&mut words[2..7]).expect("cell");
+        let shared = arena.push(&words).expect("room");
+        assert!(admit(&arena, shared, fork_shape).is_ok());
     }
 
     #[test]

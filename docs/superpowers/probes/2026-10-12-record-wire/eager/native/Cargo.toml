@@ -17,8 +17,3 @@ sittir-rust = { path = "../../../../../../rust/crates/sittir-rust", features = [
 
 [build-dependencies]
 napi-build = "2"
-
-[profile.release]
-strip = "none"
-lto = "off"
-codegen-units = 16
