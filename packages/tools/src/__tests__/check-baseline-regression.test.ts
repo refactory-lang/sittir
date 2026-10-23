@@ -199,13 +199,27 @@ describe('checkRegression', () => {
 			expect(await run([...args, '--declared', write('declared.json', declared)])).toBe(0);
 		});
 
-		it('a drop in an undeclared validator fails', () => {
+		it('a passing case lost from an undeclared validator fails beside a declared one', () => {
 			const { base, head } = shrunk();
 			head.baselineCounterChange = declaration();
 			head.grammars.python!.validators.from = vr(9, 9);
 			head.totals = { pass: base.totals.pass - 1, fail: 1, total: base.totals.total - 2 };
 			const verdict = checkRegression(base, head);
 			expectFail(verdict);
+			expect(verdict.reason).toBe('pass-count-drop');
+			expect(verdict.details.path).toBe('grammars.python.validators.from.pass');
+		});
+
+		it('a failing case removed from an undeclared validator fails beside a declared one', () => {
+			const { base, head } = shrunk();
+			base.grammars.python!.validators.from = vr(9, 10);
+			base.totals = computeTotals(base.grammars);
+			head.baselineCounterChange = declaration();
+			head.grammars.python!.validators.from = vr(9, 9);
+			head.totals = computeTotals(head.grammars);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('total-drop');
 			expect(verdict.details.path).toBe('grammars.python.validators.from.total');
 		});
 
@@ -227,6 +241,50 @@ describe('checkRegression', () => {
 			};
 			expect(checkRegression(base, head).ok).toBe(true);
 		});
+	});
+
+	it.each(['head', 'base'] as const)('a validator the checker does not compare is a schema violation on the %s', (side) => {
+		const base = baseline();
+		const head = clone(base);
+		const record = side === 'head' ? head : base;
+		const { builtRenderParse, coverage, factoryStorage, from, roundtrip } = record.grammars.rust!.validators;
+		const validators = { builtRenderParse, coverage, factoryStorage, from, irStorage: vr(0, 1), roundtrip };
+		record.grammars.rust!.validators = validators as GrammarEntry['validators'];
+		record.totals = computeTotals(record.grammars);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('schema-violation');
+		expect(verdict.details.path).toBe(`${side}.grammars.rust.validators.irStorage`);
+	});
+
+	it('a failing case deleted from a row with no cases by kind fails, though the totals grew', () => {
+		const base = baseline();
+		base.grammars.rust!.validators.roundtrip = rt(9, 10, 9);
+		base.totals = computeTotals(base.grammars);
+		const head = clone(base);
+		head.grammars.rust!.validators.roundtrip = rt(9, 9, 9);
+		head.grammars.python!.validators.from = vr(12, 12);
+		head.totals = computeTotals(head.grammars);
+		expect(head.totals.total).toBeGreaterThan(base.totals.total);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('total-drop');
+		expect(verdict.details.path).toBe('grammars.rust.validators.roundtrip.total');
+	});
+
+	it('a declared parity failure may add its failure id', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.grammars.rust!.parityFixtures = { ...pf(10, 11), failingByKind: { '12': ['render #10'] } };
+		head.totals = computeTotals(head.grammars);
+		const undeclared = checkRegression(base, head);
+		expectFail(undeclared);
+		expect(undeclared.reason).toBe('fail-rise');
+		head.baselineCounterChange = {
+			reason: 'a new fixture fails',
+			grammars: { rust: { parityFixtures: { from: { pass: 10, total: 10 }, to: { pass: 10, total: 11 } } } }
+		};
+		expect(checkRegression(base, head).ok).toBe(true);
 	});
 
 	it('head must record every validator', () => {
@@ -499,6 +557,22 @@ describe('checkRegression', () => {
 			expectFail(verdict);
 			expect(verdict.reason).toBe('case-loss');
 			expect(verdict.details.path).toBe('grammars.typescript.validators.from.casesByKind.identifier');
+		});
+
+		it('a departed kind may take its failing cases along', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.factoryStorage = { ...rt(29, 30, 29, ['a']), casesByKind: { a: 19, b: 6, c: 5 } };
+			const head = departingA(retotal(base));
+			expect(head.totals.fail).toBeLessThan(base.totals.fail);
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('a departure beside an unrelated fix passes', () => {
+			const base = inventoried();
+			base.grammars.rust!.validators.roundtrip = rt(9, 10, 9);
+			const head = departingA(retotal(base));
+			head.grammars.rust!.validators.roundtrip = rt(10, 10, 10);
+			expect(checkRegression(base, retotal(head)).ok).toBe(true);
 		});
 
 		it('a departed kind\'s lost cases are listed when a gain keeps the row\'s pass from falling', () => {
@@ -815,7 +889,7 @@ describe('checkRegression', () => {
 		expect(verdict.ok).toBe(true);
 	});
 
-	it('total fixture count decreased with a fail rise — fail (rule #2)', () => {
+	it('a total drop whose pass fell is a pass-count drop, naming the fail rise', () => {
 		const base = baseline();
 		const head = clone(base);
 		head.totals.total = 149;
@@ -826,7 +900,8 @@ describe('checkRegression', () => {
 		head.grammars.rust!.validators.from.failingKinds = ['kind_a'];
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
-		expect(verdict.reason).toBe('total-drop');
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details).toMatchObject({ path: 'grammars.rust.validators.from.pass', note: 'its fail count rose 0 → 1' });
 	});
 
 	it('total fixture count decreased by removing an already-failing case — fail (deletion is not a rename, still needs a look)', () => {

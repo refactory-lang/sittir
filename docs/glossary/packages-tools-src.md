@@ -186,7 +186,7 @@ The shape of a row's optional `casesByKind`: a plain object with sorted keys, ea
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::ComparedRow`
 
-One row the head records, with the metrics it is compared on: a validator's `pass`, a roundtrip validator's `astMatchPass` as well, or the parity fixtures' `pass`, each with its base and head values (`ComparedMetric`). A row the base does not record is compared against `UNRECORDED_ROW`. `comparedRows` yields a grammar's rows in one order, so the count rule, the declared total-drop rule and the fail-rise rule walk the same rows.
+One row the head records, with the metrics it is compared on: a validator's `pass`, a roundtrip validator's `astMatchPass` as well, or the parity fixtures' `pass`, each with its base and head values (`ComparedMetric`). A row the base does not record is compared against `UNRECORDED_ROW`. `comparedRows` yields a grammar's rows in one order, so the count rule, the total-drop rule and the fail-rise rule walk the same rows.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::caseLosses`
 
@@ -208,13 +208,21 @@ Why a row's declaration does not cover its case losses: its counters do not matc
 
 Rejects a head that records less than its base: `kinds` the base records, or the `casesByKind` of a row the base records them for. A collected head always records both, so an omission is an edited or truncated record, and without the rejection it would switch the per-kind comparison off. A base without them, collected before the fields existed, still loads.
 
-### `packages/tools/src/scripts/check-baseline-regression.ts::declaredCounterChangeHolds`
+### `packages/tools/src/scripts/check-baseline-regression.ts::checkTotalDrop`
 
-Rule 2 for a head that carries `baselineCounterChange`: the first row (a validator, or the parity fixtures) whose total dropped without a declaration naming it with `from` equal to the base's counters and `to` equal to the head's (`declarationMismatch`), or whose pass fell. It walks the rows `comparedRows` yields, so a declaration that names one row excuses no drop in another.
+Rule 2: the first row whose base records no cases by kind (`roundtrip`, or any row of a base collected before inventories) and whose total fell while its pass held, without a declaration naming it with `from` equal to the base's counters and `to` equal to the head's (`declarationMismatch`). Failing cases left such a row, and nothing else tells where they went. A row that lost a pass is left to `checkCounts`, which no declaration excuses, so the two rules never name the same row. A row whose base records cases by kind is held case by case by `checkCounts`, so a departed kind takes its cases, failing ones included, with no declaration. It walks the rows `comparedRows` yields, so a declaration that names one row excuses no drop in another.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::UNRECORDED_ROW`
 
 The counts a row the base does not record is compared against: no cases, no passes and no AST matches. Such a row cannot drop or lose a case, and every failure it brings is a fail rise.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::listRiseUnexplained`
+
+Whether a row's failing and format-deferred list (a validator's `failingKinds` and `formatDeferredKinds`, or the parity fixtures' `failingByKind` and `formatDeferredByKind` ids) grew by more than the row's total did, or grew while its pass fell. Growth within the total's is new cases that fail, and `checkFailRise` already holds their count to a declaration. An item that moves from the failing list to the format-deferred one keeps the sum.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::ROUNDTRIP_BY_VALIDATOR`
+
+Every validator `GrammarEntry` declares, mapped to whether its result is a `RoundtripResult` and so carries `astMatchPass`. The type requires every validator and the right flag for each, so a validator added to `GrammarEntry` fails type-check here until the checker compares it. `VALIDATORS` is its keys, and the shape check rejects a record holding any other validator, whose cases no rule would compare.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 

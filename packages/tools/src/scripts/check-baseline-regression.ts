@@ -30,32 +30,25 @@
  *      declares the row and names each such kind in its `cases`, with the
  *      base's and the head's counts (`case-loss`). A departed kind's lost
  *      cases are allowed and listed in the passing verdict. A gain never
- *      offsets a loss. A pass
- *      drop is a regression unless the row's fail count (`total - pass`)
- *      did not rise and every lost case belongs to a departed kind; a
- *      declaration does not excuse it. `roundtrip` counts corpus rows and
- *      records no cases by kind, so no departure explains its drop. The
- *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
- *      is rule 2's job, not re-checked here.
- *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
- *      (either direction). A kind rename or split moves fixtures between
- *      validators (a flattened parent's own factory-level case disappears
- *      while its variants each gain a `from` case) and can shrink `total`
- *      net with `fail` UNCHANGED; rule 1 already catches any actual loss
- *      in that case, so this rule only exempts the exact-unchanged-fail
- *      shape. A `fail` DECREASE alongside the total drop (a failing
- *      fixture quietly deleted) still trips this rule — that is not the
- *      same shape as a rename and deserves a look, not an automatic pass.
-      The head record's declaration is read from the head itself, or, for
-      a freshly collected head, from the committed record named by
-      `--declared`.
-      A head that carries `baselineCounterChange` is held to a per-row
-      check instead: a row's total (a validator's, or the parity
-      fixtures') may drop only if the declaration names that grammar's
-      row with `from` equal to the base's counters and `to` equal to the
-      head's, and its `pass` did not fall (so the total fell no more than
-      its fail count did). Once the head merges, the base equals `to` and
-      the declaration is inert.
+ *      offsets a loss. A pass drop is a regression unless the row's fail
+ *      count (`total - pass`) did not rise and every lost case belongs to
+ *      a departed kind; a declaration does not excuse it. `roundtrip`
+ *      counts corpus rows and records no cases by kind, so no departure
+ *      explains its drop. The aggregate `totals` are sums of the rows and
+ *      are not compared.
+ *   2. Total drop — a row whose base records no cases by kind
+ *      (`roundtrip`, or any row of a base collected before inventories)
+ *      lost cases while its pass held, so failing cases left it, unless
+ *      `baselineCounterChange` declares that row with `from` equal to the
+ *      base's counters and `to` equal to the head's. A row that lost a
+ *      pass is rule 1's, which no declaration excuses. A row whose base
+ *      records cases by kind is held case by case under rule 1, so a
+ *      departed kind takes its cases, failing ones included, with no
+ *      declaration.
+ *      The head record's declaration is read from the head itself, or,
+ *      for a freshly collected head, from the committed record named by
+ *      `--declared`. Once the head merges, the base equals `to` and the
+ *      declaration is inert.
  *   3. Fail rise — a row's fail count (`total - pass`, and for a roundtrip
  *      validator `total - astMatchPass`) rose, for any validator or the
  *      parity fixtures of any grammar, unless `baselineCounterChange`
@@ -68,10 +61,13 @@
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
  *   5. Format-deferred-count rise — for any validator the base records,
- *      `length(failingKinds_after) + length(formatDeferredKinds_after)`
- *      may not exceed the corresponding sum on the base. Items may MOVE
- *      from `failingKinds` into `formatDeferredKinds` during a cluster
- *      commit; only the SUM is checked.
+ *      `length(failingKinds) + length(formatDeferredKinds)`, and for the
+ *      parity fixtures the number of `failingByKind` and
+ *      `formatDeferredByKind` ids, may grow by no more than the row's
+ *      total did, and only while its pass held: new cases that fail,
+ *      whose count rule 3 holds to a declaration. Items may MOVE from the
+ *      failing list into the format-deferred one; only the SUM is
+ *      checked.
  *   6. Left-out rise — the PER-GRAMMAR SUM of `parityFixtures.
  *      leftOutByKind` may not grow: a render fixture the regen leaves out
  *      is a kind whose template no longer reproduces its source, and it
@@ -134,10 +130,13 @@ export type RegressionVerdict =
 
 const GRAMMARS = stableGrammars();
 
-const VALIDATORS = ['from', 'coverage', 'roundtrip', 'factoryStorage', 'builtRenderParse'] as const;
-type ValidatorName = (typeof VALIDATORS)[number];
+type ValidatorName = keyof GrammarEntry['validators'];
 
-const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = ['roundtrip', 'factoryStorage', 'builtRenderParse'];
+const ROUNDTRIP_BY_VALIDATOR: {
+	readonly [V in ValidatorName]: GrammarEntry['validators'][V] extends RoundtripResult ? true : false;
+} = { from: false, coverage: false, roundtrip: true, factoryStorage: true, builtRenderParse: true };
+
+const VALIDATORS = Object.keys(ROUNDTRIP_BY_VALIDATOR) as readonly ValidatorName[];
 
 function baseValidators(validators: object): readonly ValidatorName[] {
 	return VALIDATORS.filter((vName) => vName in validators);
@@ -446,11 +445,22 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 				}
 			};
 		}
+		const unknown = validatorKeys.find((key) => !Object.hasOwn(ROUNDTRIP_BY_VALIDATOR, key));
+		if (unknown !== undefined) {
+			return {
+				ok: false,
+				reason: 'schema-violation',
+				summary: `schema violation: ${gPath}.validators.${unknown} is not a validator the checker compares`,
+				details: {
+					path: `${gPath}.validators.${unknown}`,
+					note: 'every validator a record holds is one GrammarEntry declares'
+				}
+			};
+		}
 		for (const vName of label === 'head' ? VALIDATORS : baseValidators(validators as object)) {
 			const vPath = `${gPath}.validators.${vName}`;
 			const vv = (validators as Record<string, unknown>)[vName];
-			const isRoundtrip = ROUNDTRIP_VALIDATORS.includes(vName);
-			const sv = validateValidatorResultShape(vv, vPath, isRoundtrip);
+			const sv = validateValidatorResultShape(vv, vPath, ROUNDTRIP_BY_VALIDATOR[vName]);
 			if (sv) return sv;
 		}
 		const pf = (ge as Record<string, unknown>)['parityFixtures'];
@@ -509,7 +519,7 @@ function* comparedRows(g: string, baseGrammar: GrammarEntry | undefined, headGra
 		const b = (baseGrammar?.validators[vName] as RoundtripResult | undefined) ?? UNRECORDED_ROW;
 		const h = headGrammar.validators[vName] as RoundtripResult;
 		const metrics: ComparedMetric[] = [{ name: 'pass', before: b.pass, after: h.pass }];
-		if (ROUNDTRIP_VALIDATORS.includes(vName)) metrics.push({ name: 'astMatchPass', before: b.astMatchPass, after: h.astMatchPass });
+		if (ROUNDTRIP_BY_VALIDATOR[vName]) metrics.push({ name: 'astMatchPass', before: b.astMatchPass, after: h.astMatchPass });
 		yield { row: vName, path: `grammars.${g}.validators.${vName}`, b, h, metrics };
 	}
 	const b = baseGrammar?.parityFixtures ?? UNRECORDED_ROW;
@@ -694,39 +704,19 @@ function checkHeadKeepsInventories(base: BackendBaseline, head: BackendBaseline)
 	return null;
 }
 
-function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
 		for (const { row, path, b, h } of comparedRows(g, baseGrammar, headGrammar)) {
-			if (h.total >= b.total) continue;
-			const note =
-				declarationMismatch(head.baselineCounterChange?.grammars[g]?.[row], row, b, h) ??
-				(h.pass < b.pass ? `${row} pass fell under a declared counter change` : undefined);
-			if (note !== undefined) {
-				return {
-					ok: false,
-					reason: 'total-drop',
-					summary: `${path}.total decreased: ${b.total} → ${h.total} (${note})`,
-					details: { path: `${path}.total`, before: b.total, after: h.total, note }
-				};
-			}
+			if (b.casesByKind !== undefined || h.total >= b.total || h.pass < b.pass) continue;
+			const note = declarationMismatch(head.baselineCounterChange?.grammars[g]?.[row], row, b, h);
+			if (note === undefined) continue;
+			return {
+				ok: false,
+				reason: 'total-drop',
+				summary: `${path}.total decreased: ${b.total} → ${h.total} (${note})`,
+				details: { path: `${path}.total`, before: b.total, after: h.total, note }
+			};
 		}
-	}
-	return null;
-}
-
-function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	if (head.totals.total < base.totals.total && head.totals.fail !== base.totals.fail) {
-		if (head.baselineCounterChange !== undefined) return declaredCounterChangeHolds(base, head);
-		return {
-			ok: false,
-			reason: 'total-drop',
-			summary: `totals.total decreased: ${base.totals.total} → ${head.totals.total} (fixture deletion, with totals.fail: ${base.totals.fail} → ${head.totals.fail})`,
-			details: {
-				path: 'totals.total',
-				before: base.totals.total,
-				after: head.totals.total
-			}
-		};
 	}
 	return null;
 }
@@ -754,8 +744,8 @@ function checkFailRise(base: BackendBaseline, head: BackendBaseline): Regression
 }
 
 // ---------------------------------------------------------------------------
-// Format-deferred rise (rule #5) — per-validator sum of
-// `failingKinds + formatDeferredKinds` may not grow.
+// Format-deferred rise (rule #5) — a row's failing and format-deferred
+// lists may grow by no more than its total did.
 // ---------------------------------------------------------------------------
 
 function validatorSum(v: ValidatorResult): number {
@@ -769,55 +759,46 @@ function parityFixturesSum(p: ParityFixtures): number {
 	return sum;
 }
 
+function listRiseUnexplained(b: CounterPair, h: CounterPair, before: number, after: number): boolean {
+	return after > before && (h.total - b.total < after - before || h.pass < b.pass);
+}
+
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
 		for (const vName of baseValidators(baseGE.validators)) {
-			const baseV = baseGE.validators[vName] as ValidatorResult;
-			const headV = headGE.validators[vName] as ValidatorResult;
-			const before = validatorSum(baseV);
-			const after = validatorSum(headV);
-			if (after > before) {
-				// Allowed when the validator's `total` rose by ≥ the
-				// failingKinds-sum rise AND `pass` did not drop —
-				// architectural commits that expand validator coverage
-				// (e.g. canonical-hidden remap exposing previously-
-				// missed wrap-walker subtrees) surface honest new test
-				// cases. Per-kind regressions are caught by the
-				// independent `checkCounts` rule.
-				const baseTotal = baseV.total;
-				const headTotal = headV.total;
-				const totalRise = headTotal - baseTotal;
-				const passDelta = headV.pass - baseV.pass;
-				const failRise = after - before;
-				if (totalRise >= failRise && passDelta >= 0) continue;
-				return {
-					ok: false,
-					reason: 'format-deferred-rise',
-					summary: `format-deferred sum grew at grammars.${g}.validators.${vName}: ${before} → ${after} (total: ${baseTotal} → ${headTotal}, pass: ${baseV.pass} → ${headV.pass})`,
-					details: {
-						path: `grammars.${g}.validators.${vName}`,
-						before,
-						after,
-						note: 'failingKinds.length + formatDeferredKinds.length must not grow (move semantics permitted)'
-					}
-				};
-			}
-		}
-		const beforePf = parityFixturesSum(baseGE.parityFixtures);
-		const afterPf = parityFixturesSum(headGE.parityFixtures);
-		if (afterPf > beforePf) {
+			const b = baseGE.validators[vName] as ValidatorResult;
+			const h = headGE.validators[vName] as ValidatorResult;
+			const before = validatorSum(b);
+			const after = validatorSum(h);
+			if (!listRiseUnexplained(b, h, before, after)) continue;
 			return {
 				ok: false,
 				reason: 'format-deferred-rise',
-				summary: `format-deferred fixture-id sum grew at grammars.${g}.parityFixtures: ${beforePf} → ${afterPf}`,
+				summary: `format-deferred sum grew at grammars.${g}.validators.${vName}: ${before} → ${after} (total: ${b.total} → ${h.total}, pass: ${b.pass} → ${h.pass})`,
 				details: {
-					path: `grammars.${g}.parityFixtures`,
-					before: beforePf,
-					after: afterPf,
-					note: 'sum of failingByKind + formatDeferredByKind ids must not grow'
+					path: `grammars.${g}.validators.${vName}`,
+					before,
+					after,
+					note: 'failingKinds.length + formatDeferredKinds.length may grow by no more than total did, with pass held'
 				}
 			};
 		}
+		const b = baseGE.parityFixtures;
+		const h = headGE.parityFixtures;
+		const before = parityFixturesSum(b);
+		const after = parityFixturesSum(h);
+		if (!listRiseUnexplained(b, h, before, after)) continue;
+		return {
+			ok: false,
+			reason: 'format-deferred-rise',
+			summary: `format-deferred fixture-id sum grew at grammars.${g}.parityFixtures: ${before} → ${after} (total: ${b.total} → ${h.total}, pass: ${b.pass} → ${h.pass})`,
+			details: {
+				path: `grammars.${g}.parityFixtures`,
+				before,
+				after,
+				note: 'the failingByKind + formatDeferredByKind ids may grow by no more than total did, with pass held'
+			}
+		};
 	}
 	return null;
 }
@@ -833,17 +814,17 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
  *   2. schema-violation (base)        — bad input → don't trust it
  *   3. schema-violation (backend mismatch) — comparing counts across
  *      backends is meaningless; reject before any count comparison.
- *   4. left-out-rise
- *   5. total-drop
- *   6. pass-count-drop, case-loss
- *   7. fail-rise
- *   8. format-deferred-rise
+ *   4. grammar-dropped
+ *   5. schema-violation (a head missing an inventory its base records)
+ *   6. left-out-rise
+ *   7. total-drop
+ *   8. pass-count-drop, case-loss
+ *   9. fail-rise
+ *  10. format-deferred-rise
  *
  * The schema check runs first so subsequent checks may safely cast to
- * the typed shape. Within the rest, total-drop precedes pass-count-drop
- * because a fixture deletion is the more-actionable signal — naming
- * the missing fixture is usually clearer than naming the field whose
- * pass count happens to drop as a side effect.
+ * the typed shape. total-drop and pass-count-drop never name the same
+ * row: total-drop takes only rows whose pass held.
  *
  * Precondition for the success summary: after the backend-mismatch
  * check, `base.backend === head.backend` is guaranteed, so the summary
