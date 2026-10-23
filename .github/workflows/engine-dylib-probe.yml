@@ -6,6 +6,9 @@ name: engine dylib probe
 on:
   push:
     branches: [probe/engine-dylib]
+    paths-ignore:
+      - docs/superpowers/probes/2026-10-23-engine-dylib/README.md
+      - docs/superpowers/probes/2026-10-23-engine-dylib/evidence/**
   workflow_dispatch:
 
 env:
