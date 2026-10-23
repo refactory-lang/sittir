@@ -362,35 +362,43 @@ position write into the stream, which the spacing writer strips — and a
 coordinate's write honours its position's `ADJACENT` exactly as verbatim text
 does today.
 
-### Gaps between coordinates classify into option values
+### A rebuilt list keeps its source list's spacing
 
-Render options give every list site of a kind one value: `Option<u16>` per
-site on the node, filled from the option table when the wire left it
-unset. A rebuilt node whose items are still coordinates of one tree has a
-better source for that value than the table: the bytes between the items.
+A rebuilt node whose items are still coordinates has a better source for
+its gaps than the option table: the source list's own. The tree measures it
+once, as the list's stored layout (render options spec, Read side): for each
+side of the slot's separator, the class most of its gaps take, and the
+separator most of them hold, each stored only where it differs from what the
+read options write.
 
-In the same walk, before the table fills a site, a list slot whose
-consecutive items are both coordinates of the same tree, in source order,
-yields one gap per adjacent pair — the bytes from the first item's span end
-to the second's span start. For a separated list the gap splits around the
-first occurrence of the separator token into the text before it and the text
-after it; for an unseparated repeat the whole gap is the one site's text. Each
-piece classifies to the arm the site admits whose whitespace text has the
-same seam rank — no line break and empty is `tight`, no line break and
-non-empty is `space`, otherwise the arm with the same number of line breaks,
-falling back to the widest the site admits. A depth arm (`indent`, `dedent`)
-never classifies: indentation belongs to the writer's depth tracking. A gap
-whose token is absent, and any pair that is not two ordered coordinates of
-one tree, contributes nothing. The site takes the majority class over its
-gaps, the first seen winning a tie, and only when the wire left it unset.
+The layout follows the list out of its tree:
+- A parsed list reads it from its live tree. A node a `$with` setter
+  rebuilds from it, and a fresh list a setter mints in a slot that held one,
+  take the stored layout of the list they replace (`carryRebuiltSlots`,
+  `slotsOf`). A detached crossing and a snapshot carry it as data, since
+  neither leaves the render a tree to measure it from.
+- The prepare walk fills every gap between two present items of the slot
+  from it, kept or inserted (`prepare::fill_slot_gaps`): the side before the
+  separator onto the earlier item's `after` edge, the side after it onto the
+  later item's `before` edge. It fills at slot strength, above every option
+  and below a gap's own entry, and an edge already set keeps its arm.
 
-So for any list site the precedence is: the value the wire carried, then the
-class of the source gaps, then the engine's option table, then the grammar's
-default. Seated per-item seams are not classified: a seated item is a
-node the render rebuilds, so its own span is stale and the bytes after
-it are not the gap that will be written. Comments inside a gap count as the
-bytes they are; a comment between two items of a rebuilt list is trivia the
-reader did not attach to either stub, and that loss predates this design.
+So for a gap of a rebuilt list the precedence is: the gap's own entry (the
+value the wire carried, or the source run it kept), then the list's stored
+layout, then the seat of the kind before it, resolved from the options with
+the tree's inferred table among them. `reformat` drops both stored layers.
+
+What the slot does not measure keeps its own entries and takes nothing from
+the list:
+- the gaps of an unseparated repeat, each its own (a block's statements), so
+  an appended statement's gap takes the options;
+- a gap holding an extra, an `ERROR`, another slot's child or more than one
+  separator;
+- the edges of an item moved in from another list, which lose their entries
+  where the neighbour changed and take the target list's layout.
+
+A comment between two items is trivia of one item's side, since every extra
+has one owner, and travels with that item.
 
 ### One tolerance is deliberately lost
 
@@ -507,8 +515,8 @@ the chance that someone will.
 - `VerbatimNode` returns as a node type, admitted by slot types that
   accept a text kind.
 - The fill walk is the prepare walk: `Prepare::prepare(&mut self, &RenderContext)`
-  resolves coordinates against the engine's live trees, classifies list gaps,
-  then fills unset sites from the option table. The context is an argument
+  resolves coordinates against the engine's live trees, fills each list's
+  gaps from its stored layout, then fills unset sites from the option table. The context is an argument
   end to end; nothing is thread-local or global.
 - `hasStructure`, `_isReadTextLeaf`, and the `slot.rs` judgement collapse into
   the model's own classification of text-modeled kinds — a stamped fact, per
@@ -543,10 +551,12 @@ children`), which is precisely the proxy that forced the unconditional capture.
 6. A coordinate minted by one engine and rendered through another fails loudly.
 7. Deserialization dispatches on shape, with no attempt-then-fallback, and
    rejects an unrecognised shape rather than defaulting to an arm.
-8. A rebuilt list whose items are coordinates renders the majority class of
-   its source gaps: a parsed block with blank lines between its statements
-   keeps them after one statement is appended, and a comma list spelled
-   `a,b,c` stays tight after an item is replaced.
+8. An item inserted into a parsed separated list, or replacing one, takes the
+   list's stored spacing on both sides of its separator: a comma list spelled
+   `a,b,c` stays tight after an item is appended or replaced, and a gap that
+   kept its own entry keeps it. A parsed block keeps the blank lines between
+   its statements after one is appended, and the appended statement's gap
+   takes the options.
 9. No thread-local or global carries the tree table or the option table; the
    render context is an argument at every level of the walk.
 10. Full unit suite, and `validate history` compared numerically across all

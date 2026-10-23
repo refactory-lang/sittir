@@ -258,14 +258,21 @@ subtree renders by slicing the source the engine still holds, so every gap
 inside it is reproduced byte for byte without a class ever being named.
 
 A class is derived where a parsed list needs one. The read measures a list
-slot's gaps on first use, classifies each side of each gap into the arm the
-site admits with the same seam rank, splits a separated gap around its
-token, and gives each side the majority class over its gaps, the class the
-read options write breaking a tie. The slot stores a side's class only
-where it differs from that class, as its stored layout, and the prepare
-walk fills a rebuilt list's gaps from it, so an item added to a parsed list
-takes the list's spacing. The flank's stored choice is the list's existing
-`_delimiter`.
+slot's separator gaps on first use: a gap between two of its items holding
+one of the slot's own separators and nothing else, split around it into the
+run before and the run after. Each run classes as the grammar's layout kind
+spelled the same, else the one of its seam rank, else the widest below it,
+among the kinds that hold a line break when the run does; a depth arm never
+classes. Each side takes the majority class over its gaps, the class the
+read options write breaking a tie, and the slot's separator is the one most
+of its gaps hold. The slot stores a side's class, and its separator, only
+where it differs from what the read options write, as its stored layout,
+and the prepare walk fills every gap of the list from it, kept or inserted,
+so an item added to a parsed list takes the list's spacing. A gap with no
+separator (an unseparated repeat's), or holding an extra, an `ERROR` or
+another slot's child, is not measured: it stores its runs that differ from
+the read options, as any gap does. The flank's stored choice is the list's
+existing `_delimiter`.
 
 The tree's inferred table is the layer of the options a parse reads off its
 source. It holds only what the source sets apart from the engine's options:
