@@ -1,5 +1,4 @@
 import rust from '@sittir/rust';
-import { structuralShape } from './helpers.ts';
 
 const rs = await rust.createEngine();
 
@@ -38,6 +37,6 @@ export function roundTrip(source: string) {
 	const second = rs.parse(rendered);
 	return {
 		rendered,
-		reparsesEqual: JSON.stringify(structuralShape(first)) === JSON.stringify(structuralShape(second)),
+		reparsesEqual: JSON.stringify(first) === JSON.stringify(second),
 	};
 }
