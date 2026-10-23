@@ -10,6 +10,7 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	configFieldOr,
+	currentHandle,
 	isNodeOfKind,
 	isNodeValue
 } from '@sittir/common/utils';
@@ -549,6 +550,7 @@ export function coerceToProgram<const A extends T.Program.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Program.LooseArgs>
 ): ReturnType<typeof F.buildProgram>;
 export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram> {
+	currentHandle()?.admit(TSKindId.Program, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program))
 		return input[0] as unknown as ReturnType<typeof F.buildProgram>;
 	const _elems: readonly unknown[] = (() => {
@@ -681,6 +683,7 @@ export function coerceToStringContent<const A extends T.StringContent.LooseArgs>
 	...input: A & RefuseUndeclared<A, T.StringContent.LooseArgs>
 ): ReturnType<typeof F.buildStringContent>;
 export function coerceToStringContent(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildStringContent> {
+	currentHandle()?.admit(TSKindId.StringContent, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent))
 		return input[0] as unknown as ReturnType<typeof F.buildStringContent>;
 	const _elems: readonly unknown[] = (() => {
@@ -702,6 +705,7 @@ export function coerceToParameters<const A extends T.Parameters.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Parameters.LooseArgs>
 ): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType<typeof F.buildParameters> {
+	currentHandle()?.admit(TSKindId.Parameters, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters))
 		return input[0] as unknown as ReturnType<typeof F.buildParameters>;
 	const _elems: readonly unknown[] = (() => {
@@ -752,6 +756,7 @@ export function coerceToList<const I extends T.List.Loose>(
 ): ReturnType<typeof F.buildList>;
 export function coerceToList(input: T.List.Loose): ReturnType<typeof F.buildList> {
 	if (!_isLooseConfig<T.List.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildList>;
+	currentHandle()?.admit(TSKindId.List, [input]);
 	return F.buildList({
 		definitions: resolveList_definitions(input.definitions),
 		elements: resolveList_elements(input.elements)
@@ -773,6 +778,7 @@ export function coerceToGrouping<const I extends T.Grouping.Loose>(
 ): ReturnType<typeof F.buildGrouping>;
 export function coerceToGrouping(input: T.Grouping.Loose): ReturnType<typeof F.buildGrouping> {
 	if (!_isLooseConfig<T.Grouping.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildGrouping>;
+	currentHandle()?.admit(TSKindId.Grouping, [input]);
 	return F.buildGrouping({
 		groupingGroups: resolveGrouping_groupingGroups(input.groupingGroups),
 		elements: resolveGrouping_elements(input.elements)
@@ -796,6 +802,7 @@ export function coerceToMissingNode<const I extends T.MissingNode.Loose>(
 export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typeof F.buildMissingNode> {
 	if (!_isLooseConfig<T.MissingNode.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildMissingNode>;
+	currentHandle()?.admit(TSKindId.MissingNode, [input]);
 	return F.buildMissingNode({
 		name: resolveMissingNode_name(input?.name),
 		elements: resolveMissingNode_elements(input?.elements)
@@ -825,6 +832,7 @@ export function coerceToAnonymousNode<const I extends T.AnonymousNode.Loose>(
 export function coerceToAnonymousNode(input: T.AnonymousNode.Loose): ReturnType<typeof F.buildAnonymousNode> {
 	if (!_isLooseConfig<T.AnonymousNode.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAnonymousNode>;
+	currentHandle()?.admit(TSKindId.AnonymousNode, [input]);
 	return F.buildAnonymousNode({
 		name: resolveAnonymousNode_name(input.name),
 		elements: resolveAnonymousNode_elements(input.elements)
@@ -849,6 +857,7 @@ export function coerceToFieldDefinition<const I extends T.FieldDefinition.Loose>
 export function coerceToFieldDefinition(input: T.FieldDefinition.Loose): ReturnType<typeof F.buildFieldDefinition> {
 	if (!_isLooseConfig<T.FieldDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldDefinition>;
+	currentHandle()?.admit(TSKindId.FieldDefinition, [input]);
 	return F.buildFieldDefinition({
 		name: resolveFieldDefinition_name(input.name),
 		definition: resolveFieldDefinition_definition(input.definition)
@@ -903,6 +912,7 @@ export function coerceToPredicate<const I extends T.Predicate.Loose>(
 ): ReturnType<typeof F.buildPredicate>;
 export function coerceToPredicate(input: T.Predicate.Loose): ReturnType<typeof F.buildPredicate> {
 	if (!_isLooseConfig<T.Predicate.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildPredicate>;
+	currentHandle()?.admit(TSKindId.Predicate, [input]);
 	return F.buildPredicate({
 		prefix: resolvePredicate_prefix(input.prefix),
 		name: resolvePredicate_name(input.name),
@@ -963,6 +973,7 @@ export function coerceToGroupExpressionArm(
 ): ReturnType<typeof F.buildGroupExpressionArm> {
 	if (!_isLooseConfig<T.GroupExpressionArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGroupExpressionArm>;
+	currentHandle()?.admit(TSKindId.GroupExpressionArm, [input]);
 	return F.buildGroupExpressionArm({
 		left: resolveGroupExpressionArm_left(input.left),
 		right: resolveGroupExpressionArm_right(input.right)
@@ -989,6 +1000,7 @@ export function coerceToNamedNodeExpressionArm(
 ): ReturnType<typeof F.buildNamedNodeExpressionArm> {
 	if (!_isLooseConfig<T.NamedNodeExpressionArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeExpressionArm>;
+	currentHandle()?.admit(TSKindId.NamedNodeExpressionArm, [input]);
 	return F.buildNamedNodeExpressionArm({
 		left: resolveNamedNodeExpressionArm_left(input.left),
 		right: resolveNamedNodeExpressionArm_right(input.right)
@@ -1013,6 +1025,7 @@ export function coerceToGroupingGroup<const I extends T.GroupingGroup.Loose>(
 export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<typeof F.buildGroupingGroup> {
 	if (!_isLooseConfig<T.GroupingGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGroupingGroup>;
+	currentHandle()?.admit(TSKindId.GroupingGroup, [input]);
 	return F.buildGroupingGroup({
 		groupExpression: resolveGroupingGroup_groupExpression(input.groupExpression),
 		anchor: resolveGroupingGroup_anchor(input.anchor)
@@ -1062,6 +1075,7 @@ export function coerceToNamedNodePlain<const I extends T.NamedNodePlain.Loose>(
 export function coerceToNamedNodePlain(input: T.NamedNodePlain.Loose): ReturnType<typeof F.buildNamedNodePlain> {
 	if (!_isLooseConfig<T.NamedNodePlain.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodePlain>;
+	currentHandle()?.admit(TSKindId.NamedNodePlain, [input]);
 	return F.buildNamedNodePlain({
 		name: resolveNamedNodePlain_name(input.name),
 		namedNodeGroup: resolveNamedNodePlain_namedNodeGroup(input.namedNodeGroup),
@@ -1101,6 +1115,7 @@ export function coerceToNamedNodeSupertyped(
 ): ReturnType<typeof F.buildNamedNodeSupertyped> {
 	if (!_isLooseConfig<T.NamedNodeSupertyped.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeSupertyped>;
+	currentHandle()?.admit(TSKindId.NamedNodeSupertyped, [input]);
 	return F.buildNamedNodeSupertyped({
 		supertype: resolveNamedNodeSupertyped_supertype(input.supertype),
 		name: resolveNamedNodeSupertyped_name(input.name),
@@ -1131,6 +1146,7 @@ export function coerceToNamedNodeGroupChildren(
 ): ReturnType<typeof F.buildNamedNodeGroupChildren> {
 	if (!_isLooseConfig<T.NamedNodeGroupChildren.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeGroupChildren>;
+	currentHandle()?.admit(TSKindId.NamedNodeGroupChildren, [input]);
 	return F.buildNamedNodeGroupChildren({
 		anchor: resolveNamedNodeGroupChildren_anchor(input.anchor),
 		namedNodeExpressions: resolveNamedNodeGroupChildren_namedNodeExpressions(input.namedNodeExpressions)
@@ -1163,6 +1179,7 @@ export function coerceToNamedNodeGroupAnchoredLast(
 ): ReturnType<typeof F.buildNamedNodeGroupAnchoredLast> {
 	if (!_isLooseConfig<T.NamedNodeGroupAnchoredLast.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeGroupAnchoredLast>;
+	currentHandle()?.admit(TSKindId.NamedNodeGroupAnchoredLast, [input]);
 	return F.buildNamedNodeGroupAnchoredLast({
 		anchor: resolveNamedNodeGroupAnchoredLast_anchor(input.anchor),
 		namedNodeExpressions: resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(input.namedNodeExpressions),

@@ -29,14 +29,20 @@ describe('the structure table: what a built node of each kind must hold', () => 
 			nodeOnly: [
 				['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator'],
 				['_definition', 'DecoratedDefinition.definition', 'a built ClassDefinition / FunctionDefinition']
-			]
+			],
+			config: ['decorators', 'definition'],
+			lists: [['decorators', false, 'key']]
 		});
 	});
 
 	it('rows a non-empty separated list by its elements', () => {
 		const list = node('expression_list');
 		expect(list).toBeInstanceOf(AssembledList);
-		expect(listStructureRow(list as AssembledList)).toEqual({ kind: 'expression_list', nonEmpty: [['_item', 'expression_list.elements']] });
+		expect(listStructureRow(list as AssembledList)).toEqual({
+			kind: 'expression_list',
+			nonEmpty: [['_item', 'expression_list.elements']],
+			lists: [['items', false, 0]]
+		});
 	});
 
 	it('prints the table into the language utils by kind id', () => {

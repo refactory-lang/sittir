@@ -71,6 +71,7 @@ export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Alternation.Bound;
 export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
+	currentHandle()?.admit(TSKindId.Alternation, children);
 	const _terms = children;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'alternation', { terms: _terms });
@@ -99,6 +100,7 @@ export function buildTerm<A extends NonEmptyArray<Admit<T.TermGroup>>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Term.Bound;
 export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Term.Bound {
+	currentHandle()?.admit(TSKindId.Term, children);
 	const _term_group = children;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'term', { termGroups: _term_group });
@@ -173,6 +175,7 @@ export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion
 	config: RefusingConfig<T.LookaheadAssertion.Config, { pattern: PatternSlot }>
 ): T.LookaheadAssertion.Bound;
 export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.LookaheadAssertion.Bound {
+	currentHandle()?.admit(TSKindId.LookaheadAssertion, [config]);
 	const _content = kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
@@ -206,6 +209,7 @@ export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAsserti
 	config: RefusingConfig<T.LookbehindAssertion.Config, { pattern: PatternSlot }>
 ): T.LookbehindAssertion.Bound;
 export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): T.LookbehindAssertion.Bound {
+	currentHandle()?.admit(TSKindId.LookbehindAssertion, [config]);
 	const _content = kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content);
 	const _pattern = config.pattern;
 	const handle = currentHandle();
@@ -262,6 +266,7 @@ export function buildCharacterClass<ClassAtomsSlot extends T.CharacterClass.Conf
 	config?: RefusingConfig<Partial<T.CharacterClass.Config>, { classAtoms: ClassAtomsSlot }>
 ): T.CharacterClass.Bound;
 export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {}): T.CharacterClass.Bound {
+	currentHandle()?.admit(TSKindId.CharacterClass, [config]);
 	const _negation = strictBooleanStorage(config.negation);
 	const _leading = strictBooleanStorage(config.leading);
 	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(
@@ -365,6 +370,7 @@ export function buildClassRange<
 	EndSlot extends T.ClassRange.Config['end']
 >(config: RefusingConfig<T.ClassRange.Config, { start: StartSlot; end: EndSlot }>): T.ClassRange.Bound;
 export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound {
+	currentHandle()?.admit(TSKindId.ClassRange, [config]);
 	const _start = kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start);
 	const _end = kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end);
 	const handle = currentHandle();
@@ -468,6 +474,7 @@ export function buildNamedCapturingGroup<
 	config: RefusingConfig<T.NamedCapturingGroup.Config, { groupName: GroupNameSlot; pattern: PatternSlot }>
 ): T.NamedCapturingGroup.Bound;
 export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): T.NamedCapturingGroup.Bound {
+	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [config]);
 	const _content = kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content);
 	const _group_name = config.groupName;
 	const _pattern = config.pattern;
@@ -570,6 +577,7 @@ export function buildFlags(text: string): T.Flags.Bound {
 }
 
 export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.ZeroOrMore.Bound {
+	currentHandle()?.admit(TSKindId.ZeroOrMore, [config]);
 	const _lazy = strictBooleanStorage(config.lazy);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'zero_or_more', { lazy: _lazy });
@@ -595,6 +603,7 @@ export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.Ze
 }
 
 export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
+	currentHandle()?.admit(TSKindId.OneOrMore, [config]);
 	const _lazy = strictBooleanStorage(config.lazy);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'one_or_more', { lazy: _lazy });
@@ -620,6 +629,7 @@ export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneO
 }
 
 export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
+	currentHandle()?.admit(TSKindId.Optional, [config]);
 	const _lazy = strictBooleanStorage(config.lazy);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'optional', { lazy: _lazy });
@@ -648,6 +658,7 @@ export function buildCountQuantifier<ContentSlot extends T.CountQuantifier.Confi
 	config: RefusingConfig<T.CountQuantifier.Config, { content: ContentSlot }>
 ): T.CountQuantifier.Bound;
 export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQuantifier.Bound {
+	currentHandle()?.admit(TSKindId.CountQuantifier, [config]);
 	const _content = config.content;
 	const _lazy = strictBooleanStorage(config.lazy);
 	const handle = currentHandle();
@@ -822,6 +833,7 @@ export function buildUnicodePropertyValueExpression<
 export function buildUnicodePropertyValueExpression(
 	config: T.UnicodePropertyValueExpression.Config
 ): T.UnicodePropertyValueExpression.Bound {
+	currentHandle()?.admit(TSKindId.UnicodePropertyValueExpression, [config]);
 	const _unicode_property_value_expression_group = config.unicodePropertyValueExpressionGroup;
 	const _unicode_property_value = config.unicodePropertyValue;
 	const handle = currentHandle();
@@ -1013,6 +1025,7 @@ export function buildTermGroup<
 	QuantifierSlot extends T.TermGroup.Config['quantifier']
 >(config: RefusingConfig<T.TermGroup.Config, { content: ContentSlot; quantifier: QuantifierSlot }>): T.TermGroup.Bound;
 export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
+	currentHandle()?.admit(TSKindId.TermGroup, [config]);
 	const _content = kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content);
 	const _quantifier = config.quantifier;
 	const handle = currentHandle();
@@ -1079,6 +1092,7 @@ export function buildCountQuantifierArm<
 	>
 ): T.CountQuantifierArm.Bound;
 export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.CountQuantifierArm.Bound {
+	currentHandle()?.admit(TSKindId.CountQuantifierArm, [config]);
 	const _decimal_digits = config.decimalDigits;
 	const _count_quantifier_group = config.countQuantifierGroup;
 	const handle = currentHandle();
@@ -1127,6 +1141,7 @@ export function buildCharacterClassEscapeArm<
 export function buildCharacterClassEscapeArm(
 	config: T.CharacterClassEscapeArm.Config
 ): T.CharacterClassEscapeArm.Bound {
+	currentHandle()?.admit(TSKindId.CharacterClassEscapeArm, [config]);
 	const _character_class_escape_text2 = config.characterClassEscapeText2;
 	const _unicode_property_value_expression = config.unicodePropertyValueExpression;
 	const handle = currentHandle();
@@ -1272,6 +1287,7 @@ export function buildInlineFlagsGroupEnable<
 	config: RefusingConfig<T.InlineFlagsGroupEnable.Config, { enabled: EnabledSlot; pattern: PatternSlot }>
 ): T.InlineFlagsGroupEnable.Bound;
 export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Config): T.InlineFlagsGroupEnable.Bound {
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupEnable, [config]);
 	const _enabled = config.enabled;
 	const _pattern = config.pattern;
 	const handle = currentHandle();
@@ -1313,6 +1329,7 @@ export function buildInlineFlagsGroupToggle<
 	>
 ): T.InlineFlagsGroupToggle.Bound;
 export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Config): T.InlineFlagsGroupToggle.Bound {
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupToggle, [config]);
 	const _enabled = config.enabled;
 	const _disabled = config.disabled;
 	const _pattern = config.pattern;
@@ -1357,6 +1374,7 @@ export function buildInlineFlagsGroupDisable<
 export function buildInlineFlagsGroupDisable(
 	config: T.InlineFlagsGroupDisable.Config
 ): T.InlineFlagsGroupDisable.Bound {
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupDisable, [config]);
 	const _disabled = config.disabled;
 	const _pattern = config.pattern;
 	const handle = currentHandle();

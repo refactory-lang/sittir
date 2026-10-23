@@ -42,3 +42,7 @@ One header line, then the tables as sections, one tab-separated row per kind or 
 ### `packages/tools/src/census/node-json-census.ts::triviaKinds`
 
 The kind names inside a node's comments: every trivia side's entries, written to JSON and walked for `$type` (`jsonKinds`). A trivia entry is a node without `$query`, so its JSON is the one view that names every kind it holds, its variant leaves included.
+
+### `packages/tools/src/census/node-json-census.ts::jsonKinds`
+
+Every `$type` in a JSON value, collected recursively through arrays and object members, including the value's own `$type`. The census uses it to count the kinds a node's JSON, and its comments' JSON, mention.

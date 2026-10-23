@@ -34,6 +34,10 @@ A builder table run through an engine's own build scope: the same `scopedBuild` 
 
 The handle's `settle`, chosen once when the engine is assembled: the identity in the default `'compileTimeOnly'` mode, or, in `'runtime'` mode, `verifyStructure` over the language's structure table with one `seen` set for the engine. So no build or rebuild tests the mode; two engines in one process keep their own. A refusal is raised when the outermost call returns, and its message names the kind and the slot.
 
+### `packages/common/src/create-engine.ts::admitterOf`
+
+The handle's `admit`, chosen once at assembly like `settle`: a function that does nothing in the default `'compileTimeOnly'` mode, and in `'runtime'` mode a lookup of the kind's row in the structure table followed by `checkInput`. A kind id with no row, or one that is not a number, admits anything. The mode is never read per call, and every caller calls `handle.admit` rather than `checkInput`.
+
 ### `packages/common/src/create-engine.ts::scopedBuild`
 
 The builder table with every call, including its build middleware, run inside the engine's handle. Each function and namespace it reaches through an own property is wrapped once, so nested variant builders and their `strict` and `coerce` flavours are scoped like the top-level ones, and a builder that calls another builder keeps the same handle. The result of each call, after its middleware, passes through the handle's `settle`.
@@ -72,7 +76,7 @@ An engine's identity plus its `render` and `query`: what a node's `$render` and 
 
 ### `packages/common/src/engine-scope.ts::EngineHandle`
 
-The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores. `settle` is what a build or rebuild hands its result through before returning it (`settlerOf`).
+The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores. `settle` is what a build or rebuild hands its result through before returning it (`settlerOf`). `admit(kindId, args)` is what a call's input is handed to before the build is trusted (`admitterOf`): each generated raw builder and loose coercer of a kind whose row has `config` or `lists` calls it first, through `currentHandle()`, with its own kind id and the arguments it was given (`admitStatement`).
 
 ### `packages/common/src/engine-scope.ts::inEngine`
 
@@ -458,6 +462,10 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
 `verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+
+### `packages/common/src/verify-structure.ts::checkInput`
+
+`checkInput(row, args)` checks the arguments a builder was called with against the kind's row, where `verifyStructure` checks the node that came out, because a built node holds neither a key the kind does not declare nor an item the builder dropped. When the row has `config` and the first argument is a plain object (not an array, node or coordinate), a key outside the declared ones that does not start with `$` throws `<kind>: undeclared config key '<key>'`. Each `lists` entry that does not admit holes is read from the config key (`arrival` `key`) or, for a spread builder, from a single array argument, a single config holding the list's key, or the rest arguments after a leading options object; an `undefined` or `null` item throws `<kind>.<property>: absent item at index <i>`. A list that admits holes is skipped. Input of any other shape (a string, a node, a coordinate) is not a config and passes.
 
 ### `packages/common/src/runtime.ts::strictBooleanStorage`
 
@@ -1103,3 +1111,35 @@ A kind id's JSON: `{ $type }` naming its kind, with `leadingComments` and `trail
 ### `packages/common/src/node-json.ts::reviveItem`
 
 Revives one slot value, or one list item, of the node the reviver is building. When it revives to a kind id and its JSON carried comments, it records them as a unit-side record: the slot's storage key from its `querySlots` row, the item's position, and the revived comments. After building the node, the reviver gives it those records (`setUnitSides`), the record a parsed tree gives, so render, `$snapshot()` and `toJSON` read them with no path of their own.
+
+### `packages/common/src/node-data.ts::SideRead`
+
+One side of a node (its leading, trailing or inner comments) and the tree whose trivia table holds it. `tree` is `undefined` when the node holds the side as its own data. `sideRead` returns it, so each side is read from the place it lives rather than from one choice made per node: a rebuilt node that wrote one side and inherited the other reads each one from its own source.
+
+### `packages/common/src/node-json.ts::valueJSON`
+
+Converts one slot value to its JSON form. `undefined` and `false` are omitted; `true` and strings pass through; the language's blank value becomes `null`; a kind id becomes a unit node of that kind, carrying the comments its unit records hold (a keyword or punctuation stored as its kind id cannot hold sides itself, so its parent holds them); a node becomes its node JSON; a list becomes an array with `null` for each hole. Any other value throws, naming the slot.
+
+### `packages/common/src/node-json.ts::kindName`
+
+The kind name for a kind id, read from the language's facts. Throws when the language has no kind with that id.
+
+### `packages/common/src/node-json.ts::ReviveHooks`
+
+What the reviver needs from the engine: the language's JSON facts, a `build` hook that constructs a node of a named kind from its input, and a `settle` hook applied to each node the reviver builds. `reviveNode` takes these as its only dependency on the engine.
+
+### `packages/common/src/node-json.ts::reviveNode`
+
+Builds a parsed JSON value back into nodes, the engine's reviver. The walk is recursive and children are built before their parent, so each parent receives built children. Errors name the JSON path: an ERROR node, an unknown kind, a slot the kind lacks, or a leaf without its text.
+
+### `packages/common/src/node-json.ts::revive`
+
+The recursive walk behind `reviveNode`. An array maps each item. An object without `$type` keeps its keys, each revived. An object with `$type` is built as a node of that kind, after its slots and comments are revived. ERROR and unknown kinds are refused at the object's path.
+
+### `packages/common/src/node-json.ts::buildAt`
+
+Calls the `build` hook for one node and rethrows any failure with the JSON path prefixed to its message, keeping the original error as the cause.
+
+### `packages/common/src/node-json.ts::kindIdOf`
+
+The kind id for a kind name, or `undefined` when the language has no kind of that name. The set of names is computed once per facts object and cached, so a name that is not a kind is answered here instead of reaching `facts.kindId`, which throws for names no kind has.
