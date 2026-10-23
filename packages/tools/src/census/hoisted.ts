@@ -54,11 +54,6 @@ export function hoistedCensus(model: CensusModel): HoistedCensus {
 	};
 }
 
-/** Every kind of the model. */
-export function kindCount(model: CensusModel): number {
-	return (Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes)).length;
-}
-
 export interface HoistedCensusOptions {
 	readonly grammar: string;
 }
