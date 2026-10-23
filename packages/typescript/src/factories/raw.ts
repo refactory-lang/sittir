@@ -153,6 +153,7 @@ export function buildProgram<
 	config?: RefusingConfig<Partial<T.Program.Config>, { hashBangLine: HashBangLineSlot; statements: StatementsSlot }>
 ): T.Program.Bound;
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Bound {
+	currentHandle()?.admit(TSKindId.Program, [config]);
 	const _hash_bang_line = config.hashBangLine;
 	const _statements = listStorage<NonNullable<T.Program['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
@@ -331,6 +332,7 @@ export function buildExportSpecifier<
 	AliasSlot extends T.ExportSpecifier.Config['alias']
 >(config: RefusingConfig<T.ExportSpecifier.Config, { name: NameSlot; alias: AliasSlot }>): T.ExportSpecifier.Bound;
 export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.ExportSpecifier.Bound {
+	currentHandle()?.admit(TSKindId.ExportSpecifier, [config]);
 	const _export_kind = kindIdStorage<NonNullable<T.ExportSpecifier['_export_kind']>>(config.exportKind);
 	const _name = rejectKeywordText(
 		kindIdStorage<NonNullable<T.ExportSpecifier['_name']>>(config.name),
@@ -390,6 +392,7 @@ export function buildImportStatement(
 	config: T.ImportStatement.Config,
 	options?: T.ImportStatement.Options
 ): T.ImportStatement.Bound {
+	currentHandle()?.admit(TSKindId.ImportStatement, [config]);
 	const _import_clause = kindIdStorage<NonNullable<T.ImportStatement['_import_clause']>>(config.importClause);
 	const _from_clause = config.fromClause;
 	const _import_attribute = config.importAttribute;
@@ -558,6 +561,7 @@ export function buildImportAttribute<ObjectSlot extends T.ImportAttribute.Config
 	config: RefusingConfig<T.ImportAttribute.Config, { object: ObjectSlot }>
 ): T.ImportAttribute.Bound;
 export function buildImportAttribute(config: T.ImportAttribute.Config): T.ImportAttribute.Bound {
+	currentHandle()?.admit(TSKindId.ImportAttribute, [config]);
 	const _attribute_kind = kindIdStorage<NonNullable<T.ImportAttribute['_attribute_kind']>>(config.attributeKind);
 	const _object = orDefault(config.object, () => buildObject());
 	const handle = currentHandle();
@@ -641,6 +645,7 @@ export function buildVariableDeclaration(...args: unknown[]): T.VariableDeclarat
 		Object.keys(args[0] as object).every((k) => ['terminator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.VariableDeclaration.Options;
 	const children = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.VariableDeclarator>>;
+	currentHandle()?.admit(TSKindId.VariableDeclaration, args);
 	const _declarators = children;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.VariableDeclaration['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -680,6 +685,7 @@ export function buildLexicalDeclaration(
 	config: T.LexicalDeclaration.Config,
 	options?: T.LexicalDeclaration.Options
 ): T.LexicalDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.LexicalDeclaration, [config]);
 	const _kind = kindIdStorage<NonNullable<T.LexicalDeclaration['_kind']>>(config.kind);
 	const _declarators = listStorage<NonNullable<T.LexicalDeclaration['_declarators']>>(config.declarators);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.LexicalDeclaration['_terminator']>>(options?.terminator, [
@@ -726,6 +732,7 @@ export function buildUsingDeclaration(
 	config: T.UsingDeclaration.Config,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.UsingDeclaration, [config]);
 	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
 	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
 		config.variableDeclarators
@@ -783,6 +790,7 @@ export function buildStatementBlock(...args: unknown[]): T.StatementBlock.Bound 
 		Object.keys(args[0] as object).every((k) => ['terminator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as T.StatementBlock.Options;
 	const children = (_optsFirst ? args.slice(1) : args) as unknown as Admit<T.Statement[]>;
+	currentHandle()?.admit(TSKindId.StatementBlock, args);
 	const _statements = children;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.StatementBlock['_terminator']>>(
 		options?.terminator === null ? 0 : options?.terminator,
@@ -850,6 +858,7 @@ export function buildIfStatement<
 	>
 ): T.IfStatement.Bound;
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bound {
+	currentHandle()?.admit(TSKindId.IfStatement, [config]);
 	const _condition = config.condition;
 	const _consequence = kindIdStorage<NonNullable<T.IfStatement['_consequence']>>(config.consequence);
 	const _alternative = config.alternative;
@@ -888,6 +897,7 @@ export function buildSwitchStatement<
 	BodySlot extends T.SwitchStatement.Config['body']
 >(config: RefusingConfig<T.SwitchStatement.Config, { value: ValueSlot; body: BodySlot }>): T.SwitchStatement.Bound;
 export function buildSwitchStatement(config: T.SwitchStatement.Config): T.SwitchStatement.Bound {
+	currentHandle()?.admit(TSKindId.SwitchStatement, [config]);
 	const _value = config.value;
 	const _body = orDefault(config.body, () => buildSwitchBody());
 	const handle = currentHandle();
@@ -928,6 +938,7 @@ export function buildForStatement<
 	>
 ): T.ForStatement.Bound;
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Bound {
+	currentHandle()?.admit(TSKindId.ForStatement, [config]);
 	const _initializer = kindIdStorage<NonNullable<T.ForStatement['_initializer']>>(config.initializer);
 	const _condition = kindIdStorage<NonNullable<T.ForStatement['_condition']>>(config.condition);
 	const _increment = kindIdStorage<NonNullable<T.ForStatement['_increment']>>(config.increment);
@@ -971,6 +982,7 @@ export function buildForInStatement<
 	BodySlot extends T.ForInStatement.Config['body']
 >(config: RefusingConfig<T.ForInStatement.Config, { header: HeaderSlot; body: BodySlot }>): T.ForInStatement.Bound;
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Bound {
+	currentHandle()?.admit(TSKindId.ForInStatement, [config]);
 	const _await = strictBooleanStorage(config.await);
 	const _header = config.header;
 	const _body = kindIdStorage<NonNullable<T.ForInStatement['_body']>>(config.body);
@@ -1011,6 +1023,7 @@ export function buildWhileStatement<
 	config: RefusingConfig<T.WhileStatement.Config, { condition: ConditionSlot; body: BodySlot }>
 ): T.WhileStatement.Bound;
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Bound {
+	currentHandle()?.admit(TSKindId.WhileStatement, [config]);
 	const _condition = config.condition;
 	const _body = kindIdStorage<NonNullable<T.WhileStatement['_body']>>(config.body);
 	const handle = currentHandle();
@@ -1047,6 +1060,7 @@ export function buildDoStatement<
 	options?: T.DoStatement.Options
 ): T.DoStatement.Bound;
 export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoStatement.Options): T.DoStatement.Bound {
+	currentHandle()?.admit(TSKindId.DoStatement, [config]);
 	const _body = kindIdStorage<NonNullable<T.DoStatement['_body']>>(config.body);
 	const _condition = config.condition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(
@@ -1094,6 +1108,7 @@ export function buildTryStatement<
 	>
 ): T.TryStatement.Bound;
 export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): T.TryStatement.Bound {
+	currentHandle()?.admit(TSKindId.TryStatement, [config]);
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const _handler = config.handler;
 	const _finalizer = config.finalizer;
@@ -1132,6 +1147,7 @@ export function buildWithStatement<
 	BodySlot extends T.WithStatement.Config['body']
 >(config: RefusingConfig<T.WithStatement.Config, { object: ObjectSlot; body: BodySlot }>): T.WithStatement.Bound;
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Bound {
+	currentHandle()?.admit(TSKindId.WithStatement, [config]);
 	const _object = config.object;
 	const _body = kindIdStorage<NonNullable<T.WithStatement['_body']>>(config.body);
 	const handle = currentHandle();
@@ -1396,6 +1412,7 @@ export function buildLabeledStatement<
 	BodySlot extends T.LabeledStatement.Config['body']
 >(config: RefusingConfig<T.LabeledStatement.Config, { label: LabelSlot; body: BodySlot }>): T.LabeledStatement.Bound;
 export function buildLabeledStatement(config: T.LabeledStatement.Config): T.LabeledStatement.Bound {
+	currentHandle()?.admit(TSKindId.LabeledStatement, [config]);
 	const _label = admitAliasContent<NonNullable<T.LabeledStatement['_label']>>(config.label, [
 		[[1], (v: unknown) => buildStatementIdentifier(v as never)]
 	]);
@@ -1431,6 +1448,7 @@ export function buildSwitchBody<A extends Admit<(T.SwitchCase | T.SwitchDefault)
 	...children: A & RefuseUndeclared<A>
 ): T.SwitchBody.Bound;
 export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefault)[]>): T.SwitchBody.Bound {
+	currentHandle()?.admit(TSKindId.SwitchBody, children);
 	const _cases = children;
 	const handle = currentHandle();
 	const node = {
@@ -1460,6 +1478,7 @@ export function buildSwitchCase<
 	BodiesSlot extends T.SwitchCase.Config['bodies']
 >(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; bodies: BodiesSlot }>): T.SwitchCase.Bound;
 export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound {
+	currentHandle()?.admit(TSKindId.SwitchCase, [config]);
 	const _value = kindIdStorage<NonNullable<T.SwitchCase['_value']>>(config.value);
 	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
 	const handle = currentHandle();
@@ -1492,6 +1511,7 @@ export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.SwitchDefault.Bound;
 export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
+	currentHandle()?.admit(TSKindId.SwitchDefault, children);
 	const _body = children;
 	const handle = currentHandle();
 	const node = {
@@ -1522,6 +1542,7 @@ export function buildCatchClause<
 	config?: RefusingConfig<Partial<T.CatchClause.Config>, { catchClauseGroup: CatchClauseGroupSlot; body: BodySlot }>
 ): T.CatchClause.Bound;
 export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.CatchClause.Bound {
+	currentHandle()?.admit(TSKindId.CatchClause, [config]);
 	const _catch_clause_group = config.catchClauseGroup;
 	const _body = orDefault(config.body, () => buildStatementBlock());
 	const readGroup_catchClauseGroup = () => _catch_clause_group;
@@ -1691,6 +1712,7 @@ export function buildObject(
 		)[]
 	>
 ): T.Object.Bound {
+	currentHandle()?.admit(TSKindId.Object, children);
 	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(children, [
 		[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]
 	]);
@@ -1738,6 +1760,7 @@ export function buildObjectPattern(
 		)[]
 	>
 ): T.ObjectPattern.Bound {
+	currentHandle()?.admit(TSKindId.ObjectPattern, children);
 	const _properties = admitAliasContent<NonNullable<T.ObjectPattern['_properties']>>(children, [
 		[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]
 	]);
@@ -1773,6 +1796,7 @@ export function buildAssignmentPattern<
 	RightSlot extends T.AssignmentPattern.Config['right']
 >(config: RefusingConfig<T.AssignmentPattern.Config, { left: LeftSlot; right: RightSlot }>): T.AssignmentPattern.Bound;
 export function buildAssignmentPattern(config: T.AssignmentPattern.Config): T.AssignmentPattern.Bound {
+	currentHandle()?.admit(TSKindId.AssignmentPattern, [config]);
 	const _left = config.left;
 	const _right = kindIdStorage<NonNullable<T.AssignmentPattern['_right']>>(config.right);
 	const handle = currentHandle();
@@ -1810,6 +1834,7 @@ export function buildObjectAssignmentPattern<
 export function buildObjectAssignmentPattern(
 	config: T.ObjectAssignmentPattern.Config
 ): T.ObjectAssignmentPattern.Bound {
+	currentHandle()?.admit(TSKindId.ObjectAssignmentPattern, [config]);
 	const _left = admitAliasContent<NonNullable<T.ObjectAssignmentPattern['_left']>>(config.left, [
 		[[1], (v: unknown) => buildShorthandPropertyIdentifierPattern(v as never)]
 	]);
@@ -1851,6 +1876,7 @@ export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Array.Bound;
 export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -1880,6 +1906,7 @@ export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPatte
 	...children: A & RefuseUndeclared<A>
 ): T.ArrayPattern.Bound;
 export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
+	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -1911,6 +1938,7 @@ export function buildNestedIdentifier<
 	config: RefusingConfig<T.NestedIdentifier.Config, { object: ObjectSlot; property: PropertySlot }>
 ): T.NestedIdentifier.Bound;
 export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.NestedIdentifier.Bound {
+	currentHandle()?.admit(TSKindId.NestedIdentifier, [config]);
 	const _object = config.object;
 	const _property = admitAliasContent<NonNullable<T.NestedIdentifier['_property']>>(
 		rejectReservedText(
@@ -1966,6 +1994,7 @@ export function buildClass<
 	>
 ): T.Class.Bound;
 export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound {
+	currentHandle()?.admit(TSKindId.Class, [config]);
 	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(config.decorators ?? []);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -2039,6 +2068,7 @@ export function buildClassDeclaration(
 	config: T.ClassDeclaration.Config,
 	options?: T.ClassDeclaration.Options
 ): T.ClassDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(config.decorators ?? []);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -2148,6 +2178,7 @@ export function buildFunctionExpression<
 	>
 ): T.FunctionExpression.Bound;
 export function buildFunctionExpression(config: Partial<T.FunctionExpression.Config> = {}): T.FunctionExpression.Bound {
+	currentHandle()?.admit(TSKindId.FunctionExpression, [config]);
 	const _async = strictBooleanStorage(config.async);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -2231,6 +2262,7 @@ export function buildFunctionDeclaration(
 	config: T.FunctionDeclaration.Config,
 	options?: T.FunctionDeclaration.Options
 ): T.FunctionDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.FunctionDeclaration, [config]);
 	const _async = strictBooleanStorage(config.async);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -2318,6 +2350,7 @@ export function buildGeneratorFunction<
 	>
 ): T.GeneratorFunction.Bound;
 export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Config> = {}): T.GeneratorFunction.Bound {
+	currentHandle()?.admit(TSKindId.GeneratorFunction, [config]);
 	const _async = strictBooleanStorage(config.async);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -2401,6 +2434,7 @@ export function buildGeneratorFunctionDeclaration(
 	config: T.GeneratorFunctionDeclaration.Config,
 	options?: T.GeneratorFunctionDeclaration.Options
 ): T.GeneratorFunctionDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.GeneratorFunctionDeclaration, [config]);
 	const _async = strictBooleanStorage(config.async);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -2476,6 +2510,7 @@ export function buildArrowFunction<
 	BodySlot extends T.ArrowFunction.Config['body']
 >(config: RefusingConfig<T.ArrowFunction.Config, { content: ContentSlot; body: BodySlot }>): T.ArrowFunction.Bound;
 export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunction.Bound {
+	currentHandle()?.admit(TSKindId.ArrowFunction, [config]);
 	const _async = strictBooleanStorage(config.async);
 	const _content = config.content;
 	const _body = kindIdStorage<NonNullable<T.ArrowFunction['_body']>>(config.body);
@@ -2522,6 +2557,7 @@ export function buildNewExpression<
 	>
 ): T.NewExpression.Bound;
 export function buildNewExpression(config: T.NewExpression.Config): T.NewExpression.Bound {
+	currentHandle()?.admit(TSKindId.NewExpression, [config]);
 	const _constructor = kindIdStorage<NonNullable<T.NewExpression['_constructor']>>(config.constructor_);
 	const _type_arguments = config.typeArguments;
 	const _arguments = config.arguments;
@@ -2594,6 +2630,7 @@ export function buildMemberExpression<
 	config: RefusingConfig<T.MemberExpression.Config, { object: ObjectSlot; property: PropertySlot }>
 ): T.MemberExpression.Bound;
 export function buildMemberExpression(config: T.MemberExpression.Config): T.MemberExpression.Bound {
+	currentHandle()?.admit(TSKindId.MemberExpression, [config]);
 	const _object = kindIdStorage<NonNullable<T.MemberExpression['_object']>>(config.object);
 	const _separator = kindIdStorage<NonNullable<T.MemberExpression['_separator']>>(config.separator);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
@@ -2642,6 +2679,7 @@ export function buildSubscriptExpression<
 	config: RefusingConfig<T.SubscriptExpression.Config, { object: ObjectSlot; index: IndexSlot }>
 ): T.SubscriptExpression.Bound;
 export function buildSubscriptExpression(config: T.SubscriptExpression.Config): T.SubscriptExpression.Bound {
+	currentHandle()?.admit(TSKindId.SubscriptExpression, [config]);
 	const _object = kindIdStorage<NonNullable<T.SubscriptExpression['_object']>>(config.object);
 	const _optional_chain = strictBooleanStorage(config.optionalChain);
 	const _index = kindIdStorage<NonNullable<T.SubscriptExpression['_index']>>(config.index);
@@ -2743,6 +2781,7 @@ export function buildAssignmentExpression<
 	config: RefusingConfig<T.AssignmentExpression.Config, { left: LeftSlot; right: RightSlot }>
 ): T.AssignmentExpression.Bound;
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Bound {
+	currentHandle()?.admit(TSKindId.AssignmentExpression, [config]);
 	const _using = strictBooleanStorage(config.using);
 	const _left = config.left;
 	const _right = kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right);
@@ -2785,6 +2824,7 @@ export function buildAugmentedAssignmentExpression<
 export function buildAugmentedAssignmentExpression(
 	config: T.AugmentedAssignmentExpression.Config
 ): T.AugmentedAssignmentExpression.Bound {
+	currentHandle()?.admit(TSKindId.AugmentedAssignmentExpression, [config]);
 	const _left = config.left;
 	const _operator = kindIdStorage<NonNullable<T.AugmentedAssignmentExpression['_operator']>>(config.operator);
 	const _right = kindIdStorage<NonNullable<T.AugmentedAssignmentExpression['_right']>>(config.right);
@@ -2858,6 +2898,7 @@ export function buildTernaryExpression<
 	>
 ): T.TernaryExpression.Bound;
 export function buildTernaryExpression(config: T.TernaryExpression.Config): T.TernaryExpression.Bound {
+	currentHandle()?.admit(TSKindId.TernaryExpression, [config]);
 	const _condition = kindIdStorage<NonNullable<T.TernaryExpression['_condition']>>(config.condition);
 	const _consequence = kindIdStorage<NonNullable<T.TernaryExpression['_consequence']>>(config.consequence);
 	const _alternative = kindIdStorage<NonNullable<T.TernaryExpression['_alternative']>>(config.alternative);
@@ -2902,6 +2943,7 @@ export function buildBinaryExpression<
 	>
 ): T.BinaryExpression.Bound;
 export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config> = {}): T.BinaryExpression.Bound {
+	currentHandle()?.admit(TSKindId.BinaryExpression, [config]);
 	const _left = kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left);
 	const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
 	const _right = kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right);
@@ -2944,6 +2986,7 @@ export function buildUnaryExpression<ArgumentSlot extends T.UnaryExpression.Conf
 	config: RefusingConfig<T.UnaryExpression.Config, { argument: ArgumentSlot }>
 ): T.UnaryExpression.Bound;
 export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryExpression.Bound {
+	currentHandle()?.admit(TSKindId.UnaryExpression, [config]);
 	const _operator = kindIdStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator);
 	const _argument = kindIdStorage<NonNullable<T.UnaryExpression['_argument']>>(config.argument);
 	const handle = currentHandle();
@@ -2976,6 +3019,7 @@ export function buildSequenceExpression<A extends NonEmptyArray<Admit<T.Expressi
 	...children: A & RefuseUndeclared<A>
 ): T.SequenceExpression.Bound;
 export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expression>>): T.SequenceExpression.Bound {
+	currentHandle()?.admit(TSKindId.SequenceExpression, children);
 	const _expression = children;
 	const handle = currentHandle();
 	const node = {
@@ -3086,6 +3130,7 @@ export function buildTemplateString<A extends Admit<(T.TemplateChars | T.EscapeS
 export function buildTemplateString(
 	...children: Admit<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]>
 ): T.TemplateString.Bound {
+	currentHandle()?.admit(TSKindId.TemplateString, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -3142,6 +3187,7 @@ export function buildRegex<PatternSlot extends T.Regex.Config['pattern'], FlagsS
 	config: RefusingConfig<T.Regex.Config, { pattern: PatternSlot; flags: FlagsSlot }>
 ): T.Regex.Bound;
 export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
+	currentHandle()?.admit(TSKindId.Regex, [config]);
 	const _pattern = config.pattern;
 	const _flags = config.flags;
 	const handle = currentHandle();
@@ -3314,6 +3360,7 @@ export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[
 	...children: A & RefuseUndeclared<A>
 ): T.Arguments.Bound;
 export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
+	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -3383,6 +3430,7 @@ export function buildDecoratorMemberExpression<
 export function buildDecoratorMemberExpression(
 	config: T.DecoratorMemberExpression.Config
 ): T.DecoratorMemberExpression.Bound {
+	currentHandle()?.admit(TSKindId.DecoratorMemberExpression, [config]);
 	const _object = rejectKeywordText(
 		kindIdStorage<NonNullable<T.DecoratorMemberExpression['_object']>>(config.object),
 		'DecoratorMemberExpression.object',
@@ -3437,6 +3485,7 @@ export function buildDecoratorCallExpression<
 export function buildDecoratorCallExpression(
 	config: T.DecoratorCallExpression.Config
 ): T.DecoratorCallExpression.Bound {
+	currentHandle()?.admit(TSKindId.DecoratorCallExpression, [config]);
 	const _function = config.function;
 	const _type_arguments = config.typeArguments;
 	const _arguments = orDefault(config.arguments, () => buildArguments());
@@ -3481,6 +3530,7 @@ export function buildClassBody<A extends Admit<T.ClassBodyMember[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.ClassBody.Bound;
 export function buildClassBody(...children: Admit<T.ClassBodyMember[]>): T.ClassBody.Bound {
+	currentHandle()?.admit(TSKindId.ClassBody, children);
 	const _members = children;
 	const handle = currentHandle();
 	const node = {
@@ -3714,6 +3764,7 @@ export function buildMethodDefinition<
 	>
 ): T.MethodDefinition.Bound;
 export function buildMethodDefinition(config: T.MethodDefinition.Config): T.MethodDefinition.Bound {
+	currentHandle()?.admit(TSKindId.MethodDefinition, [config]);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodDefinition['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -3821,6 +3872,7 @@ export function buildPair<KeySlot extends T.Pair.Config['key'], ValueSlot extend
 	config: RefusingConfig<T.Pair.Config, { key: KeySlot; value: ValueSlot }>
 ): T.Pair.Bound;
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
+	currentHandle()?.admit(TSKindId.Pair, [config]);
 	const _key = admitAliasContent<NonNullable<T.Pair['_key']>>(
 		rejectReservedText(config.key, 'Pair.key', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
@@ -3865,6 +3917,7 @@ export function buildPairPattern<
 	ValueSlot extends T.PairPattern.Config['value']
 >(config: RefusingConfig<T.PairPattern.Config, { key: KeySlot; value: ValueSlot }>): T.PairPattern.Bound;
 export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bound {
+	currentHandle()?.admit(TSKindId.PairPattern, [config]);
 	const _key = admitAliasContent<NonNullable<T.PairPattern['_key']>>(
 		rejectReservedText(config.key, 'PairPattern.key', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
@@ -3943,6 +3996,7 @@ export function buildPublicFieldDefinition<
 	>
 ): T.PublicFieldDefinition.Bound;
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config): T.PublicFieldDefinition.Bound {
+	currentHandle()?.admit(TSKindId.PublicFieldDefinition, [config]);
 	const _decorator = listStorage<NonNullable<T.PublicFieldDefinition['_decorator']>>(config.decorators ?? []);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>>(
@@ -4075,6 +4129,7 @@ export function buildMethodSignature<
 	>
 ): T.MethodSignature.Bound;
 export function buildMethodSignature(config: T.MethodSignature.Config): T.MethodSignature.Bound {
+	currentHandle()?.admit(TSKindId.MethodSignature, [config]);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.MethodSignature['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -4187,6 +4242,7 @@ export function buildAbstractMethodSignature<
 export function buildAbstractMethodSignature(
 	config: T.AbstractMethodSignature.Config
 ): T.AbstractMethodSignature.Bound {
+	currentHandle()?.admit(TSKindId.AbstractMethodSignature, [config]);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.AbstractMethodSignature['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -4286,6 +4342,7 @@ export function buildFunctionSignature(
 	config: T.FunctionSignature.Config,
 	options?: T.FunctionSignature.Options
 ): T.FunctionSignature.Bound {
+	currentHandle()?.admit(TSKindId.FunctionSignature, [config]);
 	const _async = strictBooleanStorage(config.async);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -4387,6 +4444,7 @@ export function buildTypeAssertion<
 	config: RefusingConfig<T.TypeAssertion.Config, { typeArguments: TypeArgumentsSlot; expression: ExpressionSlot }>
 ): T.TypeAssertion.Bound;
 export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssertion.Bound {
+	currentHandle()?.admit(TSKindId.TypeAssertion, [config]);
 	const _type_arguments = config.typeArguments;
 	const _expression = kindIdStorage<NonNullable<T.TypeAssertion['_expression']>>(config.expression);
 	const handle = currentHandle();
@@ -4428,6 +4486,7 @@ export function buildAsExpression<
 	config: RefusingConfig<T.AsExpression.Config, { expression: ExpressionSlot; typeAnnotation: TypeAnnotationSlot }>
 ): T.AsExpression.Bound;
 export function buildAsExpression(config: T.AsExpression.Config): T.AsExpression.Bound {
+	currentHandle()?.admit(TSKindId.AsExpression, [config]);
 	const _expression = kindIdStorage<NonNullable<T.AsExpression['_expression']>>(config.expression);
 	const _type_annotation = admitAliasContent<NonNullable<T.AsExpression['_type_annotation']>>(
 		kindIdStorage<NonNullable<T.AsExpression['_type_annotation']>>(config.typeAnnotation),
@@ -4469,6 +4528,7 @@ export function buildSatisfiesExpression<
 	>
 ): T.SatisfiesExpression.Bound;
 export function buildSatisfiesExpression(config: T.SatisfiesExpression.Config): T.SatisfiesExpression.Bound {
+	currentHandle()?.admit(TSKindId.SatisfiesExpression, [config]);
 	const _expression = kindIdStorage<NonNullable<T.SatisfiesExpression['_expression']>>(config.expression);
 	const _type_annotation = admitAliasContent<NonNullable<T.SatisfiesExpression['_type_annotation']>>(
 		kindIdStorage<NonNullable<T.SatisfiesExpression['_type_annotation']>>(config.typeAnnotation),
@@ -4512,6 +4572,7 @@ export function buildInstantiationExpression<
 export function buildInstantiationExpression(
 	config: T.InstantiationExpression.Config
 ): T.InstantiationExpression.Bound {
+	currentHandle()?.admit(TSKindId.InstantiationExpression, [config]);
 	const _expression = kindIdStorage<NonNullable<T.InstantiationExpression['_expression']>>(config.expression);
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
@@ -4553,6 +4614,7 @@ export function buildImportRequireClause<
 	config: RefusingConfig<T.ImportRequireClause.Config, { name: NameSlot; source: SourceSlot }>
 ): T.ImportRequireClause.Bound;
 export function buildImportRequireClause(config: T.ImportRequireClause.Config): T.ImportRequireClause.Bound {
+	currentHandle()?.admit(TSKindId.ImportRequireClause, [config]);
 	const _name = config.name;
 	const _source = config.source;
 	const handle = currentHandle();
@@ -4585,6 +4647,7 @@ export function buildExtendsClause<A extends NonEmptyArray<Admit<T.ExtendsClause
 	...children: A & RefuseUndeclared<A>
 ): T.ExtendsClause.Bound;
 export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsClauseSingle>>): T.ExtendsClause.Bound {
+	currentHandle()?.admit(TSKindId.ExtendsClause, children);
 	const _types = children;
 	const handle = currentHandle();
 	const node = {
@@ -4615,6 +4678,7 @@ export function buildExtendsClauseSingle<
 	config: RefusingConfig<T.ExtendsClauseSingle.Config, { value: ValueSlot; typeArguments: TypeArgumentsSlot }>
 ): T.ExtendsClauseSingle.Bound;
 export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): T.ExtendsClauseSingle.Bound {
+	currentHandle()?.admit(TSKindId.ExtendsClauseSingle, [config]);
 	const _value = kindIdStorage<NonNullable<T.ExtendsClauseSingle['_value']>>(config.value);
 	const _type_arguments = config.typeArguments;
 	const handle = currentHandle();
@@ -4655,6 +4719,7 @@ export function buildImplementsClause<A extends NonEmptyArray<Admit<T.Type | T.T
 export function buildImplementsClause(
 	...children: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>
 ): T.ImplementsClause.Bound {
+	currentHandle()?.admit(TSKindId.ImplementsClause, children);
 	const _type = admitAliasContent<NonNullable<T.ImplementsClause['_type']>>(children, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -4730,6 +4795,7 @@ export function buildAbstractClassDeclaration<
 export function buildAbstractClassDeclaration(
 	config: T.AbstractClassDeclaration.Config
 ): T.AbstractClassDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.AbstractClassDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(config.decorators ?? []);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -4787,6 +4853,7 @@ export function buildModule<NameSlot extends T.Module.Config['name'], BodySlot e
 	config: RefusingConfig<T.Module.Config, { name: NameSlot; body: BodySlot }>
 ): T.Module.Bound;
 export function buildModule(config: T.Module.Config): T.Module.Bound {
+	currentHandle()?.admit(TSKindId.Module, [config]);
 	const _name = config.name;
 	const _body = config.body;
 	const handle = currentHandle();
@@ -4819,6 +4886,7 @@ export function buildInternalModule<
 	BodySlot extends T.InternalModule.Config['body']
 >(config: RefusingConfig<T.InternalModule.Config, { name: NameSlot; body: BodySlot }>): T.InternalModule.Bound;
 export function buildInternalModule(config: T.InternalModule.Config): T.InternalModule.Bound {
+	currentHandle()?.admit(TSKindId.InternalModule, [config]);
 	const _name = config.name;
 	const _body = config.body;
 	const handle = currentHandle();
@@ -4855,6 +4923,7 @@ export function buildImportAlias<
 	options?: T.ImportAlias.Options
 ): T.ImportAlias.Bound;
 export function buildImportAlias(config: T.ImportAlias.Config, options?: T.ImportAlias.Options): T.ImportAlias.Bound {
+	currentHandle()?.admit(TSKindId.ImportAlias, [config]);
 	const _name = config.name;
 	const _value = config.value;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportAlias['_terminator']>>(options?.terminator, [
@@ -4898,6 +4967,7 @@ export function buildNestedTypeIdentifier<
 	config: RefusingConfig<T.NestedTypeIdentifier.Config, { module: ModuleSlot; name: NameSlot }>
 ): T.NestedTypeIdentifier.Bound;
 export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config): T.NestedTypeIdentifier.Bound {
+	currentHandle()?.admit(TSKindId.NestedTypeIdentifier, [config]);
 	const _module = config.module;
 	const _name = admitAliasContent<NonNullable<T.NestedTypeIdentifier['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -4940,6 +5010,7 @@ export function buildInterfaceDeclaration<
 	>
 ): T.InterfaceDeclaration.Bound;
 export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config): T.InterfaceDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceDeclaration, [config]);
 	const _name = admitAliasContent<NonNullable<T.InterfaceDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -4996,6 +5067,7 @@ export function buildExtendsTypeClause(
 		Admit<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>
 	>
 ): T.ExtendsTypeClause.Bound {
+	currentHandle()?.admit(TSKindId.ExtendsTypeClause, children);
 	const _type = admitAliasContent<NonNullable<T.ExtendsTypeClause['_type']>>(children, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -5029,6 +5101,7 @@ export function buildEnumDeclaration<
 	BodySlot extends T.EnumDeclaration.Config['body']
 >(config: RefusingConfig<T.EnumDeclaration.Config, { name: NameSlot; body: BodySlot }>): T.EnumDeclaration.Bound;
 export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.EnumDeclaration, [config]);
 	const _const = strictBooleanStorage(config.const);
 	const _name = config.name;
 	const _body = orDefault(config.body, () => buildEnumBody());
@@ -5141,6 +5214,7 @@ export function buildEnumAssignment<
 	ValueSlot extends T.EnumAssignment.Config['value']
 >(config: RefusingConfig<T.EnumAssignment.Config, { name: NameSlot; value: ValueSlot }>): T.EnumAssignment.Bound;
 export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssignment.Bound {
+	currentHandle()?.admit(TSKindId.EnumAssignment, [config]);
 	const _name = admitAliasContent<NonNullable<T.EnumAssignment['_name']>>(
 		rejectReservedText(config.name, 'EnumAssignment.name', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
@@ -5195,6 +5269,7 @@ export function buildTypeAliasDeclaration(
 	config: T.TypeAliasDeclaration.Config,
 	options?: T.TypeAliasDeclaration.Options
 ): T.TypeAliasDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.TypeAliasDeclaration, [config]);
 	const _name = admitAliasContent<NonNullable<T.TypeAliasDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -5262,6 +5337,7 @@ export function buildRequiredParameter<
 	>
 ): T.RequiredParameter.Bound;
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
+	currentHandle()?.admit(TSKindId.RequiredParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(config.decorators ?? []);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -5329,6 +5405,7 @@ export function buildOptionalParameter<
 	>
 ): T.OptionalParameter.Bound;
 export function buildOptionalParameter(config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
+	currentHandle()?.admit(TSKindId.OptionalParameter, [config]);
 	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(config.decorators ?? []);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -5518,6 +5595,7 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation<
 export function buildTypeQueryMemberExpressionInTypeAnnotation(
 	config: T.TypeQueryMemberExpressionInTypeAnnotation.Config
 ): T.TypeQueryMemberExpressionInTypeAnnotation.Bound {
+	currentHandle()?.admit(TSKindId.TypeQueryMemberExpressionInTypeAnnotation, [config]);
 	const _object = kindIdStorage<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_object']>>(config.object);
 	const _property = admitAliasContent<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_property']>>(
 		rejectReservedText(
@@ -5566,6 +5644,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation<
 export function buildTypeQueryCallExpressionInTypeAnnotation(
 	config: T.TypeQueryCallExpressionInTypeAnnotation.Config
 ): T.TypeQueryCallExpressionInTypeAnnotation.Bound {
+	currentHandle()?.admit(TSKindId.TypeQueryCallExpressionInTypeAnnotation, [config]);
 	const _function = kindIdStorage<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation['_function']>>(config.function);
 	const _arguments = orDefault(config.arguments, () => buildArguments());
 	const handle = currentHandle();
@@ -5675,6 +5754,7 @@ export function buildTupleParameter<
 	TypeSlot extends T.TupleParameter.Config['type']
 >(config: RefusingConfig<T.TupleParameter.Config, { name: NameSlot; type: TypeSlot }>): T.TupleParameter.Bound;
 export function buildTupleParameter(config: T.TupleParameter.Config): T.TupleParameter.Bound {
+	currentHandle()?.admit(TSKindId.TupleParameter, [config]);
 	const _name = config.name;
 	const _type = config.type;
 	const handle = currentHandle();
@@ -5710,6 +5790,7 @@ export function buildOptionalTupleParameter<
 	config: RefusingConfig<T.OptionalTupleParameter.Config, { name: NameSlot; type: TypeSlot }>
 ): T.OptionalTupleParameter.Bound;
 export function buildOptionalTupleParameter(config: T.OptionalTupleParameter.Config): T.OptionalTupleParameter.Bound {
+	currentHandle()?.admit(TSKindId.OptionalTupleParameter, [config]);
 	const _name = config.name;
 	const _type = config.type;
 	const handle = currentHandle();
@@ -5809,6 +5890,7 @@ export function buildConstructorType<
 	>
 ): T.ConstructorType.Bound;
 export function buildConstructorType(config: T.ConstructorType.Config): T.ConstructorType.Bound {
+	currentHandle()?.admit(TSKindId.ConstructorType, [config]);
 	const _abstract = strictBooleanStorage(config.abstract);
 	const _type_parameters = config.typeParameters;
 	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
@@ -5900,6 +5982,7 @@ export function buildTemplateLiteralType<A extends Admit<(T.TemplateChars | T.Te
 export function buildTemplateLiteralType(
 	...children: Admit<(T.TemplateChars | T.TemplateType)[]>
 ): T.TemplateLiteralType.Bound {
+	currentHandle()?.admit(TSKindId.TemplateLiteralType, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -5928,6 +6011,7 @@ export function buildInferType<
 	TypeSlot extends T.InferType.Config['type']
 >(config: RefusingConfig<T.InferType.Config, { name: NameSlot; type: TypeSlot }>): T.InferType.Bound;
 export function buildInferType(config: T.InferType.Config): T.InferType.Bound {
+	currentHandle()?.admit(TSKindId.InferType, [config]);
 	const _name = admitAliasContent<NonNullable<T.InferType['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -5973,6 +6057,7 @@ export function buildConditionalType<
 	>
 ): T.ConditionalType.Bound;
 export function buildConditionalType(config: T.ConditionalType.Config): T.ConditionalType.Bound {
+	currentHandle()?.admit(TSKindId.ConditionalType, [config]);
 	const _left = admitAliasContent<NonNullable<T.ConditionalType['_left']>>(
 		kindIdStorage<NonNullable<T.ConditionalType['_left']>>(config.left),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6030,6 +6115,7 @@ export function buildGenericType<
 	config: RefusingConfig<T.GenericType.Config, { name: NameSlot; typeArguments: TypeArgumentsSlot }>
 ): T.GenericType.Bound;
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
+	currentHandle()?.admit(TSKindId.GenericType, [config]);
 	const _name = admitAliasContent<NonNullable<T.GenericType['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -6071,6 +6157,7 @@ export function buildTypePredicate<
 	TypeSlot extends T.TypePredicate.Config['type']
 >(config: RefusingConfig<T.TypePredicate.Config, { name: NameSlot; type: TypeSlot }>): T.TypePredicate.Bound;
 export function buildTypePredicate(config: T.TypePredicate.Config): T.TypePredicate.Bound {
+	currentHandle()?.admit(TSKindId.TypePredicate, [config]);
 	const _name = rejectKeywordText(
 		kindIdStorage<NonNullable<T.TypePredicate['_name']>>(config.name),
 		'TypePredicate.name',
@@ -6166,6 +6253,7 @@ export function buildTypeQueryMemberExpression<
 export function buildTypeQueryMemberExpression(
 	config: T.TypeQueryMemberExpression.Config
 ): T.TypeQueryMemberExpression.Bound {
+	currentHandle()?.admit(TSKindId.TypeQueryMemberExpression, [config]);
 	const _object = rejectKeywordText(
 		kindIdStorage<NonNullable<T.TypeQueryMemberExpression['_object']>>(config.object),
 		'TypeQueryMemberExpression.object',
@@ -6221,6 +6309,7 @@ export function buildTypeQuerySubscriptExpression<
 export function buildTypeQuerySubscriptExpression(
 	config: T.TypeQuerySubscriptExpression.Config
 ): T.TypeQuerySubscriptExpression.Bound {
+	currentHandle()?.admit(TSKindId.TypeQuerySubscriptExpression, [config]);
 	const _object = rejectKeywordText(
 		kindIdStorage<NonNullable<T.TypeQuerySubscriptExpression['_object']>>(config.object),
 		'TypeQuerySubscriptExpression.object',
@@ -6268,6 +6357,7 @@ export function buildTypeQueryCallExpression<
 export function buildTypeQueryCallExpression(
 	config: T.TypeQueryCallExpression.Config
 ): T.TypeQueryCallExpression.Bound {
+	currentHandle()?.admit(TSKindId.TypeQueryCallExpression, [config]);
 	const _function = rejectKeywordText(
 		kindIdStorage<NonNullable<T.TypeQueryCallExpression['_function']>>(config.function),
 		'TypeQueryCallExpression.function',
@@ -6313,6 +6403,7 @@ export function buildTypeQueryInstantiationExpression<
 export function buildTypeQueryInstantiationExpression(
 	config: T.TypeQueryInstantiationExpression.Config
 ): T.TypeQueryInstantiationExpression.Bound {
+	currentHandle()?.admit(TSKindId.TypeQueryInstantiationExpression, [config]);
 	const _function = rejectKeywordText(
 		kindIdStorage<NonNullable<T.TypeQueryInstantiationExpression['_function']>>(config.function),
 		'TypeQueryInstantiationExpression.function',
@@ -6446,6 +6537,7 @@ export function buildLookupType<
 	IndexTypeSlot extends T.LookupType.Config['indexType']
 >(config: RefusingConfig<T.LookupType.Config, { type: TypeSlot; indexType: IndexTypeSlot }>): T.LookupType.Bound;
 export function buildLookupType(config: T.LookupType.Config): T.LookupType.Bound {
+	currentHandle()?.admit(TSKindId.LookupType, [config]);
 	const _type = admitAliasContent<NonNullable<T.LookupType['_type']>>(
 		kindIdStorage<NonNullable<T.LookupType['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -6488,6 +6580,7 @@ export function buildMappedTypeClause<
 	config: RefusingConfig<T.MappedTypeClause.Config, { name: NameSlot; type: TypeSlot; alias: AliasSlot }>
 ): T.MappedTypeClause.Bound;
 export function buildMappedTypeClause(config: T.MappedTypeClause.Config): T.MappedTypeClause.Bound {
+	currentHandle()?.admit(TSKindId.MappedTypeClause, [config]);
 	const _name = admitAliasContent<NonNullable<T.MappedTypeClause['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -6717,6 +6810,7 @@ export function buildObjectType<MembersSlot extends ConfigOf<T.ObjectType>['memb
 	config: RefusingConfig<ConfigOf<T.ObjectType>, { members: MembersSlot }>
 ): T.ObjectType.Bound;
 export function buildObjectType(config: ConfigOf<T.ObjectType>): T.ObjectType.Bound {
+	currentHandle()?.admit(TSKindId.ObjectType, [config]);
 	const _opening = kindIdStorage<NonNullable<T.ObjectType['_opening']>>(config.opening);
 	const _members = config.members;
 	const _closing = kindIdStorage<NonNullable<T.ObjectType['_closing']>>(config.closing);
@@ -6760,6 +6854,7 @@ export function buildObjectTypeCurly<MembersSlot extends T.ObjectType.Curly.Conf
 	config?: RefusingConfig<T.ObjectType.Curly.Config, { members: MembersSlot }>
 ): T.ObjectType.Curly.Bound;
 export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.ObjectType.Curly.Bound {
+	currentHandle()?.admit(TSKindId.ObjectType, [config], ['members']);
 	const _opening = TSKindId.Lbrace as const;
 	const _members = config?.members;
 	const _closing = TSKindId.Rbrace as const;
@@ -6793,6 +6888,7 @@ export function buildObjectTypeFlow<MembersSlot extends T.ObjectType.Flow.Config
 	config?: RefusingConfig<T.ObjectType.Flow.Config, { members: MembersSlot }>
 ): T.ObjectType.Flow.Bound;
 export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.ObjectType.Flow.Bound {
+	currentHandle()?.admit(TSKindId.ObjectType, [config], ['members']);
 	const _opening = TSKindId.LbracePipe as const;
 	const _members = config?.members;
 	const _closing = TSKindId.PipeRbrace as const;
@@ -6833,6 +6929,7 @@ export function buildCallSignature<
 	>
 ): T.CallSignature.Bound;
 export function buildCallSignature(config: Partial<T.CallSignature.Config> = {}): T.CallSignature.Bound {
+	currentHandle()?.admit(TSKindId.CallSignature, [config]);
 	const _type_parameters = config.typeParameters;
 	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
 	const _return_type = config.returnType;
@@ -6883,6 +6980,7 @@ export function buildPropertySignature<
 	TypeSlot extends T.PropertySignature.Config['type']
 >(config: RefusingConfig<T.PropertySignature.Config, { name: NameSlot; type: TypeSlot }>): T.PropertySignature.Bound;
 export function buildPropertySignature(config: T.PropertySignature.Config): T.PropertySignature.Bound {
+	currentHandle()?.admit(TSKindId.PropertySignature, [config]);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PropertySignature['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -7032,6 +7130,7 @@ export function buildTypeParameter<
 	config: RefusingConfig<T.TypeParameter.Config, { name: NameSlot; constraint: ConstraintSlot; value: ValueSlot }>
 ): T.TypeParameter.Bound;
 export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Bound {
+	currentHandle()?.admit(TSKindId.TypeParameter, [config]);
 	const _const = strictBooleanStorage(config.const);
 	const _name = admitAliasContent<NonNullable<T.TypeParameter['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -7106,6 +7205,7 @@ export function buildConstraint<TypeSlot extends T.Constraint.Config['type']>(
 	config: RefusingConfig<T.Constraint.Config, { type: TypeSlot }>
 ): T.Constraint.Bound;
 export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound {
+	currentHandle()?.admit(TSKindId.Constraint, [config]);
 	const _content = kindIdStorage<NonNullable<T.Constraint['_content']>>(config.content);
 	const _type = admitAliasContent<NonNullable<T.Constraint['_type']>>(
 		kindIdStorage<NonNullable<T.Constraint['_type']>>(config.type),
@@ -7148,6 +7248,7 @@ export function buildConstructSignature<
 	>
 ): T.ConstructSignature.Bound;
 export function buildConstructSignature(config: Partial<T.ConstructSignature.Config> = {}): T.ConstructSignature.Bound {
+	currentHandle()?.admit(TSKindId.ConstructSignature, [config]);
 	const _abstract = strictBooleanStorage(config.abstract);
 	const _type_parameters = config.typeParameters;
 	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
@@ -7337,6 +7438,7 @@ export function buildUnionType<
 	RightSlot extends T.UnionType.Config['right']
 >(config: RefusingConfig<T.UnionType.Config, { left: LeftSlot; right: RightSlot }>): T.UnionType.Bound;
 export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
+	currentHandle()?.admit(TSKindId.UnionType, [config]);
 	const _left = admitAliasContent<NonNullable<T.UnionType['_left']>>(
 		kindIdStorage<NonNullable<T.UnionType['_left']>>(config.left),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7376,6 +7478,7 @@ export function buildIntersectionType<
 	RightSlot extends T.IntersectionType.Config['right']
 >(config: RefusingConfig<T.IntersectionType.Config, { left: LeftSlot; right: RightSlot }>): T.IntersectionType.Bound;
 export function buildIntersectionType(config: T.IntersectionType.Config): T.IntersectionType.Bound {
+	currentHandle()?.admit(TSKindId.IntersectionType, [config]);
 	const _left = admitAliasContent<NonNullable<T.IntersectionType['_left']>>(
 		kindIdStorage<NonNullable<T.IntersectionType['_left']>>(config.left),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7421,6 +7524,7 @@ export function buildFunctionType<
 	>
 ): T.FunctionType.Bound;
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Bound {
+	currentHandle()?.admit(TSKindId.FunctionType, [config]);
 	const _type_parameters = config.typeParameters;
 	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
 	const _return_type = admitAliasContent<NonNullable<T.FunctionType['_return_type']>>(
@@ -7500,6 +7604,7 @@ function _buildExportSpecifiers(
 	elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExportSpecifiers.Bound {
+	currentHandle()?.admit(TSKindId.ExportSpecifiers, elements);
 	const _mapped = elements.map(
 		(e): T.ExportSpecifier =>
 			(isNodeOfKind(e, TSKindId.ExportSpecifier)
@@ -7572,6 +7677,7 @@ function _buildImportSpecifiers(
 	elements: NonEmptyArray<Admit<T.ImportSpecifier>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportSpecifiers.Bound {
+	currentHandle()?.admit(TSKindId.ImportSpecifiers, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -7637,6 +7743,7 @@ function _buildFormalParametersElements(
 	elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FormalParametersElements.Bound {
+	currentHandle()?.admit(TSKindId.FormalParametersElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -7740,6 +7847,7 @@ function _buildEnumBodyElements(
 	elements: NonEmptyArray<Admit<T.EnumBodyElement>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Bound {
+	currentHandle()?.admit(TSKindId.EnumBodyElements, elements);
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -7803,6 +7911,7 @@ function _buildTypes(
 	elements: NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Types.Bound {
+	currentHandle()?.admit(TSKindId.Types, elements);
 	const _item = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -7873,6 +7982,7 @@ function _buildTypeParametersElements(
 	elements: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeParametersElements.Bound {
+	currentHandle()?.admit(TSKindId.TypeParametersElements, elements);
 	const _mapped = elements.map(
 		(e): T.TypeParameter =>
 			(isNodeOfKind(e, TSKindId.TypeParameter)
@@ -7958,6 +8068,7 @@ function _buildTupleTypeMembers(
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeMembers.Bound {
+	currentHandle()?.admit(TSKindId.TupleTypeMembers, elements);
 	const _item = admitAliasContent<
 		NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>
 	>(elements, [[[1], (v: unknown) => buildTypeIdentifier(v as never)]]);
@@ -8038,6 +8149,7 @@ export function buildCatchClauseGroup<
 	config: RefusingConfig<T.CatchClauseGroup.Config, { parameter: ParameterSlot; type: TypeSlot }>
 ): T.CatchClauseGroup.Bound;
 export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.CatchClauseGroup.Bound {
+	currentHandle()?.admit(TSKindId.CatchClauseGroup, [config]);
 	const _parameter = config.parameter;
 	const _type = config.type;
 	const handle = currentHandle();
@@ -8132,6 +8244,7 @@ export function buildAmbientDeclarationModule(
 	config: T.AmbientDeclarationModule.Config,
 	options?: T.AmbientDeclarationModule.Options
 ): T.AmbientDeclarationModule.Bound {
+	currentHandle()?.admit(TSKindId.AmbientDeclarationModule, [config]);
 	const _name = admitAliasContent<NonNullable<T.AmbientDeclarationModule['_name']>>(
 		rejectReservedText(
 			config.name,
@@ -8263,6 +8376,7 @@ function _buildObjectTypeContent(
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	}
 ): T.ObjectTypeContent.Bound {
+	currentHandle()?.admit(TSKindId.ObjectTypeContent, elements);
 	const _item = elements;
 	const _separator = options.separator;
 	const _delimiter = options.delimiter;
@@ -8568,6 +8682,7 @@ export function buildNumberFloatPoint(
 	>,
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound {
+	currentHandle()?.admit(TSKindId.NumberFloatPoint, [config]);
 	const _integer = numberText(10, '', config.integer);
 	if (typeof _integer !== 'string')
 		throw new Error(`number_float_point.integer: text must be a string: ${describeValue(_integer)}`);
@@ -8656,6 +8771,7 @@ export function buildNumberFloatLeadingPoint(
 	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound {
+	currentHandle()?.admit(TSKindId.NumberFloatLeadingPoint, [config]);
 	const _fraction = numberText(10, '', config.fraction);
 	if (typeof _fraction !== 'string')
 		throw new Error(`number_float_leading_point.fraction: text must be a string: ${describeValue(_fraction)}`);
@@ -8732,6 +8848,7 @@ export function buildNumberFloatScientific(
 	config: WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound {
+	currentHandle()?.admit(TSKindId.NumberFloatScientific, [config]);
 	const _integer = numberText(10, '', config.integer);
 	if (typeof _integer !== 'string')
 		throw new Error(`number_float_scientific.integer: text must be a string: ${describeValue(_integer)}`);
@@ -9068,6 +9185,7 @@ export function buildBinaryExpressionIn<
 	config: RefusingConfig<T.BinaryExpressionIn.Config, { left: LeftSlot; right: RightSlot }>
 ): T.BinaryExpressionIn.Bound;
 export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.BinaryExpressionIn.Bound {
+	currentHandle()?.admit(TSKindId.BinaryExpressionIn, [config]);
 	const _left = kindIdStorage<NonNullable<T.BinaryExpressionIn['_left']>>(config.left);
 	const _right = kindIdStorage<NonNullable<T.BinaryExpressionIn['_right']>>(config.right);
 	const handle = currentHandle();
@@ -9112,6 +9230,7 @@ export function buildClassBodyMemberMethod(
 	config: T.ClassBodyMemberMethod.Config,
 	options?: T.ClassBodyMemberMethod.Options
 ): T.ClassBodyMemberMethod.Bound {
+	currentHandle()?.admit(TSKindId.ClassBodyMemberMethod, [config]);
 	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
@@ -9158,6 +9277,7 @@ export function buildClassBodyMemberMethodSig<
 export function buildClassBodyMemberMethodSig(
 	config: T.ClassBodyMemberMethodSig.Config
 ): T.ClassBodyMemberMethodSig.Bound {
+	currentHandle()?.admit(TSKindId.ClassBodyMemberMethodSig, [config]);
 	const _method_signature = config.methodSignature;
 	const _terminator = kindIdStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(config.terminator);
 	const handle = currentHandle();
@@ -9233,6 +9353,7 @@ export function buildIndexSignatureColon<
 	config: RefusingConfig<T.IndexSignatureColon.Config, { name: NameSlot; indexType: IndexTypeSlot; type: TypeSlot }>
 ): T.IndexSignatureColon.Bound;
 export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): T.IndexSignatureColon.Bound {
+	currentHandle()?.admit(TSKindId.IndexSignatureColon, [config]);
 	const _sign = kindIdStorage<NonNullable<T.IndexSignatureColon['_sign']>>(config.sign);
 	const _readonly = strictBooleanStorage(config.readonly);
 	const _name = config.name;
@@ -9292,6 +9413,7 @@ export function buildIndexSignatureMappedTypeClause<
 export function buildIndexSignatureMappedTypeClause(
 	config: T.IndexSignatureMappedTypeClause.Config
 ): T.IndexSignatureMappedTypeClause.Bound {
+	currentHandle()?.admit(TSKindId.IndexSignatureMappedTypeClause, [config]);
 	const _sign = kindIdStorage<NonNullable<T.IndexSignatureMappedTypeClause['_sign']>>(config.sign);
 	const _readonly = strictBooleanStorage(config.readonly);
 	const _mapped_type_clause = config.mappedTypeClause;
@@ -9340,6 +9462,7 @@ export function buildImportStatementClauseFrom<
 export function buildImportStatementClauseFrom(
 	config: T.ImportStatementClauseFrom.Config
 ): T.ImportStatementClauseFrom.Bound {
+	currentHandle()?.admit(TSKindId.ImportStatementClauseFrom, [config]);
 	const _import_clause = config.importClause;
 	const _source = config.source;
 	const handle = currentHandle();
@@ -9401,6 +9524,7 @@ export function buildImportSpecifierName<NameSlot extends T.ImportSpecifierName.
 	config: RefusingConfig<T.ImportSpecifierName.Config, { name: NameSlot }>
 ): T.ImportSpecifierName.Bound;
 export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): T.ImportSpecifierName.Bound {
+	currentHandle()?.admit(TSKindId.ImportSpecifierName, [config]);
 	const _import_kind = kindIdStorage<NonNullable<T.ImportSpecifierName['_import_kind']>>(config.importKind);
 	const _name = config.name;
 	const handle = currentHandle();
@@ -9434,6 +9558,7 @@ export function buildImportSpecifierAs<
 	AliasSlot extends T.ImportSpecifierAs.Config['alias']
 >(config: RefusingConfig<T.ImportSpecifierAs.Config, { name: NameSlot; alias: AliasSlot }>): T.ImportSpecifierAs.Bound;
 export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Bound {
+	currentHandle()?.admit(TSKindId.ImportSpecifierAs, [config]);
 	const _import_kind = kindIdStorage<NonNullable<T.ImportSpecifierAs['_import_kind']>>(config.importKind);
 	const _name = rejectKeywordText(
 		kindIdStorage<NonNullable<T.ImportSpecifierAs['_name']>>(config.name),
@@ -9481,6 +9606,7 @@ export function buildParenthesizedExpressionTyped<
 export function buildParenthesizedExpressionTyped(
 	config: T.ParenthesizedExpressionTyped.Config
 ): T.ParenthesizedExpressionTyped.Bound {
+	currentHandle()?.admit(TSKindId.ParenthesizedExpressionTyped, [config]);
 	const _expression = kindIdStorage<NonNullable<T.ParenthesizedExpressionTyped['_expression']>>(config.expression);
 	const _type = config.type;
 	const handle = currentHandle();
@@ -9571,6 +9697,7 @@ export function buildCallExpressionCall<
 	>
 ): T.CallExpressionCall.Bound;
 export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.CallExpressionCall.Bound {
+	currentHandle()?.admit(TSKindId.CallExpressionCall, [config]);
 	const _function = kindIdStorage<NonNullable<T.CallExpressionCall['_function']>>(config.function);
 	const _type_arguments = config.typeArguments;
 	const _arguments = orDefault(config.arguments, () => buildArguments());
@@ -9619,6 +9746,7 @@ export function buildCallExpressionTemplateCall<
 export function buildCallExpressionTemplateCall(
 	config: T.CallExpressionTemplateCall.Config
 ): T.CallExpressionTemplateCall.Bound {
+	currentHandle()?.admit(TSKindId.CallExpressionTemplateCall, [config]);
 	const _function = kindIdStorage<NonNullable<T.CallExpressionTemplateCall['_function']>>(config.function);
 	const _arguments = orDefault(config.arguments, () => buildTemplateString());
 	const handle = currentHandle();
@@ -9658,6 +9786,7 @@ export function buildCallExpressionMember<
 	>
 ): T.CallExpressionMember.Bound;
 export function buildCallExpressionMember(config: T.CallExpressionMember.Config): T.CallExpressionMember.Bound {
+	currentHandle()?.admit(TSKindId.CallExpressionMember, [config]);
 	const _function = kindIdStorage<NonNullable<T.CallExpressionMember['_function']>>(config.function);
 	const _type_arguments = config.typeArguments;
 	const _arguments = orDefault(config.arguments, () => buildArguments());
@@ -9703,6 +9832,7 @@ export function buildStringDouble<A extends Admit<(T.UnescapedDoubleStringFragme
 export function buildStringDouble(
 	...children: Admit<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[]>
 ): T.StringDouble.Bound {
+	currentHandle()?.admit(TSKindId.StringDouble, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -9732,6 +9862,7 @@ export function buildStringSingle<A extends Admit<(T.UnescapedSingleStringFragme
 export function buildStringSingle(
 	...children: Admit<(T.UnescapedSingleStringFragment | T.EscapeSequence)[]>
 ): T.StringSingle.Bound {
+	currentHandle()?.admit(TSKindId.StringSingle, children);
 	const _elements = children;
 	const handle = currentHandle();
 	const node = {
@@ -9761,6 +9892,7 @@ export function buildUpdateExpressionPostfix<ArgumentSlot extends T.UpdateExpres
 export function buildUpdateExpressionPostfix(
 	config: T.UpdateExpressionPostfix.Config
 ): T.UpdateExpressionPostfix.Bound {
+	currentHandle()?.admit(TSKindId.UpdateExpressionPostfix, [config]);
 	const _argument = kindIdStorage<NonNullable<T.UpdateExpressionPostfix['_argument']>>(config.argument);
 	const _operator = kindIdStorage<NonNullable<T.UpdateExpressionPostfix['_operator']>>(config.operator);
 	const handle = currentHandle();
@@ -9793,6 +9925,7 @@ export function buildUpdateExpressionPrefix<ArgumentSlot extends T.UpdateExpress
 	config: RefusingConfig<T.UpdateExpressionPrefix.Config, { argument: ArgumentSlot }>
 ): T.UpdateExpressionPrefix.Bound;
 export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Config): T.UpdateExpressionPrefix.Bound {
+	currentHandle()?.admit(TSKindId.UpdateExpressionPrefix, [config]);
 	const _operator = kindIdStorage<NonNullable<T.UpdateExpressionPrefix['_operator']>>(config.operator);
 	const _argument = kindIdStorage<NonNullable<T.UpdateExpressionPrefix['_argument']>>(config.argument);
 	const handle = currentHandle();
@@ -9859,6 +9992,7 @@ export function buildClassHeritageExtendsClause<
 export function buildClassHeritageExtendsClause(
 	config: T.ClassHeritageExtendsClause.Config
 ): T.ClassHeritageExtendsClause.Bound {
+	currentHandle()?.admit(TSKindId.ClassHeritageExtendsClause, [config]);
 	const _extends_clause = config.extendsClause;
 	const _implements_clause = config.implementsClause;
 	const handle = currentHandle();
@@ -9899,6 +10033,7 @@ export function buildImportClauseDefaultImport<
 export function buildImportClauseDefaultImport(
 	config: T.ImportClauseDefaultImport.Config
 ): T.ImportClauseDefaultImport.Bound {
+	currentHandle()?.admit(TSKindId.ImportClauseDefaultImport, [config]);
 	const _identifier = config.identifier;
 	const _import_clause_group = config.importClauseGroup;
 	const handle = currentHandle();
@@ -9935,6 +10070,7 @@ export function buildExportStatementDefaultFrom(
 	config: T.ExportStatementDefaultFrom.Config,
 	options?: T.ExportStatementDefaultFrom.Options
 ): T.ExportStatementDefaultFrom.Bound {
+	currentHandle()?.admit(TSKindId.ExportStatementDefaultFrom, [config]);
 	const _type = strictBooleanStorage(config.type);
 	const _content = config.content;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementDefaultFrom['_terminator']>>(
@@ -9988,6 +10124,7 @@ export function buildExportStatementDefaultDeclaration<
 export function buildExportStatementDefaultDeclaration(
 	config: T.ExportStatementDefaultDeclaration.Config
 ): T.ExportStatementDefaultDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ExportStatementDefaultDeclaration, [config]);
 	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
 		config.decorators ?? []
 	);
@@ -10060,6 +10197,7 @@ export function buildExportStatementDefaultFromNsFrom<
 export function buildExportStatementDefaultFromNsFrom(
 	config: T.ExportStatementDefaultFromNsFrom.Config
 ): T.ExportStatementDefaultFromNsFrom.Bound {
+	currentHandle()?.admit(TSKindId.ExportStatementDefaultFromNsFrom, [config]);
 	const _namespace_export = config.namespaceExport;
 	const _source = config.source;
 	const handle = currentHandle();
@@ -10100,6 +10238,7 @@ export function buildExportStatementDefaultFromClauseFrom<
 export function buildExportStatementDefaultFromClauseFrom(
 	config: Partial<T.ExportStatementDefaultFromClauseFrom.Config> = {}
 ): T.ExportStatementDefaultFromClauseFrom.Bound {
+	currentHandle()?.admit(TSKindId.ExportStatementDefaultFromClauseFrom, [config]);
 	const _export_clause = orDefault(config.exportClause, () => buildExportClause());
 	const _source = config.source;
 	const handle = currentHandle();
@@ -10214,6 +10353,7 @@ export function buildVariableDeclaratorPlain<
 export function buildVariableDeclaratorPlain(
 	config: T.VariableDeclaratorPlain.Config
 ): T.VariableDeclaratorPlain.Bound {
+	currentHandle()?.admit(TSKindId.VariableDeclaratorPlain, [config]);
 	const _name = config.name;
 	const _type = config.type;
 	const _value = kindIdStorage<NonNullable<T.VariableDeclaratorPlain['_value']>>(config.value);
@@ -10256,6 +10396,7 @@ export function buildVariableDeclaratorDefinite<
 export function buildVariableDeclaratorDefinite(
 	config: T.VariableDeclaratorDefinite.Config
 ): T.VariableDeclaratorDefinite.Bound {
+	currentHandle()?.admit(TSKindId.VariableDeclaratorDefinite, [config]);
 	const _name = config.name;
 	const _type = config.type;
 	const handle = currentHandle();
@@ -10293,6 +10434,7 @@ export function buildForHeaderLhs<
 	RightSlot extends T.ForHeaderLhs.Config['right']
 >(config: RefusingConfig<T.ForHeaderLhs.Config, { left: LeftSlot; right: RightSlot }>): T.ForHeaderLhs.Bound;
 export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderLhs, [config]);
 	const _left = config.left;
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderLhs['_operator']>>(config.operator);
 	const _right = kindIdStorage<NonNullable<T.ForHeaderLhs['_right']>>(config.right);
@@ -10334,6 +10476,7 @@ export function buildForHeaderVarKind<
 	config: RefusingConfig<T.ForHeaderVarKind.Config, { left: LeftSlot; value: ValueSlot; right: RightSlot }>
 ): T.ForHeaderVarKind.Bound;
 export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForHeaderVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderVarKind, [config]);
 	const _left = config.left;
 	const _value = kindIdStorage<NonNullable<T.ForHeaderVarKind['_value']>>(config.value);
 	const _operator = kindIdStorage<NonNullable<T.ForHeaderVarKind['_operator']>>(config.operator);
@@ -10383,6 +10526,7 @@ export function buildForHeaderLetConstKind(
 	config: T.ForHeaderLetConstKind.Config,
 	options?: T.ForHeaderLetConstKind.Options
 ): T.ForHeaderLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderLetConstKind, [config]);
 	const _kind = kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_kind']>>(config.kind);
 	const _left = config.left;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
@@ -10436,6 +10580,7 @@ export function buildForHeaderUsingKind<
 	config: RefusingConfig<T.ForHeaderUsingKind.Config, { left: LeftSlot; right: RightSlot }>
 ): T.ForHeaderUsingKind.Bound;
 export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.ForHeaderUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForHeaderUsingKind, [config]);
 	const _kind = kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind);
 	const _left = config.left;
 	const _terminator = strictBooleanStorage(config.terminator);

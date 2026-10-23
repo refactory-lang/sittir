@@ -33,7 +33,7 @@ export function liveHandle(
 			throw new Error('fake engine has no parsed trees');
 		}
 	};
-	return { current: live, settle: (node) => node };
+	return { current: live, settle: (node) => node, admit: () => undefined };
 }
 
 export function detach(handle: EngineHandle): EngineIdentity {
