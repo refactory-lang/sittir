@@ -139,7 +139,15 @@ const ROUNDTRIP_BY_VALIDATOR: {
 const VALIDATORS = Object.keys(ROUNDTRIP_BY_VALIDATOR) as readonly ValidatorName[];
 
 function baseValidators(validators: object): readonly ValidatorName[] {
-	return VALIDATORS.filter((vName) => vName in validators);
+	return VALIDATORS.filter((vName) => Object.hasOwn(validators, vName));
+}
+
+function ownEntry<T>(record: { readonly [key: string]: T } | undefined, key: string): T | undefined {
+	return record !== undefined && Object.hasOwn(record, key) ? record[key] : undefined;
+}
+
+function declaredRow(head: BackendBaseline, g: string, row: string): DeclaredRowChange | undefined {
+	return ownEntry(ownEntry(head.baselineCounterChange?.grammars, g), row);
 }
 
 // ---------------------------------------------------------------------------
@@ -393,7 +401,7 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 	const checkedGrammars = label === 'head' ? [...new Set([...GRAMMARS, ...grammarKeys])] : grammarKeys;
 	for (const g of checkedGrammars) {
 		const gPath = `${label}.grammars.${g}`;
-		const ge = (grammars as Record<string, unknown>)[g];
+		const ge = ownEntry(grammars as Record<string, unknown>, g);
 		if (ge === undefined) {
 			return {
 				ok: false,
@@ -542,7 +550,7 @@ function caseLosses(baseGrammar: GrammarEntry, headGrammar: GrammarEntry, { b, h
 	const head = new Set(headKinds);
 	const departed = new Set(headKinds === undefined ? [] : (baseGrammar.kinds ?? []).filter((kind) => !head.has(kind)));
 	const lost = Object.entries(baseCases)
-		.map(([kind, cases]): KindLoss => [kind, cases - (headCases[kind] ?? 0)])
+		.map(([kind, cases]): KindLoss => [kind, cases - (ownEntry(headCases, kind) ?? 0)])
 		.filter(([, cases]) => cases > 0);
 	return { departed: lost.filter(([kind]) => departed.has(kind)), kept: lost.filter(([kind]) => !departed.has(kind)) };
 }
@@ -567,7 +575,7 @@ function unexplainedDrop({ b, h }: ComparedRow, { before, after }: ComparedMetri
 
 function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	const baseGrammars = Object.keys(base.grammars);
-	const dropped = baseGrammars.filter((g) => head.grammars[g] === undefined);
+	const dropped = baseGrammars.filter((g) => ownEntry(head.grammars, g) === undefined);
 	if (dropped.length === 0) return null;
 	return {
 		ok: false,
@@ -588,7 +596,7 @@ function* comparedGrammars(
 ): Generator<readonly [string, GrammarEntry, GrammarEntry]> {
 	for (const g of Object.keys(base.grammars)) {
 		const baseGrammar = base.grammars[g];
-		const headGrammar = head.grammars[g];
+		const headGrammar = ownEntry(head.grammars, g);
 		if (baseGrammar && headGrammar) yield [g, baseGrammar, headGrammar];
 	}
 }
@@ -612,7 +620,7 @@ function checkCounts(base: BackendBaseline, head: BackendBaseline, explained: st
 			if (losses === undefined) continue;
 			const [kept] = losses.kept;
 			if (kept !== undefined) {
-				const mismatch = caseLossMismatch(head.baselineCounterChange?.grammars[g]?.[row.row], row, losses.kept);
+				const mismatch = caseLossMismatch(declaredRow(head, g, row.row), row, losses.kept);
 				if (mismatch !== undefined) {
 					const note = `cases lost by kinds that did not depart: ${lossText(losses.kept)} (${mismatch})`;
 					const [kind] = kept;
@@ -622,8 +630,8 @@ function checkCounts(base: BackendBaseline, head: BackendBaseline, explained: st
 						summary: `case loss at ${row.path}.casesByKind: ${note}`,
 						details: {
 							path: `${row.path}.casesByKind.${kind}`,
-							before: row.b.casesByKind?.[kind],
-							after: row.h.casesByKind?.[kind] ?? 0,
+							before: ownEntry(row.b.casesByKind, kind),
+							after: ownEntry(row.h.casesByKind, kind) ?? 0,
 							note
 						}
 					};
@@ -653,7 +661,7 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 		const afterSum = sumByKind(after);
 		if (afterSum <= beforeSum) continue;
 		const [grownKind] = Object.keys(after)
-			.map((kind) => [kind, (after[kind] ?? 0) - (before[kind] ?? 0)] as const)
+			.map((kind) => [kind, (after[kind] ?? 0) - (ownEntry(before, kind) ?? 0)] as const)
 			.sort(([, a], [, b]) => b - a)[0]!;
 		return {
 			ok: false,
@@ -680,8 +688,11 @@ function caseLossMismatch(declared: DeclaredRowChange | undefined, { row, b, h }
 	const counters = declarationMismatch(declared, row, b, h);
 	if (counters !== undefined || declared === undefined) return counters;
 	const undeclared = kept
-		.map(([kind]): KindChange => [kind, b.casesByKind?.[kind] ?? 0, h.casesByKind?.[kind] ?? 0])
-		.filter(([kind, from, to]) => declared.cases?.[kind]?.from !== from || declared.cases[kind]?.to !== to);
+		.map(([kind]): KindChange => [kind, ownEntry(b.casesByKind, kind) ?? 0, ownEntry(h.casesByKind, kind) ?? 0])
+		.filter(([kind, from, to]) => {
+			const change = ownEntry(declared.cases, kind);
+			return change?.from !== from || change.to !== to;
+		});
 	if (undeclared.length === 0) return undefined;
 	return `${row}'s declaration does not name ${undeclared.map(([kind, from, to]) => `${kind} ${from} → ${to}`).join(', ')} in its cases`;
 }
@@ -708,7 +719,7 @@ function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): Regressio
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
 		for (const { row, path, b, h } of comparedRows(g, baseGrammar, headGrammar)) {
 			if (b.casesByKind !== undefined || h.total >= b.total || h.pass < b.pass) continue;
-			const note = declarationMismatch(head.baselineCounterChange?.grammars[g]?.[row], row, b, h);
+			const note = declarationMismatch(declaredRow(head, g, row), row, b, h);
 			if (note === undefined) continue;
 			return {
 				ok: false,
@@ -723,12 +734,12 @@ function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): Regressio
 
 function checkFailRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, headGrammar] of Object.entries(head.grammars)) {
-		for (const row of comparedRows(g, base.grammars[g], headGrammar)) {
+		for (const row of comparedRows(g, ownEntry(base.grammars, g), headGrammar)) {
 			for (const metric of row.metrics) {
 				const before = row.b.total - metric.before;
 				const after = row.h.total - metric.after;
 				if (after <= before) continue;
-				const note = declarationMismatch(head.baselineCounterChange?.grammars[g]?.[row.row], row.row, row.b, row.h);
+				const note = declarationMismatch(declaredRow(head, g, row.row), row.row, row.b, row.h);
 				if (note === undefined) continue;
 				const path = `${row.path}.${metric.name}`;
 				return {

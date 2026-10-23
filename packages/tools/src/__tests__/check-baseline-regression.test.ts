@@ -303,6 +303,17 @@ describe('checkRegression', () => {
 		expect(verdict.ok).toBe(true);
 	});
 
+	it('a baselined grammar named like an Object property is dropped when the head lacks it', () => {
+		const head = baseline();
+		const base = clone(head);
+		base.grammars = clone({ constructor: entry(), ...base.grammars });
+		base.totals = computeTotals(base.grammars);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('grammar-dropped');
+		expect(verdict.summary).toContain('constructor');
+	});
+
 	it('a stable grammar missing from head fails, naming it', () => {
 		const base = baseline();
 		const head = clone(base);
@@ -545,6 +556,27 @@ describe('checkRegression', () => {
 			expectFail(verdict);
 			expect(verdict.reason).toBe('schema-violation');
 			expect(verdict.details.path).toBe(path);
+		});
+
+		it('a kind named like an Object property is counted by its own entry', () => {
+			const base = baseline();
+			const ts = base.grammars.typescript!;
+			ts.kinds = ['constructor', 'x'];
+			ts.validators.from = { ...vr(1, 2), casesByKind: { constructor: 1, x: 1 } };
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.typescript!.validators.from = { ...vr(1, 1), casesByKind: { x: 1 } };
+			const verdict = checkRegression(clone(base), retotal(head));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('case-loss');
+			expect(verdict.details).toMatchObject({ path: 'grammars.typescript.validators.from.casesByKind.constructor', before: 1, after: 0 });
+			head.baselineCounterChange = {
+				reason: 'a constructor case is no longer collected',
+				grammars: {
+					typescript: { from: { from: { pass: 1, total: 2 }, to: { pass: 1, total: 1 }, cases: { constructor: { from: 1, to: 0 } } } }
+				}
+			};
+			expect(checkRegression(clone(base), clone(head)).ok).toBe(true);
 		});
 
 		it('a lost case under a key that is not one of the base\'s kinds fails', () => {

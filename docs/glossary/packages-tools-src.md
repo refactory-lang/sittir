@@ -224,6 +224,14 @@ Whether a row's failing and format-deferred list (a validator's `failingKinds` a
 
 Every validator `GrammarEntry` declares, mapped to whether its result is a `RoundtripResult` and so carries `astMatchPass`. The type requires every validator and the right flag for each, so a validator added to `GrammarEntry` fails type-check here until the checker compares it. `VALIDATORS` is its keys, and the shape check rejects a record holding any other validator, whose cases no rule would compare.
 
+### `packages/tools/src/scripts/check-baseline-regression.ts::ownEntry`
+
+A record's own entry under a key the data supplies (a kind, a grammar), or `undefined` when the record has none. A record parsed from JSON is a plain object, so a plain lookup of a kind named `constructor` or `toString` that the record lacks reads the inherited `Object` member, not `undefined`: a lost case's count becomes `NaN` and the loss vanishes, and a missing grammar reads as present. Every lookup by such a key goes through this.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::declaredRow`
+
+The head's declaration for one grammar's row (a validator, or `parityFixtures`), looked up by own entries (`ownEntry`). The total-drop, case-loss and fail-rise rules all read a row's declaration through it.
+
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
 The census behind the typing rule, run over the compiled grammar's node map (references hydrated and preferences registered, as the emitters see it): every config slot that is required and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and (with `includeLoose`) in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar, which costs about 25 s for all five, so it runs as `pnpm run type-check:required-slots` (a CI step beside the type-check), and the unit test `strict-required-slot-types.test.ts` runs the strict half only.
