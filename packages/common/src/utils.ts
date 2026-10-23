@@ -118,7 +118,8 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const at = tableAt(node);
 	if (at === undefined) {
-		setTriviaData(node as AnyUntypedNode, { ...triviaOf(node), ...trivia });
+		const own = triviaOf(node);
+		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
 	}
 	for (const side of TRIVIA_SIDES) {
