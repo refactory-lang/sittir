@@ -6783,13 +6783,13 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 ```
 
 
-### `packages/codegen/src/emitters/client-utils.ts::triviaKinds`
+### `packages/codegen/src/emitters/client-utils.ts::EmitClientUtilsConfig::triviaKinds`
 
 ```text
 /** Trivia kind names (e.g. `['line_comment', 'block_comment']`). */
 ```
 
-### `packages/codegen/src/emitters/emit.ts::expectTestFailures`
+### `packages/codegen/src/emitters/emit.ts::EmitAllConfig::expectTestFailures`
 
 ```text
 /** Kind → reason for known-failing generated tests (`expectTestFailures:`
@@ -6808,7 +6808,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 /** Emit runtime leaf pattern validation. Default `false`. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::generatedIdTables`
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig::generatedIdTables`
 
 ```text
 /**
@@ -6876,7 +6876,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/factory-map.ts::polymorphVariants`
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData::polymorphVariants`
 
 Polymorph variant discriminators, one `PolymorphVariantDescriptor` per
 polymorph parent kind, read by `nodeToConfig` to stamp `$variant` on a
@@ -6890,7 +6890,7 @@ name variant-structural derivation already resolved). `definedBy` is
 enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 `variant()` override) makes the whole kind `'override'`.
 
-### `packages/codegen/src/emitters/from.ts::generatedIdTables`
+### `packages/codegen/src/emitters/from.ts::EmitFromConfig::generatedIdTables`
 
 ```text
 /**
@@ -6918,7 +6918,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/is.ts::generatedIdTables`
+### `packages/codegen/src/emitters/is.ts::EmitIsConfig::generatedIdTables`
 
 ```text
 /**
@@ -6989,7 +6989,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
 /** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
 ```
 
-### `packages/codegen/src/emitters/kind-id-rust.ts::grammar`
+### `packages/codegen/src/emitters/kind-id-rust.ts::EmitKindIdRustConfig::grammar`
 
 ```text
 /** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */
@@ -6999,7 +6999,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
 
 For a node reference, the grammar kind the value holds, written only where it differs from `parseKind` (`valueNameOf`).
 
-### `packages/codegen/src/emitters/node-model.ts::parseKind`
+### `packages/codegen/src/emitters/node-model.ts::SerializedValue::parseKind`
 
 The kind the parser shows at the value's site: the alias target where one applies, else the grammar kind itself.
 
@@ -7009,7 +7009,7 @@ The kind the parser shows at the value's site: the alias target where one applie
 /** for node-ref: true when the ref was not resolved to an AssembledNode */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::value`
+### `packages/codegen/src/emitters/node-model.ts::SerializedValue::value`
 
 ```text
 /** for terminal: string value */
@@ -7068,7 +7068,7 @@ restates the default from one that must be spelled.
 so a reader of the model steps into a list's items through a slot like any
 other; `elementKinds` stays the kinds the items admit.
 
-### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeModel::polymorphVariants`
 
 ```text
 /**
@@ -7080,7 +7080,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::fieldAliasMap`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeModel::fieldAliasMap`
 
 ```text
 /**
@@ -7105,7 +7105,7 @@ other; `elementKinds` stays the kinds the items admit.
  */
 ```
 
-### `packages/codegen/src/emitters/refine-emit.ts::narrowedFields`
+### `packages/codegen/src/emitters/refine-emit.ts::RefineFormInfo::narrowedFields`
 
 ```text
 /** Per-form field narrowings: each entry says "in this form, field
@@ -7127,13 +7127,13 @@ other; `elementKinds` stays the kinds the items admit.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::hashRs`
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit::hashRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/hash.rs` */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::hashTs`
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit::hashTs`
 
 ```text
 /** `packages/{lang}/src/hash.ts` */
@@ -7145,13 +7145,13 @@ other; `elementKinds` stays the kinds the items admit.
 /** `rust/crates/sittir-{lang}/src/render/node.rs` — AnyNode + FromNapiValue + typed dispatch + node bridge */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::libRs`
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit::libRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes node render entrypoints */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::parseNames`
+### `packages/codegen/src/emitters/render-module.ts::EffectiveSupertypeNodeShape::parseNames`
 
 ```text
 /** Storage→parse pairs merged from every walked supertype (the owner AND
@@ -7159,7 +7159,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 * Keyed by `subtypes[].subKind`; first-stamped pair wins on collision. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::hasNodeField`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::hasNodeField`
 
 ```text
 /** True when this slot has a corresponding field in the node struct.
@@ -7167,14 +7167,14 @@ other; `elementKinds` stays the kinds the items admit.
 	 *  template walker) must be defaulted to "" in the typed dispatch path. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::storageName`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::storageName`
 
 ```text
 /** Rust struct storage identifier for this slot — used to build `node.<storageName>`
 	 *  access expressions. Defaults to `name` when no assembled slot exists. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::isUnnamed`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::isUnnamed`
 
 ```text
 /** True when this slot was inferred (not declared via `field(...)`) — i.e. it
@@ -7182,7 +7182,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 *  route lookups through `node.children` instead of `node.fields[name]`. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::separator`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::separator`
 
 ```text
 /** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
@@ -7190,7 +7190,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 *  gets its own separator (rather than a node-wide first-match). */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::backingNodeField`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingNodeField`
 
 ```text
 /**
@@ -7205,7 +7205,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::backingInnerRequired`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingInnerRequired`
 
 ```text
 /**
@@ -7216,7 +7216,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::backingDirectField`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingDirectField`
 
 ```text
 /**
@@ -7229,7 +7229,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::nodeHasChildren`
+### `packages/codegen/src/emitters/render-module.ts::EmittedStruct::nodeHasChildren`
 
 ```text
 /** True when the node struct has an unnamed (kind-named) child slot. */
@@ -7249,7 +7249,7 @@ other; `elementKinds` stays the kinds the items admit.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::typeName`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::typeName`
 
 ```text
 /** PascalCase typeName of the parent node. */
@@ -7261,19 +7261,19 @@ other; `elementKinds` stays the kinds the items admit.
 /** Raw grammar kind of the parent node — owner key for SCC lookup. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::fieldName`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::fieldName`
 
 ```text
 /** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::kinds`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::kinds`
 
 ```text
 /** Concrete kinds in this slot. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::literals`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::literals`
 
 ```text
 /** Terminal literal children that may appear in runtime `$children`. */
@@ -7425,7 +7425,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::ownerSlots`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::ownerSlots`
 
 ```text
 /**
@@ -7439,7 +7439,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::currentKind`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::currentKind`
 
 ```text
 /**
@@ -7449,7 +7449,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/test.ts::generatedIdTables`
+### `packages/codegen/src/emitters/test.ts::EmitTestsConfig::generatedIdTables`
 
 ```text
 /**
@@ -7459,11 +7459,11 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/test.ts::renderBodies`
+### `packages/codegen/src/emitters/test.ts::EmitTestsConfig::renderBodies`
 
 The compiled render bodies by kind. `rendersText` reads them to decide whether a sampled kind writes text; without them every kind is taken to write text.
 
-### `packages/codegen/src/emitters/test.ts::expectTestFailures`
+### `packages/codegen/src/emitters/test.ts::EmitTestsConfig::expectTestFailures`
 
 ```text
 /**
@@ -7507,7 +7507,7 @@ seat the child into a config or tuple take the value arguments only.
  */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::generatedIdTables`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::generatedIdTables`
 
 `EmitWrapConfig.generatedIdTables`: the parser-symbol id tables (from `loadGeneratedIdTables`). When the config passes no `kindEntries`, the emitter derives its kind catalog from them; with a catalog, every wrap function stamps `$type: TSKindId.X` (`typeStampLines`) and `wrapNode` dispatches by numeric id. Without one (synthetic test grammars) dispatch is by kind name.
 
