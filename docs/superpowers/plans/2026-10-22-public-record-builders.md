@@ -44,6 +44,22 @@ public cutover evidence.
   - string interning, with the original builder string kept;
   - trivia, provenance and retained views.
 
+## Where slices land
+
+Each slice merges into `feat/records`, the arena-storage branch, not into
+master. Master is merged into `feat/records` by a merge commit, never a
+rebase, followed by regeneration and the gate, at the start of each slice and
+whenever master moves.
+
+`feat/records` goes to master only when records are stable:
+
+- the switch slice is merged into it with its gates: both storages' complete
+  validation history unchanged, the corpus comparison in CI, and the record
+  builders at or above the eager probe in the `Arena benchmarks` workflow;
+- native parsed hydration writes records directly, without building typed
+  Rust nodes first;
+- unreferenced built records and chunks are reclaimed.
+
 ## Slices, each a PR stacked on the arena-storage PR
 
 Each slice is green on its own. Arena engines keep building objects until
