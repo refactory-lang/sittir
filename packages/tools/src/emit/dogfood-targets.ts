@@ -45,11 +45,14 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		name: 'Python4space',
 		surfaces: ['strict', 'loose'],
 		rendered: 'dogfood-python.rendered'
-	},
+	}
+];
+
+export const EMITTER_FIXTURE_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'rust',
 		source: 'packages/tools/tests/emit/__fixtures__/keyword-openers.rs',
-		stem: '20-keyword-openers-rust',
+		stem: 'keyword-openers-rust',
 		name: 'KeywordOpenersRust',
 		surfaces: ['strict', 'loose'],
 		rendered: 'keyword-openers-rust.rendered'
@@ -57,7 +60,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'typescript',
 		source: 'packages/tools/tests/emit/__fixtures__/keyword-openers.ts',
-		stem: '20-keyword-openers-typescript',
+		stem: 'keyword-openers-typescript',
 		name: 'KeywordOpenersTypescript',
 		surfaces: ['strict', 'loose'],
 		rendered: 'keyword-openers-typescript.rendered'
@@ -65,7 +68,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'python',
 		source: 'packages/tools/tests/emit/__fixtures__/keyword-openers.py',
-		stem: '20-keyword-openers-python',
+		stem: 'keyword-openers-python',
 		name: 'KeywordOpenersPython',
 		surfaces: ['strict', 'loose'],
 		rendered: 'keyword-openers-python.rendered'
@@ -73,7 +76,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'rust',
 		source: 'packages/tools/tests/emit/__fixtures__/list-seat-configs.rs',
-		stem: '21-list-seat-configs-rust',
+		stem: 'list-seat-configs-rust',
 		name: 'ListSeatConfigsRust',
 		surfaces: ['strict', 'loose'],
 		rendered: 'list-seat-configs-rust.rendered'
@@ -81,7 +84,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'rust',
 		source: 'packages/tools/tests/emit/__fixtures__/trivia.rs',
-		stem: '22-trivia-rust',
+		stem: 'trivia-rust',
 		name: 'TriviaRust',
 		surfaces: ['strict', 'loose'],
 		rendered: 'trivia-rust.rendered'
@@ -89,7 +92,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{
 		grammar: 'typescript',
 		source: 'packages/tools/tests/emit/__fixtures__/trivia.ts',
-		stem: '22-trivia-typescript',
+		stem: 'trivia-typescript',
 		name: 'TriviaTypescript',
 		surfaces: ['strict', 'loose'],
 		rendered: 'trivia-typescript.rendered'
@@ -101,11 +104,35 @@ const SUFFIX: Record<DogfoodSurface, { readonly exportName: string; readonly fil
 	loose: { exportName: 'Loose', file: '-loose.generated.ts' }
 };
 
-export const DOGFOOD_REBUILDS: readonly DogfoodRebuild[] = DOGFOOD_TARGETS.flatMap(({ surfaces, ...target }) =>
-	surfaces.map((surface) => ({
-		...target,
-		surface,
-		exportName: `rebuild${target.name}${SUFFIX[surface].exportName}`,
-		file: `examples/${target.stem}${SUFFIX[surface].file}`
-	}))
+export interface RebuildSet {
+	readonly dir: string;
+	readonly typeCheckScript: string;
+	readonly ceiling: string;
+	readonly targets: readonly DogfoodTarget[];
+}
+
+export const REBUILD_SETS: readonly RebuildSet[] = [
+	{
+		dir: 'examples',
+		typeCheckScript: 'type-check:generated-examples',
+		ceiling: 'examples/generated-typecheck-ceiling.json',
+		targets: DOGFOOD_TARGETS
+	},
+	{
+		dir: 'packages/tools/tests/emit/__generated__',
+		typeCheckScript: 'type-check:emit-fixtures',
+		ceiling: 'packages/tools/tests/emit/__generated__/generated-typecheck-ceiling.json',
+		targets: EMITTER_FIXTURE_TARGETS
+	}
+];
+
+export const GENERATED_REBUILDS: readonly DogfoodRebuild[] = REBUILD_SETS.flatMap(({ dir, targets }) =>
+	targets.flatMap(({ surfaces, ...target }) =>
+		surfaces.map((surface) => ({
+			...target,
+			surface,
+			exportName: `rebuild${target.name}${SUFFIX[surface].exportName}`,
+			file: `${dir}/${target.stem}${SUFFIX[surface].file}`
+		}))
+	)
 );
