@@ -9280,14 +9280,6 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 #### body
 
 ```text
-// emitOne returns undefined for modelTypes that don't get templates
-// (supertype / pattern / keyword / token / enum); emit an empty body
-// to preserve file presence.
-```
-
-#### body
-
-```text
 // Slot-preservation gate: assert every declared slot appears at least
 // once in the emitted body. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
 ```
@@ -9354,6 +9346,14 @@ the edge of what the seam sits beside.
 // isSlotBearingCompound's doc comment, shared.ts.
 ```
 
+
+#### body
+
+```text
+// emitOne returns undefined for modelTypes that don't get templates
+// (supertype / pattern / keyword / token / enum); emit an empty body
+// to preserve file presence.
+```
 ### `packages/codegen/src/emitters/templates.ts::emitBranchTemplate`
 
 ```text
