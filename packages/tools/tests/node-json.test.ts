@@ -352,6 +352,37 @@ describe('a comment on a token stored as its kind id survives JSON', () => {
 		expect(String(revived)).toContain('/* k */');
 	});
 
+	it('keeps it on a revived node an edit rebuilds', () => {
+		const revived = JSON.parse(JSON.stringify(ts.parse('let a = /* keep */true;')), ts.reviver) as { statements(): Iterable<unknown> };
+		const [statement] = [...revived.statements()] as { declarators(): Iterable<{ $with: Record<string, (value: unknown) => object> }> }[];
+		const [first] = [...statement!.declarators()];
+		const rebuilt = first!.$with.name!(ts.build.identifier('b'));
+		expect(String(rebuilt)).toContain('/* keep */');
+		expect(String(JSON.parse(JSON.stringify(rebuilt), ts.reviver))).toContain('/* keep */');
+	});
+
+	it('realigns a revived list’s unit comments under an edit as a parsed list’s are', () => {
+		const source = 'function f() {\n  ;\n  /* k */\n  ;\n}\n';
+		type Fn = { body(): { statements(): Iterable<unknown>; $with: Record<string, (...items: unknown[]) => object> } };
+		const prepended = (root: { statements(): Iterable<unknown> }): string => {
+			const body = ([...root.statements()] as Fn[])[0]!.body();
+			return String(body.$with.statements!(ts.kinds.EmptyStatement, ...body.statements()));
+		};
+		const tokens = (text: string): string => text.replace(/\s+/g, ' ').trim();
+		const parsed = tokens(prepended(ts.parse(source)));
+		expect(parsed).toBe('{ ; /* k */ ; ; }');
+		expect(tokens(prepended(JSON.parse(JSON.stringify(ts.parse(source)), ts.reviver) as { statements(): Iterable<unknown> }))).toBe(parsed);
+	});
+
+	it.each(['fn f() { let a = /* keep */true; }', 'fn f() { let a = /* keep */false; }', 'fn f() { let a = true /* keep */; }'])(
+		'known gap, the native read records no sides for a flattened enum it stores as a kind id: %s loses its comment',
+		(source) => {
+			const root = rs.parse(source);
+			expect(String(root)).toContain('/* keep */');
+			expect(JSON.stringify(root)).not.toContain(' keep ');
+		}
+	);
+
 	it('keeps it on a rebuilt node', () => {
 		const declarators = (ts.parse('let a = /* keep */true;').statements()[0] as unknown as { declarators(): Iterable<{ $with: Record<string, (value: unknown) => object> }> }).declarators();
 		const [first] = [...declarators];

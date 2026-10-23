@@ -342,30 +342,33 @@ export function setUnitSides(node: object, units: readonly UnitSidesData[]): voi
 	record.$_layout = { ...record.$_layout, units };
 }
 
-/**
- * The sides of a rebuilt node's unit children, carried from the node at `index` of `tree` it was
- * rebuilt from. Each slot's items are aligned with the source node's (`alignedItems`): a unit's
- * sides follow it to its new item, and a unit the rebuild removed takes its sides with it.
- */
+export function carryUnitSides(from: object, to: object): void {
+	const held = (from as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
+	if (held !== undefined && held.length > 0) setUnitSides(to, realignedUnits(held, from as Record<string, unknown>, to as Record<string, unknown>));
+}
+
 function carriedUnitSides(node: Record<string, unknown>, index: number, tree: TreeHandle): readonly unknown[] | undefined {
 	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
 	if (units === undefined || units.length === 0) return units;
 	const read = tree.read?.(index, 1);
-	if (!isRecord(read)) return undefined;
+	return isRecord(read) ? realignedUnits(units, read, node) : undefined;
+}
+
+function realignedUnits(units: readonly UnitSidesData[], before: Record<string, unknown>, after: Record<string, unknown>): UnitSidesData[] {
 	const moved = new Map<string, ReadonlyMap<number, number>>();
 	const itemsAt = (holder: Record<string, unknown>, slot: string): readonly unknown[] => {
 		const value = holder[slot];
 		return value === undefined ? [] : Array.isArray(value) ? value : [value];
 	};
-	const carried: unknown[] = [];
+	const carried: UnitSidesData[] = [];
 	for (const unit of units) {
 		let aligned = moved.get(unit.slot);
 		if (aligned === undefined) {
-			aligned = alignedItems(itemsAt(read, unit.slot), itemsAt(node, unit.slot));
+			aligned = alignedItems(itemsAt(before, unit.slot), itemsAt(after, unit.slot));
 			moved.set(unit.slot, aligned);
 		}
 		const item = aligned.get(unit.item);
-		if (item !== undefined && typeof itemsAt(node, unit.slot)[item] === 'number') carried.push({ ...unit, item });
+		if (item !== undefined && typeof itemsAt(after, unit.slot)[item] === 'number') carried.push({ ...unit, item });
 	}
 	return carried;
 }
