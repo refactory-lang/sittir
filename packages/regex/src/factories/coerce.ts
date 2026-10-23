@@ -10,6 +10,7 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	configFieldOr,
+	currentHandle,
 	isNodeOfKind,
 	isNodeValue,
 	listStorage
@@ -689,6 +690,7 @@ export function coerceToAlternation<const A extends T.Alternation.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Alternation.LooseArgs>
 ): ReturnType<typeof F.buildAlternation>;
 export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnType<typeof F.buildAlternation> {
+	currentHandle()?.admit(TSKindId.Alternation, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation))
 		return input[0] as unknown as ReturnType<typeof F.buildAlternation>;
 	const _elems: readonly unknown[] = (() => {
@@ -708,6 +710,7 @@ export function coerceToTerm<const A extends T.Term.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Term.LooseArgs>
 ): ReturnType<typeof F.buildTerm>;
 export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.buildTerm> {
+	currentHandle()?.admit(TSKindId.Term, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term))
 		return input[0] as unknown as ReturnType<typeof F.buildTerm>;
 	const _elems: readonly unknown[] = (() => {
@@ -791,6 +794,7 @@ export function coerceToLookaheadAssertion(
 ): ReturnType<typeof F.buildLookaheadAssertion> {
 	if (!_isLooseConfig<T.LookaheadAssertion.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLookaheadAssertion>;
+	currentHandle()?.admit(TSKindId.LookaheadAssertion, [input]);
 	return F.buildLookaheadAssertion({
 		content: resolveLookaheadAssertion_content(input.content),
 		pattern: resolveLookaheadAssertion_pattern(input.pattern)
@@ -820,6 +824,7 @@ export function coerceToLookbehindAssertion(
 ): ReturnType<typeof F.buildLookbehindAssertion> {
 	if (!_isLooseConfig<T.LookbehindAssertion.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLookbehindAssertion>;
+	currentHandle()?.admit(TSKindId.LookbehindAssertion, [input]);
 	return F.buildLookbehindAssertion({
 		content: resolveLookbehindAssertion_content(input.content),
 		pattern: resolveLookbehindAssertion_pattern(input.pattern)
@@ -879,6 +884,7 @@ export function coerceToCharacterClass<const I extends T.CharacterClass.Loose>(
 export function coerceToCharacterClass(input?: T.CharacterClass.Loose): ReturnType<typeof F.buildCharacterClass> {
 	if (!_isLooseConfig<T.CharacterClass.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildCharacterClass>;
+	currentHandle()?.admit(TSKindId.CharacterClass, [input]);
 	return F.buildCharacterClass({
 		negation: resolveCharacterClass_negation(input?.negation),
 		leading: resolveCharacterClass_leading(input?.leading),
@@ -942,6 +948,7 @@ export function coerceToClassRange<const I extends T.ClassRange.Loose>(
 ): ReturnType<typeof F.buildClassRange>;
 export function coerceToClassRange(input: T.ClassRange.Loose): ReturnType<typeof F.buildClassRange> {
 	if (!_isLooseConfig<T.ClassRange.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildClassRange>;
+	currentHandle()?.admit(TSKindId.ClassRange, [input]);
 	return F.buildClassRange({
 		start: resolveClassRange_start(input.start),
 		end: resolveClassRange_end(input.end)
@@ -1007,6 +1014,7 @@ export function coerceToNamedCapturingGroup(
 ): ReturnType<typeof F.buildNamedCapturingGroup> {
 	if (!_isLooseConfig<T.NamedCapturingGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedCapturingGroup>;
+	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [input]);
 	return F.buildNamedCapturingGroup({
 		content: resolveNamedCapturingGroup_content(input.content),
 		groupName: resolveNamedCapturingGroup_groupName(input.groupName),
@@ -1054,6 +1062,7 @@ export function coerceToZeroOrMore<const I extends T.ZeroOrMore.Loose>(
 export function coerceToZeroOrMore(input?: T.ZeroOrMore.Loose): ReturnType<typeof F.buildZeroOrMore> {
 	if (!_isLooseConfig<T.ZeroOrMore.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildZeroOrMore>;
+	currentHandle()?.admit(TSKindId.ZeroOrMore, [input]);
 	return F.buildZeroOrMore({
 		lazy: resolveZeroOrMore_lazy(input?.lazy)
 	});
@@ -1069,6 +1078,7 @@ export function coerceToOneOrMore<const I extends T.OneOrMore.Loose>(
 export function coerceToOneOrMore(input?: T.OneOrMore.Loose): ReturnType<typeof F.buildOneOrMore> {
 	if (!_isLooseConfig<T.OneOrMore.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildOneOrMore>;
+	currentHandle()?.admit(TSKindId.OneOrMore, [input]);
 	return F.buildOneOrMore({
 		lazy: resolveOneOrMore_lazy(input?.lazy)
 	});
@@ -1084,6 +1094,7 @@ export function coerceToOptional<const I extends T.Optional.Loose>(
 export function coerceToOptional(input?: T.Optional.Loose): ReturnType<typeof F.buildOptional> {
 	if (!_isLooseConfig<T.Optional.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildOptional>;
+	currentHandle()?.admit(TSKindId.Optional, [input]);
 	return F.buildOptional({
 		lazy: resolveOptional_lazy(input?.lazy)
 	});
@@ -1107,6 +1118,7 @@ export function coerceToCountQuantifier<const I extends T.CountQuantifier.Loose>
 export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnType<typeof F.buildCountQuantifier> {
 	if (!_isLooseConfig<T.CountQuantifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifier>;
+	currentHandle()?.admit(TSKindId.CountQuantifier, [input]);
 	return F.buildCountQuantifier({
 		content: resolveCountQuantifier_content(input.content),
 		lazy: resolveCountQuantifier_lazy(input.lazy)
@@ -1231,6 +1243,7 @@ export function coerceToUnicodePropertyValueExpression(
 ): ReturnType<typeof F.buildUnicodePropertyValueExpression> {
 	if (!_isLooseConfig<T.UnicodePropertyValueExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyValueExpression>;
+	currentHandle()?.admit(TSKindId.UnicodePropertyValueExpression, [input]);
 	return F.buildUnicodePropertyValueExpression({
 		unicodePropertyValueExpressionGroup: resolveUnicodePropertyValueExpression_unicodePropertyValueExpressionGroup(
 			input.unicodePropertyValueExpressionGroup
@@ -1362,6 +1375,7 @@ export function coerceToTermGroup<const I extends T.TermGroup.Loose>(
 ): ReturnType<typeof F.buildTermGroup>;
 export function coerceToTermGroup(input: T.TermGroup.Loose): ReturnType<typeof F.buildTermGroup> {
 	if (!_isLooseConfig<T.TermGroup.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTermGroup>;
+	currentHandle()?.admit(TSKindId.TermGroup, [input]);
 	return F.buildTermGroup({
 		content: resolveTermGroup_content(input.content),
 		quantifier: resolveTermGroup_quantifier(input.quantifier)
@@ -1412,6 +1426,7 @@ export function coerceToCountQuantifierArm(
 ): ReturnType<typeof F.buildCountQuantifierArm> {
 	if (!_isLooseConfig<T.CountQuantifierArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierArm>;
+	currentHandle()?.admit(TSKindId.CountQuantifierArm, [input]);
 	return F.buildCountQuantifierArm({
 		decimalDigits: resolveCountQuantifierArm_decimalDigits(input.decimalDigits),
 		countQuantifierGroup: resolveCountQuantifierArm_countQuantifierGroup(input.countQuantifierGroup)
@@ -1438,6 +1453,7 @@ export function coerceToCharacterClassEscapeArm(
 ): ReturnType<typeof F.buildCharacterClassEscapeArm> {
 	if (!_isLooseConfig<T.CharacterClassEscapeArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeArm>;
+	currentHandle()?.admit(TSKindId.CharacterClassEscapeArm, [input]);
 	return F.buildCharacterClassEscapeArm({
 		characterClassEscapeText2: resolveCharacterClassEscapeArm_characterClassEscapeText2(
 			input.characterClassEscapeText2
@@ -1518,6 +1534,7 @@ export function coerceToInlineFlagsGroupEnable(
 ): ReturnType<typeof F.buildInlineFlagsGroupEnable> {
 	if (!_isLooseConfig<T.InlineFlagsGroupEnable.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInlineFlagsGroupEnable>;
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupEnable, [input]);
 	return F.buildInlineFlagsGroupEnable({
 		enabled: resolveInlineFlagsGroupEnable_enabled(input.enabled),
 		pattern: resolveInlineFlagsGroupEnable_pattern(input.pattern)
@@ -1550,6 +1567,7 @@ export function coerceToInlineFlagsGroupToggle(
 ): ReturnType<typeof F.buildInlineFlagsGroupToggle> {
 	if (!_isLooseConfig<T.InlineFlagsGroupToggle.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInlineFlagsGroupToggle>;
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupToggle, [input]);
 	return F.buildInlineFlagsGroupToggle({
 		enabled: resolveInlineFlagsGroupToggle_enabled(input.enabled),
 		disabled: resolveInlineFlagsGroupToggle_disabled(input.disabled),
@@ -1577,6 +1595,7 @@ export function coerceToInlineFlagsGroupDisable(
 ): ReturnType<typeof F.buildInlineFlagsGroupDisable> {
 	if (!_isLooseConfig<T.InlineFlagsGroupDisable.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInlineFlagsGroupDisable>;
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupDisable, [input]);
 	return F.buildInlineFlagsGroupDisable({
 		disabled: resolveInlineFlagsGroupDisable_disabled(input.disabled),
 		pattern: resolveInlineFlagsGroupDisable_pattern(input.pattern)

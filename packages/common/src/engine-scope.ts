@@ -22,6 +22,7 @@ export interface EngineHandle {
 	/** The record builder module the engine's builders dispatch to; without one they build objects. */
 	records?: object;
 	readonly settle: <T>(node: T) => T;
+	readonly admit: (kindId: unknown, args: readonly unknown[], declared?: readonly string[]) => void;
 	/** Checks the values a builder of `kind` stores before it writes them as a record, for an engine verifying structure at run time. */
 	readonly verifyStored?: (kind: number, stored: Readonly<Record<string, unknown>>) => void;
 }

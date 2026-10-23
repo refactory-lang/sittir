@@ -281,13 +281,13 @@ Whether a config entry is a kind tag: the `$type` key holding a `Printed` tag. `
 
 The one required slot of a seat kind, or nothing when it has none or several. It is the slot whose value a list takes bare (`hoistSeatElement`) and the fact that makes the seat share its element slot with that slot's kinds (`wrapSeatElement`), so both read it here.
 
-### `packages/tools/src/emit/factory-source.ts::PrintContext.source`
+### `packages/tools/src/emit/factory-source.ts::PrintContext::source`
 
 ```text
 /** The source the read came from: the bytes a span addresses. */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::ModelFacts.kindIdOfName`
+### `packages/tools/src/emit/factory-source.ts::ModelFacts::kindIdOfName`
 
 ```text
 /** A kind's parser id; an alias shares its target's, and the runtime admits by id. */
@@ -438,13 +438,13 @@ value under the slot key, so no key of the parent's belongs to the group.
 // slots, so the child's rules decide their loose spelling.
 ```
 
-### `packages/tools/src/emit/factory-source.ts::PlacedArg.strict`
+### `packages/tools/src/emit/factory-source.ts::PlacedArg::strict`
 
 ```text
 /** The value as the strict surface spells it at the kind's sole slot. */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::PlacedArg.loose`
+### `packages/tools/src/emit/factory-source.ts::PlacedArg::loose`
 
 ```text
 /** The same value as the loose surface spells it there. */
@@ -582,17 +582,17 @@ Seats each read node's sides (`sidesOf`: its tree's trivia table, through the so
 
 A printed node's call, or its `emptyCall` when it carries inner trivia. Only an empty node owns inner entries, and its no-argument call is the overload typed as the empty form, the one whose `$trivia` has `inner`; `strict({})` is typed as the plain form.
 
-### `packages/tools/src/emit/factory-source.ts::PrintedFacts.emptyCall`
+### `packages/tools/src/emit/factory-source.ts::PrintedFacts::emptyCall`
 
 The no-argument call of a config-shaped node whose config printed empty.
 
-### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.surface`
+### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions::surface`
 
 ```text
 /** `strict` prints `.strict(...)` calls; `loose` prints the bundle calls with every coercion the loose contract admits. */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.nested`
+### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions::nested`
 
 ```text
 /** On the loose surface, whether a nested compound prints as its builder call or as a config object. */

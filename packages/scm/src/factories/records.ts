@@ -39,6 +39,7 @@ import {
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram<A extends Admit<T.Definition[]>>(...children: A & RefuseUndeclared<A>): T.Program.Bound;
 export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Bound {
+	currentHandle()?.admit(TSKindId.Program, children);
 	const _definitions = children;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'program', { definitions: _definitions });
@@ -250,6 +251,7 @@ export function buildStringContent<A extends NonEmptyArray<Admit<T.StringContent
 export function buildStringContent(
 	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
 ): T.StringContent.Bound {
+	currentHandle()?.admit(TSKindId.StringContent, children);
 	const _content = children;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'string_content', { contents: _content });
@@ -277,6 +279,7 @@ export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.Stri
 export function buildParameters(
 	...children: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>
 ): T.Parameters.Bound {
+	currentHandle()?.admit(TSKindId.Parameters, children);
 	const _elements = children;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
@@ -335,6 +338,7 @@ export function buildList<
 	ElementsSlot extends T.List.Config['elements']
 >(config: RefusingConfig<T.List.Config, { definitions: DefinitionsSlot; elements: ElementsSlot }>): T.List.Bound;
 export function buildList(config: T.List.Config): T.List.Bound {
+	currentHandle()?.admit(TSKindId.List, [config]);
 	const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
 	const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
@@ -367,6 +371,7 @@ export function buildGrouping<
 	config: RefusingConfig<T.Grouping.Config, { groupingGroups: GroupingGroupsSlot; elements: ElementsSlot }>
 ): T.Grouping.Bound;
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
+	currentHandle()?.admit(TSKindId.Grouping, [config]);
 	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
 	const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
@@ -407,6 +412,7 @@ export function buildMissingNode<
 	config?: RefusingConfig<Partial<T.MissingNode.Config>, { name: NameSlot; elements: ElementsSlot }>
 ): T.MissingNode.Bound;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
+	currentHandle()?.admit(TSKindId.MissingNode, [config]);
 	const _name = config.name;
 	const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
@@ -438,6 +444,7 @@ export function buildAnonymousNode<
 	ElementsSlot extends T.AnonymousNode.Config['elements']
 >(config: RefusingConfig<T.AnonymousNode.Config, { name: NameSlot; elements: ElementsSlot }>): T.AnonymousNode.Bound;
 export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
+	currentHandle()?.admit(TSKindId.AnonymousNode, [config]);
 	const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
 	const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
@@ -470,6 +477,7 @@ export function buildFieldDefinition<
 	config: RefusingConfig<T.FieldDefinition.Config, { name: NameSlot; definition: DefinitionSlot }>
 ): T.FieldDefinition.Bound;
 export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldDefinition.Bound {
+	currentHandle()?.admit(TSKindId.FieldDefinition, [config]);
 	const _name = config.name;
 	const _definition = config.definition;
 	const handle = currentHandle();
@@ -522,6 +530,7 @@ export function buildPredicate<
 	ParametersSlot extends T.Predicate.Config['parameters']
 >(config: RefusingConfig<T.Predicate.Config, { name: NameSlot; parameters: ParametersSlot }>): T.Predicate.Bound;
 export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
+	currentHandle()?.admit(TSKindId.Predicate, [config]);
 	const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
 	const _name = config.name;
 	const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
@@ -590,6 +599,7 @@ export function buildGroupExpressionArm<
 	config: RefusingConfig<T.GroupExpressionArm.Config, { left: LeftSlot; right: RightSlot }>
 ): T.GroupExpressionArm.Bound;
 export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.GroupExpressionArm.Bound {
+	currentHandle()?.admit(TSKindId.GroupExpressionArm, [config]);
 	const _left = config.left;
 	const _right = config.right;
 	const handle = currentHandle();
@@ -622,6 +632,7 @@ export function buildNamedNodeExpressionArm<
 	config: RefusingConfig<T.NamedNodeExpressionArm.Config, { left: LeftSlot; right: RightSlot }>
 ): T.NamedNodeExpressionArm.Bound;
 export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Config): T.NamedNodeExpressionArm.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeExpressionArm, [config]);
 	const _left = config.left;
 	const _right = config.right;
 	const handle = currentHandle();
@@ -651,6 +662,7 @@ export function buildGroupingGroup<GroupExpressionSlot extends T.GroupingGroup.C
 	config: RefusingConfig<T.GroupingGroup.Config, { groupExpression: GroupExpressionSlot }>
 ): T.GroupingGroup.Bound;
 export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGroup.Bound {
+	currentHandle()?.admit(TSKindId.GroupingGroup, [config]);
 	const _group_expression = config.groupExpression;
 	const _anchor = strictBooleanStorage(config.anchor);
 	const handle = currentHandle();
@@ -713,6 +725,7 @@ export function buildNamedNodePlain<
 	>
 ): T.NamedNodePlain.Bound;
 export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodePlain, [config]);
 	const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
 	const _named_node_group = config.namedNodeGroup;
 	const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
@@ -755,6 +768,7 @@ export function buildNamedNodeSupertyped<
 	>
 ): T.NamedNodeSupertyped.Bound;
 export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): T.NamedNodeSupertyped.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeSupertyped, [config]);
 	const _supertype = config.supertype;
 	const _name = config.name;
 	const _named_node_group = config.namedNodeGroup;
@@ -800,6 +814,7 @@ export function buildNamedNodeGroupChildren<
 	config: RefusingConfig<T.NamedNodeGroupChildren.Config, { namedNodeExpressions: NamedNodeExpressionsSlot }>
 ): T.NamedNodeGroupChildren.Bound;
 export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Config): T.NamedNodeGroupChildren.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeGroupChildren, [config]);
 	const _anchor = strictBooleanStorage(config.anchor);
 	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
 		config.namedNodeExpressions
@@ -847,6 +862,7 @@ export function buildNamedNodeGroupAnchoredLast<
 export function buildNamedNodeGroupAnchoredLast(
 	config: T.NamedNodeGroupAnchoredLast.Config
 ): T.NamedNodeGroupAnchoredLast.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeGroupAnchoredLast, [config]);
 	const _anchor = strictBooleanStorage(config.anchor);
 	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
 		config.namedNodeExpressions ?? []

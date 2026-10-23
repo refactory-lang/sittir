@@ -24,7 +24,7 @@ import type {
 import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
-import { checkRow, verifyStructure } from './verify-structure.ts';
+import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
@@ -195,6 +195,14 @@ function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: S
 	};
 }
 
+function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['admit'] {
+	if (mode !== 'runtime') return () => undefined;
+	return (kindId, args, declared) => {
+		const row = typeof kindId === 'number' ? table[kindId] : undefined;
+		if (row !== undefined) checkInput(row, args, declared);
+	};
+}
+
 function assembleEngine<API extends LanguageAPI>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
@@ -213,7 +221,8 @@ function assembleEngine<API extends LanguageAPI>(
 		current: identity,
 		hydrate: hooks.hydrate,
 		settle: settlerOf(options?.verifyStructure, hooks.structure),
-		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure)
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure),
+		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));

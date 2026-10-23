@@ -244,6 +244,10 @@ export interface StructureRow {
 	readonly nonEmpty?: readonly (readonly [storageKey: string, label: string])[];
 	/** `[storageKey, label, expected]`: the slot holds a built node, never bare text. */
 	readonly nodeOnly?: readonly (readonly [storageKey: string, label: string, expected: string])[];
+	/** The config keys the kind declares; only a kind whose builder takes a config first has it. */
+	readonly config?: readonly string[];
+	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */
+	readonly lists?: readonly (readonly [propertyName: string, holes: boolean, arrival: 'key' | number])[];
 }
 
 /** Each kind's {@link StructureRow} by kind id; a kind with nothing to check has no row. */
