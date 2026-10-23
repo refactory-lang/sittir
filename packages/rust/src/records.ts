@@ -255,7 +255,7 @@ export const records = {
 	LastMatchArmNode: {
 		words: 19,
 		attributes: { word: 2, width: 2, run: 5 },
-		pattern: { word: 4, width: 5 },
+		match_: { word: 4, width: 5 },
 		value: { word: 9, width: 5 },
 		trailing_comma: { word: 14, width: 5 }
 	},

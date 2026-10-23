@@ -6595,9 +6595,7 @@ export function resolveLastMatchArm_attributes(
 	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K48);
 }
 
-export function resolveLastMatchArm_pattern(
-	value: T.LastMatchArm.LooseConfig['pattern']
-): Admit<T.LastMatchArm['_pattern']> {
+export function resolveLastMatchArm_match(value: T.LastMatchArm.LooseConfig['match']): Admit<T.LastMatchArm['_match']> {
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
@@ -6622,7 +6620,7 @@ export function coerceToLastMatchArm(
 	return F.buildLastMatchArm(
 		{
 			attributes: resolveLastMatchArm_attributes(input.attributes),
-			pattern: resolveLastMatchArm_pattern(input.pattern),
+			match: resolveLastMatchArm_match(input.match),
 			value: resolveLastMatchArm_value(input.value)
 		},
 		options

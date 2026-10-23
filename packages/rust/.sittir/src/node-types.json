@@ -3930,7 +3930,7 @@
           }
         ]
       },
-      "pattern": {
+      "match": {
         "multiple": false,
         "required": true,
         "types": [

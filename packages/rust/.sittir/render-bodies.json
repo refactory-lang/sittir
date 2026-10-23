@@ -3932,7 +3932,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "match"
 		},
 		{
 			"kind": "seam",

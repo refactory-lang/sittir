@@ -19698,9 +19698,9 @@ pub struct LastMatchArmNode {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 4, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<Box<MatchPatternNode>>,
+    #[wire(key = "_match")]
+    #[slot(field = field::MATCH, word = 4, width = 5)]
+    pub match_: ::sittir_core::SlotValue<Box<MatchPatternNode>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 9, width = 5)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -19738,7 +19738,7 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmNode {
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx);
         if self.trailing_comma.is_none() { self.trailing_comma = LastMatchArmTrailingCommaNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_LAST_MATCH_ARM_TRAILING_COMMA).arm).map(::sittir_core::SlotValue::Node); }
         self.attributes.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
+        self.match_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         self.trailing_comma.prepare(ctx)?;
         Ok(())
@@ -36809,12 +36809,12 @@ fn render_last_match_arm(node: &LastMatchArmNode, w: &mut dyn ::sittir_core::ren
         tail: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
-    let pattern = &node.pattern;
+    let match_ = &node.match_;
     let trailing_comma = View::new(&node.trailing_comma, "{}");
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_BEFORE);
     w.text("=>")?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER);

@@ -1083,53 +1083,6 @@ export const matchBlock = Object.freeze({
 	coerce: typeof matchBlock$seatedCoerce;
 };
 
-const lastMatchArm$flatten$pattern =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-		parent: PF,
-		child: CF,
-		wrapperId: number
-	) =>
-	(config: unknown, options?: unknown): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const own = _o(config)['pattern'];
-		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
-			const spelled =
-				'$type' in own
-					? (own as { $type?: unknown }).$type === wrapperId
-					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
-			if (spelled) return _fwd<ReturnType<PF>>(parent, config, options);
-		}
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		let seated = false;
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'pattern' || key === 'condition') {
-				inner[key] = value;
-				seated = seated || value !== undefined;
-			} else rest[key] = value;
-		}
-		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
-	};
-function lastMatchArm$seated<A extends T.LastMatchArm.BuildArgs>(
-	...args: A & RefuseUndeclared<A>
-): ReturnType<typeof F.buildLastMatchArm>;
-function lastMatchArm$seated(...args: T.LastMatchArm.BuildArgs): ReturnType<typeof F.buildLastMatchArm> {
-	return lastMatchArm$flatten$pattern(F.buildLastMatchArm, F.buildMatchPattern, TSKindId.MatchPattern)(...args);
-}
-function lastMatchArm$seatedCoerce<const A extends T.LastMatchArm.LooseArgs>(
-	...args: A & RefuseUndeclared<A, T.LastMatchArm.LooseArgs>
-): ReturnType<typeof C.coerceToLastMatchArm>;
-function lastMatchArm$seatedCoerce(...args: T.LastMatchArm.LooseArgs): ReturnType<typeof C.coerceToLastMatchArm> {
-	return lastMatchArm$flatten$pattern(C.coerceToLastMatchArm, C.coerceToMatchPattern, TSKindId.MatchPattern)(...args);
-}
-export const lastMatchArm = Object.freeze({
-	...B.lastMatchArm,
-	...bundle(lastMatchArm$seated, lastMatchArm$seatedCoerce, { key: 'lastMatchArm', max: 2 })
-}) as unknown as Omit<typeof B.lastMatchArm, 'strict' | 'coerce'> & {
-	strict: typeof lastMatchArm$seated;
-	coerce: typeof lastMatchArm$seatedCoerce;
-};
-
 const tupleStructPattern$patterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF

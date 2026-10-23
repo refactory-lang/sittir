@@ -5126,10 +5126,10 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 
 export function buildLastMatchArm<
 	AttributesSlot extends T.LastMatchArm.Config['attributes'],
-	PatternSlot extends T.LastMatchArm.Config['pattern'],
+	MatchSlot extends T.LastMatchArm.Config['match'],
 	ValueSlot extends T.LastMatchArm.Config['value']
 >(
-	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }>,
+	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>,
 	options?: T.LastMatchArm.Options
 ): T.LastMatchArm.Bound;
 export function buildLastMatchArm(
@@ -5138,19 +5138,18 @@ export function buildLastMatchArm(
 ): T.LastMatchArm.Bound {
 	currentHandle()?.admit(TSKindId.LastMatchArm, [config]);
 	const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
 		[[',', TSKindId.Comma] as const]
 	);
-	const readGroup_pattern = () => _pattern;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LastMatchArm as const,
 		$named: true as const,
 		_attributes,
-		_pattern,
+		_match,
 		_value,
 		_trailing_comma,
 		$with: {
@@ -5158,55 +5157,17 @@ export function buildLastMatchArm(
 				rebuilt(node, handle, () =>
 					buildLastMatchArm({ ...config, attributes: restItems('attributes', values) }, options)
 				),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, match: value }, options)),
 			value: (value: Admit<NonNullable<T.LastMatchArm.Config>['value']>) =>
 				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value }, options)),
 			trailingComma: (spelling: TSKindId.Comma | null) =>
-				rebuilt(node, handle, () => buildLastMatchArm(config, { ...options, trailingComma: spelling })),
-			pattern: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
-							make: buildMatchPattern,
-							keys: [
-								{ name: 'pattern', rest: false, required: true },
-								{ name: 'condition', rest: false }
-							]
-						},
-						'pattern',
-						args,
-						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, pattern: value }, options),
-						() => readGroup_pattern.call(node)
-					)
-				),
-			condition: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
-							make: buildMatchPattern,
-							keys: [
-								{ name: 'pattern', rest: false, required: true },
-								{ name: 'condition', rest: false }
-							]
-						},
-						'condition',
-						args,
-						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, pattern: value }, options),
-						() => readGroup_pattern.call(node)
-					)
-				)
+				rebuilt(node, handle, () => buildLastMatchArm(config, { ...options, trailingComma: spelling }))
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
+		match: () => hydrateStoredSlot(node, '_match'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		trailingComma: () => _trailing_comma,
-		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

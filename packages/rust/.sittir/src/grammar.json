@@ -6532,13 +6532,13 @@
         },
         {
           "type": "FIELD",
-          "name": "pattern",
+          "name": "match",
           "content": {
             "type": "SYMBOL",
             "name": "match_pattern"
           },
-          "annotations": {
-            "flattened": true
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {

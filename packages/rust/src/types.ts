@@ -7132,12 +7132,12 @@ export interface MatchBlock {
 export interface LastMatchArm {
 	readonly $type: TSKindId.LastMatchArm;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
-	readonly _pattern: MatchPattern;
+	readonly _match: MatchPattern;
 	readonly _value: Expression;
 	readonly _trailing_comma?: number;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
-		readonly _pattern: 'pattern';
+		readonly _match: 'match';
 		readonly _value: 'value';
 		readonly _trailing_comma: 'trailingComma';
 	};
@@ -7149,19 +7149,12 @@ export interface LastMatchArm {
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
-		readonly pattern: SlotHint<T.MatchPattern>;
+		readonly match: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.LastMatchArm.Config>['value']>;
 		readonly trailingComma: SlotHint<NonNullable<T.LastMatchArm.Options>['trailingComma'], true>;
-		readonly $flat: FlatHint<
-			'pattern',
-			T.MatchPattern,
-			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false,
-			'_pattern'
-		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
-	readonly pattern: () => MatchPattern;
+	readonly match: () => MatchPattern;
 	readonly value: () => Expression;
 	readonly trailingComma: () => number | undefined;
 }
@@ -21447,16 +21440,15 @@ export namespace MatchBlock {
 export namespace LastMatchArm {
 	export type Config = OmitEach<ConfigFor<TSKindId.LastMatchArm>, 'trailingComma'>;
 	export type Options = { readonly trailingComma?: TSKindId.Comma | null };
-	interface BoundSurface extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
+		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<BoundSurface, T.LastMatchArm, BoundByKindId>;
-	interface ParsedSurface extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
+		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
-			Parsed,
+			this,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -21464,29 +21456,13 @@ export namespace LastMatchArm {
 		>;
 		readonly $snapshot: () => Snapshot<T.LastMatchArm['$type']>;
 	}
-	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.LastMatchArm, ParsedByKindId>;
 	export type Loose = OmitEach<LooseFor<TSKindId.LastMatchArm>, 'trailingComma'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.LastMatchArm>, 'trailingComma'>;
 	export type BuildArgs = [
-		config:
-			| WithoutGroup<
-					OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
-					OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>
-			  >
-			| (OmitEach<NonNullable<OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'pattern'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>)),
+		config: OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
 		options?: T.LastMatchArm.Options
 	];
-	export type LooseArgs = [
-		config:
-			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'pattern'> &
-					(
-						| T.MatchPattern.LooseArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-					)),
-		options?: T.LastMatchArm.Options
-	];
+	export type LooseArgs = [config: T.LastMatchArm.Loose, options?: T.LastMatchArm.Options];
 	export type Kind = TSKindId.LastMatchArm;
 }
 export namespace MatchPattern {

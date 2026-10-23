@@ -10665,13 +10665,13 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "match",
           "path": [
             {
               "owner": "last_match_arm",
-              "slot": "pattern"
+              "slot": "match"
             }
           ]
         },
@@ -11363,7 +11363,7 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
           "slot": "pattern",
           "path": [
@@ -11410,7 +11410,7 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
           "slot": "pattern",
           "path": [

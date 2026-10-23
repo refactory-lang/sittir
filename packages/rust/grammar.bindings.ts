@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "87a90e9225ce7ea13b37fb2b4eba8215e789a2870334ae967a7ef138abe03cef";
+export const hash = "b9ef7df68804d65437db3c26fcd77c72be123d56c3fb1629717092e57e60081b";
 
 export const renames = {
 	source_file: "file",
@@ -129,6 +129,7 @@ export default grammar(
 			for_expression: { "2": field("left"), "4": field("right") },
 			for_lifetimes: { "2": field("lifetimes") },
 			inner_attribute_item: { "3": field("content") },
+			last_match_arm: { "1": field("match") },
 			let_declaration: { "2": field("name") },
 			macro_invocation: { "0": field("function") },
 			match_expression: { "1": field("subject") },

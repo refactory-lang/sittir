@@ -2292,7 +2292,7 @@ describe('match_block', () => {
 describe('last_match_arm', () => {
 	it('factory produces correct type', () => {
 		const node = ir.lastMatchArm({
-			pattern: stampBuilt({
+			match: stampBuilt({
 				$type: TSKindId.MatchPattern,
 				$text: 'test',
 				$named: true,
@@ -2305,7 +2305,7 @@ describe('last_match_arm', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.lastMatchArm({
-			pattern: stampBuilt({
+			match: stampBuilt({
 				$type: TSKindId.MatchPattern,
 				$text: 'test',
 				$named: true,

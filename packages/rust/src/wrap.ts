@@ -3944,12 +3944,14 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 
 export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.LastMatchArm.Parsed {
 	const handle = currentHandle();
-	const readGroup_pattern = () => hydrateSlot<T.MatchPattern | undefined>(node, '_pattern', tree);
 	const node = {
 		...data,
 		$type: TSKindId.LastMatchArm as const,
 		attributes() {
 			return hydrateSlots<T.AttributeItem | T.InnerAttributeItem>(this, '_attributes', tree);
+		},
+		match() {
+			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
@@ -3962,52 +3964,13 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				rebuilt(node, handle, () =>
 					wrapLastMatchArm({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
 				),
+			match: (v: NonNullable<T.LastMatchArm['_match']>) =>
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _match: v }, tree)),
 			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _value: v }, tree)),
 			trailingComma: (v: NonNullable<T.LastMatchArm['_trailing_comma']> | null) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree)),
-			pattern: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
-							make: RAW.buildMatchPattern,
-							keys: [
-								{ name: 'pattern', rest: false, required: true },
-								{ name: 'condition', rest: false }
-							]
-						},
-						'pattern',
-						args,
-						(v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
-						() => readGroup_pattern.call(node)
-					)
-				),
-			condition: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					seatWith(
-						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
-							make: RAW.buildMatchPattern,
-							keys: [
-								{ name: 'pattern', rest: false, required: true },
-								{ name: 'condition', rest: false }
-							]
-						},
-						'condition',
-						args,
-						(v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
-						() => readGroup_pattern.call(node)
-					)
-				)
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree))
 		},
-		pattern: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

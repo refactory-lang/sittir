@@ -437,7 +437,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	293: [['matchBlockArms', 0, undefined, '_match_block_arms']],
 	295: [
 		['attributes', 0, undefined, '_attributes'],
-		['pattern', 1, undefined, '_pattern'],
+		['match', 1, undefined, '_match'],
 		['value', 2, undefined, '_value'],
 		['trailingComma', 3, undefined, '_trailing_comma']
 	],
@@ -1709,15 +1709,15 @@ export const structure: StructureTable = Object.freeze({
 	295: {
 		kind: 'last_match_arm',
 		required: [
-			['_pattern', 'pattern'],
+			['_match', 'match'],
 			['_value', 'value']
 		],
 		nodeOnly: [
 			['_attributes', 'LastMatchArm.attributes', 'a built AttributeItem / InnerAttributeItem'],
-			['_pattern', 'LastMatchArm.pattern', 'a built MatchPattern'],
+			['_match', 'LastMatchArm.match', 'a built MatchPattern'],
 			['_value', 'LastMatchArm.value', 'a built Expression']
 		],
-		config: ['attributes', 'pattern', 'value', 'trailingComma'],
+		config: ['attributes', 'match', 'value', 'trailingComma'],
 		lists: [['attributes', false, 'key']]
 	},
 	296: {
