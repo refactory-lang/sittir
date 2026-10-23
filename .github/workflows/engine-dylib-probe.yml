@@ -6,16 +6,26 @@ name: engine dylib probe
 on:
   push:
     branches: [probe/engine-dylib]
-    paths-ignore:
-      - docs/superpowers/probes/2026-10-23-engine-dylib/README.md
-      - docs/superpowers/probes/2026-10-23-engine-dylib/evidence/**
-      - .github/workflows/engine-dylib-measure.yml
-      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/variants.mjs
-      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/measure.mjs
-      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/core-share.mjs
-      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/memory.mjs
-      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/throughput.mjs
-      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/corpus.mts
+    # What the toys and grammar jobs build and run; report, evidence and
+    # measurement pushes do not rerun them.
+    paths:
+      - .github/workflows/engine-dylib-probe.yml
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - rust/crates/**
+      - packages/*/.sittir/src/**
+      - packages/typescript/common/**
+      - docs/superpowers/probes/2026-10-23-engine-dylib/spikes/**
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/toys.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/toys-ci.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/grammars.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/grammars-ci.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/package.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/layout.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/symbols.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/images.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/samples.mjs
   workflow_dispatch:
 
 env:
