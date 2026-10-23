@@ -1137,7 +1137,7 @@ How `realizesEmpty` reads one rule shape: `settled` answers a rule outright or l
 emitter produces it today; the `'error'` / `'warning'` vocabulary plus the
 `canProceed` blocking signal carry all current blocking behaviour.
 
-### `packages/codegen/src/types/parsekind-collisions.ts::ParseKindCollisionDiagnostic.severity`
+### `packages/codegen/src/types/parsekind-collisions.ts::ParseKindCollisionDiagnostic::severity`
 
 `diagnoseParseKindCollisions` always produces `'error'`. The field is typed as the full `Severity` because it
 extends the base `Diagnostic` interface, not because any caller downgrades it — `diagnoseParseKindCollisions` has
@@ -1591,7 +1591,7 @@ A literal aliased to a named symbol carries `aliasedTo` and `aliasedToId`, the p
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/types/rule.ts::SymbolRef.position`
+### `packages/codegen/src/types/rule.ts::SymbolRef::position`
 
 ```text
 // Link adds: index within parent's SEQ

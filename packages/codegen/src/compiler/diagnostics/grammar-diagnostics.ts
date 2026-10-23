@@ -31,6 +31,7 @@ import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
+import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
 
 export type { GrammarDiagnostic };
 
@@ -127,7 +128,7 @@ export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): Gram
 		severity: 'error',
 		grammar,
 		ownerKind: dropped.kind,
-		message: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in patches so it becomes a slot`,
+		message: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in ${SITE_EDITS_KEY} so it becomes a slot`,
 		canProceed: false,
 		details: { tokens: dropped.tokens }
 	};

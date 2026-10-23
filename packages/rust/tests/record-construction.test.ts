@@ -59,6 +59,28 @@ describe('record construction', () => {
 		expect((fn.body as () => unknown)()).toBe(body);
 	});
 
+	it.each([
+		['objects', objects],
+		['records', records]
+	])('returns the node a bounded slot was given, under every parent that holds it: %s', (_, engine) => {
+		const b = engine.build;
+		const args = b.arguments(b.identifier('input'));
+		const run = b.callExpression({ function: b.identifier('run'), arguments: args }) as unknown as Built;
+		const go = b.callExpression({ function: b.identifier('go'), arguments: args }) as unknown as Built;
+		expect((run.arguments as () => unknown)()).toBe(args);
+		expect((go.arguments as () => unknown)()).toBe(args);
+	});
+
+	it('rebuilds a bounded child through $with as the object builders do', () => {
+		const rebuilt = (engine: typeof objects): unknown => {
+			const b = engine.build;
+			const call = b.callExpression({ function: b.identifier('run'), arguments: b.arguments(b.identifier('input')) }) as unknown as Built;
+			const args = (call.arguments as () => Built)();
+			return readBack((args.$with as { elements(...items: unknown[]): unknown }).elements(b.identifier('x'), b.identifier('y')));
+		};
+		expect(rebuilt(records)).toEqual(rebuilt(objects));
+	});
+
 	it('rebuilds through $with, sharing the unchanged children', () => {
 		const b = records.build;
 		const body = b.block({ statements: [] });

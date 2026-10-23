@@ -51,6 +51,8 @@ export type PatchForm =
 	| 'preference'
 	| 'literal';
 
+export const SITE_EDITS_KEY = 'patches';
+
 export interface PatchSite {
 	readonly ownerKind: string;
 	readonly path: string;

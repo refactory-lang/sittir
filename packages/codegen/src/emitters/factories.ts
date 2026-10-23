@@ -783,12 +783,18 @@ export interface SlotStorageCoercion {
 	readonly typed: boolean;
 }
 
-export function storageCallExpr(valueExpr: string, coercion: SlotStorageCoercion | undefined, list: boolean, stored?: string): string {
+export function storageCallExpr(
+	valueExpr: string,
+	coercion: SlotStorageCoercion | undefined,
+	list: boolean,
+	stored?: string,
+	holes = false
+): string {
 	const typeArg = stored === undefined ? '' : `<${stored}>`;
 	if (list) {
-		if (coercion === undefined) return `listStorage${typeArg}(${valueExpr})`;
-		const item = coercion.args === '' ? coercion.helper : `(item) => ${coercion.helper}(item${coercion.args})`;
-		return `listStorage${typeArg}(${valueExpr}, ${item})`;
+		const item = coercion === undefined ? undefined : coercion.args === '' ? coercion.helper : `(item) => ${coercion.helper}(item${coercion.args})`;
+		const args = holes ? [valueExpr, item ?? 'undefined', 'true'] : item === undefined ? [valueExpr] : [valueExpr, item];
+		return `listStorage${typeArg}(${args.join(', ')})`;
 	}
 	if (coercion === undefined) return valueExpr;
 	return `${coercion.helper}${coercion.typed ? typeArg : ''}(${valueExpr}${coercion.args})`;
@@ -834,7 +840,13 @@ function storedSlotValueExpr(
 	textInput = false
 ): string {
 	const stored = `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
-	return storageCallExpr(valueExpr, slotStorageCoercion(f, nodeMap, kindEntries, textInput), isListStorage(f, nodeMap, kindEntries), stored);
+	return storageCallExpr(
+		valueExpr,
+		slotStorageCoercion(f, nodeMap, kindEntries, textInput),
+		isListStorage(f, nodeMap, kindEntries),
+		stored,
+		hasOptionalElements(f)
+	);
 }
 
 function narrowedStorageExpr(
@@ -1614,7 +1626,7 @@ export function compoundStructureRow(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): StructureRow | undefined {
-	const { spreadFacts } = resolveFactorySurface(node, nodeMap, kindEntries);
+	const { spreadFacts, leadingOptions } = resolveFactorySurface(node, nodeMap, kindEntries);
 	const registered = new Set(registeredSlots(node));
 	const stored = emittedSlots(node.slots, spreadFacts, registered).filter((f) => !registered.has(f));
 	const required = stored.filter((f) => isRequired(f) && !isMultiple(f)).map((f) => [f.storageKey, f.propertyName] as const);
@@ -1625,14 +1637,44 @@ export function compoundStructureRow(
 		const expected = bareTextExpectation(f, nodeMap, kindEntries);
 		return expected === undefined ? [] : [[f.storageKey, bareTextLabel(f, node.typeName), expected] as const];
 	});
-	return structureRow(node.kind, { required, nonEmpty, nodeOnly });
+	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
+	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
+	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
+	return structureRow(node.kind, { required, nonEmpty, nodeOnly, config: configFirst ? configKeysOf(node) : [], lists });
+}
+
+export function structureRowOfKind(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): StructureRow | undefined {
+	const node = nodeMap.nodes.get(kind);
+	if (node instanceof AssembledList) return listStructureRow(node);
+	return node !== undefined && isAuthoredCompound(node) ? compoundStructureRow(node, nodeMap, kindEntries) : undefined;
+}
+
+export function admitStatement(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	args: string,
+	declared?: readonly string[]
+): string[] {
+	const row = structureRowOfKind(kind, nodeMap, kindEntries);
+	if (kindEntries === undefined || (row?.config === undefined && row?.lists === undefined)) return [];
+	const keys = declared === undefined ? '' : `, ${JSON.stringify(declared)}`;
+	return [`  currentHandle()?.admit(${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${args}${keys});`];
 }
 
 export function listStructureRow(node: AssembledList): StructureRow | undefined {
-	return structureRow(node.kind, { nonEmpty: node.nonEmpty ? [[listContentStorageKey(node), `${node.kind}.elements`]] : [] });
+	const elements = canonicalSeparatedListField(node);
+	return structureRow(node.kind, {
+		nonEmpty: node.nonEmpty ? [[listContentStorageKey(node), `${node.kind}.elements`]] : [],
+		lists: [[elements.propertyName, hasOptionalElements(elements), 0]]
+	});
 }
 
-function structureRow(kind: string, checks: { readonly [K in 'required' | 'nonEmpty' | 'nodeOnly']?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
+function structureRow(kind: string, checks: { readonly [K in 'required' | 'nonEmpty' | 'nodeOnly' | 'config' | 'lists']?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
 	const present = Object.entries(checks).filter(([, entries]) => entries.length > 0);
 	return present.length === 0 ? undefined : { kind, ...Object.fromEntries(present) };
 }
@@ -1753,6 +1795,7 @@ function emitFieldCarryingFactory(
 	}
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	const owner = plan.viewPlan?.owner;
+	lines.push(...admitStatement(node.kind, nodeMap, kindEntries, surface.spreadFacts === null ? '[config]' : surface.leadingOptions === undefined ? 'children' : 'args'));
 	for (const f of slotsToEmit) {
 		const shape = numericSlotShape(f);
 		const source =
@@ -1958,6 +2001,7 @@ function emitRefineFormFactory(
 	);
 	if (formGeneric !== undefined) lines.push(`export function ${formFn}${formGeneric.typeParams}(${formGeneric.params}${optionsParam}): ${formBuiltName};`);
 	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}${optionsParam}): ${formBuiltName} {`);
+	lines.push(...admitStatement(node.kind, nodeMap, kindEntries, '[config]', slots.filter((slot) => !narrowed.has(slot.name)).map((slot) => slot.propertyName)));
 	for (const f of allSlots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
@@ -2597,6 +2641,7 @@ function emitSeparatedListFactory(
 		lines.push(`export function ${fn}${elements.typeParams}(${elements.params}): ${listBuiltName};`);
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ${listBuiltName} {`);
 	}
+	lines.push(...admitStatement(node.kind, nodeMap, kindEntries, 'elements'));
 	const w = surface.wrapper;
 	if (w !== undefined) {
 		lines.push(
@@ -2764,6 +2809,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
 
 		lines.push(`import type * as T from '../types-internal.js';`);
+		lines.push(`import { jsonFacts } from '../utils.js';`);
 		lines.push(DELIMITER_IMPORT);
 		if (kindEntries) {
 			lines.push(`import { TSKindId } from '../kinds.js';`);
@@ -2775,7 +2821,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'nodeJSON', 'stampBuilt', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

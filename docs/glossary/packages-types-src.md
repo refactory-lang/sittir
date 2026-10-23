@@ -505,3 +505,11 @@ A slot by its number in each kind that has it, keyed by stamped kind id. The num
 ### `packages/types/src/query.ts::SlotRefOf`
 
 The recorder member of one slot of a node type: a `PresenceRef` when the slot's hint takes a `BooleanKeyword`, else a `SlotRef`. Over a union it is the union of each member's, so a slot that is boolean in one kind and text in another has an `eq` taking `string & boolean`, which no argument satisfies: the union rule the recorder applies to slots, applied to their members.
+
+### `packages/types/src/engine-api.ts::NodeJSON`
+
+The shape a node takes as JSON. `$type` is its kind name; `$text` is a leaf's text; each slot is keyed by its accessor name; and the comments on each side are written as `leadingComments`, `trailingComments` and `innerComments`. Its slots are written by accessor name rather than storage key, so the JSON reads the same whatever a slot's storage is.
+
+### `packages/types/src/engine-api.ts::NodeJSONFacts`
+
+Engine plumbing for the JSON writer and reviver, not part of the caller's surface. Each grammar's codegen emits one set of facts (its kind names, slots, layout and leaf kinds, text envelopes, units, blank value, spread kinds and registered options), and the writer and reviver read them instead of deriving the same facts from the grammar at run time.

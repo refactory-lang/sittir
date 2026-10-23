@@ -7,7 +7,7 @@ import { diagnoseGrammar } from '../compile.ts';
 import { conflictRecords, conflictStaleRecord, conflictUnresolvableRecord } from '../diagnostics/conflicts.ts';
 import { blockedRecords, unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
-import { evaluateSittirGrammar } from './_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 
 const require = createRequire(import.meta.url);

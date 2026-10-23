@@ -443,7 +443,7 @@ Generation refused over a grammar's committed grammar bindings: missing, or deri
 
 ### `packages/codegen/src/bindings/hash.ts::assertBindingsFresh`
 
-Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the grammar bindings are on or off, since the facts codegen reads come from `bindings.scm` itself and the grammar bindings must agree with them. `compileGrammar` runs it after its diagnostic gate; the base grammar's own staleness is the generated-output freshness check's.
+Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the grammar bindings are on or off, since the facts codegen reads come from `bindings.scm` itself and the grammar bindings must agree with them. `compileGrammar` runs it before it evaluates a package with its grammar bindings (`module.ts::assertPackageBindingsFresh`); the base grammar's own staleness is the generated-output freshness check's.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsEdit`
 
@@ -580,7 +580,7 @@ The generated `grammar.bindings.ts`: its default export is the grammar bindings 
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsModule`
 
-A package's committed `grammar.bindings.ts`, imported outside the grammar's evaluation (with the DSL globals its authoring helpers call installed, `withDslGlobals`), or `undefined` when the package commits none. `compileGrammar` reads its hash for `assertBindingsFresh`.
+A package's committed `grammar.bindings.ts`, imported outside the grammar's evaluation (with the DSL globals its authoring helpers call installed, `withDslGlobals`), or `undefined` when the package commits none. `assertPackageBindingsFresh` reads its hash.
 
 ### `packages/codegen/src/bindings/module.ts::editCall`
 
@@ -1545,3 +1545,7 @@ The leads of a grammar's facts against its grammar evaluated without its binding
 ### `packages/codegen/src/bindings/module.ts::matchCall`
 
 A `LeadMatch` as the `match(…)` call that builds it: an unfielded restriction as an array, a fielded one as a one-key record, and the variant name last (after an explicit `undefined` when the match restricts nothing).
+
+### `packages/codegen/src/bindings/module.ts::assertPackageBindingsFresh`
+
+`assertBindingsFresh` for a grammar package: the hash its committed `grammar.bindings.ts` carries (`loadBindingsModule`) against its `bindings.scm` (`facts.ts::bindingsPathIn`). `compileGrammar` runs it before it evaluates a package with its grammar bindings; `evaluatePackage` does not, so the tools that read a package while its grammar bindings are stale still evaluate it.

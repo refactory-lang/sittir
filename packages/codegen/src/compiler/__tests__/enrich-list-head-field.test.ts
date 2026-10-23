@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { FIELD, REPEAT, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { grammarPackage } from '../../grammars.ts';
-import { evaluateSittirGrammar } from './_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import type { RawGrammar } from '../types.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 

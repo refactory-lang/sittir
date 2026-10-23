@@ -2,9 +2,9 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { evaluate, type EvaluateOptions } from '../../dsl/evaluate.ts';
-import type { RawGrammar } from '../types.ts';
+import type { RawGrammar } from '../../compiler/types.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
-import { NO_FILE_TYPES } from '../upstream-file-types.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 
 const DSL = JSON.stringify(resolve(__dirname, '../../dsl/index.ts'));
 

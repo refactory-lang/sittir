@@ -15,7 +15,7 @@ export function triviaFacts(comment?: (text: string) => AnyUntypedNode): TriviaF
 		kinds: new Set(['comment']),
 		innerKinds: new Set<string>(),
 		rebuildWrappers: new Set<number>(),
-		listKinds: new Set<number>(), layout: new Set<number>(),
+		listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>(),
 		...(comment === undefined ? {} : { comment })
 	};
 }
@@ -33,7 +33,7 @@ export function liveHandle(
 			throw new Error('fake engine has no parsed trees');
 		}
 	};
-	return { current: live, settle: (node) => node };
+	return { current: live, settle: (node) => node, admit: () => undefined };
 }
 
 export function detach(handle: EngineHandle): EngineIdentity {

@@ -93,13 +93,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (feedback_metadata_not_behavior.md); the compiler never sees this type.
 ```
 
-### `packages/tools/src/validate/common.ts::SlotModel.storageKey`
+### `packages/tools/src/validate/common.ts::SlotModel::storageKey`
 
 ```text
 // always `_<name>` (or `$other` for the catch-all unmatched-children slot)
 ```
 
-### `packages/tools/src/validate/common.ts::SlotModel.metadata`
+### `packages/tools/src/validate/common.ts::SlotModel::metadata`
 
 ```text
 /** Validator-only facts; read ONLY via `readFacts` (never branched on by the compiler). */
@@ -220,7 +220,6 @@ Returns the public engine's native tree handle without requesting its diagnostic
 
 Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
-
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
 
 Whether a node is of a kind name: the kind `kindNameFromId` gives its `$type`, else the id itself as text. The validators pass a lookup that names a kind as the corpus does (the from validator's `nativeKindName` maps a shared display to its physical kind), so a node found by kind matches the corpus node it stands for. `wrappedNodesOfKind` and the probe's lane search find nodes through it.
@@ -241,196 +240,6 @@ supertype the grammar declares: tree-sitter leaves a supertype that is also
 inlined out of node-types.json, so only the model still lists rust's
 _declaration_statement or python's _suite. The node-types edges come first,
 so a kind both sources list keeps the parser's order.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.mut_pattern`
-
-```text
-// Kind-specific: `mut_pattern` only appears inside match arms and
-// if-let conditions — NOT in plain `let` statements (tree-sitter-rust
-// flattens `let mut x = ..` into `let_declaration` with
-// `mutable_specifier` + `identifier` siblings, no `mut_pattern` node).
-// Using match-arm wrapper forces the parser to produce a mut_pattern.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.generic_type_with_turbofish`
-
-```text
-// `generic_type_with_turbofish`'s rendered form includes `::` (e.g.
-// `Bar::<X>`), only valid inside a scoped_type_identifier like
-// `Bar::<X>::Item`. Bare type position (`type _X = ${r};`) rejects
-// it. Wrap as a scoped path element.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.scoped_type_identifier_in_expression_position`
-
-```text
-// `scoped_type_identifier_in_expression_position`:
-// aliased to `scoped_type_identifier` only inside struct_expression's
-// name field. Needs struct-literal context to round-trip.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.delim_token_tree`
-
-```text
-// `delim_token_tree`: aliased to `token_tree` at
-// attribute.arguments and macro_invocation positions. Both kinds
-// use structural rendering (macro token content is
-// author-declared-verbatim, mixes named and anon tokens).
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.token_tree`
-
-```text
-// `token_tree` (the REAL rule, macro_rules arm bodies) is disjoint
-// from the aliased invocation/attribute form above: an invocation
-// wrapper reparses the fragment as `delim_token_tree` whose variant
-// children (`delim_token_tree_paren` …) mismatch the original's
-// `token_tree_paren` on deep AST compare. A macro-rule right-hand
-// side is the one context that parses a true `token_tree`.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.rust.visibility_modifier`
-
-```text
-// visibility_modifier is a declaration-position prefix — has no
-// supertype it fits under. Only fires when variant() adoption
-// has been applied (see `wrapForReparse` — wrappers whose kind
-// isn't in `deepReadKinds` are skipped so the wrapper doesn't
-// expose the baseline `{% if variant %}` fall-through).
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.expression`
-
-```text
-// Tree-sitter-typescript exposes supertypes unprefixed (no leading
-// `_`): `declaration`, `expression`, `statement`, `type`, `pattern`.
-// The hidden-prefix form ('_expression' etc.) existed pre-regen
-// due to an older convention and silently null-wrapped every
-// TS kind — counted as auto-pass without reparse, masking real
-// factory-rt failures.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.expression`
-
-A python expression fragment is reparsed inside brackets, `_ = (…)`. A node's render is its own bytes, laid out for the context it was read in, and python allows a line break inside an expression only within brackets (implicit line joining). A fragment read from inside brackets, such as a `concatenated_string` whose strings sit on separate lines, is valid only in a bracketed context. The parentheses supply that context for every expression fragment, and the reparsed node at the fragment's offset is still the fragment itself.
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.interface_body`
-
-```text
-// Alias-target-specific wrappers: tree-sitter aliases are
-// position-dependent. `interface_body` is `alias($.object_type,
-// $.interface_body)` inside `interface_declaration.body`.
-// Reparsing the rendered content inside the generic `type _X
-// = ${r};` wrapper produces `object_type` (no alias), but the
-// original was `interface_body`. Wrap in an interface
-// declaration so the alias re-fires and reparse produces
-// interface_body for AST-match parity.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.decorator_member_expression`
-
-```text
-// Alias-position wrappers for the decorator variant family:
-// `_decorator_member_expression` / `_decorator_call_expression` /
-// `_decorator_parenthesized_expression` are restricted rules that
-// exist only after `@`, and their member-object position admits
-// `identifier` but not `super` — so in `@(super.decorate)` the word
-// `super` lexes as a plain identifier. The generic `let _ = ${r};`
-// expression wrapper reparses the same bytes where `super` is a
-// `super` node, producing a leaf kind mismatch that is pure
-// wrapper-context infidelity, not a render defect. Reparse in a real
-// decorator position so leaf classification matches the original.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.rest_pattern`
-
-```text
-// Kind-specific: `rest_pattern` (`...x`) appears in array
-// destructuring, tuple types (TS), and parameter lists. The
-// generic `pattern` wrapper `let ${r} = null;` produces a
-// parse error — `let ...x = null` is invalid. Wrap in an
-// array destructuring target so the rest-pattern surfaces.
-// `const`, not `let`: the override parser resolves `let [`'s
-// declaration-vs-subscript ambiguity to the expression fork
-// (`let` as reserved_identifier + subscript ERROR — see the
-// KNOWN_ISSUES let-destructuring divergence), so a `let`
-// wrapper never reparses; `const [` is unambiguous.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.typescript.lhs_expression`
-
-An assignment target reparses as the left side of a parenthesized assignment, `(${r} = null);`. The parentheses keep an object pattern (`{a} = null`) from parsing as a block statement.
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS::python`
-
-```text
-// tree-sitter-python supertypes are also unprefixed.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.pattern`
-
-```text
-// The `pattern` supertype covers assignment/for/parameter targets
-// (tuple_pattern, list_pattern, …) — NOT match-case patterns, which
-// are the disjoint `case_*` family. A `match _:\n  case ${r}:`
-// context reparses `(a,b)` as case_tuple_pattern, so the original
-// kind is never found at the fragment offset. A for-loop target is
-// a true pattern-supertype position and reproduces the same
-// `tuple_pattern > ( pattern_group … )` subtree the corpus
-// contexts (parameters, for_in_clause, lambda params) produce.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.parameters_elements`
-
-```text
-// Kind-specific: `parameters_elements` is the paren-LESS parameter
-// interior (the tree name the grammar's `_parameters` rule shows as) —
-// the visible `parameters` wrapper above expects the rendering to carry
-// its own parens, so the interior needs them supplied here.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.list_splat`
-
-```text
-// Kind-specific: `list_splat` (`*args`) only appears inside
-// argument lists, list/tuple/set literals, and expression
-// lists. Generic expression wrapper `_ = *()` is syntactically
-// invalid. Argument-list context accepts it.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.list_splat_pattern`
-
-```text
-// Kind-specific: `list_splat_pattern` (`*rest`) appears inside
-// assignment patterns (`a, *rest = xs`) and function parameter
-// lists. Wrap in an assignment-target position.
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.attribute`
-
-```text
-// Kind-specific: `attribute` (`a.b`) and `subscript` (`a[b]`)
-// — tree-sitter-python parses `*a.b` and `*a[b]` as an
-// attribute / subscript whose object is a list_splat (the
-// `Lists` corpus exercises this through `[*a.b]` / `[*a[b].c]`).
-// The generic `expression` wrapper `_ = ${r}` rejects
-// `_ = *a.b` standalone. List-literal context accepts both
-// the splat-prefix form AND plain accesses (`[obj.attr]`,
-// `[*a.b]`, `[obj[k]]`, `[*a[b]]`). (016 Cluster I.)
-```
-
-### `packages/tools/src/validate/common.ts::REPARSE_WRAPPERS.python.parenthesized_expression`
-
-```text
-// Kind-specific: `parenthesized_expression` (`(expr)`) — the
-// `Function definitions` corpus exercises `(*a)` from
-// `j(((*a)))`. The generic `expression` wrapper `_ = (*a)`
-// reparses as `tuple` (since bare `*a` is only valid inside
-// a collection). Wrap as a single-arg call so the inner
-// parens stay parenthesized_expression: `f((*a))` keeps the
-// outer `(...)` as the argument list and the inner `(*a)`
-// as a parenthesized_expression. (016 Cluster I.)
 ```
 
 ### `packages/tools/src/validate/common.ts::WrapForReparseResult.text`
@@ -580,11 +389,7 @@ An assignment target reparses as the left side of a parenthesized assignment, `(
 The wrapper is chosen by the kind being rendered when it is visible, else by the parse kind the fixture targets —
 never by stripping underscores, which can land on an unrelated kind (`_number` is not `number`).
 
-The grammar's root kind reparses as written, with no wrapper: `opts.root` names it, and `reparseWrappersOf` adds its identity entry. A kind with no wrapper of its own and no supertype wrapper returns `null`.
-
-### `packages/tools/src/validate/common.ts::reparseWrappersOf`
-
-A grammar's reparse wrappers: an identity wrapper for the node model's root kind, then the grammar's own `REPARSE_WRAPPERS` entries. The root entry comes from the model for every grammar, so `REPARSE_WRAPPERS` holds only the context wrappers a grammar needs beyond its root, and a new grammar reparses its root kind with no table of its own.
+The grammar's root kind reparses as written, with no wrapper: `opts.root` names it. A kind with no wrapper of its own and no supertype wrapper returns `null`.
 
 ### `packages/tools/src/validate/common.ts::upstreamWasmPath`
 
@@ -628,7 +433,7 @@ One export of a grammar's generated wrap module, loaded through the typed intern
 A `forwarded` seat names a group whose builder forwards to another kind's
 builder: the parent takes the group's value whole under the slot key.
 
-### `packages/tools/src/validate/common.ts::Seat.seated`
+### `packages/tools/src/validate/common.ts::Seat::seated`
 
 ```text
 /** An arm whose config-shaped child is handed to the wrapper as its own
@@ -860,7 +665,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 
 `accessorOf` is required: the grammar's slot lookup (`slotAccessorOf`), through which the sides a node's trivia table gives it are materialized before they are built (`tableSides`), so a config is built from materialized data on either wire. `FactoryDispatchOpts` carries the same lookup to `buildFactoryNodeFromReference`.
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factoryShapes`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factoryShapes`
 
 ```text
 /** Per-kind factory signature hint (from the generated `_factoryShapes`
@@ -871,7 +676,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 	 * the whole Config object as the single rest-param item. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.fieldAliasMap`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::fieldAliasMap`
 
 ```text
 /** Per-field alias-source map (from the generated `_fieldAliasMap`).
@@ -883,7 +688,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 	 * wrong factory (e.g. `block` factory on a `_match_block` body). */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factoryFields`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factoryFields`
 
 ```text
 /** Per-kind list of declared factory Config field names (from the
@@ -894,61 +699,61 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 	 * children into the declared fields by position. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factorySlots`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factorySlots`
 
 ```text
 /** Per-kind slot metadata (from the generated `_factorySlots`).
 	 * Drives config-surface normalization for both named and unnamed slots. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.cstNodeKindHint`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::cstNodeKindHint`
 
 ```text
 /** Validator-supplied CST node-kind fallback for override polymorphs whose
 	 * read shape collapsed the discriminating wrapper before factory dispatch. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.firstNamedChildKindHint`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::firstNamedChildKindHint`
 
 ```text
 /** Validator-supplied CST fallback for override polymorphs whose native
 	 * read collapsed the wrapper child kind before factory dispatch. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.namedChildKindHints`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::namedChildKindHints`
 
 ```text
 /** Ordered CST named-child candidates for override polymorphs whose
 	 * discriminating wrapper kind is not the first named child. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts._parentKind`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::_parentKind`
 
 ```text
 /** Internal — current parent kind during field recursion. Used with
 	 * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts._fieldName`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::_fieldName`
 
 ```text
 /** Internal — current field name during field recursion. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts._depth`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::_depth`
 
 ```text
 /** Internal recursion guard — set by the helper, not the caller. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.kindNameFromId`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::kindNameFromId`
 
 ```text
 /** Resolver for numeric $type → string kind name; every read node
 	 * carries a numeric $type. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.surface`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::surface`
 
 ```text
 /** When set, nodes are built through the author-facing `ir` surface and a
@@ -959,48 +764,13 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 
 The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$text`, `$span`, `$parentHandle`, `$childIndex`, `$named`), its unnamed children under `$other`, and its `$_trivia`. It is the one read-node type in tools; the exercise roundtrip and the factory-source printer import it rather than declaring narrower copies.
 
-### `packages/tools/src/validate/common.ts::ReadNodeLike.$type`
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$type`
 
 The node's kind id (`TSKindId`); a reader resolves it to a kind name through the grammar's `kindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::isAnonTokenPassthrough`
 
-```text
-/**
- * Determine whether an anonymous UntypedNode token should pass through
- * `resolveChild` unchanged.
- *
- * @remarks
- * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * the reader) must stay as UntypedNode. Render's `$named !== false` filter drops
- * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
- * trailing separators. Converting them to bare strings bypasses those filters
- * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
- * rendered output).
- *
- * @param c - The candidate child UntypedNode.
- * @returns `true` if the child is an anonymous token and should be returned as-is.
- */
-```
-
-### `packages/tools/src/validate/common.ts::shouldHaltRecursion`
-
-```text
-/**
- * Guard the recursion depth and availability of tree/factory context before
- * hydrating a child node.
- *
- * @remarks
- * Depth cap: recursive construction shouldn't run away even on pathologically
- * nested corpus entries. 64 is well past real-world AST depth and stops before
- * Node's default call-stack limit.
- *
- * @param depth - Current recursion depth.
- * @param tree - Tree handle, if available.
- * @param factoryMap - Factory map, if available.
- * @returns `true` if recursion should be halted (cap exceeded or context absent).
- */
-```
+Whether a child is an anonymous token object (`$named === false`). `resolveChild` passes one through unchanged only when it is given no tree, where the child is the read node itself. Building from a tree, it refuses one: stored data holds a token as its kind id, so a token object reaching a builder input is a fault, never an input.
 
 ### `packages/tools/src/validate/common.ts::resolveAliasedKind`
 
@@ -1028,14 +798,7 @@ The node's kind id (`TSKindId`); a reader resolves it to a kind name through the
 
 ### `packages/tools/src/validate/common.ts::resolveChild`
 
-```text
-/**
- * Hydrate a shallow child UntypedNode via the tree handle, then convert
- * recursively and route through its kind's factory. Falls back to the
- * passed-in shallow UntypedNode when `tree` isn't available OR the child
- * lacks a $nodeId (factory-built children don't carry one).
- */
-```
+One child of a node as the config takes it. A scalar passes through. Given no tree or no factory map, a child object passes through unchanged: it is the read node itself, which a builder admits. Given both, the child is hydrated (`hydrateForConfig`) and built through its kind's factory (`buildWithFactory`); a kind with no factory of its own is resolved through its single wrapped child. A builder is never handed a node it could not build: an anonymous token object, a kind with no factory and no single wrapped child, and a node nested more than 64 deep each throw, naming the kind and its slot path (`pathOf`).
 
 #### body
 
@@ -1500,15 +1263,15 @@ The placement rows for one source text, for probes and tests.
 
 The rows and summary for one grammar's whole corpus. Entries that parse with errors are skipped.
 
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::fullForms`
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
 
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.oneSurfaceKinds`
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::oneSurfaceKinds`
 
 The kinds the node model stamps `oneSurface`: one builder, no `.strict` or `.coerce` member. The factory-source printer spells their call as the bare path.
 
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::root`
 
 The grammar's root kind as the node model records it; `undefined` when no model is loaded.
 
@@ -1534,7 +1297,7 @@ The shared primary render, reparse and AST verification for read, factory and IR
 
 An optional profile records read-reference materialization, recursive round-trip construction, primary rendering and reparsing. The separate storage-check construction, candidate enumeration and AST/storage comparisons remain in total validator time. Raw and IR constructors currently produce object-backed built nodes for either parsed storage setting.
 
-Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
+Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other. Both builds are given the read tree, so every child is built through its own factory: the storage comparison reads nested content the factory built, never the read's own children, and a builder is never handed a `materialize` copy. Only a candidate whose kind has no factory is skipped. A factory that throws, the kind's own or a child's, fails the candidate: the error is recorded, the storage comparison has nothing to compare, and the render still runs.
 
 Each candidate tested is one case of its kind, and `total` and `casesByKind` are read from that one count (`KindCases`). The render counts the built nodes it renders the same way, taking a case back out when the kind has no reparse host or the render is excluded.
 
@@ -1618,6 +1381,10 @@ Dispatches materialized reference data through the existing factory calling conv
 
 Selects the raw factory or IR construction surface and an optional run-local profiler. Profiling observes the existing read, recursive build, primary render and reparse operations; it does not select a different validation workload.
 
+### `packages/tools/src/validate/factory-storage.ts::storageValueOf`
+
+One stored value of a node as the storage comparison reads it: `$text` through `nodeText`, since a built leaf holds its text as a function and a materialized read holds it as a string; any other key as the node holds it.
+
 ### `packages/tools/src/grammar-internals.ts::Hydrate`
 
 The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as an accessor would return it, a coordinate read `depth` levels down through the given tree and wrapped.
@@ -1636,7 +1403,10 @@ Projects a seated slot's value into its parent's config by the seat's shape.
 A `flatten` seat splices the group's own config keys into the parent's and
 marks the config (`flattenedOf`): `true` for a config-shaped group, else the
 group's call arguments, so a direct parent can pass the group's positional
-value. An `elements` seat projects each element, and a `tuple` seat takes the
+value. A group present with none of its keys set (python's `c[::]` step
+group, rust's `use ::*;` wildcard group) has no flattened spelling: it is
+built through its own factory and passed under the seat's key, which the
+seated surface accepts beside the flattened keys. An `elements` seat projects each element, and a `tuple` seat takes the
 group's call arguments as the slot's value.
 
 ### `packages/tools/src/validate/reparse-derive.ts::deriveReparseHosts`
@@ -1766,6 +1536,10 @@ The values a node holds in its slots, each present one once, for a reader that g
 ### `packages/tools/src/validate/common.ts::storedSlotValues`
 
 A node's slot values by storage key, the one reader the validator's view/copy split goes through. A record view, or a spread copy of one (it still carries the record's stamp, `recordOf`), stores nothing in data keys, so its values are read through its slot readers (`slotValuesOf`), its list's delimiter included. Any other node, an object node or a data copy, holds them under its `_`-prefixed storage keys. `nodeToConfig`, `wrappedValues` and `separatedListFactoryOptions` all read through it.
+
+### `packages/tools/src/validate/common.ts::pathOf`
+
+The slot path `resolveChild` names when it refuses a child: the steps `memberValueOpts` records in `NodeToConfigOpts._path`, or "the root" for the node `nodeToConfig` was called on.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

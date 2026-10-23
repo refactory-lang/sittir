@@ -22,6 +22,7 @@ export interface EngineHandle {
 	/** The record builder module the engine's builders dispatch to; without one they build objects. */
 	records?: object;
 	readonly settle: <T>(node: T) => T;
+	readonly admit: (kindId: unknown, args: readonly unknown[], declared?: readonly string[]) => void;
 	/** Checks the values a builder of `kind` stores before it writes them as a record, for an engine verifying structure at run time. */
 	readonly verifyStored?: (kind: number, stored: Readonly<Record<string, unknown>>) => void;
 }
@@ -141,6 +142,12 @@ export function hydrateStored(value: unknown): unknown {
 		throw new Error(`a ${handle.current.language.name} node read through a ${caller.current.language.name} engine`);
 	}
 	return handle.hydrate(value, tree);
+}
+
+/** `value` as an accessor of a node of `tree` returns it, through the engine `tree` is bound to; `value` as it is when none is. */
+export function hydrateOn(tree: object, value: unknown): unknown {
+	const handle = treeHandles.get(tree);
+	return handle === undefined ? value : handle.hydrate(value, tree);
 }
 
 export function inTreeEngine<T>(tree: object, fn: () => T): T {

@@ -24,11 +24,12 @@ import type {
 import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
-import { checkRow, verifyStructure } from './verify-structure.ts';
+import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
+import { reviveNode } from './node-json.ts';
 import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
@@ -194,6 +195,14 @@ function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: S
 	};
 }
 
+function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['admit'] {
+	if (mode !== 'runtime') return () => undefined;
+	return (kindId, args, declared) => {
+		const row = typeof kindId === 'number' ? table[kindId] : undefined;
+		if (row !== undefined) checkInput(row, args, declared);
+	};
+}
+
 function assembleEngine<API extends LanguageAPI>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
@@ -212,7 +221,8 @@ function assembleEngine<API extends LanguageAPI>(
 		current: identity,
 		hydrate: hooks.hydrate,
 		settle: settlerOf(options?.verifyStructure, hooks.structure),
-		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure)
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure),
+		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));
@@ -258,6 +268,10 @@ function assembleEngine<API extends LanguageAPI>(
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
+		reviver: (key, value) =>
+			key !== ''
+				? value
+				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, build: hooks.buildByKind, settle: handle.settle })),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (

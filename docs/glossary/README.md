@@ -1,10 +1,14 @@
-# Function glossaries — where the comments live
+# Function glossaries — where the explanations live
 
-Hand-written source under `packages/codegen/src/` carries no explanatory
-comments. Every comment that used to sit above or inside a declaration lives
-in the per-directory glossary here, filed under the declaration it belongs
-to. Source keeps only directive comments (`@ts-*`, `eslint*`,
-`prettier-ignore`, `biome-ignore`, `/// <reference>`, `@rule-type-consts`).
+Hand-written source in the trees this glossary covers (`packages/codegen/src/`,
+`packages/common/src/`, `packages/tools/src/`, `packages/types/src/`; see the
+layout table below) carries no explanatory comments. The explanation for each
+declaration lives in the per-directory glossary here, filed under the
+declaration it belongs to. Source keeps only
+directive comments (`@ts-*`, `eslint*`, `prettier-ignore`, `biome-ignore`,
+`/// <reference>`, `@rule-type-consts`) and public-API JSDoc. Authors put the
+why of a non-obvious decision in the commit message; the docs peer turns it
+into a glossary entry after the PR merges.
 
 ## Layout
 
@@ -54,14 +58,18 @@ unresolved meanwhile. File-level comments (a module header) sit under
   infigraph enhancement tracked upstream; until it lands, this two-call
   pattern is the lookup.)
 - **By hand:** open the directory's file and find `### \`<file>::<qualified name>\``.
-- **Before editing a function**, read its entry — it is the rationale the
-  source no longer shows.
+- **Before editing a function**, read its entry and the commit messages that
+  touched it — together they are the rationale the source no longer shows.
 
 ## Adding or changing documentation
 
-- Do not write an explanatory comment in source. Put the text in the
-  declaration's glossary section (create the section if it is new; add a
-  `#### body` sub-section for a note about a specific part of the body).
+- Authors do not write explanatory comments or glossary entries. The why of
+  a non-obvious decision goes in the commit message.
+- The docs peer writes entries after a PR merges to master, from that PR's
+  commits: a new declaration gets a section (a `#### body` sub-section for a
+  note about a specific part of the body); a moved or renamed declaration is
+  rekeyed; a removed declaration's entry is deleted; each "why" is carried
+  over from the commit message.
 - A comment that lands in source anyway is moved mechanically:
   `pnpm exec tsx scripts/relocate-comments-to-glossary.mts <files>` (dry run)
   then `--apply`. The run is idempotent and strips only the comment ranges.
@@ -73,9 +81,8 @@ unresolved meanwhile. File-level comments (a module header) sit under
   dangling entry.
 - Use infigraph's `stale_docs` to list entries whose code changed after the
   entry, and `doc_entry` (`infigraph doc-entry`: edit, replace, create,
-  rekey, delete, ack) to change them. Add the entry for a new declaration in
-  the same commit as the code. `ack` an entry only after reading the changed
-  lines against it, never in bulk.
+  rekey, delete, ack) to change them. `ack` an entry only after reading the
+  changed lines against it, never in bulk.
 - Entries are mechanical relocations, unedited and unverified, until a
   content pass rewrites them; stale prose in an entry is a reason to fix the
   entry, never to reintroduce the comment in source.

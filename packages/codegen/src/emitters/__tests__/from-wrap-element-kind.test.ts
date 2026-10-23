@@ -73,7 +73,7 @@ describe('from() auto-wrapped array elements', () => {
 			'case "_struct_pattern_elements": return (coerceToStructPatternElements as (...args: unknown[]) => unknown)(...children);'
 		);
 		expect(emitted).toContain(
-			'_resolveManyBranch<T.FieldPattern | TSKindId.RemainingFieldPattern>(els, "field_pattern", '
+			'_resolveKindEnumItems(els, [TSKindId.RemainingFieldPattern], (_v) => _resolveManyBranch<T.FieldPattern | TSKindId.RemainingFieldPattern>(_v, "field_pattern", '
 		);
 		// The container kind is what produced a container nested in itself.
 		expect(emitted).not.toContain('if (_isFromKind(kind)) return _resolveByKind(kind, e);');

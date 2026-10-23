@@ -192,32 +192,32 @@ export class BuiltArena {
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
 	}
 
-	#adopt<T extends object>(node: T, at: number, words: number | undefined, text: BuiltText | undefined): T {
-		adoptBuilt(node, { arena: this, at, words, text });
+	#adopt<T extends object>(node: T, at: number, text: BuiltText | undefined): T {
+		adoptBuilt(node, { arena: this, at, text });
 		this.#nodes.set(at, new WeakRef(node));
 		this.#released.register(node, at);
 		return node;
 	}
 
-	#view(at: number, words: number | undefined): object {
+	#view(at: number): object {
 		const head = this.words(at, 1);
 		const stub = { $type: head[wordOf(at, this.format)]!, [RECORD]: at } as RecordStub;
-		return this.#adopt(this.#wrap(stub, this.tree) as object, at, words, undefined);
+		return this.#adopt(this.#wrap(stub, this.tree) as object, at, undefined);
 	}
 
 	/** The node of the compound record its builder just wrote at `record`: a view of the record. */
 	view(record: BuiltPlace): object {
-		return this.#view(record.at, record.words);
+		return this.#view(record.at);
 	}
 
 	/** Gives the leaf `node` of `kind` its record, `words` long, header only, and the interned `text` its cells hold. */
 	adoptLeaf<T extends object>(node: T, kind: number, words: number, text: string): T {
-		return this.#adopt(node, this.record(kind, words).at, undefined, this.text(text));
+		return this.#adopt(node, this.record(kind, words).at, this.text(text));
 	}
 
 	/** The node of the compound record at `at`: its builder's while it is held, else a fresh view of the record. */
 	node(at: number): object {
-		return this.#nodes.get(at)?.deref() ?? this.#view(at, undefined);
+		return this.#nodes.get(at)?.deref() ?? this.#view(at);
 	}
 
 	/** Holds the parsed tree `tree`, which a record of this arena names, with its `token`, for as long as the arena lives. */
@@ -397,22 +397,6 @@ export function storeList(arena: BuiltArena, data: Uint32Array, at: number, item
 	for (let n = 0; n < items.length; n++) storeCell(arena, run.data, run.base + n * stride, items[n]);
 	data[at] = run.at;
 	data[at + 1] = items.length;
-}
-
-/**
- * Writes the cell of a bounded slot holding `value` into a fresh record at `at`: a compound node's whole record held
- * inside the cell after its header, any other value's cell as `storeCell` writes it.
- *
- * @throws For a node no builder of `arena` made.
- */
-export function storeInline(arena: BuiltArena, data: Uint32Array, at: number, value: unknown): void {
-	const ref = builtRefOf(value);
-	if (ref === undefined || ref.arena !== arena || ref.text !== undefined) return storeCell(arena, data, at, value);
-	if (ref.words === undefined) throw new Error(`the record at ${ref.at} has no stamped length, so no slot can hold it inline`);
-	const source = arena.words(ref.at, ref.words);
-	const start = wordOf(ref.at, arena.format);
-	data[at] = arena.format.inline;
-	data.set(source.subarray(start, start + ref.words), at + arena.format.inlineHeaderWords);
 }
 
 /** Gives the fresh list record `record` a side record holding the settings a builder chose: its delimiters and its separator. */

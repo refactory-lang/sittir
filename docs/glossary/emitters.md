@@ -653,15 +653,23 @@ The slots a field-carrying builder stores on its node: every slot, or for a spre
 
 ### `packages/codegen/src/emitters/factories.ts::compoundStructureRow`
 
-A field-carrying kind's structure row: what each built node of the kind holds, by storage key. Among the stored slots that are not registered options, a required single slot must hold a value. A non-empty list (`needsNonEmptyHoist`) must hold an item, labelled `<kind>.children` for a spread builder's parameter and `<kind>.<property>` otherwise. A slot with a `bareTextExpectation` holds no bare text, with the builder's label and expectation. `undefined` when there is nothing to check.
+A field-carrying kind's structure row: what each built node of the kind holds, by storage key. Among the stored slots that are not registered options, a required single slot must hold a value. A non-empty list (`needsNonEmptyHoist`) must hold an item, labelled `<kind>.children` for a spread builder's parameter and `<kind>.<property>` otherwise. A slot with a `bareTextExpectation` holds no bare text, with the builder's label and expectation. The row also records what the builder is given, which `checkInput` tests: for a kind whose builder takes a config first (`classifyFactoryShape` answers `config`), the config keys the kind declares (`configKeysOf`, the keys the compile-time `RefuseUndeclared` refuses outside), and for every stored list slot `[propertyName, holes, arrival]` (`hasOptionalElements` for the holes; arrival is `key` for a config-first kind, else the index the rest items start at: 1 after a leading options argument, 0 otherwise). `undefined` when there is nothing to check.
+
+### `packages/codegen/src/emitters/factories.ts::structureRowOfKind`
+
+The structure row a kind's own builder and coercer are held to: a separated list's `listStructureRow`, an authored compound's `compoundStructureRow`, and `undefined` for any other kind.
+
+### `packages/codegen/src/emitters/factories.ts::admitStatement`
+
+The generated line that hands a call's input to the current engine handle: `currentHandle()?.admit(<the kind's id>, <args>);`, or nothing when the kind's row has neither `config` nor `lists`. The raw builder emits it first, over `[config]` for a config-first kind and over its rest arguments (`children`, or `args` after a leading options argument) for a spread kind; a separated list's builder over `elements`. The loose coercer of the same kind emits it over `[input]` or its rest `input`. Each of these functions knows its own kind and exactly what it reads, which a proxy over the builder table does not: a form or variant builder returns the same kind but takes keys of its own, and would be refused against the kind's row. A variant or form builder builds through the kind's own raw builder, so what it passes on is checked there, against the kind's config.
 
 ### `packages/codegen/src/emitters/factories.ts::listStructureRow`
 
-A separated list's structure row: a non-empty list's elements, under its content key, must hold an item (`<kind>.elements`).
+A separated list's structure row: a non-empty list's elements, under its content key, must hold an item (`<kind>.elements`). Its elements are also the row's one list, taken from index 0, with holes where the element slot admits them.
 
 ### `packages/codegen/src/emitters/factories.ts::structureRow`
 
-A row from its three check lists, empty lists dropped; `undefined` when all three are empty.
+A row from its check lists, empty lists dropped; `undefined` when all are empty.
 
 ### `packages/codegen/src/emitters/factories.ts::listContentStorageKey`
 
@@ -2025,7 +2033,7 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
  */
 ```
 
-Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
+Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Which kinds have a row, and in which form, is `builtFromText`'s answer; this function only writes the row each form takes. Hidden and visible leaves register alike.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -4938,7 +4946,7 @@ arms, so a gap prints once.
 A slot that can hold a unit (`RustBodyPrinter.unitSlot`) prints through
 `BodyLayout::render_unit(node.layout(), "<key>", 0, w, |w| <slot>.render(w))`.
 
-### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.unitSlot`
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter::unitSlot`
 
 The wire key (`slotWireKey`) of a slot that can hold a unit, a kind its
 slot stores bare and that so carries no layout of its own; `undefined` for a
@@ -4948,7 +4956,7 @@ the sides the node's layout holds for item 0 of that slot
 (`NodeLayout::units`). A list's items are framed by its `ListView`'s
 `units`.
 
-### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.innerGap`
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter::innerGap`
 
 Whether a slot name is the node's inner site (`AbstractAssembledCompound.innerSite`), where the body renders the native node's inner entries. `render-module.ts` supplies it from the node the body renders.
 
@@ -6781,13 +6789,13 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 ```
 
 
-### `packages/codegen/src/emitters/client-utils.ts::triviaKinds`
+### `packages/codegen/src/emitters/client-utils.ts::EmitClientUtilsConfig::triviaKinds`
 
 ```text
 /** Trivia kind names (e.g. `['line_comment', 'block_comment']`). */
 ```
 
-### `packages/codegen/src/emitters/emit.ts::expectTestFailures`
+### `packages/codegen/src/emitters/emit.ts::EmitAllConfig::expectTestFailures`
 
 ```text
 /** Kind → reason for known-failing generated tests (`expectTestFailures:`
@@ -6806,7 +6814,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 /** Emit runtime leaf pattern validation. Default `false`. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::generatedIdTables`
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig::generatedIdTables`
 
 ```text
 /**
@@ -6874,7 +6882,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/factory-map.ts::polymorphVariants`
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData::polymorphVariants`
 
 Polymorph variant discriminators, one `PolymorphVariantDescriptor` per
 polymorph parent kind, read by `nodeToConfig` to stamp `$variant` on a
@@ -6888,7 +6896,7 @@ name variant-structural derivation already resolved). `definedBy` is
 enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 `variant()` override) makes the whole kind `'override'`.
 
-### `packages/codegen/src/emitters/from.ts::generatedIdTables`
+### `packages/codegen/src/emitters/from.ts::EmitFromConfig::generatedIdTables`
 
 ```text
 /**
@@ -6916,7 +6924,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/is.ts::generatedIdTables`
+### `packages/codegen/src/emitters/is.ts::EmitIsConfig::generatedIdTables`
 
 ```text
 /**
@@ -6987,7 +6995,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
 /** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
 ```
 
-### `packages/codegen/src/emitters/kind-id-rust.ts::grammar`
+### `packages/codegen/src/emitters/kind-id-rust.ts::EmitKindIdRustConfig::grammar`
 
 ```text
 /** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */
@@ -6997,7 +7005,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
 
 For a node reference, the grammar kind the value holds, written only where it differs from `parseKind` (`valueNameOf`).
 
-### `packages/codegen/src/emitters/node-model.ts::parseKind`
+### `packages/codegen/src/emitters/node-model.ts::SerializedValue::parseKind`
 
 The kind the parser shows at the value's site: the alias target where one applies, else the grammar kind itself.
 
@@ -7007,7 +7015,7 @@ The kind the parser shows at the value's site: the alias target where one applie
 /** for node-ref: true when the ref was not resolved to an AssembledNode */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::value`
+### `packages/codegen/src/emitters/node-model.ts::SerializedValue::value`
 
 ```text
 /** for terminal: string value */
@@ -7066,7 +7074,7 @@ restates the default from one that must be spelled.
 so a reader of the model steps into a list's items through a slot like any
 other; `elementKinds` stays the kinds the items admit.
 
-### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeModel::polymorphVariants`
 
 ```text
 /**
@@ -7078,7 +7086,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::fieldAliasMap`
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeModel::fieldAliasMap`
 
 ```text
 /**
@@ -7103,7 +7111,7 @@ other; `elementKinds` stays the kinds the items admit.
  */
 ```
 
-### `packages/codegen/src/emitters/refine-emit.ts::narrowedFields`
+### `packages/codegen/src/emitters/refine-emit.ts::RefineFormInfo::narrowedFields`
 
 ```text
 /** Per-form field narrowings: each entry says "in this form, field
@@ -7125,13 +7133,13 @@ other; `elementKinds` stays the kinds the items admit.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::hashRs`
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit::hashRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/hash.rs` */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::hashTs`
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit::hashTs`
 
 ```text
 /** `packages/{lang}/src/hash.ts` */
@@ -7143,13 +7151,13 @@ other; `elementKinds` stays the kinds the items admit.
 /** `rust/crates/sittir-{lang}/src/render/node.rs` — AnyNode + FromNapiValue + typed dispatch + node bridge */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::libRs`
+### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit::libRs`
 
 ```text
 /** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes node render entrypoints */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::parseNames`
+### `packages/codegen/src/emitters/render-module.ts::EffectiveSupertypeNodeShape::parseNames`
 
 ```text
 /** Storage→parse pairs merged from every walked supertype (the owner AND
@@ -7157,7 +7165,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 * Keyed by `subtypes[].subKind`; first-stamped pair wins on collision. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::hasNodeField`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::hasNodeField`
 
 ```text
 /** True when this slot has a corresponding field in the node struct.
@@ -7165,14 +7173,14 @@ other; `elementKinds` stays the kinds the items admit.
 	 *  template walker) must be defaulted to "" in the typed dispatch path. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::storageName`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::storageName`
 
 ```text
 /** Rust struct storage identifier for this slot — used to build `node.<storageName>`
 	 *  access expressions. Defaults to `name` when no assembled slot exists. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::isUnnamed`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::isUnnamed`
 
 ```text
 /** True when this slot was inferred (not declared via `field(...)`) — i.e. it
@@ -7180,7 +7188,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 *  route lookups through `node.children` instead of `node.fields[name]`. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::separator`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::separator`
 
 ```text
 /** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
@@ -7188,7 +7196,7 @@ other; `elementKinds` stays the kinds the items admit.
 	 *  gets its own separator (rather than a node-wide first-match). */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::backingNodeField`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingNodeField`
 
 ```text
 /**
@@ -7205,7 +7213,7 @@ other; `elementKinds` stays the kinds the items admit.
 
 A slot the template names with this set is reported as a `HelperSlotRead` (`helperSlotReadsOf`), and generation refuses it as `slot-through-hidden-helper`.
 
-### `packages/codegen/src/emitters/render-module.ts::backingInnerRequired`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingInnerRequired`
 
 ```text
 /**
@@ -7216,7 +7224,7 @@ A slot the template names with this set is reported as a `HelperSlotRead` (`help
 	 */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::backingDirectField`
+### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingDirectField`
 
 ```text
 /**
@@ -7229,7 +7237,7 @@ A slot the template names with this set is reported as a `HelperSlotRead` (`help
 	 */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::nodeHasChildren`
+### `packages/codegen/src/emitters/render-module.ts::EmittedStruct::nodeHasChildren`
 
 ```text
 /** True when the node struct has an unnamed (kind-named) child slot. */
@@ -7249,7 +7257,7 @@ A slot the template names with this set is reported as a `HelperSlotRead` (`help
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::typeName`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::typeName`
 
 ```text
 /** PascalCase typeName of the parent node. */
@@ -7261,19 +7269,19 @@ A slot the template names with this set is reported as a `HelperSlotRead` (`help
 /** Raw grammar kind of the parent node — owner key for SCC lookup. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::fieldName`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::fieldName`
 
 ```text
 /** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::kinds`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::kinds`
 
 ```text
 /** Concrete kinds in this slot. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::literals`
+### `packages/codegen/src/emitters/render-module.ts::PerSlotChildEnum::literals`
 
 ```text
 /** Terminal literal children that may appear in runtime `$children`. */
@@ -7425,7 +7433,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::ownerSlots`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::ownerSlots`
 
 ```text
 /**
@@ -7439,7 +7447,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::currentKind`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::currentKind`
 
 ```text
 /**
@@ -7449,7 +7457,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/test.ts::generatedIdTables`
+### `packages/codegen/src/emitters/test.ts::EmitTestsConfig::generatedIdTables`
 
 ```text
 /**
@@ -7459,11 +7467,11 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/test.ts::renderBodies`
+### `packages/codegen/src/emitters/test.ts::EmitTestsConfig::renderBodies`
 
 The compiled render bodies by kind. `rendersText` reads them to decide whether a sampled kind writes text; without them every kind is taken to write text.
 
-### `packages/codegen/src/emitters/test.ts::expectTestFailures`
+### `packages/codegen/src/emitters/test.ts::EmitTestsConfig::expectTestFailures`
 
 ```text
 /**
@@ -7507,7 +7515,7 @@ seat the child into a config or tuple take the value arguments only.
  */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::generatedIdTables`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::generatedIdTables`
 
 `EmitWrapConfig.generatedIdTables`: the parser-symbol id tables (from `loadGeneratedIdTables`). When the config passes no `kindEntries`, the emitter derives its kind catalog from them; with a catalog, every wrap function stamps `$type: TSKindId.X` (`typeStampLines`) and `wrapNode` dispatches by numeric id. Without one (synthetic test grammars) dispatch is by kind name.
 
@@ -7809,7 +7817,7 @@ prints through it.
  * see its docstring) rather than looping forever. */
 ```
 
-### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral.resolvedKindId`
+### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral::resolvedKindId`
 
 The mint-time literal-chain id (`NodeRef.resolvedKindId`) carried through from
 the terminal value. Absent for kind-derived literals (keyword/token model
@@ -8264,7 +8272,7 @@ The leaf shape of a kind's guard. A pattern leaf is `'text'` and is tested like 
  *  `isKindIdStored(storageTargetOf(...))` directly. */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::TypeComponent.kind`
+### `packages/codegen/src/emitters/shared.ts::TypeComponent::resolvedKindId`
 
 ```text
 // A `literal` component is a fixed-text arm. `rawKind` is the kind it
@@ -8628,7 +8636,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  */
 ```
 
-### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData.forwardsTo`
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData::forwardsTo`
 
 ```text
 /** Companion fact to a `'forwarded'` factoryShape: the kind whose
@@ -9144,7 +9152,7 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
 token's grammar-wide face (origin `cascade`), beside the preference,
 literal-default and fallback counts.
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::isLiteralMergePair`
 
 ```text
 // Same merge-hazard pairs the emitted SpacingWriter table uses (one
@@ -9154,7 +9162,7 @@ literal-default and fallback counts.
 // inside some real token of the grammar.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.emittedSlotNames`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::emittedSlotNames`
 
 ```text
 // Slot storage names already emitted during this kind's tree walk. Two
@@ -9177,14 +9185,14 @@ literal-default and fallback counts.
 // `visitingHelpers`).
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.seamBoundaries`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::seamBoundaries`
 
 ```text
 // Seam-census sink (optional so hand-built test ctx literals stay valid):
 // the SEQ join appends one record per boundary it classifies.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.mergePairClassCombos`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::mergePairClassCombos`
 
 ```text
 // Class combos (`${leftClass}\0${rightClass}`) for which at least one
@@ -9193,7 +9201,7 @@ literal-default and fallback counts.
 // so it stays `runtime-varying`. Optional for hand-built test ctx.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.mergePairLeftChars`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::mergePairLeftChars`
 
 ```text
 // The pair table's left/right character projections: a char absent from
@@ -9260,7 +9268,7 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 // lookup via `slotByRuleId`).
 ```
 
-### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.<unknown>`
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter::finalize`
 
 #### body
 
@@ -10047,7 +10055,9 @@ Emits `triviaFacts`, the grammar's `TriviaFacts<TSKindId>` (checked with `satisf
 - `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
 - `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node;
 - `listKinds` (`listKindIds`), engine plumbing: the kind ids of the grammar's list kinds, whose rebuilt nodes keep the source identity of the list they replace;
-- `layout` (`layoutTriviaKindIds`): the kind ids of the trivia members that spell layout rather than content, which a consumer that prints content without format leaves out (`seatTableSides`).
+- `layout` (`layoutTriviaKindIds`): the kind ids of the trivia members that spell layout rather than content, which a consumer that prints content without format leaves out (`seatTableSides`);
+- `innerRegions` (`innerRegions`), engine plumbing: for each kind with an inner side, the storage keys inside its inner gap, over which a built node's emptiness is judged;
+- `namedUnits` (`namedUnitKindIds`), engine plumbing: the unit kind ids the parser names, the only stored units that own sides inside that gap.
 
 The render engine passes both sets to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
 
@@ -10061,7 +10071,7 @@ How the parser delivers a slot's children: a named slot by its field alone, and 
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's number among the kind's native node slots (`render-module.ts::nodeSlotNumbers`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these numbers, so the native evaluator knows no slot names and routes the slot by the read's own router. A slot with no field in its kind's native node cannot be numbered, and the emitter throws, as it does for a slot read as `is` (`RECORDER_FLAG_KEY`), the recorder's flag test. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's number among the kind's native node slots (`render-module.ts::nodeSlotNumbers`), the keyword when the slot holds that keyword's presence (`keywordPresenceValue`, `undefined` otherwise), and last the key the node stores the slot under (`storageKeyOf`). Every row has all four places, so no reader's index moves when a keyword is absent. The storage key pairs an accessor with what the node data and its records are keyed by: node JSON writes a unit child's comments, which its parent's unit sides hold by storage key, under the accessor that reads the unit. The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these numbers, so the native evaluator knows no slot names and routes the slot by the read's own router. A slot with no field in its kind's native node cannot be numbered, and the emitter throws, as it does for a slot read as `is` (`RECORDER_FLAG_KEY`), the recorder's flag test. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
 
 ### `packages/codegen/src/emitters/client-utils.ts::RECORDER_FLAG_KEY`
 
@@ -10069,11 +10079,19 @@ The member a `where` recorder tests a flag by (`common/src/query.ts::flagRef`), 
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 
-Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's number.
+Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id, each row written in full with an absent keyword as `undefined` (JSON would turn it into `null`). The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's number.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitStructure`
 
 Emits `structure`, the factories emitter's structure table as a frozen object keyed by kind id. The language hooks carry it to the engine, where `verifyStructure: 'runtime'` checks each built node against its kind's row.
+
+### `packages/codegen/src/emitters/client-utils.ts::emitJsonFacts`
+
+Emits the grammar's `jsonFacts`, what its nodes are written to JSON by (`nodeJSON`) and revived by. Three of its members are the facts `utils.ts` already holds, referenced rather than copied: the kind names (`KIND_NAMES`), the slots by accessor (`querySlots`) and the layout trivia (`triviaFacts.layout`). The rest are emitted from the sources the rest of codegen uses: the leaves that store their text (`storedTextKinds`, the set the wraps give `wrapLeaf`), the units (`unitKindIds`, the keyword and punctuation kinds a slot holds as a kind id) and the blank arm's id (`BLANK_KIND_ID`), which JSON writes as `null`.
+
+### `packages/codegen/src/emitters/client-utils.ts::textEnvelopeContents`
+
+The alias envelopes built from their content's text (the `alias` form of `builtFromText`), each envelope's kind id paired with the kind id of the content leaf it holds. They become `jsonFacts.textEnvelopes`, which tells the reviver to build such an envelope from its content's text, so the envelope's own text check applies (a property name may be a word the content kind reserves), and only when the content is written as that kind. A content leaf with no kind id fails emission.
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -10153,9 +10171,9 @@ The rows of the model's spelled-trivia table as the generated api writes them: o
 
 The `trivia` member of the language hooks: the generated facts, the default comment kind's coercer as `comment`, and the spelled-trivia rows as `spelled`, in the model's match order. The bare facts object when there is neither.
 
-### `packages/codegen/src/emitters/engine.ts::triviaImports`
+### `packages/codegen/src/emitters/engine.ts::factoryImports`
 
-The factory imports the trivia hook needs, one line per module: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
+The factory imports the language hooks need, one line per module: the coercer module's `buildByKind` (the hook the node reviver builds through), and the trivia hook's builders: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
 
 ### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTypeName`
 
@@ -11975,6 +11993,10 @@ In `_resolveOne`, a value that is neither a config object nor kinded data hoists
 
 `_resolveBareText` tests the slot's text leaves in lexical-rank order, counting an envelope arm's leaves (`_ENVELOPE_TEXT_LEAVES`, from `transparentEnvelopeTextLeaves`) as the slot's own. A text reached through an envelope is passed as text to the envelope's coercer, which runs its own keyword extraction and rank, so `left: 'result'` builds the same `_lhs_expression` envelope the strict surface spells and `left: 'async'` builds the envelope around the keyword arm.
 
+`_resolveByKind` builds a kind-tagged value by its shape. A tag naming a kind built from text (`builtFromText`) with a string `text` takes the registry's checked text path (`_buildGuardedText`); a kind with slots takes any other object as its config (`{ $type, content: 'n' }`); a slotless kind (`_SLOTLESS_TEXT_KINDS`, the `fixed` and `stored` forms) has no config, so a tag without its text is refused naming the shape. The node reviver builds through it, so JSON writes such kinds by their slots.
+
+`_resolveKindEnum` and `_resolveKindEnumItems` serve a mixed-enum slot, one that stores some kinds as their id and the rest as nodes. They take the slot's stored kind ids (`kindEnumMemberDiscriminants`) and keep a number only when it is one of them; any other number is a value for the slot's resolver, which reads it as a numeric leaf or builds the token it names. The grammar-wide `_KIND_ID_STORED` is not the test: `rs.kinds.Comma` among a token tree's items is a token to build, since that slot stores only `$` as an id. `_resolveKindEnumItems` applies the test to each item of a list, so a revived list keeps its stored ids and resolves the rest.
+
 `_listElements` passes an element that is already the list's wrapper kind through untouched and resolves only the others to the wrapper's content; resolving a built wrapper toward an alias content kind would nest it inside that alias.
 
 The node resolvers (`_resolveOne`, `_resolveMany`, `_resolveOneLeaf`, `_resolveOneBranch`, `_resolveManyLeaf`, `_resolveManyBranch`, `_wrapArray`) take the slot's kinds as the type argument `T` and return `Admit<T>`: what they produce is a node of one of those kinds, built or passed through, and the builders they feed admit nodes by kind.
@@ -12347,6 +12369,15 @@ Emits a kind's record view, when it has one (`recordStorageOf`), through the sam
 ### `packages/codegen/src/emitters/wrap.ts::listOptionSetters`
 
 A separated list's `$with` setters for its options, one per `listOptionKeys` key, each typed by that key of the list's options type. A setter rewraps the list's edited data with the option's storage key (`_separator`, `_delimiter`) set, as a slot setter rewraps with its slot. A from() given a list node and options sets them through these setters (`withOptions`), so it never reads the list's storage.
+
+### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
+
+The unit kinds (`unitKindIds`) whose kind the parser names, read from the kind catalog's `anon` stamp: an empty statement's `;`, `true`, `self`, not a `$` or `{`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+
+### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
+
+The sorted kind ids of the unit kinds (keyword or punctuation model type, with a kind id) that `keep` accepts: the one walk behind `unitKindIds` and `namedUnitKindIds`.
+
 
 ### `packages/codegen/src/emitters/render-module.ts::module`
 
@@ -14513,7 +14544,7 @@ The runtime helper one slot value is stored through, by the slot's storage encod
 
 ### `packages/codegen/src/emitters/factories.ts::storageCallExpr`
 
-The call that stores one value: for a list, `listStorage` over it with the coercion as the item function (the helper itself when it takes no table, otherwise a closure passing the table); otherwise the coercion applied to the value, or the value as given. `storedSlotValueExpr` and the loose resolvers' `storedFieldCall` both emit through it, so a list is stored one way whichever surface builds it.
+The call that stores one value: for a list, `listStorage` over it with the coercion as the item function (the helper itself when it takes no table, otherwise a closure passing the table), with `holes` passed on for a slot whose element admits a hole (`hasOptionalElements`), so that list keeps its absent positions; otherwise the coercion applied to the value, or the value as given. `storedSlotValueExpr` and the loose resolvers' `storedFieldCall` both emit through it, so a list is stored one way whichever surface builds it.
 
 ### `packages/codegen/src/emitters/factories.ts::isListStorage`
 
@@ -14890,7 +14921,7 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), `toJSON` (the node's structure through `nodeJSON` and the grammar's `jsonFacts`, so `JSON.stringify` writes kind names and accessor-named slots rather than storage), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf's members are written here too (the wraps' `wrapLeaf`, with `text` and no accessors).
 
 A record view passes `row`: it holds no storage keys to rebuild from, so its writes and reads that need the node's data go through the object node of its row, read once (`rowOf`). Each `$with` setter forwards its arguments by name (`rowWith`), each `$trivia` position forwards to the row's (`rowTrivia`), and `$query` and `$snapshot` take the row. A write therefore returns an object node, and the view itself is never edited.
 
@@ -15248,7 +15279,7 @@ The literal of one dummy node in a generated test: its `$type`, `$text` and `$na
 
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 
-Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: the host templates, the priority list and the gated kinds.
+Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: the host templates, the priority list and the gated kinds. A python expression host is written `_ = (…)`, because python allows a line break inside an expression only within brackets: a fragment read inside brackets, such as a `concatenated_string` whose strings sit on separate lines, is valid only in a bracketed context, and the parentheses supply it while the reparsed node at the fragment's offset is still the fragment.
 
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
@@ -15557,3 +15588,33 @@ A node's `$trivia` member: its `leading` and `trailing` sides, and `inner` for a
 ### `packages/codegen/src/emitters/factories.ts::sharedImportLine`
 
 The record module's import of the constants both builder modules use: the leaf and slot patterns, the delimiter specs and the reserved-word sets, declared once in `objects.ts` and imported by `records.ts`, so each pattern is one literal in the package.
+
+### `packages/codegen/src/emitters/built-from-text.ts::builtFromText`
+
+The kinds a builder can make from text, each with the form its text takes. This is the one place the fact is decided; the coercer's `_leafRegistry`, its `_AFFIXED_KINDS` and `_SLOTLESS_TEXT_KINDS`, the wraps' `wrapLeaf` rows and the grammar's `jsonFacts.leaves` all read it.
+
+- `fixed`: a visible keyword or punctuation leaf (`isBuilderTextLeaf`), whose one spelling is its text; a slot holds it as a kind id.
+- `affixed`: a token whose text differs from its content by a required fixed member (`isAffixedLeaf`); its text input is the content.
+- `interior`: a token with named interior slots (`interiorOf`), whose text is split into those slots.
+- `stored`: a pattern leaf whose node stores its text as `$text` (`storedTextKinds`).
+- `alias`: an alias envelope of a pattern leaf, built from the leaf's text.
+
+Only kinds the factory emitter emits are listed (`classifyFactoryEmission`). A kind there is no factory for cannot be built from anything, and a parse never yields it: the grammars' scanner tokens and error sentinels, such as rust `string_close` and `_error_sentinel` and typescript `_ternary_qmark` and `__error_recovery`, are pattern leaves with a kind id and no corpus instance. A pattern leaf with a factory but no text pattern is skipped when no slot references it, and is an error otherwise.
+
+`fixed` and `stored` kinds have no slots, so text is their only input. The other forms also take the kind's config, which is why `_resolveByKind` dispatches a tag on its shape.
+
+### `packages/codegen/src/emitters/built-from-text.ts::storedTextKinds`
+
+The `stored` kinds of `builtFromText`: the pattern leaves whose nodes hold their text. The wraps give each a `wrapLeaf` row, and their kind ids are the grammar's `jsonFacts.leaves`, so the nodes with a `$text` member and the nodes whose JSON carries `$text` are the same set.
+
+### `packages/codegen/src/emitters/built-from-text.ts::BuiltFromText`
+
+The text-built kinds of one grammar, each classified into the form its builder takes: `fixed` (a keyword or punctuation leaf), `affixed` (a leaf with a prefix or suffix), `interior` (a node whose content is an interior region), `stored` (a leaf whose text is stored and matched by a pattern), and `alias` (an alias envelope over a leaf). `builtFromText` produces the list from the node map. The JSON facts record the text-built kinds as one fact, so the reviver can tell which kinds it builds from text.
+
+### `packages/codegen/src/emitters/client-utils.ts::registeredOptionRows`
+
+Each kind id that has registered slots, mapped to the slot property names its builder takes in its options argument, sorted by kind id. Kinds with no slots are left out. The rows become the `options` table of the emitted JSON facts.
+
+### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
+
+The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.

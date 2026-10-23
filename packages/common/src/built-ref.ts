@@ -1,10 +1,9 @@
 import type { BuiltArena, BuiltText } from './built-arena.ts';
 
-/** What a built node names: its arena and its record, the record's words when its builder wrote it, and for a leaf the text its cells hold. */
+/** What a built node names: its arena and its record, and for a leaf the text its cells hold. */
 export interface BuiltRef {
 	readonly arena: BuiltArena;
 	readonly at: number;
-	readonly words: number | undefined;
 	readonly text: BuiltText | undefined;
 }
 

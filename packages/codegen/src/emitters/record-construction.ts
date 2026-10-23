@@ -7,7 +7,7 @@ import { rustFieldIdent } from './node-common.ts';
 import { RECORD_HEADER_WORDS, type RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
 
-export const RECORD_CONSTRUCTION_IMPORTS = ['bindRow', 'builtArenaOf', 'storeCell', 'storeFlag', 'storeInline', 'storeList', 'storeListOptions'] as const;
+export const RECORD_CONSTRUCTION_IMPORTS = ['bindRow', 'builtArenaOf', 'storeCell', 'storeFlag', 'storeList', 'storeListOptions'] as const;
 
 export function recordPlacesOf(
 	node: AuthoredCompound | AssembledList,
@@ -42,7 +42,6 @@ function slotStore(place: RecordPlace, local: string): string {
 	const at = `record.base + ${place.word}`;
 	if ('bit' in place) return `  if (${local}) storeFlag(record.data, ${at}, ${2 ** place.bit});`;
 	if (place.run !== undefined) return `  storeList(arena, record.data, ${at}, ${local}, ${place.run});`;
-	if (place.inline !== undefined) return `  storeInline(arena, record.data, ${at}, ${local});`;
 	return `  storeCell(arena, record.data, ${at}, ${local});`;
 }
 

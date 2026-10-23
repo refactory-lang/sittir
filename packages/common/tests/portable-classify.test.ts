@@ -16,14 +16,14 @@ const FALSE = 11;
 const FIELD = 12;
 
 const SLOTS: QuerySlots = {
-	[FUNCTION]: [['name', 0]],
+	[FUNCTION]: [['name', 0, undefined, '_name']],
 	[DECORATED]: [
-		['decorators', 0],
-		['definition', 1]
+		['decorators', 0, undefined, '_decorator'],
+		['definition', 1, undefined, '_definition']
 	],
-	[DECORATOR]: [['expression', 0]],
-	[BINARY]: [['operator', 1]],
-	[FIELD]: [['accessor', 0, 'accessor']]
+	[DECORATOR]: [['expression', 0, undefined, '_expression']],
+	[BINARY]: [['operator', 1, undefined, '_operator']],
+	[FIELD]: [['accessor', 0, 'accessor', '_accessor']]
 };
 
 const subject = (kind: number, row: number) => ({ slots: { [kind]: SLOTS[kind]![row]![1] } });
@@ -148,9 +148,9 @@ describe('classifierOf conditions through a list', () => {
 	const ITEMS = { slots: { [PARAMS]: 0 } };
 	const ELEMENT = { slots: { [PARAM]: 0 } };
 	const SLOTS: QuerySlots = {
-		[METHOD]: [['params', 0]],
-		[PARAMS]: [['items', 0]],
-		[PARAM]: [['element', 0]]
+		[METHOD]: [['params', 0, undefined, '_params']],
+		[PARAMS]: [['items', 0, undefined, '_items']],
+		[PARAM]: [['element', 0, undefined, '_element']]
 	};
 	const PARAMS_STEP = { slots: { [METHOD]: 0 } };
 	const read = classifierOf({

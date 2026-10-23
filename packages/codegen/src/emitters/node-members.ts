@@ -80,6 +80,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	lines.push(
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
+		'    toJSON: () => nodeJSON(node, jsonFacts),',
 		...triviaBlockLines(row, spec.inner),
 		...(spec.parsed
 			? [
