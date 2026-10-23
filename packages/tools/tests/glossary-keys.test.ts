@@ -310,6 +310,23 @@ describe('the ratchet on edge-case trees', () => {
 		expect(result.undocumented).not.toContain(`${FILE}::Only::make (static)`);
 	});
 
+	it('counts exported declarations and their direct members as undocumented, and not the nested trees below', () => {
+		writeSource(
+			root,
+			FILE,
+			'export const TABLE = { alpha: { beta: { gamma: 1 } } };\nexport namespace N { export const inner = 1; }\n'
+		);
+		writeSource(root, 'docs/glossary/common.md', `### \`${FILE}::TABLE::alpha::beta\`\n`);
+		const result = measure(root);
+		expect([...result.undocumented].sort()).toEqual([
+			`${FILE}::N`,
+			`${FILE}::N::inner`,
+			`${FILE}::TABLE`,
+			`${FILE}::TABLE::alpha`
+		]);
+		expect(result.valid['ok-owner-qualified']).toBe(1);
+	});
+
 	it('does not let a line that merely starts with a fence marker close a fence', () => {
 		writeSource(root, FILE, 'export function documented(): void {}\n');
 		writeSource(

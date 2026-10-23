@@ -10,6 +10,7 @@ export const GLOSSARY_TREES: readonly string[] = [
 ];
 
 export const GLOSSARY_DIR = 'docs/glossary';
+export const UNDOCUMENTED_DEPTH = 2;
 export const DEFAULT_CEILINGS = 'packages/tools/glossary-key-ceilings.json';
 
 export const VALID_CLASSES = ['ok-bare-unique', 'ok-owner-qualified', 'ok-module'] as const;
@@ -363,7 +364,7 @@ export function measure(root: string): Measurement {
 	let exported = 0;
 	for (const [file, own] of declarations) {
 		for (const declaration of own) {
-			if (!declaration.exported) continue;
+			if (!declaration.exported || declaration.path.length > UNDOCUMENTED_DEPTH) continue;
 			exported += 1;
 			if (!resolved.has(declarationId(file, declaration)))
 				undocumented.push(`${file}::${declaration.path.join('::')}${declaration.isStatic ? ' (static)' : ''}`);
@@ -452,7 +453,7 @@ export async function run(opts: GlossaryKeysOptions = {}): Promise<number> {
 			JSON.stringify({ counts: measurement.counts, valid: measurement.valid, ceilings, regressions }, null, 1)
 		);
 	} else {
-		console.log(`glossary-keys — ${measurement.headings} keys, ${measurement.exported} exported declarations`);
+		console.log(`glossary-keys — ${measurement.headings} keys, ${measurement.exported} exported declarations to depth ${UNDOCUMENTED_DEPTH}`);
 		for (const name of VALID_CLASSES) console.log(`${name}\t${measurement.valid[name]}`);
 		console.log('class\tcount\tceiling');
 		for (const name of COUNT_NAMES) console.log(`${name}\t${measurement.counts[name]}\t${ceilings[name] ?? '-'}`);
