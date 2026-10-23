@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideTreeOf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -126,7 +126,10 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const facts: TriviaFacts = handle.current.trivia;
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
-	const read = (side: TriviaSideName): readonly TriviaEntry[] => hydratedEntries(sideOf(node, side), sideTreeOf(node));
+	const read = (side: TriviaSideName): readonly TriviaEntry[] => {
+		const { entries, tree } = sideRead(node, side);
+		return hydratedEntries(entries, tree);
+	};
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
 		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 		const at = tableAt(node);

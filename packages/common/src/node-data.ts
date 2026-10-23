@@ -445,23 +445,31 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
  * was rebuilt from (`placeOf`).
  */
 export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
-	if (envelopeKindOf(node) !== undefined) return [];
-	const at = tableAt(node);
-	if (at !== undefined) return at.tree.triviaSide(at.index, side) as TriviaEntry[];
-	const stored = triviaOf(node)?.[side];
-	if (stored !== undefined) return stored;
-	const source = placeOf(node);
-	const table = source === undefined ? undefined : tableOf(sourceTree(source), decodeIndex(source.treeHandle));
-	return table === undefined ? [] : (table.tree.triviaSide(table.index, side) as TriviaEntry[]);
+	return sideRead(node, side).entries;
 }
 
-/** The tree whose trivia table answers `sideOf` for `node`: its own live tree, else that of the node it was rebuilt from (`placeOf`) while it lives; `undefined` for a node whose sides are its own data. */
-export function sideTreeOf(node: object): TreeHandle | undefined {
-	if (envelopeKindOf(node) !== undefined) return undefined;
-	if (tableAt(node) !== undefined) return treeOf(node);
-	if (triviaOf(node) !== undefined) return undefined;
-	const source = placeOf(node);
-	return source === undefined ? undefined : sourceTree(source);
+/** One side of a node and the tree whose table holds it (`sideOf`'s source); `tree` is `undefined` for a side the node holds as its own data. */
+export interface SideRead {
+	readonly entries: readonly TriviaEntry[];
+	readonly tree: TreeHandle | undefined;
+}
+
+const NO_SIDE: SideRead = { entries: [], tree: undefined };
+
+/**
+ * One side of `node` and the tree that holds it: a parsed node's live table, else the side it holds as its own
+ * data, else the table of the node it was rebuilt from (`placeOf`) while that tree lives. An alias envelope's
+ * content (`envelopeKindOf`) reads nothing from a table, whose entries for that parser node are the envelope's.
+ */
+export function sideRead(node: object, side: TriviaSideName): SideRead {
+	const at = tableAt(node);
+	if (at !== undefined) return envelopeKindOf(node) !== undefined ? NO_SIDE : { entries: at.tree.triviaSide(at.index, side) as TriviaEntry[], tree: treeOf(node) };
+	const stored = triviaOf(node)?.[side];
+	if (stored !== undefined) return { entries: stored, tree: undefined };
+	const source = envelopeKindOf(node) === undefined ? placeOf(node) : undefined;
+	const tree = source === undefined ? undefined : sourceTree(source);
+	const table = source === undefined ? undefined : tableOf(tree, decodeIndex(source.treeHandle));
+	return table === undefined ? NO_SIDE : { entries: table.tree.triviaSide(table.index, side) as TriviaEntry[], tree };
 }
 
 /** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */

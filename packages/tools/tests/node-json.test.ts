@@ -303,3 +303,29 @@ describe('a comment written through $trivia reads back as the node a parsed comm
 		expect(fromWrite?.content()).toEqual(fromRead?.content());
 	});
 });
+
+describe('a rebuilt node reads each side from where that side lives', () => {
+	type Rebuildable = { readonly $trivia: Record<'leading' | 'trailing', (...items: unknown[]) => unknown>; readonly $with: Record<string, (value: unknown) => Rebuildable> };
+	const comments = (text: string): number => (text.match(/\/\/ [lt]\b/g) ?? []).length;
+
+	it.each([
+		['trailing', 'leading'],
+		['leading', 'trailing']
+	] as const)('a %s side written before a rebuild and a %s side written after both survive JSON', (before, after) => {
+		const statement = ts.parse('a;\nb;\n').statements()[0] as unknown as Rebuildable & { expression(): unknown };
+		statement.$trivia[before](before === 'leading' ? '// l' : '// t');
+		const rebuilt = statement.$with.expression!((ts.parse('c;\n').statements()[0] as unknown as { expression(): unknown }).expression());
+		rebuilt.$trivia[after](after === 'leading' ? '// l' : '// t');
+		const revived = JSON.parse(JSON.stringify(rebuilt), ts.reviver) as object;
+		expect(JSON.stringify(revived)).toBe(JSON.stringify(rebuilt));
+		expect(comments(String(revived))).toBe(2);
+	});
+
+	it('keeps a comment written on rebuilt alias content', () => {
+		const content = (ts.parse('interface I {}').statements()[0] as unknown as { body(): { content(): Rebuildable & { members(): unknown } } }).body().content();
+		const rebuilt = content.$with.members!(content.members());
+		rebuilt.$trivia.leading('/* new */');
+		expect(String(rebuilt)).toContain('/* new */');
+		expect(String(JSON.parse(JSON.stringify(rebuilt), ts.reviver))).toContain('/* new */');
+	});
+});
