@@ -1,7 +1,10 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }})
+run-name: Arena benchmarks (${{ inputs.benchmark || 'all' }})
 
 on:
+  # A push to a bench/ branch measures that commit with every benchmark.
+  push:
+    branches: ['bench/**']
   workflow_dispatch:
     inputs:
       benchmark:
@@ -28,20 +31,20 @@ jobs:
       prefix: ${{ needs.prepare.outputs.prefix }}
   eager-native:
     needs: prepare
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
+    if: contains(fromJSON('["all", "eager"]'), inputs.benchmark || 'all')
     uses: ./.github/workflows/benchmark-native.yml
     with:
       grammar: eager
       prefix: ${{ needs.prepare.outputs.prefix }}
   eager:
     needs: [prepare, native, eager-native]
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
+    if: contains(fromJSON('["all", "eager"]'), inputs.benchmark || 'all')
     uses: ./.github/workflows/benchmark-eager.yml
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
   corpus:
     needs: [prepare, native]
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
+    if: contains(fromJSON('["all", "corpus"]'), inputs.benchmark || 'all')
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
