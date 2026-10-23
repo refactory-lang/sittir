@@ -15358,3 +15358,15 @@ Only kinds the factory emitter emits are listed (`classifyFactoryEmission`). A k
 ### `packages/codegen/src/emitters/built-from-text.ts::storedTextKinds`
 
 The `stored` kinds of `builtFromText`: the pattern leaves whose nodes hold their text. The wraps give each a `wrapLeaf` row, and their kind ids are the grammar's `jsonFacts.leaves`, so the nodes with a `$text` member and the nodes whose JSON carries `$text` are the same set.
+
+### `packages/codegen/src/emitters/built-from-text.ts::BuiltFromText`
+
+The text-built kinds of one grammar, each classified into the form its builder takes: `fixed` (a keyword or punctuation leaf), `affixed` (a leaf with a prefix or suffix), `interior` (a node whose content is an interior region), `stored` (a leaf whose text is stored and matched by a pattern), and `alias` (an alias envelope over a leaf). `builtFromText` produces the list from the node map. The JSON facts record the text-built kinds as one fact, so the reviver can tell which kinds it builds from text.
+
+### `packages/codegen/src/emitters/client-utils.ts::registeredOptionRows`
+
+Each kind id that has registered slots, mapped to the slot property names its builder takes in its options argument, sorted by kind id. Kinds with no slots are left out. The rows become the `options` table of the emitted JSON facts.
+
+### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
+
+The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.
