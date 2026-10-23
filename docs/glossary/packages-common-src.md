@@ -991,3 +991,35 @@ A kind id's JSON: `{ $type }` naming its kind, with `leadingComments` and `trail
 ### `packages/common/src/node-json.ts::reviveItem`
 
 Revives one slot value, or one list item, of the node the reviver is building. When it revives to a kind id and its JSON carried comments, it records them as a unit-side record: the slot's storage key from its `querySlots` row, the item's position, and the revived comments. After building the node, the reviver gives it those records (`setUnitSides`), the record a parsed tree gives, so render, `$snapshot()` and `toJSON` read them with no path of their own.
+
+### `packages/common/src/node-data.ts::SideRead`
+
+One side of a node (its leading, trailing or inner comments) and the tree whose trivia table holds it. `tree` is `undefined` when the node holds the side as its own data. `sideRead` returns it, so each side is read from the place it lives rather than from one choice made per node: a rebuilt node that wrote one side and inherited the other reads each one from its own source.
+
+### `packages/common/src/node-json.ts::valueJSON`
+
+Converts one slot value to its JSON form. `undefined` and `false` are omitted; `true` and strings pass through; the language's blank value becomes `null`; a kind id becomes a unit node of that kind, carrying the comments its unit records hold (a keyword or punctuation stored as its kind id cannot hold sides itself, so its parent holds them); a node becomes its node JSON; a list becomes an array with `null` for each hole. Any other value throws, naming the slot.
+
+### `packages/common/src/node-json.ts::kindName`
+
+The kind name for a kind id, read from the language's facts. Throws when the language has no kind with that id.
+
+### `packages/common/src/node-json.ts::ReviveHooks`
+
+What the reviver needs from the engine: the language's JSON facts, a `build` hook that constructs a node of a named kind from its input, and a `settle` hook applied to each node the reviver builds. `reviveNode` takes these as its only dependency on the engine.
+
+### `packages/common/src/node-json.ts::reviveNode`
+
+Builds a parsed JSON value back into nodes, the engine's reviver. The walk is recursive and children are built before their parent, so each parent receives built children. Errors name the JSON path: an ERROR node, an unknown kind, a slot the kind lacks, or a leaf without its text.
+
+### `packages/common/src/node-json.ts::revive`
+
+The recursive walk behind `reviveNode`. An array maps each item. An object without `$type` keeps its keys, each revived. An object with `$type` is built as a node of that kind, after its slots and comments are revived. ERROR and unknown kinds are refused at the object's path.
+
+### `packages/common/src/node-json.ts::buildAt`
+
+Calls the `build` hook for one node and rethrows any failure with the JSON path prefixed to its message, keeping the original error as the cause.
+
+### `packages/common/src/node-json.ts::kindIdOf`
+
+The kind id for a kind name, or `undefined` when the language has no kind of that name. The set of names is computed once per facts object and cached, so a name that is not a kind is answered here instead of reaching `facts.kindId`, which throws for names no kind has.
