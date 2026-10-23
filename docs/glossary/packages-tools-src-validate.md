@@ -1651,3 +1651,115 @@ A failure's kind labeled with the surface whose run produced it, `<surface>: <ki
 ### `packages/tools/src/validate/surface-label.ts::kindOfLabel`
 
 The kind a `surfaceLabel` names, or the entry itself when it carries no surface. A kind name holds no `': '`, so an unlabeled kind reads back unchanged. The baseline check reads the built-render-parse row's failing kinds through it, to compare them with the grammar's `kinds`.
+
+### `packages/tools/src/validate/glossary-keys.ts::GLOSSARY_TREES`
+
+The four source trees the glossary covers, as paths from the repo root. The tool reads only these trees, and a key naming a file outside them is `out-of-scope-file`.
+
+### `packages/tools/src/validate/glossary-keys.ts::GLOSSARY_DIR`
+
+The directory of glossary documents, relative to the repo root. Every `.md` file in it except `README.md` is read for headings.
+
+### `packages/tools/src/validate/glossary-keys.ts::UNDOCUMENTED_DEPTH`
+
+How deep the undocumented count reaches: exported top-level declarations and their direct members, depth two. Nested properties below that are valid keys but are not counted as undocumented.
+
+### `packages/tools/src/validate/glossary-keys.ts::DEFAULT_CEILINGS`
+
+The checked-in ceilings file, relative to the repo root: one ceiling per broken class and one for the undocumented count. A run fails when a count exceeds its ceiling. `--update` only lowers a ceiling and creates the file when it is absent.
+
+### `packages/tools/src/validate/glossary-keys.ts::VALID_CLASSES`
+
+The valid key classes the tool accepts: `ok-bare-unique` (a bare name declared once in the file), `ok-owner-qualified` (a full path matching one declaration) and `ok-module` (a file-level `::module` key).
+
+### `packages/tools/src/validate/glossary-keys.ts::BROKEN_CLASSES`
+
+The broken key classes the tool counts: `ambiguous`, `no-declaration`, `wrong-owner`, `dot-separated`, `placeholder`, `out-of-scope-file` and `file-missing`. Each has a ceiling in the ceilings file.
+
+### `packages/tools/src/validate/glossary-keys.ts::COUNT_NAMES`
+
+The names a run reports counts under, in order: each broken class, then `undocumented`. The ceilings file has one entry per name.
+
+### `packages/tools/src/validate/glossary-keys.ts::ValidClass`
+
+The union of the valid key classes, taken from `VALID_CLASSES`.
+
+### `packages/tools/src/validate/glossary-keys.ts::BrokenClass`
+
+The union of the broken key classes, taken from `BROKEN_CLASSES`.
+
+### `packages/tools/src/validate/glossary-keys.ts::KeyClass`
+
+Any key class: a valid class or a broken one.
+
+### `packages/tools/src/validate/glossary-keys.ts::CountName`
+
+A name a count is reported under: a broken class, or `undocumented`.
+
+### `packages/tools/src/validate/glossary-keys.ts::Declaration`
+
+One declaration the compiler enumerates in a source file: its path within the file (owner names, then the member name), whether it is exported, and whether it is a static member. A static and an instance member of one name are two declarations.
+
+### `packages/tools/src/validate/glossary-keys.ts::GlossaryKey`
+
+One heading key read from a glossary document: the key text and where the heading is (document and line).
+
+### `packages/tools/src/validate/glossary-keys.ts::ClassifiedKey`
+
+A glossary key with its class, and the declaration it resolves to when it resolves to one.
+
+### `packages/tools/src/validate/glossary-keys.ts::Classification`
+
+The result of classifying one key: its class, and the resolved declaration path when the key resolves to exactly one declaration.
+
+### `packages/tools/src/validate/glossary-keys.ts::Measurement`
+
+A full run's result: every classified key, the count per name (each broken class, and undocumented), and the undocumented declarations themselves.
+
+### `packages/tools/src/validate/glossary-keys.ts::Ceilings`
+
+The ceilings file's content: an optional ceiling per count name. A missing ceiling is not checked.
+
+### `packages/tools/src/validate/glossary-keys.ts::Regression`
+
+One count that exceeds its ceiling: the name, the count, and the ceiling it breaks.
+
+### `packages/tools/src/validate/glossary-keys.ts::GlossaryKeysOptions`
+
+The options a run takes: `update` lowers the ceilings file, `table` and `json` choose the output form, `undocumented` lists the undocumented declarations, `ceilings` names another ceilings file, and `root` names the repo root.
+
+### `packages/tools/src/validate/glossary-keys.ts::enumerateDeclarations`
+
+Lists the declarations one source file contains, parsed through the TypeScript compiler API. Top-level declarations, class and interface members, enum members, const-object and type-literal properties, and namespace members are enumerated at any depth, each with an export flag. Bound names in destructuring exports and dotted namespaces are walked. Private members are skipped, protected members are kept, and a static and an instance member of one name stay two declarations. A const object is followed only through `as const`, `satisfies` and parentheses.
+
+### `packages/tools/src/validate/glossary-keys.ts::inGlossaryTrees`
+
+True when a file is a TypeScript source under one of the glossary trees. A key naming any other file is `out-of-scope-file`.
+
+### `packages/tools/src/validate/glossary-keys.ts::enumerateTrees`
+
+Enumerates the declarations of every source file under the glossary trees, keyed by repo-relative path. Test files and files whose first line is the auto-generated banner are skipped: they carry no authored declarations.
+
+### `packages/tools/src/validate/glossary-keys.ts::readKeys`
+
+Reads every `### \`file::key\`` heading from the glossary documents, with its location. A fence is skipped until a closing marker with nothing after it, so a `ts` line inside a fence does not end the fence early and hide a real heading after it.
+
+### `packages/tools/src/validate/glossary-keys.ts::classifyKey`
+
+Classifies one heading key against the enumerated declarations, in order: a file outside the glossary trees is `out-of-scope-file`; a missing file is `file-missing`; a `::module` key is `ok-module` once its file exists; a bare name declared once resolves; a qualified key resolves only when its full path matches exactly one declaration; a dot-separated qualifier is `dot-separated`; `<unknown>` is `placeholder`.
+
+### `packages/tools/src/validate/glossary-keys.ts::measure`
+
+Runs the whole measurement for one repo root: enumerates the declarations, classifies every heading key, and counts each broken class and the undocumented declarations, which are the exported declarations at depth two that no key resolves to.
+
+### `packages/tools/src/validate/glossary-keys.ts::compareWithCeilings`
+
+Lists every count that exceeds its ceiling. A count with no ceiling is not checked.
+
+### `packages/tools/src/validate/glossary-keys.ts::loweredCeilings`
+
+The ceilings an `--update` run writes: each count's ceiling lowered to the current count when the count is below it, and never raised. A name with no ceiling takes the current count.
+
+### `packages/tools/src/validate/glossary-keys.ts::run`
+
+The `sittir tool glossary-keys` entry point. It measures the repo, reads the ceilings file, and prints the result in the requested form. With `update`, it writes the lowered ceilings and creates the file when absent. Otherwise it fails when any count exceeds its ceiling, or when a ceiling is not a non-negative integer, which is refused rather than compared as NaN.
