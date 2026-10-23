@@ -763,12 +763,18 @@ export interface SlotStorageCoercion {
 	readonly typed: boolean;
 }
 
-export function storageCallExpr(valueExpr: string, coercion: SlotStorageCoercion | undefined, list: boolean, stored?: string): string {
+export function storageCallExpr(
+	valueExpr: string,
+	coercion: SlotStorageCoercion | undefined,
+	list: boolean,
+	stored?: string,
+	holes = false
+): string {
 	const typeArg = stored === undefined ? '' : `<${stored}>`;
 	if (list) {
-		if (coercion === undefined) return `listStorage${typeArg}(${valueExpr})`;
-		const item = coercion.args === '' ? coercion.helper : `(item) => ${coercion.helper}(item${coercion.args})`;
-		return `listStorage${typeArg}(${valueExpr}, ${item})`;
+		const item = coercion === undefined ? undefined : coercion.args === '' ? coercion.helper : `(item) => ${coercion.helper}(item${coercion.args})`;
+		const args = holes ? [valueExpr, item ?? 'undefined', 'true'] : item === undefined ? [valueExpr] : [valueExpr, item];
+		return `listStorage${typeArg}(${args.join(', ')})`;
 	}
 	if (coercion === undefined) return valueExpr;
 	return `${coercion.helper}${coercion.typed ? typeArg : ''}(${valueExpr}${coercion.args})`;
@@ -814,7 +820,13 @@ function storedSlotValueExpr(
 	textInput = false
 ): string {
 	const stored = `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
-	return storageCallExpr(valueExpr, slotStorageCoercion(f, nodeMap, kindEntries, textInput), isListStorage(f, nodeMap, kindEntries), stored);
+	return storageCallExpr(
+		valueExpr,
+		slotStorageCoercion(f, nodeMap, kindEntries, textInput),
+		isListStorage(f, nodeMap, kindEntries),
+		stored,
+		hasOptionalElements(f)
+	);
 }
 
 function narrowedStorageExpr(

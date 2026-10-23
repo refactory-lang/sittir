@@ -14476,7 +14476,7 @@ The runtime helper one slot value is stored through, by the slot's storage encod
 
 ### `packages/codegen/src/emitters/factories.ts::storageCallExpr`
 
-The call that stores one value: for a list, `listStorage` over it with the coercion as the item function (the helper itself when it takes no table, otherwise a closure passing the table); otherwise the coercion applied to the value, or the value as given. `storedSlotValueExpr` and the loose resolvers' `storedFieldCall` both emit through it, so a list is stored one way whichever surface builds it.
+The call that stores one value: for a list, `listStorage` over it with the coercion as the item function (the helper itself when it takes no table, otherwise a closure passing the table), with `holes` passed on for a slot whose element admits a hole (`hasOptionalElements`), so that list keeps its absent positions; otherwise the coercion applied to the value, or the value as given. `storedSlotValueExpr` and the loose resolvers' `storedFieldCall` both emit through it, so a list is stored one way whichever surface builds it.
 
 ### `packages/codegen/src/emitters/factories.ts::isListStorage`
 

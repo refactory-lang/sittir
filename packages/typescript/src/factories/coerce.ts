@@ -3723,7 +3723,8 @@ export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.
 	return F.buildArray(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Expression | T.SpreadElement>(_v, _K6, _K16)),
-			(item) => coerceMixedEnumStorage(item, [])
+			(item) => coerceMixedEnumStorage(item, []),
+			true
 		) as unknown as Parameters<typeof F.buildArray>)
 	);
 }
@@ -4909,7 +4910,8 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 		return F.buildArguments(
 			...(listStorage(
 				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.Expression | T.SpreadElement>(_v, _K6, _K16)),
-				(item) => coerceMixedEnumStorage(item, [])
+				(item) => coerceMixedEnumStorage(item, []),
+				true
 			) as unknown as Parameters<typeof F.buildArguments>)
 		);
 	}
@@ -4924,7 +4926,8 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 	return F.buildArguments(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Expression | T.SpreadElement>(_v, _K6, _K16)),
-			(item) => coerceMixedEnumStorage(item, [])
+			(item) => coerceMixedEnumStorage(item, []),
+			true
 		) as unknown as Parameters<typeof F.buildArguments>)
 	);
 }

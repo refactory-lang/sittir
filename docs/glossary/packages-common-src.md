@@ -659,7 +659,7 @@ Whether a key carries node data across the native boundary: a storage key (`_<sl
 
 ### `packages/common/src/runtime.ts::listStorage`
 
-A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given), with the absent ones dropped; a value that is not an array is stored through `item` alone. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
+A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given); a value that is not an array is stored through `item` alone. An absent item (one `item` stores as `undefined`) is dropped, except in a list whose element admits a hole (`holes`, the model's `hasOptionalElements` stamp, passed by the emitter): there an `undefined` or `null` item is kept as a hole at its position, so `[a, , b]` builds three positions. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
 
 ### `packages/common/src/runtime.ts::kindIdStorage`
 

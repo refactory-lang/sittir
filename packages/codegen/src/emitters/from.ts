@@ -2,7 +2,7 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
-import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
+import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -1059,7 +1059,7 @@ function storedFieldCall(
 			: fieldMultiple
 				? `_resolveKindEnumItems(${prop}, ${stored}, (_v) => ${callFor('_v')})`
 				: `_resolveKindEnum(${prop}, ${stored}, () => ${baseCall})`;
-	return storageCallExpr(resolved, coercion, fieldMultiple);
+	return storageCallExpr(resolved, coercion, fieldMultiple, undefined, fieldMultiple && hasOptionalElements(field));
 }
 
 function keywordPresenceResolverCall(

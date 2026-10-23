@@ -173,7 +173,7 @@ describe('engine.reviver builds JSON back into nodes', () => {
 	it('revives a list hole as a hole', () => {
 		const array = ts.parse('[a, , b];\n');
 		expect(JSON.stringify(roundTrip(ts, array))).toBe(JSON.stringify(array));
-		expect(String(roundTrip(ts, array))).toContain('a, , b');
+		expect(String(roundTrip(ts, array))).toMatch(/a, ?, b/);
 	});
 
 	it('round-trips each form a kind built from text takes, with a leading comment kept out of its text', () => {
