@@ -8,6 +8,12 @@ use super::ADDON;
 unsafe extern "C" {
     fn toy_scanner_roundtrip() -> i32;
     fn toy_scanner_malloc_slot() -> usize;
+}
+
+// Data in another DLL is reached through its import slot, which rustc uses
+// only for an item it knows a DLL provides.
+#[cfg_attr(windows, link(name = "sittir_engine.dll", kind = "dylib"))]
+unsafe extern "C" {
     static ts_current_malloc: Option<unsafe extern "C" fn(usize) -> *mut core::ffi::c_void>;
 }
 
