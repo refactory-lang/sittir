@@ -186,7 +186,7 @@ The shape of a row's optional `casesByKind`: a plain object with sorted keys, ea
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::ComparedRow`
 
-One row the head records, with the metrics it is compared on: a validator's `pass`, a roundtrip validator's `astMatchPass` as well, or the parity fixtures' `pass`, each with its base and head values (`ComparedMetric`). A row the base does not record is compared against `UNRECORDED_ROW`. `comparedRows` yields a grammar's rows in one order, so the count rule, the total-drop rule and the fail-rise rule walk the same rows.
+One row the head records, with the metrics it is compared on: a validator's `pass`, a roundtrip validator's `astMatchPass` as well, or the parity fixtures' `pass`, each with its base and head values (`ComparedMetric`). A row the base does not record is compared against `UNRECORDED_ROW`. `comparedRows` yields a grammar's rows in one order, so the count rule, the total-drop rule, the fail-rise rule and the failure-list rule walk the same rows.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::caseLosses`
 
@@ -218,7 +218,7 @@ The counts a row the base does not record is compared against: no cases, no pass
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::listRiseUnexplained`
 
-Whether a row's failing and format-deferred list (a validator's `failingKinds` and `formatDeferredKinds`, or the parity fixtures' `failingByKind` and `formatDeferredByKind` ids) grew by more than the row's total did, or grew while its pass fell. Growth within the total's is new cases that fail, and `checkFailRise` already holds their count to a declaration. An item that moves from the failing list to the format-deferred one keeps the sum.
+Whether a row's failing and format-deferred list (a validator's `failingKinds` and `formatDeferredKinds`, or the parity fixtures' `failingByKind` and `formatDeferredByKind` ids) grew by more than the row's total did, or grew while its pass fell. Growth within the total's is new cases that fail, and `checkFailRise` already holds their count to a declaration. A row whose fail rise is declared is not held to it at all (`failRiseDeclared`). An item that moves from the failing list to the format-deferred one keeps the sum.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::ROUNDTRIP_BY_VALIDATOR`
 
@@ -243,6 +243,14 @@ The size of a validator's failing and format-deferred lists (`failingKinds` and 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::isKindId`
 
 Whether a key is a kind id: a non-negative integer, written the way `String(id)` writes it. The parity fixtures key `failingByKind` and `formatDeferredByKind` by the node's numeric `$type`, and an object enumerates such keys in ascending numeric order, the collector's order, so the shape check needs no order check for them: ids 98 and 127 enumerate as 98, 127, which a string comparison would refuse.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::failureListSizes`
+
+A row's failing and format-deferred list sizes on the base and the head, for the failure-list rule: the parity fixtures' failure ids (`parityFixturesSum`), or a validator's failing kinds (`validatorSum`, the head's without the kinds it adds). Undefined for a validator the base does not record, which the rule does not compare.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::failRiseDeclared`
+
+Whether a row's fail count (`total - pass`, or `total - astMatchPass` for a roundtrip validator) rose and a declaration covers the row (`declarationMismatch`), the rise `checkFailRise` accepts. The failure-list rule does not hold such a row to its allowance: one new failing case can list several kinds, a corpus entry every kind it fails in. A declaration whose row did not fail more excuses no list growth, and an inherited one cannot match, as its `from` no longer equals the base.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 

@@ -70,7 +70,8 @@
  *      checked. A kind the head adds (in its `kinds`, not the base's) is
  *      not counted in the head's list: a kind that splits or is renamed
  *      lists its failing parts under new names, and rule 3 holds their
- *      failures.
+ *      failures. A row whose fail rise rule 3 finds declared is not held
+ *      to the allowance: one new failing case can list several kinds.
  *   6. Left-out rise — the PER-GRAMMAR SUM of `parityFixtures.
  *      leftOutByKind` may not grow: a render fixture the regen leaves out
  *      is a kind whose template no longer reproduces its source, and it
@@ -525,7 +526,7 @@ interface ComparedMetric {
 }
 
 interface ComparedRow {
-	readonly row: string;
+	readonly row: ValidatorName | 'parityFixtures';
 	readonly path: string;
 	readonly b: CountedRow;
 	readonly h: CountedRow;
@@ -790,43 +791,44 @@ function listRiseUnexplained(b: CounterPair, h: CounterPair, before: number, aft
 	return after > before && (h.total - b.total < after - before || h.pass < b.pass);
 }
 
+function failureListSizes(
+	row: ComparedRow['row'],
+	baseGE: GrammarEntry,
+	headGE: GrammarEntry,
+	arrived: ReadonlySet<string>
+): readonly [before: number, after: number] | undefined {
+	if (row === 'parityFixtures') return [parityFixturesSum(baseGE.parityFixtures), parityFixturesSum(headGE.parityFixtures)];
+	if (!Object.hasOwn(baseGE.validators, row)) return undefined;
+	return [validatorSum(baseGE.validators[row]), validatorSum(headGE.validators[row], arrived)];
+}
+
+function failRiseDeclared(head: BackendBaseline, g: string, { row, b, h, metrics }: ComparedRow): boolean {
+	const rose = metrics.some(({ before, after }) => h.total - after > b.total - before);
+	return rose && declarationMismatch(declaredRow(head, g, row), row, b, h) === undefined;
+}
+
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
 		const arrived = kindsMissingFrom(headGE, baseGE);
-		for (const vName of baseValidators(baseGE.validators)) {
-			const b = baseGE.validators[vName] as ValidatorResult;
-			const h = headGE.validators[vName] as ValidatorResult;
-			const before = validatorSum(b);
-			const after = validatorSum(h, arrived);
-			if (!listRiseUnexplained(b, h, before, after)) continue;
+		for (const row of comparedRows(g, baseGE, headGE)) {
+			const sizes = failureListSizes(row.row, baseGE, headGE, arrived);
+			if (sizes === undefined) continue;
+			const [before, after] = sizes;
+			if (!listRiseUnexplained(row.b, row.h, before, after) || failRiseDeclared(head, g, row)) continue;
+			const parity = row.row === 'parityFixtures';
+			const lists = parity ? 'the failingByKind + formatDeferredByKind ids' : 'failingKinds.length + formatDeferredKinds.length';
 			return {
 				ok: false,
 				reason: 'format-deferred-rise',
-				summary: `format-deferred sum grew at grammars.${g}.validators.${vName}: ${before} → ${after} (total: ${b.total} → ${h.total}, pass: ${b.pass} → ${h.pass})`,
+				summary: `format-deferred ${parity ? 'fixture-id ' : ''}sum grew at ${row.path}: ${before} → ${after} (total: ${row.b.total} → ${row.h.total}, pass: ${row.b.pass} → ${row.h.pass})`,
 				details: {
-					path: `grammars.${g}.validators.${vName}`,
+					path: row.path,
 					before,
 					after,
-					note: 'failingKinds.length + formatDeferredKinds.length may grow by no more than total did, with pass held'
+					note: `${lists} may grow by no more than total did, with pass held, unless the row's fail rise is declared`
 				}
 			};
 		}
-		const b = baseGE.parityFixtures;
-		const h = headGE.parityFixtures;
-		const before = parityFixturesSum(b);
-		const after = parityFixturesSum(h);
-		if (!listRiseUnexplained(b, h, before, after)) continue;
-		return {
-			ok: false,
-			reason: 'format-deferred-rise',
-			summary: `format-deferred fixture-id sum grew at grammars.${g}.parityFixtures: ${before} → ${after} (total: ${b.total} → ${h.total}, pass: ${b.pass} → ${h.pass})`,
-			details: {
-				path: `grammars.${g}.parityFixtures`,
-				before,
-				after,
-				note: 'the failingByKind + formatDeferredByKind ids may grow by no more than total did, with pass held'
-			}
-		};
 	}
 	return null;
 }

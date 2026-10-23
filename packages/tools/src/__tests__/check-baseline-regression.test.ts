@@ -299,6 +299,36 @@ describe('checkRegression', () => {
 		expect(checkRegression(base, head).ok).toBe(true);
 	});
 
+	it('a declared new corpus failure may list every kind it fails, though they outnumber the entries added', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.grammars.scm!.validators.roundtrip = rt(10, 11, 10, ['capture', 'named_node_plain', 'program']);
+		head.totals = computeTotals(head.grammars);
+		const undeclared = checkRegression(base, head);
+		expectFail(undeclared);
+		expect(undeclared.reason).toBe('fail-rise');
+		head.baselineCounterChange = {
+			reason: 'a new corpus entry fails',
+			grammars: { scm: { roundtrip: { from: { pass: 10, total: 10 }, to: { pass: 10, total: 11 } } } }
+		};
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('a declaration whose row did not fail more excuses no spread of failing kinds', () => {
+		const base = baseline();
+		base.grammars.scm!.validators.roundtrip = rt(9, 10, 9, ['capture']);
+		base.totals = computeTotals(base.grammars);
+		const head = clone(base);
+		head.grammars.scm!.validators.roundtrip = rt(9, 10, 9, ['capture', 'program']);
+		head.baselineCounterChange = {
+			reason: 'a declaration with no change',
+			grammars: { scm: { roundtrip: { from: { pass: 9, total: 10 }, to: { pass: 9, total: 10 } } } }
+		};
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('format-deferred-rise');
+	});
+
 	it('declared parity failures under kind ids of different lengths pass, in the order the collector writes them', () => {
 		const base = baseline();
 		const head = clone(base);
