@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from './_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../diagnostics/grammar-diagnostics.ts';
 import { toScreamingSnakeCase } from '../model/casing.ts';
 import type { RawGrammar } from '../types.ts';

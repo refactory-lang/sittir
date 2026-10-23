@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import { lead, match } from '../../dsl/bind.ts';
 import { assertGatePasses, unexpectableExpectEntries } from '../../compiler/diagnostics/grammar-diagnostics.ts';

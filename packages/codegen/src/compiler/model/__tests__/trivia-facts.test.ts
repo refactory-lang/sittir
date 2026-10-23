@@ -6,7 +6,7 @@ import { AbstractAssembledCompound } from '../node-map.ts';
 import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
-import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
 
 const nodeMaps = new Map<string, Promise<NodeMap>>();

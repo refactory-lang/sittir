@@ -232,7 +232,7 @@ export async function compileNodeMap(grammar: string, options: { readonly unboun
 	const { nodeMap } = await compileGrammar({
 		package: await invoke('grammars', 'grammarPackage', grammar),
 		generatedIdTables: options.unbound === true ? undefined : await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar),
-		unbound: options.unbound
+		evaluation: { unbound: options.unbound }
 	});
 	return nodeMap;
 }
