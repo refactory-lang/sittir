@@ -911,6 +911,15 @@ export function slotAccessorOf(model: LoadedNodeModel, kindNameFromId: (id: numb
 	};
 }
 
+/** A kind's slot name as a config builds it and its accessor reads it, from the model's slot name. */
+export function slotNameOf(model: Pick<LoadedNodeModel, 'slotAccessors'>): (kind: string, slot: string) => string {
+	return (kind, slot) => {
+		const name = model.slotAccessors[kind]?.[storageKeyOf(slot)];
+		if (name === undefined) throw new Error(`slotNameOf: ${kind} has no slot ${slot} in the node model`);
+		return name;
+	};
+}
+
 export async function loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf> {
 	const kindNameFromId = await loadStorageKindNameFromId(grammar);
 	if (kindNameFromId === undefined) throw new Error(`loadSlotAccessorOf: ${grammar} has no kind name table`);
