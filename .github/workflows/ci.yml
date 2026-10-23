@@ -89,6 +89,11 @@ jobs:
         # test:coverage`), each running all ~208 test files.
         run: pnpm run test -- --coverage
 
+      - name: Benchmark reporting tests
+        # The benchmark workflows run these with `node --test` before any
+        # build, so they stay outside vitest.
+        run: node --test scripts/ci/arena-benchmark-*.test.mjs
+
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
