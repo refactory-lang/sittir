@@ -51,6 +51,7 @@ import { languageByName } from '../languages.ts';
 import {
 	grammarModulePath,
 	importGrammarModule,
+	requireGrammarModule,
 	type FactoryEntry,
 	type GrammarModules,
 	type Hydrate
@@ -929,9 +930,7 @@ export function slotNameOf(model: Pick<LoadedNodeModel, 'slotAccessors'>): (kind
 }
 
 export async function loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf> {
-	const kindNameFromId = await loadStorageKindNameFromId(grammar);
-	if (kindNameFromId === undefined) throw new Error(`loadSlotAccessorOf: ${grammar} has no kind name table`);
-	return slotAccessorOf(await loadNodeModel(grammar), kindNameFromId);
+	return slotAccessorOf(await loadNodeModel(grammar), await loadStorageKindNameFromId(grammar));
 }
 
 export interface TypedNode {
@@ -967,27 +966,9 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 	return { entries, seats: model.seats, modelTypes: model.modelTypes };
 }
 
-export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
-	try {
-		const typesModule = await importGrammarModule(grammar, 'types.ts');
-		if (!typesModule) return undefined;
-		return typesModule.KIND_DISPLAY_NAMES;
-	} catch {
-		return undefined;
-	}
-}
-
-export async function loadStorageKindNameFromId(
-	grammar: string
-): Promise<((id: number) => string | undefined) | undefined> {
-	try {
-		const typesModule = await importGrammarModule(grammar, 'types.ts');
-		if (!typesModule) return undefined;
-		const kindNames = typesModule.KIND_NAMES;
-		return kindNames ? (id: number) => kindNames.get(id) : undefined;
-	} catch {
-		return undefined;
-	}
+export async function loadStorageKindNameFromId(grammar: string): Promise<(id: number) => string | undefined> {
+	const kindNames = (await requireGrammarModule(grammar, 'types.ts')).KIND_NAMES;
+	return (id: number) => kindNames.get(id);
 }
 
 export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) => boolean> {
@@ -1024,20 +1005,6 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 				return undefined;
 			}
 		};
-	} catch {
-		return undefined;
-	}
-}
-
-export async function loadCanonicalKindNameFromId(
-	grammar: string
-): Promise<((id: number) => string | undefined) | undefined> {
-	try {
-		const typesModule = await importGrammarModule(grammar, 'types.ts');
-		if (!typesModule) return undefined;
-		const kindNames = typesModule.KIND_NAMES;
-		if (!kindNames) return undefined;
-		return (id: number) => kindNames.get(id);
 	} catch {
 		return undefined;
 	}

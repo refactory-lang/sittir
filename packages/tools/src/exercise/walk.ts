@@ -9,7 +9,6 @@ interface CommonModule {
 	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
 	readNodeOf(grammar: string): Promise<((tree: TreeHandle) => unknown) | null>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
-	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
 	loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf>;
 	materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
 }

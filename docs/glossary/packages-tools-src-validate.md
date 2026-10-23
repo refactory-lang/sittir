@@ -839,32 +839,6 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
  */
 ```
 
-### `packages/tools/src/validate/common.ts::loadKindNames`
-
-```text
-/**
- * Load the grammar package's `kindNameFromId` resolver for Phase D numeric
- * `$type` support. Returns a safe wrapper that returns `undefined` on unknown
- * ids rather than throwing.
- */
-```
-
-```text
-/**
- * Load the static KIND_NAMES map from the grammar's generated types module.
- * Returns the Map directly for use as `RulesConfig.kindNames`.
- */
-```
-
-#### body
-
-```text
-// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds the JS-backend
-// template renderer's name resolution, which needs the parser's
-// display label, not the canonical (wrap-dispatch) catalog key.
-// See emitKindIdEnumAndLookups's KIND_DISPLAY_NAMES doc comment.
-```
-
 ### `packages/tools/src/validate/common.ts::loadStorageKindNameFromId`
 
 ```text
@@ -898,19 +872,6 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 
 ```text
 // Legacy fallback for pre-Phase-D generated types
-```
-
-### `packages/tools/src/validate/common.ts::loadCanonicalKindNameFromId`
-
-```text
-/**
- * Load the CANONICAL (catalog-key) kind-name resolver — `KIND_NAMES`, the
- * wrap-dispatch name table, NOT the parser display labels. Alias-source
- * kinds diverge between the two (rust `delim_token_tree` displays as
- * `token_tree`); use this wherever the SOURCE identity of a node matters —
- * e.g. selecting a reparse wrapper context — and `loadKindNameFromId`
- * wherever tree-sitter's own `.type` string must match.
- */
 ```
 
 ### `packages/tools/src/validate/common.ts::loadKindIdFromName`
@@ -1674,13 +1635,9 @@ The grammar's raw factory map with every builder run through the validators' nat
 
 Loads the grammar's generated `reparse-hosts.ts` once; `wrapForReparse` reads it.
 
-### `packages/tools/src/validate/factory-storage.ts::loadFactoryKindNameFromId`
-
-Loads canonical `KIND_NAMES` for factory dispatch, preserving distinct wrap identities that can share a parser display label (Python `block` and `_match_block`, for example). A thrown types-module import is logged and returned as an `importFailure`; silently continuing without a resolver would reject every candidate and report an empty 0/0 success.
-
 ### `packages/tools/src/validate/factory-storage.ts::loadFactoryModuleForGrammar`
 
-Loads the generated raw factory map through the typed internal loader, scopes builders to the existing engine, then reads validator-only calling conventions and slot metadata from the pure-data node model. It returns partial artifacts and an import-failure record if loading throws; absent optional artifacts retain the existing empty result. Canonical factory identity loading uses `loadFactoryKindNameFromId` so types-module failures stay visible to the validator.
+Loads the generated raw factory map through the typed internal loader, scopes builders to the existing engine, then reads validator-only calling conventions and slot metadata from the pure-data node model. It returns partial artifacts and an import-failure record if loading throws; absent optional artifacts retain the existing empty result. Factory identity comes from `loadStorageKindNameFromId`; when that throws, the failure becomes the import-failure record, so a types-module failure stays visible to the validator instead of rejecting every candidate as an empty 0/0 run.
 
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 

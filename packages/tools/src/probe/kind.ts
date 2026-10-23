@@ -77,7 +77,7 @@
 import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,
-	loadCanonicalKindNameFromId,
+	loadStorageKindNameFromId,
 	loadWebTreeSitter,
 	loadNativeEngine,
 	readNativeTree,
@@ -350,11 +350,11 @@ async function computeValidatorWrapDiag(
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	// Parity with the validator: candidates key by the CANONICAL catalog
 	// name of the wire `$type`, so the replayed wrapper selection must too.
-	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
+	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const targetKind = targetNode.type;
 	const dType = (untypedNode as { $type?: unknown } | undefined)?.$type;
 	const renderedKind =
-		typeof dType === 'number' && canonicalKindNameFromId ? (canonicalKindNameFromId(dType) ?? targetKind) : targetKind;
+		typeof dType === 'number' ? (canonicalKindNameFromId(dType) ?? targetKind) : targetKind;
 
 	await loadReparseHosts(grammar);
 	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dedupeMismatchesByContainment, loadCorpusEntries, parseCorpus } from '../common.ts';
+import { dedupeMismatchesByContainment, loadCorpusEntries, loadStorageKindNameFromId, parseCorpus } from '../common.ts';
 
 describe('dedupeMismatchesByContainment', () => {
 	it('drops an ancestor mismatch whose span strictly contains a descendant mismatch in the same entry', () => {
@@ -125,5 +125,17 @@ describe('parseCorpus', () => {
 describe('loadCorpusEntries', () => {
 	it('throws, naming the fetch command, for a grammar with no corpus', () => {
 		expect(() => loadCorpusEntries('no-such-grammar')).toThrow(/tool fetch-corpus --grammar no-such-grammar/);
+	});
+});
+
+describe('loadStorageKindNameFromId', () => {
+	it('names a kind id from the generated KIND_NAMES table', async () => {
+		const kindName = await loadStorageKindNameFromId('rust');
+		const { TSKindId } = await import('../../../../rust/src/kinds.ts');
+		expect(kindName(TSKindId.SourceFile)).toBe('source_file');
+	});
+
+	it('throws when the types module cannot be loaded, rather than answering nothing', async () => {
+		await expect(loadStorageKindNameFromId('no_such_grammar')).rejects.toThrow();
 	});
 });

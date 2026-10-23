@@ -50,7 +50,8 @@ import {
 	tableSides,
 	type ReadNodeLike,
 	loadScopedFactoryMap,
-	loadNativeEngine
+	loadNativeEngine,
+	loadStorageKindNameFromId
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
 import {
@@ -361,20 +362,6 @@ function carriesSource(value: unknown): boolean {
 	return Object.values(value).some(carriesSource);
 }
 
-async function loadFactoryKindNameFromId(grammar: string): Promise<{
-	kindNameFromId: ((id: number) => string | undefined) | undefined;
-	importFailure: { message: string } | null;
-}> {
-	try {
-		const kindNames = (await importGrammarModule(grammar, 'types.ts'))?.KIND_NAMES;
-		return { kindNameFromId: kindNames ? (id: number) => kindNames.get(id) : undefined, importFailure: null };
-	} catch (error) {
-		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${error instanceof Error ? error.message : error}`;
-		console.error(message);
-		return { kindNameFromId: undefined, importFailure: { message } };
-	}
-}
-
 async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryMap: Record<string, FactoryEntry>;
 	factoryShapes: Record<string, FactoryShape>;
@@ -411,18 +398,12 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
-		const identity = await loadFactoryKindNameFromId(grammar);
-		kindNameFromId = identity.kindNameFromId;
-		if (identity.importFailure) {
-			return {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				kindNameFromId,
-				importFailure: identity.importFailure
-			};
+		try {
+			kindNameFromId = await loadStorageKindNameFromId(grammar);
+		} catch (error) {
+			const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${error instanceof Error ? error.message : error}`;
+			console.error(message);
+			return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, importFailure: { message } };
 		}
 		return {
 			factoryMap,

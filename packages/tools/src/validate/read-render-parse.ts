@@ -36,7 +36,7 @@ import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	loadKindNameFromId,
-	loadCanonicalKindNameFromId,
+	loadStorageKindNameFromId,
 	buildReadHandle,
 	buildKindToSupertypes,
 	loadReparseHosts,
@@ -970,7 +970,7 @@ export async function validateReadRenderParse(
 
 	const readNode = await readNodeOf(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
-	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
+	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -1046,7 +1046,7 @@ export async function validateReadRenderParse(
 					(w: TypedNode) => {
 						if (w.$named === false) return;
 						const displayKind = kindNameFromId?.(w.$type);
-						const sourceKind = canonicalKindNameFromId?.(w.$type);
+						const sourceKind = canonicalKindNameFromId(w.$type);
 						// Testable-surface filter is CANONICAL-keyed, like the bucketing:
 						// template filenames carry canonical spellings, so hidden minted
 						// kinds (whose display name differs) are admitted and probed

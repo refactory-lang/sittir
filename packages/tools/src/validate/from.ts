@@ -268,12 +268,12 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const excluded: ValidatorSkip[] = [];
 	const orphanedExtras = new Map<string, ValidatorSkip>();
 	const unreadKinds = new Map<string, CorpusEntry>();
-	const storageKindOf = (kindId: number): string => storageKindNameFromId?.(kindId) ?? '';
+	const storageKindOf = (kindId: number): string => storageKindNameFromId(kindId) ?? '';
 	const occurrenceKind = (node: TSNode): string =>
-		physicalDisplayKind(node.type, storageKindNameFromId?.(node.grammarId), displayUnions);
+		physicalDisplayKind(node.type, storageKindNameFromId(node.grammarId), displayUnions);
 	const nativeKindName = (id: number): string | undefined => {
 		const display = kindNameFromId?.(id);
-		return display === undefined ? undefined : physicalDisplayKind(display, storageKindNameFromId?.(id), displayUnions);
+		return display === undefined ? undefined : physicalDisplayKind(display, storageKindNameFromId(id), displayUnions);
 	};
 	const unreadReason = (node: TSNode): string | undefined => {
 		if (insideExtra(node)) return 'native-read-dropped-extra';
@@ -375,7 +375,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		// wears the member_expression face over the decorator_member_expression
 		// storage kind). Storage identity picks the from/factory pair — the
 		// face is only how the corpus walk found the node.
-		const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
+		const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId(readData.$type) : undefined;
 		const readKind =
 			readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
 		const readKindId = kindIdFromName?.(readKind);
