@@ -65,20 +65,8 @@ export type LeafStringMap = {
 	[TSKindId.False]: 'false';
 	[TSKindId.Null]: 'null';
 	[TSKindId.Undefined]: 'undefined';
-	[TSKindId.AccessibilityModifier]: 'public' | 'private' | 'protected';
 	[TSKindId.OverrideModifier]: 'override';
 	[TSKindId.ExistentialType]: '*';
-	[TSKindId.PredefinedType]:
-		| 'any'
-		| 'number'
-		| 'boolean'
-		| 'string'
-		| 'symbol'
-		| 'unique symbol'
-		| 'void'
-		| 'unknown'
-		| 'never'
-		| 'object';
 	[TSKindId.UsingDeclarationArm]: 'await using';
 	[TSKindId.EmptyMember]: ';';
 	[TSKindId.OptionalChainMarker]: '?.';
@@ -86,6 +74,7 @@ export type LeafStringMap = {
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
 	[TSKindId.AutomaticSemicolon]: '\n';
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: '\n';
+	[TSKindId.Tight]: '';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
@@ -93,11 +82,15 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.Star]: '*';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.DefaultKeyword]: 'default';
+	[TSKindId.Lbrace]: '{';
+	[TSKindId.Rbrace]: '}';
 	[TSKindId.TypeKeyword]: 'type';
 	[TSKindId.TypeofKeyword]: 'typeof';
 	[TSKindId.ImportKeyword]: 'import';
+	[TSKindId.Semi]: ';';
 	[TSKindId.WithKeyword]: 'with';
 	[TSKindId.AssertKeyword]: 'assert';
 	[TSKindId.VarKeyword]: 'var';
@@ -108,6 +101,8 @@ export type LeafStringMap = {
 	[TSKindId.IfKeyword]: 'if';
 	[TSKindId.SwitchKeyword]: 'switch';
 	[TSKindId.ForKeyword]: 'for';
+	[TSKindId.Lparen]: '(';
+	[TSKindId.Rparen]: ')';
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.WhileKeyword]: 'while';
 	[TSKindId.DoKeyword]: 'do';
@@ -117,22 +112,73 @@ export type LeafStringMap = {
 	[TSKindId.DebuggerKeyword]: 'debugger';
 	[TSKindId.ReturnKeyword]: 'return';
 	[TSKindId.ThrowKeyword]: 'throw';
+	[TSKindId.Colon]: ':';
 	[TSKindId.CaseKeyword]: 'case';
 	[TSKindId.CatchKeyword]: 'catch';
 	[TSKindId.FinallyKeyword]: 'finally';
 	[TSKindId.YieldKeyword]: 'yield';
+	[TSKindId.Eq]: '=';
+	[TSKindId.Lbrack]: '[';
+	[TSKindId.Rbrack]: ']';
+	[TSKindId.Dot]: '.';
 	[TSKindId.ClassKeyword]: 'class';
 	[TSKindId.AsyncKeyword]: 'async';
 	[TSKindId.FunctionKeyword]: 'function';
+	[TSKindId.EqGt]: '=>';
+	[TSKindId.QmarkDot]: '?.';
 	[TSKindId.NewKeyword]: 'new';
+	[TSKindId.PlusEq]: '+=';
+	[TSKindId.DashEq]: '-=';
+	[TSKindId.StarEq]: '*=';
+	[TSKindId.SlashEq]: '/=';
+	[TSKindId.PercentEq]: '%=';
+	[TSKindId.CaretEq]: '^=';
+	[TSKindId.AmpEq]: '&=';
+	[TSKindId.PipeEq]: '|=';
+	[TSKindId.GtGtEq]: '>>=';
+	[TSKindId.GtGtGtEq]: '>>>=';
+	[TSKindId.LtLtEq]: '<<=';
+	[TSKindId.StarStarEq]: '**=';
+	[TSKindId.AmpAmpEq]: '&&=';
+	[TSKindId.PipePipeEq]: '||=';
+	[TSKindId.QmarkQmarkEq]: '??=';
+	[TSKindId.DotDotDot]: '...';
+	[TSKindId.Qmark]: '?';
+	[TSKindId.AmpAmp]: '&&';
+	[TSKindId.PipePipe]: '||';
+	[TSKindId.GtGt]: '>>';
+	[TSKindId.GtGtGt]: '>>>';
+	[TSKindId.LtLt]: '<<';
+	[TSKindId.Amp]: '&';
+	[TSKindId.Caret]: '^';
+	[TSKindId.Pipe]: '|';
+	[TSKindId.Plus]: '+';
+	[TSKindId.Dash]: '-';
+	[TSKindId.Slash]: '/';
+	[TSKindId.Percent]: '%';
+	[TSKindId.StarStar]: '**';
+	[TSKindId.Lt]: '<';
+	[TSKindId.LtEq]: '<=';
+	[TSKindId.EqEq]: '==';
+	[TSKindId.EqEqEq]: '===';
+	[TSKindId.BangEq]: '!=';
+	[TSKindId.BangEqEq]: '!==';
+	[TSKindId.GtEq]: '>=';
+	[TSKindId.Gt]: '>';
+	[TSKindId.QmarkQmark]: '??';
 	[TSKindId.InstanceofKeyword]: 'instanceof';
+	[TSKindId.Bang]: '!';
+	[TSKindId.Tilde]: '~';
 	[TSKindId.VoidKeyword]: 'void';
 	[TSKindId.DeleteKeyword]: 'delete';
+	[TSKindId.Bquote]: '`';
+	[TSKindId.DollarLbrace]: '${';
 	[TSKindId.ThisKeyword]: 'this';
 	[TSKindId.SuperKeyword]: 'super';
 	[TSKindId.TrueKeyword]: 'true';
 	[TSKindId.FalseKeyword]: 'false';
 	[TSKindId.NullKeyword]: 'null';
+	[TSKindId.At]: '@';
 	[TSKindId.StaticKeyword]: 'static';
 	[TSKindId.ReadonlyKeyword]: 'readonly';
 	[TSKindId.GetKeyword]: 'get';
@@ -152,6 +198,9 @@ export type LeafStringMap = {
 	[TSKindId.PrivateKeyword]: 'private';
 	[TSKindId.ProtectedKeyword]: 'protected';
 	[TSKindId.OverrideKeyword]: 'override';
+	[TSKindId.DashQmarkColon]: '-?:';
+	[TSKindId.PlusQmarkColon]: '+?:';
+	[TSKindId.QmarkColon]: '?:';
 	[TSKindId.AssertsKeyword]: 'asserts';
 	[TSKindId.InferKeyword]: 'infer';
 	[TSKindId.IsKeyword]: 'is';
@@ -162,15 +211,35 @@ export type LeafStringMap = {
 	[TSKindId.BooleanKeyword]: 'boolean';
 	[TSKindId.StringKeyword]: 'string';
 	[TSKindId.SymbolKeyword]: 'symbol';
+	[TSKindId.Unique]: 'unique symbol';
 	[TSKindId.UnknownKeyword]: 'unknown';
 	[TSKindId.NeverKeyword]: 'never';
 	[TSKindId.ObjectKeyword]: 'object';
+	[TSKindId.LbracePipe]: '{|';
+	[TSKindId.PipeRbrace]: '|}';
+	[TSKindId.Comma]: ',';
 	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.ExportKeyword]: 'export';
 	[TSKindId.FromKeyword]: 'from';
+	[TSKindId.Dquote]: '"';
+	[TSKindId.Squote]: "'";
+	[TSKindId.PlusPlus]: '++';
+	[TSKindId.DashDash]: '--';
 	[TSKindId.TargetKeyword]: 'target';
 	[TSKindId.MetaKeyword]: 'meta';
 	[TSKindId.OfKeyword]: 'of';
+	[TSKindId.AccessibilityModifier]: 'public' | 'private' | 'protected';
+	[TSKindId.PredefinedType]:
+		| 'any'
+		| 'number'
+		| 'boolean'
+		| 'string'
+		| 'symbol'
+		| 'unique symbol'
+		| 'void'
+		| 'unknown'
+		| 'never'
+		| 'object';
 };
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([

@@ -40,9 +40,8 @@ import type { PortableQueryIds } from '@sittir/common/portable';
 export type LeafScalarMap = {};
 
 export type LeafStringMap = {
-	[TSKindId.Quantifier]: '*' | '+' | '?';
-	[TSKindId.PredicateType]: '?' | '!';
 	[TSKindId.Anchor]: '.';
+	[TSKindId.Tight]: '';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
@@ -50,8 +49,24 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.Star]: '*';
+	[TSKindId.Plus]: '+';
+	[TSKindId.Qmark]: '?';
+	[TSKindId.At]: '@';
+	[TSKindId.Dquote]: '"';
+	[TSKindId.Lbrack]: '[';
+	[TSKindId.Rbrack]: ']';
+	[TSKindId.Lparen]: '(';
+	[TSKindId.Rparen]: ')';
 	[TSKindId.MissingKeyword]: 'MISSING';
 	[TSKindId.Underscore]: '_';
+	[TSKindId.Colon]: ':';
+	[TSKindId.Bang]: '!';
+	[TSKindId.Pound]: '#';
+	[TSKindId.Dot]: '.';
+	[TSKindId.Slash]: '/';
+	[TSKindId.Quantifier]: '*' | '+' | '?';
+	[TSKindId.PredicateType]: '?' | '!';
 };
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([

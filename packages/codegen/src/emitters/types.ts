@@ -143,7 +143,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	referencedBitflagConsts.clear();
 	const { grammar, nodeMap } = config;
 	const { generatedIdTables } = config;
-	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
+	const { structNodes, leafKinds, supertypes, tokenTexts, leafValueMap } = collectNodesByCategory(nodeMap);
 
 
 	const nodeKinds = structNodes.map((n) => n.kind);
@@ -176,16 +176,9 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('');
 
 	lines.push('export type LeafStringMap = {');
-	for (const kind of leafKinds) {
-		const kw = keywordKinds.get(kind);
-		if (kw) {
-			lines.push(`  ${leafMapKey(kind)}: ${JSON.stringify(kw)};`);
-			continue;
-		}
-		const values = leafValueMap.get(kind);
-		if (values && values.length > 0) {
-			lines.push(`  ${leafMapKey(kind)}: ${values.map((v) => JSON.stringify(v)).join(' | ')};`);
-		}
+	for (const [kind, text] of tokenTexts) lines.push(`  ${leafMapKey(kind)}: ${JSON.stringify(text)};`);
+	for (const [kind, values] of leafValueMap) {
+		if (values.length > 0) lines.push(`  ${leafMapKey(kind)}: ${values.map((v) => JSON.stringify(v)).join(' | ')};`);
 	}
 	lines.push('};');
 	lines.push('');
@@ -539,7 +532,7 @@ interface NodeCategories {
 	structNodes: StructuralNode[];
 	leafKinds: string[];
 	supertypes: { kind: string; subtypes: string[] }[];
-	keywordKinds: Map<string, string>;
+	tokenTexts: Map<string, string>;
 	leafValueMap: Map<string, string[]>;
 }
 
@@ -547,7 +540,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	const structNodes: StructuralNode[] = [];
 	const leafKinds: string[] = [];
 	const supertypes: { kind: string; subtypes: string[] }[] = [];
-	const keywordKinds = new Map<string, string>();
+	const tokenTexts = new Map<string, string>();
 	const leafValueMap = new Map<string, string[]>();
 
 	for (const [kind, node] of nodeMap.nodes) {
@@ -569,10 +562,8 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrBuilderTextLeaf(node)) {
-					leafKinds.push(kind);
-					keywordKinds.set(kind, node.text);
-				}
+				tokenTexts.set(kind, node.text);
+				if (isWordOrBuilderTextLeaf(node)) leafKinds.push(kind);
 				break;
 			case 'enum':
 				leafKinds.push(kind);
@@ -582,7 +573,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				assertNever(node);
 		}
 	}
-	return { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap };
+	return { structNodes, leafKinds, supertypes, tokenTexts, leafValueMap };
 }
 
 export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
