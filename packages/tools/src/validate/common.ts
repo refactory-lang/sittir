@@ -917,7 +917,7 @@ export function slotValuesOf(
 	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): [storageKey: string, value: unknown][] {
-	const { kind, accessors, delimiter } = accessorOf(node.$type);
+	const { kind, accessors, delimiter, separator } = accessorOf(node.$type);
 	const values = Object.entries(accessors).flatMap(([storageKey, accessor]): [string, unknown][] => {
 		const read = storedSlotReader(node, accessor);
 		if (typeof read !== 'function' || read.length !== 0) {
@@ -934,6 +934,7 @@ export function slotValuesOf(
 		}
 	});
 	if (delimiter && typeof node.delimiter === 'number') values.push([storageKeyOf('delimiter'), node.delimiter]);
+	if (separator && typeof node.separator === 'number') values.push([storageKeyOf('separator'), node.separator]);
 	return values;
 }
 
@@ -942,25 +943,26 @@ export function storedSlotValues(node: object, accessorOf: SlotAccessorOf): [sto
 	return Object.entries(node).filter(([key]) => key.startsWith('_'));
 }
 
-/** A kind and its slots: each storage key to the accessor that reads it, and whether it is a list whose delimiter is chosen per instance. */
+/** A kind and its slots: each storage key to the accessor that reads it, and whether it is a list whose delimiter, and whose separator, is chosen per instance. */
 export interface KindSlots {
 	readonly kind: string;
 	readonly accessors: Readonly<Record<string, string>>;
 	readonly delimiter: boolean;
+	readonly separator: boolean;
 }
 
 /** A kind's slots, by the node's stamped kind id. */
 export type SlotAccessorOf = (typeId: number) => KindSlots;
 
 export function slotAccessorOf(
-	model: Pick<LoadedNodeModel, 'slotAccessors' | 'listDefaults'>,
+	model: Pick<LoadedNodeModel, 'slotAccessors' | 'listDefaults' | 'listSeparators'>,
 	kindNameFromId: (id: number) => string | undefined
 ): SlotAccessorOf {
 	return (typeId) => {
 		const kind = kindNameFromId(typeId);
 		const accessors = kind === undefined ? undefined : model.slotAccessors[kind];
 		if (kind === undefined || accessors === undefined) throw new Error(`slotAccessorOf: ${kind ?? `kind id ${typeId}`} is not in the node model`);
-		return { kind, accessors, delimiter: model.listDefaults[kind] !== undefined };
+		return { kind, accessors, delimiter: model.listDefaults[kind] !== undefined, separator: model.listSeparators[kind] !== undefined };
 	};
 }
 

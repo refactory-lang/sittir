@@ -11,7 +11,8 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { recordOf } from './record-view.ts';
+import { recordOf, recordSeparator } from './record-view.ts';
+import { builtRefOf } from './built-ref.ts';
 import { isBuiltNode } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -394,15 +395,17 @@ const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
 
 /**
  * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
- * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
- * An owner names the accessor that returns its list and answers that list's `separator`.
+ * own `_separator` when its data stores one, the separator a built list's record was built with
+ * (`recordSeparator`), else the one its tree answers (`slotSeparatorOf`). An owner names the
+ * accessor that returns its list and answers that list's `separator`.
  */
 export function defineListSeparator(node: object, accessor?: string): void {
 	let getter = SEPARATOR_GETTERS.get(accessor);
 	if (getter === undefined) {
 		getter = function (this: Record<string, unknown>) {
 			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
-			return this._separator ?? slotSeparatorOf(this);
+			const built = builtRefOf(this);
+			return this._separator ?? (built === undefined ? undefined : recordSeparator(this, built.arena.tree)) ?? slotSeparatorOf(this);
 		};
 		SEPARATOR_GETTERS.set(accessor, getter);
 	}
@@ -719,6 +722,7 @@ export * from './runtime.ts';
 export {
 	RECORD,
 	recordDelimiter,
+	recordSeparator,
 	recordFlag,
 	recordItems,
 	recordLength,

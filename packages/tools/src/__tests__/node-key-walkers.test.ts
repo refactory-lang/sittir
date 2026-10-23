@@ -3,7 +3,7 @@ import { materialize, slotAccessorOf, type LoadedNodeModel } from '../validate/c
 import { collectChildren } from '../exercise/walk.ts';
 
 const LIST_ITEMS = Symbol('items');
-const accessorOf = slotAccessorOf({ slotAccessors: { owner: { _body: 'body' }, leaf: {} }, listDefaults: {} } as unknown as LoadedNodeModel, (id) => (id === 7 ? 'owner' : id === 3 ? 'leaf' : undefined));
+const accessorOf = slotAccessorOf({ slotAccessors: { owner: { _body: 'body' }, leaf: {} }, listDefaults: {}, listSeparators: {} } as unknown as LoadedNodeModel, (id) => (id === 7 ? 'owner' : id === 3 ? 'leaf' : undefined));
 
 const leaf = (text: string) => ({
 	$type: 3,

@@ -264,14 +264,24 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 
 /** A list's delimiters setting as the side record at `at` in `words` holds it, `undefined` when it holds none. */
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {
+	return sideListSetting(words, at, format, format.sideDelimiter, 'delimiters setting');
+}
+
+export function decodeSideSeparatorKind(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {
+	return sideListSetting(words, at, format, format.sideSeparatorKind, 'chosen separator');
+}
+
+export function sideListSettingOffset(mask: number, format: CellFormat, bit: number): number {
+	const before = format.sideBeforeDelimiter.reduce((sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words), 1);
+	return bit === format.sideDelimiter || (mask & format.sideDelimiter) === 0 ? before : before + 1;
+}
+
+function sideListSetting(words: ArrayLike<number>, at: number, format: CellFormat, bit: number, what: string): number | undefined {
 	const mask = words[at];
 	if (mask === undefined) throw new Error(`no side record at word ${at}`);
-	if ((mask & format.sideDelimiter) === 0) return undefined;
-	const offset = format.sideBeforeDelimiter.reduce(
-		(sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words),
-		1
-	);
-	const delimiter = words[at + offset];
-	if (delimiter === undefined) throw new Error(`a side record's delimiters setting ends at word ${at + offset}`);
-	return delimiter;
+	if ((mask & bit) === 0) return undefined;
+	const offset = sideListSettingOffset(mask, format, bit);
+	const setting = words[at + offset];
+	if (setting === undefined) throw new Error(`a side record's ${what} ends at word ${at + offset}`);
+	return setting;
 }

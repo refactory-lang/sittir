@@ -8,7 +8,7 @@ import {
 	type SlotAccessorOf
 } from '../validate/common.ts';
 
-const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
+const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false, separator: false });
 
 const KINDS = [
 	'clause',

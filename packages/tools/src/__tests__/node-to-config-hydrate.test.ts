@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { nodeToConfig, type Hydrate, type SlotAccessorOf } from '../validate/common.ts';
 
-const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
+const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false, separator: false });
 
 const slot = (propertyName: string) => ({ propertyName, unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false });
 const KINDS = ['owner', 'clause', 'word'];

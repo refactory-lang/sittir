@@ -8,7 +8,7 @@ const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1]
 const accessors: Readonly<Record<string, Readonly<Record<string, string>>>> = { envelope: { _content: 'content' } };
 const accessorOf: SlotAccessorOf = (typeId) => {
 	const kind = kindNameFromId(typeId) ?? String(typeId);
-	return { kind, accessors: accessors[kind] ?? {}, delimiter: false };
+	return { kind, accessors: accessors[kind] ?? {}, delimiter: false, separator: false };
 };
 const artifacts = (factoryMap: Record<string, FactoryEntry>): FactoryDispatchArtifacts => ({
 	factoryMap,

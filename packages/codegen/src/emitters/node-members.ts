@@ -192,7 +192,7 @@ function selfListOption(key: string, environment: 'factory' | 'wrap' | 'view'): 
 	if (environment === 'factory') return `_${key}`;
 	if (environment === 'wrap') return `(data as { readonly _${key}?: unknown })._${key}`;
 	if (key === 'delimiter') return 'recordDelimiter(data, tree)';
-	throw new Error(`a record view reads no list option '${key}': its record holds only the delimiters setting`);
+	throw new Error(`a record view's list option '${key}' is its shared getter (defineListSeparator), not a member: a parsed list's separator is its tree's`);
 }
 
 export function listSelfViewParts(

@@ -151,7 +151,7 @@ describe('printFactorySource', () => {
 			{ $type: 3, $text: 'main' },
 			'identifier',
 			artifacts,
-			{ kindNameFromId: ctx.kindNameFromId, accessorOf: (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false }) },
+			{ kindNameFromId: ctx.kindNameFromId, accessorOf: (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false, separator: false }) },
 			ctx
 		);
 		expect(source).toBe('ir.identifier("main")');

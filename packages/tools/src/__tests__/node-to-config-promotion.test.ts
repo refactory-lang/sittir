@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { nodeToConfig, type SlotAccessorOf } from '../validate/common.ts';
 
-const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
+const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false, separator: false });
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 
 function makeFactorySlots(

@@ -5,7 +5,7 @@ import { separatedListFactoryOptions, type SlotAccessorOf } from '../../src/vali
 const unread: SlotAccessorOf = () => {
 	throw new Error('a copy is read through its storage keys');
 };
-const list: SlotAccessorOf = () => ({ kind: 'list', accessors: {}, delimiter: true });
+const list: SlotAccessorOf = () => ({ kind: 'list', accessors: {}, delimiter: true, separator: true });
 
 describe('separatedListFactoryOptions', () => {
 	it('maps _delimiter to delimiter', () => {
@@ -20,7 +20,8 @@ describe('separatedListFactoryOptions', () => {
 		expect(separatedListFactoryOptions({}, unread)).toBeUndefined();
 	});
 
-	it("reads a record view's delimiter through its reader", () => {
+	it("reads a record view's delimiter and separator through its readers", () => {
 		expect(separatedListFactoryOptions({ $type: 1, [RECORD]: 8, delimiter: 2 }, list)).toEqual({ delimiter: 2 });
+		expect(separatedListFactoryOptions({ $type: 1, [RECORD]: 8, delimiter: 2, separator: 9 }, list)).toEqual({ separator: 9, delimiter: 2 });
 	});
 });

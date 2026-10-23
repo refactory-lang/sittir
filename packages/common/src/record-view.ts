@@ -5,6 +5,8 @@ import {
 	decodeListCell,
 	decodeSideDelimiter,
 	decodeSideRow,
+	decodeSideSeparatorKind,
+	sideListSettingOffset,
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
@@ -52,15 +54,14 @@ function wordsAt(
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
-/** The words of the side record at `side`, long enough for every field before a list's delimiters setting and the setting itself. */
+/** The words of the side record at `side`, long enough for every field before a list's settings and the settings it holds: its delimiters and its chosen separator. */
 function sideWordsAt(records: RecordWords, side: number): { readonly words: Uint32Array; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;
-	const length = records.format.sideBeforeDelimiter.reduce(
-		(sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words),
-		1
-	);
-	return wordsAt(records, side, (mask & records.format.sideDelimiter) === 0 ? length : length + 1);
+	const { format } = records;
+	const held = [format.sideDelimiter, format.sideSeparatorKind].filter((bit) => (mask & bit) !== 0);
+	const length = held.reduce((most, bit) => Math.max(most, sideListSettingOffset(mask, format, bit) + 1), sideListSettingOffset(mask, format, format.sideDelimiter));
+	return wordsAt(records, side, length);
 }
 
 /** The address of the side record of the record at `at`, 0 for none. */
@@ -94,13 +95,21 @@ export function recordStub(tree: TreeHandle, at: number): RecordStub {
 
 /** The delimiters setting of the list the record `holder` views, as its side record holds it; `undefined` when it holds none. */
 export function recordDelimiter(holder: object, tree: TreeHandle): number | undefined {
+	return recordListSetting(holder, tree, decodeSideDelimiter);
+}
+
+export function recordSeparator(holder: object, tree: TreeHandle): number | undefined {
+	return recordListSetting(holder, tree, decodeSideSeparatorKind);
+}
+
+function recordListSetting(holder: object, tree: TreeHandle, decode: (words: Uint32Array, at: number, format: RecordWords['format']) => number | undefined): number | undefined {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record option read needs a record view');
 	const records = recordsOf(tree);
 	const side = sideOf(records, at);
 	if (side === 0) return undefined;
 	const { words, start } = sideWordsAt(records, side);
-	return decodeSideDelimiter(words, start, records.format);
+	return decode(words, start, records.format);
 }
 
 const rows = new WeakMap<object, Record<string, unknown>>();
