@@ -365,10 +365,11 @@ type SlotNamesOf<T> = T extends { readonly __slotNames__?: infer M } ? M : {};
 /**
  * The name a slot is configured and read by: the model's slot name, as the
  * generator writes it in `__slotNames__`, keyed by the storage key `_K`.
+ * A slot with no written name has no key (`never`).
  */
 export type SlotKey<T, K extends string> = `_${K}` extends keyof SlotNamesOf<T>
 	? SlotNamesOf<T>[`_${K}`] & string
-	: K;
+	: never;
 
 // ---------------------------------------------------------------------------
 // Concrete interface transformations

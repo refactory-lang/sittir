@@ -41,3 +41,14 @@ type NewExpressionConfig = ConfigOf<NewExpression>;
 
 type _2a = Expect<Equal<SlotKey<NewExpression, 'argument'>, 'arguments'>>;
 type _2b = Expect<Equal<keyof NewExpressionConfig, 'constructor_' | 'arguments'>>;
+
+// A slot the generator wrote no name for has no key: the storage name is
+// never a config key.
+interface Unnamed {
+	readonly $type: 4;
+	readonly _type_arguments?: { readonly $type: 5; readonly $text: string };
+	readonly _argument: readonly { readonly $type: 3; readonly $text: string }[];
+	readonly __slotNames__?: { readonly _argument: 'arguments' };
+}
+type _2c = Expect<Equal<keyof ConfigOf<Unnamed>, 'arguments'>>;
+type _2d = Expect<Equal<SlotKey<{ readonly _value: string }, 'value'>, never>>;
