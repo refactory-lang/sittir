@@ -1,0 +1,128 @@
+{
+  "host": "x86_64-pc-windows-msvc",
+  "napiShared": {
+    "scenario": "napi-shared",
+    "platform": "win32-x64",
+    "node": "v22.23.4",
+    "loadA": "Module did not self-register: '\\\\?\\D:\\a\\_temp\\toys\\napi-a\\toy_napi_a.node'.",
+    "loadB": "Module did not self-register: '\\\\?\\D:\\a\\_temp\\toys\\napi-b\\toy_napi_b.node'.",
+    "images": []
+  },
+  "shapeA": {
+    "scenario": "shape-a",
+    "platform": "win32-x64",
+    "node": "v22.23.4",
+    "loadB": "loaded",
+    "ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "engine": {
+      "a": [
+        "0x7ff99ab52740",
+        "\\\\?\\D:\\a\\_temp\\toys\\shape-a-a\\sittir_engine.dll",
+        "0.0.0+6eb07bfbf9b8"
+      ],
+      "b": [
+        "0x7ff99ab52740",
+        "\\\\?\\D:\\a\\_temp\\toys\\shape-a-a\\sittir_engine.dll",
+        "0.0.0+6eb07bfbf9b8"
+      ]
+    },
+    "mallocSlot": {
+      "a": "0x7ff99ac1e000",
+      "b": "0x7ff99ac1e000"
+    },
+    "scannerRoundtrip": [
+      true,
+      true
+    ],
+    "parseWithoutLanguage": [
+      true,
+      true
+    ],
+    "images": [
+      "D:\\a\\_temp\\toys\\shape-a-a\\sittir_engine.dll",
+      "D:\\a\\_temp\\toys\\shape-a-a\\std-512d688ad63bc3c4.dll",
+      "D:\\a\\_temp\\toys\\shape-a-a\\toy_addon_a.node",
+      "D:\\a\\_temp\\toys\\shape-a-b\\toy_addon_b.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": null,
+      "rpaths": [],
+      "needs": [
+        "KERNEL32.dll",
+        "std-512d688ad63bc3c4.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "addon": {
+      "id": null,
+      "rpaths": [],
+      "needs": [
+        "sittir_engine.dll",
+        "kernel32.dll",
+        "std-512d688ad63bc3c4.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "KERNEL32.dll"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "napiAddon": {
+      "id": null,
+      "rpaths": [],
+      "needs": [
+        "toy_napi_engine.dll",
+        "std-512d688ad63bc3c4.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "KERNEL32.dll"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    }
+  },
+  "skewSource": {
+    "scenario": "shape-a",
+    "platform": "win32-x64",
+    "node": "v22.23.4",
+    "loadB": "sittir engine mismatch: this addon was built against engine 0.0.0+6ff84a8f7f72, but the process already loaded engine 0.0.0+6eb07bfbf9b8 from \\\\?\\D:\\a\\_temp\\toys\\shape-a-a\\sittir_engine.dll. Install sittir grammar packages of one release.",
+    "images": [
+      "D:\\a\\_temp\\toys\\shape-a-a\\sittir_engine.dll",
+      "D:\\a\\_temp\\toys\\shape-a-a\\std-512d688ad63bc3c4.dll",
+      "D:\\a\\_temp\\toys\\shape-a-a\\toy_addon_a.node",
+      "D:\\a\\_temp\\toys\\skew-source-b\\toy_addon_b.node"
+    ]
+  },
+  "skewVersion": {
+    "scenario": "shape-a",
+    "platform": "win32-x64",
+    "node": "v22.23.4",
+    "loadB": "The specified procedure could not be found.\r\n\\\\?\\D:\\a\\_temp\\toys\\skew-version-b\\toy_addon_b.node",
+    "images": [
+      "D:\\a\\_temp\\toys\\shape-a-a\\sittir_engine.dll",
+      "D:\\a\\_temp\\toys\\shape-a-a\\std-512d688ad63bc3c4.dll",
+      "D:\\a\\_temp\\toys\\shape-a-a\\toy_addon_a.node"
+    ]
+  }
+}

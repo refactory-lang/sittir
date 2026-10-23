@@ -49,10 +49,10 @@ The second registration exports every item both addons registered into B's
 exports object, and replaces the constructor napi-rs looks up by class name.
 Which addon's class wins depends on a hash map's order, so the platforms
 disagree, but on each of them one addon's Rust struct ends up wrapped in the
-other addon's class: a type-confused cast in general. On Windows the `.node`
-itself would not export `napi_register_module_v1` (it is defined in the
-library), and Node finds a module's entry point only in the module it loaded.
-<!-- NAPI-WINDOWS -->
+other addon's class: a type-confused cast in general. On Windows neither addon
+loads at all: `Module did not self-register` for both, since
+`napi_register_module_v1` is defined in the library and Node looks for a
+module's entry point only in the module it loaded.
 
 ### What B would save on top of A
 
@@ -108,8 +108,8 @@ Two drivers, each run on every platform by the probe-only workflow
 | scanner's allocator slots imported from the engine | yes | yes | yes | yes | yes |
 | one tree-id counter, no `globalThis` counter | yes | yes | yes | yes | yes |
 | tree objects: render, refusal, freed by GC | yes | yes | yes | yes | yes |
-| skew, same version: refused at load | yes | yes | yes | yes | <!-- WIN-SKEW --> |
-| skew, new version: load fails, symbol missing | yes | yes | yes | yes | <!-- WIN-SKEW --> |
+| skew, same version: refused at load | yes | yes | yes | yes | yes |
+| skew, new version: load fails, symbol missing | yes | yes | yes | yes | yes |
 
 ### 1. One engine image from per-package copies
 
@@ -226,9 +226,14 @@ packages built from different engines meet:
 - a new version changes every mangled engine symbol, so the load fails first:
   `Symbol not found: __RNvNtC…13sittir_engine5stamp6LOADED` (macOS),
   `undefined symbol: …` (glibc), `Error relocating …: symbol not found`
-  (musl). The JavaScript loader should map these to the same message.
+  (musl), `The specified procedure could not be found.` (Windows). The
+  JavaScript loader should map these to the same message.
 
-The stamp was identical on every platform's build.
+The stamp hashes the engine's source bytes, so it came out the same on every
+Unix build and different on Windows, whose checkout has CRLF line endings.
+That is harmless within a process, which loads one platform's binaries, but
+the real stamp should come from the release's identity (version and commit),
+not from file bytes.
 
 ## Measurements
 
