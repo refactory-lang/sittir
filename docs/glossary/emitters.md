@@ -12308,7 +12308,7 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 
 ### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
 
-The unit kinds (`unitKindIds`) whose kind the parser names, read from the kind catalog's `anon` stamp: an empty statement's `;`, `true`, `self`, not a `$` or `{`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_bare`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
 
 ### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
 

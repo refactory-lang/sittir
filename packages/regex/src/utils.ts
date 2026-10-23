@@ -14,7 +14,7 @@ export const triviaFacts = Object.freeze({
 	listKinds: new Set<number>([]),
 	layout: new Set<number>([47, 48, 49, 50]),
 	innerRegions: new Map<number, readonly string[]>([[58, ['_negation', '_leading', '_class_atoms', '_trailing']]]),
-	namedUnits: new Set<number>([2, 4, 5, 6, 19, 47, 48, 49, 50, 54, 82]),
+	namedUnits: new Set<number>([2, 4, 5, 6, 19, 54, 82]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 47, '\n': 48, '\n\n': 49, '\n\n\n': 50 })
