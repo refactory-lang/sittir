@@ -842,9 +842,7 @@ function buildTypedTemplateBody(
 		if (shape?.tag === 'presence') {
 			if (shape.kind !== undefined) {
 				const variant = `${rustNodeStructName(shape.kind)}::${rustNodeVariantName(shape.kind)}`;
-				const unit = seatedKindsOf(plan).has(shape.kind.display.name)
-					? `${variant}(::sittir_core::options::Edges::default())`
-					: variant;
+				const unit = seatedKindsOf(plan).has(shape.kind.display.name) ? `${variant}(::sittir_core::options::Edges::default())` : variant;
 				bind(ident, `View::new(::sittir_core::view::Presence::new(node.${rIdent}(), ${unit}), ${template})`);
 				continue;
 			}
@@ -894,9 +892,7 @@ function buildTypedTemplateBody(
 			lines.push(`        template: ${template},`);
 			if (separatorText !== undefined) {
 				lines.push(`        token: node.separator_kind().map_or(${fallback}, ${ident}_separator),`);
-				lines.push(
-					`        separators: Some((::sittir_core::layout::BodyLayout::slot_tokens(node.layout(), ${wireKey}), ${ident}_separator)),`
-				);
+				lines.push(`        separators: Some((::sittir_core::layout::BodyLayout::slot_tokens(node.layout(), ${wireKey}), ${ident}_separator)),`);
 			} else {
 				lines.push(`        token: ${fieldSepLiteral},`);
 				lines.push(`        separators: None,`);
@@ -940,7 +936,9 @@ function buildTypedTemplateBody(
 	}
 	for (const name of refs.seams) {
 		if (seamFieldNames.has(rustFieldIdent(name))) continue;
-		throw new Error(`render body for '${struct.kind}' names seam '${name}', which its node has no spacing site for`);
+		throw new Error(
+			`render body for '${struct.kind}' names seam '${name}', which its node has no spacing site for`
+		);
 	}
 	for (const flank of doubledFlanks(struct.body)) {
 		if (process.env.SEAM_FLANK_CENSUS) console.error(`SEAM2 ${struct.kind} ${flank}`);
@@ -1531,13 +1529,11 @@ export function payloadCeilingAssertions(pinned: readonly string[], payloads: Re
 	const stale = pinned.find((name) => !payloads.has(name));
 	if (stale !== undefined) throw new Error(`${stale} is boxed but no choice holds it`);
 	const n = PAYLOAD_CEILING_BYTES;
-	return [...payloads]
-		.sort()
-		.map((name) =>
-			pinned.includes(name)
-				? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");`
-				: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");`
-		);
+	return [...payloads].sort().map((name) =>
+		pinned.includes(name)
+			? `const _: () = assert!(::core::mem::size_of::<${name}>() > ${n}, "${name} is within the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");`
+			: `const _: () = assert!(::core::mem::size_of::<${name}>() <= ${n}, "${name} is over the ${n}-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");`
+	);
 }
 
 function kindIdStoredFirst<T>(entries: readonly T[], nodeOf: (entry: T) => AssembledNode): T[] {
@@ -1609,17 +1605,11 @@ function emitSupertypeNodeEnum(
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 	const viewed = supertypeViewed(supertypeNode, nodeMap);
 
-	lines.push(
-		...nodeDeclaration(read, NODE_DERIVE, viewed ? `choice, ${viewArg(enumName)}` : 'choice', 'enum', enumName)
-	);
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `choice, ${viewArg(enumName)}` : 'choice', 'enum', enumName));
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
-		lines.push(
-			...(isFixedTextLeaf(subNode)
-				? fixedVariantLines(fixedLiteralOf(fixed, subKind))
-				: [`    ${variant}(${choicePayloadType(subNode, read)}),`])
-		);
+		lines.push(...(isFixedTextLeaf(subNode) ? fixedVariantLines(fixedLiteralOf(fixed, subKind)) : [`    ${variant}(${choicePayloadType(subNode, read)}),`]));
 	}
 	if (admitsVerbatim) lines.push(`    #[node(verbatim)]`, `    Verbatim(VerbatimNode),`);
 	lines.push(`}`);
@@ -1716,9 +1706,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 				lines.push(`        ${fixedRenderArm(`${subject.path}::${variant}`, fixedLiteralOf(fixed, subKind))}`);
 				continue;
 			}
-			lines.push(
-				`        ${subject.path}::${variant}(inner) => ${payloadExpr(subject, boxedInEnum(subNode, boxedPayloads))}.render(w),`
-			);
+			lines.push(`        ${subject.path}::${variant}(inner) => ${payloadExpr(subject, boxedInEnum(subNode, boxedPayloads))}.render(w),`);
 		}
 		if (supertypeAdmitsVerbatim(supertypeNode, nodeMap)) {
 			lines.push(`        ${verbatimRenderArm(subject.path, supertypeVerbatimIsImmediate(supertypeNode, nodeMap))}`);
@@ -2053,9 +2041,7 @@ function shareIdenticalChoices(
 function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
 	const name = choices.get(choiceKey(typeName, fieldName));
 	if (name === undefined) {
-		throw new Error(
-			`render-module: ${typeName}.${fieldName} is typed by its own choice, but none was collected for it`
-		);
+		throw new Error(`render-module: ${typeName}.${fieldName} is typed by its own choice, but none was collected for it`);
 	}
 	return name;
 }
@@ -2144,9 +2130,7 @@ function choiceUnitArm(enumName: string, unit: ChoiceUnit): string[] {
 	const call = fixedRenderCall(unit.fixed);
 	const write = unit.siteImmediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 	const pattern = fixedPattern(`${enumName}::${unit.fixed.variant}`, unit.fixed, 'edges');
-	return unit.seams === undefined
-		? [`            ${pattern} => ${write},`]
-		: literalSeamedArm(pattern, write, unit.seams);
+	return unit.seams === undefined ? [`            ${pattern} => ${write},`] : literalSeamedArm(pattern, write, unit.seams);
 }
 
 function literalSeamedArm(pattern: string, write: string, seams: LiteralArmSeams): string[] {
@@ -2257,9 +2241,7 @@ function emitPerSlotChildEnum(
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
 	const viewed = nodeKinds.length > 0 || admitsVerbatim;
-	lines.push(
-		...nodeDeclaration(read, NODE_DERIVE, viewed ? `choice, ${viewArg(enumName)}` : 'choice', 'enum', enumName)
-	);
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, viewed ? `choice, ${viewArg(enumName)}` : 'choice', 'enum', enumName));
 	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
@@ -2314,9 +2296,7 @@ function emitPerSlotChildEnum(
 			const variant = rustTypeIdent(node.typeName);
 			const call = `${payloadExpr(subject, isBoxed(node))}.render(w)`;
 			const arm =
-				!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap)
-					? `{ w.seam(${TIGHT_KINDS}); ${call} }`
-					: call;
+				!(node instanceof AssembledLeaf) && isLeftImmediateKind(kind, nodeMap) ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
 			out.push(`            ${subject.path}::${variant}(inner) => ${arm},`);
 		}
 		for (const unit of units.values()) out.push(...choiceUnitArm(subject.path, unit));
@@ -2544,17 +2524,9 @@ function renderTriviaNodeSupport(
 		const id = kindIdByKind.get(node.kind);
 		if (id === undefined || !(whitespaceKinds.has(node.kind) || continuationKinds.has(node.kind))) return [];
 		const unit = unitOf(node) ?? (whitespaceKinds.has(node.kind) ? fixedLiteralOf(fixed, node.kind) : undefined);
-		return [
-			{
-				id,
-				member: unit === undefined ? `TriviaNode::${rustNodeVariantName(node)}(text)` : `TriviaNode::${unit.variant}`
-			}
-		];
+		return [{ id, member: unit === undefined ? `TriviaNode::${rustNodeVariantName(node)}(text)` : `TriviaNode::${unit.variant}` }];
 	});
-	const layoutMembers = [
-		...members,
-		...depthVariants.map(({ variant, id }) => ({ id, member: `TriviaNode::${variant}` }))
-	];
+	const layoutMembers = [...members, ...depthVariants.map(({ variant, id }) => ({ id, member: `TriviaNode::${variant}` }))];
 	lines.push(
 		'impl ::sittir_core::trivia::FromTriviaText for TriviaNode {',
 		`    fn from_text(text: ${TRIVIA_TEXT}) -> Self {`,
@@ -2764,9 +2736,7 @@ function edgeArmSlotsOf(
 		if (arms.length === 0) return;
 		const slot = body[written.side === 'before' ? i + 1 : i - 1];
 		if (slot?.kind !== 'slot') {
-			throw new Error(
-				`kind '${node.kind}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`
-			);
+			throw new Error(`kind '${node.kind}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`);
 		}
 		out[written.side] = slot.name;
 	});
@@ -2786,9 +2756,7 @@ function sourceTrailingSeparator(
 	if (node.trailingDelimiter !== 'optional') return undefined;
 	const idOf = (entry: KindEnumEntry | undefined, spelled: string): number => {
 		if (entry === undefined) {
-			throw new Error(
-				`list '${node.kind}' has an optional trailing separator ${JSON.stringify(spelled)} with no kind id to find in its source`
-			);
+			throw new Error(`list '${node.kind}' has an optional trailing separator ${JSON.stringify(spelled)} with no kind id to find in its source`);
 		}
 		return entry.id;
 	};
@@ -2950,12 +2918,7 @@ function seatTargetMatchImpl(typeName: string, arms: readonly SeatArm[], read: R
 }
 
 function seatArm(variant: string, kind: string, node: AssembledNode, fixed: FixedLiterals): SeatArm {
-	return {
-		variant,
-		line: isFixedTextLeaf(node)
-			? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind))
-			: `Self::${variant}(t) => t.seat_target(table, ctx),`
-	};
+	return { variant, line: isFixedTextLeaf(node) ? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind)) : `Self::${variant}(t) => t.seat_target(table, ctx),` };
 }
 
 function seatThroughSlotOf(node: AssembledNode, nodeMap: NodeMap, plan: RenderPlan): AssembledNonterminal | undefined {
@@ -2979,17 +2942,7 @@ function seatTargetStructImpl(
 	const reaches = seatReachOf(plan, nodeMap);
 	if (!reaches(node.kind)) return [];
 	const kind = node.kind;
-	if (isFixedTextLeaf(node))
-		return seatTargetMatchImpl(
-			rustNodeStructName(node),
-			[
-				{
-					variant: fixedLiteralOf(fixed, node.kind).variant,
-					line: fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind))
-				}
-			],
-			read
-		);
+	if (isFixedTextLeaf(node)) return seatTargetMatchImpl(rustNodeStructName(node), [{ variant: fixedLiteralOf(fixed, node.kind).variant, line: fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind)) }], read);
 	const body: string[] = [];
 	if (seatedKindsOf(plan).has(node.kind)) {
 		const id = node.kindId;
@@ -3065,10 +3018,7 @@ function renderSeatTargets(
 		);
 		const reaching = [
 			...nodes.map(({ kind, node }) => seatArm(rustTypeIdent(node.typeName), kind, node, fixed)),
-			...[...literals.values()].map((unit) => ({
-				variant: unit.variant,
-				line: fixedSeatArm(`Self::${unit.variant}`, unit)
-			}))
+			...[...literals.values()].map((unit) => ({ variant: unit.variant, line: fixedSeatArm(`Self::${unit.variant}`, unit) }))
 		];
 		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, read));
 	}
@@ -3108,9 +3058,7 @@ function seatedSlots(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): S
 }
 
 function seatLoops(seated: readonly SeatedSlot[]): string[] {
-	return seated.map(
-		({ ident, table }) => `    ${PREPARE_MOD}::SeatSlot::fill_seats(&mut parts.${ident}, overlay, ${table}, ctx);`
-	);
+	return seated.map(({ ident, table }) => `    ${PREPARE_MOD}::SeatSlot::fill_seats(&mut parts.${ident}, overlay, ${table}, ctx);`);
 }
 
 interface DefaultedSlot {
@@ -3181,9 +3129,7 @@ function prepareEdgesLine(plan: RenderPlan, node: AssembledNode, templateBody: B
 	};
 	const fill = (arms: string): string => `${PREPARE_MOD}::prepare_edges(${PREPARE_MOD}::LayoutTarget::edges_mut(&mut parts.layout, overlay), ${id}, ${arms}, ctx);`;
 	const arms = `(${arm('before')}, ${arm('after')})`;
-	return armSlots?.before === undefined && armSlots?.after === undefined
-		? `    ${fill(arms)}`
-		: `    { let arms = ${arms}; ${fill('arms')} }`;
+	return armSlots?.before === undefined && armSlots?.after === undefined ? `    ${fill(arms)}` : `    { let arms = ${arms}; ${fill('arms')} }`;
 }
 
 function prepareStructImpl(
@@ -3206,9 +3152,7 @@ function prepareStructImpl(
 		body.push(...slotGapFills(node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			body.push(
-				`    ${PREPARE_MOD}::Setting::fill(&mut parts.${rustFieldIdent(site.fieldIdent)}, overlay, ctx.options.site_arm(options::${site.constName}).arm);`
-			);
+			body.push(`    ${PREPARE_MOD}::Setting::fill(&mut parts.${rustFieldIdent(site.fieldIdent)}, overlay, ctx.options.site_arm(options::${site.constName}).arm);`);
 		}
 		body.push(...seatLoops(seated));
 		if (delim !== undefined) {
@@ -3217,10 +3161,7 @@ function prepareStructImpl(
 				trailing === undefined
 					? fallback
 					: `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
-			body.push(
-				`    let delimiter = ${value};`,
-				`    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, delimiter);`
-			);
+			body.push(`    let delimiter = ${value};`, `    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, delimiter);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {
@@ -3416,20 +3357,7 @@ function renderNodeDataStruct(
 		seated: seated.some(({ ident }) => ident === field),
 		defaulted: defaulted.some(({ ident }) => ident === field)
 	});
-	lines.push(
-		...nodeDeclaration(
-			read,
-			NODE_DERIVE,
-			`${nodeArgs(
-				node,
-				ownId,
-				read.ctx,
-				printedSlots.map(({ slot }) => slot)
-			)}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}`,
-			'struct',
-			structName
-		)
-	);
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}`, 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3440,27 +3368,15 @@ function renderNodeDataStruct(
 		}
 		if (node instanceof AssembledList) {
 			if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
-				lines.push(
-					wireKeyAttr('_delimiter'),
-					`    #[flank(${flankArgs(node)})]`,
-					'    pub delimiter: Option<::sittir_core::types::Delimiter>,'
-				);
+				lines.push(wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<::sittir_core::types::Delimiter>,');
 			}
 			if (node.separatorRule !== undefined) {
-				lines.push(
-					wireKeyAttr('_separator'),
-					`    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`,
-					'    pub separator_kind: Option<KindId>,'
-				);
+				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<KindId>,');
 			}
 		}
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			lines.push(
-				wireKeyAttr(site.wireKey),
-				spaceAttr(site, node, printedSlots, placeOf),
-				`    pub ${rustFieldIdent(site.fieldIdent)}: Option<KindId>,`
-			);
+			lines.push(wireKeyAttr(site.wireKey), spaceAttr(site, node, printedSlots, placeOf), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<KindId>,`);
 		}
 	} else if (isTerminalNode(node)) {
 		lines.push(...renderLayoutField(), ...renderLeafTextField());
@@ -3476,13 +3392,7 @@ function renderNodeDataStruct(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		`        ${
 			subject.view
-				? layoutRenderCall(
-						`${rustNodeFieldsTraitName(node)}::${LAYOUT_FIELD.rustName}(self)`,
-						ownKind,
-						owner,
-						body,
-						'::sittir_core::arena::RecordLayout'
-					)
+				? layoutRenderCall(`${rustNodeFieldsTraitName(node)}::${LAYOUT_FIELD.rustName}(self)`, ownKind, owner, body, '::sittir_core::arena::RecordLayout')
 				: layoutRenderCall(`self.${LAYOUT_FIELD.rustName}.as_deref()`, ownKind, owner, body)
 		}`,
 		`    }`,
@@ -3565,9 +3475,7 @@ function collectFixedLiterals(
 	for (const literal of fixed.values()) {
 		const prior = kindByVariant.get(literal.variant);
 		if (prior !== undefined) {
-			throw new Error(
-				`render-module: fixed literals '${prior}' and '${literal.kind}' are both named ${literal.variant}`
-			);
+			throw new Error(`render-module: fixed literals '${prior}' and '${literal.kind}' are both named ${literal.variant}`);
 		}
 		kindByVariant.set(literal.variant, literal.kind);
 	}
@@ -3588,9 +3496,7 @@ function fixedLiteralOf(fixed: FixedLiterals, kind: string, text?: string): Fixe
 }
 
 function fixedVariantLines(fixed: FixedLiteral): string[] {
-	return fixed.edged
-		? ['    #[node(edged)]', `    ${fixed.variant}(::sittir_core::options::Edges),`]
-		: [`    ${fixed.variant},`];
+	return fixed.edged ? ['    #[node(edged)]', `    ${fixed.variant}(::sittir_core::options::Edges),`] : [`    ${fixed.variant},`];
 }
 
 function fixedPattern(path: string, fixed: FixedLiteral, bind: string = '_'): string {
@@ -3707,26 +3613,17 @@ function spaceAttr(
 	placeOf: ReadonlyMap<string, RecordPlace>
 ): string {
 	const side = separatorSideOf(site);
-	if (side === undefined)
-		throw new Error(
-			`render: '${node.kind}' spacing site '${site.address}' carries a per-node value on no side of a separator`
-		);
+	if (side === undefined) throw new Error(`render: '${node.kind}' spacing site '${site.address}' carries a per-node value on no side of a separator`);
 	const slot = printedSlots.find(({ slot }) => slot.name === site.slot)?.slot;
 	const place = slot === undefined ? undefined : placeOf.get(rustFieldIdent(slot.storageName));
 	if (place === undefined || !('run' in place) || place.run === undefined) {
-		throw new Error(
-			`render: '${node.kind}' spacing site '${site.address}' spaces '${site.slot}', which is none of its list slots`
-		);
+		throw new Error(`render: '${node.kind}' spacing site '${site.address}' spaces '${site.slot}', which is none of its list slots`);
 	}
 	return `    #[space(slot = ${place.word}, side = ${side}, site = options::${site.constName})]`;
 }
 
 function renderLayoutField(): string[] {
-	return [
-		wireKeyAttr(LAYOUT_FIELD.wireKey),
-		'    #[layout]',
-		`    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`
-	];
+	return [wireKeyAttr(LAYOUT_FIELD.wireKey), '    #[layout]', `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
 }
 
 function renderLeafTextField(): string[] {
@@ -3832,10 +3729,7 @@ function assertReadableNodes(
 					: typeName === undefined
 						? []
 						: read.admitted.get(typeName);
-			if (ids === undefined)
-				throw new Error(
-					`render-module: ${node.kind}.${slot.name} is typed ${typeName}, which printed no admitted kind ids`
-				);
+			if (ids === undefined) throw new Error(`render-module: ${node.kind}.${slot.name} is typed ${typeName}, which printed no admitted kind ids`);
 			untagged.push({ name: slot.name, ids });
 		}
 		assertOneUntaggedSlot(node.kind, untagged, read.ctx.kindEntries);

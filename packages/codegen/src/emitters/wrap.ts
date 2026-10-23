@@ -2,26 +2,10 @@ import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import {
-	AbstractAssembledCompound,
-	AssembledAlias,
-	AssembledList,
-	AssembledNonterminal,
-	isPatternLeaf,
-	storesNodes
-} from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, isPatternLeaf, storesNodes } from '../compiler/model/node-map.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import {
-	groupSeatParts,
-	innerPositionsOf,
-	listSelfViewParts,
-	nodeMemberLines,
-	ownerViewParts,
-	seatedSetters,
-	spelledGroupSlots,
-	type SetterEntry
-} from './node-members.ts';
+import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, type SetterEntry } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
@@ -38,14 +22,7 @@ import {
 	pruneUnusedImports,
 	blankFromInput
 } from './shared.ts';
-import {
-	builtTypeSurfaceOf,
-	fieldElementType,
-	listOptionKeys,
-	listSelfViewPlan,
-	seatPlanOf,
-	separatedListSurface
-} from './factories.ts';
+import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface } from './factories.ts';
 import { collectKindEntries, findKindEntry, collectCatalogKinds, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { nodeRecordLayout } from './render-module.ts';
@@ -53,9 +30,7 @@ import type { RecordPlace } from './record-layout.ts';
 import { rustFieldIdent } from './node-common.ts';
 
 export function listKindIds(nodeMap: NodeMap): number[] {
-	return [...nodeMap.nodes.values()]
-		.flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : []))
-		.sort((a, b) => a - b);
+	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
 }
 
 export function unitKindIds(nodeMap: NodeMap): number[] {
@@ -86,9 +61,7 @@ function kindIdsOf(nodeMap: NodeMap, kinds: readonly string[]): number[] {
 }
 
 export function rootKindIds(nodeMap: NodeMap): number[] {
-	return [...nodeMap.nodes.values()]
-		.flatMap((node) => (node.grammarRoot === true && node.kindId !== undefined ? [node.kindId] : []))
-		.sort((a, b) => a - b);
+	return [...nodeMap.nodes.values()].flatMap((node) => (node.grammarRoot === true && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
 }
 
 export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {
@@ -165,19 +138,11 @@ export namespace wrap {
 		if (result !== undefined) output.push(renameUnusedTreeParam(result));
 	}
 
-	export function view(
-		output: string[],
-		node: AuthoredCompound | AssembledList,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap
-	): boolean {
+	export function view(output: string[], node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): boolean {
 		if (!node.rawFactoryName) return false;
 		const storage = recordStorageOf(node, nodeMap, kindEntries);
 		if (storage === undefined) return false;
-		const source =
-			node instanceof AssembledList
-				? emitSeparatedListWrap(node, kindEntries, nodeMap, storage)
-				: emitFieldCarryingWrap(node, kindEntries, nodeMap, storage);
+		const source = node instanceof AssembledList ? emitSeparatedListWrap(node, kindEntries, nodeMap, storage) : emitFieldCarryingWrap(node, kindEntries, nodeMap, storage);
 		if (source === undefined) return false;
 		output.push(source);
 		return true;
@@ -190,11 +155,7 @@ type WrapStorage =
 
 const OBJECT: WrapStorage = { mode: 'object' };
 
-function recordStorageOf(
-	node: AuthoredCompound | AssembledList,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): WrapStorage | undefined {
+function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): WrapStorage | undefined {
 	if (seatPlanOf(node, nodeMap, kindEntries, 'RAW.').groups.length > 0) return undefined;
 	const layout = nodeRecordLayout(node, nodeMap);
 	if (layout === undefined) return undefined;
@@ -311,10 +272,7 @@ function emitSeparatedListWrap(
 	}
 	lines.push(
 		...nodeMemberLines({
-			setters: seatedSetters(
-				[...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)],
-				plan
-			),
+			setters: seatedSetters([...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)], plan),
 			accessors: [],
 			extra: view.members,
 			inner: innerPositionsOf(node.kind, nodeMap),
@@ -340,26 +298,17 @@ function fieldAccessorLines(
 	return slots
 		.filter((f) => !skip.has(f.propertyName))
 		.map((f) => {
-			const body = slotAccessorBody(
-				f,
-				{
-					elemType: fieldElementType(f, nodeMap, kindEntries),
-					required: isRequired(f),
-					storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries),
-					aliasContent
-				},
-				storage
-			);
+			const body = slotAccessorBody(f, {
+				elemType: fieldElementType(f, nodeMap, kindEntries),
+				required: isRequired(f),
+				storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries),
+				aliasContent
+			}, storage);
 			return `    ${f.propertyName}() { ${body}; },`;
 		});
 }
 
-function emitFieldCarryingWrap(
-	node: AuthoredCompound,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap,
-	storage: WrapStorage
-): string {
+function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap, storage: WrapStorage): string {
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
@@ -387,14 +336,7 @@ function emitFieldCarryingWrap(
 		'  const node = {',
 		'    ...data,',
 		...typeStampLines(node, kindEntries),
-		...fieldAccessorLines(
-			node.slots,
-			kindEntries,
-			nodeMap,
-			spelledGroupSlots(plan),
-			storage,
-			node instanceof AssembledAlias
-		),
+		...fieldAccessorLines(node.slots, kindEntries, nodeMap, spelledGroupSlots(plan), storage, node instanceof AssembledAlias),
 		...nodeMemberLines({
 			setters: seatedSetters(inlineSetters(node, nodeMap, kindEntries), plan),
 			accessors: [],
@@ -414,11 +356,7 @@ function admittedSlot(kind: string, slot: string, value: string): string {
 	return `admitSlot(handle, ${JSON.stringify(kind)}, ${JSON.stringify(slot)}, ${value})`;
 }
 
-function inlineSetters(
-	node: AuthoredCompound | AssembledList,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): SetterEntry[] {
+function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): SetterEntry[] {
 	const wrapFn = `wrap${node.typeName}`;
 	const restSlots = new Set(
 		(builtTypeSurfaceOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries)?.setters ?? [])
@@ -446,11 +384,7 @@ function inlineSetters(
 	});
 }
 
-function listOptionSetters(
-	node: AssembledList,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): SetterEntry[] {
+function listOptionSetters(node: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): SetterEntry[] {
 	const surface = separatedListSurface(node, nodeMap, kindEntries);
 	return listOptionKeys(surface).map((key) => ({
 		name: key,
@@ -478,20 +412,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	}
 
 	constructor(config: EmitWrapConfig) {
-		const {
-			nodeMap,
-			generatedIdTables,
-			inlineKinds,
-			synthesizedKinds,
-			kindEntries: providedKindEntries,
-			rootKind
-		} = config;
+		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries, rootKind } = config;
 		this.#nodeMap = nodeMap;
 		this.#kindEntries =
 			providedKindEntries ??
-			(generatedIdTables
-				? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-				: undefined);
+			(generatedIdTables ? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables) : undefined);
 		this.#inlineKinds = inlineKinds;
 		this.#synthesizedKinds = synthesizedKinds;
 		this.#canonicalAliasSourceKinds = new Set(collectAliasTargetToSourceMap(nodeMap).values());
@@ -575,19 +500,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (existing === undefined || (exact && !existing.exact)) rows.set(memberName, { row, view, exact });
 		}
 		const table = new Map([...rows].map(([member, { row }]) => [member, row]));
-		const views = new Map(
-			[...rows].flatMap(([member, { view }]) => (view === undefined ? [] : [[member, view] as const]))
-		);
+		const views = new Map([...rows].flatMap(([member, { view }]) => (view === undefined ? [] : [[member, view] as const])));
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (!isPatternLeaf(node)) continue;
 			const entry = this.#kindEntries ? findKindEntry(this.#kindEntries, kind) : undefined;
 			if (this.#kindEntries && entry === undefined) continue;
 			const memberName = entry?.member ?? kind;
 			if (table.has(memberName)) continue;
-			table.set(
-				memberName,
-				`  ${this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`}: (d, t) => wrapLeaf(d, t),`
-			);
+			table.set(memberName, `  ${this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`}: (d, t) => wrapLeaf(d, t),`);
 		}
 		return { wraps: table, views };
 	}
@@ -596,9 +516,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		if (!this.#kindEntries || this.#rootKind === undefined) return [];
 		const rootEntry = findKindEntry(this.#kindEntries, this.#rootKind);
 		if (rootEntry === undefined || !rows.has(rootEntry.member)) {
-			throw new Error(
-				`emitWrap: root kind '${this.#rootKind}' has no wrap-table row — cannot name the wrapped root surface`
-			);
+			throw new Error(`emitWrap: root kind '${this.#rootKind}' has no wrap-table row — cannot name the wrapped root surface`);
 		}
 		this.#rootTreeTypeName = `${rootEntry.member}Tree`;
 		this.#rootMember = rootEntry.member;
@@ -625,9 +543,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
 			...(keyed ? ["import { TSKindId } from './kinds.js';"] : []),
-			...(keyed && this.#rootEmptyForm() !== undefined
-				? [`import type { ${this.#rootEmptyForm()} } from './types.js';`]
-				: []),
+			...(keyed && this.#rootEmptyForm() !== undefined ? [`import type { ${this.#rootEmptyForm()} } from './types.js';`] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			"import * as RAW from './factories/raw.js';",
@@ -671,9 +587,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'  const handle = currentHandle();',
 			'  const node = {',
 			'    ...data,',
-			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false }, text: 'textOf(data)' }).map((line) =>
-				line.slice(2)
-			),
+			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false }, text: 'textOf(data)' }).map((line) => line.slice(2)),
 			'  };',
 			'  return node;',
 			'}',
@@ -685,12 +599,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'};',
 			'',
 			...(keyed
-				? [
-						'const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {',
-						...views.values(),
-						'};',
-						''
-					]
+				? ['const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {', ...views.values(), '};', '']
 				: []),
 			...this.#rootTreeLines(rows),
 			"/** Wrap a node into its kind's node: the node as it crossed, with the kind's members attached. */"
