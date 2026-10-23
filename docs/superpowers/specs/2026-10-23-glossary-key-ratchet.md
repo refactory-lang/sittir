@@ -52,9 +52,9 @@ first match is the class.
 | `no-declaration` | none of the above: the name is not declared in `file` |
 | `fenced` | the heading sits inside a code fence (the doctor class `4 fenced`) |
 
-`owner-missing-single` resolves by rekey to `Owner::name`. A rekey dry run on
-`node-map.ts::isUnnamed` → `node-map.ts::AssembledNonterminal::isUnnamed` resolved
-in the graph, so the graph spells members with their owner.
+`owner-missing-single` resolves by rekey to `Owner::name` for concrete classes. A
+rekey dry run on `node-map.ts::isUnnamed` → `node-map.ts::AssembledNonterminal::isUnnamed`
+resolved in the graph. Abstract-class getters are the exception (see Today's counts).
 
 Multi-owner, wrong-owner, no-declaration, and dot-separated keys need a decision
 by the entry's author; the check reports them, it does not rewrite them.
@@ -79,8 +79,13 @@ the classifier moves to the compiler API.
 
 Headings total 4407. Doctor's own counts on the same day, for the cross-check:
 no-symbol 576, `name#N` 7, `.` keys 10, multi-entry 58, fenced 4, malformed 3.
-The two methods differ by the owner-missing class; the rekey dry run shows the
-graph agrees with the compiler-API classifier's `Owner::name` reading.
+The two methods differ by the owner-missing class. For concrete classes the graph
+accepts the owner-qualified key (rekey dry run on `AssembledNonterminal::isUnnamed`).
+Getters declared on an abstract class (`AssembledNodeBase`: `surfaceHidden`,
+`configTypeName`, `fromInputTypeName`) are keyed bare in the graph, and an
+owner-qualified rekey is refused. The compiler-API classifier and the graph disagree
+for these; the spec must say which one a key is checked against. Reported to
+Infigraph; unresolved.
 
 ## Ceilings file
 
