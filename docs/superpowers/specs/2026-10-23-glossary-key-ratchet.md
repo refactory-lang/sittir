@@ -51,10 +51,11 @@ every level of nesting. The enumerator reports, for each file in scope:
 5. members of a type literal (`type T = { … }`, including generic aliases), at any
    depth, keyed `Alias::member` and `Alias::member::nested`.
 
-Undocumented declarations are the exported subset of the above: exported top-level
-declarations, plus members of exported classes, interfaces, enums, const objects, and
-type literals. Non-exported declarations and members of non-exported owners are not
-counted.
+Undocumented declarations are depth two only: exported top-level declarations, plus their
+direct members, meaning members of exported classes, interfaces, enums, const objects, type
+literals and namespaces. Deeper nested properties (`A::prop::inner`) are not counted as
+undocumented, though an entry for one is a valid key. Non-exported declarations and members of
+non-exported owners are not counted.
 
 Undocumented = enumerated exported declarations minus keys that resolve to them under the
 rule above.
