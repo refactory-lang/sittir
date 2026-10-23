@@ -462,6 +462,24 @@ Field source tracking (override/enriched/grammar)
 pnpm exec tsx packages/cli/src/cli.ts tool field-provenance [options]
 ```
 
+### `tool glossary-keys`
+
+Glossary key ratchet (every heading names one declaration; count undocumented exports; fail on a ceiling increase)
+
+**Options**
+
+- `--update` — Lower the committed ceilings to the current counts (never raises one)
+- `--table` — Print every broken key with its class and glossary location
+- `--undocumented` — Print every exported declaration no valid key resolves to
+- `--json` — Machine-readable JSON output
+- `--ceilings <path>` — Ceilings path (default: packages/tools/glossary-key-ceilings.json)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool glossary-keys [options]
+```
+
 ### `tool grammar-diagnostics`
 
 Run pre-codegen grammar diagnostics
