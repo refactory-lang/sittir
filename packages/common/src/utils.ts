@@ -13,6 +13,7 @@ import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 
 export { Delimiter } from './delimiter.ts';
+export { nodeJSON } from './node-json.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -553,7 +554,7 @@ export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 }
 
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
-	return input !== null && typeof input === 'object' && !isNodeValue(input) && key in input
+	return input !== null && typeof input === 'object' && !Array.isArray(input) && !isNodeValue(input) && (key in input || Object.keys(input).length === 0)
 		? (input as Record<string, unknown>)[key]
 		: orElse();
 }

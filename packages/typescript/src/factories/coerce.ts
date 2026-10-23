@@ -424,6 +424,43 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'number_bigint_octal',
 	'number_bigint_decimal'
 ]);
+const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
+	'import',
+	'empty_statement',
+	'optional_chain',
+	'unescaped_double_string_fragment',
+	'unescaped_single_string_fragment',
+	'regex_pattern',
+	'regex_flags',
+	'identifier',
+	'this',
+	'super',
+	'true',
+	'false',
+	'null',
+	'undefined',
+	'override_modifier',
+	'existential_type',
+	'using_declaration_arm',
+	'number_decimal',
+	'empty_member',
+	'optional_chain_marker',
+	'meta_property_new_target',
+	'meta_property_import_meta',
+	'html_comment',
+	'jsx_text',
+	'_template_chars',
+	'_automatic_semicolon',
+	'_function_signature_automatic_semicolon',
+	'_tight',
+	'_space',
+	'_tab',
+	'_newline',
+	'_blankline',
+	'_double_blankline',
+	'_indent',
+	'_dedent'
+]);
 
 function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
@@ -526,8 +563,16 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeValue(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
-	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
-	return fn(text);
+	if (typeof text === 'string') return _buildGuardedText(text, kind) as ReturnType<_FromMap[K]>;
+	if (_SLOTLESS_TEXT_KINDS.has(kind) || 'text' in rest)
+		throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
+	return fn(rest);
+}
+
+export function buildByKind(kind: string, ...input: unknown[]): unknown {
+	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
+	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
+	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -547,6 +592,13 @@ function _keywordOr<R>(
  *  leaf like every other shape. */
 function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' && _KIND_ID_STORED.has(v) ? (v as T) : resolve();
+}
+
+function _resolveKindEnumItems<T>(v: _LooseFieldInput, resolve: (v: _LooseFieldInput) => readonly T[]): readonly T[] {
+	if (!Array.isArray(v)) return _resolveKindEnum(v, () => resolve(v));
+	return v.flatMap((item: _LooseFieldInput) =>
+		typeof item === 'number' && _KIND_ID_STORED.has(item) ? [item as T] : resolve([item])
+	);
 }
 
 function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
@@ -2400,7 +2452,7 @@ export function resolveProgram_hashBangLine(
 
 export function resolveProgram_statements(value: T.Program.LooseConfig['statements']): Admit<T.Program['_statements']> {
 	return listStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
+		_resolveKindEnumItems(value, (_v) => _resolveMany<T.Statement>(_v, _K0, _K1)),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
@@ -2874,7 +2926,7 @@ export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): Re
 	return (F.buildStatementBlock as (...args: unknown[]) => ReturnType<typeof F.buildStatementBlock>)(
 		options,
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Statement | '\n'>(_elems, _K0, _K1)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.Statement | '\n'>(_v, _K0, _K1)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as readonly unknown[])
 	);
@@ -3393,7 +3445,7 @@ export function resolveSwitchCase_value(value: T.SwitchCase.LooseConfig['value']
 
 export function resolveSwitchCase_bodies(value: T.SwitchCase.LooseConfig['body']): Admit<T.SwitchCase['_body']> {
 	return listStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
+		_resolveKindEnumItems(value, (_v) => _resolveMany<T.Statement>(_v, _K0, _K1)),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
@@ -3419,7 +3471,7 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSwitchDefault(
 			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Statement>(children, _K0, _K1)),
+				_resolveKindEnumItems(children, (_v) => _resolveMany<T.Statement>(_v, _K0, _K1)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildSwitchDefault>)
 		);
@@ -3434,7 +3486,7 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 	})();
 	return F.buildSwitchDefault(
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Statement>(_elems, _K0, _K1)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.Statement>(_v, _K0, _K1)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildSwitchDefault>)
 	);
@@ -3658,7 +3710,7 @@ export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.
 	})();
 	return F.buildArray(
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Expression | T.SpreadElement>(_elems, _K6, _K16)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.Expression | T.SpreadElement>(_v, _K6, _K16)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildArray>)
 	);
@@ -4605,7 +4657,7 @@ export function coerceToSequenceExpression(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSequenceExpression(
 			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Expression>(children, _K6, _K14)),
+				_resolveKindEnumItems(children, (_v) => _resolveMany<T.Expression>(_v, _K6, _K14)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildSequenceExpression>)
 		);
@@ -4620,7 +4672,7 @@ export function coerceToSequenceExpression(
 	})();
 	return F.buildSequenceExpression(
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Expression>(_elems, _K6, _K14)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.Expression>(_v, _K6, _K14)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildSequenceExpression>)
 	);
@@ -4838,7 +4890,7 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArguments(
 			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Expression | T.SpreadElement>(children, _K6, _K16)),
+				_resolveKindEnumItems(children, (_v) => _resolveMany<T.Expression | T.SpreadElement>(_v, _K6, _K16)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildArguments>)
 		);
@@ -4853,7 +4905,7 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 	})();
 	return F.buildArguments(
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Expression | T.SpreadElement>(_elems, _K6, _K16)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.Expression | T.SpreadElement>(_v, _K6, _K16)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildArguments>)
 	);
@@ -4960,7 +5012,7 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildClassBody(
 			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.ClassBodyMember>(children, _K34, _K35)),
+				_resolveKindEnumItems(children, (_v) => _resolveMany<T.ClassBodyMember>(_v, _K34, _K35)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildClassBody>)
 		);
@@ -4975,7 +5027,7 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 	})();
 	return F.buildClassBody(
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.ClassBodyMember>(_elems, _K34, _K35)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.ClassBodyMember>(_v, _K34, _K35)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildClassBody>)
 	);
@@ -5914,7 +5966,7 @@ export function coerceToImplementsClause(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildImplementsClause(
 			...(listStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Type>(children, _K39, _K40)),
+				_resolveKindEnumItems(children, (_v) => _resolveMany<T.Type>(_v, _K39, _K40)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildImplementsClause>)
 		);
@@ -5929,7 +5981,7 @@ export function coerceToImplementsClause(
 	})();
 	return F.buildImplementsClause(
 		...(listStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Type>(_elems, _K39, _K40)),
+			_resolveKindEnumItems(_elems, (_v) => _resolveMany<T.Type>(_v, _K39, _K40)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildImplementsClause>)
 	);
@@ -8272,7 +8324,7 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K39, _K40)),
+					_resolveKindEnumItems(els, (_v) => _resolveMany<T.Type | T.TypeIdentifier.Types>(_v, _K39, _K40)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
@@ -8369,7 +8421,7 @@ export function coerceToTupleTypeMembers(
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnum(els, () =>
+					_resolveKindEnumItems(els, (_v) =>
 						_resolveMany<
 							| T.TupleParameter
 							| T.OptionalTupleParameter
@@ -8377,7 +8429,7 @@ export function coerceToTupleTypeMembers(
 							| T.RestType
 							| T.Type
 							| T.TypeIdentifier.Types
-						>(els, _K39, _K65)
+						>(_v, _K39, _K65)
 					),
 					(item) => coerceMixedEnumStorage(item, [])
 				),

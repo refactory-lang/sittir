@@ -8,8 +8,8 @@ import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds }
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, PythonNode, PythonTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { querySlots, structure, triviaFacts } from './utils.js';
-import { coerceToComment } from './factories/coerce.js';
+import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
+import { buildByKind, coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ModuleRoot } from './render-engine.js';
 import { wrapNode, hydrate, type ModuleTree } from './wrap.js';
@@ -36,6 +36,8 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	build: ir,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
+	json: jsonFacts,
+	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),

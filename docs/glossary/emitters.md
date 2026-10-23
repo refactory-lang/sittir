@@ -2121,7 +2121,7 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
  */
 ```
 
-Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
+Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Which kinds have a row, and in which form, is `builtFromText`'s answer; this function only writes the row each form takes. Hidden and visible leaves register alike.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -10078,6 +10078,10 @@ Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind i
 
 Emits `structure`, the factories emitter's structure table as a frozen object keyed by kind id. The language hooks carry it to the engine, where `verifyStructure: 'runtime'` checks each built node against its kind's row.
 
+### `packages/codegen/src/emitters/client-utils.ts::emitJsonFacts`
+
+Emits the grammar's `jsonFacts`, what its nodes are written to JSON by (`nodeJSON`) and revived by. Three of its members are the facts `utils.ts` already holds, referenced rather than copied: the kind names (`KIND_NAMES`), the slots by accessor (`querySlots`) and the layout trivia (`triviaFacts.layout`). The rest are emitted from the sources the rest of codegen uses: the leaves that store their text (`storedTextKinds`, the set the wraps give `wrapLeaf`), the units (`unitKindIds`, the keyword and punctuation kinds a slot holds as a kind id) and the blank arm's id (`BLANK_KIND_ID`), which JSON writes as `null`.
+
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -10156,9 +10160,9 @@ The rows of the model's spelled-trivia table as the generated api writes them: o
 
 The `trivia` member of the language hooks: the generated facts, the default comment kind's coercer as `comment`, and the spelled-trivia rows as `spelled`, in the model's match order. The bare facts object when there is neither.
 
-### `packages/codegen/src/emitters/engine.ts::triviaImports`
+### `packages/codegen/src/emitters/engine.ts::factoryImports`
 
-The factory imports the trivia hook needs, one line per module: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
+The factory imports the language hooks need, one line per module: the coercer module's `buildByKind` (the hook the node reviver builds through), and the trivia hook's builders: raw builders for own-text leaves, coercers for the default comment kind and for kinds built through their coercer.
 
 ### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig.rootTypeName`
 
@@ -11973,6 +11977,8 @@ The scalar branch of `_resolveOne` and `_resolveOneLeaf`: a boolean, number or b
 In `_resolveOne`, a value that is neither a config object nor kinded data hoists into a branch arm only when that arm is the slot's sole branch kind or its declared default arm; a string additionally needs the arm to be string-capable. A bare string never picks an arm by elimination among several — which kind it names is not decided by its text — so a string no leaf accepts throws when any arm could take it.
 
 `_resolveBareText` tests the slot's text leaves in lexical-rank order, counting an envelope arm's leaves (`_ENVELOPE_TEXT_LEAVES`, from `transparentEnvelopeTextLeaves`) as the slot's own. A text reached through an envelope is passed as text to the envelope's coercer, which runs its own keyword extraction and rank, so `left: 'result'` builds the same `_lhs_expression` envelope the strict surface spells and `left: 'async'` builds the envelope around the keyword arm.
+
+`_resolveByKind` builds a kind-tagged value by its shape. A tag naming a kind built from text (`builtFromText`) with a string `text` takes the registry's checked text path (`_buildGuardedText`); a kind with slots takes any other object as its config (`{ $type, content: 'n' }`); a slotless kind (`_SLOTLESS_TEXT_KINDS`, the `fixed` and `stored` forms) has no config, so a tag without its text is refused naming the shape. The node reviver builds through it, so JSON writes such kinds by their slots.
 
 `_listElements` passes an element that is already the list's wrapper kind through untouched and resolves only the others to the wrapper's content; resolving a built wrapper toward an alias content kind would nest it inside that alias.
 
@@ -14838,7 +14844,7 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, `toString` (the same text, so a node interpolates into a template string and a pattern test of a node renders it), `toJSON` (the node's structure through `nodeJSON` and the grammar's `jsonFacts`, so `JSON.stringify` writes kind names and accessor-named slots rather than storage), the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf's members are written here too (the wraps' `wrapLeaf`, with `text` and no accessors).
 
 ### `packages/codegen/src/emitters/node-members.ts::StoredAccessor`
 
@@ -15323,3 +15329,21 @@ A JSON value as the printer walks it.
 ### `packages/codegen/src/emitters/membership.ts::membershipKindsOf`
 
 The kinds a value of any of `names` can read as, each once: a supertype's transitive parse kinds (`expandToConcreteParseKinds`), with each enum kind among them replaced by its members (`memberKindsOf`). The enum kind's own id is left out: a read stores the member id and never the enum's, a query walk yields such a node as that member id rather than as a coordinate, and a coordinate's `$type` is the shared stamp, so no value a guard or `ofType` meets has the enum's kind. It is the one membership derivation: the `is` guards' rows in `_members` (so `isMember`, `membersOf` and a query's `ofType` read the same sets), the same rows as types in `KindMembers` (which the guards and a query view's `ofType` narrow through), and the portable flag tables' kinds (`emitPortable`'s `typesOf`, `slotFlagsOf`'s `kindsOf`) all come from it.
+
+### `packages/codegen/src/emitters/built-from-text.ts::builtFromText`
+
+The kinds a builder can make from text, each with the form its text takes. This is the one place the fact is decided; the coercer's `_leafRegistry`, its `_AFFIXED_KINDS` and `_SLOTLESS_TEXT_KINDS`, the wraps' `wrapLeaf` rows and the grammar's `jsonFacts.leaves` all read it.
+
+- `fixed`: a visible keyword or punctuation leaf (`isBuilderTextLeaf`), whose one spelling is its text; a slot holds it as a kind id.
+- `affixed`: a token whose text differs from its content by a required fixed member (`isAffixedLeaf`); its text input is the content.
+- `interior`: a token with named interior slots (`interiorOf`), whose text is split into those slots.
+- `stored`: a pattern leaf whose node stores its text as `$text` (`storedTextKinds`).
+- `alias`: an alias envelope of a pattern leaf, built from the leaf's text.
+
+Only kinds the factory emitter emits are listed (`classifyFactoryEmission`). A kind there is no factory for cannot be built from anything, and a parse never yields it: the grammars' scanner tokens and error sentinels, such as rust `string_close` and `_error_sentinel` and typescript `_ternary_qmark` and `__error_recovery`, are pattern leaves with a kind id and no corpus instance. A pattern leaf with a factory but no text pattern is skipped when no slot references it, and is an error otherwise.
+
+`fixed` and `stored` kinds have no slots, so text is their only input. The other forms also take the kind's config, which is why `_resolveByKind` dispatches a tag on its shape.
+
+### `packages/codegen/src/emitters/built-from-text.ts::storedTextKinds`
+
+The `stored` kinds of `builtFromText`: the pattern leaves whose nodes hold their text. The wraps give each a `wrapLeaf` row, and their kind ids are the grammar's `jsonFacts.leaves`, so the nodes with a `$text` member and the nodes whose JSON carries `$text` are the same set.

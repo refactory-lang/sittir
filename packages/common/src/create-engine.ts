@@ -27,6 +27,7 @@ import { metricsEnabled, recordFfi } from './metrics.ts';
 import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
+import { reviveNode } from './node-json.ts';
 import { createRenderHandle } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
@@ -229,6 +230,10 @@ function assembleEngine<API extends LanguageAPI>(
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
+		reviver: (key, value) =>
+			key !== ''
+				? value
+				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, build: hooks.buildByKind, settle: handle.settle })),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
