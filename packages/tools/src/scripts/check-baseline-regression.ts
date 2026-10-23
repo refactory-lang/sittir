@@ -67,7 +67,10 @@
  *      total did, and only while its pass held: new cases that fail,
  *      whose count rule 3 holds to a declaration. Items may MOVE from the
  *      failing list into the format-deferred one; only the SUM is
- *      checked.
+ *      checked. A kind the head adds (in its `kinds`, not the base's) is
+ *      not counted in the head's list: a kind that splits or is renamed
+ *      lists its failing parts under new names, and rule 3 holds their
+ *      failures.
  *   6. Left-out rise — the PER-GRAMMAR SUM of `parityFixtures.
  *      leftOutByKind` may not grow: a render fixture the regen leaves out
  *      is a kind whose template no longer reproduces its source, and it
@@ -161,6 +164,11 @@ function isSorted(arr: readonly string[]): boolean {
 		if (arr[i - 1]! > arr[i]!) return false;
 	}
 	return true;
+}
+
+function isKindId(key: string): boolean {
+	const id = Number(key);
+	return Number.isSafeInteger(id) && id >= 0 && String(id) === key;
 }
 
 function isPlainStringArray(value: unknown): value is string[] {
@@ -303,15 +311,16 @@ function validateParityFixturesShape(v: unknown, path: string): RegressionVerdic
 			};
 		}
 		const keys = Object.keys(value as object);
-		if (!isSorted(keys)) {
+		const notKindId = keys.find((kind) => !isKindId(kind));
+		if (notKindId !== undefined) {
 			return {
 				ok: false,
 				reason: 'schema-violation',
-				summary: `schema violation: ${path}.${key} keys are not sorted ascending`,
+				summary: `schema violation: ${path}.${key} key '${notKindId}' is not a kind id`,
 				details: {
 					path: `${path}.${key}`,
 					after: keys,
-					note: 'object keys must be sorted ascending'
+					note: 'parity failures are keyed by numeric kind id, which an object enumerates in ascending order'
 				}
 			};
 		}
@@ -542,13 +551,17 @@ interface CaseLosses {
 	readonly kept: readonly KindLoss[];
 }
 
+function kindsMissingFrom(grammar: GrammarEntry, other: GrammarEntry): ReadonlySet<string> {
+	if (grammar.kinds === undefined || other.kinds === undefined) return new Set();
+	const others = new Set(other.kinds);
+	return new Set(grammar.kinds.filter((kind) => !others.has(kind)));
+}
+
 function caseLosses(baseGrammar: GrammarEntry, headGrammar: GrammarEntry, { b, h }: ComparedRow): CaseLosses | undefined {
 	const baseCases = b.casesByKind;
 	if (baseCases === undefined) return undefined;
 	const headCases = h.casesByKind ?? {};
-	const headKinds = headGrammar.kinds;
-	const head = new Set(headKinds);
-	const departed = new Set(headKinds === undefined ? [] : (baseGrammar.kinds ?? []).filter((kind) => !head.has(kind)));
+	const departed = kindsMissingFrom(baseGrammar, headGrammar);
 	const lost = Object.entries(baseCases)
 		.map(([kind, cases]): KindLoss => [kind, cases - (ownEntry(headCases, kind) ?? 0)])
 		.filter(([, cases]) => cases > 0);
@@ -759,8 +772,8 @@ function checkFailRise(base: BackendBaseline, head: BackendBaseline): Regression
 // lists may grow by no more than its total did.
 // ---------------------------------------------------------------------------
 
-function validatorSum(v: ValidatorResult): number {
-	return v.failingKinds.length + v.formatDeferredKinds.length;
+function validatorSum(v: ValidatorResult, uncounted: ReadonlySet<string> = new Set()): number {
+	return [...v.failingKinds, ...v.formatDeferredKinds].filter((kind) => !uncounted.has(kind)).length;
 }
 
 function parityFixturesSum(p: ParityFixtures): number {
@@ -776,11 +789,12 @@ function listRiseUnexplained(b: CounterPair, h: CounterPair, before: number, aft
 
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
+		const arrived = kindsMissingFrom(headGE, baseGE);
 		for (const vName of baseValidators(baseGE.validators)) {
 			const b = baseGE.validators[vName] as ValidatorResult;
 			const h = headGE.validators[vName] as ValidatorResult;
 			const before = validatorSum(b);
-			const after = validatorSum(h);
+			const after = validatorSum(h, arrived);
 			if (!listRiseUnexplained(b, h, before, after)) continue;
 			return {
 				ok: false,

@@ -190,7 +190,7 @@ One row the head records, with the metrics it is compared on: a validator's `pas
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::caseLosses`
 
-The cases a row lost, kind by kind: each kind whose cases in the head's `casesByKind` fall short of the base's, split into kinds that departed (in the base's `kinds` and missing from the head's) and kinds that did not, which are the kinds still in `kinds` and the keys that are not one of the base's kinds. With no `kinds` on either side, no kind departs, so every loss is compared. A gain is never netted against a loss. Undefined only when the base records no cases by kind for the row, as a baseline collected before the field existed does; `checkHeadKeepsInventories` has already rejected a head that drops them.
+The cases a row lost, kind by kind: each kind whose cases in the head's `casesByKind` fall short of the base's, split into kinds that departed (in the base's `kinds` and missing from the head's, `kindsMissingFrom`) and kinds that did not, which are the kinds still in `kinds` and the keys that are not one of the base's kinds. With no `kinds` on either side, no kind departs, so every loss is compared. A gain is never netted against a loss. Undefined only when the base records no cases by kind for the row, as a baseline collected before the field existed does; `checkHeadKeepsInventories` has already rejected a head that drops them.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::unexplainedDrop`
 
@@ -231,6 +231,18 @@ A record's own entry under a key the data supplies (a kind, a grammar), or `unde
 ### `packages/tools/src/scripts/check-baseline-regression.ts::declaredRow`
 
 The head's declaration for one grammar's row (a validator, or `parityFixtures`), looked up by own entries (`ownEntry`). The total-drop, case-loss and fail-rise rules all read a row's declaration through it.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::kindsMissingFrom`
+
+The kinds one grammar entry records in `kinds` that the other does not: with the base first, the kinds that departed; with the head first, the kinds that arrived. Empty when either side records no `kinds`, so a baseline collected before the field existed departs and adds nothing.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::validatorSum`
+
+The size of a validator's failing and format-deferred lists (`failingKinds` and `formatDeferredKinds`), leaving out the kinds in `uncounted`. `checkFormatDeferredRise` leaves out the head's arrived kinds (`kindsMissingFrom`): a kind that splits or is renamed lists its failing parts under new names, which is no spread of failures among kinds that exist on both sides, and `checkFailRise` holds their count. A departed kind is still counted in the base's list, so a failing kind merged into one that survives keeps the sum.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::isKindId`
+
+Whether a key is a kind id: a non-negative integer, written the way `String(id)` writes it. The parity fixtures key `failingByKind` and `formatDeferredByKind` by the node's numeric `$type`, and an object enumerates such keys in ascending numeric order, the collector's order, so the shape check needs no order check for them: ids 98 and 127 enumerate as 98, 127, which a string comparison would refuse.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 

@@ -287,6 +287,19 @@ describe('checkRegression', () => {
 		expect(checkRegression(base, head).ok).toBe(true);
 	});
 
+	it('declared parity failures under kind ids of different lengths pass, in the order the collector writes them', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.grammars.rust!.parityFixtures = { ...pf(10, 12), failingByKind: { '98': ['render #3'], '127': ['render #7'] } };
+		head.totals = computeTotals(head.grammars);
+		head.baselineCounterChange = {
+			reason: 'two new fixtures fail',
+			grammars: { rust: { parityFixtures: { from: { pass: 10, total: 10 }, to: { pass: 10, total: 12 } } } }
+		};
+		expect(Object.keys(clone(head).grammars.rust!.parityFixtures.failingByKind)).toEqual(['98', '127']);
+		expect(checkRegression(base, clone(head)).ok).toBe(true);
+	});
+
 	it('head must record every validator', () => {
 		const base = baseline();
 		const head = clone(base);
@@ -597,6 +610,28 @@ describe('checkRegression', () => {
 			const head = departingA(retotal(base));
 			expect(head.totals.fail).toBeLessThan(base.totals.fail);
 			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('a failing kind that splits lists its failing parts under new names', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.from = { ...vr(2, 4, ['a']), casesByKind: { a: 2, b: 1, c: 1 } };
+			const head = clone(retotal(base));
+			head.grammars.typescript!.kinds = ['a1', 'a2', 'b', 'c'];
+			head.grammars.typescript!.validators.from = { ...vr(2, 4, ['a1', 'a2']), casesByKind: { a1: 1, a2: 1, b: 1, c: 1 } };
+			const verdict = checkRegression(base, retotal(head));
+			expect(verdict.ok).toBe(true);
+			if (verdict.ok) expect(verdict.explained).toContain('grammars.typescript.validators.from 2/4 → 2/4: departed a (2 cases)');
+		});
+
+		it('a failure that spreads to a kind that still exists fails, though no count moves', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.from = { ...vr(2, 4, ['a']), casesByKind: { a: 2, b: 1, c: 1 } };
+			const head = clone(retotal(base));
+			head.grammars.typescript!.validators.from = { ...vr(2, 4, ['a', 'b']), casesByKind: { a: 2, b: 1, c: 1 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('format-deferred-rise');
+			expect(verdict.details.path).toBe('grammars.typescript.validators.from');
 		});
 
 		it('a departure beside an unrelated fix passes', () => {
@@ -971,9 +1006,9 @@ describe('checkRegression', () => {
 		const base = baseline();
 		const head = clone(base);
 		// Base has empty failingByKind; head adds two failure ids under one
-		// kind. parityFixturesSum grows from 0 → 2 → format-deferred-rise.
+		// kind id. parityFixturesSum grows from 0 → 2 → format-deferred-rise.
 		head.grammars.rust!.parityFixtures.failingByKind = {
-			list_comprehension: ['render #1', 'render #2']
+			'42': ['render #1', 'render #2']
 		};
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
@@ -981,11 +1016,10 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toContain('grammars.rust.parityFixtures');
 	});
 
-	it('parity-fixtures unsorted keys — fail (schema)', () => {
+	it('parity failure keys that are not kind ids — fail (schema)', () => {
 		const base = baseline();
 		const head = clone(base);
-		// Inject a keys-unsorted object on head. The schema check must
-		// surface it BEFORE any count comparison runs.
+		// The schema check must surface it BEFORE any count comparison runs.
 		head.grammars.rust!.parityFixtures.failingByKind = {
 			zebra: ['render #1'],
 			alpha: ['render #2']
@@ -994,6 +1028,7 @@ describe('checkRegression', () => {
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');
 		expect(verdict.details.path).toContain('parityFixtures.failingByKind');
+		expect(verdict.summary).toContain("key 'zebra' is not a kind id");
 	});
 
 	it('grammars-keys unsorted — fail (schema)', () => {
