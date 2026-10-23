@@ -5458,6 +5458,10 @@ A slot's property name: its camel-cased storage name, pluralized when any value 
 
 A leaf whose text the parse carries: a pattern node, stored as its text (`$text`) and never as a kind id, so its parsed node has no slots and no wrap through the slot-bearing compounds. It is the one text-leaf fact: the set `wrapLeaf` registers and the set the node-JSON census counts. It is not the set of kinds a bare string can build (`leafTextChecks`): that set also holds lexed compounds and aliases of a pattern leaf, which have wraps, and leaves out a pattern with no text pattern of its own (an external scanner token). A fixed-text keyword or punctuation (`isFixedTextLeaf`) is stored as its kind id and is not a text leaf.
 
+### `packages/codegen/src/compiler/model/node-map.ts::storageKeyOf`
+
+A slot's storage key: its storage name with a leading `_`. The slot's `storageKey` getter and the readers of `node-model.json5` (whose slot `name` is the storage name) both derive it here.
+
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::leadingChars`
 
 The characters a pattern's accepted texts can start with: the live edges out of the start state.

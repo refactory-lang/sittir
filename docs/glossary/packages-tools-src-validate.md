@@ -745,11 +745,12 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 ```text
 /**
  * Walk a wrapped tree via declared getters, calling `visit` on each
- * encountered wrapped node. Enumeration uses `Object.keys` + accessor
- * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's hydration ($type on every node is the grammar-symbol
- * wire identity stamped by the read).
+ * encountered wrapped node. A stored member is read through the accessor
+ * the model names for it (`slotAccessorOf`, by the node's stamped kind id);
+ * a stored member the model has no slot for (a list's `_delimiter`) is
+ * plain data. Each child materializes through the wrap layer's hydration
+ * ($type on every node is the grammar-symbol wire identity stamped by the
+ * read).
  *
  * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
@@ -1785,6 +1786,10 @@ Whether a kind's model type makes it a leaf, a kind that carries text rather tha
 ### `packages/tools/src/validate/common.ts::slotKeyOf`
 
 The key a config holds a kind's slot under: the slot's model name, read from the factory slot metadata (`FactorySlotMeta.propertyName`), which the node-model reader derives once (`slotPropertyName`). The validators build every config through it and never camel-case or pluralize a slot name themselves. A slot with no metadata throws, naming the kind and slot, instead of falling back to a guessed key.
+
+### `packages/tools/src/validate/common.ts::slotAccessorOf`
+
+A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

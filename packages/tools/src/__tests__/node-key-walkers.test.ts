@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { materialize } from '../validate/common.ts';
+import { materialize, slotAccessorOf, type LoadedNodeModel } from '../validate/common.ts';
 import { collectChildren } from '../exercise/walk.ts';
 
 const LIST_ITEMS = Symbol('items');
+const accessorOf = slotAccessorOf({ slotAccessors: { owner: { _body: 'body' }, leaf: {} } } as unknown as LoadedNodeModel, (id) => (id === 7 ? 'owner' : id === 3 ? 'leaf' : undefined));
 
 const leaf = (text: string) => ({
 	$type: 3,
@@ -35,7 +36,7 @@ const owner = (child: ReturnType<typeof leaf>) => ({
 
 describe('the tools walkers select a node by key', () => {
 	it('materialize copies storage and $ metadata only', () => {
-		expect(materialize(owner(leaf('a')))).toEqual({
+		expect(materialize(owner(leaf('a')), accessorOf)).toEqual({
 			$type: 7,
 			
 			$named: true,
@@ -45,6 +46,11 @@ describe('the tools walkers select a node by key', () => {
 
 	it('collectChildren calls the readers of the node and no other member', () => {
 		const child = leaf('a');
-		expect(collectChildren(owner(child) as never)).toEqual([child]);
+		expect(collectChildren(owner(child) as never, accessorOf)).toEqual([child]);
+	});
+
+	it('copies a stored member the model has no slot for as data, and refuses a kind the model does not have', () => {
+		expect(materialize({ ...owner(leaf('a')), _delimiter: 2 }, accessorOf)).toMatchObject({ _delimiter: 2 });
+		expect(() => materialize({ ...owner(leaf('a')), $type: 9 }, accessorOf)).toThrow('kind id 9 is not in the node model');
 	});
 });

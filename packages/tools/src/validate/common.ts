@@ -69,7 +69,7 @@ const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (
 	.loadWebTreeSitter;
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
-const { pluralize, slotPropertyName, snakeToCamel } = await load('modelNodeMap');
+const { slotPropertyName, storageKeyOf } = await load('modelNodeMap');
 const { factorySlotMetaOf, slotKindsOf, valueNameOf } = await load('nodeModelRead');
 
 type SlotArity = 'one' | 'many';
@@ -473,6 +473,8 @@ export interface LoadedNodeModel {
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
 	readonly slotNames: Record<string, readonly string[]>;
 	readonly slotStorage: Record<string, Record<string, string>>;
+	/** Each kind's slots by storage key, to the accessor that reads it; a kind with no slots maps to `{}`. */
+	readonly slotAccessors: Record<string, Record<string, string>>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
@@ -584,6 +586,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotKinds: {},
 	slotNames: {},
 	slotStorage: {},
+	slotAccessors: {},
 	factoryShapes: {},
 	factoryFields: {},
 	factorySlots: {},
@@ -648,6 +651,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const slotKinds: Record<string, Record<string, readonly string[]>> = {};
 	const slotNames: Record<string, readonly string[]> = {};
 	const slotStorage: Record<string, Record<string, string>> = {};
+	const slotAccessors: Record<string, Record<string, string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
 	const subtypes: Record<string, readonly string[]> = {};
@@ -674,6 +678,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.seated === true) hoistedKinds.add(node.kind);
 		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
+		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slotPropertyName(slot)]));
 		if (node.slots !== undefined) {
 			for (const slot of node.slots) {
 				for (const value of slot.values ?? []) {
@@ -725,6 +730,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		slotKinds,
 		slotNames,
 		slotStorage,
+		slotAccessors,
 		factoryShapes,
 		factoryFields,
 		factorySlots,
@@ -749,6 +755,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 
 export function walkWrappedTree(
 	root: unknown,
+	accessorOf: SlotAccessorOf,
 	visit: (w: TypedNode) => void,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): void {
@@ -760,9 +767,11 @@ export function walkWrappedTree(
 			seen.add(w.$treeHandle);
 		}
 		visit(w);
+		let slots: Readonly<Record<string, string>> | undefined;
 		for (const k of Object.keys(w)) {
 			if (!k.startsWith('_')) continue;
-			const v = resolveWrappedStorageValue(w, k, onAccessorThrow);
+			slots ??= accessorOf(w.$type);
+			const v = resolveWrappedStorageValue(w, k, slots, onAccessorThrow);
 			if (hasNumericType(v)) recurse(v);
 			else if (Array.isArray(v)) for (const x of v) if (hasNumericType(x)) recurse(x);
 		}
@@ -770,15 +779,20 @@ export function walkWrappedTree(
 	recurse(root);
 }
 
-export function materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode {
-	return materializeValue(root, onAccessorThrow) as AnyUntypedNode;
+export function materialize(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyUntypedNode {
+	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
 }
 
 export function materializeDetached(
 	root: unknown,
+	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
-	return holdingTreeOf(root, detachCoordinates(materialize(root, onAccessorThrow)));
+	return holdingTreeOf(root, detachCoordinates(materialize(root, accessorOf, onAccessorThrow)));
 }
 
 /**
@@ -818,11 +832,16 @@ export interface ValidatorSkip {
 	readonly input?: string;
 }
 
-function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): unknown {
+function materializeValue(
+	value: unknown,
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeValue(entry, onAccessorThrow));
+		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow));
 	}
 	if (!hasNumericType(value)) return value;
+	let slots: Readonly<Record<string, string>> | undefined;
 	const materialized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key)) continue;
@@ -840,18 +859,19 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 					: {
 							...layout,
 							trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, (entries) =>
-								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), onAccessorThrow))
+								entries.map((entry) => materializeValue(hydrateTriviaEntry(entry), accessorOf, onAccessorThrow))
 							)
 						};
 			continue;
 		}
 		if (key.startsWith('_')) {
-			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
+			slots ??= accessorOf(value.$type);
+			const resolved = resolveWrappedStorageValue(value, key, slots, onAccessorThrow);
 			if (resolved === undefined) continue;
-			materialized[key] = materializeValue(resolved, onAccessorThrow);
+			materialized[key] = materializeValue(resolved, accessorOf, onAccessorThrow);
 			continue;
 		}
-		materialized[key] = materializeValue(raw, onAccessorThrow);
+		materialized[key] = materializeValue(raw, accessorOf, onAccessorThrow);
 	}
 	carryPlace(value, materialized);
 	carrySourceStamp(value, materialized);
@@ -861,33 +881,40 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 function resolveWrappedStorageValue(
 	node: TypedNode,
 	storageKey: string,
+	slots: Readonly<Record<string, string>>,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	if (!storageKey.startsWith('_')) return node[storageKey];
-	for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
-		const accessor = storedSlotReader(node, accessorName);
-		if (typeof accessor === 'function' && accessor.length === 0) {
-			try {
-				return (accessor as () => unknown).call(node);
-			} catch (e) {
-				const message = (e as Error).message;
-				const type = (node as any).$type;
-				process.stderr.write(
-					`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${type} err=${message}\n`
-				);
-				onAccessorThrow?.({ key: storageKey, accessor: accessorName, type, message });
-				return node[storageKey];
-			}
-		}
+	const accessorName = slots[storageKey];
+	if (accessorName === undefined) return node[storageKey];
+	const accessor = storedSlotReader(node, accessorName);
+	if (typeof accessor !== 'function' || accessor.length !== 0) return node[storageKey];
+	try {
+		return (accessor as () => unknown).call(node);
+	} catch (e) {
+		const message = (e as Error).message;
+		const type = node.$type;
+		process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${type} err=${message}\n`);
+		onAccessorThrow?.({ key: storageKey, accessor: accessorName, type, message });
+		return node[storageKey];
 	}
-	return node[storageKey];
 }
 
-export function accessorCandidatesForStorageKey(storageKey: string): readonly string[] {
-	if (!storageKey.startsWith('_')) return [];
-	const base = snakeToCamel(storageKey.slice(1));
-	const plural = pluralize(base);
-	return plural === base ? [base] : [base, plural];
+/** A kind's slots, by the node's stamped kind id: each storage key to the accessor that reads it. */
+export type SlotAccessorOf = (typeId: number) => Readonly<Record<string, string>>;
+
+export function slotAccessorOf(model: LoadedNodeModel, kindNameFromId: (id: number) => string | undefined): SlotAccessorOf {
+	return (typeId) => {
+		const kind = kindNameFromId(typeId);
+		const slots = kind === undefined ? undefined : model.slotAccessors[kind];
+		if (slots === undefined) throw new Error(`slotAccessorOf: ${kind ?? `kind id ${typeId}`} is not in the node model`);
+		return slots;
+	};
+}
+
+export async function loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf> {
+	const kindNameFromId = await loadStorageKindNameFromId(grammar);
+	if (kindNameFromId === undefined) throw new Error(`loadSlotAccessorOf: ${grammar} has no kind name table`);
+	return slotAccessorOf(await loadNodeModel(grammar), kindNameFromId);
 }
 
 export interface TypedNode {

@@ -384,6 +384,10 @@ export function snakeToCamel(name: string): string {
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
+export function storageKeyOf(storageName: string): string {
+	return `_${storageName}`;
+}
+
 export function slotPropertyName(slot: {
 	readonly name: string;
 	readonly values?: readonly { readonly multiplicity?: string }[];
@@ -1215,7 +1219,7 @@ export class AssembledNonterminal {
 		return isMultiple(this) ? 'many' : 'one';
 	}
 	get storageKey(): string {
-		return `_${this.storageName}`;
+		return storageKeyOf(this.storageName);
 	}
 
 	constructor(init: AssembledNonterminalInit) {

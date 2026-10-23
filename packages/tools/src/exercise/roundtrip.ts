@@ -1,5 +1,5 @@
 import { spanOf } from '@sittir/common/utils';
-import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
+import type { FactoryEntry, ReadNodeLike, SlotAccessorOf } from '../validate/common.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -26,7 +26,8 @@ interface CommonModule {
 	loadNativeEngine(grammar: string): Promise<ExerciseEngine>;
 	loadCorpusEntries(grammar: string): readonly { name: string; source: string }[];
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
-	walkWrappedTree(root: unknown, visit: (node: ParsedNode) => void): void;
+	loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf>;
+	walkWrappedTree(root: unknown, accessorOf: SlotAccessorOf, visit: (node: ParsedNode) => void): void;
 	loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T>;
 	loadNodeModel(grammar: string): Promise<{
 		factoryShapes: Record<string, FactoryShape>;
@@ -124,10 +125,11 @@ function findFirstOfKind(
 	root: unknown,
 	kind: string,
 	common: CommonModule,
-	kindNameFromId: KindNameFromId
+	kindNameFromId: KindNameFromId,
+	accessorOf: SlotAccessorOf
 ): ParsedNode | undefined {
 	let found: ParsedNode | undefined;
-	common.walkWrappedTree(root, (node) => {
+	common.walkWrappedTree(root, accessorOf, (node) => {
 		if (found !== undefined || node.$named === false) return;
 		if (typeof node.$type === 'number' && kindNameFromId?.(node.$type) === kind) found = node;
 	});
@@ -175,10 +177,11 @@ function resolveCorpusCase(
 	kind: string,
 	common: CommonModule,
 	engine: ExerciseEngine,
-	kindNameFromId: KindNameFromId
+	kindNameFromId: KindNameFromId,
+	accessorOf: SlotAccessorOf
 ): ExerciseCase | null {
 	for (const entry of common.loadCorpusEntries(grammar)) {
-		if (findFirstOfKind(engine.parse(entry.source), kind, common, kindNameFromId) !== undefined) {
+		if (findFirstOfKind(engine.parse(entry.source), kind, common, kindNameFromId, accessorOf) !== undefined) {
 			return { kind, find: kind, source: entry.source, label: entry.name };
 		}
 	}
@@ -190,7 +193,8 @@ function resolveCases(
 	kinds: readonly string[],
 	common: CommonModule,
 	engine: ExerciseEngine,
-	kindNameFromId: KindNameFromId
+	kindNameFromId: KindNameFromId,
+	accessorOf: SlotAccessorOf
 ): readonly ExerciseCase[] {
 	if (kinds.length === 0) return BUILTIN_CASES[grammar] ?? [];
 	const selected: ExerciseCase[] = [];
@@ -200,7 +204,7 @@ function resolveCases(
 			selected.push(...builtinMatches);
 			continue;
 		}
-		const corpusCase = resolveCorpusCase(grammar, kind, common, engine, kindNameFromId);
+		const corpusCase = resolveCorpusCase(grammar, kind, common, engine, kindNameFromId, accessorOf);
 		selected.push(corpusCase ?? { kind, find: kind, source: '', label: 'no matching built-in or corpus case' });
 	}
 	return selected;
@@ -213,8 +217,9 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 	const common = await loadCommon();
 	const artifacts = await loadFactoryArtifacts(grammar);
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
+	const accessorOf = await common.loadSlotAccessorOf(grammar);
 	const engine = await common.loadNativeEngine(grammar);
-	const cases = resolveCases(grammar, kinds, common, engine, kindNameFromId);
+	const cases = resolveCases(grammar, kinds, common, engine, kindNameFromId, accessorOf);
 	if (cases.length === 0) {
 		process.stderr.write(`exercise: no cases available for grammar '${grammar}'\n`);
 		return 1;
@@ -232,7 +237,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 		let input: string;
 		let rendered: string;
 		try {
-			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, kindNameFromId);
+			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, kindNameFromId, accessorOf);
 			if (node === undefined) {
 				skip += 1;
 				process.stdout.write(
