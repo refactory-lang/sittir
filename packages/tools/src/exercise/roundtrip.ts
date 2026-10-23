@@ -106,7 +106,7 @@ export async function loadFactoryArtifacts(grammar: GrammarName): Promise<Factor
 	const common = await loadCommon();
 	const model = await common.loadNodeModel(grammar);
 	return {
-		factoryMap: await common.loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {}),
+		factoryMap: await common.loadScopedFactoryMap(grammar, factoryModule._factoryMap),
 		factoryShapes: model.factoryShapes,
 		fieldAliasMap: model.fieldAliasMap,
 		factoryFields: model.factoryFields,

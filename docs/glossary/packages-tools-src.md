@@ -22,7 +22,7 @@ The absolute path of a generated source artifact under a discovered grammar pack
 
 ### `packages/tools/src/grammar-internals.ts::importGrammarModule`
 
-Imports a generated module through its `pathToFileURL` URL, which ESM accepts across platforms. The result has the export type selected by the filename. A missing file returns `undefined`, preserving callers' optional-artifact behavior; import errors propagate to the validator's existing failure reporting.
+Imports a generated module through its `pathToFileURL` URL, which ESM accepts across platforms. The result has the export type selected by the filename. A missing file returns `undefined`, preserving callers' optional-artifact behavior. A file that exists must carry every export `GrammarModules` declares for it: one that reads `undefined` throws an error naming the grammar, file and export, so a partly generated module can never pass for an empty map. Import errors propagate to the caller's failure reporting.
 
 ### `packages/tools/src/grammar-internals.ts::requireGrammarModule`
 

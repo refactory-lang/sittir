@@ -28,4 +28,18 @@ describe('factory storage that cannot load what it validates reports the run fai
 		expect(result.fail).toBeGreaterThan(0);
 		expect(formatFactoryStorageReport(result)).toMatch(/^ {2}x /);
 	});
+
+	it('factory storage: a factory module that exports no _factoryMap', async () => {
+		const path = grammarModulePath('regex', 'factories/raw.ts');
+		if (path === undefined) throw new Error('regex has no factories/raw.ts');
+		mocked.push(path);
+		vi.doMock(path, async (importOriginal) => {
+			return { ...(await importOriginal<Record<string, unknown>>()), _factoryMap: undefined };
+		});
+		vi.resetModules();
+		const { validateFactoryStorage } = await import('../src/validate/factory-storage.ts');
+		const result = await validateFactoryStorage('regex');
+		expect(result.errors.some((error) => error.message.includes("no export '_factoryMap'"))).toBe(true);
+		expect(result.fail).toBeGreaterThan(0);
+	});
 });

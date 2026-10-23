@@ -995,18 +995,7 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 		const typesModule = await importGrammarModule(grammar, 'types.ts');
 		if (!typesModule) return undefined;
 		const kindNames = typesModule.KIND_DISPLAY_NAMES;
-		if (kindNames) {
-			return (id: number) => kindNames.get(id);
-		}
-		const rawFn = typesModule.kindNameFromId;
-		if (!rawFn) return undefined;
-		return (id: number) => {
-			try {
-				return rawFn(id);
-			} catch {
-				return undefined;
-			}
-		};
+		return (id: number) => kindNames.get(id);
 	} catch {
 		return undefined;
 	}

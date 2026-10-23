@@ -25,7 +25,7 @@ import { nodeText, placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
-import { importGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
+import { requireGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -372,61 +372,22 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
 	importFailure: { message: string } | null;
 }> {
-	let factoryMap: Record<string, FactoryEntry> = {};
-	let factoryShapes: Record<string, FactoryShape> = {};
-	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let factoryFields: Record<string, readonly string[]> = {};
-	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
-	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
 	try {
-		const factoryModule = await importGrammarModule(grammar, 'factories/raw.ts');
-		if (!factoryModule) {
-			return {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				kindNameFromId,
-				importFailure: null
-			};
-		}
-		factoryMap = await loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {});
-		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
-		// data, loaded separately from the factory functions.
-		const mapData = await loadNodeModel(grammar);
-		factoryShapes = mapData.factoryShapes;
-		fieldAliasMap = mapData.fieldAliasMap;
-		factoryFields = mapData.factoryFields;
-		factorySlots = mapData.factorySlots;
-		try {
-			kindNameFromId = await loadStorageKindNameFromId(grammar);
-		} catch (error) {
-			const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${error instanceof Error ? error.message : error}`;
-			console.error(message);
-			return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, importFailure: { message } };
-		}
+		const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
+		const { factoryShapes, fieldAliasMap, factoryFields, factorySlots } = await loadNodeModel(grammar);
 		return {
-			factoryMap,
+			factoryMap: await loadScopedFactoryMap(grammar, factoryModule._factoryMap),
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			kindNameFromId,
+			kindNameFromId: await loadStorageKindNameFromId(grammar),
 			importFailure: null
 		};
 	} catch (e) {
-		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/factories/raw.ts: ${(e as Error)?.message ?? e}`;
+		const message = `[validate-factory-roundtrip] failed to load ${grammar} factory artifacts: ${e instanceof Error ? e.message : e}`;
 		console.error(message);
-		return {
-			factoryMap,
-			factoryShapes,
-			fieldAliasMap,
-			factoryFields,
-			factorySlots,
-			kindNameFromId,
-			importFailure: { message }
-		};
+		return { factoryMap: {}, factoryShapes: {}, fieldAliasMap: {}, factoryFields: {}, factorySlots: {}, kindNameFromId: undefined, importFailure: { message } };
 	}
 }
 

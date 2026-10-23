@@ -205,7 +205,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const errors: FromValidationError[] = [];
 	try {
 		const fromModule = await requireGrammarModule(grammar, 'factories/coerce.ts');
-		fromMap = fromModule._fromMap ?? {};
+		fromMap = fromModule._fromMap;
 	} catch (e) {
 		errors.push({
 			kind: '(from-module-load)',
@@ -215,7 +215,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	}
 	try {
 		const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
-		factoryMap = factoryModule._factoryMap ?? {};
+		factoryMap = factoryModule._factoryMap;
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// factorySlots) lives in node-model.json5.
 		const model = await loadNodeModel(grammar);

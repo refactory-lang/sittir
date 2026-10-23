@@ -868,12 +868,6 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 // KIND_DISPLAY_NAMES doc comment.
 ```
 
-#### body
-
-```text
-// Legacy fallback for pre-Phase-D generated types
-```
-
 ### `packages/tools/src/validate/common.ts::loadKindIdFromName`
 
 ```text
@@ -1637,7 +1631,7 @@ Loads the grammar's generated `reparse-hosts.ts` once; `wrapForReparse` reads it
 
 ### `packages/tools/src/validate/factory-storage.ts::loadFactoryModuleForGrammar`
 
-Loads the generated raw factory map through the typed internal loader, scopes builders to the existing engine, then reads validator-only calling conventions and slot metadata from the pure-data node model. It returns partial artifacts and an import-failure record if loading throws; absent optional artifacts retain the existing empty result. Factory identity comes from `loadStorageKindNameFromId`; when that throws, the failure becomes the import-failure record, so a types-module failure stays visible to the validator instead of rejecting every candidate as an empty 0/0 run.
+Loads the generated raw factory map through `requireGrammarModule`, scopes builders to the existing engine, reads validator-only calling conventions and slot metadata from the pure-data node model, and takes factory identity from `loadStorageKindNameFromId`. Every artifact is required: a missing module, a module without its declared exports, or a failing types module becomes the one import-failure record, which the validator reports as a failed run rather than an empty 0/0 pass.
 
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 
