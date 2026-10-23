@@ -255,31 +255,37 @@ source made and renders it from the options, as it renders the layout
 The native reader stamps no whitespace. A parsed node carries its
 coordinate — the tagged tree handle and its byte span — and an untouched
 subtree renders by slicing the source the engine still holds, so every gap
-inside it is reproduced byte for byte without a class ever being named. A
-class is derived only where it is needed: when a rebuilt node's list items
-are still coordinates of one tree, the render's prepare walk classifies the
-bytes between consecutive items into the arm the site admits with the same
-seam rank, splits a separated gap around its token, and gives the site the
-majority class over its gaps, the grammar's declared default breaking a
-tie. That derived class is the occurrence's stamp in the precedence below;
-the flank stamp is the list's existing `_delimiter`. `tree.inferOptions()`
-folds the same stamps over a whole tree: each list is one vote for its
-site's key, the majority wins, the declared default breaks a tie, and a key
-no list in the tree carries is absent. The walk is the read-side twin of
-the render's prepare walk, over the parsed tree in native code. The result
-is the tree's inferred table, a table of site and arm ids of the same shape
-as the engine's resolved options; it is computed lazily, once, and kept
-beside the parsed tree in the engine's table, an edit to the tree
-invalidating it. That table is the tree's render format: a render through
-the handle reads it there, in place of the fixed factory source the native
-render used to assume, and nothing crosses the boundary for it. Only the
-on-demand projection to `Options` keys crosses, when a caller asks. The mechanism, its precedence and its limits are specified
-under "Gaps between coordinates classify into option values" in the
-source-provenance design (`2026-08-26-text-content-vs-source-provenance.md`).
+inside it is reproduced byte for byte without a class ever being named.
 
-`extract_format` keeps producing `indent` by consensus over line starts.
-Its reserved `slots` and `literals` members are removed; this design is
-what they were reserved for.
+A class is derived where a parsed list needs one. The read measures a list
+slot's gaps on first use, classifies each side of each gap into the arm the
+site admits with the same seam rank, splits a separated gap around its
+token, and gives each side the majority class over its gaps, the class the
+read options write breaking a tie. The slot stores a side's class only
+where it differs from that class, as its stored layout, and the prepare
+walk fills a rebuilt list's gaps from it, so an item added to a parsed list
+takes the list's spacing. The flank's stored choice is the list's existing
+`_delimiter`.
+
+The tree's inferred table is the layer of the options a parse reads off its
+source. It holds only what the source sets apart from the engine's options:
+- the indentation unit, the most frequent step between consecutive line
+  starts, absent when two steps tie or the source never indents;
+- the arm of each of the root's edges, from the file's leading and trailing
+  whitespace;
+- per list site, the class most of the tree's lists of that site take. Each
+  list is one vote, the declared default breaks a tie, and a site no list
+  carries is absent.
+
+It is computed when the tree is parsed and is the baseline the tree's lists
+are measured against, so a list that agrees with the tree's majority stores
+nothing. A render of the tree's nodes resolves over it (Precedence), and so
+does a render of a built node made from one tree's nodes. It is kept with
+the tree in the engine's table, a table of site and arm ids of the same
+shape as the engine's resolved options. Nothing crosses the boundary for it
+but the parse result's projection to `Options` keys, which the engine keeps
+internal. The same fold over the raw votes of several sources is
+`styleFrom` (Engine and boundary API).
 
 ### Render side
 
@@ -326,12 +332,13 @@ kind × slot  >  supertype × slot  >  the label's top-level value  >  the prefe
 ```
 
 Without `reformat`, per-call options fill unstamped slots only, which is
-what splicing a built node into a parsed file needs. A render through a
-tree handle then fills what is still unset from the tree's inferred table
-(below), so a built node dropped into a parsed file follows the file's own
-spacing with the caller passing nothing; engine options and the grammar's
-defaults answer only where the tree gives no evidence. A render through the
-engine has no tree and skips that step.
+what splicing a built node into a parsed file needs. A render of a node read
+from a tree, or of a built node made from one tree's nodes, then fills what
+is still unset from that tree's inferred table (Read side). So a built node
+dropped into a parsed file follows the file's own spacing with the caller
+passing nothing, and engine options and the grammar's defaults answer only
+where the tree gives no evidence. A built node made from no tree's nodes,
+or from several trees' nodes, has no tree layer.
 
 `reformat` makes a canonical render:
 
@@ -342,33 +349,37 @@ per-call options  >  engine options  >  grammar default
 It drops every choice the source stored: the occurrence's stamps, the
 preference choices a parsed node holds (Construction tier), the layout its
 tree stores, and the tree's inferred table. Each is rendered from the
-options instead.
-
-This inverts one existing behaviour: the engine-level format record used to
-outrank a tree's inferred format. Under this design the node's own stamps
-outrank engine options, and only an explicit `reformat` drops them.
+options instead. A node's own stamps outrank engine options, and only an
+explicit `reformat` drops them.
 
 ## Engine and boundary API
 
-- `EngineOptions.options?: Options` — the generated per-grammar interface,
-  every key optional, every value a kind id or a `Delimiter` member.
-- `EngineOptions.format` narrows to `boundary`.
+- `createEngine(language, { render })` — the engine's render options: the
+  generated per-grammar `Options` interface, every key optional, every
+  value a kind id or a `Delimiter` member, checked against the language's
+  options at the call.
 - `engine.ir` — the coercer surface with the engine's declared defaults.
-- `render(node, { options?, reformat? })` on engines and tree handles; a
-  handle's render fills from its tree's inferred table after per-call
-  options and before engine options, and never needs the client to pass it.
-  Under `reformat` it skips the table, as it skips every stored choice
-  (Precedence).
-- `tree.inferOptions()` — the `Options` a parsed tree's bytes evidence:
-  per key, the majority of the stamps its lists carry, absent where the tree
-  holds no list of that site. An inference, never a declaration: a caller
-  who renders with it is round-tripping the tree's own spacing. The walk is
-  a native function over the parsed tree in the grammar crate, answering in
-  site and arm ids as the engine's resolved options do; the handle's method
-  projects the cached table to `Options` keys on demand, and a Rust consumer
-  reads the table directly. Rendering through the handle never needs this
-  call: the table is applied natively.
-- Native: `SittirEngine` takes the options object once at construction and
+- `engine.render(node, options?)` — per-call options of the same type. A
+  render of a node read from a tree, or of a built node made from one
+  tree's nodes, fills from that tree's inferred table after per-call
+  options and before engine options, and never needs the client to pass
+  it. The canonical render (`reformat`, Precedence) skips the table, as it
+  skips every stored choice.
+- `styleFrom(language, ...paths)` (and `rust.styleFrom(...paths)` on the
+  descriptor) — the `render` options the bytes of some files evidence. Per
+  key, it takes the majority of the votes their trees cast (Read side),
+  absent where no file evidences the site. With several files the raw
+  votes are added before the majority is taken, and a tie takes the
+  declared default. It is an inference, never a declaration: a caller who
+  renders with it round-trips the files' own spacing. It creates no
+  engine: it loads the language, parses the files with a temporary native
+  instance, and disposes it. A path whose extension the language's
+  `fileTypes` does not name is refused, and a language with no file types
+  has no `styleFrom`. `styleFromSource(language, text, ...more)` does the
+  same over source text, for every language. There is no public method
+  that returns a tree's table: rendering never needs one, since the table
+  is applied natively.
+- Native: the engine takes the options object once at construction and
   resolves it to one kind id per site there, applying the precedence above
   and rejecting unknown keys; per-call options travel the same way. Per
   node, only ids ever cross napi.
@@ -397,9 +408,9 @@ outrank engine options, and only an explicit `reformat` drops them.
   trailing comma included, and never changes a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the
   grammar's default; per-call options without `reformat` fill only unstamped
-  slots; `tree.inferOptions()` on a parsed tree names the spacing its lists
+  slots; `styleFromSource` over a file's text names the spacing its lists
   were written with, and rendering a rebuilt node with that result reproduces
-  the tree's list spacing.
+  the file's list spacing.
 - Every existing gate stays identical: validator history compared
   numerically, the codegen suite at its baseline, package suites green,
   examples rendering the same bytes.
