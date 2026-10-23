@@ -170,11 +170,11 @@ Writes one already-terminated line to stdout; the sink for streamed and kept chi
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::baseValidators`
 
-The validators a base baseline is checked and compared on: those it records. A validator a change adds has no base to regress from, so the base may lack it, as it may lack a grammar new to head. Head is always checked for every validator.
+The validators a baseline records. The head is checked for every validator; a base may predate some, as it may predate a grammar new to head. The base's schema check and the format-deferred rule walk only these; the other rules walk every row the head records (`ComparedRow`).
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::checkFailRise`
 
-Rule 3: the first row whose fail count (`total - metric`) rose without a declaration that covers it (`declarationMismatch`). A declaration names the row under its grammar by validator, or as `parityFixtures`. It runs after `checkCounts`, so a pass that fell beside the rise has already failed there. `totals.fail` is the sum of the rows, so no rise in it can pass this rule unless every row's rise is declared.
+Rule 3: the first row whose fail count (`total - metric`) rose without a declaration that covers it (`declarationMismatch`). A declaration names the row under its grammar by validator, or as `parityFixtures`. It walks every grammar the head records, so a row the base does not record (a validator or grammar the change adds) rises from `UNRECORDED_ROW`'s zero counts and is declared `from` `{ pass: 0, total: 0 }`. It runs after `checkCounts`, so a pass that fell beside the rise has already failed there. `totals.fail` is the sum of the rows, so no rise in it can pass this rule unless every row's rise is declared.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::declarationMismatch`
 
@@ -186,7 +186,7 @@ The shape of a row's optional `casesByKind`: a plain object with sorted keys, ea
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::ComparedRow`
 
-One row the base records, with the metrics it is compared on: a validator's `pass`, a roundtrip validator's `astMatchPass` as well, or the parity fixtures' `pass`, each with its base and head values (`ComparedMetric`). `comparedRows` yields a grammar's rows in one order, so the count rule and the fail-rise rule walk the same rows.
+One row the head records, with the metrics it is compared on: a validator's `pass`, a roundtrip validator's `astMatchPass` as well, or the parity fixtures' `pass`, each with its base and head values (`ComparedMetric`). A row the base does not record is compared against `UNRECORDED_ROW`. `comparedRows` yields a grammar's rows in one order, so the count rule, the declared total-drop rule and the fail-rise rule walk the same rows.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::caseLosses`
 
@@ -207,6 +207,14 @@ Why a row's declaration does not cover its case losses: its counters do not matc
 ### `packages/tools/src/scripts/check-baseline-regression.ts::checkHeadKeepsInventories`
 
 Rejects a head that records less than its base: `kinds` the base records, or the `casesByKind` of a row the base records them for. A collected head always records both, so an omission is an edited or truncated record, and without the rejection it would switch the per-kind comparison off. A base without them, collected before the fields existed, still loads.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::declaredCounterChangeHolds`
+
+Rule 2 for a head that carries `baselineCounterChange`: the first row (a validator, or the parity fixtures) whose total dropped without a declaration naming it with `from` equal to the base's counters and `to` equal to the head's (`declarationMismatch`), or whose pass fell. It walks the rows `comparedRows` yields, so a declaration that names one row excuses no drop in another.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::UNRECORDED_ROW`
+
+The counts a row the base does not record is compared against: no cases, no passes and no AST matches. Such a row cannot drop or lose a case, and every failure it brings is a fail rise.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 

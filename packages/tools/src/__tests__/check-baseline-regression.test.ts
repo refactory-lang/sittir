@@ -1,5 +1,5 @@
 /**
- * Tests for `check-baseline-regression.ts` — feature 016 / T009.
+ * Tests for `check-baseline-regression.ts`.
  *
  * The CI regression-checker compares two `BackendBaseline` JSONs (base
  * vs head) and exits non-zero on any of the verdict rules documented on
@@ -207,6 +207,25 @@ describe('checkRegression', () => {
 			const verdict = checkRegression(base, head);
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.python.validators.from.total');
+		});
+
+		it('a parity drop under an inherited declaration that names another row fails, though the base records no cases by kind', () => {
+			const base = baseline();
+			base.grammars.python!.parityFixtures = pf(10, 11);
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.python!.parityFixtures = pf(10, 10);
+			head.totals = computeTotals(head.grammars);
+			head.baselineCounterChange = declaration();
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('total-drop');
+			expect(verdict.details).toMatchObject({ path: 'grammars.python.parityFixtures.total', before: 11, after: 10 });
+			head.baselineCounterChange = {
+				reason: 'a failing fixture is no longer collected',
+				grammars: { python: { parityFixtures: { from: { pass: 10, total: 11 }, to: { pass: 10, total: 10 } } } }
+			};
+			expect(checkRegression(base, head).ok).toBe(true);
 		});
 	});
 
@@ -637,6 +656,55 @@ describe('checkRegression', () => {
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.parityFixtures.pass');
 			head.baselineCounterChange = declaring('parityFixtures', { pass: 10, total: 11 });
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		const fromNothing = (row: string, to: { pass: number; total: number }): BackendBaseline['baselineCounterChange'] => ({
+			reason: 'a new row starts with one failure',
+			grammars: { typescript: { [row]: { from: { pass: 0, total: 0 }, to } } }
+		});
+
+		function withoutBuiltRenderParse(head: BackendBaseline): BackendBaseline {
+			const base = clone(head);
+			for (const g of Object.values(base.grammars)) delete (g.validators as Partial<GrammarEntry['validators']>).builtRenderParse;
+			base.totals = computeTotals(base.grammars);
+			return base;
+		}
+
+		it('a validator the base does not record counts from zero, so its failures are a rise declared from 0/0', () => {
+			const head = baseline();
+			head.grammars.typescript!.validators.builtRenderParse = rt(9, 10, 9);
+			head.totals = computeTotals(head.grammars);
+			const base = withoutBuiltRenderParse(head);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('fail-rise');
+			expect(verdict.details).toMatchObject({ path: 'grammars.typescript.validators.builtRenderParse.pass', before: 0, after: 1 });
+			head.baselineCounterChange = fromNothing('builtRenderParse', { pass: 9, total: 10 });
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('an AST-only failure in a validator the base does not record is a rise', () => {
+			const head = baseline();
+			head.grammars.typescript!.validators.builtRenderParse = rt(10, 10, 9);
+			head.totals = computeTotals(head.grammars);
+			const verdict = checkRegression(withoutBuiltRenderParse(head), head);
+			expectFail(verdict);
+			expect(verdict.details).toMatchObject({ path: 'grammars.typescript.validators.builtRenderParse.astMatchPass', before: 0, after: 1 });
+		});
+
+		it('a grammar the base does not record counts from zero, so its failures are a rise', () => {
+			const head = baseline();
+			head.grammars.typescript!.parityFixtures = pf(9, 10);
+			head.totals = computeTotals(head.grammars);
+			const base = clone(head);
+			delete (base.grammars as Record<string, GrammarEntry>).typescript;
+			base.totals = computeTotals(base.grammars);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('fail-rise');
+			expect(verdict.details).toMatchObject({ path: 'grammars.typescript.parityFixtures.pass', before: 0, after: 1 });
+			head.baselineCounterChange = fromNothing('parityFixtures', { pass: 9, total: 10 });
 			expect(checkRegression(base, head).ok).toBe(true);
 		});
 	});

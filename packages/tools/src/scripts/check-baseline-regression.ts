@@ -1,21 +1,24 @@
 /**
- * check-baseline-regression.ts — feature 016, T009.
+ * check-baseline-regression.ts — the validation ratchet.
  *
  * Reads two `BackendBaseline` JSONs (the PR's base and head versions of
- * `packages/tools/baselines/<backend>.json`) and applies
- * the verdict rules from `contracts/baseline-json.md` (section
- * "Regression-Checker Verdict Rules").
+ * `packages/tools/baselines/<backend>.json`) and applies the verdict
+ * rules below.
  *
  * Exits 0 when the head is at-or-better than the base on every tracked
  * metric; exits 1 otherwise. On failure, prints a JSON object naming
  * the offending field path so the CI log points reviewers at the regression.
  *
+ * Every row the head records is compared: each validator and the parity
+ * fixtures of each grammar. A row the base does not record (a validator
+ * or grammar the change adds) is compared against zero counts, so it
+ * has nothing to lose and each failure it brings is a rise.
+ *
  * The six fail conditions:
  *   1. Pass-count drop — any of `validators.{from,coverage,roundtrip,
  *      factoryStorage,builtRenderParse}.pass`, `validators.{roundtrip,
  *      factoryStorage,builtRenderParse}.astMatchPass`, `parityFixtures.pass`,
- *      per grammar, for each validator the base records (a validator the
- *      change adds has no base). This is what
+ *      per grammar. This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
  *      top of it. A kind departs by name: it is in the base's `kinds` and
  *      missing from the head's; with no `kinds` on either side, no kind
@@ -46,23 +49,25 @@
       The head record's declaration is read from the head itself, or, for
       a freshly collected head, from the committed record named by
       `--declared`.
-      A head that carries `baselineCounterChange` is held to a per-grammar
-      check instead: a validator's total may drop only if the declaration
-      names that grammar's validator with `from` equal to the base's
-      counters and `to` equal to the head's, and its `pass` did not fall
-      (so the total fell no more than its fail count did). Once the head
-      merges, the base equals `to` and the declaration is inert.
+      A head that carries `baselineCounterChange` is held to a per-row
+      check instead: a row's total (a validator's, or the parity
+      fixtures') may drop only if the declaration names that grammar's
+      row with `from` equal to the base's counters and `to` equal to the
+      head's, and its `pass` did not fall (so the total fell no more than
+      its fail count did). Once the head merges, the base equals `to` and
+      the declaration is inert.
  *   3. Fail rise — a row's fail count (`total - pass`, and for a roundtrip
  *      validator `total - astMatchPass`) rose, for any validator or the
  *      parity fixtures of any grammar, unless `baselineCounterChange`
  *      declares that row with `from` equal to the base's counters and `to`
- *      equal to the head's. A pass that falls alongside the rise is
- *      already a pass-count drop under rule 1, which runs first.
+ *      equal to the head's. A row the base does not record is declared
+ *      `from` `{ pass: 0, total: 0 }`. A pass that falls alongside the
+ *      rise is already a pass-count drop under rule 1, which runs first.
  *      `totals.fail` is the sum of the rows, so it cannot rise unless a
  *      row does.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
- *   5. Format-deferred-count rise (within 016) — for any validator,
+ *   5. Format-deferred-count rise — for any validator the base records,
  *      `length(failingKinds_after) + length(formatDeferredKinds_after)`
  *      may not exceed the corresponding sum on the base. Items may MOVE
  *      from `failingKinds` into `formatDeferredKinds` during a cluster
@@ -134,11 +139,6 @@ type ValidatorName = (typeof VALIDATORS)[number];
 
 const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = ['roundtrip', 'factoryStorage', 'builtRenderParse'];
 
-/**
- * The validators a base baseline is compared on: those it records. A
- * validator a change adds has no base to regress from, so head alone must
- * record every validator.
- */
 function baseValidators(validators: object): readonly ValidatorName[] {
 	return VALIDATORS.filter((vName) => vName in validators);
 }
@@ -502,15 +502,17 @@ interface ComparedRow {
 	readonly metrics: readonly ComparedMetric[];
 }
 
-function* comparedRows(g: string, baseGrammar: GrammarEntry, headGrammar: GrammarEntry): Generator<ComparedRow> {
-	for (const vName of baseValidators(baseGrammar.validators)) {
-		const b = baseGrammar.validators[vName] as RoundtripResult;
+const UNRECORDED_ROW = { pass: 0, total: 0, astMatchPass: 0 } as const;
+
+function* comparedRows(g: string, baseGrammar: GrammarEntry | undefined, headGrammar: GrammarEntry): Generator<ComparedRow> {
+	for (const vName of VALIDATORS) {
+		const b = (baseGrammar?.validators[vName] as RoundtripResult | undefined) ?? UNRECORDED_ROW;
 		const h = headGrammar.validators[vName] as RoundtripResult;
 		const metrics: ComparedMetric[] = [{ name: 'pass', before: b.pass, after: h.pass }];
 		if (ROUNDTRIP_VALIDATORS.includes(vName)) metrics.push({ name: 'astMatchPass', before: b.astMatchPass, after: h.astMatchPass });
 		yield { row: vName, path: `grammars.${g}.validators.${vName}`, b, h, metrics };
 	}
-	const b = baseGrammar.parityFixtures;
+	const b = baseGrammar?.parityFixtures ?? UNRECORDED_ROW;
 	const h = headGrammar.parityFixtures;
 	yield { row: 'parityFixtures', path: `grammars.${g}.parityFixtures`, b, h, metrics: [{ name: 'pass', before: b.pass, after: h.pass }] };
 }
@@ -694,14 +696,11 @@ function checkHeadKeepsInventories(base: BackendBaseline, head: BackendBaseline)
 
 function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
-		for (const vName of baseValidators(baseGrammar.validators)) {
-			const b = baseGrammar.validators[vName] as ValidatorResult;
-			const h = headGrammar.validators[vName] as ValidatorResult;
+		for (const { row, path, b, h } of comparedRows(g, baseGrammar, headGrammar)) {
 			if (h.total >= b.total) continue;
-			const path = `grammars.${g}.validators.${vName}`;
 			const note =
-				declarationMismatch(head.baselineCounterChange?.grammars[g]?.[vName], vName, b, h) ??
-				(h.pass < b.pass ? `${vName} pass fell under a declared counter change` : undefined);
+				declarationMismatch(head.baselineCounterChange?.grammars[g]?.[row], row, b, h) ??
+				(h.pass < b.pass ? `${row} pass fell under a declared counter change` : undefined);
 			if (note !== undefined) {
 				return {
 					ok: false,
@@ -733,8 +732,8 @@ function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): Regressio
 }
 
 function checkFailRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
-		for (const row of comparedRows(g, baseGrammar, headGrammar)) {
+	for (const [g, headGrammar] of Object.entries(head.grammars)) {
+		for (const row of comparedRows(g, base.grammars[g], headGrammar)) {
 			for (const metric of row.metrics) {
 				const before = row.b.total - metric.before;
 				const after = row.h.total - metric.after;
@@ -784,7 +783,7 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
 				// (e.g. canonical-hidden remap exposing previously-
 				// missed wrap-walker subtrees) surface honest new test
 				// cases. Per-kind regressions are caught by the
-				// independent `checkPassCounts` rule.
+				// independent `checkCounts` rule.
 				const baseTotal = baseV.total;
 				const headTotal = headV.total;
 				const totalRise = headTotal - baseTotal;
@@ -799,7 +798,7 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
 						path: `grammars.${g}.validators.${vName}`,
 						before,
 						after,
-						note: 'failingKinds.length + formatDeferredKinds.length must not grow within feature 016 (move semantics permitted)'
+						note: 'failingKinds.length + formatDeferredKinds.length must not grow (move semantics permitted)'
 					}
 				};
 			}
