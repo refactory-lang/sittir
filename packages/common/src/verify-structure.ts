@@ -2,6 +2,7 @@ import type { StructureRow, StructureTable } from '@sittir/types';
 import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
 import { isRebuilt } from './node-data.ts';
+import { isNodeValue } from './utils.ts';
 import { sourceOf } from './source-stamp.ts';
 
 export function verifyStructure(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
@@ -25,6 +26,34 @@ function verifyBuilt(value: unknown, table: StructureTable, seen: WeakSet<object
 	if (typeof value !== 'object' || value === null || seen.has(value)) return;
 	const node = value as Record<string, unknown>;
 	if (sourceOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, seen);
+}
+
+export function checkInput(row: StructureRow, args: readonly unknown[]): void {
+	const head = args[0];
+	if (row.config !== undefined && isConfigInput(head)) {
+		for (const key of Object.keys(head)) {
+			if (!key.startsWith('$') && !row.config.includes(key)) throw new Error(`${row.kind}: undeclared config key '${key}'`);
+		}
+	}
+	for (const [slot, holes, arrival] of row.lists ?? []) {
+		if (holes) continue;
+		const absent = listInput(args, slot, arrival).findIndex((item) => item === undefined || item === null);
+		if (absent >= 0) throw new Error(`${row.kind}.${slot}: absent item at index ${absent}`);
+	}
+}
+
+function isConfigInput(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value) && !isNodeValue(value);
+}
+
+function listInput(args: readonly unknown[], slot: string, arrival: 'key' | number): readonly unknown[] {
+	const head = args[0];
+	if (arrival !== 'key' && args.length === 1 && Array.isArray(head)) return head;
+	if (isConfigInput(head) && (arrival === 'key' || (args.length === 1 && slot in head))) {
+		const keyed = head[slot];
+		return Array.isArray(keyed) ? keyed : [];
+	}
+	return arrival === 'key' ? [] : args.slice(arrival === 1 && isConfigInput(head) ? 1 : 0);
 }
 
 function checkRow(node: Record<string, unknown>, row: StructureRow): void {

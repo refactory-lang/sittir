@@ -637,15 +637,23 @@ The slots a field-carrying builder stores on its node: every slot, or for a spre
 
 ### `packages/codegen/src/emitters/factories.ts::compoundStructureRow`
 
-A field-carrying kind's structure row: what each built node of the kind holds, by storage key. Among the stored slots that are not registered options, a required single slot must hold a value. A non-empty list (`needsNonEmptyHoist`) must hold an item, labelled `<kind>.children` for a spread builder's parameter and `<kind>.<property>` otherwise. A slot with a `bareTextExpectation` holds no bare text, with the builder's label and expectation. `undefined` when there is nothing to check.
+A field-carrying kind's structure row: what each built node of the kind holds, by storage key. Among the stored slots that are not registered options, a required single slot must hold a value. A non-empty list (`needsNonEmptyHoist`) must hold an item, labelled `<kind>.children` for a spread builder's parameter and `<kind>.<property>` otherwise. A slot with a `bareTextExpectation` holds no bare text, with the builder's label and expectation. The row also records what the builder is given, which `checkInput` tests: for a kind whose builder takes a config first (`classifyFactoryShape` answers `config`), the config keys the kind declares (`configKeysOf`, the keys the compile-time `RefuseUndeclared` refuses outside), and for every stored list slot `[propertyName, holes, arrival]` (`hasOptionalElements` for the holes; arrival is `key` for a config-first kind, else the index the rest items start at: 1 after a leading options argument, 0 otherwise). `undefined` when there is nothing to check.
+
+### `packages/codegen/src/emitters/factories.ts::structureRowOfKind`
+
+The structure row a kind's own builder and coercer are held to: a separated list's `listStructureRow`, an authored compound's `compoundStructureRow`, and `undefined` for any other kind.
+
+### `packages/codegen/src/emitters/factories.ts::admitStatement`
+
+The generated line that hands a call's input to the current engine handle: `currentHandle()?.admit(<the kind's id>, <args>);`, or nothing when the kind's row has neither `config` nor `lists`. The raw builder emits it first, over `[config]` for a config-first kind and over its rest arguments (`children`, or `args` after a leading options argument) for a spread kind; a separated list's builder over `elements`. The loose coercer of the same kind emits it over `[input]` or its rest `input`. Each of these functions knows its own kind and exactly what it reads, which a proxy over the builder table does not: a form or variant builder returns the same kind but takes keys of its own, and would be refused against the kind's row. A variant or form builder builds through the kind's own raw builder, so what it passes on is checked there, against the kind's config.
 
 ### `packages/codegen/src/emitters/factories.ts::listStructureRow`
 
-A separated list's structure row: a non-empty list's elements, under its content key, must hold an item (`<kind>.elements`).
+A separated list's structure row: a non-empty list's elements, under its content key, must hold an item (`<kind>.elements`). Its elements are also the row's one list, taken from index 0, with holes where the element slot admits them.
 
 ### `packages/codegen/src/emitters/factories.ts::structureRow`
 
-A row from its three check lists, empty lists dropped; `undefined` when all three are empty.
+A row from its check lists, empty lists dropped; `undefined` when all are empty.
 
 ### `packages/codegen/src/emitters/factories.ts::listContentStorageKey`
 

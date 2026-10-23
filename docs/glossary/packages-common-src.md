@@ -34,6 +34,10 @@ A builder table run through an engine's own build scope: the same `scopedBuild` 
 
 The handle's `settle`, chosen once when the engine is assembled: the identity in the default `'compileTimeOnly'` mode, or, in `'runtime'` mode, `verifyStructure` over the language's structure table with one `seen` set for the engine. So no build or rebuild tests the mode; two engines in one process keep their own. A refusal is raised when the outermost call returns, and its message names the kind and the slot.
 
+### `packages/common/src/create-engine.ts::admitterOf`
+
+The handle's `admit`, chosen once at assembly like `settle`: a function that does nothing in the default `'compileTimeOnly'` mode, and in `'runtime'` mode a lookup of the kind's row in the structure table followed by `checkInput`. A kind id with no row, or one that is not a number, admits anything. The mode is never read per call, and every caller calls `handle.admit` rather than `checkInput`.
+
 ### `packages/common/src/create-engine.ts::scopedBuild`
 
 The builder table with every call, including its build middleware, run inside the engine's handle. Each function and namespace it reaches through an own property is wrapped once, so nested variant builders and their `strict` and `coerce` flavours are scoped like the top-level ones, and a builder that calls another builder keeps the same handle. The result of each call, after its middleware, passes through the handle's `settle`.
@@ -72,7 +76,7 @@ An engine's identity plus its `render` and `query`: what a node's `$render` and 
 
 ### `packages/common/src/engine-scope.ts::EngineHandle`
 
-The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores. `settle` is what a build or rebuild hands its result through before returning it (`settlerOf`).
+The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores. `settle` is what a build or rebuild hands its result through before returning it (`settlerOf`). `admit(kindId, args)` is what a call's input is handed to before the build is trusted (`admitterOf`): each generated raw builder and loose coercer of a kind whose row has `config` or `lists` calls it first, through `currentHandle()`, with its own kind id and the arguments it was given (`admitStatement`).
 
 ### `packages/common/src/engine-scope.ts::inEngine`
 
@@ -410,6 +414,10 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
 `verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+
+### `packages/common/src/verify-structure.ts::checkInput`
+
+`checkInput(row, args)` checks the arguments a builder was called with against the kind's row, where `verifyStructure` checks the node that came out, because a built node holds neither a key the kind does not declare nor an item the builder dropped. When the row has `config` and the first argument is a plain object (not an array, node or coordinate), a key outside the declared ones that does not start with `$` throws `<kind>: undeclared config key '<key>'`. Each `lists` entry that does not admit holes is read from the config key (`arrival` `key`) or, for a spread builder, from a single array argument, a single config holding the list's key, or the rest arguments after a leading options object; an `undefined` or `null` item throws `<kind>.<property>: absent item at index <i>`. A list that admits holes is skipped. Input of any other shape (a string, a node, a coordinate) is not a config and passes.
 
 ### `packages/common/src/runtime.ts::strictBooleanStorage`
 

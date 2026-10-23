@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { StructureTable } from '@sittir/types';
-import { verifyStructure } from '../src/verify-structure.ts';
+import { checkInput, verifyStructure } from '../src/verify-structure.ts';
 import { stampBuilt } from '../src/source-stamp.ts';
 
 const BLOCK = 1;
@@ -76,5 +76,45 @@ describe('verifyStructure', () => {
 		const block = built(BLOCK, { _statements: [] });
 		expect(() => verify(block, seen)).toThrow();
 		expect(() => verify(block, seen)).toThrow();
+	});
+});
+
+describe('checkInput', () => {
+	const config = { kind: 'case', config: ['value', 'bodies'], lists: [['bodies', false, 'key']] } as const;
+	const spread = { kind: 'block', lists: [['statements', false, 0]] } as const;
+	const led = { kind: 'seq', lists: [['items', false, 1]] } as const;
+	const holes = { kind: 'array', lists: [['elements', true, 0]] } as const;
+
+	it('refuses a config key the kind does not declare, and passes the declared ones and tags', () => {
+		expect(() => checkInput(config, [{ value: 1, body: [] }])).toThrow("case: undeclared config key 'body'");
+		expect(() => checkInput(config, [{ $type: 1, value: 1, bodies: [] }])).not.toThrow();
+	});
+
+	it('reads only a plain object as a config', () => {
+		expect(() => checkInput(config, ['text'])).not.toThrow();
+		expect(() => checkInput(config, [[{ stray: 1 }]])).not.toThrow();
+		expect(() => checkInput(config, [])).not.toThrow();
+	});
+
+	it('refuses an absent item in a config list, by index', () => {
+		expect(() => checkInput(config, [{ value: 1, bodies: [1, null] }])).toThrow('case.bodies: absent item at index 1');
+		expect(() => checkInput(config, [{ value: 1 }])).not.toThrow();
+	});
+
+	it('refuses an absent item in rest arguments, in an array argument and in a keyed config', () => {
+		expect(() => checkInput(spread, [1, undefined])).toThrow('block.statements: absent item at index 1');
+		expect(() => checkInput(spread, [[1, null]])).toThrow('block.statements: absent item at index 1');
+		expect(() => checkInput(spread, [{ statements: [undefined] }])).toThrow('block.statements: absent item at index 0');
+		expect(() => checkInput(spread, [1, 2])).not.toThrow();
+	});
+
+	it('starts the rest items after a leading options object', () => {
+		expect(() => checkInput(led, [{ terminator: 1 }, 1, null])).toThrow('seq.items: absent item at index 1');
+		expect(() => checkInput(led, [{ terminator: 1 }, 1])).not.toThrow();
+		expect(() => checkInput(led, [1, null])).toThrow('seq.items: absent item at index 1');
+	});
+
+	it('admits absent items in a list that holds holes', () => {
+		expect(() => checkInput(holes, [1, undefined, null])).not.toThrow();
 	});
 });

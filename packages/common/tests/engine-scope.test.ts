@@ -24,7 +24,7 @@ function handleOf(label: string): EngineHandle {
 			throw new Error('type-only');
 		}
 	};
-	return { current: live, settle: (node) => node };
+	return { current: live, settle: (node) => node, admit: () => undefined };
 }
 
 describe('engine scope', () => {
