@@ -1,0 +1,11 @@
+{
+  "host": "aarch64-apple-darwin",
+  "name": "libsittir_core.dylib",
+  "bytes": {
+    "file": 3883568,
+    "code": 199964,
+    "metadata": 3410638,
+    "symbols": 180224,
+    "rest": 92742
+  }
+}

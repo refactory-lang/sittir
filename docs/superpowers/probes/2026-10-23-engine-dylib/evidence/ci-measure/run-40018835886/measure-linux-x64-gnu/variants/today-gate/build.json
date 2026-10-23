@@ -1,0 +1,63 @@
+{
+  "variant": "today-gate",
+  "host": "x86_64-unknown-linux-gnu",
+  "packages": [
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 114.12,
+    "user": 423.89,
+    "sys": 19.8
+  },
+  "images": {
+    "rust": {
+      "sittir-rust.node": {
+        "file": 11985864,
+        "code": 6267050,
+        "metadata": 0,
+        "symbols": 5441,
+        "rest": 5713373
+      }
+    },
+    "typescript": {
+      "sittir-typescript.node": {
+        "file": 12771048,
+        "code": 6511450,
+        "metadata": 0,
+        "symbols": 5441,
+        "rest": 6254157
+      }
+    },
+    "python": {
+      "sittir-python.node": {
+        "file": 8840336,
+        "code": 4854458,
+        "metadata": 0,
+        "symbols": 5336,
+        "rest": 3980542
+      }
+    },
+    "scm": {
+      "sittir-scm.node": {
+        "file": 4138264,
+        "code": 2333754,
+        "metadata": 0,
+        "symbols": 5336,
+        "rest": 1799174
+      }
+    },
+    "regex": {
+      "sittir-regex.node": {
+        "file": 4154336,
+        "code": 2365738,
+        "metadata": 0,
+        "symbols": 5336,
+        "rest": 1783262
+      }
+    }
+  }
+}

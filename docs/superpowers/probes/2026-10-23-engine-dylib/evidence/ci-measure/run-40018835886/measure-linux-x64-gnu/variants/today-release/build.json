@@ -1,0 +1,63 @@
+{
+  "variant": "today-release",
+  "host": "x86_64-unknown-linux-gnu",
+  "packages": [
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 160.48,
+    "user": 436.01,
+    "sys": 21.36
+  },
+  "images": {
+    "rust": {
+      "sittir-rust.node": {
+        "file": 9980736,
+        "code": 5737770,
+        "metadata": 0,
+        "symbols": 5441,
+        "rest": 4237525
+      }
+    },
+    "typescript": {
+      "sittir-typescript.node": {
+        "file": 10849712,
+        "code": 6037482,
+        "metadata": 0,
+        "symbols": 5441,
+        "rest": 4806789
+      }
+    },
+    "python": {
+      "sittir-python.node": {
+        "file": 7271104,
+        "code": 4440122,
+        "metadata": 0,
+        "symbols": 5336,
+        "rest": 2825646
+      }
+    },
+    "scm": {
+      "sittir-scm.node": {
+        "file": 3333120,
+        "code": 2085802,
+        "metadata": 0,
+        "symbols": 5336,
+        "rest": 1241982
+      }
+    },
+    "regex": {
+      "sittir-regex.node": {
+        "file": 3358616,
+        "code": 2118426,
+        "metadata": 0,
+        "symbols": 5336,
+        "rest": 1234854
+      }
+    }
+  }
+}

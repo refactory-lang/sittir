@@ -1,0 +1,134 @@
+{
+  "variant": "dylib-release",
+  "host": "aarch64-apple-darwin",
+  "packages": [
+    "sittir-engine",
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 181.58,
+    "user": 434.03,
+    "sys": 35.97
+  },
+  "images": {
+    "rust": {
+      "libsittir_engine.dylib": {
+        "file": 1720048,
+        "code": 874520,
+        "metadata": 9141,
+        "symbols": 212992,
+        "rest": 623395
+      },
+      "libstd-614bb9b33bbc23af.dylib": {
+        "file": 1275840,
+        "code": 637280,
+        "metadata": 126,
+        "symbols": 344064,
+        "rest": 294370
+      },
+      "sittir-rust.node": {
+        "file": 6903200,
+        "code": 3995872,
+        "metadata": 0,
+        "symbols": 147456,
+        "rest": 2759872
+      }
+    },
+    "typescript": {
+      "libsittir_engine.dylib": {
+        "file": 1720048,
+        "code": 874520,
+        "metadata": 9141,
+        "symbols": 212992,
+        "rest": 623395
+      },
+      "libstd-614bb9b33bbc23af.dylib": {
+        "file": 1275840,
+        "code": 637280,
+        "metadata": 126,
+        "symbols": 344064,
+        "rest": 294370
+      },
+      "sittir-typescript.node": {
+        "file": 7760912,
+        "code": 4272224,
+        "metadata": 0,
+        "symbols": 147456,
+        "rest": 3341232
+      }
+    },
+    "python": {
+      "libsittir_engine.dylib": {
+        "file": 1720048,
+        "code": 874520,
+        "metadata": 9141,
+        "symbols": 212992,
+        "rest": 623395
+      },
+      "libstd-614bb9b33bbc23af.dylib": {
+        "file": 1275840,
+        "code": 637280,
+        "metadata": 126,
+        "symbols": 344064,
+        "rest": 294370
+      },
+      "sittir-python.node": {
+        "file": 4516992,
+        "code": 2871340,
+        "metadata": 0,
+        "symbols": 114688,
+        "rest": 1530964
+      }
+    },
+    "scm": {
+      "libsittir_engine.dylib": {
+        "file": 1720048,
+        "code": 874520,
+        "metadata": 9141,
+        "symbols": 212992,
+        "rest": 623395
+      },
+      "libstd-614bb9b33bbc23af.dylib": {
+        "file": 1275840,
+        "code": 637280,
+        "metadata": 126,
+        "symbols": 344064,
+        "rest": 294370
+      },
+      "sittir-scm.node": {
+        "file": 1279584,
+        "code": 872712,
+        "metadata": 0,
+        "symbols": 81920,
+        "rest": 324952
+      }
+    },
+    "regex": {
+      "libsittir_engine.dylib": {
+        "file": 1720048,
+        "code": 874520,
+        "metadata": 9141,
+        "symbols": 212992,
+        "rest": 623395
+      },
+      "libstd-614bb9b33bbc23af.dylib": {
+        "file": 1275840,
+        "code": 637280,
+        "metadata": 126,
+        "symbols": 344064,
+        "rest": 294370
+      },
+      "sittir-regex.node": {
+        "file": 1312304,
+        "code": 902216,
+        "metadata": 0,
+        "symbols": 81920,
+        "rest": 328168
+      }
+    }
+  }
+}

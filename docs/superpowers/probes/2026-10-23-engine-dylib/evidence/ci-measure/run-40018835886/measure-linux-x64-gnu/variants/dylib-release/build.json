@@ -1,0 +1,134 @@
+{
+  "variant": "dylib-release",
+  "host": "x86_64-unknown-linux-gnu",
+  "packages": [
+    "sittir-engine",
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 146.2,
+    "user": 428.63,
+    "sys": 20.34
+  },
+  "images": {
+    "rust": {
+      "libsittir_engine.so": {
+        "file": 2161904,
+        "code": 1063379,
+        "metadata": 9139,
+        "symbols": 132056,
+        "rest": 957330
+      },
+      "libstd-44675f186029a4cd.so": {
+        "file": 1454272,
+        "code": 695861,
+        "metadata": 130,
+        "symbols": 229657,
+        "rest": 528624
+      },
+      "sittir-rust.node": {
+        "file": 8100744,
+        "code": 4666090,
+        "metadata": 0,
+        "symbols": 19465,
+        "rest": 3415189
+      }
+    },
+    "typescript": {
+      "libsittir_engine.so": {
+        "file": 2161904,
+        "code": 1063379,
+        "metadata": 9139,
+        "symbols": 132056,
+        "rest": 957330
+      },
+      "libstd-44675f186029a4cd.so": {
+        "file": 1454272,
+        "code": 695861,
+        "metadata": 130,
+        "symbols": 229657,
+        "rest": 528624
+      },
+      "sittir-typescript.node": {
+        "file": 8969504,
+        "code": 4965018,
+        "metadata": 0,
+        "symbols": 19379,
+        "rest": 3985107
+      }
+    },
+    "python": {
+      "libsittir_engine.so": {
+        "file": 2161904,
+        "code": 1063379,
+        "metadata": 9139,
+        "symbols": 132056,
+        "rest": 957330
+      },
+      "libstd-44675f186029a4cd.so": {
+        "file": 1454272,
+        "code": 695861,
+        "metadata": 130,
+        "symbols": 229657,
+        "rest": 528624
+      },
+      "sittir-python.node": {
+        "file": 5393760,
+        "code": 3369850,
+        "metadata": 0,
+        "symbols": 19469,
+        "rest": 2004441
+      }
+    },
+    "scm": {
+      "libsittir_engine.so": {
+        "file": 2161904,
+        "code": 1063379,
+        "metadata": 9139,
+        "symbols": 132056,
+        "rest": 957330
+      },
+      "libstd-44675f186029a4cd.so": {
+        "file": 1454272,
+        "code": 695861,
+        "metadata": 130,
+        "symbols": 229657,
+        "rest": 528624
+      },
+      "sittir-scm.node": {
+        "file": 1459632,
+        "code": 1021002,
+        "metadata": 0,
+        "symbols": 19187,
+        "rest": 419443
+      }
+    },
+    "regex": {
+      "libsittir_engine.so": {
+        "file": 2161904,
+        "code": 1063379,
+        "metadata": 9139,
+        "symbols": 132056,
+        "rest": 957330
+      },
+      "libstd-44675f186029a4cd.so": {
+        "file": 1454272,
+        "code": 695861,
+        "metadata": 130,
+        "symbols": 229657,
+        "rest": 528624
+      },
+      "sittir-regex.node": {
+        "file": 1486120,
+        "code": 1054506,
+        "metadata": 0,
+        "symbols": 19187,
+        "rest": 412427
+      }
+    }
+  }
+}

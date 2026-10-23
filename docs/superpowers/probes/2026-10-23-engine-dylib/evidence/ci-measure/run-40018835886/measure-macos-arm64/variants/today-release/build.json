@@ -1,0 +1,63 @@
+{
+  "variant": "today-release",
+  "host": "aarch64-apple-darwin",
+  "packages": [
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 176.01,
+    "user": 423.9,
+    "sys": 29.19
+  },
+  "images": {
+    "rust": {
+      "sittir-rust.node": {
+        "file": 8367152,
+        "code": 4877828,
+        "metadata": 0,
+        "symbols": 131072,
+        "rest": 3358252
+      }
+    },
+    "typescript": {
+      "sittir-typescript.node": {
+        "file": 9191952,
+        "code": 5153668,
+        "metadata": 0,
+        "symbols": 147456,
+        "rest": 3890828
+      }
+    },
+    "python": {
+      "sittir-python.node": {
+        "file": 5964272,
+        "code": 3750264,
+        "metadata": 0,
+        "symbols": 114688,
+        "rest": 2099320
+      }
+    },
+    "scm": {
+      "sittir-scm.node": {
+        "file": 2727296,
+        "code": 1747640,
+        "metadata": 0,
+        "symbols": 65536,
+        "rest": 914120
+      }
+    },
+    "regex": {
+      "sittir-regex.node": {
+        "file": 2743504,
+        "code": 1776248,
+        "metadata": 0,
+        "symbols": 65536,
+        "rest": 901720
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "host": "x86_64-unknown-linux-gnu",
+  "name": "libsittir_core.so",
+  "bytes": {
+    "file": 3875640,
+    "code": 221802,
+    "metadata": 3410640,
+    "symbols": 76453,
+    "rest": 166745
+  }
+}
