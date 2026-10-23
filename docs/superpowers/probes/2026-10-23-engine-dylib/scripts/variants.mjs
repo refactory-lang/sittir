@@ -10,7 +10,9 @@
 // - dylib-release: -C prefer-dynamic, the release profile with LTO off
 //   (rustc refuses LTO with prefer-dynamic), one unit;
 // - dylib-gate: -C prefer-dynamic, the gate profile.
-// A clean build: the target directory is emptied first and sccache is off.
+// A clean build, crates fetched beforehand (`cargo fetch --locked`): the
+// target directory is emptied first, sccache is off, nothing is downloaded;
+// the build is timed by bash's `time -p` (wall, user and system seconds).
 // Every packaged image is stripped (`strip -x`, keeping the exported
 // symbols the loader binds) and re-signed ad hoc on macOS.
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -38,7 +40,8 @@ rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 
 const packages = [...(variant.engine ? ['sittir-engine'] : []), ...GRAMMARS.map((g) => `sittir-${g}`)];
-const build = spawnSync('/usr/bin/time', ['-p', 'cargo', 'build', '--offline', '--profile', variant.profile, '--target', host, ...packages.flatMap((p) => ['-p', p])], {
+const cargoArgs = ['build', '--frozen', '--profile', variant.profile, '--target', host, ...packages.flatMap((p) => ['-p', p])];
+const build = spawnSync('bash', ['-c', 'time -p cargo "$@"', 'cargo', ...cargoArgs], {
 	cwd: resolve(values.src),
 	encoding: 'utf8',
 	env: { ...process.env, ...variant.env, CARGO_TARGET_DIR: targetDir, RUSTC_WRAPPER: '', CARGO_BUILD_RUSTC_WRAPPER: '' }

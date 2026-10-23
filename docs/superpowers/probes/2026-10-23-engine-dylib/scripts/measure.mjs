@@ -9,7 +9,7 @@
 // `--idle` runs before every measurement and must exit 0 (a wait-for-idle
 // gate). Memory is measured with rust alone and with all five grammars.
 import { execSync } from 'node:child_process';
-import { readdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { report } from './layout.mjs';
@@ -28,7 +28,7 @@ const { values } = parseArgs({
 	}
 });
 const variantsDir = resolve(values.variants);
-const names = values.names?.split(',') ?? readdirSync(variantsDir).filter((name) => !name.startsWith('.'));
+const names = values.names?.split(',') ?? readdirSync(variantsDir, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
 const rounds = Number(values.rounds ?? 5);
 const throughputGrammars = (values.throughput ?? 'rust,python').split(',');
 const addon = (variant, grammar) => join(variantsDir, variant, grammar, `sittir-${grammar}.node`);
@@ -79,5 +79,6 @@ for (const cell of cells) {
 	}
 }
 const failures = runs.filter((r) => r.result.exit !== undefined);
+mkdirSync(resolve(values.out), { recursive: true });
 writeFileSync(join(resolve(values.out), 'measure.json'), `${JSON.stringify({ names, rounds, medians, failures, runs }, null, 2)}\n`);
 console.log(JSON.stringify({ medians, failures: failures.length }, null, 2));
