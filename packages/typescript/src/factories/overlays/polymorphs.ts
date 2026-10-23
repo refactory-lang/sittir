@@ -2824,7 +2824,7 @@ const exportStatementDefaultDeclaration$using =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'kind' || key === 'variableDeclarator' || key === 'automaticSemicolon') inner[key] = value;
+			if (key === 'kind' || key === 'variableDeclarators' || key === 'automaticSemicolon') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);

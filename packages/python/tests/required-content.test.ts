@@ -27,7 +27,7 @@ describe('required repeated content', () => {
 	});
 
 	it('builds non-empty clauses and their parent', () => {
-		const clause = py.build.forInClause({ left: 'x', right: ['xs'] });
+		const clause = py.build.forInClause({ left: 'x', rights: ['xs'] });
 		const clauses = py.build.comprehensionClauses(clause);
 		expect(clauses.$render().toString()).toBe('for x in xs');
 		expect(py.build.listComprehension({ body: 'x', clauses }).$render().toString()).toBe(

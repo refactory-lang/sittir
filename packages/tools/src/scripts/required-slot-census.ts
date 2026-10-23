@@ -57,8 +57,8 @@ export const admittingSlots = async (
 		const callerSlots = node.configSlots;
 		for (const slot of callerSlots) {
 			if (!isRequired(slot) || slotFilledWhenOmitted(slot, nodeMap)) continue;
-			const property = checker.getPropertyOfType(checker.getNonNullableType(paramType), slot.configKey);
-			const label = `${node.kind}.${slot.configKey}`;
+			const property = checker.getPropertyOfType(checker.getNonNullableType(paramType), slot.propertyName);
+			const label = `${node.kind}.${slot.propertyName}`;
 			if (property === undefined) {
 				const directParameter = callerSlots.length === 1 && param.name.getText(source) !== 'config';
 				if (!directParameter || param.questionToken !== undefined || hasUndefined(paramType)) strict.push(label);
@@ -73,7 +73,7 @@ export const admittingSlots = async (
 			if (!affix) {
 				probeIds.push(label);
 				probeLines.push(
-					`export const p${probeIds.length}: (undefined extends T.${node.typeName}.LooseConfig['${slot.configKey}'] ? 'U' : 'ok') & ({} extends Pick<T.${node.typeName}.LooseConfig, '${slot.configKey}'> ? 'O' : 'ok') = 'ok' as 'ok';`
+					`export const p${probeIds.length}: (undefined extends T.${node.typeName}.LooseConfig['${slot.propertyName}'] ? 'U' : 'ok') & ({} extends Pick<T.${node.typeName}.LooseConfig, '${slot.propertyName}'> ? 'O' : 'ok') = 'ok' as 'ok';`
 				);
 			}
 		}

@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
+import { loadSlotAccessorOf } from '../src/validate/common.ts';
 
 const rust = await createEngine(await languageByName('rust'));
 const typescript = await createEngine(await languageByName('typescript'));
 const python = await createEngine(await languageByName('python'));
+const rustSlots = await loadSlotAccessorOf('rust');
 
 interface Case {
 	readonly grammar: string;
@@ -164,10 +166,9 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 	});
 });
 
-/** The first node in `root` a guard accepts, reached through each slot's reader. */
+/** The first node in a rust `root` a guard accepts, reached through each slot's reader. */
 function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): T {
 	const seen = new Set<object>();
-	const camel = (slot: string) => slot.replace(/^_/, '').replace(/_([a-z0-9])/g, (_, letter: string) => letter.toUpperCase());
 	const queue: unknown[] = [root];
 	while (queue.length > 0) {
 		const node = queue.shift();
@@ -179,9 +180,10 @@ function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): 
 			continue;
 		}
 		const record = node as Record<string, unknown>;
+		const slots = typeof record.$type === 'number' ? rustSlots(record.$type).accessors : {};
 		for (const key of Object.keys(record)) {
 			if (!key.startsWith('_') || record[key] == null) continue;
-			const reader = record[camel(key)];
+			const reader = slots[key] === undefined ? undefined : record[slots[key]];
 			queue.push(typeof reader === 'function' ? (reader as () => unknown).call(node) : record[key]);
 		}
 	}

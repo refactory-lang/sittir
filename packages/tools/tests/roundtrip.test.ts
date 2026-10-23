@@ -5,6 +5,7 @@ import { buildFactoryNode, loadFactoryArtifacts, run } from '../src/exercise/rou
 const KINDS = ['identifier', 'number_literal', 'direct_child', 'spread_child', 'rebuilt_direct', 'rebuilt_spread'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
+const noSlots: common.SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
 
 describe('exercise roundtrip helpers', () => {
 	afterEach(() => {
@@ -36,6 +37,7 @@ describe('exercise roundtrip helpers', () => {
 			factorySlots: {
 				direct_child: {
 					children: {
+						propertyName: 'children',
 						required: true,
 						multiple: false,
 						nonEmpty: false
@@ -50,7 +52,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('direct_child'), _children: leaf } as never,
 			artifacts,
 			common,
-			() => [],
+			noSlots,
 			kindNameFromId
 		);
 
@@ -70,6 +72,7 @@ describe('exercise roundtrip helpers', () => {
 			factorySlots: {
 				spread_child: {
 					children: {
+						propertyName: 'children',
 						required: true,
 						multiple: true,
 						nonEmpty: true
@@ -84,7 +87,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('spread_child'), _children: [left, right] } as never,
 			artifacts,
 			common,
-			() => [],
+			noSlots,
 			kindNameFromId
 		);
 

@@ -47,8 +47,8 @@ import {
 	walkWrappedTree,
 	materializeDetached,
 	materializeShallow,
-	type SlotReaders,
-	loadSlotReaders,
+	type SlotAccessorOf,
+	loadSlotAccessorOf,
 	emitValidatorMetrics,
 	loadNodeModel,
 	loadIsLeafKind,
@@ -445,11 +445,11 @@ export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
 	render: (node: AnyUntypedNode) => string,
 	triviaOf: (node: object) => NodeTrivia | undefined,
-	readers: SlotReaders
+	accessorOf: SlotAccessorOf
 ): number {
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
-		const copy = markEdited({ ...storageOf(data, readers), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
+		const copy = markEdited({ ...storageOf(data, accessorOf), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
 		carryPlace(node, copy);
 		return copy;
 	};
@@ -500,8 +500,8 @@ export function leadingTriviaRenderedWidth(
 	return measured.length - current.length;
 }
 
-function storageOf(node: AnyUntypedNode, readers: SlotReaders): AnyUntypedNode {
-	return isCoordinate(node) ? materializeShallow(hydrateStored(node), readers) : node;
+function storageOf(node: AnyUntypedNode, accessorOf: SlotAccessorOf): AnyUntypedNode {
+	return isCoordinate(node) ? materializeShallow(hydrateStored(node), accessorOf) : node;
 }
 
 function commonPrefixLength(a: string, b: string): number {
@@ -737,7 +737,7 @@ export interface RenderReparseContext {
 	readonly visibleKinds: ReadonlySet<string>;
 	readonly readIdentity: ReadIdentity;
 	readonly placements: ReadonlyMap<string, Placement>;
-	readonly readers: SlotReaders;
+	readonly accessorOf: SlotAccessorOf;
 }
 
 /** Where a split kind sits: the nearest ancestor that is no split rule, and the source around the kind inside it. */
@@ -841,7 +841,7 @@ export function renderReparse(
 		return { status: 'failed', message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`, rendered };
 	}
 	const triviaOffsetAdjust =
-		typeof data === 'function' ? 0 : leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.readers);
+		typeof data === 'function' ? 0 : leadingTriviaRenderedWidth(data, ctx.render, ctx.triviaOf, ctx.accessorOf);
 	const reparsed = treeRoot
 		? tree2.rootNode
 		: source !== null
@@ -960,7 +960,7 @@ export async function loadRenderReparseContext(
 		root: model.root,
 		variantChildKinds: await loadVariantChildKindsByOwner(grammar),
 		readIdentity: readIdentityOf(model.relaxes),
-		readers: await loadSlotReaders(grammar),
+		accessorOf: await loadSlotAccessorOf(grammar),
 		placements: placementsOf(grammar, parser, model.splitFrom)
 	};
 }
@@ -974,7 +974,7 @@ export async function validateReadRenderParse(
 	parser.setLanguage(lang);
 
 	const kindNameFromId = await loadKindNameFromId(grammar);
-	const readers = await loadSlotReaders(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine, options.profile);
@@ -1098,7 +1098,7 @@ export async function validateReadRenderParse(
 				}
 			} else if (readNode && handle.read) {
 				const wrappedRoot = deepRoot ?? (readNode(handle) as TypedNode);
-				walkWrappedTree(wrappedRoot, readers, visitCandidate, onAccessorThrow);
+				walkWrappedTree(wrappedRoot, accessorOf, visitCandidate, onAccessorThrow);
 			}
 			const refusals = refusalsOf(entry);
 			errors.push(...refusals);
@@ -1180,8 +1180,8 @@ export async function validateReadRenderParse(
 							const at = (cand.node as AnyUntypedNode).$_layout?.at;
 							data = measureRoundtrip(options.profile, 'read', () =>
 								recursive !== true && at !== undefined
-									? materializeShallow(cand.node, readers, onAccessorThrow)
-									: (materializeDetached(cand.node, readers, onAccessorThrow) as AnyUntypedNode)
+									? materializeShallow(cand.node, accessorOf, onAccessorThrow)
+									: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode)
 							);
 						}
 					} catch (e) {
@@ -1292,7 +1292,7 @@ export async function validateReadRenderParse(
 											typeof data === 'function'
 												? (materializeDetached(
 														readNode!(handle, cand.coordinate) as TypedNode,
-														readers,
+														accessorOf,
 														onAccessorThrow
 													) as AnyUntypedNode)
 												: data,

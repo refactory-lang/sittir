@@ -1765,7 +1765,7 @@ describe('argument_list', () => {
 describe('decorated_definition', () => {
 	it('factory produces correct type', () => {
 		const node = ir.decoratedDefinition({
-			decorator: [
+			decorators: [
 				stampBuilt({
 					$type: TSKindId.Decorator,
 					$text: 'test',
@@ -1796,7 +1796,7 @@ describe('decorated_definition', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.decoratedDefinition({
-			decorator: [
+			decorators: [
 				stampBuilt({
 					$type: TSKindId.Decorator,
 					$text: 'test',
@@ -4392,7 +4392,7 @@ describe('for_in_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forInClause({
 			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			right: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			rights: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 		});
 		expect(node.$type).toBe(TSKindId.ForInClause);
 		expectBuiltNode(node);
@@ -4400,7 +4400,7 @@ describe('for_in_clause', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.forInClause({
 			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			right: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			rights: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

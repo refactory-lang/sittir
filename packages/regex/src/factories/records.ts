@@ -99,7 +99,7 @@ export function buildTerm<A extends NonEmptyArray<Admit<T.TermGroup>>>(
 export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Term.Bound {
 	const _term_group = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'term', { termGroup: _term_group });
+	if (handle !== undefined) admitChildren(handle, 'term', { termGroups: _term_group });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Term as const, { _term_group });
 	const record = arena.record(TSKindId.Term as const, 4);

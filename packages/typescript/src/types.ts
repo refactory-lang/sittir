@@ -2669,6 +2669,10 @@ export interface Program {
 	readonly $type: TSKindId.Program;
 	readonly _hash_bang_line?: HashBangLine;
 	readonly _statements: readonly Statement[];
+	readonly __slotNames__?: {
+		readonly _hash_bang_line: 'hashBangLine';
+		readonly _statements: 'statements';
+	};
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
@@ -2683,6 +2687,9 @@ export interface Program {
 export interface HashBangLine {
 	readonly $type: TSKindId.HashBangLine;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -2692,6 +2699,9 @@ export interface HashBangLine {
 export interface NamespaceExport {
 	readonly $type: TSKindId.NamespaceExport;
 	readonly _module_export_name: Identifier | String | TSKindId.DefaultKeyword;
+	readonly __slotNames__?: {
+		readonly _module_export_name: 'moduleExportName';
+	};
 	readonly __inputHints__?: {
 		readonly module_export_name: KindEnum<'default', TSKindId.DefaultKeyword> | Identifier | String;
 	};
@@ -2704,6 +2714,9 @@ export interface NamespaceExport {
 export interface ExportClause {
 	readonly $type: TSKindId.ExportClause;
 	readonly _export_specifiers?: ExportSpecifiers;
+	readonly __slotNames__?: {
+		readonly _export_specifiers: 'exportSpecifiers';
+	};
 	readonly __looseHints__?: {
 		readonly export_specifiers?: readonly ExportSpecifier[];
 	};
@@ -2728,6 +2741,11 @@ export interface ExportSpecifier {
 	readonly _export_kind?: number;
 	readonly _name: Identifier | String | TSKindId.DefaultKeyword;
 	readonly _alias?: Identifier | String | TSKindId.DefaultKeyword;
+	readonly __slotNames__?: {
+		readonly _export_kind: 'exportKind';
+		readonly _name: 'name';
+		readonly _alias: 'alias';
+	};
 	readonly __inputHints__?: {
 		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'default', TSKindId.DefaultKeyword> | Identifier | String;
@@ -2749,6 +2767,12 @@ export interface ImportStatement {
 	readonly _from_clause: ImportStatementClauseFrom | ImportRequireClause | String;
 	readonly _import_attribute?: ImportAttribute;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _import_clause: 'importClause';
+		readonly _from_clause: 'fromClause';
+		readonly _import_attribute: 'importAttribute';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -2768,6 +2792,9 @@ export interface ImportStatement {
 export interface ImportClause {
 	readonly $type: TSKindId.ImportClause;
 	readonly _content: NamespaceImport | NamedImports | ImportClauseDefaultImport;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>;
 	};
@@ -2777,6 +2804,9 @@ export interface ImportClause {
 export interface NamespaceImport {
 	readonly $type: TSKindId.NamespaceImport;
 	readonly _name: Identifier;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
 	};
@@ -2786,6 +2816,9 @@ export interface NamespaceImport {
 export interface NamedImports {
 	readonly $type: TSKindId.NamedImports;
 	readonly _import_specifiers?: ImportSpecifiers;
+	readonly __slotNames__?: {
+		readonly _import_specifiers: 'importSpecifiers';
+	};
 	readonly __looseHints__?: {
 		readonly import_specifiers?: readonly ImportSpecifier[];
 	};
@@ -2803,6 +2836,10 @@ export interface ImportAttribute {
 	readonly $type: TSKindId.ImportAttribute;
 	readonly _attribute_kind: number;
 	readonly _object: Object;
+	readonly __slotNames__?: {
+		readonly _attribute_kind: 'attributeKind';
+		readonly _object: 'object';
+	};
 	readonly __inputHints__?: {
 		readonly attribute_kind: KindEnum<'with' | 'assert', TSKindId.WithKeyword | TSKindId.AssertKeyword>;
 	};
@@ -2821,6 +2858,10 @@ export interface ExpressionStatement {
 	readonly $type: TSKindId.ExpressionStatement;
 	readonly _expression: Expression | SequenceExpression;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -2848,6 +2889,10 @@ export interface VariableDeclaration {
 	readonly $type: TSKindId.VariableDeclaration;
 	readonly _declarators: NonEmptyArray<VariableDeclarator>;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _declarators: 'declarators';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -2864,6 +2909,11 @@ export interface LexicalDeclaration {
 	readonly _kind: number;
 	readonly _declarators: NonEmptyArray<VariableDeclarator>;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _kind: 'kind';
+		readonly _declarators: 'declarators';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'let' | 'const', TSKindId.LetKeyword | TSKindId.ConstKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -2883,6 +2933,11 @@ export interface UsingDeclaration {
 	readonly _kind: number;
 	readonly _variable_declarator: NonEmptyArray<VariableDeclarator>;
 	readonly _automatic_semicolon: number;
+	readonly __slotNames__?: {
+		readonly _kind: 'kind';
+		readonly _variable_declarator: 'variableDeclarators';
+		readonly _automatic_semicolon: 'automaticSemicolon';
+	};
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'using' | 'await using', TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm>;
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -2901,6 +2956,10 @@ export interface StatementBlock {
 	readonly $type: TSKindId.StatementBlock;
 	readonly _statements: readonly Statement[];
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _statements: 'statements';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
@@ -2916,6 +2975,9 @@ export interface StatementBlock {
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
 	readonly _body: Statement;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
@@ -2930,6 +2992,11 @@ export interface IfStatement {
 	readonly _condition: ParenthesizedExpression;
 	readonly _consequence: Statement;
 	readonly _alternative?: ElseClause;
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+		readonly _consequence: 'consequence';
+		readonly _alternative: 'alternative';
+	};
 	readonly __inputHints__?: {
 		readonly consequence: KindEnum<';', TSKindId.Semi> | Statement;
 	};
@@ -2950,6 +3017,10 @@ export interface SwitchStatement {
 	readonly $type: TSKindId.SwitchStatement;
 	readonly _value: ParenthesizedExpression;
 	readonly _body: SwitchBody;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly body: readonly (SwitchCase | SwitchDefault)[];
 	};
@@ -2972,6 +3043,12 @@ export interface ForStatement {
 	readonly _condition: Expression | SequenceExpression | TSKindId.EmptyStatement;
 	readonly _increment?: Expression | SequenceExpression;
 	readonly _body: Statement;
+	readonly __slotNames__?: {
+		readonly _initializer: 'initializer';
+		readonly _condition: 'condition';
+		readonly _increment: 'increment';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly initializer:
 			| KindEnum<
@@ -3039,6 +3116,11 @@ export interface ForInStatement {
 	readonly _await: boolean;
 	readonly _header: ForHeader;
 	readonly _body: Statement;
+	readonly __slotNames__?: {
+		readonly _await: 'await';
+		readonly _header: 'header';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly await?: BaseBooleanKeyword<'await'>;
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
@@ -3057,6 +3139,10 @@ export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: ParenthesizedExpression;
 	readonly _body: Statement;
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
@@ -3073,6 +3159,11 @@ export interface DoStatement {
 	readonly _body: Statement;
 	readonly _condition: ParenthesizedExpression;
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _condition: 'condition';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -3092,6 +3183,11 @@ export interface TryStatement {
 	readonly _body: StatementBlock;
 	readonly _handler?: CatchClause;
 	readonly _finalizer?: FinallyClause;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _handler: 'handler';
+		readonly _finalizer: 'finalizer';
+	};
 	readonly __looseHints__?: {
 		readonly body: readonly Statement[];
 		readonly finalizer?: readonly Statement[];
@@ -3110,6 +3206,10 @@ export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _object: ParenthesizedExpression;
 	readonly _body: Statement;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
@@ -3125,6 +3225,10 @@ export interface BreakStatement {
 	readonly $type: TSKindId.BreakStatement;
 	readonly _label?: StatementIdentifier;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _label: 'label';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -3143,6 +3247,10 @@ export interface ContinueStatement {
 	readonly $type: TSKindId.ContinueStatement;
 	readonly _label?: StatementIdentifier;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _label: 'label';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -3160,6 +3268,9 @@ export interface ContinueStatement {
 export interface DebuggerStatement {
 	readonly $type: TSKindId.DebuggerStatement;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -3173,6 +3284,10 @@ export interface ReturnStatement {
 	readonly $type: TSKindId.ReturnStatement;
 	readonly _expression?: Expression | SequenceExpression;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly expression?:
 			| KindEnum<
@@ -3200,6 +3315,10 @@ export interface ThrowStatement {
 	readonly $type: TSKindId.ThrowStatement;
 	readonly _expression: Expression | SequenceExpression;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -3227,6 +3346,10 @@ export interface LabeledStatement {
 	readonly $type: TSKindId.LabeledStatement;
 	readonly _label: StatementIdentifier;
 	readonly _body: Statement;
+	readonly __slotNames__?: {
+		readonly _label: 'label';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
@@ -3244,6 +3367,9 @@ export interface LabeledStatement {
 export interface SwitchBody {
 	readonly $type: TSKindId.SwitchBody;
 	readonly _cases: readonly (SwitchCase | SwitchDefault)[];
+	readonly __slotNames__?: {
+		readonly _cases: 'cases';
+	};
 	readonly __slotHints__?: {
 		readonly cases: SlotHint<(T.SwitchCase | T.SwitchDefault)[], false, true>;
 	};
@@ -3254,6 +3380,10 @@ export interface SwitchCase {
 	readonly $type: TSKindId.SwitchCase;
 	readonly _value: Expression | SequenceExpression;
 	readonly _body: readonly Statement[];
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _body: 'bodies';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -3271,7 +3401,7 @@ export interface SwitchCase {
 	};
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.SwitchCase.Config>['value']>;
-		readonly bodies: SlotHint<NonNullable<NonNullable<T.SwitchCase.Config>['body']>[number][], true, true>;
+		readonly bodies: SlotHint<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][], true, true>;
 	};
 	readonly value: () => Expression | SequenceExpression;
 	readonly bodies: () => readonly Statement[];
@@ -3280,6 +3410,9 @@ export interface SwitchCase {
 export interface SwitchDefault {
 	readonly $type: TSKindId.SwitchDefault;
 	readonly _body: readonly Statement[];
+	readonly __slotNames__?: {
+		readonly _body: 'bodies';
+	};
 	readonly __inputHints__?: {
 		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
@@ -3293,6 +3426,10 @@ export interface CatchClause {
 	readonly $type: TSKindId.CatchClause;
 	readonly _catch_clause_group?: CatchClauseGroup;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _catch_clause_group: 'catchClauseGroup';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly body: readonly Statement[];
 	};
@@ -3314,6 +3451,9 @@ export interface CatchClause {
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly body: readonly Statement[];
 	};
@@ -3326,6 +3466,9 @@ export interface FinallyClause {
 export interface YieldExpression {
 	readonly $type: TSKindId.YieldExpression;
 	readonly _expression?: YieldExpressionDelegate | Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression?:
 			| KindEnum<
@@ -3349,6 +3492,9 @@ export interface YieldExpression {
 export interface Object {
 	readonly $type: TSKindId.Object;
 	readonly _properties: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | undefined)[];
+	readonly __slotNames__?: {
+		readonly _properties: 'properties';
+	};
 	readonly __slotHints__?: {
 		readonly properties: SlotHint<
 			(
@@ -3380,6 +3526,9 @@ export interface ObjectPattern {
 		| ShorthandPropertyIdentifierPattern
 		| undefined
 	)[];
+	readonly __slotNames__?: {
+		readonly _properties: 'properties';
+	};
 	readonly __slotHints__?: {
 		readonly properties: SlotHint<
 			(
@@ -3406,6 +3555,10 @@ export interface AssignmentPattern {
 	readonly $type: TSKindId.AssignmentPattern;
 	readonly _left: Pattern;
 	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly right:
 			| KindEnum<
@@ -3431,6 +3584,10 @@ export interface ObjectAssignmentPattern {
 	readonly $type: TSKindId.ObjectAssignmentPattern;
 	readonly _left: ShorthandPropertyIdentifierPattern | ObjectPattern | ArrayPattern;
 	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly right:
 			| KindEnum<
@@ -3460,6 +3617,9 @@ export interface ObjectAssignmentPattern {
 export interface Array {
 	readonly $type: TSKindId.Array;
 	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __inputHints__?: {
 		readonly elements?: readonly (
 			| KindEnum<
@@ -3484,6 +3644,9 @@ export interface Array {
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
 	readonly _elements: readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<((T.Pattern | T.AssignmentPattern) | undefined)[], false, true>;
 	};
@@ -3494,6 +3657,10 @@ export interface NestedIdentifier {
 	readonly $type: TSKindId.NestedIdentifier;
 	readonly _object: Identifier | NestedIdentifier;
 	readonly _property: PropertyIdentifier;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _property: 'property';
+	};
 	readonly __looseHints__?: {
 		readonly property: readonly Identifier[];
 	};
@@ -3512,6 +3679,13 @@ export interface Class {
 	readonly _type_parameters?: TypeParameters;
 	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _heritage: 'heritage';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly name?: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
@@ -3546,6 +3720,14 @@ export interface ClassDeclaration {
 	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _heritage: 'heritage';
+		readonly _body: 'body';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
 	};
@@ -3580,6 +3762,9 @@ export interface ClassDeclaration {
 export interface ClassHeritage {
 	readonly $type: TSKindId.ClassHeritage;
 	readonly _content: ClassHeritageExtendsClause | ImplementsClause;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ClassHeritageExtendsClause | T.ImplementsClause>;
 	};
@@ -3594,6 +3779,14 @@ export interface FunctionExpression {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 	};
@@ -3637,6 +3830,15 @@ export interface FunctionDeclaration {
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
@@ -3682,6 +3884,14 @@ export interface GeneratorFunction {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 	};
@@ -3725,6 +3935,15 @@ export interface GeneratorFunctionDeclaration {
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
@@ -3767,6 +3986,11 @@ export interface ArrowFunction {
 	readonly _async: boolean;
 	readonly _content: ArrowFunctionParameter | CallSignature;
 	readonly _body: Expression | StatementBlock;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _content: 'content';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly body:
@@ -3797,6 +4021,11 @@ export interface NewExpression {
 	readonly _constructor: PrimaryExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments?: Arguments;
+	readonly __slotNames__?: {
+		readonly _constructor: 'constructor_';
+		readonly _type_arguments: 'typeArguments';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly constructor:
 			| KindEnum<
@@ -3833,6 +4062,9 @@ export interface NewExpression {
 export interface AwaitExpression {
 	readonly $type: TSKindId.AwaitExpression;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -3857,6 +4089,11 @@ export interface MemberExpression {
 	readonly _object: Expression | PrimaryExpression | TSKindId.Import;
 	readonly _separator: number;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _separator: 'separator';
+		readonly _property: 'property';
+	};
 	readonly __inputHints__?: {
 		readonly object:
 			| KindEnum<
@@ -3889,6 +4126,11 @@ export interface SubscriptExpression {
 	readonly _object: Expression | PrimaryExpression;
 	readonly _optional_chain: boolean;
 	readonly _index: Expression | SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _optional_chain: 'optionalChain';
+		readonly _index: 'index';
+	};
 	readonly __inputHints__?: {
 		readonly object:
 			| KindEnum<
@@ -3936,6 +4178,9 @@ export interface LhsExpression {
 		| ObjectPattern
 		| ArrayPattern
 		| NonNullExpression;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<'undefined', TSKindId.Undefined>
@@ -3974,6 +4219,11 @@ export interface AssignmentExpression {
 	readonly _using: boolean;
 	readonly _left: ParenthesizedExpression | LhsExpression;
 	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _using: 'using';
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly using?: BaseBooleanKeyword<'using'>;
 		readonly right:
@@ -4003,6 +4253,11 @@ export interface AugmentedAssignmentExpression {
 	readonly _left: MemberExpression | SubscriptExpression | Identifier | ParenthesizedExpression | NonNullExpression;
 	readonly _operator: number;
 	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<
 			'+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??=',
@@ -4054,6 +4309,9 @@ export interface AugmentedAssignmentExpression {
 export interface SpreadElement {
 	readonly $type: TSKindId.SpreadElement;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -4078,6 +4336,11 @@ export interface TernaryExpression {
 	readonly _condition: Expression;
 	readonly _consequence: Expression;
 	readonly _alternative: Expression;
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+		readonly _consequence: 'consequence';
+		readonly _alternative: 'alternative';
+	};
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<
@@ -4129,6 +4392,12 @@ export interface BinaryExpression {
 	readonly _operator?: number;
 	readonly _right?: Expression;
 	readonly _binary_expression_in?: BinaryExpressionIn;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+		readonly _binary_expression_in: 'binaryExpressionIn';
+	};
 	readonly __inputHints__?: {
 		readonly left?:
 			| KindEnum<
@@ -4219,6 +4488,10 @@ export interface UnaryExpression {
 	readonly $type: TSKindId.UnaryExpression;
 	readonly _operator: number;
 	readonly _argument: Expression;
+	readonly __slotNames__?: {
+		readonly _operator: 'operator';
+		readonly _argument: 'argument';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<
 			'!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete',
@@ -4253,6 +4526,9 @@ export interface UnaryExpression {
 export interface SequenceExpression {
 	readonly $type: TSKindId.SequenceExpression;
 	readonly _expression: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _expression: 'expressions';
+	};
 	readonly __inputHints__?: {
 		readonly expression: NonEmptyArray<
 			| KindEnum<
@@ -4276,6 +4552,9 @@ export interface SequenceExpression {
 export interface EscapeSequence {
 	readonly $type: TSKindId.EscapeSequence;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4285,6 +4564,9 @@ export interface EscapeSequence {
 export interface TemplateString {
 	readonly $type: TSKindId.TemplateString;
 	readonly _elements: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], false, true>;
 	};
@@ -4294,6 +4576,9 @@ export interface TemplateString {
 export interface TemplateSubstitution {
 	readonly $type: TSKindId.TemplateSubstitution;
 	readonly _expression: Expression | SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -4318,6 +4603,10 @@ export interface Regex {
 	readonly $type: TSKindId.Regex;
 	readonly _pattern: RegexPattern;
 	readonly _flags?: RegexFlags;
+	readonly __slotNames__?: {
+		readonly _pattern: 'pattern';
+		readonly _flags: 'flags';
+	};
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.RegexPattern>;
 		readonly flags: SlotHint<T.RegexFlags, true>;
@@ -4329,6 +4618,9 @@ export interface Regex {
 export interface PrivatePropertyIdentifier {
 	readonly $type: TSKindId.PrivatePropertyIdentifier;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4338,6 +4630,9 @@ export interface PrivatePropertyIdentifier {
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
 	readonly _elements: readonly (Expression | SpreadElement | undefined)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __inputHints__?: {
 		readonly elements?: readonly (
 			| KindEnum<
@@ -4366,6 +4661,9 @@ export interface Decorator {
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<
 			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
@@ -4382,6 +4680,10 @@ export interface DecoratorMemberExpression {
 	readonly $type: TSKindId.DecoratorMemberExpression;
 	readonly _object: Identifier | TSKindId.Super | DecoratorMemberExpression;
 	readonly _property: PropertyIdentifier;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _property: 'property';
+	};
 	readonly __inputHints__?: {
 		readonly object: KindEnum<'super', TSKindId.Super | TSKindId.SuperKeyword> | Identifier | DecoratorMemberExpression;
 	};
@@ -4401,6 +4703,11 @@ export interface DecoratorCallExpression {
 	readonly _function: Identifier | DecoratorMemberExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _type_arguments: 'typeArguments';
+		readonly _arguments: 'arguments';
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
@@ -4424,6 +4731,9 @@ export interface DecoratorCallExpression {
 export interface ClassBody {
 	readonly $type: TSKindId.ClassBody;
 	readonly _members: readonly ClassBodyMember[];
+	readonly __slotNames__?: {
+		readonly _members: 'members';
+	};
 	readonly __inputHints__?: {
 		readonly members?: readonly (KindEnum<';', TSKindId.Semi> | ClassBodyMember)[];
 	};
@@ -4436,6 +4746,9 @@ export interface ClassBody {
 export interface FormalParameters {
 	readonly $type: TSKindId.FormalParameters;
 	readonly _elements?: FormalParametersElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (RequiredParameter | OptionalParameter)[];
 	};
@@ -4459,6 +4772,10 @@ export interface ClassStaticBlock {
 	readonly $type: TSKindId.ClassStaticBlock;
 	readonly _terminator?: number;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _terminator: 'terminator';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
 	};
@@ -4483,6 +4800,9 @@ export interface RestPattern {
 		| ObjectPattern
 		| ArrayPattern
 		| NonNullExpression;
+	readonly __slotNames__?: {
+		readonly _lhs_expression: 'lhsExpression';
+	};
 	readonly __inputHints__?: {
 		readonly lhs_expression:
 			| KindEnum<'undefined', TSKindId.Undefined>
@@ -4530,6 +4850,20 @@ export interface MethodDefinition {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _static: 'static';
+		readonly _override: 'override';
+		readonly _readonly: 'readonly';
+		readonly _async: 'async';
+		readonly _accessor_kind: 'accessorKind';
+		readonly _name: 'name';
+		readonly _optional: 'optional';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -4597,6 +4931,10 @@ export interface Pair {
 	readonly $type: TSKindId.Pair;
 	readonly _key: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _key: 'key';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -4629,6 +4967,10 @@ export interface PairPattern {
 	readonly $type: TSKindId.PairPattern;
 	readonly _key: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _value: Pattern | AssignmentPattern;
+	readonly __slotNames__?: {
+		readonly _key: 'key';
+		readonly _value: 'value';
+	};
 	readonly __slotHints__?: {
 		readonly key: SlotHint<
 			| T.PropertyIdentifier
@@ -4647,6 +4989,9 @@ export interface PairPattern {
 export interface ComputedPropertyName {
 	readonly $type: TSKindId.ComputedPropertyName;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -4680,6 +5025,20 @@ export interface PublicFieldDefinition {
 	readonly _optionality?: number;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _declare: 'declare';
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _static: 'static';
+		readonly _override: 'override';
+		readonly _readonly: 'readonly';
+		readonly _abstract: 'abstract';
+		readonly _accessor: 'accessor';
+		readonly _name: 'name';
+		readonly _optionality: 'optionality';
+		readonly _type: 'type';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly declare?: BaseBooleanKeyword<'declare'>;
 		readonly accessibility_modifier?: KindEnum<
@@ -4749,6 +5108,9 @@ export interface PublicFieldDefinition {
 export interface NonNullExpression {
 	readonly $type: TSKindId.NonNullExpression;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -4781,6 +5143,19 @@ export interface MethodSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __slotNames__?: {
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _static: 'static';
+		readonly _override: 'override';
+		readonly _readonly: 'readonly';
+		readonly _async: 'async';
+		readonly _accessor_kind: 'accessorKind';
+		readonly _name: 'name';
+		readonly _optional: 'optional';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+	};
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -4851,6 +5226,16 @@ export interface AbstractMethodSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __slotNames__?: {
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _override: 'override';
+		readonly _accessor_kind: 'accessorKind';
+		readonly _name: 'name';
+		readonly _optional: 'optional';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+	};
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -4913,6 +5298,14 @@ export interface FunctionSignature {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly terminator: KindEnum<
@@ -4953,6 +5346,9 @@ export interface FunctionSignature {
 export interface DecoratorParenthesizedExpression {
 	readonly $type: TSKindId.DecoratorParenthesizedExpression;
 	readonly _expression: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>;
 	};
@@ -4963,6 +5359,10 @@ export interface TypeAssertion {
 	readonly $type: TSKindId.TypeAssertion;
 	readonly _type_arguments: TypeArguments;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _type_arguments: 'typeArguments';
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -4997,6 +5397,10 @@ export interface AsExpression {
 	readonly $type: TSKindId.AsExpression;
 	readonly _expression: Expression;
 	readonly _type_annotation: TSKindId.ConstKeyword | Type;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _type_annotation: 'typeAnnotation';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -5050,6 +5454,10 @@ export interface SatisfiesExpression {
 	readonly $type: TSKindId.SatisfiesExpression;
 	readonly _expression: Expression;
 	readonly _type_annotation: Type;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _type_annotation: 'typeAnnotation';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -5101,6 +5509,10 @@ export interface InstantiationExpression {
 	readonly $type: TSKindId.InstantiationExpression;
 	readonly _expression: Expression;
 	readonly _type_arguments: TypeArguments;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _type_arguments: 'typeArguments';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -5135,6 +5547,10 @@ export interface ImportRequireClause {
 	readonly $type: TSKindId.ImportRequireClause;
 	readonly _name: Identifier;
 	readonly _source: String;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _source: 'source';
+	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
 		readonly source: SlotHint<T.String>;
@@ -5146,6 +5562,9 @@ export interface ImportRequireClause {
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
 	readonly _types: NonEmptyArray<ExtendsClauseSingle>;
+	readonly __slotNames__?: {
+		readonly _types: 'types';
+	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonEmptyArray<T.ExtendsClauseSingle>, false, true>;
 	};
@@ -5156,6 +5575,10 @@ export interface ExtendsClauseSingle {
 	readonly $type: TSKindId.ExtendsClauseSingle;
 	readonly _value: Expression;
 	readonly _type_arguments?: TypeArguments;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _type_arguments: 'typeArguments';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -5189,6 +5612,9 @@ export interface ExtendsClauseSingle {
 export interface ImplementsClause {
 	readonly $type: TSKindId.ImplementsClause;
 	readonly _type: NonEmptyArray<Type>;
+	readonly __slotNames__?: {
+		readonly _type: 'types';
+	};
 	readonly __inputHints__?: {
 		readonly type: NonEmptyArray<
 			| KindEnum<
@@ -5227,6 +5653,9 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
 	readonly $type: TSKindId.AmbientDeclaration;
 	readonly _content: Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>;
 	};
@@ -5240,6 +5669,13 @@ export interface AbstractClassDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _heritage: 'heritage';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
@@ -5270,6 +5706,10 @@ export interface Module {
 	readonly $type: TSKindId.Module;
 	readonly _name: String | Identifier | NestedIdentifier;
 	readonly _body?: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly body?: readonly Statement[];
 	};
@@ -5285,6 +5725,10 @@ export interface InternalModule {
 	readonly $type: TSKindId.InternalModule;
 	readonly _name: String | Identifier | NestedIdentifier;
 	readonly _body?: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly body?: readonly Statement[];
 	};
@@ -5301,6 +5745,11 @@ export interface ImportAlias {
 	readonly _name: Identifier;
 	readonly _value: Identifier | NestedIdentifier;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _value: 'value';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -5318,6 +5767,10 @@ export interface NestedTypeIdentifier {
 	readonly $type: TSKindId.NestedTypeIdentifier;
 	readonly _module: Identifier | NestedIdentifier;
 	readonly _name: TypeIdentifier;
+	readonly __slotNames__?: {
+		readonly _module: 'module';
+		readonly _name: 'name';
+	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 	};
@@ -5335,6 +5788,12 @@ export interface InterfaceDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _extends_type_clause?: ExtendsTypeClause;
 	readonly _body: InterfaceBody;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _extends_type_clause: 'extendsTypeClause';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
@@ -5362,6 +5821,9 @@ export interface InterfaceDeclaration {
 export interface ExtendsTypeClause {
 	readonly $type: TSKindId.ExtendsTypeClause;
 	readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
+	readonly __slotNames__?: {
+		readonly _type: 'types';
+	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<
 			NonEmptyArray<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>,
@@ -5377,6 +5839,11 @@ export interface EnumDeclaration {
 	readonly _const: boolean;
 	readonly _name: Identifier;
 	readonly _body: EnumBody;
+	readonly __slotNames__?: {
+		readonly _const: 'const';
+		readonly _name: 'name';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly const?: BaseBooleanKeyword<'const'>;
 	};
@@ -5399,6 +5866,9 @@ export interface EnumDeclaration {
 export interface EnumBody {
 	readonly $type: TSKindId.EnumBody;
 	readonly _elements?: EnumBodyElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly EnumBodyElement[];
 	};
@@ -5416,6 +5886,10 @@ export interface EnumAssignment {
 	readonly $type: TSKindId.EnumAssignment;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -5450,6 +5924,12 @@ export interface TypeAliasDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _value: Type;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _value: 'value';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -5510,6 +5990,15 @@ export interface RequiredParameter {
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _override: 'override';
+		readonly _readonly: 'readonly';
+		readonly _pattern: 'pattern';
+		readonly _type: 'type';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -5561,6 +6050,15 @@ export interface OptionalParameter {
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _override: 'override';
+		readonly _readonly: 'readonly';
+		readonly _pattern: 'pattern';
+		readonly _type: 'type';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -5606,6 +6104,9 @@ export interface OptionalParameter {
 export interface OmittingTypeAnnotation {
 	readonly $type: TSKindId.OmittingTypeAnnotation;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5643,6 +6144,9 @@ export interface OmittingTypeAnnotation {
 export interface AddingTypeAnnotation {
 	readonly $type: TSKindId.AddingTypeAnnotation;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5680,6 +6184,9 @@ export interface AddingTypeAnnotation {
 export interface OptingTypeAnnotation {
 	readonly $type: TSKindId.OptingTypeAnnotation;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5717,6 +6224,9 @@ export interface OptingTypeAnnotation {
 export interface TypeAnnotation {
 	readonly $type: TSKindId.TypeAnnotation;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5758,6 +6268,10 @@ export interface TypeQueryMemberExpressionInTypeAnnotation {
 		| TypeQueryMemberExpressionInTypeAnnotation
 		| TypeQueryCallExpressionInTypeAnnotation;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _property: 'property';
+	};
 	readonly __inputHints__?: {
 		readonly object:
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
@@ -5779,6 +6293,10 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 	readonly $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 	readonly _function: TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation;
 	readonly _arguments: Arguments;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
@@ -5798,6 +6316,9 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 export interface Asserts {
 	readonly $type: TSKindId.Asserts;
 	readonly _value: TypePredicate | Identifier | TSKindId.This;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value: KindEnum<'this', TSKindId.This | TSKindId.ThisKeyword> | TypePredicate | Identifier;
 	};
@@ -5810,6 +6331,9 @@ export interface Asserts {
 export interface AssertsAnnotation {
 	readonly $type: TSKindId.AssertsAnnotation;
 	readonly _asserts: Asserts;
+	readonly __slotNames__?: {
+		readonly _asserts: 'asserts';
+	};
 	readonly __looseHints__?: {
 		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | 'this')[];
 	};
@@ -5823,6 +6347,10 @@ export interface TupleParameter {
 	readonly $type: TSKindId.TupleParameter;
 	readonly _name: Identifier | RestPattern;
 	readonly _type: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
 	};
@@ -5838,6 +6366,10 @@ export interface OptionalTupleParameter {
 	readonly $type: TSKindId.OptionalTupleParameter;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
 	};
@@ -5852,6 +6384,9 @@ export interface OptionalTupleParameter {
 export interface OptionalType {
 	readonly $type: TSKindId.OptionalType;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5889,6 +6424,9 @@ export interface OptionalType {
 export interface RestType {
 	readonly $type: TSKindId.RestType;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -5929,6 +6467,12 @@ export interface ConstructorType {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _abstract: 'abstract';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly type:
@@ -5987,6 +6531,9 @@ export interface ConstructorType {
 export interface TemplateType {
 	readonly $type: TSKindId.TemplateType;
 	readonly _type: PrimaryType | InferType;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -6025,6 +6572,9 @@ export interface TemplateType {
 export interface TemplateLiteralType {
 	readonly $type: TSKindId.TemplateLiteralType;
 	readonly _elements: readonly (TemplateChars | TemplateType)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.TemplateChars | T.TemplateType)[], false, true>;
 	};
@@ -6035,6 +6585,10 @@ export interface InferType {
 	readonly $type: TSKindId.InferType;
 	readonly _name: TypeIdentifier;
 	readonly _type?: Type;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type?:
 			| KindEnum<
@@ -6080,6 +6634,12 @@ export interface ConditionalType {
 	readonly _right: Type;
 	readonly _consequence: Type;
 	readonly _alternative: Type;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+		readonly _consequence: 'consequence';
+		readonly _alternative: 'alternative';
+	};
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
@@ -6202,6 +6762,10 @@ export interface GenericType {
 	readonly $type: TSKindId.GenericType;
 	readonly _name: TypeIdentifier | NestedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type_arguments: 'typeArguments';
+	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
 	};
@@ -6235,6 +6799,10 @@ export interface TypePredicate {
 		| TSKindId.NeverKeyword
 		| TSKindId.ObjectKeyword;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly name:
 			| KindEnum<
@@ -6313,6 +6881,9 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
 	readonly $type: TSKindId.TypePredicateAnnotation;
 	readonly _type_predicate: TypePredicate;
+	readonly __slotNames__?: {
+		readonly _type_predicate: 'typePredicate';
+	};
 	readonly __slotHints__?: {
 		readonly typePredicate: SlotHint<T.TypePredicate>;
 	};
@@ -6329,6 +6900,11 @@ export interface TypeQueryMemberExpression {
 		| TypeQueryCallExpression;
 	readonly _content: number;
 	readonly _property: PrivatePropertyIdentifier | PropertyIdentifier;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _content: 'content';
+		readonly _property: 'property';
+	};
 	readonly __inputHints__?: {
 		readonly object:
 			| KindEnum<'this', TSKindId.This | TSKindId.ThisKeyword>
@@ -6375,6 +6951,11 @@ export interface TypeQuerySubscriptExpression {
 		| TSKindId.ObjectKeyword
 		| String
 		| Number;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _optional_chain: 'optionalChain';
+		readonly _index: 'index';
+	};
 	readonly __inputHints__?: {
 		readonly object:
 			| KindEnum<'this', TSKindId.This | TSKindId.ThisKeyword>
@@ -6440,6 +7021,10 @@ export interface TypeQueryCallExpression {
 	readonly $type: TSKindId.TypeQueryCallExpression;
 	readonly _function: TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _arguments: Arguments;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
@@ -6462,6 +7047,10 @@ export interface TypeQueryInstantiationExpression {
 	readonly $type: TSKindId.TypeQueryInstantiationExpression;
 	readonly _function: TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	readonly _type_arguments: TypeArguments;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _type_arguments: 'typeArguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
@@ -6495,6 +7084,9 @@ export interface TypeQuery {
 		| TypeQueryInstantiationExpression
 		| Identifier
 		| TSKindId.This;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'this', TSKindId.This | TSKindId.ThisKeyword>
@@ -6528,6 +7120,9 @@ export interface TypeQuery {
 export interface IndexTypeQuery {
 	readonly $type: TSKindId.IndexTypeQuery;
 	readonly _type: PrimaryType;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -6566,6 +7161,10 @@ export interface LookupType {
 	readonly $type: TSKindId.LookupType;
 	readonly _type: PrimaryType;
 	readonly _index_type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+		readonly _index_type: 'indexType';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -6633,6 +7232,11 @@ export interface MappedTypeClause {
 	readonly _name: TypeIdentifier;
 	readonly _type: Type;
 	readonly _alias?: Type;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+		readonly _alias: 'alias';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -6710,6 +7314,9 @@ export interface LiteralType {
 		| TSKindId.False
 		| TSKindId.Null
 		| TSKindId.Undefined;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
@@ -6752,6 +7359,9 @@ export interface LiteralType {
 export interface FlowMaybeType {
 	readonly $type: TSKindId.FlowMaybeType;
 	readonly _type: PrimaryType;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -6789,6 +7399,9 @@ export interface FlowMaybeType {
 export interface ParenthesizedType {
 	readonly $type: TSKindId.ParenthesizedType;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -6826,6 +7439,9 @@ export interface ParenthesizedType {
 export interface TypeArguments {
 	readonly $type: TSKindId.TypeArguments;
 	readonly _types: Types;
+	readonly __slotNames__?: {
+		readonly _types: 'types';
+	};
 	readonly __looseHints__?: {
 		readonly types: readonly Type[];
 	};
@@ -6850,6 +7466,11 @@ export interface ObjectType {
 	readonly _opening: number;
 	readonly _members?: ObjectTypeContent;
 	readonly _closing: number;
+	readonly __slotNames__?: {
+		readonly _opening: 'opening';
+		readonly _members: 'members';
+		readonly _closing: 'closing';
+	};
 	readonly __inputHints__?: {
 		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
 		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
@@ -6893,6 +7514,11 @@ export interface CallSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly __slotNames__?: {
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
@@ -6926,6 +7552,15 @@ export interface PropertySignature {
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _optional: boolean;
 	readonly _type?: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _static: 'static';
+		readonly _override: 'override';
+		readonly _readonly: 'readonly';
+		readonly _name: 'name';
+		readonly _optional: 'optional';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
 			'public' | 'private' | 'protected',
@@ -6968,6 +7603,9 @@ export interface PropertySignature {
 export interface TypeParameters {
 	readonly $type: TSKindId.TypeParameters;
 	readonly _elements: TypeParametersElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements: readonly TypeParameter[];
 	};
@@ -6993,6 +7631,12 @@ export interface TypeParameter {
 	readonly _name: TypeIdentifier;
 	readonly _constraint?: Constraint;
 	readonly _value?: DefaultType;
+	readonly __slotNames__?: {
+		readonly _const: 'const';
+		readonly _name: 'name';
+		readonly _constraint: 'constraint';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly const?: BaseBooleanKeyword<'const'>;
 	};
@@ -7015,6 +7659,9 @@ export interface TypeParameter {
 export interface DefaultType {
 	readonly $type: TSKindId.DefaultType;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -7053,6 +7700,10 @@ export interface Constraint {
 	readonly $type: TSKindId.Constraint;
 	readonly _content: number;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'extends' | ':', TSKindId.ExtendsKeyword | TSKindId.Colon>;
 		readonly type:
@@ -7096,6 +7747,12 @@ export interface ConstructSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _type?: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _abstract: 'abstract';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 	};
@@ -7129,6 +7786,9 @@ export interface ConstructSignature {
 export interface ArrayType {
 	readonly $type: TSKindId.ArrayType;
 	readonly _type: PrimaryType;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -7166,6 +7826,9 @@ export interface ArrayType {
 export interface TupleType {
 	readonly $type: TSKindId.TupleType;
 	readonly _tuple_type_members?: TupleTypeMembers;
+	readonly __slotNames__?: {
+		readonly _tuple_type_members: 'tupleTypeMembers';
+	};
 	readonly __looseHints__?: {
 		readonly tuple_type_members?: readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[];
 	};
@@ -7188,6 +7851,9 @@ export interface TupleType {
 export interface ReadonlyType {
 	readonly $type: TSKindId.ReadonlyType;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -7226,6 +7892,10 @@ export interface UnionType {
 	readonly $type: TSKindId.UnionType;
 	readonly _left?: Type;
 	readonly _right: Type;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly left?:
 			| KindEnum<
@@ -7292,6 +7962,10 @@ export interface IntersectionType {
 	readonly $type: TSKindId.IntersectionType;
 	readonly _left?: Type;
 	readonly _right: Type;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly left?:
 			| KindEnum<
@@ -7359,6 +8033,11 @@ export interface FunctionType {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type: Type | Asserts | TypePredicate;
+	readonly __slotNames__?: {
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+	};
 	readonly __inputHints__?: {
 		readonly return_type:
 			| KindEnum<
@@ -7417,6 +8096,9 @@ export interface ExportSpecifiers {
 	readonly $type: TSKindId.ExportSpecifiers;
 	readonly _item: NonEmptyArray<ExportSpecifier>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __inputHints__?: {
 		readonly item: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>;
 	};
@@ -7439,6 +8121,9 @@ export interface ImportSpecifiers {
 	readonly $type: TSKindId.ImportSpecifiers;
 	readonly _item: NonEmptyArray<ImportSpecifier>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.ImportSpecifier>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -7451,6 +8136,9 @@ export interface FormalParametersElements {
 	readonly $type: TSKindId.FormalParametersElements;
 	readonly _item: NonEmptyArray<RequiredParameter | OptionalParameter>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.RequiredParameter | T.OptionalParameter>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -7465,6 +8153,9 @@ export interface FormalParametersElements {
 export interface EnumBodyElementName {
 	readonly $type: TSKindId.EnumBodyElementName;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<
 			| (T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName)
@@ -7478,6 +8169,9 @@ export interface EnumBodyElements {
 	readonly $type: TSKindId.EnumBodyElements;
 	readonly _item: NonEmptyArray<EnumBodyElement>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.EnumBodyElement>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -7490,6 +8184,9 @@ export interface Types {
 	readonly $type: TSKindId.Types;
 	readonly _item: NonEmptyArray<Type>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -7505,6 +8202,9 @@ export interface TypeParametersElements {
 	readonly $type: TSKindId.TypeParametersElements;
 	readonly _item: NonEmptyArray<TypeParameter>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __inputHints__?: {
 		readonly item: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
@@ -7523,6 +8223,9 @@ export interface TupleTypeMembers {
 	readonly $type: TSKindId.TupleTypeMembers;
 	readonly _item: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<
 			NonEmptyArray<
@@ -7543,6 +8246,9 @@ export interface TupleTypeMembers {
 export interface ImportClauseGroup {
 	readonly $type: TSKindId.ImportClauseGroup;
 	readonly _content: NamespaceImport | NamedImports;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.NamespaceImport | T.NamedImports>;
 	};
@@ -7553,6 +8259,10 @@ export interface CatchClauseGroup {
 	readonly $type: TSKindId.CatchClauseGroup;
 	readonly _parameter: Identifier | ObjectPattern | ArrayPattern;
 	readonly _type?: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _parameter: 'parameter';
+		readonly _type: 'type';
+	};
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
@@ -7567,6 +8277,9 @@ export interface CatchClauseGroup {
 export interface AmbientDeclarationGlobal {
 	readonly $type: TSKindId.AmbientDeclarationGlobal;
 	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly body: readonly Statement[];
 	};
@@ -7581,6 +8294,11 @@ export interface AmbientDeclarationModule {
 	readonly _name: PropertyIdentifier;
 	readonly _type: Type;
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly type:
 			| KindEnum<
@@ -7630,6 +8348,9 @@ export interface ObjectTypeContent {
 	>;
 	readonly _separator?: number;
 	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<
 			NonEmptyArray<
@@ -7667,6 +8388,10 @@ export interface ExportStatementNamespaceExport {
 	readonly $type: TSKindId.ExportStatementNamespaceExport;
 	readonly _name: Identifier;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -7682,6 +8407,10 @@ export interface ExportStatementEqualsExport {
 	readonly $type: TSKindId.ExportStatementEqualsExport;
 	readonly _expression: Expression;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -7707,6 +8436,9 @@ export interface ExportStatementEqualsExport {
 export interface CommentLine {
 	readonly $type: TSKindId.CommentLine;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -7716,6 +8448,9 @@ export interface CommentLine {
 export interface CommentBlock {
 	readonly $type: TSKindId.CommentBlock;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -7725,6 +8460,9 @@ export interface CommentBlock {
 export interface LiteralTypeNegativeNumber {
 	readonly $type: TSKindId.LiteralTypeNegativeNumber;
 	readonly _argument: Number;
+	readonly __slotNames__?: {
+		readonly _argument: 'argument';
+	};
 	readonly __slotHints__?: {
 		readonly argument: SlotHint<T.Number>;
 	};
@@ -7735,6 +8473,10 @@ export interface NumberHex {
 	readonly $type: TSKindId.NumberHex;
 	readonly _prefix: '0x' | '0X';
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 		readonly prefix: SlotHint<'0x' | '0X'>;
@@ -7750,6 +8492,13 @@ export interface NumberFloatPoint {
 	readonly _marker?: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
+	readonly __slotNames__?: {
+		readonly _integer: 'integer';
+		readonly _fraction: 'fraction';
+		readonly _marker: 'marker';
+		readonly _sign: 'sign';
+		readonly _exponent: 'exponent';
+	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly fraction: SlotHint<string | number | bigint, true>;
@@ -7770,6 +8519,12 @@ export interface NumberFloatLeadingPoint {
 	readonly _marker?: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
+	readonly __slotNames__?: {
+		readonly _fraction: 'fraction';
+		readonly _marker: 'marker';
+		readonly _sign: 'sign';
+		readonly _exponent: 'exponent';
+	};
 	readonly __slotHints__?: {
 		readonly fraction: SlotHint<string | number | bigint>;
 		readonly sign: SlotHint<'-' | '+', true>;
@@ -7788,6 +8543,12 @@ export interface NumberFloatScientific {
 	readonly _marker: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent: string;
+	readonly __slotNames__?: {
+		readonly _integer: 'integer';
+		readonly _marker: 'marker';
+		readonly _sign: 'sign';
+		readonly _exponent: 'exponent';
+	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly sign: SlotHint<'-' | '+', true>;
@@ -7804,6 +8565,10 @@ export interface NumberBinary {
 	readonly $type: TSKindId.NumberBinary;
 	readonly _prefix: '0b' | '0B';
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 		readonly prefix: SlotHint<'0b' | '0B'>;
@@ -7816,6 +8581,10 @@ export interface NumberOctal {
 	readonly $type: TSKindId.NumberOctal;
 	readonly _prefix: '0o' | '0O';
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 		readonly prefix: SlotHint<'0o' | '0O'>;
@@ -7827,6 +8596,9 @@ export interface NumberOctal {
 export interface NumberBigintHex {
 	readonly $type: TSKindId.NumberBigintHex;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 	};
@@ -7836,6 +8608,9 @@ export interface NumberBigintHex {
 export interface NumberBigintBinary {
 	readonly $type: TSKindId.NumberBigintBinary;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 	};
@@ -7845,6 +8620,9 @@ export interface NumberBigintBinary {
 export interface NumberBigintOctal {
 	readonly $type: TSKindId.NumberBigintOctal;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 	};
@@ -7854,6 +8632,9 @@ export interface NumberBigintOctal {
 export interface NumberBigintDecimal {
 	readonly $type: TSKindId.NumberBigintDecimal;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 	};
@@ -7864,6 +8645,10 @@ export interface BinaryExpressionIn {
 	readonly $type: TSKindId.BinaryExpressionIn;
 	readonly _left: Expression | PrivatePropertyIdentifier;
 	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
@@ -7902,6 +8687,11 @@ export interface ClassBodyMemberMethod {
 	readonly _decorator: readonly Decorator[];
 	readonly _method_definition: MethodDefinition;
 	readonly _terminator?: number;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _method_definition: 'methodDefinition';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
@@ -7919,6 +8709,10 @@ export interface ClassBodyMemberMethodSig {
 	readonly $type: TSKindId.ClassBodyMemberMethodSig;
 	readonly _method_signature: MethodSignature;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _method_signature: 'methodSignature';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ',', TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma>;
 	};
@@ -7934,6 +8728,10 @@ export interface ClassBodyMemberDeclaration {
 	readonly $type: TSKindId.ClassBodyMemberDeclaration;
 	readonly _member: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _member: 'member';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma>;
 	};
@@ -7954,6 +8752,13 @@ export interface IndexSignatureColon {
 	readonly _name: Identifier;
 	readonly _index_type: Type;
 	readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _sign: 'sign';
+		readonly _readonly: 'readonly';
+		readonly _name: 'name';
+		readonly _index_type: 'indexType';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
@@ -8006,6 +8811,12 @@ export interface IndexSignatureMappedTypeClause {
 	readonly _readonly: boolean;
 	readonly _mapped_type_clause: MappedTypeClause;
 	readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _sign: 'sign';
+		readonly _readonly: 'readonly';
+		readonly _mapped_type_clause: 'mappedTypeClause';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
@@ -8028,6 +8839,10 @@ export interface ImportStatementClauseFrom {
 	readonly $type: TSKindId.ImportStatementClauseFrom;
 	readonly _import_clause: ImportClause;
 	readonly _source: String;
+	readonly __slotNames__?: {
+		readonly _import_clause: 'importClause';
+		readonly _source: 'source';
+	};
 	readonly __looseHints__?: {
 		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
 	};
@@ -8042,6 +8857,9 @@ export interface ImportStatementClauseFrom {
 export interface YieldExpressionDelegate {
 	readonly $type: TSKindId.YieldExpressionDelegate;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -8065,6 +8883,10 @@ export interface ImportSpecifierName {
 	readonly $type: TSKindId.ImportSpecifierName;
 	readonly _import_kind?: number;
 	readonly _name: Identifier;
+	readonly __slotNames__?: {
+		readonly _import_kind: 'importKind';
+		readonly _name: 'name';
+	};
 	readonly __inputHints__?: {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 	};
@@ -8081,6 +8903,11 @@ export interface ImportSpecifierAs {
 	readonly _import_kind?: number;
 	readonly _name: Identifier | String | TSKindId.DefaultKeyword;
 	readonly _alias: Identifier;
+	readonly __slotNames__?: {
+		readonly _import_kind: 'importKind';
+		readonly _name: 'name';
+		readonly _alias: 'alias';
+	};
 	readonly __inputHints__?: {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'default', TSKindId.DefaultKeyword> | Identifier | String;
@@ -8099,6 +8926,10 @@ export interface ParenthesizedExpressionTyped {
 	readonly $type: TSKindId.ParenthesizedExpressionTyped;
 	readonly _expression: Expression;
 	readonly _type?: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _type: 'type';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<
@@ -8126,6 +8957,9 @@ export interface ParenthesizedExpressionTyped {
 export interface ParenthesizedExpressionSequence {
 	readonly $type: TSKindId.ParenthesizedExpressionSequence;
 	readonly _sequence_expression: SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _sequence_expression: 'sequenceExpression';
+	};
 	readonly __looseHints__?: {
 		readonly sequence_expression: readonly Expression[];
 	};
@@ -8140,6 +8974,11 @@ export interface CallExpressionCall {
 	readonly _function: Expression | TSKindId.Import;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _type_arguments: 'typeArguments';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
@@ -8179,6 +9018,10 @@ export interface CallExpressionTemplateCall {
 	readonly $type: TSKindId.CallExpressionTemplateCall;
 	readonly _function: PrimaryExpression | NewExpression;
 	readonly _arguments: TemplateString;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
@@ -8209,6 +9052,11 @@ export interface CallExpressionMember {
 	readonly _function: PrimaryExpression;
 	readonly _type_arguments?: TypeArguments;
 	readonly _arguments: Arguments;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _type_arguments: 'typeArguments';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
@@ -8245,6 +9093,9 @@ export interface CallExpressionMember {
 export interface StringDouble {
 	readonly $type: TSKindId.StringDouble;
 	readonly _elements: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], false, true>;
 	};
@@ -8254,6 +9105,9 @@ export interface StringDouble {
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
 	readonly _elements: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], false, true>;
 	};
@@ -8264,6 +9118,10 @@ export interface UpdateExpressionPostfix {
 	readonly $type: TSKindId.UpdateExpressionPostfix;
 	readonly _argument: Expression;
 	readonly _operator: number;
+	readonly __slotNames__?: {
+		readonly _argument: 'argument';
+		readonly _operator: 'operator';
+	};
 	readonly __inputHints__?: {
 		readonly argument:
 			| KindEnum<
@@ -8290,6 +9148,10 @@ export interface UpdateExpressionPrefix {
 	readonly $type: TSKindId.UpdateExpressionPrefix;
 	readonly _operator: number;
 	readonly _argument: Expression;
+	readonly __slotNames__?: {
+		readonly _operator: 'operator';
+		readonly _argument: 'argument';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'++' | '--', TSKindId.PlusPlus | TSKindId.DashDash>;
 		readonly argument:
@@ -8315,6 +9177,9 @@ export interface UpdateExpressionPrefix {
 export interface ArrowFunctionParameter {
 	readonly $type: TSKindId.ArrowFunctionParameter;
 	readonly _parameter: Identifier;
+	readonly __slotNames__?: {
+		readonly _parameter: 'parameter';
+	};
 	readonly __slotHints__?: {
 		readonly parameter: SlotHint<T.Identifier>;
 	};
@@ -8325,6 +9190,10 @@ export interface ClassHeritageExtendsClause {
 	readonly $type: TSKindId.ClassHeritageExtendsClause;
 	readonly _extends_clause: ExtendsClause;
 	readonly _implements_clause?: ImplementsClause;
+	readonly __slotNames__?: {
+		readonly _extends_clause: 'extendsClause';
+		readonly _implements_clause: 'implementsClause';
+	};
 	readonly __looseHints__?: {
 		readonly extends_clause: readonly ExtendsClauseSingle[];
 		readonly implements_clause?: readonly Type[];
@@ -8341,6 +9210,10 @@ export interface ImportClauseDefaultImport {
 	readonly $type: TSKindId.ImportClauseDefaultImport;
 	readonly _identifier: Identifier;
 	readonly _import_clause_group?: ImportClauseGroup;
+	readonly __slotNames__?: {
+		readonly _identifier: 'identifier';
+		readonly _import_clause_group: 'importClauseGroup';
+	};
 	readonly __looseHints__?: {
 		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
 	};
@@ -8360,6 +9233,11 @@ export interface ExportStatementDefaultFrom {
 		| ExportStatementDefaultFromNsFrom
 		| ExportStatementDefaultFromClauseFrom;
 	readonly _terminator: number;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+		readonly _content: 'content';
+		readonly _terminator: 'terminator';
+	};
 	readonly __inputHints__?: {
 		readonly type?: BaseBooleanKeyword<'type'>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -8383,6 +9261,10 @@ export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator: readonly Decorator[];
 	readonly _content: Declaration | ExportStatementDefaultDeclarationDefaultKw;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
 		readonly content: SlotHint<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>;
@@ -8394,6 +9276,9 @@ export interface ExportStatementDefaultDeclaration {
 export interface ExportStatementDefaultFromStarFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFromStarFrom;
 	readonly _source: String;
+	readonly __slotNames__?: {
+		readonly _source: 'source';
+	};
 	readonly __slotHints__?: {
 		readonly source: SlotHint<T.String>;
 	};
@@ -8404,6 +9289,10 @@ export interface ExportStatementDefaultFromNsFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFromNsFrom;
 	readonly _namespace_export: NamespaceExport;
 	readonly _source: String;
+	readonly __slotNames__?: {
+		readonly _namespace_export: 'namespaceExport';
+		readonly _source: 'source';
+	};
 	readonly __looseHints__?: {
 		readonly namespace_export: readonly (Identifier | String | 'default')[];
 	};
@@ -8419,6 +9308,10 @@ export interface ExportStatementDefaultFromClauseFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFromClauseFrom;
 	readonly _export_clause: ExportClause;
 	readonly _source?: String;
+	readonly __slotNames__?: {
+		readonly _export_clause: 'exportClause';
+		readonly _source: 'source';
+	};
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
 	};
@@ -8439,6 +9332,9 @@ export interface ExportStatementDefaultFromClauseFrom {
 export interface ExportStatementDefaultDeclarationDefaultKw {
 	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKw;
 	readonly _content: Declaration | ExportStatementDefaultDeclarationDefaultKwValue;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>;
 	};
@@ -8449,6 +9345,10 @@ export interface ExportStatementDefaultDeclarationDefaultKwValue {
 	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
 	readonly _value: Expression;
 	readonly _automatic_semicolon: number;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _automatic_semicolon: 'automaticSemicolon';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -8478,6 +9378,11 @@ export interface VariableDeclaratorPlain {
 	readonly _name: Identifier | ObjectPattern | ArrayPattern;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value?:
 			| KindEnum<
@@ -8508,6 +9413,10 @@ export interface VariableDeclaratorDefinite {
 	readonly $type: TSKindId.VariableDeclaratorDefinite;
 	readonly _name: Identifier;
 	readonly _type: TypeAnnotation;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
 	};
@@ -8524,6 +9433,11 @@ export interface ForHeaderLhs {
 	readonly _left: LhsExpression | ParenthesizedExpression;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'in' | 'of', TSKindId.InKeyword | TSKindId.OfKeyword>;
 		readonly right:
@@ -8555,6 +9469,12 @@ export interface ForHeaderVarKind {
 	readonly _value?: Expression;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _value: 'value';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly value?:
 			| KindEnum<
@@ -8600,6 +9520,13 @@ export interface ForHeaderLetConstKind {
 	readonly _terminator?: number;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _kind: 'kind';
+		readonly _left: 'left';
+		readonly _terminator: 'terminator';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'let' | 'const', TSKindId.LetKeyword | TSKindId.ConstKeyword>;
 		readonly terminator?: KindEnum<'\n', TSKindId.AutomaticSemicolon>;
@@ -8638,6 +9565,13 @@ export interface ForHeaderUsingKind {
 	readonly _terminator: boolean;
 	readonly _operator: number;
 	readonly _right: Expression | SequenceExpression;
+	readonly __slotNames__?: {
+		readonly _kind: 'kind';
+		readonly _left: 'left';
+		readonly _terminator: 'terminator';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'using' | 'await using', TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm>;
 		readonly terminator?: BaseBooleanKeyword<'\n'>;
@@ -8672,6 +9606,9 @@ export interface ForHeaderUsingKind {
 export interface StatementIdentifier {
 	readonly $type: TSKindId.StatementIdentifier;
 	readonly _content: Identifier;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Identifier>;
 	};
@@ -8682,6 +9619,9 @@ export interface StatementIdentifier {
 export interface ShorthandPropertyIdentifier {
 	readonly $type: TSKindId.ShorthandPropertyIdentifier;
 	readonly _content: Identifier;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Identifier>;
 	};
@@ -8692,6 +9632,9 @@ export interface ShorthandPropertyIdentifier {
 export interface ShorthandPropertyIdentifierPattern {
 	readonly $type: TSKindId.ShorthandPropertyIdentifierPattern;
 	readonly _content: Identifier;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Identifier>;
 	};
@@ -8702,6 +9645,9 @@ export interface ShorthandPropertyIdentifierPattern {
 export interface PropertyIdentifier {
 	readonly $type: TSKindId.PropertyIdentifier;
 	readonly _content: Identifier;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Identifier>;
 	};
@@ -8712,6 +9658,9 @@ export interface PropertyIdentifier {
 export interface TypeIdentifier {
 	readonly $type: TSKindId.TypeIdentifier;
 	readonly _content: Identifier;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Identifier>;
 	};
@@ -8722,6 +9671,9 @@ export interface TypeIdentifier {
 export interface InterfaceBody {
 	readonly $type: TSKindId.InterfaceBody;
 	readonly _content: ObjectType;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ObjectType>;
 	};
@@ -16830,8 +17782,8 @@ export namespace UsingDeclaration {
 	export type Kind = TSKindId.UsingDeclaration;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'variableDeclarator'>,
-			KeyRefusesEmpty<LooseConfig, 'variableDeclarator'>,
+			KeyRefusesEmpty<Config, 'variableDeclarators'>,
+			KeyRefusesEmpty<LooseConfig, 'variableDeclarators'>,
 			SetterRefusesEmpty<Bound, 'variableDeclarators'>
 		]
 	>;
@@ -18234,8 +19186,8 @@ export namespace SequenceExpression {
 	export type Kind = TSKindId.SequenceExpression;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'expression'>,
-			KeyRefusesEmpty<LooseConfig, 'expression'>,
+			KeyRefusesEmpty<Config, 'expressions'>,
+			KeyRefusesEmpty<LooseConfig, 'expressions'>,
 			SetterRefusesEmpty<Bound, 'expressions'>
 		]
 	>;
@@ -19085,7 +20037,7 @@ export namespace ImplementsClause {
 		  ];
 	export type Kind = TSKindId.ImplementsClause;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'type'>, KeyRefusesEmpty<LooseConfig, 'type'>, SetterRefusesEmpty<Bound, 'types'>]
+		[KeyRefusesEmpty<Config, 'types'>, KeyRefusesEmpty<LooseConfig, 'types'>, SetterRefusesEmpty<Bound, 'types'>]
 	>;
 }
 export namespace AmbientDeclaration {
@@ -19324,7 +20276,7 @@ export namespace ExtendsTypeClause {
 		  ];
 	export type Kind = TSKindId.ExtendsTypeClause;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'type'>, KeyRefusesEmpty<LooseConfig, 'type'>, SetterRefusesEmpty<Bound, 'types'>]
+		[KeyRefusesEmpty<Config, 'types'>, KeyRefusesEmpty<LooseConfig, 'types'>, SetterRefusesEmpty<Bound, 'types'>]
 	>;
 }
 export namespace EnumDeclaration {
@@ -20745,7 +21697,7 @@ export namespace ExportSpecifiers {
 		  ];
 	export type Kind = TSKindId.ExportSpecifiers;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ImportSpecifiers {
@@ -20797,7 +21749,7 @@ export namespace ImportSpecifiers {
 		  ];
 	export type Kind = TSKindId.ImportSpecifiers;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace FormalParametersElements {
@@ -20853,7 +21805,7 @@ export namespace FormalParametersElements {
 		  ];
 	export type Kind = TSKindId.FormalParametersElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace EnumBodyElementName {
@@ -20935,7 +21887,7 @@ export namespace EnumBodyElements {
 		  ];
 	export type Kind = TSKindId.EnumBodyElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace Types {
@@ -20987,7 +21939,7 @@ export namespace Types {
 		  ];
 	export type Kind = TSKindId.Types;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace TypeParametersElements {
@@ -21063,7 +22015,7 @@ export namespace TypeParametersElements {
 		  ];
 	export type Kind = TSKindId.TypeParametersElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace TupleTypeMembers {
@@ -21166,7 +22118,7 @@ export namespace TupleTypeMembers {
 		  ];
 	export type Kind = TSKindId.TupleTypeMembers;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ImportClauseGroup {
@@ -21397,7 +22349,7 @@ export namespace ObjectTypeContent {
 		  ];
 	export type Kind = TSKindId.ObjectTypeContent;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ExportStatementNamespaceExport {

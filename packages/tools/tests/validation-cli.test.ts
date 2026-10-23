@@ -34,6 +34,7 @@ vi.mock('../src/run.ts', () => ({
 	runFactory: vi.fn().mockResolvedValue({
 		grammar: 'rust',
 		total: 7,
+		casesByKind: { function_item: 7 },
 		pass: 7,
 		fail: 0,
 		skip: 0,
@@ -42,7 +43,16 @@ vi.mock('../src/run.ts', () => ({
 		astMismatches: [],
 		skips: [],
 		excluded: [],
-		render: { total: 6, pass: 6, astMatchPass: 6, errors: [], astMismatches: [], excluded: [] }
+		render: {
+			total: 6,
+			casesByKind: { function_item: 6 },
+			pass: 6,
+			astMatchPass: 6,
+			separatorTolerated: 0,
+			errors: [],
+			astMismatches: [],
+			excluded: []
+		}
 	}),
 	formatFromReport: vi.fn().mockReturnValue('from: pass=5 total=5'),
 	formatReadRenderParseReport: vi.fn().mockReturnValue('rt: pass=8 total=8'),

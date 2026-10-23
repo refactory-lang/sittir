@@ -248,7 +248,7 @@ export function buildStringContent(
 ): T.StringContent.Bound {
 	const _content = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'string_content', { content: _content });
+	if (handle !== undefined) admitChildren(handle, 'string_content', { contents: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.StringContent as const, { _content });
 	const record = arena.record(TSKindId.StringContent as const, 4);
@@ -357,16 +357,16 @@ export function buildList(config: T.List.Config): T.List.Bound {
 }
 
 export function buildGrouping<
-	GroupingGroupSlot extends T.Grouping.Config['groupingGroup'],
+	GroupingGroupsSlot extends T.Grouping.Config['groupingGroups'],
 	ElementsSlot extends T.Grouping.Config['elements']
 >(
-	config: RefusingConfig<T.Grouping.Config, { groupingGroup: GroupingGroupSlot; elements: ElementsSlot }>
+	config: RefusingConfig<T.Grouping.Config, { groupingGroups: GroupingGroupsSlot; elements: ElementsSlot }>
 ): T.Grouping.Bound;
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
-	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroup);
+	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
 	const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroup: _grouping_group, elements: _elements });
+	if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group, elements: _elements });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Grouping as const, { _grouping_group, _elements });
 	const record = arena.record(TSKindId.Grouping as const, 6);
@@ -381,7 +381,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 						args,
 						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
 						(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
-							buildGrouping({ ...config, groupingGroup: restItems('groupingGroups', values) })
+							buildGrouping({ ...config, groupingGroups: restItems('groupingGroups', values) })
 					)
 				),
 			elements: (...values: Admit<T.ListElement[]>) =>

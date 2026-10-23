@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
-import { findWrappedNode, loadKindNameFromId, loadSlotReaders, slotValuesOf } from '../src/validate/common.ts';
+import { findWrappedNode, loadKindNameFromId, loadSlotAccessorOf, slotValuesOf } from '../src/validate/common.ts';
 
 /** The items of the list slot of the first node of `kind` in `source`, as its slot reader returns them. */
 async function itemsOf(grammar: string, nodeStorage: 'object' | 'arena', source: string, kind: string): Promise<readonly unknown[]> {
 	const engine = await createEngine(await languageByName(grammar), { nodeStorage });
-	const readers = await loadSlotReaders(grammar);
-	const node = findWrappedNode(engine.parse(source), readers, kind, await loadKindNameFromId(grammar));
+	const accessorOf = await loadSlotAccessorOf(grammar);
+	const node = findWrappedNode(engine.parse(source), accessorOf, kind, await loadKindNameFromId(grammar));
 	if (node === undefined) throw new Error(`no ${kind} in ${JSON.stringify(source)}`);
-	const list = slotValuesOf(node, readers).find(([, value]) => Array.isArray(value))?.[1];
+	const list = slotValuesOf(node, accessorOf).find(([, value]) => Array.isArray(value))?.[1];
 	if (!Array.isArray(list)) throw new Error(`${kind} holds no list slot`);
 	const items = [...(list as readonly unknown[])];
 	engine.dispose();

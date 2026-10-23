@@ -1,5 +1,5 @@
 import { spanOf } from '@sittir/common/utils';
-import type { FactoryEntry, ReadNodeLike, SlotReaders } from '../validate/common.ts';
+import type { FactoryEntry, ReadNodeLike, SlotAccessorOf } from '../validate/common.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -103,11 +103,11 @@ function findFirstOfKind(
 	root: unknown,
 	kind: string,
 	common: CommonModule,
-	readers: SlotReaders,
+	accessorOf: SlotAccessorOf,
 	kindNameFromId: KindNameFromId
 ): ParsedNode | undefined {
 	let found: ParsedNode | undefined;
-	common.walkWrappedTree(root, readers, (node) => {
+	common.walkWrappedTree(root, accessorOf, (node) => {
 		if (found !== undefined || node.$named === false) return;
 		if (typeof node.$type === 'number' && kindNameFromId?.(node.$type) === kind) found = node;
 	});
@@ -141,26 +141,26 @@ export function buildFactoryNode(
 	readData: ReadNodeLike,
 	artifacts: FactoryArtifacts,
 	common: Pick<CommonModule, 'buildFactoryNodeFromReference'>,
-	readers: SlotReaders,
+	accessorOf: SlotAccessorOf,
 	kindNameFromId: KindNameFromId
 ): unknown {
 	const { factory, resolvedKind } = resolveFactory(artifacts.factoryMap, kind);
 	if (factory === undefined) {
 		throw new Error(`no factory registered for '${kind}'`);
 	}
-	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, { kindNameFromId, readers });
+	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, { kindNameFromId, accessorOf });
 }
 
 function resolveCorpusCase(
 	grammar: GrammarName,
 	kind: string,
 	common: CommonModule,
-	readers: SlotReaders,
+	accessorOf: SlotAccessorOf,
 	engine: ExerciseEngine,
 	kindNameFromId: KindNameFromId
 ): ExerciseCase | null {
 	for (const entry of common.loadCorpusEntries(grammar)) {
-		if (findFirstOfKind(engine.parse(entry.source), kind, common, readers, kindNameFromId) !== undefined) {
+		if (findFirstOfKind(engine.parse(entry.source), kind, common, accessorOf, kindNameFromId) !== undefined) {
 			return { kind, find: kind, source: entry.source, label: entry.name };
 		}
 	}
@@ -171,7 +171,7 @@ function resolveCases(
 	grammar: GrammarName,
 	kinds: readonly string[],
 	common: CommonModule,
-	readers: SlotReaders,
+	accessorOf: SlotAccessorOf,
 	engine: ExerciseEngine,
 	kindNameFromId: KindNameFromId
 ): readonly ExerciseCase[] {
@@ -183,7 +183,7 @@ function resolveCases(
 			selected.push(...builtinMatches);
 			continue;
 		}
-		const corpusCase = resolveCorpusCase(grammar, kind, common, readers, engine, kindNameFromId);
+		const corpusCase = resolveCorpusCase(grammar, kind, common, accessorOf, engine, kindNameFromId);
 		selected.push(corpusCase ?? { kind, find: kind, source: '', label: 'no matching built-in or corpus case' });
 	}
 	return selected;
@@ -197,8 +197,8 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 	const artifacts = await loadFactoryArtifacts(grammar);
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
 	const engine: ExerciseEngine = await common.loadNativeEngine(grammar);
-	const readers = await common.loadSlotReaders(grammar);
-	const cases = resolveCases(grammar, kinds, common, readers, engine, kindNameFromId);
+	const accessorOf = await common.loadSlotAccessorOf(grammar);
+	const cases = resolveCases(grammar, kinds, common, accessorOf, engine, kindNameFromId);
 	if (cases.length === 0) {
 		process.stderr.write(`exercise: no cases available for grammar '${grammar}'\n`);
 		return 1;
@@ -216,7 +216,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 		let input: string;
 		let rendered: string;
 		try {
-			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, readers, kindNameFromId);
+			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, accessorOf, kindNameFromId);
 			if (node === undefined) {
 				skip += 1;
 				process.stdout.write(
@@ -225,7 +225,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 				continue;
 			}
 			input = sourceOf(node, exercise.source);
-			const factoryNode = buildFactoryNode(exercise.kind, node as ReadNodeLike, artifacts, common, readers, kindNameFromId);
+			const factoryNode = buildFactoryNode(exercise.kind, node as ReadNodeLike, artifacts, common, accessorOf, kindNameFromId);
 			if (factoryNode === null) throw new Error('the factory built nothing from the parsed node');
 			rendered = engine.render(factoryNode).toString();
 		} catch (error) {

@@ -4,16 +4,16 @@ import { interiorPattern, lexedConfig, projectInterior, type TokenInterior } fro
 const CHAR: TokenInterior = {
 	regex: "^(?<b>b)?'(?<content>[^\\\\']|\\\\.)'$",
 	slots: [
-		{ name: 'b', configKey: 'b', flag: true },
-		{ name: 'content', configKey: 'content' }
+		{ name: 'b', propertyName: 'b', flag: true },
+		{ name: 'content', propertyName: 'content' }
 	]
 };
 
 const INTEGER: TokenInterior = {
 	regex: '^(?<content>[0-9][0-9_]*)(?<suffix>isize|u8)?$',
 	slots: [
-		{ name: 'content', configKey: 'content' },
-		{ name: 'suffix', configKey: 'suffix' }
+		{ name: 'content', propertyName: 'content' },
+		{ name: 'suffix', propertyName: 'suffix' }
 	]
 };
 

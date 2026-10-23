@@ -26,7 +26,7 @@ type InteriorNode = InteriorEntry | { readonly group: readonly InteriorNode[] };
 export interface NodeInterior {
 	readonly entries: readonly InteriorEntry[];
 	readonly regex: string;
-	readonly slots: readonly { readonly name: string; readonly configKey: string; readonly flag?: true }[];
+	readonly slots: readonly { readonly name: string; readonly propertyName: string; readonly flag?: true }[];
 }
 
 export function interiorEnumArms(values: readonly string[]): string {
@@ -161,15 +161,15 @@ export function interiorOf(node: AssembledNode): NodeInterior | undefined {
 	if (tree === undefined || !(node instanceof AbstractAssembledCompound)) return undefined;
 	const entries = flattenNodes(tree);
 	assertUnambiguous(node.kind, entries);
-	const configKeyOf = (name: string): string => node.slots.find((s) => s.name === name)!.configKey;
+	const propertyNameOf = (name: string): string => node.slots.find((s) => s.name === name)!.propertyName;
 	const slots = entries.flatMap((entry) =>
 		'lit' in entry
 			? []
 			: 'flag' in entry
-				? [{ name: entry.flag, configKey: configKeyOf(entry.flag), flag: true as const }]
+				? [{ name: entry.flag, propertyName: propertyNameOf(entry.flag), flag: true as const }]
 				: 'enum' in entry
-					? [{ name: entry.enum, configKey: configKeyOf(entry.enum) }]
-					: [{ name: entry.slot, configKey: configKeyOf(entry.slot) }]
+					? [{ name: entry.enum, propertyName: propertyNameOf(entry.enum) }]
+					: [{ name: entry.slot, propertyName: propertyNameOf(entry.slot) }]
 	);
 	return { entries, regex: `^${tree.map(interiorNodePattern).join('')}$`, slots };
 }
@@ -268,7 +268,7 @@ export function numericSlotShape(slot: AssembledNonterminal): NumberShape | unde
 }
 
 export function numericSlotKeys(node: AssembledNode): readonly string[] {
-	return node.slots.filter((slot) => numericSlotShape(slot) !== undefined).map((slot) => slot.configKey);
+	return node.slots.filter((slot) => numericSlotShape(slot) !== undefined).map((slot) => slot.propertyName);
 }
 
 export function numericLeafShape(kind: string, node: AssembledNode): NumberShape | undefined {
@@ -303,7 +303,7 @@ export function numericLiteralSignature(fn: string, shape: NumberShape, param: s
 export function numericConfigSlots(node: AssembledNode): string | undefined {
 	const slots = node.slots.flatMap((slot) => {
 		const shape = numericSlotShape(slot);
-		return shape === undefined ? [] : [`${JSON.stringify(slot.configKey)}: ${shape.base === 'float' ? 'false' : 'true'}`];
+		return shape === undefined ? [] : [`${JSON.stringify(slot.propertyName)}: ${shape.base === 'float' ? 'false' : 'true'}`];
 	});
 	return slots.length === 0 ? undefined : `{ ${slots.join('; ')} }`;
 }
@@ -321,7 +321,7 @@ export function numberInputTest(shape: NumberShape, value: string): string {
 export function widenNumericSlots(type: string, node: AssembledNode): string {
 	const widened = node.slots.flatMap((slot) => {
 		const shape = numericSlotShape(slot);
-		return shape === undefined ? [] : [`${JSON.stringify(slot.configKey)}: ${numberInputType(shape)}`];
+		return shape === undefined ? [] : [`${JSON.stringify(slot.propertyName)}: ${numberInputType(shape)}`];
 	});
 	return widened.length === 0 ? type : `WidenNumeric<${type}, { ${widened.join('; ')} }>`;
 }

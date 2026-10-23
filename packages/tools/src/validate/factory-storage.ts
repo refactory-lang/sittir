@@ -36,8 +36,8 @@ import {
 	walkWrappedTree,
 	materializeBuildInput,
 	builtStorageOf,
-	loadSlotReaders,
-	type SlotReaders,
+	loadSlotAccessorOf,
+	type SlotAccessorOf,
 	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -55,7 +55,14 @@ import {
 	loadNativeEngine
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
-import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
+import {
+	emptyBuiltRender,
+	emptyBuiltRenderRun,
+	finishBuiltRender,
+	type BuiltRenderFailure,
+	type BuiltRenderResult
+} from './built-render.ts';
+import { KindCases, type CasesByKind } from './kind-cases.ts';
 import { sourceSpans } from '@sittir/common';
 import { measureRoundtrip, type RoundtripProfile } from './roundtrip-profile.ts';
 
@@ -278,6 +285,7 @@ function compareNodeStorage(
 export interface FactoryStorageResult {
 	grammar: string;
 	total: number;
+	casesByKind: CasesByKind;
 	pass: number;
 	fail: number;
 	skip: number;
@@ -503,7 +511,7 @@ function buildFactoryUntypedNode(
 		input?: string;
 		rendered?: string;
 	}[],
-	readers: SlotReaders,
+	accessorOf: SlotAccessorOf,
 	kindNameFromId?: (id: number) => string | undefined,
 	tree?: TreeHandle
 ): AnyUntypedNode | null {
@@ -514,7 +522,7 @@ function buildFactoryUntypedNode(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, readers, tree, placeText: tree !== undefined }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, accessorOf, tree, placeText: tree !== undefined }
 		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
@@ -543,7 +551,7 @@ export async function validateFactoryStorage(
 		await loadFactoryModuleForGrammar(grammar);
 
 	const readNode = await readNodeOf(grammar);
-	const readers = await loadSlotReaders(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(
 		grammar,
@@ -552,7 +560,7 @@ export async function validateFactoryStorage(
 		options.profile
 	);
 	const { listSeparators } = await loadNodeModel(grammar);
-	const render = emptyBuiltRender();
+	const render = emptyBuiltRenderRun();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -573,7 +581,7 @@ export async function validateFactoryStorage(
 	}[] = [];
 	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
-	let total = 0;
+	const cases = new KindCases();
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 
@@ -585,6 +593,7 @@ export async function validateFactoryStorage(
 		return {
 			grammar,
 			total: 0,
+			casesByKind: {},
 			pass: 0,
 			fail: 0,
 			skip: 0,
@@ -621,6 +630,7 @@ export async function validateFactoryStorage(
 		return {
 			grammar,
 			total: 0,
+			casesByKind: {},
 			pass: 0,
 			fail: 1,
 			skip: 0,
@@ -653,7 +663,7 @@ export async function validateFactoryStorage(
 		const wrappedRoot = readNode(handle) as TypedNode;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
-		walkWrappedTree(wrappedRoot, readers, (w: TypedNode) => {
+		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
@@ -673,7 +683,7 @@ export async function validateFactoryStorage(
 				const pairKey = `${kind}\0${entry.name}`;
 				if (testedPairs.has(pairKey)) continue;
 				testedPairs.add(pairKey);
-				total++;
+				cases.add(kind);
 				options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
 
 				const indices = spans.toIndices(cand);
@@ -686,7 +696,7 @@ export async function validateFactoryStorage(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = measureRoundtrip(options.profile, 'read', () => materializeBuildInput(cand.node, readers));
+				const referenceData = measureRoundtrip(options.profile, 'read', () => materializeBuildInput(cand.node, accessorOf));
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
@@ -705,7 +715,7 @@ export async function validateFactoryStorage(
 					entry.name,
 					inputSource,
 					errors,
-					readers,
+					accessorOf,
 					kindNameFromId
 				);
 				if (factoryData === null) {
@@ -715,7 +725,7 @@ export async function validateFactoryStorage(
 					continue;
 				}
 
-				render.total++;
+				render.cases.add(kind);
 				const renderFailure = (message: string, rendered?: string): BuiltRenderFailure => ({
 					kind,
 					entry: entry.name,
@@ -731,7 +741,7 @@ export async function validateFactoryStorage(
 						node,
 						innerKind,
 						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
-						{ kindNameFromId, readers, tree: handle, placeText: true }
+						{ kindNameFromId, accessorOf, tree: handle, placeText: true }
 					);
 				};
 				const buildErrors: typeof errors = [];
@@ -749,7 +759,7 @@ export async function validateFactoryStorage(
 								: rebuildChildren(
 										root,
 										buildInner,
-										(read, rebuild) => tableSides(read, readers, rebuild),
+										(read, rebuild) => tableSides(read, accessorOf, rebuild),
 										takesText
 									)) as unknown as AnyUntypedNode,
 							kind,
@@ -765,7 +775,7 @@ export async function validateFactoryStorage(
 							entry.name,
 							inputSource,
 							buildErrors,
-							readers,
+							accessorOf,
 							kindNameFromId,
 							handle
 						);
@@ -775,7 +785,7 @@ export async function validateFactoryStorage(
 				}
 				const hostless = wrapRendered('', kind, node1?.type ?? kind, renderReparseContext) === null;
 				if (hostless) {
-					render.total--;
+					render.cases.remove(kind);
 					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
@@ -794,7 +804,7 @@ export async function validateFactoryStorage(
 							tolerance
 						);
 						if (outcome.status === 'excluded') {
-							render.total--;
+							render.cases.remove(kind);
 							render.excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
 						} else if (outcome.status === 'failed') {
 							render.errors.push(renderFailure(outcome.message, outcome.rendered));
@@ -812,7 +822,7 @@ export async function validateFactoryStorage(
 
 				const diff = compareNodeStorage(
 					referenceData as unknown as Record<string, unknown>,
-					builtStorageOf(factoryData, readers) as Record<string, unknown>,
+					builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
 					'',
 					{ factoryShapes, kindNameFromId }
 				);
@@ -833,10 +843,12 @@ export async function validateFactoryStorage(
 		}
 	}
 
+	const total = cases.total;
 	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
+		casesByKind: cases.byKind(),
 		pass,
 		fail: total - pass - skips.length,
 		skip: skips.length,
@@ -845,7 +857,7 @@ export async function validateFactoryStorage(
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		skips,
 		excluded,
-		render
+		render: finishBuiltRender(render)
 	};
 }
 

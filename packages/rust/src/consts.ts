@@ -7,83 +7,86 @@ export const TOKEN_INTERIORS = {
 	char_literal_escaped_hex: {
 		regex: "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
 		slots: [
-			{ name: 'byte', configKey: 'byte', flag: true },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'byte', propertyName: 'byte', flag: true },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	char_literal_escaped_simple: {
 		regex: "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$",
 		slots: [
-			{ name: 'byte', configKey: 'byte', flag: true },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'byte', propertyName: 'byte', flag: true },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	char_literal_escaped_unicode_braced: {
 		regex: "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
 		slots: [
-			{ name: 'byte', configKey: 'byte', flag: true },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'byte', propertyName: 'byte', flag: true },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	char_literal_escaped_unicode_fixed: {
 		regex: "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
 		slots: [
-			{ name: 'byte', configKey: 'byte', flag: true },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'byte', propertyName: 'byte', flag: true },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	char_literal_plain: {
 		regex: "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$",
 		slots: [
-			{ name: 'byte', configKey: 'byte', flag: true },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'byte', propertyName: 'byte', flag: true },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	escape_sequence_hex: {
 		regex: '^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	escape_sequence_simple: { regex: '^\\\\(?<content>(?:[^xu]))$', slots: [{ name: 'content', configKey: 'content' }] },
+	escape_sequence_simple: {
+		regex: '^\\\\(?<content>(?:[^xu]))$',
+		slots: [{ name: 'content', propertyName: 'content' }]
+	},
 	escape_sequence_unicode_braced: {
 		regex: '^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_unicode_fixed: {
 		regex: '^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	integer_literal_binary: {
 		regex: '^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
 		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'suffix', configKey: 'suffix' }
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'suffix', propertyName: 'suffix' }
 		]
 	},
 	integer_literal_decimal: {
 		regex: '^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
 		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'suffix', configKey: 'suffix' }
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'suffix', propertyName: 'suffix' }
 		]
 	},
 	integer_literal_hex: {
 		regex: '^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
 		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'suffix', configKey: 'suffix' }
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'suffix', propertyName: 'suffix' }
 		]
 	},
 	integer_literal_octal: {
 		regex: '^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
 		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'suffix', configKey: 'suffix' }
+			{ name: 'content', propertyName: 'content' },
+			{ name: 'suffix', propertyName: 'suffix' }
 		]
 	},
-	metavariable: { regex: '^\\$(?<name>[a-zA-Z_]\\w*)$', slots: [{ name: 'name', configKey: 'name' }] },
+	metavariable: { regex: '^\\$(?<name>[a-zA-Z_]\\w*)$', slots: [{ name: 'name', propertyName: 'name' }] },
 	shebang: {
 		regex: '^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 

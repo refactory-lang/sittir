@@ -62,3 +62,13 @@ describe('emitFactorySourceText (real python grammar)', () => {
 		expect(source).not.toContain('py.kinds.List');
 	});
 });
+
+describe('emitFactorySourceText (real scm grammar)', () => {
+	// `grouping` seats its repeated `grouping_group` slot, configured as
+	// `groupingGroups`: each element prints as its seat kind's config.
+	it('prints a repeated seat\'s elements under the slot\'s model name', async () => {
+		const source = await emitFactorySourceText('scm', '((a) (b))* @c\n', 'rebuild');
+		expect(source).toContain('groupingGroups: [{');
+		expect(source).not.toContain('anchor: false');
+	});
+});

@@ -531,7 +531,7 @@ export const structure: StructureTable = Object.freeze({
 	140: {
 		kind: 'assert_statement',
 		nonEmpty: [['_expression', 'assert_statement.children']],
-		nodeOnly: [['_expression', 'AssertStatement.expression', 'a built Expression']]
+		nodeOnly: [['_expression', 'AssertStatement.expressions', 'a built Expression']]
 	},
 	141: {
 		kind: 'expression_statement',
@@ -585,7 +585,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_condition', 'IfStatement.condition', 'a built Expression'],
 			['_consequence', 'IfStatement.consequence', 'a built Suite'],
-			['_alternative', 'IfStatement.alternative', 'a built ElifClause / ElseClause']
+			['_alternative', 'IfStatement.alternatives', 'a built ElifClause / ElseClause']
 		]
 	},
 	151: {
@@ -747,7 +747,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_code', 'code']],
 		nodeOnly: [
 			['_code', 'ExecStatement.code', 'buildIdentifier(…)'],
-			['_in_clause', 'ExecStatement.inClause', 'a built Expression']
+			['_in_clause', 'ExecStatement.inClauses', 'a built Expression']
 		]
 	},
 	172: {
@@ -790,7 +790,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_definition', 'definition']],
 		nonEmpty: [['_decorator', 'decorated_definition.decorators']],
 		nodeOnly: [
-			['_decorator', 'DecoratedDefinition.decorator', 'a built Decorator'],
+			['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator'],
 			['_definition', 'DecoratedDefinition.definition', 'a built ClassDefinition / FunctionDefinition']
 		]
 	},
@@ -1251,7 +1251,7 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_async', 'ForInClause.async', 'a boolean'],
 			['_left', 'ForInClause.left', 'a built Pattern / PatternList'],
-			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause']
+			['_right', 'ForInClause.rights', 'a built Expression / LambdaWithinForInClause']
 		]
 	},
 	244: {
@@ -1275,7 +1275,7 @@ export const structure: StructureTable = Object.freeze({
 	246: {
 		kind: 'concatenated_string',
 		nonEmpty: [['_string', 'concatenated_string.children']],
-		nodeOnly: [['_string', 'ConcatenatedString.string', 'a built String']]
+		nodeOnly: [['_string', 'ConcatenatedString.strings', 'a built String']]
 	},
 	247: {
 		kind: 'string',
@@ -1285,7 +1285,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_string_start', 'String.stringStart', 'buildStringStart(…)'],
-			['_content', 'String.content', 'a built Interpolation / StringContent'],
+			['_content', 'String.contents', 'a built Interpolation / StringContent'],
 			['_string_end', 'String.stringEnd', 'buildStringEnd(…)']
 		]
 	},
@@ -1365,7 +1365,7 @@ export const structure: StructureTable = Object.freeze({
 	281: {
 		kind: 'comprehension_clauses',
 		nonEmpty: [['_content', 'comprehension_clauses.children']],
-		nodeOnly: [['_content', 'ComprehensionClauses.content', 'a built ForInClause / IfClause']]
+		nodeOnly: [['_content', 'ComprehensionClauses.contents', 'a built ForInClause / IfClause']]
 	},
 	283: {
 		kind: 'simple_pattern_negative',
@@ -1378,7 +1378,7 @@ export const structure: StructureTable = Object.freeze({
 	284: {
 		kind: 'except_clause_exception_list',
 		nonEmpty: [['_value', 'except_clause_exception_list.children']],
-		nodeOnly: [['_value', 'ExceptClauseExceptionList.value', 'a built Expression']]
+		nodeOnly: [['_value', 'ExceptClauseExceptionList.values', 'a built Expression']]
 	},
 	285: {
 		kind: 'except_clause_exception',
@@ -1437,7 +1437,10 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_with_items', 'withItems']],
 		nodeOnly: [['_with_items', 'WithClauseParen.withItems', 'a built WithClauseWithItems']]
 	},
-	292: { kind: 'match_block_block', nodeOnly: [['_alternative', 'MatchBlockBlock.alternative', 'a built CaseClause']] },
+	292: {
+		kind: 'match_block_block',
+		nodeOnly: [['_alternative', 'MatchBlockBlock.alternatives', 'a built CaseClause']]
+	},
 	293: {
 		kind: 'match_block_empty',
 		required: [['_newline', 'newline']],

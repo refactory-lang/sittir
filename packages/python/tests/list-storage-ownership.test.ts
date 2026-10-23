@@ -16,7 +16,7 @@ const builders = (engine: Engine) => scopeBuilders(engine, _factoryMap) as unkno
 const read = (engine: Engine): Read =>
 	[...engine.parse('@x\n@y\ndef f(): pass\n').$query().$descendants.ofType(engine.kinds.DecoratedDefinition)][0] as unknown as Read;
 const items = (engine: Engine): unknown[] => [...(read(engine).decorators!() as unknown[])];
-const build = (engine: Engine, list: unknown[]): Built => builders(engine).decorated_definition!({ decorator: list, definition: read(engine).definition!() });
+const build = (engine: Engine, list: unknown[]): Built => builders(engine).decorated_definition!({ decorators: list, definition: read(engine).definition!() });
 
 describe('a built node owns its stored lists', () => {
 	it.each(['trusting', 'verifying'] as const)("%s: mutating the caller's array after the build changes neither the node nor its render", (mode) => {
