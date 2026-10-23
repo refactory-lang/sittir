@@ -168,7 +168,13 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		const freshNode = fresh as Record<string, unknown>;
 		const heldNode = held as Record<string, unknown>;
 		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !stands(freshNode.$type)) continue;
-		if (placeOf(freshNode) !== undefined || placeOf(heldNode) === undefined) continue;
+		if (placeOf(freshNode) !== undefined) continue;
+		if (placeOf(heldNode) === undefined) {
+			const trivia = triviaOf(heldNode);
+			if (trivia !== undefined && triviaOf(freshNode) === undefined) setTriviaData(freshNode as unknown as AnyUntypedNode, trivia);
+			carryUnitSides(heldNode, freshNode);
+			continue;
+		}
 		carryRead(heldNode, freshNode);
 		carryPlace(heldNode, freshNode);
 	}

@@ -373,11 +373,11 @@ function realignedUnits(units: readonly UnitSidesData[], before: Record<string, 
 	return carried;
 }
 
-/** What an item of a slot is the same item by: a unit by its kind, a read node by the handle it names; a built node is no item of the source. */
-function itemIdentity(item: unknown): string | undefined {
+function itemIdentity(item: unknown): unknown {
 	if (typeof item === 'number') return `kind:${item}`;
-	const handle = isRecord(item) ? sourceHandleOf(item) : undefined;
-	return handle === undefined ? undefined : `node:${handle}`;
+	if (!isRecord(item)) return undefined;
+	const handle = sourceHandleOf(item);
+	return handle === undefined ? item : `node:${handle}`;
 }
 
 /**
@@ -389,8 +389,8 @@ function itemIdentity(item: unknown): string | undefined {
  * in both slots. A node needs no alignment: its sides are its own.
  */
 function alignedItems(before: readonly unknown[], after: readonly unknown[]): ReadonlyMap<number, number> {
-	const nodeAt = new Map<string, number>();
-	const runs = new Map<number, Map<string, number[]>>();
+	const nodeAt = new Map<unknown, number>();
+	const runs = new Map<number, Map<unknown, number[]>>();
 	let run = -1;
 	after.forEach((item, j) => {
 		const identity = itemIdentity(item);
@@ -400,7 +400,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 			return;
 		}
 		if (identity === undefined) return;
-		const kinds = runs.get(run) ?? new Map<string, number[]>();
+		const kinds = runs.get(run) ?? new Map<unknown, number[]>();
 		runs.set(run, kinds);
 		const units = kinds.get(identity);
 		if (units === undefined) kinds.set(identity, [j]);
@@ -409,7 +409,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 	const aligned = new Map<number, number>();
 	const placed = new Set<number>();
 	let anchor = -1;
-	let counts = new Map<string, number>();
+	let counts = new Map<unknown, number>();
 	before.forEach((item, i) => {
 		const identity = itemIdentity(item);
 		if (typeof item !== 'number') {
@@ -428,7 +428,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 		aligned.set(i, j);
 		placed.add(j);
 	});
-	const free = new Map<string, { readonly items: number[]; next: number }>();
+	const free = new Map<unknown, { readonly items: number[]; next: number }>();
 	after.forEach((item, j) => {
 		const identity = itemIdentity(item);
 		if (identity === undefined || typeof item !== 'number' || placed.has(j)) return;

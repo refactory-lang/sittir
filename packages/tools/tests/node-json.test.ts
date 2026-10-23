@@ -383,6 +383,32 @@ describe('a comment on a token stored as its kind id survives JSON', () => {
 		}
 	);
 
+	it('keeps a revived list wrapper’s unit comments when an edit rebuilds it in place', () => {
+		const source = 'foo<T, /* keep */this>();';
+		type Args = { types(): Iterable<unknown>; $with: Record<string, (...items: unknown[]) => object> };
+		type Statement = { expression(): { typeArguments(): Args } };
+		const reset = (root: { statements(): Iterable<unknown> }): string => {
+			const args = ([...root.statements()] as Statement[])[0]!.expression().typeArguments();
+			return String(args.$with.types!(...args.types())).replace(/\s+/g, '');
+		};
+		const parsed = reset(ts.parse(source));
+		expect(parsed).toBe('<T,/*keep*/this>');
+		expect(reset(JSON.parse(JSON.stringify(ts.parse(source)), ts.reviver) as { statements(): Iterable<unknown> })).toBe(parsed);
+	});
+
+	it('anchors a revived list’s unit comments on the statements an edit keeps', () => {
+		const source = 'function f() {\n  a();\n  /* A */\n  ;\n  b();\n  /* B */\n  ;\n}\n';
+		type Fn = { body(): { statements(): Iterable<unknown>; $with: Record<string, (...items: unknown[]) => object> } };
+		const tail = (root: { statements(): Iterable<unknown> }): string => {
+			const body = ([...root.statements()] as Fn[])[0]!.body();
+			return String(body.$with.statements!(...[...body.statements()].slice(2))).replace(/\s+/g, ' ').trim();
+		};
+		const parsed = tail(ts.parse(source));
+		expect(parsed).toContain('/* B */');
+		expect(parsed).not.toContain('/* A */');
+		expect(tail(JSON.parse(JSON.stringify(ts.parse(source)), ts.reviver) as { statements(): Iterable<unknown> })).toBe(parsed);
+	});
+
 	it('keeps it on a rebuilt node', () => {
 		const declarators = (ts.parse('let a = /* keep */true;').statements()[0] as unknown as { declarators(): Iterable<{ $with: Record<string, (value: unknown) => object> }> }).declarators();
 		const [first] = [...declarators];

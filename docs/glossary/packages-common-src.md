@@ -518,11 +518,11 @@ A rebuilt node's unit sides, carried from the node at `index` of the tree it was
 
 ### `packages/common/src/node-data.ts::itemIdentity`
 
-What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
+What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`), and a built node by itself, the object a rebuild that keeps it passes on. So a revived list's kept statements anchor its units' sides as a parsed list's do: a comment on a `;` stays with the `;` after the statement it followed, not with the first `;` of its kind.
 
 ### `packages/common/src/node-data.ts::alignedItems`
 
-The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
+The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The nodes both slots hold anchor it, each by its identity (`itemIdentity`: a read node by the handle it names, a built node by itself): a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
 
 Identical units align by order within a run: nothing tells two units of one kind apart, so removing or reordering identical units among themselves keeps their sides by position, not by the unit the caller meant. Removing the first of two commented `;` units keeps the first unit's comment on the `;` that remains.
 
@@ -611,7 +611,7 @@ Where a node sits in its source: a read node's own tree token, tree handle, end,
 
 ### `packages/common/src/utils.ts::carryRebuiltSlots`
 
-For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carryPlace`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). A node the caller built and passed in, of another kind or already carrying source, is left as it is.
+For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carryPlace`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). Where the old wrapper was built (a revived node's, with no source identity), the fresh one takes what it held instead: its stored trivia, and its unit sides realigned to the fresh slots (`carryUnitSides`), so a setter that rebuilds a revived list in place keeps the list's comments and its units'. A node the caller built and passed in, of another kind or already carrying source, is left as it is.
 
 ### `packages/common/src/utils.ts::NodeAddress`
 
