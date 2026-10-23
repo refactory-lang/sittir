@@ -1098,6 +1098,7 @@ export interface NodeToConfigOpts {
 	readonly _parentKind?: string;
 	readonly _fieldName?: string;
 	readonly _depth?: number;
+	readonly _path?: string;
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	readonly surface?: IrSurface;
 }
@@ -1113,12 +1114,8 @@ function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
 	return c.$named === false;
 }
 
-function shouldHaltRecursion(
-	depth: number,
-	tree: NodeToConfigOpts['tree'],
-	factoryMap: NodeToConfigOpts['factoryMap']
-): boolean {
-	return depth > 64 || !tree || !factoryMap;
+function pathOf(opts: NodeToConfigOpts): string {
+	return opts._path ?? 'the root';
 }
 
 function resolveAliasedKind(
@@ -1140,9 +1137,12 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child === 'string' || typeof child === 'number') return child;
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
-	if (isAnonTokenPassthrough(c)) return child;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
-	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
+	if (isAnonTokenPassthrough(c)) {
+		if (tree === undefined) return child;
+		throw new Error(`nodeToConfig: an anonymous token (${String(c.$type)}) reached a builder input at ${pathOf(opts)}`);
+	}
+	if (!tree || !factoryMap) return child;
 	const hydrated = hydrateForConfig(c, opts);
 	if (opts.placeText === true && _parentKind !== undefined && opts.factoryShapes?.[_parentKind] === 'placed') {
 		const text = readNodeText(hydrated, opts);
@@ -1151,6 +1151,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind = rawTypeId !== undefined ? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId)) : undefined;
 	if (!rawKind) return hydrated;
+	if (_depth > 64) throw new Error(`nodeToConfig: ${rawKind} is nested more than 64 deep, at ${pathOf(opts)}`);
 	let kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap);
 	let factory = factoryMap![kind];
 	if (!factory && kind.startsWith('_')) {
@@ -1163,7 +1164,8 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	}
 	if (!factory) {
 		const inner = soleWrappedNode(hydrated, opts);
-		return inner === undefined ? hydrated : resolveChild(inner, { ...opts, _depth: _depth + 1 });
+		if (inner === undefined) throw new Error(`nodeToConfig: ${kind} has no factory and no single wrapped child, at ${pathOf(opts)}`);
+		return resolveChild(inner, { ...opts, _depth: _depth + 1 });
 	}
 	return buildWithFactory(hydrated, kind, factory, { ...opts, _depth: _depth + 1 });
 }
@@ -1378,6 +1380,10 @@ function projectSeatedSlot(
 			const groupNode = hydrateForConfig(value as ReadNodeLike, opts);
 			const inner = childOpts(opts);
 			const group = nodeToConfig(groupNode, inner);
+			if (Object.keys(group).length === 0) {
+				out[key] = resolveChild(groupNode, memberValueOpts(opts, parentKind, slot.name));
+				return;
+			}
 			const nested = armRouteOf(group);
 			if (nested !== undefined) {
 				throw new Error(
@@ -1576,6 +1582,7 @@ function memberValueOpts(
 		...opts,
 		_parentKind: parentKind,
 		_fieldName: fieldName,
+		_path: `${opts._path === undefined ? '' : `${opts._path} > `}${parentKind ?? '?'}.${fieldName ?? '?'}`,
 		firstNamedChildKindHint: undefined,
 		namedChildKindHints: undefined
 	};

@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
 import { grammarPackage } from '../../grammars.ts';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import { baseRulesOf } from '../shared.ts';
 import { getEnrichMints } from '../enrich.ts';
 import { evaluatePackage } from '../evaluate-package.ts';

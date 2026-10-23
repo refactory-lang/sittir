@@ -1,4 +1,3 @@
-import { dirname, join } from 'node:path';
 import {
 	ALIAS,
 	CHOICE,
@@ -32,9 +31,8 @@ import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
-import { resolveOverridesPath } from '../../dsl/resolve-grammar.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
-import { grammarPackage } from '../../grammars.ts';
+import { grammarPackage, REPO_ROOT } from '../../grammars.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
@@ -1389,9 +1387,8 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		// root for this call so the test passes regardless of which directory
 		// the test runner was invoked from (this package's own vitest.config.ts
 		// notes the parser/WASM setup assumes the root config's cwd).
-		const repoRoot = join(dirname(resolveOverridesPath('typescript')), '..', '..');
 		const originalCwd = process.cwd();
-		process.chdir(repoRoot);
+		process.chdir(REPO_ROOT);
 		let diagnostics: DiagnosticSink;
 		try {
 			const raw = await evaluatePackage(grammarPackage('typescript'));

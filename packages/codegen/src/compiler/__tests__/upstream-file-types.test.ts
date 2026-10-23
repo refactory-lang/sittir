@@ -4,7 +4,6 @@ import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { grammarPackage, grammarPackages, sittirDirOf } from '../../grammars.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
-import { packageEntryPath, packageGrammarJsPath, packageSourceEntry } from '../../dsl/resolve-grammar.ts';
 import { upstreamFileTypes } from '../upstream-file-types.ts';
 
 const CENSUS: Readonly<Record<string, readonly string[]>> = {
@@ -41,12 +40,6 @@ describe('evaluating a grammar package', () => {
 			for (const stage of Object.values(raw.stages ?? {})) expect(stage.grammar.fileTypes).toEqual(['rs']);
 		}
 	}, 120_000);
-
-	it('takes the overrides entry unless the base is asked for', () => {
-		const pkg = grammarPackage('rust');
-		expect(packageSourceEntry(pkg)).toBe(packageEntryPath(pkg));
-		expect(packageSourceEntry(pkg, { base: true })).toBe(packageGrammarJsPath(pkg));
-	});
 });
 
 describe('choosing the upstream entry', () => {

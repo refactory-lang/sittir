@@ -1,8 +1,8 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { evaluateSittirGrammar } from './_sittir-grammar.ts';
-import type { RawGrammar } from '../types.ts';
+import { evaluateSittirGrammar } from './sittir-grammar.ts';
+import type { RawGrammar } from '../../compiler/types.ts';
 
 export async function evaluateTempGrammar(upstream: { extras: string; rules: string }, config: string): Promise<RawGrammar> {
 	const dir = mkdtempSync(join(tmpdir(), 'sittir-temp-grammar-'));

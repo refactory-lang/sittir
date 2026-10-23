@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { diagnoseEvaluationStages } from '../../stage.ts';
 import { diagnoseRuleCauses } from '../rule-causes.ts';
 import { unexpectableExpectEntries } from '../grammar-diagnostics.ts';
-import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 
 async function collisionsOf(upstreamRules: string, config: string): Promise<{ owner: string; canProceed: boolean }[]> {
 	const raw = await evaluateTempGrammar({ extras: '/\\s/', rules: upstreamRules }, config);

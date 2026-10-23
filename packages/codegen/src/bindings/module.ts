@@ -3,8 +3,9 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { withDslGlobals } from '../dsl/evaluate.ts';
 import type { Bindings, LeadMatch } from '../dsl/bind.ts';
-import { grammarPackageDir, type GrammarName } from '../grammars.ts';
-import { REGENERATE_BINDINGS_COMMAND } from './hash.ts';
+import { grammarPackageDir, type GrammarName, type GrammarPackage } from '../grammars.ts';
+import { bindingsPathIn } from './facts.ts';
+import { assertBindingsFresh, REGENERATE_BINDINGS_COMMAND } from './hash.ts';
 import type { GrammarBindings, GrammarBindingsEdit, GrammarBindingsPatch } from './grammar-bindings.ts';
 
 export const BINDINGS_MODULE = 'grammar.bindings.ts';
@@ -16,6 +17,10 @@ export async function loadBindingsModule(dir: string): Promise<Bindings | undefi
 	if (!existsSync(path)) return undefined;
 	const module = (await withDslGlobals(() => import(pathToFileURL(path).href))) as { readonly default?: Bindings };
 	return module.default;
+}
+
+export async function assertPackageBindingsFresh(pkg: GrammarPackage): Promise<void> {
+	assertBindingsFresh(pkg.name, (await loadBindingsModule(pkg.dir))?.hash, bindingsPathIn(pkg.dir));
 }
 
 const q = (v: string): string => JSON.stringify(v);

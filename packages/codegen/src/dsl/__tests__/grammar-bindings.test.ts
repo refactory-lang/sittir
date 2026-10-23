@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
 import { baseNamesOf, bindGrammar, lead, match } from '../bind.ts';
