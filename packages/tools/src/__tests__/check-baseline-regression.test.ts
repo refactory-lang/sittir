@@ -303,7 +303,7 @@ describe('checkRegression', () => {
 		expect(verdict.details.after).toBe(9);
 	});
 
-	describe('a pass drop is explained by the kinds that left, by name', () => {
+	describe('cases are compared kind by kind, and only a departed kind may lose them', () => {
 		// typescript records kinds a, b and c; in the departing head, a has left.
 		function inventoried(): BackendBaseline {
 			const base = baseline();
@@ -336,23 +336,21 @@ describe('checkRegression', () => {
 			return head;
 		}
 
-		it('a departed kind explains the loss of exactly its own cases in each kind-tied row, and the verdict lists every one', () => {
+		it('a departed kind may lose all its cases in each kind-tied row, and the verdict lists every one', () => {
 			const base = inventoried();
 			const verdict = checkRegression(base, departingA(base));
 			expect(verdict.ok).toBe(true);
 			if (!verdict.ok) return;
 			expect(verdict.explained).toEqual([
-				'grammars.typescript.validators.from.pass 3 → 2: total 3 → 2, explained by departed a (1 case)',
-				'grammars.typescript.validators.coverage.pass 3 → 2: total 3 → 2, explained by departed a (1 case)',
-				'grammars.typescript.validators.factoryStorage.pass 30 → 11: total 30 → 11, explained by departed a (19 cases)',
-				'grammars.typescript.validators.factoryStorage.astMatchPass 30 → 11: total 30 → 11, explained by departed a (19 cases)',
-				'grammars.typescript.validators.builtRenderParse.pass 60 → 22: total 60 → 22, explained by departed a (38 cases)',
-				'grammars.typescript.validators.builtRenderParse.astMatchPass 60 → 22: total 60 → 22, explained by departed a (38 cases)',
-				'grammars.typescript.parityFixtures.pass 30 → 11: total 30 → 11, explained by departed a (19 cases)'
+				'grammars.typescript.validators.from 3/3 → 2/2: departed a (1 case)',
+				'grammars.typescript.validators.coverage 3/3 → 2/2: departed a (1 case)',
+				'grammars.typescript.validators.factoryStorage 30/30 → 11/11: departed a (19 cases)',
+				'grammars.typescript.validators.builtRenderParse 60/60 → 22/22: departed a (38 cases)',
+				'grammars.typescript.parityFixtures 30/30 → 11/11: departed a (19 cases)'
 			]);
 		});
 
-		it('the CLI prints each explained drop', async () => {
+		it('the CLI prints each departed kind\'s lost cases', async () => {
 			const base = inventoried();
 			const dir = mkdtempSync(join(tmpdir(), 'baseline-'));
 			const write = (name: string, value: unknown) => {
@@ -370,22 +368,79 @@ describe('checkRegression', () => {
 				spy.mockRestore();
 			}
 			expect(out.join('')).toContain(
-				'  explained: grammars.typescript.validators.factoryStorage.pass 30 → 11: total 30 → 11, explained by departed a (19 cases)\n'
+				'  explained: grammars.typescript.validators.factoryStorage 30/30 → 11/11: departed a (19 cases)\n'
 			);
 		});
 
-		it('a drop larger than the departed kinds\' cases fails, naming them', () => {
+		it('a surviving kind\'s loss fails though another surviving kind\'s gain hides it in the total', () => {
+			const base = baseline();
+			const ts = base.grammars.typescript!;
+			ts.kinds = ['block', 'call', 'match_block'];
+			ts.validators.factoryStorage = { ...rt(106, 106, 106), casesByKind: { block: 47, call: 40, match_block: 19 } };
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.typescript!.kinds = ['block', 'call'];
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(87, 87, 87), casesByKind: { block: 46, call: 41 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('pass-count-drop');
+			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
+			expect(verdict.details.note).toBe('cases lost by kinds that did not depart: block (1 case); departed match_block (19 cases)');
+		});
+
+		it('a surviving kind\'s loss fails when the row\'s pass does not fall, unless the row is declared', () => {
+			const base = inventoried();
+			const head = clone(base);
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { a: 19, b: 5, c: 6 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('case-loss');
+			expect(verdict.details).toMatchObject({ path: 'grammars.typescript.validators.factoryStorage.casesByKind.b', before: 6, after: 5 });
+			expect(verdict.details.note).toBe(
+				'cases lost by kinds that did not depart: b (1 case) (factoryStorage has no baselineCounterChange declaration)'
+			);
+			head.baselineCounterChange = {
+				reason: 'a case moves from b to c',
+				grammars: { typescript: { factoryStorage: { from: { pass: 30, total: 30 }, to: { pass: 30, total: 30 } } } }
+			};
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('a lost case under a key that is not one of the base\'s kinds fails', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.from = { ...vr(4, 4), casesByKind: { a: 1, b: 1, c: 1, identifier: 1 } };
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.typescript!.validators.from = { ...vr(4, 4), casesByKind: { a: 1, b: 1, c: 2 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('case-loss');
+			expect(verdict.details.path).toBe('grammars.typescript.validators.from.casesByKind.identifier');
+		});
+
+		it('a departed kind\'s lost cases are listed when a gain keeps the row\'s pass from falling', () => {
+			const base = inventoried();
+			const head = clone(base);
+			head.grammars.typescript!.kinds = ['b', 'c', 'd'];
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { b: 6, c: 5, d: 19 } };
+			const verdict = checkRegression(base, retotal(head));
+			expect(verdict.ok).toBe(true);
+			if (verdict.ok) {
+				expect(verdict.explained).toEqual(['grammars.typescript.validators.factoryStorage 30/30 → 30/30: departed a (19 cases)']);
+			}
+		});
+
+		it('a drop beyond the departed kind\'s cases fails, naming the kind that lost the rest', () => {
 			const base = inventoried();
 			const head = departingA(base);
 			head.grammars.typescript!.validators.factoryStorage = { ...rt(10, 10, 10), casesByKind: { b: 5, c: 5 } };
 			const verdict = checkRegression(base, retotal(head));
 			expectFail(verdict);
-			expect(verdict.reason).toBe('pass-count-drop');
 			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
-			expect(verdict.details.note).toBe('total 30 → 10, more than departed a (19 cases) explains');
+			expect(verdict.details.note).toBe('cases lost by kinds that did not depart: b (1 case); departed a (19 cases)');
 		});
 
-		it('the cases of a kind that appeared are not credited against a drop', () => {
+		it('the cases of a kind that appeared are not credited against a loss', () => {
 			const base = inventoried();
 			const head = departingA(base);
 			head.grammars.typescript!.kinds = ['b', 'c', 'd'];
@@ -393,9 +448,7 @@ describe('checkRegression', () => {
 			const verdict = checkRegression(base, retotal(head));
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
-			expect(verdict.details.note).toBe(
-				'total 30 → 16 (a drop of 24, not crediting 10 cases of kinds that appeared), more than departed a (19 cases) explains'
-			);
+			expect(verdict.details.note).toBe('cases lost by kinds that did not depart: b (5 cases); departed a (19 cases)');
 		});
 
 		it('a kind that still exists losing a case is no departure', () => {
@@ -405,7 +458,7 @@ describe('checkRegression', () => {
 			const verdict = checkRegression(base, retotal(head));
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
-			expect(verdict.details.note).toBe('total 3 → 2, and no departed kind has cases in this row');
+			expect(verdict.details.note).toBe('cases lost by kinds that did not depart: c (1 case)');
 		});
 
 		it('a drop alongside a new failure fails even with a kind gone', () => {
