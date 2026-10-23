@@ -92,7 +92,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	stages.simplify = normalized.rules?.[kind] ?? null;
 
 	const { assemble, AssembleCtx, hydrateSlotRefs } = await load('assemble');
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const node = nodeMap.nodes.get(kind) ?? null;
 	stages.assemble = node ? summarizeAssembled(node) : null;
 
