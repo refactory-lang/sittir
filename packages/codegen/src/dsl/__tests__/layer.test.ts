@@ -279,6 +279,37 @@ describe('an edits key that names no rule', () => {
 	});
 });
 
+describe('a config key wire does not know', () => {
+	const KNOWN =
+		'name, rules, edits, resolutions, supertypes, inline, extras, externals, word, conflicts, precedences, reserved, groups, options, renderAs, visibleExternals, reparseHosts, factoryInline, expectDiagnostics, expectTestFailures, contexts, generated';
+
+	it('is config-key-unknown on the record, naming the key and every known key, and the key has no effect', async () => {
+		await withDslGlobals(async () => {
+			const base = upstream({ program: ($: Symbols) => repeat($.pair!), pair: ($: Symbols) => seq($.item!, ',', $.item!) });
+			// @ts-expect-error the config type has no 'patches' key
+			const result = layer(base, { patches: { pair: { 0: field('left') } } });
+			expect(result.grammar.rules.pair).not.toMatchObject({ members: [{ type: 'FIELD', name: 'left' }, expect.anything(), expect.anything()] });
+			expect(layerRecordOf(result)?.diagnostics).toEqual([
+				expect.objectContaining({
+					code: 'config-key-unknown',
+					severity: 'fail',
+					canProceed: false,
+					grammar: 'up',
+					message: `wire(): 'patches' is not a config key; the keys are ${KNOWN}`,
+					details: { key: 'patches', known: KNOWN.split(', ') }
+				})
+			]);
+		});
+	});
+
+	it('blocks the compile gate when the config is spliced into the grammar as text', async () => {
+		const evaluated = await evaluateTempGrammar({ extras: '/\\s/', rules: 'pair: ($) => seq($.word, $.word)' }, "patches: { pair: { 0: field('left') } }");
+		const diagnosis = diagnoseGrammar({ grammar: 'demo', evaluated });
+		expect(diagnosis.passed).toBe(false);
+		expect(diagnosis.blocked).toEqual([expect.objectContaining({ code: 'config-key-unknown', grammar: 'demo', details: { key: 'patches', known: KNOWN.split(', ') } })]);
+	});
+});
+
 describe('a lead entry in a layer', () => {
 	const listed = (): GrammarResult =>
 		upstream({

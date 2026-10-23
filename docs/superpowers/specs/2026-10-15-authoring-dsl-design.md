@@ -475,6 +475,9 @@ No layer uses it yet. The derived kind renames stay data (§2.4), and the genera
 | `options`, `renderAs`, `visibleExternals`, `reparseHosts`, `factoryInline` | stay |
 | `expectDiagnostics`, `expectTestFailures` | stay |
 | `contexts` | new, from the builder contexts spec |
+| `generated` | new: the bindings printer marks the layer it writes (§2.4). That layer's enrich-fixpoint check stays out of its own diagnostics and runs when a generated-layer check asks for it |
+
+A key outside this table is refused. The layer pass records `config-key-unknown` (fail), naming the key and every key the table keeps, and the key has no effect. One list of the kept keys gives both the refusal and the message, and the type check holds that list equal to the config type's keys.
 
 ## 4. The copy primitive
 

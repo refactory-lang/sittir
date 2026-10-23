@@ -1,5 +1,6 @@
 import { enrichShapeDiagnostics, enrichShapesOf } from './enrich-shapes.ts';
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { Rule } from '../types/rule.ts';
 import { FIELD } from '../types/rule-types.ts'; // @rule-type-consts
 import { EMPTY_CONFLICT_RESOLUTIONS, sameConflictSet, type ConflictResolutionsInput, type ResolutionSectionInput } from './conflict-resolutions.ts';
@@ -61,6 +62,46 @@ export type LayerConfig<B extends GrammarJson = any> = Omit<WireConfig<EnrichedG
 	readonly contexts?: ContextsConfig;
 	readonly generated?: true;
 };
+
+const LAYER_CONFIG_KEYS = {
+	name: true,
+	rules: true,
+	edits: true,
+	resolutions: true,
+	supertypes: true,
+	inline: true,
+	extras: true,
+	externals: true,
+	word: true,
+	conflicts: true,
+	precedences: true,
+	reserved: true,
+	groups: true,
+	options: true,
+	renderAs: true,
+	visibleExternals: true,
+	reparseHosts: true,
+	factoryInline: true,
+	expectDiagnostics: true,
+	expectTestFailures: true,
+	contexts: true,
+	generated: true
+} as const satisfies { readonly [K in keyof LayerConfig]-?: true };
+
+function unknownConfigKeys(grammar: string, config: LayerConfig): GrammarDiagnostic[] {
+	const known = Object.keys(LAYER_CONFIG_KEYS);
+	return Object.keys(config)
+		.filter((key) => !Object.hasOwn(LAYER_CONFIG_KEYS, key))
+		.map((key): GrammarDiagnostic => ({
+			scope: 'grammar',
+			code: 'config-key-unknown',
+			severity: 'fail',
+			canProceed: false,
+			grammar,
+			message: `wire(): '${key}' is not a config key; the keys are ${known.join(', ')}`,
+			details: { key, known }
+		}));
+}
 
 type LayerCallback = (this: unknown, $: unknown, previous?: unknown) => unknown;
 
@@ -363,7 +404,7 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, config: LayerConfig): { readonly evaluated: Omit<LayerLists, 'conflicts'>; readonly ctx: LayerCtx } {
 	const inherited = layerRecordOf(source);
 	const name = config.name ?? source.grammar.name;
-	const diagnostics = [...(inherited?.diagnostics ?? [])];
+	const diagnostics = [...(inherited?.diagnostics ?? []), ...unknownConfigKeys(name, config)];
 	const declared = evaluatedConfig(config);
 	const completed = intake(source, { config, name, inherited, declared });
 	completePendingBase(base, completed);

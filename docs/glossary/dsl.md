@@ -7388,7 +7388,7 @@ layer's callbacks make become its record's `externalRoles` in either runtime.
 
 ### `packages/codegen/src/dsl/layer.ts::evaluatedLayer`
 
-The layer up to completion. The config's `groups:`, `renderAs:` and `visibleExternals:` callbacks are evaluated
+The layer up to completion. The pass's diagnostics start with the inherited ones and a refusal of each config key wire does not know (`unknownConfigKeys`). The config's `groups:`, `renderAs:` and `visibleExternals:` callbacks are evaluated
 once (`wire/wire.ts::evaluatedConfig`), for intake and wire to read. Intake completes the base and the pending base
 takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed
 base; its refusals join the pass's diagnostics and its `narrow`, lead and rename entries the pass's queues, and its alias
@@ -7475,6 +7475,14 @@ How a rename rewrites each of the layer's lists (`verbs/rename.ts::ListRename`).
 ### `packages/codegen/src/dsl/layer.ts::factoryInlineNames`
 
 The kinds `factoryInline` names for the layer: the list its source grammar carries and the ones the layer's own callback names (`wire/wire.ts::factoryInlineNamesOf`). A rename refuses them (`verbs/rename.ts::applyRename`).
+
+### `packages/codegen/src/dsl/layer.ts::LAYER_CONFIG_KEYS`
+
+The keys `wire(config)` keeps, as the design's config-key table lists them: one entry per `LayerConfig` key, typed so that a key added to or removed from the config type fails the type-check until the list follows it. `unknownConfigKeys` refuses every other key and names these in its message.
+
+### `packages/codegen/src/dsl/layer.ts::unknownConfigKeys`
+
+One `config-key-unknown` failure for each config key outside `LAYER_CONFIG_KEYS`, naming the key and every known key. Wire reads only the keys it knows, so an unknown key, such as a misspelled or retired one, would otherwise change nothing in silence. That matters most where the config reaches wire untyped, as text spliced into a grammar file. `evaluatedLayer` adds the failures to the pass's diagnostics before it evaluates anything, so they block the compile gate as the pass's other refusals do.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
