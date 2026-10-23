@@ -9,7 +9,9 @@ import { baseRulesOf } from './shared.ts';
 import { wireWithoutConfig, type WiredOpts } from './wire/wire.ts';
 import { ownRecordsOf } from './layer.ts';
 import { layerRecordOf, mergedRecords, synthesizedOf, type LayerRecords, type StageBases, type SynthesizedRules } from './layer-record.ts';
+import { pathToFileURL } from 'node:url';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
+import { sha256File } from '../util/content-hash.ts';
 import type { GrammarResult } from './enrich.ts';
 import type { ProjectedGrammar } from './verbs/effects.ts';
 
@@ -529,7 +531,9 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 }
 
 async function importedGrammar(entryPath: string): Promise<unknown> {
-	const mod = (await import(entryPath)) as {
+	const url = pathToFileURL(entryPath);
+	url.searchParams.set('content', sha256File(entryPath));
+	const mod = (await import(url.href)) as {
 		default?: unknown;
 		grammar?: unknown;
 	};

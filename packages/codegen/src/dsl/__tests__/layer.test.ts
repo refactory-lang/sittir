@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -11,7 +11,9 @@ import { diagnoseGrammar } from '../../compiler/compile.ts';
 import { evaluate, evaluateDsl, evaluatedGrammarOf, generatedLayerDiagnostics, withDslGlobals } from '../evaluate.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
-import { grammarPackage } from '../../grammars.ts';
+import { BINDINGS_MODULE, grammarPackage, layerPath } from '../../grammars.ts';
+import { loadBindingsHash } from '../../bindings/module.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 import { canonical } from '../../transpile/evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile/tree-sitter-cli.ts';
 import { alias, field, match, narrow, preference } from '../dsl-authoring.ts';
@@ -308,6 +310,32 @@ describe('a config key wire does not know', () => {
 		expect(diagnosis.passed).toBe(false);
 		expect(diagnosis.blocked).toEqual([expect.objectContaining({ code: 'config-key-unknown', grammar: 'demo', details: { key: 'patches', known: KNOWN.split(', ') } })]);
 	});
+});
+
+describe('a top layer rewritten in the same process', () => {
+	it('evaluates from its current bytes, the bytes the freshness check reads', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-rewritten-layer-'));
+		try {
+			const base = join(dir, 'base.js');
+			writeFileSync(
+				base,
+				"module.exports = grammar({ name: 'demo', rules: { source: ($) => repeat($.pair), pair: ($) => seq($.word, ',', $.number), word: () => /[a-z]+/, number: () => /[0-9]+/ } });\n"
+			);
+			const write = (name: string, hash: string): void => {
+				writeSittirGrammarPackage(dir, base, 'demo', '', undefined, { bindings: `generated: true, edits: { pair: { 0: field('${name}') } }` });
+				appendFileSync(join(dir, BINDINGS_MODULE), `export const hash = ${JSON.stringify(hash)};\n`);
+			};
+			const pairOfTop = async (): Promise<unknown> => (await evaluate(layerPath({ dir }, 'top'), NO_FILE_TYPES)).rules.pair;
+			write('left', 'first');
+			expect(await pairOfTop()).toMatchObject({ type: 'SEQ', members: [{ type: 'FIELD', name: 'left' }, expect.anything(), expect.anything()] });
+			expect(await loadBindingsHash(dir)).toBe('first');
+			write('right', 'second');
+			expect(await pairOfTop()).toMatchObject({ type: 'SEQ', members: [{ type: 'FIELD', name: 'right' }, expect.anything(), expect.anything()] });
+			expect(await loadBindingsHash(dir)).toBe('second');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 120_000);
 });
 
 describe('a lead entry in a layer', () => {
