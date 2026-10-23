@@ -118,6 +118,25 @@ Doctor's counts on the same day, for the cross-check: no-symbol 576, `name#N` 7,
 differs from this rule for interface and type-literal properties and for some abstract
 class members. Those differences are Infigraph's to fix.
 
+## Resolved enumeration questions
+
+These settle the cases the rule above leaves open. Implement builds to them.
+
+- `constructor` is a class member. It is enumerated, keyed `Owner::constructor`, and on an
+  exported class it counts as undocumented.
+- TypeScript `private` and `#private` members are not enumerated as undocumented, for the same
+  reason as members of non-exported owners. `protected` members count.
+- Namespace members (`namespace N { export … }`) are enumerated as `N::member`, and exported
+  when the namespace is.
+- Type literals are followed through unions, intersections and parentheses. A property whose
+  own type is a type literal nests: `A::prop::inner`.
+- An object-literal const is followed through `as const`, `satisfies` and parentheses only.
+  `Object.freeze(...)` is not followed.
+- A key is valid only when its full path matches exactly one declaration's path in the file
+  (`Namespace::Owner::member`, or the bare name for a top-level declaration). Suffix matching
+  (`Owner::member` matching `Outer::Owner::member`) is not used: one owner name can occur under
+  several namespaces in one file, and a suffix would make such a key ambiguous.
+
 ## Ceilings file
 
 One checked-in JSON file holds the ceiling for each broken class and for undocumented
