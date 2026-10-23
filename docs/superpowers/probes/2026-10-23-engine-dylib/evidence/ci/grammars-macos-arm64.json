@@ -1,0 +1,110 @@
+{
+  "host": "aarch64-apple-darwin",
+  "check": {
+    "platform": "darwin-arm64",
+    "node": "v22.23.2",
+    "grammars": [
+      "python",
+      "regex"
+    ],
+    "ids": [
+      "python:0",
+      "python:1",
+      "regex:2",
+      "regex:3",
+      "python:4",
+      "python:5",
+      "regex:6",
+      "regex:7"
+    ],
+    "idsUniqueAndIncreasing": true,
+    "globalCounter": null,
+    "render": {
+      "python": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      },
+      "regex": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      }
+    },
+    "crossGrammar": {
+      "renderInForeignTree": "Value is not an instance of class `Tree`",
+      "foreignMethodOnTree": "Illegal invocation"
+    },
+    "treeObjects": {
+      "settled": {
+        "python": 1,
+        "regex": 1
+      },
+      "afterMaking200Each": {
+        "python": 201,
+        "regex": 201
+      },
+      "afterGc": {
+        "python": 1,
+        "regex": 1
+      },
+      "held": 2
+    },
+    "images": [
+      "/Users/USER/*/libsittir_engine.dylib",
+      "/Users/USER/*/libstd-614bb9b33bbc23af.dylib",
+      "/Users/USER/*/sittir-python.node",
+      "/Users/USER/*/sittir-regex.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": "@rpath/libsittir_engine.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-614bb9b33bbc23af.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "python": {
+      "id": "/Users/runner/work/_temp/target/aarch64-apple-darwin/gate/deps/libsittir_python.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/Users/runner/work/_temp/target/aarch64-apple-darwin/gate/deps/libsittir_python.dylib",
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-614bb9b33bbc23af.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "regex": {
+      "id": "/Users/runner/work/_temp/target/aarch64-apple-darwin/gate/deps/libsittir_regex.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/Users/runner/work/_temp/target/aarch64-apple-darwin/gate/deps/libsittir_regex.dylib",
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-614bb9b33bbc23af.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 1,
+      "needsAllocator": []
+    }
+  }
+}

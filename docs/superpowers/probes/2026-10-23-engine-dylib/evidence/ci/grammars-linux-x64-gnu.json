@@ -1,0 +1,111 @@
+{
+  "host": "x86_64-unknown-linux-gnu",
+  "check": {
+    "platform": "linux-x64",
+    "node": "v22.23.3",
+    "grammars": [
+      "python",
+      "regex"
+    ],
+    "ids": [
+      "python:0",
+      "python:1",
+      "regex:2",
+      "regex:3",
+      "python:4",
+      "python:5",
+      "regex:6",
+      "regex:7"
+    ],
+    "idsUniqueAndIncreasing": true,
+    "globalCounter": null,
+    "render": {
+      "python": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      },
+      "regex": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      }
+    },
+    "crossGrammar": {
+      "renderInForeignTree": "Value is not an instance of class `Tree`",
+      "foreignMethodOnTree": "Illegal invocation"
+    },
+    "treeObjects": {
+      "settled": {
+        "python": 1,
+        "regex": 1
+      },
+      "afterMaking200Each": {
+        "python": 201,
+        "regex": 201
+      },
+      "afterGc": {
+        "python": 1,
+        "regex": 1
+      },
+      "held": 2
+    },
+    "images": [
+      "/home/runner/work/_temp/grammars/pkg-python/libsittir_engine.so",
+      "/home/runner/work/_temp/grammars/pkg-python/libstd-44675f186029a4cd.so",
+      "/home/runner/work/_temp/grammars/pkg-python/sittir-python.node",
+      "/home/runner/work/_temp/grammars/pkg-regex/sittir-regex.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": "libsittir_engine.so",
+      "rpaths": [
+        "$ORIGIN"
+      ],
+      "needs": [
+        "libstd-44675f186029a4cd.so",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-x86-64.so.2"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "python": {
+      "id": null,
+      "rpaths": [
+        "$ORIGIN"
+      ],
+      "needs": [
+        "libsittir_engine.so",
+        "libstd-44675f186029a4cd.so",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-x86-64.so.2"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "regex": {
+      "id": null,
+      "rpaths": [
+        "$ORIGIN"
+      ],
+      "needs": [
+        "libsittir_engine.so",
+        "libstd-44675f186029a4cd.so",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-x86-64.so.2"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 1,
+      "needsAllocator": []
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "host": "aarch64-apple-darwin",
+  "check": {
+    "platform": "darwin-arm64",
+    "node": "v26.12.0",
+    "grammars": [
+      "python",
+      "regex"
+    ],
+    "ids": [
+      "python:0",
+      "python:1",
+      "regex:2",
+      "regex:3",
+      "python:4",
+      "python:5",
+      "regex:6",
+      "regex:7"
+    ],
+    "idsUniqueAndIncreasing": true,
+    "globalCounter": null,
+    "render": {
+      "python": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      },
+      "regex": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      }
+    },
+    "crossGrammar": {
+      "renderInForeignTree": "Value is not an instance of class `Tree`",
+      "foreignMethodOnTree": "Illegal invocation"
+    },
+    "treeObjects": {
+      "settled": {
+        "python": 1,
+        "regex": 1
+      },
+      "afterMaking200Each": {
+        "python": 201,
+        "regex": 201
+      },
+      "afterGc": {
+        "python": 1,
+        "regex": 1
+      },
+      "held": 2
+    },
+    "images": [
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/grammars-ci/pkg-python/libsittir_engine.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/grammars-ci/pkg-python/libstd-f7394d8dadbee1bf.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/grammars-ci/pkg-python/sittir-python.node",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/grammars-ci/pkg-regex/sittir-regex.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": "@rpath/libsittir_engine.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-f7394d8dadbee1bf.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "python": {
+      "id": "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-dylib/aarch64-apple-darwin/gate/deps/libsittir_python.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-dylib/aarch64-apple-darwin/gate/deps/libsittir_python.dylib",
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-f7394d8dadbee1bf.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "regex": {
+      "id": "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-dylib/aarch64-apple-darwin/gate/deps/libsittir_regex.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-dylib/aarch64-apple-darwin/gate/deps/libsittir_regex.dylib",
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-f7394d8dadbee1bf.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 1,
+      "needsAllocator": []
+    }
+  }
+}

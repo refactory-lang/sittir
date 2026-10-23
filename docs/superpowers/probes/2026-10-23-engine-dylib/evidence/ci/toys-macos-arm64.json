@@ -1,0 +1,168 @@
+{
+  "host": "aarch64-apple-darwin",
+  "napiShared": {
+    "scenario": "napi-shared",
+    "platform": "darwin-arm64",
+    "node": "v22.23.2",
+    "loadA": "loaded",
+    "aExports": [
+      "SittirEngine",
+      "addon",
+      "make",
+      "refuse"
+    ],
+    "aBeforeB": {
+      "addon": "a",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by a"
+    },
+    "loadB": "loaded",
+    "bExports": [
+      "SittirEngine",
+      "addon",
+      "make",
+      "refuse"
+    ],
+    "b": {
+      "addon": "b",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by b",
+      "madeIsOwnClass": true
+    },
+    "aAfterB": {
+      "addon": "a",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by a",
+      "madeIsOwnClass": false
+    },
+    "images": [
+      "/Users/USER/*/libstd-614bb9b33bbc23af.dylib",
+      "/Users/USER/*/libtoy_napi_engine.dylib",
+      "/Users/USER/*/toy_napi_a.node",
+      "/Users/USER/*/toy_napi_b.node"
+    ]
+  },
+  "shapeA": {
+    "scenario": "shape-a",
+    "platform": "darwin-arm64",
+    "node": "v22.23.2",
+    "loadB": "loaded",
+    "ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "engine": {
+      "a": [
+        "0x119ff0090",
+        "/Users/runner/work/_temp/toys/shape-a-a/libsittir_engine.dylib",
+        "0.0.0+fddb7767b533"
+      ],
+      "b": [
+        "0x119ff0090",
+        "/Users/runner/work/_temp/toys/shape-a-a/libsittir_engine.dylib",
+        "0.0.0+fddb7767b533"
+      ]
+    },
+    "mallocSlots": {
+      "a": [
+        "0x11a02c438",
+        "0x11a02c438"
+      ],
+      "b": [
+        "0x11a02c438",
+        "0x11a02c438"
+      ]
+    },
+    "scannerRoundtrip": [
+      true,
+      true
+    ],
+    "parseWithoutLanguage": [
+      true,
+      true
+    ],
+    "images": [
+      "/Users/USER/*/libsittir_engine.dylib",
+      "/Users/USER/*/libstd-614bb9b33bbc23af.dylib",
+      "/Users/USER/*/toy_addon_a.node",
+      "/Users/USER/*/toy_addon_b.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": "@rpath/libsittir_engine.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-614bb9b33bbc23af.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "addon": {
+      "id": "/Users/runner/work/_temp/target/aarch64-apple-darwin/release/deps/libtoy_addon_a.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/Users/runner/work/_temp/target/aarch64-apple-darwin/release/deps/libtoy_addon_a.dylib",
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-614bb9b33bbc23af.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "napiAddon": {
+      "id": "/Users/runner/work/_temp/target/aarch64-apple-darwin/release/deps/libtoy_napi_a.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/Users/runner/work/_temp/target/aarch64-apple-darwin/release/deps/libtoy_napi_a.dylib",
+        "@rpath/libtoy_napi_engine.dylib",
+        "@rpath/libstd-614bb9b33bbc23af.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    }
+  },
+  "skewSource": {
+    "scenario": "shape-a",
+    "platform": "darwin-arm64",
+    "node": "v22.23.2",
+    "loadB": "sittir engine mismatch: this addon was built against engine 0.0.0+6d36c1404c34, but the process already loaded engine 0.0.0+fddb7767b533 from /Users/runner/work/_temp/toys/shape-a-a/libsittir_engine.dylib. Install sittir grammar packages of one release.",
+    "images": [
+      "/Users/USER/*/libsittir_engine.dylib",
+      "/Users/USER/*/libstd-614bb9b33bbc23af.dylib",
+      "/Users/USER/*/toy_addon_a.node",
+      "/Users/USER/*/toy_addon_b.node"
+    ]
+  },
+  "skewVersion": {
+    "scenario": "shape-a",
+    "platform": "darwin-arm64",
+    "node": "v22.23.2",
+    "loadB": "dlopen(/Users/runner/work/_temp/toys/skew-version-b/toy_addon_b.node, 0x0001): Symbol not found: __RNvNtCsl8QtrSNhQe6_13sittir_engine5stamp6LOADED\n  Referenced from: <1F8DDC04-28F3-393F-897E-5FDDA33CC727> /Users/runner/work/_temp/toys/skew-version-b/toy_addon_b.node\n  Expected in:     <B7DBC754-0696-37B1-B157-C841945C2D9F> /Users/runner/work/_temp/toys/shape-a-a/libsittir_engine.dylib",
+    "images": [
+      "/Users/USER/*/libsittir_engine.dylib",
+      "/Users/USER/*/libstd-614bb9b33bbc23af.dylib",
+      "/Users/USER/*/toy_addon_a.node"
+    ]
+  }
+}

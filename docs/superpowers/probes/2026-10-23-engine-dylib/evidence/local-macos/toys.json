@@ -1,0 +1,168 @@
+{
+  "host": "aarch64-apple-darwin",
+  "napiShared": {
+    "scenario": "napi-shared",
+    "platform": "darwin-arm64",
+    "node": "v26.12.0",
+    "loadA": "loaded",
+    "aExports": [
+      "SittirEngine",
+      "addon",
+      "make",
+      "refuse"
+    ],
+    "aBeforeB": {
+      "addon": "a",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by a"
+    },
+    "loadB": "loaded",
+    "bExports": [
+      "SittirEngine",
+      "addon",
+      "make",
+      "refuse"
+    ],
+    "b": {
+      "addon": "b",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by b",
+      "madeIsOwnClass": true
+    },
+    "aAfterB": {
+      "addon": "a",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by a",
+      "madeIsOwnClass": false
+    },
+    "images": [
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/napi-a/libstd-f7394d8dadbee1bf.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/napi-a/libtoy_napi_engine.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/napi-a/toy_napi_a.node",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/napi-b/toy_napi_b.node"
+    ]
+  },
+  "shapeA": {
+    "scenario": "shape-a",
+    "platform": "darwin-arm64",
+    "node": "v26.12.0",
+    "loadB": "loaded",
+    "ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "engine": {
+      "a": [
+        "0x106eb0000",
+        "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib",
+        "0.0.0+fddb7767b533"
+      ],
+      "b": [
+        "0x106eb0000",
+        "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib",
+        "0.0.0+fddb7767b533"
+      ]
+    },
+    "mallocSlots": {
+      "a": [
+        "0x106eeea30",
+        "0x106eeea30"
+      ],
+      "b": [
+        "0x106eeea30",
+        "0x106eeea30"
+      ]
+    },
+    "scannerRoundtrip": [
+      true,
+      true
+    ],
+    "parseWithoutLanguage": [
+      true,
+      true
+    ],
+    "images": [
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libstd-f7394d8dadbee1bf.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/toy_addon_a.node",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-b/toy_addon_b.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": "@rpath/libsittir_engine.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-f7394d8dadbee1bf.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "addon": {
+      "id": "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-spikes/aarch64-apple-darwin/release/deps/libtoy_addon_a.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-spikes/aarch64-apple-darwin/release/deps/libtoy_addon_a.dylib",
+        "@rpath/libsittir_engine.dylib",
+        "@rpath/libstd-f7394d8dadbee1bf.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "napiAddon": {
+      "id": "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-spikes/aarch64-apple-darwin/release/deps/libtoy_napi_a.dylib",
+      "rpaths": [
+        "@loader_path"
+      ],
+      "needs": [
+        "/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/target-spikes/aarch64-apple-darwin/release/deps/libtoy_napi_a.dylib",
+        "@rpath/libtoy_napi_engine.dylib",
+        "@rpath/libstd-f7394d8dadbee1bf.dylib",
+        "/usr/lib/libiconv.2.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    }
+  },
+  "skewSource": {
+    "scenario": "shape-a",
+    "platform": "darwin-arm64",
+    "node": "v26.12.0",
+    "loadB": "sittir engine mismatch: this addon was built against engine 0.0.0+6d36c1404c34, but the process already loaded engine 0.0.0+fddb7767b533 from /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib. Install sittir grammar packages of one release.",
+    "images": [
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libstd-f7394d8dadbee1bf.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/toy_addon_a.node",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/skew-source-b/toy_addon_b.node"
+    ]
+  },
+  "skewVersion": {
+    "scenario": "shape-a",
+    "platform": "darwin-arm64",
+    "node": "v26.12.0",
+    "loadB": "dlopen(/private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/skew-version-b/toy_addon_b.node, 0x0001): Symbol not found: __RNvNtCsc4vrJTfko9u_13sittir_engine5stamp6LOADED\n  Referenced from: <41CF2839-7B77-3839-B5BB-9932B2AC52E8> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/skew-version-b/toy_addon_b.node\n  Expected in:     <3FF52389-67F5-3021-94F2-9E897106191E> /private/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib",
+    "images": [
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libsittir_engine.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/libstd-f7394d8dadbee1bf.dylib",
+      "/tmp/claude-501/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/e390e592-92be-4950-849b-07d44d3e5750/scratchpad/toys-ci/shape-a-a/toy_addon_a.node"
+    ]
+  }
+}

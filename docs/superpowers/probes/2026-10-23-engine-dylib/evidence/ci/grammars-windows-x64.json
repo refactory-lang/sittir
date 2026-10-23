@@ -1,0 +1,115 @@
+{
+  "host": "x86_64-pc-windows-msvc",
+  "check": {
+    "platform": "win32-x64",
+    "node": "v22.23.3",
+    "grammars": [
+      "python",
+      "regex"
+    ],
+    "ids": [
+      "python:0",
+      "python:1",
+      "regex:2",
+      "regex:3",
+      "python:4",
+      "python:5",
+      "regex:6",
+      "regex:7"
+    ],
+    "idsUniqueAndIncreasing": true,
+    "globalCounter": null,
+    "render": {
+      "python": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      },
+      "regex": {
+        "viaTreeIsSource": true,
+        "sameAsTable": true
+      }
+    },
+    "crossGrammar": {
+      "renderInForeignTree": "Value is not an instance of class `Tree`",
+      "foreignMethodOnTree": "Illegal invocation"
+    },
+    "treeObjects": {
+      "settled": {
+        "python": 1,
+        "regex": 1
+      },
+      "afterMaking200Each": {
+        "python": 201,
+        "regex": 201
+      },
+      "afterGc": {
+        "python": 1,
+        "regex": 1
+      },
+      "held": 2
+    },
+    "images": [
+      "D:\\a\\_temp\\grammars\\pkg-python\\sittir-python.node",
+      "D:\\a\\_temp\\grammars\\pkg-python\\sittir_engine.dll",
+      "D:\\a\\_temp\\grammars\\pkg-python\\std-512d688ad63bc3c4.dll",
+      "D:\\a\\_temp\\grammars\\pkg-regex\\sittir-regex.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": null,
+      "rpaths": [],
+      "needs": [
+        "KERNEL32.dll",
+        "std-512d688ad63bc3c4.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "python": {
+      "id": null,
+      "rpaths": [],
+      "needs": [
+        "sittir_engine.dll",
+        "kernel32.dll",
+        "std-512d688ad63bc3c4.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "KERNEL32.dll"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "regex": {
+      "id": null,
+      "rpaths": [],
+      "needs": [
+        "sittir_engine.dll",
+        "kernel32.dll",
+        "std-512d688ad63bc3c4.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "KERNEL32.dll"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 1,
+      "needsAllocator": []
+    }
+  }
+}

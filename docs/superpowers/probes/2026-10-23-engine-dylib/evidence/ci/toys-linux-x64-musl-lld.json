@@ -1,0 +1,166 @@
+{
+  "host": "x86_64-unknown-linux-musl",
+  "napiShared": {
+    "scenario": "napi-shared",
+    "platform": "linux-x64",
+    "node": "v22.23.4",
+    "loadA": "loaded",
+    "aExports": [
+      "SittirEngine",
+      "addon",
+      "make",
+      "refuse"
+    ],
+    "aBeforeB": {
+      "addon": "a",
+      "constructed": "method of a on an object built by a",
+      "made": "method of a on an object built by a"
+    },
+    "loadB": "loaded",
+    "bExports": [
+      "SittirEngine",
+      "addon",
+      "make",
+      "refuse"
+    ],
+    "b": {
+      "addon": "b",
+      "constructed": "method of b on an object built by b",
+      "made": "method of b on an object built by b",
+      "madeIsOwnClass": true
+    },
+    "aAfterB": {
+      "addon": "a",
+      "constructed": "method of a on an object built by a",
+      "made": "method of b on an object built by a",
+      "madeIsOwnClass": false
+    },
+    "images": [
+      "/__w/_temp/toys/napi-a/libstd-135dbb91b6c04a5d.so",
+      "/__w/_temp/toys/napi-a/libtoy_napi_engine.so",
+      "/__w/_temp/toys/napi-a/toy_napi_a.node",
+      "/__w/_temp/toys/napi-b/toy_napi_b.node"
+    ]
+  },
+  "shapeA": {
+    "scenario": "shape-a",
+    "platform": "linux-x64",
+    "node": "v22.23.4",
+    "loadB": "loaded",
+    "ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "engine": {
+      "a": [
+        "0x7f0e25628da0",
+        "/__w/_temp/toys/shape-a-a/libsittir_engine.so",
+        "0.0.0+fddb7767b533"
+      ],
+      "b": [
+        "0x7f0e25628da0",
+        "/__w/_temp/toys/shape-a-a/libsittir_engine.so",
+        "0.0.0+fddb7767b533"
+      ]
+    },
+    "mallocSlots": {
+      "a": [
+        "0x7f0e25663970",
+        "0x7f0e25663970"
+      ],
+      "b": [
+        "0x7f0e25663970",
+        "0x7f0e25663970"
+      ]
+    },
+    "scannerRoundtrip": [
+      true,
+      true
+    ],
+    "parseWithoutLanguage": [
+      true,
+      true
+    ],
+    "images": [
+      "/__w/_temp/toys/shape-a-a/libsittir_engine.so",
+      "/__w/_temp/toys/shape-a-a/libstd-135dbb91b6c04a5d.so",
+      "/__w/_temp/toys/shape-a-a/toy_addon_a.node",
+      "/__w/_temp/toys/shape-a-b/toy_addon_b.node"
+    ]
+  },
+  "links": {
+    "engine": {
+      "id": "libsittir_engine.so",
+      "rpaths": [
+        "$ORIGIN"
+      ],
+      "needs": [
+        "libstd-135dbb91b6c04a5d.so",
+        "libgcc_s.so.1",
+        "libc.musl-x86_64.so.1"
+      ],
+      "definesRuntime": 147,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    },
+    "addon": {
+      "id": null,
+      "rpaths": [
+        "$ORIGIN"
+      ],
+      "needs": [
+        "libsittir_engine.so",
+        "libstd-135dbb91b6c04a5d.so",
+        "libgcc_s.so.1",
+        "libc.musl-x86_64.so.1"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 4,
+      "needsAllocator": [
+        "ts_current_free",
+        "ts_current_malloc",
+        "ts_current_realloc"
+      ]
+    },
+    "napiAddon": {
+      "id": null,
+      "rpaths": [
+        "$ORIGIN"
+      ],
+      "needs": [
+        "libtoy_napi_engine.so",
+        "libstd-135dbb91b6c04a5d.so",
+        "libgcc_s.so.1",
+        "libc.musl-x86_64.so.1"
+      ],
+      "definesRuntime": 0,
+      "needsRuntime": 0,
+      "needsAllocator": []
+    }
+  },
+  "skewSource": {
+    "scenario": "shape-a",
+    "platform": "linux-x64",
+    "node": "v22.23.4",
+    "loadB": "sittir engine mismatch: this addon was built against engine 0.0.0+6d36c1404c34, but the process already loaded engine 0.0.0+fddb7767b533 from /__w/_temp/toys/shape-a-a/libsittir_engine.so. Install sittir grammar packages of one release.",
+    "images": [
+      "/__w/_temp/toys/shape-a-a/libsittir_engine.so",
+      "/__w/_temp/toys/shape-a-a/libstd-135dbb91b6c04a5d.so",
+      "/__w/_temp/toys/shape-a-a/toy_addon_a.node",
+      "/__w/_temp/toys/skew-source-b/toy_addon_b.node"
+    ]
+  },
+  "skewVersion": {
+    "scenario": "shape-a",
+    "platform": "linux-x64",
+    "node": "v22.23.4",
+    "loadB": "Error relocating /__w/_temp/toys/skew-version-b/toy_addon_b.node: _RNvNtCsc8ZGqpiRztk_13sittir_engine5stamp6LOADED: symbol not found",
+    "images": [
+      "/__w/_temp/toys/shape-a-a/libsittir_engine.so",
+      "/__w/_temp/toys/shape-a-a/libstd-135dbb91b6c04a5d.so",
+      "/__w/_temp/toys/shape-a-a/toy_addon_a.node"
+    ]
+  }
+}

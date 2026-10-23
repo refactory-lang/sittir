@@ -1,0 +1,19 @@
+# CI run 40011785893 (head 428cc15bc): link failures kept as evidence
+
+## toys (linux-arm64-gnu)
+  = note: /usr/bin/ld: anonymous version tag cannot be combined with other version tags
+          collect2: error: ld returned 1 exit status
+error: could not compile `sittir-engine` (lib) due to 1 previous error
+
+## toys (linux-x64-musl)
+  = note: /usr/lib/gcc/x86_64-alpine-linux-musl/15.2.0/../../../../x86_64-alpine-linux-musl/bin/ld: anonymous version tag cannot be combined with other version tags
+          collect2: error: ld returned 1 exit status
+error: could not compile `sittir-engine` (lib) due to 1 previous error
+
+## toys (windows-x64)
+          toy_addon_b.toy_addon_b.cfdd903acb0ae2f8-cgu.0.rcgu.o : error LNK2019: unresolved external symbol ts_current_malloc referenced in function _RNvNtCshQsI5HmrMs6_11toy_addon_b5addon23malloc_slots_c_callback
+          D:\a\_temp\target\x86_64-pc-windows-msvc\release\deps\toy_addon_b.dll : fatal error LNK1120: 1 unresolved externals
+          toy_addon_a.toy_addon_a.d2130044618884f7-cgu.0.rcgu.o : error LNK2019: unresolved external symbol ts_current_malloc referenced in function _RNvNtCsi2dEhZ3j3E1_11toy_addon_a5addon23malloc_slots_c_callback
+          D:\a\_temp\target\x86_64-pc-windows-msvc\release\deps\toy_addon_a.dll : fatal error LNK1120: 1 unresolved externals
+error: could not compile `toy-addon-b` (lib) due to 1 previous error
+error: could not compile `toy-addon-a` (lib) due to 1 previous error
