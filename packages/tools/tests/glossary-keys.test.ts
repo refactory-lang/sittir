@@ -246,3 +246,81 @@ describe('the ratchet on a planted tree', () => {
 		expect(ceilings().undocumented).toBe(0);
 	});
 });
+
+describe('enumeration edge cases', () => {
+	it('enumerates the names a destructuring declaration binds', () => {
+		expect(paths('export const { a, b: [c, ...d], ...e } = source;', true)).toEqual(['a', 'c', 'd', 'e']);
+	});
+
+	it('walks a dotted namespace to its members', () => {
+		expect(paths('export namespace A.B { export const missing = 1; const quiet = 2; }', true)).toEqual([
+			'A',
+			'A::B',
+			'A::B::missing'
+		]);
+		expect(paths('namespace A.B { export const missing = 1; }', true)).toEqual([]);
+	});
+
+	it('nests the type literal of a parameter property under it', () => {
+		expect(paths('export class C { constructor(public config: { inner: number }) {} }')).toContain('C::config::inner');
+	});
+
+	it('keeps a static member and an instance member of one name apart', () => {
+		const found = enumerateDeclarations('probe.ts', 'export class C { static f(): void {} f(): void {} }').filter(
+			(declaration) => declaration.path.join('::') === 'C::f'
+		);
+		expect(found.map((declaration) => declaration.isStatic).sort()).toEqual([false, true]);
+	});
+
+	it('follows only as const, satisfies and parentheses into a const object', () => {
+		expect(paths('export const DATA = { leaf: 1 } as {};')).toEqual(['DATA']);
+		expect(paths('export const DATA = { leaf: 1 } as const;')).toEqual(['DATA', 'DATA::leaf']);
+		expect(paths('export const DATA = ({ leaf: 1 }) satisfies object;')).toEqual(['DATA', 'DATA::leaf']);
+	});
+});
+
+describe('the ratchet on edge-case trees', () => {
+	let root: string;
+	const FILE = 'packages/common/src/probe.ts';
+	beforeEach(() => {
+		root = mkdtempSync(join(tmpdir(), 'glossary-keys-'));
+		vi.spyOn(console, 'log').mockImplementation(() => undefined);
+		vi.spyOn(console, 'error').mockImplementation(() => undefined);
+	});
+	afterEach(() => {
+		vi.restoreAllMocks();
+		rmSync(root, { recursive: true, force: true });
+	});
+
+	it('counts a static member undocumented until a key resolves to it, and refuses a key that names both', () => {
+		writeSource(
+			root,
+			FILE,
+			'export class Only { static make(): void {} }\nexport class Both { static f(): void {} f(): void {} }\n'
+		);
+		writeSource(root, 'docs/glossary/common.md', `### \`${FILE}::Only::make\`\n\n### \`${FILE}::Both::f\`\n`);
+		const result = measure(root);
+		expect(result.counts.ambiguous).toBe(1);
+		expect(result.undocumented).toEqual(expect.arrayContaining([`${FILE}::Both::f (static)`, `${FILE}::Both::f`]));
+		expect(result.undocumented).not.toContain(`${FILE}::Only::make (static)`);
+	});
+
+	it('does not let a line that merely starts with a fence marker close a fence', () => {
+		writeSource(root, FILE, 'export function documented(): void {}\n');
+		writeSource(
+			root,
+			'docs/glossary/common.md',
+			['```md', '```ts still code', `### \`${FILE}::inside\``, '```', `### \`${FILE}::planted\``, ''].join('\n')
+		);
+		const result = measure(root);
+		expect(result.keys.map((entry) => entry.key)).toEqual([`${FILE}::planted`]);
+	});
+
+	it('refuses a ceiling that is not a non-negative integer, whether checking or updating', async () => {
+		writeSource(root, FILE, 'export function documented(): void {}\n');
+		writeSource(root, 'ceilings.json', JSON.stringify({ undocumented: 'bad' }));
+		expect(await run({ root, ceilings: 'ceilings.json' })).toBe(1);
+		expect(await run({ root, ceilings: 'ceilings.json', update: true })).toBe(1);
+		expect(console.error).toHaveBeenCalledWith(expect.stringContaining('not a non-negative integer: undocumented'));
+	});
+});

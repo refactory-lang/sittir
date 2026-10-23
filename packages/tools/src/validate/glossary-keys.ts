@@ -33,6 +33,7 @@ export const COUNT_NAMES: readonly CountName[] = [...BROKEN_CLASSES, 'undocument
 export interface Declaration {
 	readonly path: readonly string[];
 	readonly exported: boolean;
+	readonly isStatic: boolean;
 }
 
 export interface GlossaryKey {
@@ -87,14 +88,18 @@ function namesExportedByList(sourceFile: ts.SourceFile): ReadonlySet<string> {
 	return names;
 }
 
+function boundNames(name: ts.BindingName): readonly string[] {
+	if (ts.isIdentifier(name)) return [name.text];
+	return name.elements.flatMap((element) => (ts.isOmittedExpression(element) ? [] : boundNames(element.name)));
+}
+
 function unwrapExpression(expression: ts.Expression | undefined): ts.Expression | undefined {
 	let current = expression;
 	while (
 		current !== undefined &&
 		(ts.isParenthesizedExpression(current) ||
-			ts.isAsExpression(current) ||
 			ts.isSatisfiesExpression(current) ||
-			ts.isTypeAssertionExpression(current))
+			(ts.isAsExpression(current) && ts.isConstTypeReference(current.type)))
 	) {
 		current = current.expression;
 	}
@@ -105,10 +110,10 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 	const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 	const listed = namesExportedByList(sourceFile);
 	const found = new Map<string, Declaration>();
-	const add = (path: readonly string[], exported: boolean): void => {
-		const id = path.join('::');
+	const add = (path: readonly string[], exported: boolean, isStatic = false): void => {
+		const id = `${path.join('::')}${isStatic ? '\u0000static' : ''}`;
 		const prior = found.get(id);
-		if (prior === undefined || (exported && !prior.exported)) found.set(id, { path, exported });
+		if (prior === undefined || (exported && !prior.exported)) found.set(id, { path, exported, isStatic });
 	};
 
 	const typeMembers = (type: ts.TypeNode | undefined, path: readonly string[], exported: boolean): void => {
@@ -143,8 +148,10 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 				for (const parameter of member.parameters) {
 					const name = nameOf(parameter.name);
 					const modifiers = ts.getModifiers(parameter) ?? [];
-					if (name !== undefined && modifiers.length > 0 && !hasModifier(parameter, ts.SyntaxKind.PrivateKeyword))
+					if (name !== undefined && modifiers.length > 0 && !hasModifier(parameter, ts.SyntaxKind.PrivateKeyword)) {
 						add([...path, name], exported);
+						typeMembers(parameter.type, [...path, name], exported);
+					}
 				}
 				continue;
 			}
@@ -158,7 +165,7 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 			const name = nameOf(member.name);
 			if (name === undefined || hasModifier(member, ts.SyntaxKind.PrivateKeyword)) continue;
 			const own = [...path, name];
-			add(own, exported);
+			add(own, exported, hasModifier(member, ts.SyntaxKind.StaticKeyword));
 			if (ts.isPropertyDeclaration(member)) typeMembers(member.type, own, exported);
 		}
 	};
@@ -174,6 +181,16 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 			add(own, exported);
 			if (ts.isPropertyAssignment(property)) objectMembers(property.initializer, own, exported);
 		}
+	};
+
+	const namespaceMembers = (node: ts.ModuleDeclaration, prefix: readonly string[], exported: boolean): void => {
+		if (!ts.isIdentifier(node.name)) return;
+		const path = [...prefix, node.name.text];
+		add(path, exported);
+		if (node.body === undefined) return;
+		if (ts.isModuleDeclaration(node.body)) namespaceMembers(node.body, path, exported);
+		else if (ts.isModuleBlock(node.body))
+			visit(node.body.statements, path, (member) => exported && hasModifier(member, ts.SyntaxKind.ExportKeyword));
 	};
 
 	const visit = (statements: ts.NodeArray<ts.Statement>, prefix: readonly string[], isExported: ExportTest): void => {
@@ -206,26 +223,15 @@ export function enumerateDeclarations(file: string, source: string): readonly De
 			} else if (ts.isVariableStatement(statement)) {
 				const constant = (statement.declarationList.flags & ts.NodeFlags.Const) !== 0;
 				for (const declaration of statement.declarationList.declarations) {
-					if (!ts.isIdentifier(declaration.name)) continue;
-					const path = [...prefix, declaration.name.text];
-					const exported = isExported(statement, declaration.name.text);
-					add(path, exported);
-					if (constant) objectMembers(declaration.initializer, path, exported);
+					for (const bound of boundNames(declaration.name)) {
+						const path = [...prefix, bound];
+						const exported = isExported(statement, bound);
+						add(path, exported);
+						if (constant && ts.isIdentifier(declaration.name)) objectMembers(declaration.initializer, path, exported);
+					}
 				}
-			} else if (
-				ts.isModuleDeclaration(statement) &&
-				ts.isIdentifier(statement.name) &&
-				statement.body !== undefined &&
-				ts.isModuleBlock(statement.body)
-			) {
-				const path = [...prefix, statement.name.text];
-				const exported = isExported(statement, statement.name.text);
-				add(path, exported);
-				visit(
-					statement.body.statements,
-					path,
-					(node, name) => exported && hasModifier(node, ts.SyntaxKind.ExportKeyword) && name !== ''
-				);
+			} else if (ts.isModuleDeclaration(statement) && ts.isIdentifier(statement.name)) {
+				namespaceMembers(statement, prefix, isExported(statement, statement.name.text));
 			}
 		}
 	};
@@ -278,13 +284,16 @@ export function readKeys(root: string): readonly GlossaryKey[] {
 		readFileSync(join(directory, entry), 'utf8')
 			.split('\n')
 			.forEach((line, index) => {
-				const opener = /^\s*(`{3,}|~{3,})/.exec(line)?.[1];
-				if (opener !== undefined) {
-					if (fence === undefined) fence = opener;
-					else if (opener[0] === fence[0] && opener.length >= fence.length) fence = undefined;
+				if (fence !== undefined) {
+					const closer = /^\s*(`{3,}|~{3,})\s*$/.exec(line)?.[1];
+					if (closer !== undefined && closer[0] === fence[0] && closer.length >= fence.length) fence = undefined;
 					return;
 				}
-				if (fence !== undefined) return;
+				const opener = /^\s*(`{3,}|~{3,})/.exec(line)?.[1];
+				if (opener !== undefined) {
+					fence = opener;
+					return;
+				}
 				const key = /^### `([^`]+)`/.exec(line)?.[1];
 				if (key !== undefined && key.includes('::')) keys.push({ key, where: `${GLOSSARY_DIR}/${entry}:${index + 1}` });
 			});
@@ -298,9 +307,13 @@ function namesDeclaration(path: readonly string[], segments: readonly string[]):
 		: path.length === segments.length && path.every((segment, index) => segment === segments[index]);
 }
 
+function declarationId(file: string, declaration: Declaration): string {
+	return `${file}::${declaration.path.join('::')}${declaration.isStatic ? '\u0000static' : ''}`;
+}
+
 export interface Classification {
 	readonly class: KeyClass;
-	readonly resolved?: readonly string[];
+	readonly resolved?: Declaration;
 }
 
 export function classifyKey(
@@ -320,7 +333,7 @@ export function classifyKey(
 	const own = declarations.get(file) ?? [];
 	const matches = own.filter((declaration) => namesDeclaration(declaration.path, segments));
 	if (matches.length === 1)
-		return { class: segments.length === 1 ? 'ok-bare-unique' : 'ok-owner-qualified', resolved: matches[0]!.path };
+		return { class: segments.length === 1 ? 'ok-bare-unique' : 'ok-owner-qualified', resolved: matches[0]! };
 	if (matches.length > 1) return { class: 'ambiguous' };
 	if (segments.length > 1 && own.some((declaration) => declaration.path[declaration.path.length - 1] === name))
 		return { class: 'wrong-owner' };
@@ -343,8 +356,7 @@ export function measure(root: string): Measurement {
 	for (const { key, where } of readKeys(root)) {
 		const result = classifyKey(key, root, declarations);
 		keys.push({ key, where, class: result.class });
-		if (result.resolved !== undefined)
-			resolved.add(`${key.slice(0, key.indexOf('::'))}::${result.resolved.join('::')}`);
+		if (result.resolved !== undefined) resolved.add(declarationId(key.slice(0, key.indexOf('::')), result.resolved));
 	}
 	const undocumented: string[] = [];
 	let exported = 0;
@@ -352,8 +364,8 @@ export function measure(root: string): Measurement {
 		for (const declaration of own) {
 			if (!declaration.exported) continue;
 			exported += 1;
-			const id = `${file}::${declaration.path.join('::')}`;
-			if (!resolved.has(id)) undocumented.push(id);
+			if (!resolved.has(declarationId(file, declaration)))
+				undocumented.push(`${file}::${declaration.path.join('::')}${declaration.isStatic ? ' (static)' : ''}`);
 		}
 	}
 	const tally = (names: readonly KeyClass[]): Record<string, number> =>
@@ -414,6 +426,13 @@ export async function run(opts: GlossaryKeysOptions = {}): Promise<number> {
 	const existing: Ceilings = existsSync(ceilingsPath)
 		? (JSON.parse(readFileSync(ceilingsPath, 'utf8')) as Ceilings)
 		: {};
+	const malformed = Object.entries(existing).filter(([, value]) => !Number.isInteger(value) || (value as number) < 0);
+	if (malformed.length > 0) {
+		console.error(
+			`glossary-keys: ${relative(root, ceilingsPath)} holds a ceiling that is not a non-negative integer: ${malformed.map(([name]) => name).join(', ')}`
+		);
+		return 1;
+	}
 
 	if (opts.update) {
 		const lowered = loweredCeilings(measurement.counts, existing);
