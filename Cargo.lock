@@ -461,6 +461,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sittir-engine"
+version = "0.0.0"
+dependencies = [
+ "sha2",
+ "tree-sitter",
+]
+
+[[package]]
 name = "sittir-node-macros"
 version = "0.0.0"
 dependencies = [

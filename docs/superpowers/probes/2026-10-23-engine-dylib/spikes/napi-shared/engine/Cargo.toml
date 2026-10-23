@@ -1,0 +1,16 @@
+[package]
+name = "toy-napi-engine"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+build = "../../build/napi-engine.rs"
+
+[lib]
+crate-type = ["dylib"]
+
+[features]
+default = ["napi"]
+napi = []
+
+[dependencies]
+napi = { workspace = true }

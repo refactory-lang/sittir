@@ -1,0 +1,21 @@
+# Toy crates for the engine-dylib probe. Their own workspace, outside sittir's.
+#
+# napi-shared: napi linked into the shared dylib, as sittir-core's napi
+#   bindings would put it there. Two addons export the same names.
+# shape-a: two addons on the real sittir-engine library (tree-sitter and the
+#   process statics), each with its own napi and a C scanner.
+[workspace]
+resolver = "2"
+members = ["napi-shared/*", "shape-a/addon-*"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace.dependencies]
+napi = { version = "=3.14.2", default-features = false, features = ["napi4"] }
+napi-derive = "=3.6.12"
+napi-build = "=2.6.0"
+tree-sitter = "=0.27.1"
+cc = "1"

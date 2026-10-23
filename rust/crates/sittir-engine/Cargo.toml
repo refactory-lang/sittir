@@ -1,0 +1,23 @@
+[package]
+name = "sittir-engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "The library every sittir grammar addon shares at run time: the one tree-sitter runtime and the statics a process holds once."
+
+# `dylib` is what a grammar addon links when it is built with
+# `-C prefer-dynamic`; without that flag the addon takes the `rlib` and links
+# everything statically, as before.
+[lib]
+crate-type = ["dylib", "rlib"]
+
+[dependencies]
+tree-sitter = { workspace = true }
+
+[build-dependencies]
+sha2 = { workspace = true }
+
+[lints]
+workspace = true
