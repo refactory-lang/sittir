@@ -38,6 +38,18 @@ describe("verifyStructure: 'runtime' refuses what a builder was not given a plac
 		expect(() => switchCase(verifying)({ value, bodies: [null] })).toThrow('switch_case.bodies: absent item at index 0');
 	});
 
+	it('refuses an absent item behind a leading options argument', () => {
+		const statement = verifying.build.expressionStatement.strict(verifying.build.identifier('a'));
+		const coerceBlock = verifying.build.statementBlock.coerce as unknown as Strict;
+		expect(() => coerceBlock({}, [statement, null])).toThrow('statement_block.statements: absent item at index 1');
+		expect(() => coerceBlock({}, { statements: [statement, null] })).toThrow('statement_block.statements: absent item at index 1');
+	});
+
+	it('refuses an undeclared key through a refine form', () => {
+		const curly = verifying.build.objectType.curly.strict as unknown as Loose;
+		expect(() => curly({ stray: 1 })).toThrow("object_type: undeclared config key 'stray'");
+	});
+
 	it('accepts the declared key and a list of built items', () => {
 		const value = verifying.build.identifier('a');
 		expect(switchCase(verifying)({ value, bodies: [] }).$render()).toBe('case a:');

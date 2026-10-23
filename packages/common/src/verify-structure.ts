@@ -28,11 +28,11 @@ function verifyBuilt(value: unknown, table: StructureTable, seen: WeakSet<object
 	if (sourceOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, seen);
 }
 
-export function checkInput(row: StructureRow, args: readonly unknown[]): void {
+export function checkInput(row: StructureRow, args: readonly unknown[], declared: readonly string[] | undefined = row.config): void {
 	const head = args[0];
-	if (row.config !== undefined && isConfigInput(head)) {
+	if (declared !== undefined && isConfigInput(head)) {
 		for (const key of Object.keys(head)) {
-			if (!key.startsWith('$') && !row.config.includes(key)) throw new Error(`${row.kind}: undeclared config key '${key}'`);
+			if (!key.startsWith('$') && !declared.includes(key)) throw new Error(`${row.kind}: undeclared config key '${key}'`);
 		}
 	}
 	for (const [slot, holes, arrival] of row.lists ?? []) {
@@ -48,12 +48,13 @@ function isConfigInput(value: unknown): value is Record<string, unknown> {
 
 function listInput(args: readonly unknown[], slot: string, arrival: 'key' | number): readonly unknown[] {
 	const head = args[0];
-	if (arrival !== 'key' && args.length === 1 && Array.isArray(head)) return head;
-	if (isConfigInput(head) && (arrival === 'key' || (args.length === 1 && slot in head))) {
-		const keyed = head[slot];
-		return Array.isArray(keyed) ? keyed : [];
-	}
-	return arrival === 'key' ? [] : args.slice(arrival === 1 && isConfigInput(head) ? 1 : 0);
+	if (arrival === 'key') return isConfigInput(head) && Array.isArray(head[slot]) ? (head[slot] as readonly unknown[]) : [];
+	const keyed = args.length === 1 && isConfigInput(head) && slot in head;
+	const rest = arrival === 1 && isConfigInput(head) && !keyed ? args.slice(1) : args;
+	const [only] = rest;
+	if (rest.length !== 1) return rest;
+	if (Array.isArray(only)) return only;
+	return isConfigInput(only) && slot in only ? (Array.isArray(only[slot]) ? (only[slot] as readonly unknown[]) : [only[slot]]) : rest;
 }
 
 function checkRow(node: Record<string, unknown>, row: StructureRow): void {

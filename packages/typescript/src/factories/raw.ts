@@ -6854,6 +6854,7 @@ export function buildObjectTypeCurly<MembersSlot extends T.ObjectType.Curly.Conf
 	config?: RefusingConfig<T.ObjectType.Curly.Config, { members: MembersSlot }>
 ): T.ObjectType.Curly.Bound;
 export function buildObjectTypeCurly(config?: T.ObjectType.Curly.Config): T.ObjectType.Curly.Bound {
+	currentHandle()?.admit(TSKindId.ObjectType, [config], ['members']);
 	const _opening = TSKindId.Lbrace as const;
 	const _members = config?.members;
 	const _closing = TSKindId.Rbrace as const;
@@ -6887,6 +6888,7 @@ export function buildObjectTypeFlow<MembersSlot extends T.ObjectType.Flow.Config
 	config?: RefusingConfig<T.ObjectType.Flow.Config, { members: MembersSlot }>
 ): T.ObjectType.Flow.Bound;
 export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.ObjectType.Flow.Bound {
+	currentHandle()?.admit(TSKindId.ObjectType, [config], ['members']);
 	const _opening = TSKindId.LbracePipe as const;
 	const _members = config?.members;
 	const _closing = TSKindId.PipeRbrace as const;

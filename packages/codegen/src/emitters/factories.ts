@@ -1637,11 +1637,13 @@ export function admitStatement(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	args: string
+	args: string,
+	declared?: readonly string[]
 ): string[] {
 	const row = structureRowOfKind(kind, nodeMap, kindEntries);
 	if (kindEntries === undefined || (row?.config === undefined && row?.lists === undefined)) return [];
-	return [`  currentHandle()?.admit(${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${args});`];
+	const keys = declared === undefined ? '' : `, ${JSON.stringify(declared)}`;
+	return [`  currentHandle()?.admit(${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${args}${keys});`];
 }
 
 export function listStructureRow(node: AssembledList): StructureRow | undefined {
@@ -1962,6 +1964,7 @@ function emitRefineFormFactory(
 	);
 	if (formGeneric !== undefined) lines.push(`export function ${formFn}${formGeneric.typeParams}(${formGeneric.params}${optionsParam}): ${formBuiltName};`);
 	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}${optionsParam}): ${formBuiltName} {`);
+	lines.push(...admitStatement(node.kind, nodeMap, kindEntries, '[config]', slots.filter((slot) => !narrowed.has(slot.name)).map((slot) => slot.propertyName)));
 	for (const f of allSlots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {

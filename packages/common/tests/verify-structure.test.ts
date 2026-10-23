@@ -114,6 +114,18 @@ describe('checkInput', () => {
 		expect(() => checkInput(led, [1, null])).toThrow('seq.items: absent item at index 1');
 	});
 
+	it('unwraps the container that follows a leading options object', () => {
+		expect(() => checkInput(led, [{}, [1, null]])).toThrow('seq.items: absent item at index 1');
+		expect(() => checkInput(led, [{}, { items: [1, null] }])).toThrow('seq.items: absent item at index 1');
+		expect(() => checkInput(led, [{ items: [1, null] }])).toThrow('seq.items: absent item at index 1');
+		expect(() => checkInput(led, [{}, [1, 2]])).not.toThrow();
+	});
+
+	it('checks config keys against the form keys it is given', () => {
+		expect(() => checkInput(config, [{ value: 1, stray: 1 }], ['value'])).toThrow("case: undeclared config key 'stray'");
+		expect(() => checkInput(config, [{ value: 1 }], ['value'])).not.toThrow();
+	});
+
 	it('admits absent items in a list that holds holes', () => {
 		expect(() => checkInput(holes, [1, undefined, null])).not.toThrow();
 	});

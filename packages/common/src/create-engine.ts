@@ -170,9 +170,9 @@ function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: S
 
 function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['admit'] {
 	if (mode !== 'runtime') return () => undefined;
-	return (kindId, args) => {
+	return (kindId, args, declared) => {
 		const row = typeof kindId === 'number' ? table[kindId] : undefined;
-		if (row !== undefined) checkInput(row, args);
+		if (row !== undefined) checkInput(row, args, declared);
 	};
 }
 
