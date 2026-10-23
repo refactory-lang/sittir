@@ -18,15 +18,13 @@ function readComplexPattern(pattern: string): ComplexPattern {
 	const module = py.parse(`match x:\n    case ${pattern}:\n        pass\n`) as unknown as {
 		statements(): readonly {
 			body(): {
-				content(): {
-					alternatives(): readonly {
-						casePatterns(): { items(): readonly { content(): { content(): ComplexPattern } }[] };
-					}[];
-				};
+				alternatives(): readonly {
+					casePatterns(): { items(): readonly { content(): { content(): ComplexPattern } }[] };
+				}[];
 			};
 		}[];
 	};
-	return module.statements()[0]!.body().content().alternatives()[0]!.casePatterns().items()[0]!.content().content();
+	return module.statements()[0]!.body().alternatives()[0]!.casePatterns().items()[0]!.content().content();
 }
 
 describe('complex_pattern names its parts', () => {

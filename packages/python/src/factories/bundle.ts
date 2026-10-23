@@ -58,7 +58,6 @@ export const matchStatement = bundle(F.buildMatchStatement, C.coerceToMatchState
 	key: 'matchStatement',
 	max: 1
 });
-export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock, { key: 'matchBlock', max: 1 });
 export const caseClause = bundle(F.buildCaseClause, C.coerceToCaseClause, { key: 'caseClause', max: 1 });
 export const forStatement = bundle(F.buildForStatement, C.coerceToForStatement, { key: 'forStatement', max: 1 });
 export const whileStatement = bundle(F.buildWhileStatement, C.coerceToWhileStatement, {

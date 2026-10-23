@@ -1,12 +1,11 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, snakeToCamel } from '../compiler/model/node-map.ts';
+import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, type AssembledNode } from '../compiler/model/node-map.ts';
 import { isDeclaredSupertype } from './shared.ts';
 import { membershipKindsOf } from './membership.ts';
-import { assertNever } from '../polymorph-variant.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
-import { flattenedVariantParents, type FlattenedVariantRoute } from '../compiler/model/ir-surface.ts';
+import { flattenedVariantParents, formRoutesOf, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
 
 export interface EmitIsConfig {
 	grammar: string;
@@ -14,62 +13,7 @@ export interface EmitIsConfig {
 	generatedIdTables?: GeneratedIdTables;
 }
 
-const toCamelCase = snakeToCamel;
-
-const RESERVED = new Set([
-	'break',
-	'case',
-	'catch',
-	'class',
-	'const',
-	'continue',
-	'debugger',
-	'default',
-	'delete',
-	'do',
-	'else',
-	'enum',
-	'export',
-	'extends',
-	'false',
-	'finally',
-	'for',
-	'function',
-	'if',
-	'import',
-	'in',
-	'instanceof',
-	'new',
-	'null',
-	'return',
-	'super',
-	'switch',
-	'this',
-	'throw',
-	'true',
-	'try',
-	'typeof',
-	'var',
-	'void',
-	'while',
-	'with',
-	'yield',
-	'let',
-	'static',
-	'implements',
-	'interface',
-	'package',
-	'private',
-	'protected',
-	'public',
-	'kind'
-]);
-
 const RESERVED_GUARD_NAMES = new Set(['kind']);
-
-function safeGuardKey(camel: string): string {
-	return RESERVED.has(camel) ? `${camel}_` : camel;
-}
 
 function kindPredicate(narrowType: string): string {
 	return `<T extends { readonly $type: number } | number>(v: T): v is Extract<T, { readonly $type: number }> & { readonly $type: ${narrowType} }`;
@@ -77,6 +21,12 @@ function kindPredicate(narrowType: string): string {
 
 function supertypePredicate(discriminant: string): string {
 	return `<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, ${discriminant}>`;
+}
+
+function leafShapeOf(node: AssembledNode): 'text' | 'unit' | 'enum' | undefined {
+	if (isPatternLeaf(node)) return 'text';
+	if (node instanceof AssembledEnum) return 'enum';
+	return isFixedTextLeaf(node) ? 'unit' : undefined;
 }
 
 export function emitIs(config: EmitIsConfig): string {
@@ -89,61 +39,42 @@ export function emitIs(config: EmitIsConfig): string {
 	const kindIdOf = (kind: string): number | undefined =>
 		kindEntries !== undefined ? findOwnKindEntry(kindEntries, kind)?.id : undefined;
 
+	const usedGuardKeys = new Set<string>();
+	const claimGuardKey = (node: AssembledNode): string => {
+		const key = node.typeKey;
+		if (key === undefined) throw new Error(`is emitter: '${node.kind}' has no stamped type key.`);
+		if (usedGuardKeys.has(key) || RESERVED_GUARD_NAMES.has(key)) {
+			throw new Error(`is emitter: '${node.kind}' takes the guard key '${key}', which another guard or an is method already holds.`);
+		}
+		usedGuardKeys.add(key);
+		return key;
+	};
+
 	const structuralKinds: Array<{
 		kind: string;
 		typeName: string;
 		guardKey: string;
 		member?: string;
-		numericId?: number;
 	}> = [];
-	const usedCamelKeys = new Set<string>();
+
+	const seated = kindEntries ? seatedFormKinds(nodeMap) : new Set<string>();
+	const guardedAtOwnKey = (kind: string, node: AssembledNode): boolean =>
+		!node.hidden &&
+		node.modelType !== 'supertype' &&
+		(kindEntries === undefined || kindIdOf(kind) !== undefined) &&
+		(node.builderPath === undefined || node.builderPath.length === 1 || seated.has(kind));
 
 	for (const [kind, node] of nodeMap.nodes) {
-		let structural: boolean;
-		switch (node.modelType) {
-			case 'branch':
-			case 'envelope':
-				structural = node.ownSurface;
-				break;
-			case 'polymorph':
-			case 'alias':
-				structural = node.ownSurface;
-				break;
-			case 'supertype':
-				structural = false;
-				break;
-			case 'list':
-				structural = true;
-				break;
-			case 'pattern':
-			case 'keyword':
-			case 'punctuation':
-			case 'enum':
-				structural = false;
-				break;
-			default:
-				assertNever(node);
-		}
-		if (!structural) continue;
-		const numericId = kindIdOf(kind);
-		if (kindEntries && numericId === undefined) {
-			continue;
-		}
-		const camel = toCamelCase(kind);
-		const guardKey = safeGuardKey(camel);
-		if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(camel)) {
-			throw new Error(
-				`is emitter: camelCase kind '${camel}' collides with reserved guard key ` +
-					`or another kind. Rename '${kind}' before proceeding.`
-			);
-		}
-		usedCamelKeys.add(guardKey);
+		if (!guardedAtOwnKey(kind, node) || leafShapeOf(node) !== undefined) continue;
+		const guardKey = claimGuardKey(node);
 		const member = kindEntries ? findOwnKindEntry(kindEntries, kind)?.member : undefined;
-		structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
+		structuralKinds.push({ kind, typeName: node.typeName, guardKey, member });
 	}
 
 	const variantParents = kindEntries ? flattenedVariantParents(nodeMap) : [];
 	const supertypeKindByKey = new Map(variantParents.map((parent) => [parent.key, parent.node.kind]));
+	const formRoutes: ReadonlyMap<string, readonly FormRoute[]> = kindEntries ? formRoutesOf(nodeMap) : new Map();
+	const formsOf = (kind: string): readonly FormRoute[] | undefined => (nodeMap.nodes.get(kind)!.builderPath === undefined ? undefined : formRoutes.get(kind));
 
 	const supertypes: Array<{
 		kind: string;
@@ -159,10 +90,7 @@ export function emitIs(config: EmitIsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isDeclaredSupertype(node)) continue;
 		const st = node;
-		const cleanName = kind.replace(/^_/, '');
 		const typeName = node.typeName;
-		const camel = toCamelCase(cleanName);
-		const guardKey = safeGuardKey(camel);
 		const memberKinds: string[] = [];
 		const memberIds: number[] = [];
 		const memberKindIds: string[] = [];
@@ -174,8 +102,7 @@ export function emitIs(config: EmitIsConfig): string {
 			memberKindIds.push(`TSKindId.${entry.member}`);
 		}
 		if (memberKinds.length === 0) continue;
-		if (usedCamelKeys.has(guardKey)) continue;
-		usedCamelKeys.add(guardKey);
+		const guardKey = claimGuardKey(st);
 		const variants = variantParents.find((parent) => parent.node === st)?.variants ?? [];
 		const own = kindEntries === undefined ? undefined : findOwnKindEntry(kindEntries, kind);
 		supertypes.push({ kind, id: own?.id, member: own?.member, typeName, guardKey, memberKinds, memberIds, memberKindIds, variants });
@@ -189,19 +116,15 @@ export function emitIs(config: EmitIsConfig): string {
 		memberIds: number[];
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.hidden || !(isPatternLeaf(node) || isFixedTextLeaf(node) || node instanceof AssembledEnum)) continue;
+		const shape = leafShapeOf(node);
+		if (shape === undefined || !guardedAtOwnKey(kind, node)) continue;
 		const entry = kindEntries === undefined ? undefined : findOwnKindEntry(kindEntries, kind);
-		if (kindEntries && entry === undefined) continue;
-		const guardKey = safeGuardKey(toCamelCase(kind.replace(/^_/, '')));
-		if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(guardKey)) {
-			throw new Error(`is emitter: camelCase kind '${guardKey}' collides with reserved guard key or another kind. Rename '${kind}' before proceeding.`);
-		}
-		usedCamelKeys.add(guardKey);
+		const guardKey = claimGuardKey(node);
 		const memberEntries = node instanceof AssembledEnum && kindEntries ? membershipKindsOf([kind], nodeMap).flatMap((member) => findKindEntry(kindEntries, member) ?? []) : [];
 		leafGuards.push({
 			kind,
 			guardKey,
-			shape: isPatternLeaf(node) ? 'text' : node instanceof AssembledEnum ? 'enum' : 'unit',
+			shape,
 			discriminant: node instanceof AssembledEnum ? (memberEntries.length > 0 ? memberEntries.map((m) => `TSKindId.${m.member}`).join(' | ') : 'number') : entry ? `TSKindId.${entry.member}` : 'number',
 			memberIds: [...new Set(memberEntries.map((m) => m.id))]
 		});
@@ -211,15 +134,65 @@ export function emitIs(config: EmitIsConfig): string {
 		if (nested === undefined) throw new Error(`is emitter: the nested variant parent '${key}' has no supertype guard.`);
 		return nested.guardKey;
 	};
+	const testsIdOnly = (kind: string): boolean => {
+		const shape = leafShapeOf(nodeMap.nodes.get(kind)!);
+		return shape === 'unit' || shape === 'enum';
+	};
+	const ownPredicate = (kind: string): string => {
+		const id = kindDiscriminantExpr(kind, nodeMap, kindEntries);
+		return testsIdOnly(kind) ? supertypePredicate(id) : kindPredicate(id);
+	};
+	const baseGuard = (kind: string): string => `${testsIdOnly(kind) ? '_mg' : '_g'}(${kindDiscriminantExpr(kind, nodeMap, kindEntries)})`;
+	const formGuardConst = (kind: string): string => `_form_${nodeMap.nodes.get(kind)!.typeName}_guard`;
+	const kindConsts: string[] = [];
+	const formConsts: string[] = [];
+	const kindTestNames = new Map<string, string>();
+	const kindTest = (kind: string): string => {
+		let name = kindTestNames.get(kind);
+		if (name === undefined) {
+			name = `_kind_${nodeMap.nodes.get(kind)!.typeName}_guard`;
+			kindTestNames.set(kind, name);
+			kindConsts.push(`    const ${name} = ${baseGuard(kind)};`);
+		}
+		return name;
+	};
+	const kindGuard = (kind: string): string => (formsOf(kind) !== undefined ? formGuard(kind) : kindTest(kind));
+	const selfTest = (kind: string): string => (seated.has(kind) ? kindTest(kind) : kindGuard(kind));
+	let seatsRead = false;
+	const guardTree = (kind: string, routes: readonly FormRoute[]): string => `_vg(${baseGuard(kind)}, { ${routes.map((route) => formMember(kind, route)).join(', ')} })`;
+	const formMember = (kind: string, route: FormRoute): string => {
+		if (route.seat === undefined) return `${route.name}: ${kindGuard(route.child.kind)}`;
+		const child = route.forms === undefined ? kindTest(route.child.kind) : guardTree(route.child.kind, route.forms);
+		seatsRead = true;
+		return `${route.name}: _at(${kindTest(kind)}, ${JSON.stringify(route.seat)}, ${child})`;
+	};
+	const formGuardNames = new Set<string>();
+	const formGuard = (kind: string): string => {
+		const name = formGuardConst(kind);
+		if (formGuardNames.has(kind)) return name;
+		formGuardNames.add(kind);
+		formConsts.push(`    const ${name} = ${guardTree(kind, formsOf(kind)!)};`);
+		return name;
+	};
+	const seatedPredicate = (host: string): string =>
+		`<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${kindDiscriminantExpr(host, nodeMap, kindEntries)} }`;
+	const seatedMemberType = (host: string, route: FormRoute): string => {
+		if (route.forms === undefined) return `${route.name}${seatedPredicate(host)}`;
+		return `readonly ${route.name}: { ${seatedPredicate(host)}; ${route.forms.map((inner) => seatedMemberType(host, inner)).join('; ')} }`;
+	};
+	const formMemberType = (host: string, route: FormRoute): string => {
+		if (route.seat !== undefined) return seatedMemberType(host, route);
+		return formsOf(route.child.kind) !== undefined ? `readonly ${route.name}: ${formGuardType(route.child.kind)}` : `${route.name}${ownPredicate(route.child.kind)}`;
+	};
+	const formGuardType = (kind: string): string => `{ ${ownPredicate(kind)}; ${formsOf(kind)!.map((route) => formMemberType(kind, route)).join('; ')} }`;
+
 	const variantGuard = (route: FlattenedVariantRoute): { readonly type: string; readonly value: string } => {
 		if (route.nestedParentKey !== undefined) {
 			const nested = guardKeyOfSupertype(route.nestedParentKey);
 			return { type: `${route.name}: IsGuards['${nested}']`, value: `_supertype_${nested}_guard` };
 		}
-		const id = kindDiscriminantExpr(route.child.kind, nodeMap, kindEntries);
-		return route.leaf
-			? { type: `${route.name}${supertypePredicate(id)}`, value: `_mg(${id})` }
-			: { type: `${route.name}${kindPredicate(id)}`, value: `_g(${id})` };
+		const type = formsOf(route.child.kind) !== undefined ? `readonly ${route.name}: ${formGuardType(route.child.kind)}` : `${route.name}${ownPredicate(route.child.kind)}`;
+		return { type, value: kindGuard(route.child.kind) };
 	};
 
 	const supertypeKey = (s: (typeof supertypes)[number]): string | undefined => (s.member !== undefined && s.memberIds.length > 0 ? `TSKindId.${s.member}` : undefined);
@@ -259,7 +232,16 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('// IsGuards — per-kind + supertype type-narrowing guards.');
 	lines.push('export interface IsGuards {');
 	for (const s of structuralKinds) {
-		lines.push(`    ${s.guardKey}${kindPredicate(s.member ? `TSKindId.${s.member}` : 'number')};`);
+		const own = kindPredicate(s.member ? `TSKindId.${s.member}` : 'number');
+		const routes = seated.has(s.kind) ? undefined : formsOf(s.kind);
+		if (routes === undefined) {
+			lines.push(`    ${s.guardKey}${own};`);
+			continue;
+		}
+		lines.push(`    readonly ${s.guardKey}: {`);
+		lines.push(`        ${own};`);
+		for (const route of routes) lines.push(`        ${formMemberType(s.kind, route)};`);
+		lines.push('    };');
 	}
 	lines.push(
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
@@ -335,9 +317,35 @@ export function emitIs(config: EmitIsConfig): string {
 		return lines.join('\n');
 	}
 
-	if (supertypes.some((s) => s.variants.length > 0)) {
+	const supertypeConsts: string[] = [];
+	for (const parent of variantParents) {
+		const s = supertypes.find((candidate) => candidate.kind === parent.node.kind);
+		if (s === undefined || s.variants.length === 0) continue;
+		const members = s.variants.map((variant) => `${variant.name}: ${variantGuard(variant).value}`).join(', ');
+		const base = s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`;
+		supertypeConsts.push(`    const _supertype_${s.guardKey}_guard = _vg(${base}, { ${members} });`);
+	}
+	const table: string[] = [];
+	for (const s of structuralKinds) table.push(`        ${s.guardKey}: ${selfTest(s.kind)},`);
+	table.push("        kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),");
+	for (const s of supertypes) {
+		if (s.variants.length > 0) table.push(`        ${s.guardKey}: _supertype_${s.guardKey}_guard,`);
+		else if (s.memberIds.length > 0) table.push(`        ${s.guardKey}: ${s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`},`);
+		else table.push(`        ${s.guardKey}: _sg(new Set<number>()),`);
+	}
+	for (const leaf of leafGuards) table.push(`        ${leaf.guardKey}: ${selfTest(leaf.kind)},`);
+	if (formConsts.length > 0 || supertypeConsts.length > 0) {
 		lines.push('function _vg<G extends object>(guard: G, variants: object): G {');
 		lines.push('    return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));');
+		lines.push('}');
+		lines.push('');
+	}
+	if (seatsRead) {
+		lines.push('function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {');
+		lines.push('    const inner = guard as unknown as (v: unknown) => boolean;');
+		lines.push('    const forms: Record<string, object> = {};');
+		lines.push('    for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);');
+		lines.push('    return _vg((v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()), forms) as unknown as G;');
 		lines.push('}');
 		lines.push('');
 	}
@@ -352,27 +360,9 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('        return (v: unknown): boolean => test(v, kinds);');
 	lines.push('    };');
 	lines.push('    const _sg = (kinds: ReadonlySet<number>) => (v: unknown): boolean => test(v, kinds);');
-	for (const parent of variantParents) {
-		const s = supertypes.find((candidate) => candidate.kind === parent.node.kind);
-		if (s === undefined || s.variants.length === 0) continue;
-		const members = s.variants.map((variant) => `${variant.name}: ${variantGuard(variant).value}`).join(', ');
-		const base = s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`;
-		lines.push(`    const _supertype_${s.guardKey}_guard = _vg(${base}, { ${members} });`);
-	}
+	lines.push(...kindConsts, ...formConsts, ...supertypeConsts);
 	lines.push('    return Object.freeze({');
-	for (const s of structuralKinds) {
-		lines.push(`        ${s.guardKey}: _g(${kindDiscriminantExpr(s.kind, nodeMap, kindEntries)}),`);
-	}
-	lines.push("        kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),");
-	for (const s of supertypes) {
-		if (s.variants.length > 0) lines.push(`        ${s.guardKey}: _supertype_${s.guardKey}_guard,`);
-		else if (s.memberIds.length > 0) lines.push(`        ${s.guardKey}: ${s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`},`);
-		else lines.push(`        ${s.guardKey}: _sg(new Set<number>()),`);
-	}
-	for (const leaf of leafGuards) {
-		const expr = kindDiscriminantExpr(leaf.kind, nodeMap, kindEntries);
-		lines.push(`        ${leaf.guardKey}: ${leaf.shape === 'text' ? `_g(${expr})` : `_mg(${expr})`},`);
-	}
+	lines.push(...table);
 	lines.push('    }) as unknown as IsGuards;');
 	lines.push('}');
 	lines.push('');

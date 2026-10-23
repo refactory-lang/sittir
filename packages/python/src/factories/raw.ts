@@ -909,33 +909,6 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	return stampBuilt(node) as unknown as T.MatchStatement.Bound;
 }
 
-export function buildMatchBlock<V extends Admit<T.MatchBlockBlock | T.MatchBlockEmpty>>(
-	value: V & RefuseUndeclared<V>
-): T.MatchBlock.Bound;
-export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>): T.MatchBlock.Bound {
-	const _content = value;
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.MatchBlock as const,
-		$named: true as const,
-		_content,
-		$with: {
-			content: (value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>) =>
-				rebuilt(node, handle, () => buildMatchBlock(value))
-		},
-		content: () => hydrateStoredSlot(node, '_content'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.MatchBlock.Bound;
-}
-
 export function buildCaseClause<
 	CasePatternsSlot extends T.CaseClause.Config['casePatterns'],
 	GuardSlot extends T.CaseClause.Config['guard'],
@@ -7726,7 +7699,6 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Bound;
 	else_clause: T.ElseClause.Bound;
 	match_statement: T.MatchStatement.Bound;
-	match_block: T.MatchBlock.Bound;
 	case_clause: T.CaseClause.Bound;
 	for_statement: T.ForStatement.Bound;
 	while_statement: T.WhileStatement.Bound;
@@ -7926,7 +7898,6 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
-	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,

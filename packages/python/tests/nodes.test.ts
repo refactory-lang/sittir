@@ -944,12 +944,7 @@ describe('match_statement', () => {
 				$named: true,
 				_subject: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any,
-			body: stampBuilt({
-				$type: TSKindId.MatchBlock,
-				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
-			}) as any
+			body: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchStatement);
 		expectBuiltNode(node);
@@ -962,80 +957,10 @@ describe('match_statement', () => {
 				$named: true,
 				_subject: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 			}) as any,
-			body: stampBuilt({
-				$type: TSKindId.MatchBlock,
-				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
-			}) as any
+			body: stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('match_block', () => {
-	it('factory produces correct type', () => {
-		const node = ir.matchBlock(
-			stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
-		);
-		expect(node.$type).toBe(TSKindId.MatchBlock);
-		expectBuiltNode(node);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlock(
-			stampBuilt({ $type: TSKindId.MatchBlockBlock, $text: 'test', $named: true, _alternative: [] }) as any
-		);
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
-describe('match_block sub-factories', () => {
-	it('block builds the parent', () => {
-		const node = ir.matchBlock.block(
-			stampBuilt({
-				$type: TSKindId.CaseClause,
-				$text: 'test',
-				$named: true,
-				_case_patterns: stampBuilt({
-					$type: TSKindId.CasePatterns,
-					$text: 'test',
-					$named: true,
-					_item: [
-						stampBuilt({
-							$type: TSKindId.CasePattern,
-							$text: 'test',
-							$named: true,
-							_content: stampBuilt({
-								$type: TSKindId.KeywordPattern,
-								$text: 'test',
-								$named: true,
-								_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-								_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
-							}) as any
-						}) as any
-					]
-				}) as any,
-				_consequence: stampBuilt({
-					$type: TSKindId.SuiteInline,
-					$text: 'test',
-					$named: true,
-					_elements: stampBuilt({
-						$type: TSKindId.SimpleStatementsElements,
-						$text: 'test',
-						$named: true,
-						_item: [stampBuilt({ $type: TSKindId.PassStatement, $text: 'pass', $named: true }) as any]
-					}) as any
-				}) as any
-			}) as any
-		);
-		expect(node.$type).toBe(TSKindId.MatchBlock);
-		expect((node as any).content()?.$type).toBe(TSKindId.MatchBlockBlock);
-	});
-	it('empty builds the parent', () => {
-		const node = ir.matchBlock.empty(stampBuilt({ $type: TSKindId.Newline, $text: '\n', $named: true }) as any);
-		expect(node.$type).toBe(TSKindId.MatchBlock);
-		expect((node as any).content()?.$type).toBe(TSKindId.MatchBlockEmpty);
 	});
 });
 

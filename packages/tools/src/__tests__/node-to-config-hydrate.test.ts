@@ -12,11 +12,12 @@ describe('nodeToConfig hydrates a coordinate through the wrap', () => {
 		const coordinate = { $type: id('clause'), $treeHandle: 1, $span: { start: 0, end: 1 } };
 		const hydrate: Hydrate = (entry) => (entry === coordinate ? { $type: id('clause'), _value: leaf } : entry);
 		const clause = vi.fn((config: unknown) => ({ $type: id('clause'), config }));
+		const word = (text: string) => ({ $type: id('word'), $text: text });
 		const config = nodeToConfig({ $type: id('owner'), _body: coordinate } as never, {
 			kindNameFromId,
 			tree: { source: 'x' } as never,
 			hydrate,
-			factoryMap: { clause } as never,
+			factoryMap: { clause, word } as never,
 			factoryShapes: { owner: 'config', clause: 'config', word: 'text' },
 			factorySlots: { owner: { body: slot('body') }, clause: { value: slot('value') } }
 		});

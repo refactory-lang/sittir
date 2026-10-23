@@ -515,7 +515,7 @@ static const char * const ts_symbol_names[] = {
   [sym_elif_clause] = "elif_clause",
   [sym_else_clause] = "else_clause",
   [sym_match_statement] = "match_statement",
-  [sym__match_block] = "match_block",
+  [sym__match_block] = "_match_block",
   [sym_case_clause] = "case_clause",
   [sym_for_statement] = "for_statement",
   [sym_while_statement] = "while_statement",
@@ -1663,8 +1663,9 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__match_block] = {
-    .visible = true,
+    .visible = false,
     .named = true,
+    .supertype = true,
   },
   [sym_case_clause] = {
     .visible = true,
