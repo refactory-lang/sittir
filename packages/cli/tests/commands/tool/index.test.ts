@@ -23,6 +23,7 @@ const EXPECTED = [
 	'fetch-corpus',
 	'field-provenance',
 	'gap-census',
+	'glossary-keys',
 	'grammar-diagnostics',
 	'hoisted-census',
 	'inspect-refs',

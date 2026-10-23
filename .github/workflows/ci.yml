@@ -518,6 +518,24 @@ jobs:
             echo "| python     | 107/114 | 105/115 | 205/860 |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+  glossary-keys:
+    name: glossary key ratchet
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Glossary key ratchet
+        run: npx tsx packages/cli/src/cli.ts tool glossary-keys
+
   no-tracked-node-modules:
     name: no tracked node_modules
     runs-on: ubuntu-22.04
