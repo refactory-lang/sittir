@@ -78,6 +78,12 @@ export function hydrateStored(value: unknown): unknown {
 	return handle.hydrate(value, tree);
 }
 
+/** `value` as an accessor of a node of `tree` returns it, through the engine `tree` is bound to; `value` as it is when none is. */
+export function hydrateOn(tree: object, value: unknown): unknown {
+	const handle = treeHandles.get(tree);
+	return handle === undefined ? value : handle.hydrate(value, tree);
+}
+
 export function inTreeEngine<T>(tree: object, fn: () => T): T {
 	const handle = treeHandles.get(tree);
 	return handle === undefined ? fn() : inEngine(handle, fn);

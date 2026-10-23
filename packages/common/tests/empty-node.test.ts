@@ -26,8 +26,9 @@ describe('a node is empty when it has no child with width', () => {
 		expect(ts.isEmptyNode(body)).toBe(false);
 	});
 
-	it("counts a built block's terminator, which renders text", () => {
+	it('decides a built block by the same rule: its stored automatic semicolon holds no sides, a stored `;` does', () => {
 		expect(ts.isEmptyNode(ts.build.statementBlock())).toBe(true);
-		expect(ts.isEmptyNode(ts.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon } as never))).toBe(false);
+		expect(ts.isEmptyNode(ts.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon } as never))).toBe(true);
+		expect(ts.isEmptyNode(ts.build.statementBlock({ statements: [ts.kinds.EmptyStatement] } as never))).toBe(false);
 	});
 });

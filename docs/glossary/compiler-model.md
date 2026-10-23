@@ -4669,7 +4669,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
-- When several slots share a span, only the first in render order keys it.
+- When several slots share a span, only the first in render order keys it, and the gap's `slots` lists all of them (by storage key, `storageKeyOf`). A slot outside the span, such as typescript's automatic-semicolon terminator after `}`, is not in it. The root gap's `slots` are every slot with no token before it, plus its repeat slot.
 - A kind with several gaps still has one inner side (`innerSite`).
 - A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
 - A compound with no slots and at least two tokens has the one gap `interior` after its first token.
@@ -4678,7 +4678,7 @@ Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `
 
 ### `packages/codegen/src/compiler/model/node-map.ts::InnerGap`
 
-One inner-comment position of a kind: the empty slot that keys it (or `interior`) and the number of the kind's unconditional literal tokens before it.
+One inner-comment position of a kind: the empty slot that keys it (or `interior`), the number of the kind's unconditional literal tokens before it, and `slots`, the storage keys of every slot that shares its span between the tokens that flank it. A built node of the kind is empty when nothing that owns sides is stored in those slots (`innerRegions`).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.lineEnds`
 
@@ -5404,6 +5404,10 @@ content and is never one.
 ### `packages/codegen/src/compiler/model/trivia.ts::continuationTriviaKinds`
 
 The trivia kinds that are a line continuation. A kind is one when its default arm is a pattern whose every text ends at a line break (`endsWithLineBreak`) and cannot be all space (`requiresNonSpace`), and then every arm of that kind is one: python's `line_continuation` is layout in both arms, `newline` (`\` then a line break) and `nul` (`\` then NUL). Both facts are read off the pattern's automaton, so no kind name or text is matched. Whitespace trivia is merged into its gap as a seam; a continuation is the same kind of fact (layout the source carried between two tokens) with a backslash in it, so the render module answers its text as a seam too; the writer then extends the held trivia seam with it (several continuations in a row, or one after a space entry, keep all of their text), and a root edge leaves a held continuation standing since it already ends the line. Without that, an own-line trailing entry was joined by a line break written before its backslash, which ended the statement.
+
+### `packages/codegen/src/compiler/model/trivia.ts::innerRegions`
+
+The slots inside each kind's inner gap, keyed by kind id: the `slots` of its `innerSite`, sorted by kind id. Emitted as `TriviaFacts.innerRegions` (`emitTriviaFacts`). A built node is empty when nothing that owns sides is stored there (`storesNothingIn`), the stored counterpart of the parsed rule that no child holds sides. So a slot outside the gap, such as a terminator after the closing brace, never makes a node non-empty. `inner-region-parity.test.ts` holds the two rules to the same answer over every corpus.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::endsWithLineBreak`
 

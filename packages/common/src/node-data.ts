@@ -231,6 +231,16 @@ export function placeOf(node: object): SourceIdentity | undefined {
 	return { token, treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
 }
 
+/**
+ * The display id of the alias envelope whose content `node` is, read from the same parser node:
+ * its source identity carries the envelope's display id, which the reader stamps only there.
+ * `undefined` for any other node. The envelope holds that parser node's sides.
+ */
+export function envelopeKindOf(node: object): number | undefined {
+	const stamp = placeOf(node)?.kind ?? coordinateOf(node)?.$type;
+	return stamp !== undefined && stamp !== (node as { readonly $type?: unknown }).$type ? stamp : undefined;
+}
+
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
 export function carryPlace(from: object, to: object): void {
 	const source = placeOf(from);
@@ -322,44 +332,52 @@ export function slotSeparatorOf(node: object): number | undefined {
 }
 
 /** One unit child's sides as a tree gives them (`NodeLayout.units`): its slot's wire key and its item there. */
-interface UnitSidesData {
+export interface UnitSidesData extends TriviaSides<unknown> {
 	readonly slot: string;
 	readonly item: number;
 }
 
-/**
- * The sides of a rebuilt node's unit children, carried from the node at `index` of `tree` it was
- * rebuilt from. Each slot's items are aligned with the source node's (`alignedItems`): a unit's
- * sides follow it to its new item, and a unit the rebuild removed takes its sides with it.
- */
+export function setUnitSides(node: object, units: readonly UnitSidesData[]): void {
+	const record = node as { $_layout?: NodeDataLayout };
+	record.$_layout = { ...record.$_layout, units };
+}
+
+export function carryUnitSides(from: object, to: object): void {
+	const held = (from as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
+	if (held !== undefined && held.length > 0) setUnitSides(to, realignedUnits(held, from as Record<string, unknown>, to as Record<string, unknown>));
+}
+
 function carriedUnitSides(node: Record<string, unknown>, index: number, tree: TreeHandle): readonly unknown[] | undefined {
 	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
 	if (units === undefined || units.length === 0) return units;
 	const read = tree.read?.(index, 1);
-	if (!isRecord(read)) return undefined;
+	return isRecord(read) ? realignedUnits(units, read, node) : undefined;
+}
+
+function realignedUnits(units: readonly UnitSidesData[], before: Record<string, unknown>, after: Record<string, unknown>): UnitSidesData[] {
 	const moved = new Map<string, ReadonlyMap<number, number>>();
 	const itemsAt = (holder: Record<string, unknown>, slot: string): readonly unknown[] => {
 		const value = holder[slot];
 		return value === undefined ? [] : Array.isArray(value) ? value : [value];
 	};
-	const carried: unknown[] = [];
+	const carried: UnitSidesData[] = [];
 	for (const unit of units) {
 		let aligned = moved.get(unit.slot);
 		if (aligned === undefined) {
-			aligned = alignedItems(itemsAt(read, unit.slot), itemsAt(node, unit.slot));
+			aligned = alignedItems(itemsAt(before, unit.slot), itemsAt(after, unit.slot));
 			moved.set(unit.slot, aligned);
 		}
 		const item = aligned.get(unit.item);
-		if (item !== undefined && typeof itemsAt(node, unit.slot)[item] === 'number') carried.push({ ...unit, item });
+		if (item !== undefined && typeof itemsAt(after, unit.slot)[item] === 'number') carried.push({ ...unit, item });
 	}
 	return carried;
 }
 
-/** What an item of a slot is the same item by: a unit by its kind, a read node by the handle it names; a built node is no item of the source. */
-function itemIdentity(item: unknown): string | undefined {
+function itemIdentity(item: unknown): unknown {
 	if (typeof item === 'number') return `kind:${item}`;
-	const handle = isRecord(item) ? sourceHandleOf(item) : undefined;
-	return handle === undefined ? undefined : `node:${handle}`;
+	if (!isRecord(item)) return undefined;
+	const handle = sourceHandleOf(item);
+	return handle === undefined ? item : `node:${handle}`;
 }
 
 /**
@@ -371,8 +389,8 @@ function itemIdentity(item: unknown): string | undefined {
  * in both slots. A node needs no alignment: its sides are its own.
  */
 function alignedItems(before: readonly unknown[], after: readonly unknown[]): ReadonlyMap<number, number> {
-	const nodeAt = new Map<string, number>();
-	const runs = new Map<number, Map<string, number[]>>();
+	const nodeAt = new Map<unknown, number>();
+	const runs = new Map<number, Map<unknown, number[]>>();
 	let run = -1;
 	after.forEach((item, j) => {
 		const identity = itemIdentity(item);
@@ -382,7 +400,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 			return;
 		}
 		if (identity === undefined) return;
-		const kinds = runs.get(run) ?? new Map<string, number[]>();
+		const kinds = runs.get(run) ?? new Map<unknown, number[]>();
 		runs.set(run, kinds);
 		const units = kinds.get(identity);
 		if (units === undefined) kinds.set(identity, [j]);
@@ -391,7 +409,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 	const aligned = new Map<number, number>();
 	const placed = new Set<number>();
 	let anchor = -1;
-	let counts = new Map<string, number>();
+	let counts = new Map<unknown, number>();
 	before.forEach((item, i) => {
 		const identity = itemIdentity(item);
 		if (typeof item !== 'number') {
@@ -410,7 +428,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 		aligned.set(i, j);
 		placed.add(j);
 	});
-	const free = new Map<string, { readonly items: number[]; next: number }>();
+	const free = new Map<unknown, { readonly items: number[]; next: number }>();
 	after.forEach((item, j) => {
 		const identity = itemIdentity(item);
 		if (identity === undefined || typeof item !== 'number' || placed.has(j)) return;
@@ -435,13 +453,31 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
  * was rebuilt from (`placeOf`).
  */
 export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
+	return sideRead(node, side).entries;
+}
+
+/** One side of a node and the tree whose table holds it (`sideOf`'s source); `tree` is `undefined` for a side the node holds as its own data. */
+export interface SideRead {
+	readonly entries: readonly TriviaEntry[];
+	readonly tree: TreeHandle | undefined;
+}
+
+const NO_SIDE: SideRead = { entries: [], tree: undefined };
+
+/**
+ * One side of `node` and the tree that holds it: a parsed node's live table, else the side it holds as its own
+ * data, else the table of the node it was rebuilt from (`placeOf`) while that tree lives. An alias envelope's
+ * content (`envelopeKindOf`) reads nothing from a table, whose entries for that parser node are the envelope's.
+ */
+export function sideRead(node: object, side: TriviaSideName): SideRead {
 	const at = tableAt(node);
-	if (at !== undefined) return at.tree.triviaSide(at.index, side) as TriviaEntry[];
+	if (at !== undefined) return envelopeKindOf(node) !== undefined ? NO_SIDE : { entries: at.tree.triviaSide(at.index, side) as TriviaEntry[], tree: treeOf(node) };
 	const stored = triviaOf(node)?.[side];
-	if (stored !== undefined) return stored;
-	const source = placeOf(node);
-	const table = source === undefined ? undefined : tableOf(sourceTree(source), decodeIndex(source.treeHandle));
-	return table === undefined ? [] : (table.tree.triviaSide(table.index, side) as TriviaEntry[]);
+	if (stored !== undefined) return { entries: stored, tree: undefined };
+	const source = envelopeKindOf(node) === undefined ? placeOf(node) : undefined;
+	const tree = source === undefined ? undefined : sourceTree(source);
+	const table = source === undefined ? undefined : tableOf(tree, decodeIndex(source.treeHandle));
+	return table === undefined ? NO_SIDE : { entries: table.tree.triviaSide(table.index, side) as TriviaEntry[], tree };
 }
 
 /** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */
@@ -514,7 +550,8 @@ function rootEdges(node: object): ChangedEdges {
  * The node that takes a render root's edges: the root, unless it is an alias
  * envelope whose content is the same parser node (the content's coordinate
  * carries the envelope's display id, which the reader stamps only there), in
- * which case the content holds that node's sides and takes the edges.
+ * which case the content, whose coordinate names that node to the render,
+ * takes the edges.
  */
 function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknown> | undefined {
 	if (!isRecord(node)) return undefined;
@@ -524,7 +561,7 @@ function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknow
 
 /** Whether `child` is the content of the alias envelope `holder`, the same parser node: its coordinate carries the envelope's display id. */
 function isAliasContent(holder: Record<string, unknown>, child: unknown): boolean {
-	return isRecord(child) && child.$type !== holder.$type && coordinateOf(child)?.$type === holder.$type;
+	return isRecord(child) && envelopeKindOf(child) === holder.$type;
 }
 
 /** The siblings beside the node a source identity names, while its tree lives. */
@@ -648,8 +685,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
 	if (separator !== undefined) setLayout(out, 'separator', separator);
 	if (given?.span !== undefined) setLayout(out, 'span', given.span);
-	const content = fold ? undefined : Object.keys(value).flatMap((key) => (isStorageKey(key) && isAliasContent(value, value[key]) ? [value[key] as object] : []))[0];
-	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
+	const trivia = fold ? triviaOf(value) : sided ? sidesOf(value) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 		setLayout(out, 'trivia', entriesData(trivia as TriviaSides<unknown>));

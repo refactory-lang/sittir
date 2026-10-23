@@ -12338,17 +12338,6 @@
       "_content": {
         "$type": 1,
         "$text": "findConfiguration"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            181
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "findConfiguration",
@@ -14332,17 +14321,6 @@
       "_content": {
         "$type": 1,
         "$text": "id"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            181
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "id",
@@ -23277,14 +23255,7 @@
                       "_content": {
                         "$type": 367,
                         "_opening": 5,
-                        "_closing": 6,
-                        "$_layout": {
-                          "trivia": {
-                            "inner": [
-                              183
-                            ]
-                          }
-                        }
+                        "_closing": 6
                       },
                       "$_layout": {
                         "trivia": {
@@ -23354,14 +23325,7 @@
                   "_content": {
                     "$type": 367,
                     "_opening": 5,
-                    "_closing": 6,
-                    "$_layout": {
-                      "trivia": {
-                        "inner": [
-                          183
-                        ]
-                      }
-                    }
+                    "_closing": 6
                   },
                   "$_layout": {
                     "trivia": {
@@ -23426,14 +23390,7 @@
                 "_content": {
                   "$type": 367,
                   "_opening": 5,
-                  "_closing": 6,
-                  "$_layout": {
-                    "trivia": {
-                      "inner": [
-                        183
-                      ]
-                    }
-                  }
+                  "_closing": 6
                 },
                 "$_layout": {
                   "trivia": {
@@ -23491,14 +23448,7 @@
               "_content": {
                 "$type": 367,
                 "_opening": 5,
-                "_closing": 6,
-                "$_layout": {
-                  "trivia": {
-                    "inner": [
-                      183
-                    ]
-                  }
-                }
+                "_closing": 6
               },
               "$_layout": {
                 "trivia": {
@@ -23552,14 +23502,7 @@
           "_content": {
             "$type": 367,
             "_opening": 5,
-            "_closing": 6,
-            "$_layout": {
-              "trivia": {
-                "inner": [
-                  183
-                ]
-              }
-            }
+            "_closing": 6
           },
           "$_layout": {
             "trivia": {
@@ -23607,14 +23550,7 @@
         "_content": {
           "$type": 367,
           "_opening": 5,
-          "_closing": 6,
-          "$_layout": {
-            "trivia": {
-              "inner": [
-                183
-              ]
-            }
-          }
+          "_closing": 6
         },
         "$_layout": {
           "trivia": {
@@ -23681,14 +23617,7 @@
       "_content": {
         "$type": 367,
         "_opening": 5,
-        "_closing": 6,
-        "$_layout": {
-          "trivia": {
-            "inner": [
-              183
-            ]
-          }
-        }
+        "_closing": 6
       },
       "$_layout": {
         "trivia": {
@@ -23727,18 +23656,7 @@
     "input": {
       "$type": 367,
       "_opening": 5,
-      "_closing": 6,
-      "$_layout": {
-        "trivia": {
-          "inner": [
-            183
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
-      }
+      "_closing": 6
     },
     "expectedOutput": "{}",
     "options": {
@@ -27874,17 +27792,6 @@
       "_content": {
         "$type": 1,
         "$text": "bar"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "bar",
@@ -40964,17 +40871,6 @@
       "_content": {
         "$type": 1,
         "$text": "prop"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            181
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "prop",
@@ -41007,17 +40903,6 @@
       "_content": {
         "$type": 1,
         "$text": "requiredProp"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "requiredProp",
@@ -41114,17 +40999,6 @@
       "_content": {
         "$type": 1,
         "$text": "readonlyProp"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "readonlyProp",
@@ -43988,14 +43862,7 @@
                 "_content": {
                   "$type": 367,
                   "_opening": 5,
-                  "_closing": 6,
-                  "$_layout": {
-                    "trivia": {
-                      "inner": [
-                        181
-                      ]
-                    }
-                  }
+                  "_closing": 6
                 },
                 "$_layout": {
                   "trivia": {
@@ -44032,14 +43899,7 @@
               "_content": {
                 "$type": 367,
                 "_opening": 5,
-                "_closing": 6,
-                "$_layout": {
-                  "trivia": {
-                    "inner": [
-                      181
-                    ]
-                  }
-                }
+                "_closing": 6
               },
               "$_layout": {
                 "trivia": {
@@ -44254,14 +44114,7 @@
             "_content": {
               "$type": 367,
               "_opening": 5,
-              "_closing": 6,
-              "$_layout": {
-                "trivia": {
-                  "inner": [
-                    181
-                  ]
-                }
-              }
+              "_closing": 6
             },
             "$_layout": {
               "trivia": {
@@ -44313,14 +44166,7 @@
           "_content": {
             "$type": 367,
             "_opening": 5,
-            "_closing": 6,
-            "$_layout": {
-              "trivia": {
-                "inner": [
-                  181
-                ]
-              }
-            }
+            "_closing": 6
           },
           "$_layout": {
             "trivia": {
@@ -44465,14 +44311,7 @@
           "_content": {
             "$type": 367,
             "_opening": 5,
-            "_closing": 6,
-            "$_layout": {
-              "trivia": {
-                "inner": [
-                  181
-                ]
-              }
-            }
+            "_closing": 6
           },
           "$_layout": {
             "trivia": {
@@ -44910,14 +44749,7 @@
         "_content": {
           "$type": 367,
           "_opening": 5,
-          "_closing": 6,
-          "$_layout": {
-            "trivia": {
-              "inner": [
-                181
-              ]
-            }
-          }
+          "_closing": 6
         },
         "$_layout": {
           "trivia": {
@@ -44964,14 +44796,7 @@
         "_content": {
           "$type": 367,
           "_opening": 5,
-          "_closing": 6,
-          "$_layout": {
-            "trivia": {
-              "inner": [
-                181
-              ]
-            }
-          }
+          "_closing": 6
         },
         "$_layout": {
           "trivia": {
@@ -45009,14 +44834,7 @@
       "_content": {
         "$type": 367,
         "_opening": 5,
-        "_closing": 6,
-        "$_layout": {
-          "trivia": {
-            "inner": [
-              181
-            ]
-          }
-        }
+        "_closing": 6
       },
       "$_layout": {
         "trivia": {
@@ -45057,14 +44875,7 @@
       "_content": {
         "$type": 367,
         "_opening": 5,
-        "_closing": 6,
-        "$_layout": {
-          "trivia": {
-            "inner": [
-              181
-            ]
-          }
-        }
+        "_closing": 6
       },
       "$_layout": {
         "trivia": {
@@ -45103,18 +44914,7 @@
     "input": {
       "$type": 367,
       "_opening": 5,
-      "_closing": 6,
-      "$_layout": {
-        "trivia": {
-          "inner": [
-            181
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
-      }
+      "_closing": 6
     },
     "expectedOutput": "{}",
     "options": {
@@ -45141,18 +44941,7 @@
     "input": {
       "$type": 367,
       "_opening": 5,
-      "_closing": 6,
-      "$_layout": {
-        "trivia": {
-          "inner": [
-            181
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
-      }
+      "_closing": 6
     },
     "expectedOutput": "{}",
     "options": {
@@ -85313,20 +85102,6 @@
       "_content": {
         "$type": 1,
         "$text": "a"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            180
-          ],
-          "trailing": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "a",
@@ -88315,17 +88090,6 @@
       "_content": {
         "$type": 1,
         "$text": "CodeEditor"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "CodeEditor",
@@ -118979,17 +118743,6 @@
       "_content": {
         "$type": 1,
         "$text": "A"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "A",
@@ -119019,17 +118772,6 @@
       "_content": {
         "$type": 1,
         "$text": "B"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "B",
@@ -122635,17 +122377,6 @@
       "_content": {
         "$type": 1,
         "$text": "Y"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "Y",
@@ -122675,17 +122406,6 @@
       "_content": {
         "$type": 1,
         "$text": "X"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            180
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "X",
@@ -130501,18 +130221,6 @@
       "_content": {
         "$type": 1,
         "$text": "C"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            183,
-            186
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "C",

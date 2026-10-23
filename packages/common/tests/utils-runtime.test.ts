@@ -28,7 +28,7 @@ describe('@sittir/common/utils runtime surface', () => {
 
 	it('renders through the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>() };
+		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>() };
 		const node = inEngine(liveHandle({ render, trivia }), () => withMethods(stampBuilt({ $type: 1, _name: 'x' })));
 
 		expect(node.$render()).toBe('rendered');

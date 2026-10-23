@@ -344,6 +344,10 @@ The handle in scope, or `undefined` outside any engine call. A node built with n
 
 Whether a handle's `current` is a live engine rather than an identity, told by the presence of a `render` member.
 
+### `packages/common/src/engine-scope.ts::hydrateOn`
+
+A value as an accessor of a node of a tree returns it, through the generated `hydrate` of the engine the tree is bound to (`hydrateWith` with the grammar's wrap): node data is wrapped as its kind's node, and anything else passes through. A tree bound to no engine returns the value as it is. `hydrateStored` reaches the same `hydrate` from a coordinate's own tree token; this takes the tree from the caller, for data that names no tree, such as a trivia entry written into a tree's table.
+
 ### `packages/common/src/engine.ts::createRenderHandle`
 
 A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.
@@ -457,7 +461,7 @@ Whether a value is a node of one kind id, a coordinate of that kind included (`i
 
 ### `packages/common/src/utils.ts::configFieldOr`
 
-The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union. A coordinate is a node value, never a config (`isNodeValue`).
+The value of the key `key` when the input is a config object (not a node, not an array) that carries it, else `orElse()`. An empty object is a config too, one that leaves the slot out (`undefined`), never the slot's content: `build.parameters({})` is `build.parameters()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union. A coordinate is a node value, never a config (`isNodeValue`).
 
 ### `packages/common/src/utils.ts::orDefault`
 
@@ -510,15 +514,15 @@ new list's separator.
 
 ### `packages/common/src/node-data.ts::carriedUnitSides`
 
-A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
+A rebuilt node's unit sides, carried from the node at `index` of the tree it was rebuilt from: the tree's records for that node, realigned against what the tree reads there (`realignedUnits`).
 
 ### `packages/common/src/node-data.ts::itemIdentity`
 
-What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
+What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`), and a built node by itself, the object a rebuild that keeps it passes on. So a revived list's kept statements anchor its units' sides as a parsed list's do: a comment on a `;` stays with the `;` after the statement it followed, not with the first `;` of its kind.
 
 ### `packages/common/src/node-data.ts::alignedItems`
 
-The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
+The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The nodes both slots hold anchor it, each by its identity (`itemIdentity`: a read node by the handle it names, a built node by itself): a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
 
 Identical units align by order within a run: nothing tells two units of one kind apart, so removing or reordering identical units among themselves keeps their sides by position, not by the unit the caller meant. Removing the first of two commented `;` units keeps the first unit's comment on the `;` that remains.
 
@@ -562,7 +566,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carryPlace`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carryPlace`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), a built source's stored trivia, and the unit sides it holds, realigned to the new slots (`carryUnitSides`). It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -590,7 +594,7 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
 
 ### `packages/common/src/node-data.ts::evidenceOf`
 
@@ -607,7 +611,7 @@ Where a node sits in its source: a read node's own tree token, tree handle, end,
 
 ### `packages/common/src/utils.ts::carryRebuiltSlots`
 
-For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carryPlace`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). A node the caller built and passed in, of another kind or already carrying source, is left as it is.
+For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carryPlace`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). Where the old wrapper was built (a revived node's, with no source identity), the fresh one takes what it held instead: its stored trivia, and its unit sides realigned to the fresh slots (`carryUnitSides`), so a setter that rebuilds a revived list in place keeps the list's comments and its units'. A node the caller built and passed in, of another kind or already carrying source, is left as it is.
 
 ### `packages/common/src/utils.ts::NodeAddress`
 
@@ -659,7 +663,7 @@ Whether a key carries node data across the native boundary: a storage key (`_<sl
 
 ### `packages/common/src/runtime.ts::listStorage`
 
-A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given), with the absent ones dropped; a value that is not an array is stored through `item` alone. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
+A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given); a value that is not an array is stored through `item` alone. An absent item (one `item` stores as `undefined`) is dropped, except in a list whose element admits a hole (`holes`, the model's `hasOptionalElements` stamp, passed by the emitter): there an `undefined` or `null` item is kept as a hole at its position, so `[a, , b]` builds three positions. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
 
 ### `packages/common/src/runtime.ts::kindIdStorage`
 
@@ -756,11 +760,11 @@ A keyword-presence slot's loose input as what the slot stores: `true` for any pr
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry with its text as the method `$text()` (`asTextNode`).
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); a written entry, stored as detached data, wrapped as its kind's node through the engine bound to the tree whose table holds it (`hydrateOn`) when that tree is given; and any entry with its text as the method `$text()` (`asTextNode`).
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 
-A trivia side as its reader gets it, each entry through `hydrateTriviaEntry`. The array is a new one only when an entry is a coordinate. Otherwise it is the same array, its entries given the method `$text()` in place, so a side read back is the one stored.
+A trivia side as its reader gets it, each entry through `hydrateTriviaEntry` on the tree whose table answered the side (`sideRead`). A written entry is stored as detached data, which the render reads; the reader gets it as its kind's node, the same surface a read entry has, so `toJSON` and every other reader meet one shape. A side a node holds as its own data, with no coordinate in it, is read back as the same array, its entries given the method `$text()` in place.
 
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
@@ -834,9 +838,23 @@ The one seat that wraps and registers: the wrapper the registry holds at the val
 
 The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
 
+### `packages/common/src/utils.ts::isEmptyNode`
+
+Whether a node can hold inner trivia: nothing in it owns sides, since a comment beside any child has that child to lead or trail. Emptiness is about side ownership, not about what renders.
+
+- A parsed node answers from its tree (`TreeHandle.isEmpty`): no child is named, not an extra or `ERROR`, and with width.
+- A built node answers from what it stores (`storesNothingIn`), over its kind's inner region (`TriviaFacts.innerRegions`) with the named units (`TriviaFacts.namedUnits`), read through the node's engine (`engineOf`). A slot outside the gap does not count, so a typescript block whose only stored value is its automatic-semicolon terminator after `}` is empty, though the terminator still renders. A stored token of an anonymous kind (rust's `$` in `a!($)`) does not count either, while a named one (an empty statement's `;`) does.
+- A node with no engine, or of a kind with no inner region, is judged over every `_`-keyed slot, every unit counting.
+
+The two rules are held to one answer by `inner-region-parity.test.ts`. The one disagreement is scm `missing_node` in `(MISSING) @cap`, where the tree counts the capture after `)`; it is named there until the tree's rule reads the same gaps. `rebuilt` and `$trivia.inner` (`triviaWriter`) ask it, and so does `engine.isEmptyNode`, which also requires a kind with an inner side.
+
+### `packages/common/src/utils.ts::storesNothingIn`
+
+Whether a node stores nothing that owns sides in the slots `region` names, or in every `_`-keyed slot when it names none. A slot owns sides when it holds a node, a coordinate, text or a presence (any value other than `null`/`undefined`), or a unit whose kind id is in `namedUnits`. Every unit counts when no `namedUnits` is given. A list owns sides when any item does. It is the stored half of `isEmptyNode`, exported so the corpus parity test applies it to parsed nodes too.
+
 ### `packages/common/src/node-data.ts::sideOf`
 
-The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
+The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools: the entries of `sideRead`, which decides per side where it lives. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope and its content are one parser node, and the envelope holds that node's sides: the content (`envelopeKindOf`) reads none from the table, so every reader meets a comment there once.
 
 ### `packages/common/src/node-data.ts::sidesOf`
 
@@ -877,6 +895,26 @@ A read value given a node's text member: an object whose `$text` is a string get
 ### `packages/common/src/node-data.ts::hasNodeText`
 
 Whether a value has a text member in either form, a node's `$text()` method or native data's `$text` string, decided by the member's type alone. It never calls the method: a node's text is made strictly on access, and a method backed by the tree's native `text(span)` would otherwise cost a native call and a string on every check. `isNode`, which every coercer runs, tests text presence here; code that needs the text itself reads it through `nodeText`.
+
+### `packages/common/src/node-data.ts::envelopeKindOf`
+
+The display id of the alias envelope whose content a node is, read from the same parser node, else `undefined`. The reader stamps a coordinate with the grammar id, except at an alias envelope, where it stamps the display id; the envelope and its content are wrapped from that one coordinate, so the content is the node whose stamp (its own coordinate's, or the one an edit carried forward, `placeOf`) differs from its own kind. Over the corpora this matches "shares its holder's tree handle" exactly. The contract: an alias content's comments belong to its envelope. `sideRead` reads the content nothing from a table, whose entries for that parser node are the envelope's (a content an edit rebuilt still reads the sides it holds as its own data), and a `$trivia` write through the content lands on the one parser node, which the envelope reads once and every writer (JSON, render) writes once. `isAliasContent` asks this of a holder's child.
+
+### `packages/common/src/node-data.ts::sideRead`
+
+One side of a node and the tree whose trivia table holds it, decided per side, the one source `sideOf` and the `$trivia` reader share: a parsed node's live table at its own index, else the side the node holds as its own data (no tree), else the table of the node it was rebuilt from (`placeOf`) while that tree lives. So a rebuilt node that wrote one side and inherits the other reads each from where it lives, and the reader hydrates each through its own tree. An alias envelope's content (`envelopeKindOf`) reads nothing from either table, since that parser node's entries are its envelope's; a side it holds as its own data, after an edit rebuilt it, is still read.
+
+### `packages/common/src/node-data.ts::setUnitSides`
+
+Gives a built node its unit children's sides as held layout (`$_layout.units`), the record `unitSidesOf` reads first. The node reviver uses it to put back a unit's comments, which a unit (a bare kind id) cannot hold itself.
+
+### `packages/common/src/node-data.ts::realignedUnits`
+
+Unit-side records moved from the node they were recorded on (`before`) to the node a rebuild made from it (`after`). A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned between the two (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed, or replaced with a node, go with it. The one core behind a parsed source's carried sides (`carriedUnitSides`) and a built source's held ones (`carryUnitSides`).
+
+### `packages/common/src/node-data.ts::carryUnitSides`
+
+Makes a rebuilt node keep the unit sides its source holds as its own layout (`$_layout.units`), realigned to the rebuilt node's slots (`realignedUnits`). A revived node holds its units' comments that way and has no source tree to read them from again, so without this an edit dropped them. `rebuilt` calls it next to `carryPlace`. A parsed source's units come through its place instead (`unitSidesOf` → `carriedUnitSides`).
 
 ### `packages/common/src/interior.ts::interiorPattern`
 
@@ -929,3 +967,27 @@ The one read of a node's provenance, public through `@sittir/common`: the stamp 
 ### `packages/common/src/source-stamp.ts::carrySourceStamp`
 
 Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised copies, `materializeValue`) loses the stamp with every other symbol member, and this puts it back, so the copy is the node it stands for. A spread copy keeps the stamp and needs no carry. Beside `carryPlace`, which carries a different fact: where in its source a node sits.
+
+### `packages/common/src/node-json.ts::nodeJSON`
+
+A node's JSON, the body of every node's `toJSON`. What the node's kind is decides what is written, from the grammar's `jsonFacts`: `$type` is the kind's name; a text leaf (`leaves`) and an ERROR node add `$text`; each slot of the kind (`slots`) is written under its accessor's name, read through the accessor so a parsed node and a built node give the same JSON. A slot's value is written by what it holds: a node as its JSON, a kind id as a node of that kind (`{ $type }`), with the comments its parent holds for it (`unitSidesOf`, by the slot's storage key from its `querySlots` row and its item there) as its own `leadingComments` and `trailingComments`, so a comment on a unit crosses the way a node's does, a list (anything iterable that is not a node, since a list owner is itself iterable) as an array whose empty element is `null`, `true` and strings as they are, the blank arm of an optional slot that chose none (`blank`, the kind id no parser kind holds) as `null`, the spelling a builder takes it in (a `null` in a slot is a blank arm and a `null` inside a list is a hole: the position tells them apart); `undefined` and an absent keyword (`false`) are left out. Each trivia side's entries whose kind is not layout are the comments, written as `leadingComments`, `trailingComments` and `innerComments` when the side has any; an ERROR the parser left is one of them. Nothing else crosses: no storage keys, no layout, no provenance stamp or tree token, no `$with`, so the JSON names no tree and needs none to revive. The walk calls `nodeJSON` on the children itself rather than their `toJSON`, so an entry that is not a generated node (an ERROR) is written the same way.
+
+### `packages/common/src/node-json.ts::contentText`
+
+The text a text envelope's JSON carries in its one slot: the content leaf's `$text`, when the content is written as the kind the envelope holds (`jsonFacts.textEnvelopes`) with no member but `$type` and `$text`. Any other content (another kind, an `ERROR`, an unknown kind, comments) gives none, and the envelope revives through its slots, which refuse what it cannot hold at the content's path. The reviver builds an envelope with text through the envelope's own builder, never the content kind's, because the content kind's reserved words do not bind the envelope: `x.default` writes its property as `{ $type: 'property_identifier', content: { $type: 'identifier', $text: 'default' } }`, and `identifier` refuses `default` while `property_identifier` admits it.
+
+### `packages/common/src/node-json.ts::unitSidesBySlot`
+
+A node's unit-side records (`unitSidesOf`) grouped by slot storage key, then by item, so `nodeJSON` finds the comments of each unit it writes by its slot's `querySlots` storage key and its position in that slot.
+
+### `packages/common/src/node-json.ts::commentsJSON`
+
+The comments among a trivia side's entries as JSON. An entry whose kind is layout is left out. Each other entry is hydrated (`hydrateTriviaEntry`: a coordinate a tree's unit side holds becomes its comment node) and written as its node's JSON. A node's own sides and a unit's sides are written through it alike.
+
+### `packages/common/src/node-json.ts::unitJSON`
+
+A kind id's JSON: `{ $type }` naming its kind, with `leadingComments` and `trailingComments` from the unit's side record when it has comments there. A unit has no inner side.
+
+### `packages/common/src/node-json.ts::reviveItem`
+
+Revives one slot value, or one list item, of the node the reviver is building. When it revives to a kind id and its JSON carried comments, it records them as a unit-side record: the slot's storage key from its `querySlots` row, the item's position, and the revived comments. After building the node, the reviver gives it those records (`setUnitSides`), the record a parsed tree gives, so render, `$snapshot()` and `toJSON` read them with no path of their own.

@@ -1642,6 +1642,7 @@ function slotEmptiness(root: RenderRule, { slotById }: SlotEmptinessCtx): Emptin
 export interface InnerGap {
 	readonly key: string;
 	readonly precedingTokens: number;
+	readonly slots: readonly string[];
 }
 
 export interface FullFormAffix {
@@ -1814,8 +1815,11 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		};
 		walk(root, { conditional: false });
 		const tokens = immediateTokens.length;
+		const slotsAt = (precedingTokens: number): string[] => [
+			...new Set(occurrences.filter((occurrence) => occurrence.precedingTokens === precedingTokens).map((occurrence) => storageKeyOf(occurrence.slot.storageName)))
+		];
 		if (this._slots.length === 0) {
-			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1 }] : [];
+			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1, slots: [] }] : [];
 		}
 		if (tokens === 0) {
 			if (!this.grammarRoot) return [];
@@ -1823,7 +1827,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 			const repeat =
 				occurrences.find((occurrence) => isMultiple(occurrence.slot))?.slot ??
 				(rootSlot !== undefined && isMultiple(rootSlot) ? rootSlot : undefined);
-			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0 }];
+			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0, slots: [...new Set([...slotsAt(0), storageKeyOf(repeat.storageName)])] }];
 		}
 		return occurrences
 			.filter(
@@ -1835,7 +1839,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 					occurrence.precedingTokens < tokens &&
 					!immediateTokens[occurrence.precedingTokens]
 			)
-			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
+			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens, slots: slotsAt(occurrence.precedingTokens) }));
 	}
 
 	#computing = false;

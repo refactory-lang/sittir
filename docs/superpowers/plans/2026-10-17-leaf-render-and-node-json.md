@@ -41,7 +41,22 @@ The arena plan (`2026-10-10-arena-tables.md`, on `feat/records`) changes how a l
 
 - Generated outputs are never hand-edited. Regen and `validate:native` go to sittir-exec.
 - Explanations live in `docs/glossary/`. The public API (`NodeMethods`, `Engine.reviver`, `NodeJSON`) carries JSDoc.
-- The branch is `feat/leaf-render-json` in `scratchpad/wt-leaf-json`, off master `37cea2c41`.
+- Tasks 0 and 1 landed on master (`c91509f99`, `e79be18a5`). Tasks 2–4 are on `feat/node-json` in `scratchpad/wt-node-json`.
+
+## What landed differently
+
+The census and the corpus round trip found these, each ruled and pinned:
+
+- **Kind names resolve through the model.** A model kind the parser also issues under an alias display id (rust `_let_chain`, typescript `_lhs_expression`, python `_simple_statements` and `_simple_pattern`) writes its model name, and the reviver resolves names through the generated `kindIdFromName`, never a reverse of `KIND_NAMES` (`jsonFacts.kindId`).
+- **Three more facts on `jsonFacts`:**
+  - `spread`, the kinds whose builder takes `(options?, ...items)`, which is the model's factory shape;
+  - `options`, each kind's registered option slots by accessor name;
+  - `textEnvelopes`, the alias envelopes built from their content's text. They revive through the envelope's own text check, so a property name may be a word the content kind reserves.
+- **One slot spelling.** Config keys are the accessor names, which landed on master first. The reviver passes accessor names straight to the builder.
+- **List holes.** Only a list slot whose element admits a hole (`hasOptionalElements`) keeps `undefined` items; `null` there means a hole. Every other list drops absent items. `[a, , b]` renders `[a,, b]`.
+- **Kind ids in mixed slots.** A loose slot that stores some kind ids keeps only its own; any other number goes to the slot's resolver.
+- **C3.1 exception.** Nine rust corpus roots fail at a match arm's `pattern`, because the arm's whole guarded pattern and the pattern inside it share that key. The fix renames the arm's field `match` through grammar bindings, which no grammar applies yet. The corpus test names those roots, and a named root must still fail. Roots whose parse holds an `ERROR` are outside the contract.
+- **Examples.** `structuralShape` is gone. The dogfood contract and the round-trip examples compare `JSON.stringify(node)`.
 
 ## Facts this plan rests on (master `37cea2c41`)
 
