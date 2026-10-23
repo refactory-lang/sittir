@@ -1,8 +1,11 @@
+import { mkdtempSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { evaluate } from '../../dsl/evaluate.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
-import { grammarPackage } from '../../grammars.ts';
+import { grammarPackage, type GrammarPackage } from '../../grammars.ts';
 import { StaleBindingsError, assertBindingsFresh } from '../hash.ts';
 
 const reached = vi.hoisted(() => new Error('reached the evaluation'));
@@ -28,6 +31,12 @@ vi.mock('../../dsl/evaluate.ts', async (importOriginal) => {
 
 const rust = grammarPackage('rust');
 
+function packageWithoutGrammarEntry(): GrammarPackage {
+	const dir = mkdtempSync(join(tmpdir(), 'package-without-grammar-entry-'));
+	symlinkSync(join(rust.dir, 'node_modules'), join(dir, 'node_modules'));
+	return { ...rust, dir };
+}
+
 beforeEach(() => {
 	vi.clearAllMocks();
 });
@@ -40,6 +49,11 @@ describe('a package whose grammar bindings are stale', () => {
 
 	it.each([{ unbound: true }, { base: true }])('is evaluated by a compile that reads no grammar bindings (%o)', async (evaluation) => {
 		await expect(compileGrammar({ package: rust, evaluation })).rejects.toBe(reached);
+		expect(assertBindingsFresh).not.toHaveBeenCalled();
+	});
+
+	it('is evaluated by the compile of a package with no grammar.sittir.ts, which evaluates the upstream grammar alone', async () => {
+		await expect(compileGrammar({ package: packageWithoutGrammarEntry() })).rejects.toBe(reached);
 		expect(assertBindingsFresh).not.toHaveBeenCalled();
 	});
 

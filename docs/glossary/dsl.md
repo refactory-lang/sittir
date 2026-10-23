@@ -8824,7 +8824,7 @@ The options of a package evaluation: the entry it reads (`resolve-grammar.ts::Pa
 
 ### `packages/codegen/src/dsl/evaluate-package.ts::readsGrammarBindings`
 
-Whether a package evaluation with these options reads the package's grammar bindings: it does unless it is `unbound` (the grammar without its grammar bindings) or `base` (the upstream grammar alone). `compileGrammar` checks the grammar bindings for freshness exactly when it does.
+Whether evaluating the package with these options reads its grammar bindings: exactly when the evaluation is not `unbound` and its entry (`resolve-grammar.ts::packageSourceEntry`, the one `evaluatePackage` evaluates) is the package's own `grammar.sittir.ts`. The upstream grammar, taken for `base` or for a package with no `grammar.sittir.ts`, carries no grammar bindings. `compileGrammar` checks the grammar bindings for freshness exactly when it holds.
 
 ### `packages/codegen/src/dsl/resolve-grammar.ts::resolveGrammarJsPath`
 

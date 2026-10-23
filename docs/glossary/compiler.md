@@ -1633,7 +1633,7 @@ Before it evaluates a package with its grammar bindings (`dsl/evaluate-package.t
 nothing the compile evaluates or generates uses grammar bindings derived from other sources than the ones on disk.
 The config's `evaluation` options pass through to `evaluatePackage` unchanged.
 With `unbound` it evaluates the package without its grammar bindings: the
-base grammar's compilation, whose model the grammar bindings are derived against. With `base` it evaluates the upstream grammar alone. Neither reads the grammar bindings, so neither is checked.
+base grammar's compilation, whose model the grammar bindings are derived against. With `base` it evaluates the upstream grammar alone, as it does for a package with no `grammar.sittir.ts`. None of these reads the grammar bindings, so none is checked.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 

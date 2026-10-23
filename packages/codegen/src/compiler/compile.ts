@@ -39,7 +39,7 @@ export interface CompileGrammarConfig {
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
-	if (readsGrammarBindings(cfg.evaluation)) await assertPackageBindingsFresh(cfg.package);
+	if (readsGrammarBindings(cfg.package, cfg.evaluation)) await assertPackageBindingsFresh(cfg.package);
 	const evaluated = await evaluatePackage(cfg.package, cfg.evaluation);
 	const diagnosis = diagnoseGrammar({
 		grammar,
