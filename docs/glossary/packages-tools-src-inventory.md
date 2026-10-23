@@ -67,11 +67,11 @@ hash covers, then each grammar's `grammar.bindings.ts` (`bindingsModule`), and
 prints its convergence (`grammarBindingsSummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
 (`vocabularyDisagreements`), whether the flags module is current
-(`flagsCurrent`), and whether each grammar.bindings.ts is enrich's fixpoint over
+(`flagsCurrent`), and whether each grammar.bindings.ts is current and enrich's fixpoint over
 grammar.sittir.ts (`generatedLayerReport`). `--write` refuses a layer it wrote that
 is not (`generatedLayerFixpoint`). A cycle, a container capture with no direct
 target, a container slot left uncaptured, a form with no entry for its supertype's
-claim, a failed compile, a disagreement, a stale flags module or a layer that is not enrich's
+claim, a failed compile, a disagreement, a stale flags module, a stale layer or a layer that is not enrich's
 fixpoint is a non-zero exit.
 ```
 
@@ -89,7 +89,7 @@ What `generatedLayerReport` prints, a line per grammar with any diagnostic under
 
 ### `packages/tools/src/inventory/index.ts::generatedLayerReport`
 
-`--check`'s fixpoint report: for each grammar, whether its `grammar.bindings.ts` is enrich's fixpoint over `grammar.sittir.ts` (`generatedLayerFixpoint`), with the diagnostics formatted under the ones that are not (`formatGrammarDiagnostics`). Any such grammar fails the check.
+`--check`'s layer report: for each grammar, whether its `grammar.bindings.ts` is current against `bindings.scm` and the vocabulary (`bindingsStaleness`, the test the compile throws on), and then whether it is enrich's fixpoint over `grammar.sittir.ts` (`generatedLayerFixpoint`), with the diagnostics formatted under the ones that are not (`formatGrammarDiagnostics`). A stale layer is reported by its message and not checked further. Any such grammar fails the check.
 
 ### `packages/tools/src/inventory/flags.ts::printFlagsModule`
 

@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { writeSittirGrammarPackage } from '../../codegen/src/compiler/__tests__/_sittir-grammar.ts';
 import { generatedLayerReport } from '../src/inventory/index.ts';
+import { REGENERATE_BINDINGS_COMMAND } from '../../codegen/src/bindings/hash.ts';
 
 const tmp = vi.hoisted(() => ({ dir: '' }));
 
@@ -20,6 +21,18 @@ vi.mock('../src/codegen-surface.ts', async (importOriginal) => {
 		};
 	};
 	return { ...real, load: load as typeof real.load };
+});
+
+// The layer's staleness check finds its package directory through the grammars module, from the inventory and from codegen's bindings alike.
+vi.mock('@sittir/codegen/grammars', async (importOriginal) => {
+	const real = await importOriginal<Record<string, unknown>>();
+	const packageDir = real.grammarPackageDir as (name: string) => string;
+	return { ...real, grammarPackageDir: (name: string) => (name === 'tmp' ? tmp.dir : packageDir(name)) };
+});
+vi.mock('../../codegen/src/grammars.ts', async (importOriginal) => {
+	const real = await importOriginal<Record<string, unknown>>();
+	const packageDir = real.grammarPackageDir as (name: string) => string;
+	return { ...real, grammarPackageDir: (name: string) => (name === 'tmp' ? tmp.dir : packageDir(name)) };
 });
 
 const BASE =
@@ -62,5 +75,19 @@ describe("--check reports a generated layer that is not enrich's fixpoint", () =
 		const report = await generatedLayerReport(['tmp' as never]);
 		expect(report.failed).toBe(false);
 		expect(report.text).toContain("is enrich's fixpoint");
+	}, 120_000);
+});
+
+describe("--check reports a generated layer whose grammar.bindings.ts is stale against bindings.scm", () => {
+	it('a committed hash that is not the current bindings.scm fails the report with the staleness line and the regeneration command', async () => {
+		writeSittirGrammarPackage(dir, join(dir, 'base.js'), 'demo', '', undefined, {
+			bindings: "generated: true, rules: { pair: ($) => seq('(', ')') }"
+		} as never);
+		writeFileSync(join(dir, 'bindings.scm'), '(identifier) @identifier\n');
+		writeFileSync(join(dir, 'grammar.bindings.ts'), 'export const hash = "stale";\n');
+		const report = await generatedLayerReport(['tmp' as never]);
+		expect(report.failed).toBe(true);
+		expect(report.text).toContain('tmp: grammar.bindings.ts is stale against bindings.scm and the vocabulary');
+		expect(report.text).toContain(REGENERATE_BINDINGS_COMMAND);
 	}, 120_000);
 });

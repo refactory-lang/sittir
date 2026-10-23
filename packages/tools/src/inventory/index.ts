@@ -10,11 +10,13 @@ import {
 	bindingGrammars,
 	bindingsModulePath,
 	bindingsPath,
+	bindingsStaleness,
 	derive,
 	deriveGrammarBindings,
 	FLAGS_PATH,
 	grammarBindingsHash,
 	grammarInput,
+	loadBindingsHash,
 	printBindingsModule,
 	readVocabulary,
 	REGENERATE_BINDINGS_COMMAND,
@@ -23,7 +25,7 @@ import {
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
 import { printFlagsModule } from './flags.ts';
-import { REPO_ROOT, type GrammarName } from '@sittir/codegen/grammars';
+import { REPO_ROOT, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 import { compileNodeMap, evaluateGrammar, invoke, load, type GrammarDiagnostic } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
@@ -118,6 +120,12 @@ export async function generatedLayerReport(grammars: readonly GrammarName[]): Pr
 	const lines: string[] = [];
 	let failed = false;
 	for (const grammar of grammars) {
+		const stale = bindingsStaleness(grammar, await loadBindingsHash(grammarPackageDir(grammar)));
+		if (stale !== undefined) {
+			failed = true;
+			lines.push(stale);
+			continue;
+		}
 		const unsettled = await generatedLayerFixpoint(grammar);
 		if (unsettled.length > 0) failed = true;
 		lines.push(

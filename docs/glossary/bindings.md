@@ -448,7 +448,11 @@ Generation refused over a grammar's committed grammar bindings: missing, or deri
 
 ### `packages/codegen/src/bindings/hash.ts::assertBindingsFresh`
 
-Codegen's check of a grammar's generated layer: a grammar with a `bindings.scm` must commit `grammar.bindings.ts`, and the hash the layer exports must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`; a layer that exports no hash is reported as missing its bindings. A grammar with no `bindings.scm` passes. `compileGrammar` runs it before it evaluates either layer, with the hash `module.ts::loadBindingsHash` reads, so a stale layer is reported as stale and never evaluated. Compiling layer 1 alone skips it, since that is the compile the inventory regenerates the layer from. The base grammar's own staleness is the generated-output freshness check's.
+Codegen's check of a grammar's generated layer: it throws `StaleBindingsError` with the message `bindingsStaleness` gives, and passes when that gives none. `compileGrammar` runs it before it evaluates either layer, with the hash `module.ts::loadBindingsHash` reads, so a stale layer is reported as stale and never evaluated. Compiling layer 1 alone skips it, since that is the compile the inventory regenerates the layer from. The base grammar's own staleness is the generated-output freshness check's.
+
+### `packages/codegen/src/bindings/hash.ts::bindingsStaleness`
+
+Why a grammar's committed grammar bindings cannot be used, or nothing. The grammar has a `bindings.scm`, and its `grammar.bindings.ts` exports no hash, or a hash other than that of `bindings.scm` and the vocabulary now; each message names `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` is never stale. `assertBindingsFresh` throws it, and the inventory's `--check` reports it (`generatedLayerReport`).
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsEdit`
 
