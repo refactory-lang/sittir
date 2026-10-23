@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { placeOf, spanOf } from '@sittir/common/utils';
+import { nodeText, placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -186,6 +186,10 @@ function isEmptyStorageValue(v: unknown): boolean {
 	return v === undefined || (Array.isArray(v) && v.length === 0);
 }
 
+function storageValueOf(node: Record<string, unknown>, key: string): unknown {
+	return key === '$text' ? nodeText(node) : node[key];
+}
+
 /**
  * A bare scalar and a single-element array are the SAME storage value, not
  * a masked cardinality bug: the slot model owns arity and enforces it at
@@ -257,17 +261,17 @@ function compareNodeStorage(
 	for (const key of expectedKeys) {
 		if (key === '$type') continue;
 		seen.add(key);
-		const ev = expected[key];
+		const ev = storageValueOf(expected, key);
 		if (!actualKeys.has(key)) {
 			if (isEmptyStorageValue(ev)) continue;
 			return `${path || 'root'}.${key}: missing on factory output`;
 		}
-		const diff = compareStorageValue(ev, actual[key], `${path || 'root'}.${key}`, ctx);
+		const diff = compareStorageValue(ev, storageValueOf(actual, key), `${path || 'root'}.${key}`, ctx);
 		if (diff) return diff;
 	}
 	for (const key of actualKeys) {
 		if (key === '$type' || seen.has(key)) continue;
-		const av = actual[key];
+		const av = storageValueOf(actual, key);
 		if (isEmptyStorageValue(av)) continue;
 		return `${path || 'root'}.${key}: unexpected extra field on factory output`;
 	}
@@ -704,7 +708,8 @@ export async function validateFactoryStorage(
 					entry.name,
 					inputSource,
 					errors,
-					kindNameFromId
+					kindNameFromId,
+					handle
 				);
 				if (factoryData === null) {
 					// No factory for this kind, or the factory threw (already

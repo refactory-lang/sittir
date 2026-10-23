@@ -1077,42 +1077,7 @@ The node's kind id (`TSKindId`); a reader resolves it to a kind name through the
 
 ### `packages/tools/src/validate/common.ts::isAnonTokenPassthrough`
 
-```text
-/**
- * Determine whether an anonymous UntypedNode token should pass through
- * `resolveChild` unchanged.
- *
- * @remarks
- * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * the reader) must stay as UntypedNode. Render's `$named !== false` filter drops
- * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
- * trailing separators. Converting them to bare strings bypasses those filters
- * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
- * rendered output).
- *
- * @param c - The candidate child UntypedNode.
- * @returns `true` if the child is an anonymous token and should be returned as-is.
- */
-```
-
-### `packages/tools/src/validate/common.ts::shouldHaltRecursion`
-
-```text
-/**
- * Guard the recursion depth and availability of tree/factory context before
- * hydrating a child node.
- *
- * @remarks
- * Depth cap: recursive construction shouldn't run away even on pathologically
- * nested corpus entries. 64 is well past real-world AST depth and stops before
- * Node's default call-stack limit.
- *
- * @param depth - Current recursion depth.
- * @param tree - Tree handle, if available.
- * @param factoryMap - Factory map, if available.
- * @returns `true` if recursion should be halted (cap exceeded or context absent).
- */
-```
+Whether a child is an anonymous token object (`$named === false`). `resolveChild` passes one through unchanged only when it is given no tree, where the child is the read node itself. Building from a tree, it refuses one: stored data holds a token as its kind id, so a token object reaching a builder input is a fault, never an input.
 
 ### `packages/tools/src/validate/common.ts::resolveAliasedKind`
 
@@ -1140,14 +1105,7 @@ The node's kind id (`TSKindId`); a reader resolves it to a kind name through the
 
 ### `packages/tools/src/validate/common.ts::resolveChild`
 
-```text
-/**
- * Hydrate a shallow child UntypedNode via the tree handle, then convert
- * recursively and route through its kind's factory. Falls back to the
- * passed-in shallow UntypedNode when `tree` isn't available OR the child
- * lacks a $nodeId (factory-built children don't carry one).
- */
-```
+One child of a node as the config takes it. A scalar passes through. Given no tree or no factory map, a child object passes through unchanged: it is the read node itself, which a builder admits. Given both, the child is hydrated (`hydrateForConfig`) and built through its kind's factory (`buildWithFactory`); a kind with no factory of its own is resolved through its single wrapped child. A builder is never handed a node it could not build: an anonymous token object, a kind with no factory and no single wrapped child, and a node nested more than 64 deep each throw, naming the kind and its slot path (`pathOf`).
 
 #### body
 
@@ -1652,7 +1610,7 @@ The render-and-reparse step every rendering row shares. It renders a node with t
 
 ### `packages/tools/src/validate/factory-storage.ts::validateFactoryStorage`
 
-Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
+Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other. Both builds are given the read tree, so every child is built through its own factory: the storage comparison reads nested content the factory built, never the read's own children, and a builder is never handed a `materialize` copy.
 
 Each candidate tested is one case of its kind, and `total` and `casesByKind` are read from that one count (`KindCases`). The render counts the built nodes it renders the same way, taking a case back out when the kind has no reparse host or the render is excluded.
 
@@ -1728,6 +1686,10 @@ Loads the generated raw factory map through the typed internal loader, scopes bu
 
 Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.
 
+### `packages/tools/src/validate/factory-storage.ts::storageValueOf`
+
+One stored value of a node as the storage comparison reads it: `$text` through `nodeText`, since a built leaf holds its text as a function and a materialized read holds it as a string; any other key as the node holds it.
+
 ### `packages/tools/src/grammar-internals.ts::Hydrate`
 
 The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as an accessor would return it, a coordinate read `depth` levels down through the given tree and wrapped.
@@ -1754,7 +1716,10 @@ Projects a seated slot's value into its parent's config by the seat's shape.
 A `flatten` seat splices the group's own config keys into the parent's and
 marks the config (`flattenedOf`): `true` for a config-shaped group, else the
 group's call arguments, so a direct parent can pass the group's positional
-value. An `elements` seat projects each element, and a `tuple` seat takes the
+value. A group present with none of its keys set (python's `c[::]` step
+group, rust's `use ::*;` wildcard group) has no flattened spelling: it is
+built through its own factory and passed under the seat's key, which the
+seated surface accepts beside the flattened keys. An `elements` seat projects each element, and a `tuple` seat takes the
 group's call arguments as the slot's value.
 
 ### `packages/tools/src/validate/reparse-derive.ts::deriveReparseHosts`
@@ -1804,6 +1769,10 @@ A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exe
 ### `packages/tools/src/validate/common.ts::slotNameOf`
 
 A kind's slot, by its model slot name (the storage name a seat table or `factoryFields` lists), to the name a config builds it by and its accessor reads it by, from the loaded model (`LoadedNodeModel.slotAccessors`). The factory-source printer keys a seated slot (`wrapSeatedConfig`) and a trivia entry's content slot through it. A slot the model does not have throws, naming the kind and slot.
+
+### `packages/tools/src/validate/common.ts::pathOf`
+
+The slot path `resolveChild` names when it refuses a child: the steps `memberValueOpts` records in `NodeToConfigOpts._path`, or "the root" for the node `nodeToConfig` was called on.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
