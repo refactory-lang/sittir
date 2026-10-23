@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
-import { normalizeGrammar } from '../normalize.ts';
-import { assemble, AssembleCtx } from '../assemble.ts';
-import { armIsForm, armRoutesOf, formRoutesOf, stampIrSurface } from '../model/ir-surface.ts';
+import { armIsForm, armRoutesOf, formRoutesOf } from '../model/ir-surface.ts';
 import { emitIs } from '../../emitters/is.ts';
 
 const direct = {

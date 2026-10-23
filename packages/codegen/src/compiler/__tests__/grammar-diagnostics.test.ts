@@ -1,6 +1,5 @@
 import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { withPredictedKinds, diagnosePredicted } from '../../__tests__/helpers/linked.ts';
-import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
@@ -14,7 +13,7 @@ import {
 import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import { predictedKindsOf, type GeneratedIdTables, predictedIdTablesOf } from '../../dsl/symbol-table.ts';
+import { type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { AssembledEnum } from '../model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';

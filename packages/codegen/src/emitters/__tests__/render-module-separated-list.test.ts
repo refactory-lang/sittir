@@ -20,7 +20,6 @@ import { preference } from '../../dsl/primitives/preference.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
-	AssembledSupertype,
 	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule

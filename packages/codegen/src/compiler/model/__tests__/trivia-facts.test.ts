@@ -1,5 +1,4 @@
 import { diagnosePredicted } from '../../../__tests__/helpers/linked.ts';
-import { predictedIdTablesOf } from '../../../dsl/symbol-table.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
@@ -7,7 +6,6 @@ import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
 import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
-import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
 

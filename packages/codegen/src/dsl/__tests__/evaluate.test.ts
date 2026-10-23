@@ -10,7 +10,6 @@ import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { evaluate } from '../evaluate.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { link } from '../../compiler/link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';

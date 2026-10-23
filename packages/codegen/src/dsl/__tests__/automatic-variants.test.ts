@@ -6,7 +6,6 @@ import { field } from '../primitives/field.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { getEnrichAutomaticVariants, isSupertypeOwner, relabelledArm } from '../automatic-variants.ts';
-import { link } from '../../compiler/link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import { stampLabelProvenance, variantChildrenOf } from '../../compiler/variant-structural.ts';

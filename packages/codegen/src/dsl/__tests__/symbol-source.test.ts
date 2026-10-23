@@ -4,7 +4,6 @@ import {
 	assertPredictedKindEntries,
 	catalogRenames,
 	collectGeneratedKindEntries,
-	predictedKindsOf,
 	predictKindCatalog,
 	predictedSymbolSourceOf,
 	type GeneratedKindEntry

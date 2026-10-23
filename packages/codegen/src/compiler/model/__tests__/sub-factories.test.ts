@@ -2,13 +2,8 @@ import { assemblePredicted } from '../../../__tests__/helpers/linked.ts';
 import type { NodeMapWithIdTables } from '../../../__tests__/helpers/node-map-fixtures.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { stampIrSurface } from '../ir-surface.ts';
 import type { Rule } from '../../../types/rule.ts';
 import type { RawGrammar } from '../../types.ts';
-import { linkPredicted } from '../../../__tests__/helpers/linked.ts';
-import { normalizeGrammar } from '../../normalize.ts';
-import { assemble, AssembleCtx } from '../../assemble.ts';
-import type { NodeMap } from '../../types.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,

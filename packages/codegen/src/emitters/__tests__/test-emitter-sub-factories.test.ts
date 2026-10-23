@@ -2,13 +2,8 @@ import type { NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtu
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { linkPredicted } from '../../__tests__/helpers/linked.ts';
-import { normalizeGrammar } from '../../compiler/normalize.ts';
-import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import type { NodeMap } from '../../compiler/types.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { predictedSymbolSourceOf } from '../../dsl/symbol-table.ts';
 import { emitTests } from '../test.ts';

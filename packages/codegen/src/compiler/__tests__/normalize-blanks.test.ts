@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from '../link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar, blanksDropped } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';

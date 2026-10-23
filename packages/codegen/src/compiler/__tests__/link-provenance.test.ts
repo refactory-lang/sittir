@@ -2,7 +2,6 @@ import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rul
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import { link } from '../link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { collectReferences } from '../rule-catalog.ts';
 

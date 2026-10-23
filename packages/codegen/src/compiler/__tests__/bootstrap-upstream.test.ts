@@ -1,10 +1,8 @@
 import { diagnosePredicted } from '../../__tests__/helpers/linked.ts';
-import { predictedIdTablesOf } from '../../dsl/symbol-table.ts';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
-import { collectGrammarDiagnosticsForGrammar } from '../diagnostics/grammar-diagnostics.ts';
 import { toScreamingSnakeCase } from '../model/casing.ts';
 import type { RawGrammar } from '../types.ts';
 

@@ -16,7 +16,6 @@ import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { LinkedGrammar, RawGrammar, RefineForm } from '../../compiler/types.ts';
-import { link } from '../../compiler/link.ts';
 import { linkPredicted, rawIdTablesOf, withFixtureLexicalRanks } from '../../__tests__/helpers/linked.ts';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';

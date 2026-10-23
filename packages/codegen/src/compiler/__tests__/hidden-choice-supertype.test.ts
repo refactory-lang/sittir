@@ -2,7 +2,6 @@ import { CHOICE, FIELD, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import { link } from '../link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';

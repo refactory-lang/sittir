@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { displayFamilyNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import { emitTypesModules } from '../types.ts';
 

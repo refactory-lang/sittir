@@ -3,8 +3,6 @@ import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
-import { normalizeGrammar } from '../normalize.ts';
-import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import {
 	factoryTakesSpreadChildren,
@@ -47,7 +45,7 @@ function getCompound(nodeMap: NodeMap, kind: string) {
 
 describe('slot structural signals', () => {
 	it('treats fieldless slots as unnamed without consulting origin', () => {
-		const { nodeMap, generatedIdTables } = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
@@ -57,7 +55,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('projects unnamed-slot parseNames from per-value parseKind, not slot aliasSources', () => {
-		const { nodeMap, generatedIdTables } = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: 'interface_body' },
@@ -80,7 +78,7 @@ describe('slot structural signals', () => {
 		// sole slot therefore reaches the same direct-value factory a named
 		// one does, and `isUnnamed` survives as a wire fact rather than a
 		// surface one.
-		const { nodeMap, generatedIdTables } = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
@@ -91,7 +89,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('classifies the child surface from arity, for an unnamed sole slot too', () => {
-		const { nodeMap, generatedIdTables } = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
@@ -106,7 +104,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('shared factory classifiers key unnamed-child spread surfaces off isUnnamed', () => {
-		const { nodeMap, generatedIdTables } = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: {
 				type: 'REPEAT1',
 				content: { type: 'SYMBOL', name: 'identifier' }
@@ -139,7 +137,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('two unnamed same-kind slots in one branch fire storagename-collision (not silently collapsed)', () => {
-		const { nodeMap, generatedIdTables } = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			host: {
 				type: 'CHOICE',
 				members: [

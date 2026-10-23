@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { emitKindIdRust, relaxedKeywordIds } from '../kind-id-rust.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -9,7 +9,6 @@ import type { GrammarName } from '../../grammars.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
-
 
 async function emittedKindIds(grammar: GrammarName) {
 	const raw = await evaluatePackage(grammarPackage(grammar));

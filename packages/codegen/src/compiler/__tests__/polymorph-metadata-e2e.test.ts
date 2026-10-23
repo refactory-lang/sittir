@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { link } from '../link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { deriveVariantChildren } from '../variant-structural.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';

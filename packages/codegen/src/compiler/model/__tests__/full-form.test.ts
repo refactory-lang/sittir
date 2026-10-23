@@ -1,9 +1,7 @@
 import { diagnosePredicted } from '../../../__tests__/helpers/linked.ts';
-import { predictedIdTablesOf } from '../../../dsl/symbol-table.ts';
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../../__tests__/helpers/sittir-grammar.ts';
-import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { compileGrammar } from '../../compile.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';

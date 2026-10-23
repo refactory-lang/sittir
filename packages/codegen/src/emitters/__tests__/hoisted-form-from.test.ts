@@ -1,5 +1,4 @@
 import { collectKindEntries } from '../kind-discriminant.ts';
-import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { FIELD, PATTERN, SEQ, STRING, SYMBOL, CHOICE } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';

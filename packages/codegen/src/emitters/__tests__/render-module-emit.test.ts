@@ -16,7 +16,7 @@ import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-com
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
-import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
+import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { link } from '../../compiler/link.ts';
@@ -42,7 +42,6 @@ import {
 	nodeArgs,
 	type ReadFactsCtx
 } from '../node-projection.ts';
-
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
