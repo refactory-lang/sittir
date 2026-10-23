@@ -9,6 +9,13 @@ on:
     paths-ignore:
       - docs/superpowers/probes/2026-10-23-engine-dylib/README.md
       - docs/superpowers/probes/2026-10-23-engine-dylib/evidence/**
+      - .github/workflows/engine-dylib-measure.yml
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/variants.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/measure.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/core-share.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/memory.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/throughput.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/corpus.mts
   workflow_dispatch:
 
 env:

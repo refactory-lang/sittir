@@ -1,0 +1,92 @@
+# The shared engine library probe's measurements, on dedicated runners: each
+# runner builds today's static addons (the merge base) and the dylib shape
+# (this branch) in both profiles, one clean build after another, then measures
+# memory and throughput across all four in alternating rounds, so every
+# comparison is made on one machine. Runs on the probe branch only.
+name: engine dylib measure
+
+on:
+  push:
+    branches: [probe/engine-dylib]
+    paths:
+      - .github/workflows/engine-dylib-measure.yml
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/variants.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/measure.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/core-share.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/memory.mjs
+      - docs/superpowers/probes/2026-10-23-engine-dylib/scripts/throughput.mjs
+
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+  PROBE: docs/superpowers/probes/2026-10-23-engine-dylib
+  # Today's addons: the probe branch's merge base with master.
+  BASE: 7a768a0e9fd7a8860c01258091f0a5da8a5ccd15
+
+jobs:
+  measure:
+    name: measure (${{ matrix.name }})
+    runs-on: ${{ matrix.host }}
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: macos-arm64, host: macos-14 }
+          - { name: linux-x64-gnu, host: ubuntu-22.04 }
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.BASE }}
+          path: base-tree
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: pnpm
+      - name: Rust (pinned)
+        uses: ./.github/actions/rust-toolchain
+      - name: Machine
+        shell: bash
+        run: |
+          rustc -vV
+          node -p 'const os = require("node:os"); JSON.stringify({ cpus: os.cpus().length, model: os.cpus()[0].model, memory: os.totalmem() })'
+      - name: Fetch crates
+        shell: bash
+        run: |
+          cargo fetch --locked
+          cargo fetch --locked --manifest-path base-tree/Cargo.toml
+      - name: Build the variants
+        shell: bash
+        run: |
+          for variant in today-release today-gate; do
+            node "$PROBE/scripts/variants.mjs" --variant "$variant" --src base-tree --target-dir "$RUNNER_TEMP/target" --out "$RUNNER_TEMP/variants"
+          done
+          for variant in dylib-release dylib-gate; do
+            node "$PROBE/scripts/variants.mjs" --variant "$variant" --src . --target-dir "$RUNNER_TEMP/target" --out "$RUNNER_TEMP/variants"
+          done
+          rm -rf "$RUNNER_TEMP/target"
+      - name: sittir-core without napi, as a dylib
+        shell: bash
+        env:
+          RUSTFLAGS: -C prefer-dynamic
+        run: node "$PROBE/scripts/core-share.mjs" --src . --target-dir "$RUNNER_TEMP/target-core" --out "$RUNNER_TEMP/core-share"
+      - name: Corpus
+        shell: bash
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter "@sittir/common..." run build
+          pnpm exec tsx "$PROBE/scripts/corpus.mts" --out "$RUNNER_TEMP/corpus" --grammars rust,python
+      - name: Measure
+        shell: bash
+        run: node "$PROBE/scripts/measure.mjs" --variants "$RUNNER_TEMP/variants" --corpus "$RUNNER_TEMP/corpus" --out "$RUNNER_TEMP/measure" --rounds 5 --iterations 200
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: measure-${{ matrix.name }}
+          path: |
+            ${{ runner.temp }}/variants/*/build.json
+            ${{ runner.temp }}/core-share/core-share.json
+            ${{ runner.temp }}/measure/measure.json
+          if-no-files-found: ignore
