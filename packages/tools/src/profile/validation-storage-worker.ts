@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import type { GrammarName } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadNativeEngine, useValidationNodeStorage } from '../validate/common.ts';
+import { loadCorpusEntries, loadNativeEngine, useValidationConstruction, useValidationNodeStorage, type Construction } from '../validate/common.ts';
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { RoundtripProfile } from '../validate/roundtrip-profile.ts';
@@ -18,12 +18,14 @@ import {
 export interface ValidationStorageOptions {
 	grammar: GrammarName;
 	storage: StorageMode;
+	construction: Construction;
 	warmup: number;
 	iterations: number;
 }
 
 export async function sampleValidationStorage(options: ValidationStorageOptions): Promise<ValidationStorageRun> {
 	useValidationNodeStorage(options.storage);
+	useValidationConstruction(options.construction);
 	await loadNativeEngine(options.grammar);
 	const corpus = corpusFingerprint(loadCorpusEntries(options.grammar));
 	await collectGarbage();
@@ -75,7 +77,7 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 	}
 	await collectGarbage();
 	const memory = { baseline, after: process.memoryUsage(), peakRssBytes: process.resourceUsage().maxRSS * 1024 };
-	return { grammar: options.grammar, storage: options.storage, pid: process.pid, corpus, buckets, memory };
+	return { grammar: options.grammar, storage: options.storage, construction: options.construction, pid: process.pid, corpus, buckets, memory };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

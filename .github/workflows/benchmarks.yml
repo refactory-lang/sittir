@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }})
+run-name: Arena benchmarks (${{ inputs.benchmark }}, ${{ inputs.construction }} construction)
 
 on:
   workflow_dispatch:
@@ -9,6 +9,11 @@ on:
         type: choice
         default: all
         options: [all, eager, corpus]
+      construction:
+        description: How the corpus job's arena arm builds nodes; records runs regex and scm, the grammars every compound kind of which has a record view
+        type: choice
+        default: objects
+        options: [objects, records]
 
 permissions:
   contents: read
@@ -45,4 +50,5 @@ jobs:
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
-      grammars: ${{ needs.prepare.outputs.grammars }}
+      grammars: ${{ inputs.construction == 'records' && '["regex","scm"]' || needs.prepare.outputs.grammars }}
+      construction: ${{ inputs.construction }}

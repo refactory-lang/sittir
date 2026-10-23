@@ -201,7 +201,9 @@ export function mergeCorpusShards(shards, grammars) {
 		'grammar shard coverage differs'
 	);
 	assert.equal(shards.length, grammars.length, 'grammar shard coverage differs');
+	const construction = constructionOf(shards[0].report);
 	for (const shard of shards) {
+		assert.equal(constructionOf(shard.report), construction, 'shards must build with the same construction');
 		assert.equal(shard.report.options.grammars.length, 1, 'one grammar per runner required');
 		verify(shard.before, shard.after);
 		for (const field of [
@@ -225,7 +227,12 @@ export function mergeCorpusShards(shards, grammars) {
 			);
 		analyzeCorpus(shard.report);
 	}
-	return { mode: 'validation-storage-shards', options: { grammars }, shards };
+	return { mode: 'validation-storage-shards', options: { grammars, construction }, shards };
+}
+
+/** The construction a corpus report's arena arm builds with: objects unless the run named records. */
+export function constructionOf(report) {
+	return report.options?.construction ?? 'objects';
 }
 
 export function analyzeCorpus(data) {
@@ -367,7 +374,11 @@ export function summarize(data) {
 		'',
 		"Medians are computed from each worker's three batches, then across five workers. Ranges remain in analysis.json and raw samples.",
 		'',
-		'Native parsed hydration currently builds typed Rust nodes before record encoding. No intermediate JS AST crosses the bridge. Public factory/IR buckets still build objects under both storage settings.',
+		`Native parsed hydration currently builds typed Rust nodes before record encoding. No intermediate JS AST crosses the bridge. ${
+			constructionOf(data) === 'records'
+				? 'Factory and IR buckets build records on the arena arm and objects on the object arm.'
+				: 'Factory and IR buckets build objects under both storage settings.'
+		}`,
 		''
 	];
 	if (data.shards)

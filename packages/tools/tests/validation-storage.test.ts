@@ -13,6 +13,7 @@ function sample(storage: StorageMode, round = 0): ValidationStorageRun & { round
 	return {
 		grammar: 'regex',
 		storage,
+		construction: 'objects',
 		round,
 		pid: storage === 'object' ? 1 : 2,
 		corpus: { entries: 1, bytes: 6, sha256: 'corpus' },

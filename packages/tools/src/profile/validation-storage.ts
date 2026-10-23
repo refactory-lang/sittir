@@ -1,6 +1,7 @@
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { roundtripPhases, type RoundtripProfile } from '../validate/roundtrip-profile.ts';
 import { median, type corpusFingerprint } from './storage-common.ts';
+import type { Construction } from '../validate/common.ts';
 
 export const validationBuckets = ['read-render-parse', 'factory-render-parse', 'ir-render-parse'] as const;
 export const validationPhases = ['validator', ...roundtripPhases] as const;
@@ -15,6 +16,7 @@ export interface ValidationBucketSample extends ReturnType<RoundtripProfile['fin
 export interface ValidationStorageRun {
 	grammar: GrammarName;
 	storage: StorageMode;
+	construction: Construction;
 	pid: number;
 	corpus: ReturnType<typeof corpusFingerprint>;
 	buckets: ValidationBucketSample[];
