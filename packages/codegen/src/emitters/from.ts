@@ -3,7 +3,7 @@ import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { builtFromText } from './built-from-text.ts';
 import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -22,7 +22,6 @@ import type {
 
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
-import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
 import {
 	DELIMITER_IMPORT,
@@ -58,17 +57,13 @@ import {
 	wordConstructibleText,
 	isAuthoredCompound,
 	transparentContentKindNames,
-	isAffixedLeaf,
 	transparentWrapperContentSlot,
-	referencedKinds,
-	classifyFactoryEmission,
 	registeredSlots,
 	pruneUnusedImports,
 	classifyKindsForResolver,
 	resolvesLooseInput,
 	looseElementType,
 	leadingOptionsOf,
-	aliasPatternLeaf,
 	placedAlias,
 	keywordAliasContent,
 	fixedTextEntryOf,
@@ -86,13 +81,11 @@ import {
 	listOptionKeys,
 	listSpreadTarget,
 	leadingOptionsSplit,
-	leafReDeclaration,
 	slotStorageCoercion,
 	storageCallExpr
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
-	AssembledAlias,
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
