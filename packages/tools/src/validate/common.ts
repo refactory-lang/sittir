@@ -1534,10 +1534,7 @@ function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | 
 	const tree = treeOf(source as object);
 	const carried = source.$_layout?.trivia;
 	if (tree !== undefined) return tableSides(source, tree, (read) => resolveChild(read, { ...childOpts(opts), tree }));
-	return (
-		carried &&
-		(mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia)
-	);
+	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 }
 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
