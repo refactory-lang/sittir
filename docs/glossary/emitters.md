@@ -9266,7 +9266,7 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 // lookup via `slotByRuleId`).
 ```
 
-### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.<unknown>`
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter::finalize`
 
 #### body
 

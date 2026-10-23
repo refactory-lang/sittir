@@ -1016,7 +1016,7 @@ can't be unified.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::parameterless`
 
-A compound with a factory whose every slot fills itself takes no arguments: python's `match_block_empty` holds only the `_newline` layout token, regex's `lazy` only the literal `?`. The getter is guarded against re-entrancy, so a reference cycle reads as `false`.
+A compound with a factory whose every slot fills itself takes no arguments: python's `match_block_empty` holds only the `_newline` layout token, regex's `lazy` only the literal `?`. The getter is guarded against re-entrancy, so a reference cycle reads as `false`. The result is not memoized: slot values are still `UnresolvedRef` before `hydrateSlotRefs` runs, so a cached `false` would outlive the hydration. The node map is attached by `assemble()` once every node exists; test fixtures leave it unset and resolve to `false`. Determined content is what makes a kind take arguments: with none, an all-optional kind is configurable, not parameterless. Before pruning, or in a test fixture, determined slots still sit in the record and are classified in place.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::soleRequiredValue`
 
@@ -1153,9 +1153,7 @@ flatten and simplify joins use.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::subtypes`
 
-```text
-/** Resolved concrete kind names in this supertype union. */
-```
+The resolved subtype list: hidden names are expanded to their concrete kinds. This differs from `rule.subtypes`, which carries the raw names as the grammar declares them, so `subtypes` is not replaced with `rule.subtypes`. Each entry's `.node` starts as an `UnresolvedRef`, because a subtype's own node may not exist yet during the single forward-referencing pass in `assemble.ts`. `hydrateSlotRefs` hydrates it to the real node once the full node map exists, the same two-pass pattern branch and group slots use. `storageKindId` is read off each `SubtypeRef`; `assemble.ts` stamps it once, at discovery, and this constructor never re-derives it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::subtypeParseNames`
 
@@ -2442,36 +2440,6 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.<unknown>`
-
-```text
-// Cycle guard for the parameterless getter. Breaks re-entrant calls
-// (cyclic slot graphs) conservatively, replicating LFP-from-false semantics.
-// No memoization — results must not be cached pre-hydration (before
-// hydrateSlotRefs runs, slot values are UnresolvedRef and would produce a
-// false-negative that would be incorrectly cached for the post-hydration call).
-```
-
-```text
-// Node map back-reference for pre-hydration UnresolvedRef resolution in the
-// parameterless getter. Attached by assemble() after all nodes are constructed
-// (via attachNodeMap). Not set in test fixtures — those resolve false.
-// Private to prevent serialization walks from descending into the whole map.
-```
-
-```text
-// hidden nodes have no factory
-```
-
-#### body
-
-```text
-// Determined content is the whole point: with none, an all-optional
-// kind is configurable, not parameterless. Pre-prune (or in a test
-// fixture) determined slots still sit in the record — classify them
-// in place.
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
 
 ```text
@@ -2892,23 +2860,6 @@ emission).
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::defaultVariantSubtype`
 
 The variant subtype stamped as the default, when this supertype is variant-bearing and names one. Whether a variant-bearing supertype is callable without naming an arm is exactly whether this is defined.
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
-
-```text
-// #subtypes stores the RESOLVED subtype list (hidden names expanded to
-// their concrete kinds) — this differs from rule.subtypes which carries
-// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
-//
-// Each entry's `.node` starts as an `UnresolvedRef` — supertypes are
-// constructed in the same single forward-referencing pass as every other
-// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
-// — and is hydrated to the real node by `hydrateSlotRefs` once the full
-// node map exists, the same two-pass pattern branch/group slot values
-// already use. `storageKindId` is read directly off each `SubtypeRef` —
-// assemble.ts's resolution helpers stamp it once, at discovery; this
-// constructor never re-derives it.
-```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::transitiveParseKinds`
 

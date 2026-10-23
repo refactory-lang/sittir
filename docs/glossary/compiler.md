@@ -6701,12 +6701,6 @@ whose choice holds none of the children's own members (typescript's
 // do we call this token in TypeScript identifier space".
 ```
 
-### `packages/codegen/src/compiler/link.ts::TOKEN_NAMES.<unknown>`
-
-```text
-// Multi-char tokens
-```
-
 ### `packages/codegen/src/compiler/link.ts::resolveRule`
 
 ```text
