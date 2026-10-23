@@ -399,19 +399,23 @@ const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
 
 const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
 
+export function chosenSeparatorOf(node: object): unknown {
+	const built = builtRefOf(node);
+	return (node as Record<string, unknown>)._separator ?? (built === undefined ? undefined : recordSeparator(node, built.arena.tree));
+}
+
 /**
- * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
- * own `_separator` when its data stores one, the separator a built list's record was built with
- * (`recordSeparator`), else the one its tree answers (`slotSeparatorOf`). An owner names the
- * accessor that returns its list and answers that list's `separator`.
+ * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the
+ * separator a builder chose for the list (`chosenSeparatorOf`), else the one its tree answers
+ * (`slotSeparatorOf`). An owner names the accessor that returns its list and answers that list's
+ * `separator`.
  */
 export function defineListSeparator(node: object, accessor?: string): void {
 	let getter = SEPARATOR_GETTERS.get(accessor);
 	if (getter === undefined) {
 		getter = function (this: Record<string, unknown>) {
 			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
-			const built = builtRefOf(this);
-			return this._separator ?? (built === undefined ? undefined : recordSeparator(this, built.arena.tree)) ?? slotSeparatorOf(this);
+			return chosenSeparatorOf(this) ?? slotSeparatorOf(this);
 		};
 		SEPARATOR_GETTERS.set(accessor, getter);
 	}

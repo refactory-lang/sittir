@@ -12,7 +12,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { coordinateOf, hydrateTriviaEntry, writeTrivia, writtenSides } from '@sittir/common/utils';
+import { chosenSeparatorOf, coordinateOf, hydrateTriviaEntry, writeTrivia, writtenSides } from '@sittir/common/utils';
 import { scopeBuilders, useRecordConstruction } from '@sittir/common/engine';
 import {
 	carryRead,
@@ -934,7 +934,8 @@ export function slotValuesOf(
 		}
 	});
 	if (delimiter && typeof node.delimiter === 'number') values.push([storageKeyOf('delimiter'), node.delimiter]);
-	if (separator && typeof node.separator === 'number') values.push([storageKeyOf('separator'), node.separator]);
+	const chosen = separator ? chosenSeparatorOf(node) : undefined;
+	if (typeof chosen === 'number') values.push([storageKeyOf('separator'), chosen]);
 	return values;
 }
 

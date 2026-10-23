@@ -20,8 +20,11 @@ describe('separatedListFactoryOptions', () => {
 		expect(separatedListFactoryOptions({}, unread)).toBeUndefined();
 	});
 
-	it("reads a record view's delimiter and separator through its readers", () => {
+	it("reads a record view's delimiter through its reader", () => {
 		expect(separatedListFactoryOptions({ $type: 1, [RECORD]: 8, delimiter: 2 }, list)).toEqual({ delimiter: 2 });
-		expect(separatedListFactoryOptions({ $type: 1, [RECORD]: 8, delimiter: 2, separator: 9 }, list)).toEqual({ separator: 9, delimiter: 2 });
+	});
+
+	it("leaves out a parsed record view's separator, which is its tree's layout, not a choice", () => {
+		expect(separatedListFactoryOptions({ $type: 1, [RECORD]: 8, delimiter: 2, separator: 9 }, list)).toEqual({ delimiter: 2 });
 	});
 });
