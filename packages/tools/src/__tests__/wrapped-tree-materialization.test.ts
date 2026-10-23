@@ -31,7 +31,7 @@ function asRecord(value: unknown): Record<string, unknown> {
 describe('wrapped tree materialization', () => {
 	it('keeps each node it copies a node with its provenance, the copy being made by string keys', () => {
 		const child = stampSource(leaf(21, 'child'), Source.Ts);
-		const root = stampSource({ $type: 1, $named: true, _items: child } satisfies TypedNode, Source.Ts);
+		const root = stampSource({ $type: 1, $named: true, _items: child, items: () => child } satisfies TypedNode, Source.Ts);
 		const materialized = materialize(root, accessorOf);
 		expect(sourceOf(materialized)).toBe(Source.Ts);
 		expect(sourceOf(asRecord(materialized)._items as object)).toBe(Source.Ts);

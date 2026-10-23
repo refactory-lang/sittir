@@ -43,7 +43,7 @@ function parsedShape(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(parsedShape);
 	if (node === null || typeof node !== 'object') return node;
 	const record = node as Record<string, unknown>;
-	const slots = typeof record.$type === 'number' ? pythonSlots(record.$type) : {};
+	const slots = typeof record.$type === 'number' ? pythonSlots(record.$type).accessors : {};
 	return Object.fromEntries(
 		Object.entries(record)
 			.filter(([key, value]) => typeof value !== 'function' && (key === '$type' || !key.startsWith('$')))

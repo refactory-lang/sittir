@@ -1789,7 +1789,7 @@ The key a config holds a kind's slot under: the slot's model name, read from the
 
 ### `packages/tools/src/validate/common.ts::slotAccessorOf`
 
-A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
+A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). It answers the kind's name with the map (`KindSlots`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind, and so does a slot whose model-named accessor the node does not have as a reader (`resolveWrappedStorageValue`): the model and the generated node disagree. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
 
 ### `packages/tools/src/validate/common.ts::slotNameOf`
 

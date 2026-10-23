@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
-import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, readNativeTree } from '../src/validate/common.ts';
+import { kindViewOf, loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, materializeDetached, nativeLanguageEngineOf, readNativeTree, readNodeOf } from '../src/validate/common.ts';
 import { selfContainedRenderInput } from '../src/validate/read-render-parse.ts';
 
 const parsed = await createEngine(rust);
@@ -11,10 +11,11 @@ const engine = await loadNativeEngine('rust');
 const native = await nativeLanguageEngineOf('rust');
 const isLeafKind = await loadIsLeafKind('rust');
 const accessorOf = await loadSlotAccessorOf('rust');
+const readNode = (await readNodeOf('rust'))!;
 
 function detachedInput(source: string): { readonly input: AnyUntypedNode; readonly options: Readonly<Record<string, unknown>> } {
-	const { root, tree } = readNativeTree(engine, source, { depth: Infinity });
-	const input = selfContainedRenderInput(materializeDetached(root, accessorOf), source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode;
+	const { tree } = readNativeTree(engine, source);
+	const input = selfContainedRenderInput(materializeDetached(readNode(tree), accessorOf), source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode;
 	return { input, options: tree.options ?? {} };
 }
 

@@ -200,9 +200,9 @@ const holdsMany = (owner: unknown, value: unknown): value is ArrayLike<unknown> 
 
 function* slotValuesOf(node: TypedNode, accessorOf: SlotAccessorOf): Generator<{ camel: string; values: unknown[]; many: boolean }> {
 	const record = node as unknown as Record<string, unknown>;
-	const slots = accessorOf(node.$type);
+	const { accessors } = accessorOf(node.$type);
 	const names = new Set([
-		...Object.getOwnPropertyNames(node).flatMap((key) => (slots[key] === undefined ? [] : [slots[key]])),
+		...Object.getOwnPropertyNames(node).flatMap((key) => (accessors[key] === undefined ? [] : [accessors[key]])),
 		...Object.keys(node.$with ?? {})
 	]);
 	for (const camel of names) {

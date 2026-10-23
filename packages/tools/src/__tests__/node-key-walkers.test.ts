@@ -53,4 +53,9 @@ describe('the tools walkers select a node by key', () => {
 		expect(materialize({ ...owner(leaf('a')), _delimiter: 2 }, accessorOf)).toMatchObject({ _delimiter: 2 });
 		expect(() => materialize({ ...owner(leaf('a')), $type: 9 }, accessorOf)).toThrow('kind id 9 is not in the node model');
 	});
+
+	it('refuses a slot whose model-named accessor the node does not have as a reader', () => {
+		const { body: _body, ...withoutReader } = owner(leaf('a'));
+		expect(() => materialize(withoutReader, accessorOf)).toThrow('owner stores _body, but has no reader body()');
+	});
 });

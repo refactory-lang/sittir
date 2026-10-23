@@ -767,7 +767,7 @@ export function walkWrappedTree(
 			seen.add(w.$treeHandle);
 		}
 		visit(w);
-		let slots: Readonly<Record<string, string>> | undefined;
+		let slots: KindSlots | undefined;
 		for (const k of Object.keys(w)) {
 			if (!k.startsWith('_')) continue;
 			slots ??= accessorOf(w.$type);
@@ -841,7 +841,7 @@ function materializeValue(
 		return value.map((entry) => materializeValue(entry, accessorOf, onAccessorThrow));
 	}
 	if (!hasNumericType(value)) return value;
-	let slots: Readonly<Record<string, string>> | undefined;
+	let slots: KindSlots | undefined;
 	const materialized: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key)) continue;
@@ -881,13 +881,15 @@ function materializeValue(
 function resolveWrappedStorageValue(
 	node: TypedNode,
 	storageKey: string,
-	slots: Readonly<Record<string, string>>,
+	slots: KindSlots,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	const accessorName = slots[storageKey];
+	const accessorName = slots.accessors[storageKey];
 	if (accessorName === undefined) return node[storageKey];
 	const accessor = storedSlotReader(node, accessorName);
-	if (typeof accessor !== 'function' || accessor.length !== 0) return node[storageKey];
+	if (typeof accessor !== 'function' || accessor.length !== 0) {
+		throw new Error(`resolveWrappedStorageValue: ${slots.kind} stores ${storageKey}, but has no reader ${accessorName}()`);
+	}
 	try {
 		return (accessor as () => unknown).call(node);
 	} catch (e) {
@@ -899,15 +901,21 @@ function resolveWrappedStorageValue(
 	}
 }
 
-/** A kind's slots, by the node's stamped kind id: each storage key to the accessor that reads it. */
-export type SlotAccessorOf = (typeId: number) => Readonly<Record<string, string>>;
+/** A kind and its slots: each storage key to the accessor that reads it. */
+export interface KindSlots {
+	readonly kind: string;
+	readonly accessors: Readonly<Record<string, string>>;
+}
+
+/** A kind's slots, by the node's stamped kind id. */
+export type SlotAccessorOf = (typeId: number) => KindSlots;
 
 export function slotAccessorOf(model: LoadedNodeModel, kindNameFromId: (id: number) => string | undefined): SlotAccessorOf {
 	return (typeId) => {
 		const kind = kindNameFromId(typeId);
-		const slots = kind === undefined ? undefined : model.slotAccessors[kind];
-		if (slots === undefined) throw new Error(`slotAccessorOf: ${kind ?? `kind id ${typeId}`} is not in the node model`);
-		return slots;
+		const accessors = kind === undefined ? undefined : model.slotAccessors[kind];
+		if (kind === undefined || accessors === undefined) throw new Error(`slotAccessorOf: ${kind ?? `kind id ${typeId}`} is not in the node model`);
+		return { kind, accessors };
 	};
 }
 

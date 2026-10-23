@@ -180,7 +180,7 @@ function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): 
 			continue;
 		}
 		const record = node as Record<string, unknown>;
-		const slots = typeof record.$type === 'number' ? rustSlots(record.$type) : {};
+		const slots = typeof record.$type === 'number' ? rustSlots(record.$type).accessors : {};
 		for (const key of Object.keys(record)) {
 			if (!key.startsWith('_') || record[key] == null) continue;
 			const reader = slots[key] === undefined ? undefined : record[slots[key]];

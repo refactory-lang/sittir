@@ -60,8 +60,8 @@ function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string
 export function collectChildren(node: WalkNode, accessorOf: SlotAccessorOf): unknown[] {
 	const children: unknown[] = [];
 	const members = node as unknown as Record<string, unknown>;
-	const slots = accessorOf(node.$type);
-	const readers = new Set(Object.keys(members).flatMap((key) => (slots[key] === undefined ? [] : [slots[key]])));
+	const { accessors } = accessorOf(node.$type);
+	const readers = new Set(Object.keys(members).flatMap((key) => (accessors[key] === undefined ? [] : [accessors[key]])));
 	for (const name of readers) {
 		const reader = members[name];
 		if (typeof reader !== 'function' || reader.length !== 0) continue;
