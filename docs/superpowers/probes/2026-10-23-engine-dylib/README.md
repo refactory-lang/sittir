@@ -9,7 +9,38 @@ where the evidence is.
 
 ## Summary
 
-<!-- SUMMARY -->
+Shape A works on every platform tried: macOS arm64, Linux x64 and arm64
+(glibc), Linux x64 (musl) and Windows x64. Each grammar package ships its own
+copy of the engine and the Rust std library, and the process maps the first
+package's copies and never opens the others. The tree-sitter runtime is
+defined only in the engine. The tree-id counter is one static in the engine,
+with the `globalThis` path gone. A tree can be a JavaScript object that frees
+itself, and another grammar's engine refuses it. An engine from another build or
+version is refused at load. Linux needs lld to link the engine, and Windows
+scanners reach the allocator through `__imp_` slots.
+
+What the shared library buys is one runtime and one set of process statics,
+not size. Against today's static addons, release builds, on CI runners:
+
+- **Speed: unchanged.** Parse, read and render over the rust and python
+  corpora changed by −2.6% to +0.3% on Linux (two runs, rounds within 4% of
+  each other) and −1.2% to +0.5% on macOS. Losing fat LTO, which rustc
+  refuses with `-C prefer-dynamic`, cost nothing measurable.
+- **Build time: unchanged**, within the noise between runs.
+- **Memory: about even.** With one grammar loaded, RSS is 1.0 MiB higher on
+  Linux and 0.4 MiB higher on macOS. With all five, it is 2.4 and 1.4–1.5 MiB
+  lower. Each grammar after the first costs 3.6 MiB instead of 4.4 on Linux,
+  and 2.0–2.1 instead of 2.5 on macOS; the break-even is around the second
+  grammar.
+- **Install size: larger.** Each package grows by 1.5–1.7 MiB: its `.node`
+  sheds 1.4–1.8 MiB and gains the engine (1.6–2.1 MiB) and std (1.2–1.4 MiB)
+  copies. All five packages: 33.2 → 41.5 MiB on Linux, 27.7 → 35.1 MiB on
+  macOS.
+
+Shape B would share at most 0.2 MiB of code per addon, and its library would
+carry 3.25 MiB of Rust crate metadata into every package. Its cost is a
+rewrite of sittir-core's napi boundary (below). The evidence favours A; the
+choice between them is the maintainer's.
 
 ## The shape question: what can live in the shared library
 
@@ -56,7 +87,33 @@ module's entry point only in the module it loaded.
 
 ### What B would save on top of A
 
-<!-- B-SAVING -->
+Measured by building sittir-core without its napi bindings as a dylib
+(`scripts/core-share.mjs`), which is what B's library would hold. A dylib
+keeps all of its crate's non-generic code, so its code is the most B can
+share. Generic code is instantiated in each addon under either shape, and
+rustc copies small non-generic functions into the crates that call them.
+
+**sittir-core without napi, as a dylib (stripped), against the RSS each extra grammar costs**
+
+|  | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| file | 3.70 MiB | 3.70 MiB |
+| of which code | 0.21 MiB | 0.19 MiB |
+| of which Rust crate metadata | 3.25 MiB | 3.25 MiB |
+| RSS per extra grammar, today (all five minus rust alone, over four) | 4.41 MiB | 2.51 MiB |
+| RSS per extra grammar, shape A | 3.56 MiB | 2.04 MiB |
+
+So B shares at most 0.19–0.21 MiB of code per addon, 6–9% of what each grammar
+after the first costs in RSS under A. The RSS saving can only be smaller,
+since only the pages an addon touches count. On disk B goes the other way:
+the library is a 3.70 MiB file, 3.25 MiB of it the crate's metadata
+(`.rustc`), which rustc embeds in every Rust dylib for crates that compile
+against it and which the loader never reads; it holds, in rustc's
+intermediate form, the generic code each addon instantiates. Each package
+would ship its own copy of that file, so B adds about 3.5 MiB per package
+unless the metadata is removed from the shipped copies, which this probe did
+not try. The engine's own metadata is 0.01 MiB, since its crate only
+re-exports tree-sitter and holds the statics.
 
 ### What B would cost
 
@@ -237,7 +294,147 @@ not from file bytes.
 
 ## Measurements
 
-<!-- MEASUREMENTS -->
+Measured in CI by `.github/workflows/engine-dylib-measure.yml`, twice (runs
+40016280921 and 40018835886), each time on a macOS arm64 runner (macos-14:
+3 virtual M1 cores, 7 GiB) and a Linux x64 runner (ubuntu-22.04: 4 EPYC
+cores, 16 GiB). Each runner builds four variants of the five grammar addons,
+one clean build after another, with crates fetched beforehand and no compiler
+cache (`scripts/variants.mjs`):
+
+- `today-release`: today's static addons, from the probe's merge base with
+  master (`7a768a0e9`), in the release profile (fat LTO, one codegen unit):
+  what ships today;
+- `dylib-release`: this branch with `-C prefer-dynamic`, in the release
+  profile with LTO off, one codegen unit;
+- `today-gate`, `dylib-gate`: the same two in the gate profile (no LTO, 16
+  units) that local generation builds.
+
+Every image is stripped (`strip -x`) and laid out as its package would ship.
+Then `scripts/measure.mjs` runs five rounds, alternating the variants' order,
+each measurement in a fresh Node 24 process:
+
+- memory (`scripts/memory.mjs`): rust alone, then all five grammars, loaded
+  and each run once on a small sample (parse, read at every depth, render,
+  dispose). It records RSS and the V8 heap after a GC, over the process
+  before loading, and on macOS vmmap's physical footprint, which counts a
+  shared image's clean pages once.
+- throughput (`scripts/throughput.mjs`): every source of the rust and python
+  validation corpora (149 and 116), parsed, read at every depth, rendered and
+  disposed, for 200 passes, reporting the median pass.
+
+The dylib addons also carry this branch's additions (the `Tree` class and the
+stamp check); today's addons are the merge base's.
+
+Run 40018835886 (`node scripts/tables.mjs evidence/ci-measure/run-40018835886`):
+
+**Package sizes, release profile (stripped, MiB)**
+
+|  | linux-x64-gnu today | linux-x64-gnu dylib | macos-arm64 today | macos-arm64 dylib |
+| --- | --- | --- | --- | --- |
+| `sittir-rust.node` | 9.52 | 7.73 | 7.98 | 6.58 |
+| `sittir-typescript.node` | 10.35 | 8.55 | 8.77 | 7.40 |
+| `sittir-python.node` | 6.93 | 5.14 | 5.69 | 4.31 |
+| `sittir-scm.node` | 3.18 | 1.39 | 2.60 | 1.22 |
+| `sittir-regex.node` | 3.20 | 1.42 | 2.62 | 1.25 |
+| engine copy |  | 2.06 |  | 1.64 |
+| std copy |  | 1.39 |  | 1.22 |
+| one package (rust) | 9.52 | 11.17 | 7.98 | 9.44 |
+| one package (regex) | 3.20 | 4.87 | 2.62 | 4.11 |
+| all five packages | 33.18 | 41.48 | 27.65 | 35.05 |
+
+**What the images hold, release profile (MiB: code / Rust crate metadata / symbol tables / rest)**
+
+| image | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| `sittir-rust.node`, today | 5.47 / 0.00 / 0.01 / 4.04 | 4.65 / 0.00 / 0.13 / 3.20 |
+| `sittir-rust.node`, dylib | 4.45 / 0.00 / 0.02 / 3.26 | 3.81 / 0.00 / 0.14 / 2.63 |
+| `sittir-regex.node`, today | 2.02 / 0.00 / 0.01 / 1.18 | 1.69 / 0.00 / 0.06 / 0.86 |
+| `sittir-regex.node`, dylib | 1.01 / 0.00 / 0.02 / 0.39 | 0.86 / 0.00 / 0.08 / 0.31 |
+| engine copy | 1.01 / 0.01 / 0.13 / 0.91 | 0.83 / 0.01 / 0.20 / 0.59 |
+| std copy | 0.66 / 0.00 / 0.22 / 0.50 | 0.61 / 0.00 / 0.33 / 0.28 |
+| sittir-core without napi (shape B) | 0.21 / 3.25 / 0.07 / 0.16 | 0.19 / 3.25 / 0.17 / 0.09 |
+
+**Clean build of the five grammars (seconds, wall / CPU)**
+
+| variant | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| today-release | 160 / 457 | 176 / 453 |
+| dylib-release | 146 / 449 | 182 / 470 |
+| today-gate | 114 / 444 | 122 / 336 |
+| dylib-gate | 111 / 427 | 129 / 357 |
+
+**Memory after loading and a small workload (median of the rounds, MiB over the process before loading)**
+
+|  | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| rust alone, today-release | RSS +8.25 (loaded +2.50), heap +0.05 | RSS +5.55 (loaded +1.66), heap +0.08, footprint +1.10 |
+| rust alone, dylib-release | RSS +9.25 (loaded +3.25), heap +0.05 | RSS +5.95 (loaded +1.88), heap +0.08, footprint +1.20 |
+| rust alone, today-gate | RSS +9.25 (loaded +2.88), heap +0.05 | RSS +6.56 (loaded +1.83), heap +0.08, footprint +1.30 |
+| rust alone, dylib-gate | RSS +10.50 (loaded +3.88), heap +0.05 | RSS +7.22 (loaded +2.25), heap +0.08, footprint +1.40 |
+| all five, today-release | RSS +25.88 (loaded +9.38), heap +0.13 | RSS +15.59 (loaded +4.44), heap +0.17, footprint +2.60 |
+| all five, dylib-release | RSS +23.50 (loaded +7.63), heap +0.15 | RSS +14.09 (loaded +3.70), heap +0.19, footprint +1.90 |
+| all five, today-gate | RSS +29.13 (loaded +11.13), heap +0.13 | RSS +18.94 (loaded +5.50), heap +0.17, footprint +3.60 |
+| all five, dylib-gate | RSS +26.38 (loaded +9.38), heap +0.15 | RSS +17.73 (loaded +4.56), heap +0.19, footprint +2.70 |
+
+**Parse + read + render over the corpus (ms per pass: median of the rounds, change from today, spread across rounds; parse / read / render)**
+
+|  | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| rust, today-release | 40.32, spread 2%; 7.25 / 13.75 / 18.80 | 38.60, spread 43%; 6.25 / 14.25 / 17.59 |
+| rust, dylib-release | 39.88 (−1.1%), spread 2%; 6.99 / 13.71 / 18.72 | 30.03 (−22.2%), spread 54%; 5.08 / 10.96 / 13.99 |
+| rust, today-gate | 45.73, spread 0%; 7.71 / 16.99 / 20.47 | 35.27, spread 50%; 5.50 / 13.78 / 16.20 |
+| rust, dylib-gate | 46.09 (+0.8%), spread 1%; 7.69 / 17.03 / 20.77 | 37.24 (+5.6%), spread 69%; 5.95 / 14.20 / 16.54 |
+| python, today-release | 40.60, spread 1%; 6.76 / 14.05 / 19.33 | 33.98, spread 34%; 5.34 / 12.73 / 15.40 |
+| python, dylib-release | 40.74 (+0.3%), spread 1%; 6.64 / 14.19 / 19.43 | 31.47 (−7.4%), spread 35%; 4.96 / 11.89 / 14.41 |
+| python, today-gate | 46.39, spread 1%; 7.28 / 17.61 / 21.13 | 32.58, spread 44%; 4.62 / 12.83 / 14.77 |
+| python, dylib-gate | 46.95 (+1.2%), spread 1%; 7.30 / 17.72 / 21.48 | 40.55 (+24.5%), spread 38%; 5.56 / 15.66 / 17.75 |
+
+Sources timed per pass: linux-x64-gnu: rust 149, python 116; macos-arm64: rust 149, python 116. Failed runs: linux-x64-gnu 0, macos-arm64 0.
+
+That run's macOS runner was contended: throughput varied 34–69% between
+rounds of one variant, against at most 4% on Linux in both runs, so its macOS
+throughput cannot resolve a few percent. Run 40016280921's build times and
+throughput (`--only build,throughput`):
+
+**Clean build of the five grammars (seconds, wall / CPU)**
+
+| variant | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| today-release | 147 / 443 | 121 / 286 |
+| dylib-release | 145 / 443 | 106 / 284 |
+| today-gate | 112 / 417 | 82 / 233 |
+| dylib-gate | 113 / 430 | 86 / 236 |
+
+**Parse + read + render over the corpus (ms per pass: median of the rounds, change from today, spread across rounds; parse / read / render)**
+
+|  | linux-x64-gnu | macos-arm64 |
+| --- | --- | --- |
+| rust, today-release | 40.44, spread 2%; 7.21 / 13.80 / 18.83 | 25.06, spread 14%; 3.89 / 8.97 / 11.93 |
+| rust, dylib-release | 39.40 (−2.6%), spread 3%; 6.93 / 13.58 / 18.48 | 24.75 (−1.2%), spread 6%; 3.84 / 9.24 / 11.43 |
+| rust, today-gate | 45.56, spread 1%; 7.82 / 17.01 / 20.26 | 26.47, spread 8%; 4.07 / 10.17 / 11.91 |
+| rust, dylib-gate | 46.24 (+1.5%), spread 3%; 7.73 / 17.10 / 20.71 | 27.31 (+3.2%), spread 17%; 4.00 / 10.49 / 12.33 |
+| python, today-release | 41.09, spread 1%; 6.85 / 14.26 / 19.51 | 25.60, spread 3%; 3.78 / 9.52 / 12.16 |
+| python, dylib-release | 40.85 (−0.6%), spread 2%; 6.61 / 14.29 / 19.48 | 25.72 (+0.5%), spread 2%; 3.66 / 9.75 / 12.19 |
+| python, today-gate | 46.90, spread 2%; 7.39 / 17.51 / 21.47 | 27.77, spread 4%; 3.81 / 11.03 / 12.60 |
+| python, dylib-gate | 46.64 (−0.6%), spread 4%; 7.22 / 17.57 / 21.29 | 27.39 (−1.4%), spread 3%; 3.75 / 10.55 / 12.65 |
+
+Sources timed per pass: linux-x64-gnu: rust 149, python 116; macos-arm64: rust 149, python 116. Failed runs: linux-x64-gnu 0, macos-arm64 0.
+
+Reading them:
+
+- Sizes and memory are the same in both runs.
+- The code that leaves each `.node` is the code the engine holds: rust's
+  addon drops from 5.47 to 4.45 MiB of code on Linux, and the engine has
+  1.01. The engine and std copies (3.45 MiB on Linux, 2.86 on macOS) outweigh
+  what each `.node` sheds (1.78–1.81 and 1.37–1.40), so every package grows.
+- The shared images are mapped once, so each grammar after the first costs
+  less than today. The first costs more (1.0 MiB on Linux, 0.4 on macOS): it
+  loads two more images, and they hold all of the engine's and std's code,
+  where a statically linked addon keeps only what it calls.
+- tree-sitter's C functions were never inlined into the Rust code (`cc`
+  compiles them outside rustc's LTO), so calling them in another library adds
+  only an indirect call. No stage got slower: on Linux, release parse is
+  2–4% faster in both runs, and read and render are within 2%.
 
 ## What the real migration has to carry
 
@@ -248,7 +445,8 @@ not from file bytes.
   script's environment has to carry it; a build script cannot. Fat LTO is
   refused with it ("only 'staticlib', 'bin', and 'cdylib' outputs are
   supported with LTO"), so release builds lose LTO across the sittir-core /
-  grammar boundary (thin-local LTO inside each crate is allowed).
+  grammar boundary (thin-local LTO inside each crate is allowed). Measured,
+  that costs nothing (see Measurements).
 - **Linux links the engine with lld.** GNU ld refuses the second version
   script. rust-lld is the default on x86_64-linux-gnu; the other Linux
   targets pass `-C link-arg=-fuse-ld=lld` and need lld installed (the
@@ -263,7 +461,8 @@ not from file bytes.
 - **Packaging.** Each platform package ships the engine and std beside the
   `.node`; on macOS their references are rewritten to `@rpath/` and the
   images re-signed, as `scripts/package.mjs` does. The npm `files` and the
-  napi-rs loader have to carry the two extra files.
+  napi-rs loader have to carry the two extra files, which add 2.9–3.5 MiB to
+  every package.
 - **Process-unique statics live in sittir-engine.** Under shape A anything in
   sittir-core is one per addon. `feat/records` adds `NEXT_TREE_ID` and
   `claim_tree_id` to sittir-core's `engine.rs` (beside `TreeClaim`), and keeps
@@ -295,6 +494,12 @@ RUSTFLAGS="-C prefer-dynamic" node docs/superpowers/probes/2026-10-23-engine-dyl
 ```
 
 Add `-C link-arg=-fuse-ld=lld` on Linux arm64 and musl, and
-`-C target-feature=-crt-static` on musl. The measurements: stage the master
-and probe trees outside the checkout, then `scripts/variants.mjs` per
-variant, `scripts/corpus.mts` once, and `scripts/measure.mjs`.
+`-C target-feature=-crt-static` on musl.
+
+The measurements run in CI (`.github/workflows/engine-dylib-measure.yml`),
+since clean-build times and throughput need a machine nothing else is
+building on. Its steps are the recipe: `cargo fetch` both trees, then
+`scripts/variants.mjs` per variant, `scripts/core-share.mjs`,
+`scripts/corpus.mts` and `scripts/measure.mjs`. Download a run's artifacts
+into `evidence/ci-measure/run-<id>/` and print the tables with
+`node scripts/tables.mjs evidence/ci-measure/run-<id>`.
