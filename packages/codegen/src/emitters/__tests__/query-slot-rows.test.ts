@@ -19,9 +19,9 @@ const withSlot = (field: string) =>
 	}).nodeMap;
 
 describe('querySlotRows', () => {
-	it('numbers each slot of a kind by its node field', () => {
+	it('numbers each slot of a kind by its node field, and names the key the node stores it under', () => {
 		const rows = [...querySlotRows(withSlot('target')).values()];
-		expect(rows).toEqual([[['target', 0]]]);
+		expect(rows).toEqual([[['target', 0, undefined, '_target']]]);
 	});
 
 	it('refuses a slot read as `is`, the name a where condition tests a flag by', () => {

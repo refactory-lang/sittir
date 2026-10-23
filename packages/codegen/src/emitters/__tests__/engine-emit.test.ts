@@ -63,7 +63,8 @@ describe('emitApi', () => {
 		expect(output).toContain('createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),');
 		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
 		expect(output).toContain('trivia: triviaFacts,');
-		expect(output).not.toContain('coerce.js');
+		expect(output).toContain('\tbuildByKind,');
+		expect(output).toContain("import { buildByKind } from './factories/coerce.js';");
 	});
 
 	it('carries the comment builder in the trivia hook when the grammar has a comment coercer', () => {
@@ -74,7 +75,7 @@ describe('emitApi', () => {
 			commentCoercer: 'coerceToComment'
 		});
 		expect(withComment).toContain('trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),');
-		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
+		expect(withComment).toContain("import { buildByKind, coerceToComment } from './factories/coerce.js';");
 	});
 
 	it('types the language API\'s kind ids by the grammar\'s kind enum', () => {

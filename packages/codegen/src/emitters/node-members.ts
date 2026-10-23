@@ -70,6 +70,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	lines.push(
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
+		'    toJSON: () => nodeJSON(node, jsonFacts),',
 		'    $trivia: {',
 		triviaMember(row, 'leading'),
 		triviaMember(row, 'trailing'),

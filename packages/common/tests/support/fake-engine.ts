@@ -15,7 +15,7 @@ export function triviaFacts(comment?: (text: string) => AnyUntypedNode): TriviaF
 		kinds: new Set(['comment']),
 		innerKinds: new Set<string>(),
 		rebuildWrappers: new Set<number>(),
-		listKinds: new Set<number>(), layout: new Set<number>(),
+		listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>(),
 		...(comment === undefined ? {} : { comment })
 	};
 }

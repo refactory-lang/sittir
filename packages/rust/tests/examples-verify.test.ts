@@ -13,7 +13,7 @@ import {
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
-import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
+import { dogfoodContract } from '../../../examples/helpers.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
@@ -150,25 +150,6 @@ describe('dogfoodContract helper', () => {
 		const result = dogfoodContract(rs, rebuilt, target);
 		expect(result.sameModuloWhitespace).toBe(false);
 		expect(result.firstDifference).toContain('other');
-	});
-});
-
-describe('structuralShape trivia handling', () => {
-	it("keeps a bare leaf's $text alongside its trivia", () => {
-		const leaf = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
-		const shape = structuralShape(leaf) as Record<string, unknown>;
-		expect(shape.$text).toBe('main');
-		expect(shape.$_layout).toBeDefined();
-	});
-	it('differs when only the comment text differs', () => {
-		const alpha = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('alpha'));
-		const beta = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('beta'));
-		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
-	});
-	it('differs when the same comment is leading vs. trailing', () => {
-		const leading = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
-		const trailing = rs.build.identifier('main').$trivia.trailing(rs.build.lineComment.regular('c'));
-		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
 	});
 });
 

@@ -84,7 +84,7 @@ describe('Factory shape — branch node', () => {
 		const keys = Object.keys(node);
 		// A reader is an enumerable member; every key is a member or data
 		expect(keys).toContain('name');
-		expect(keys).toEqual(expect.arrayContaining(['$render', '$trivia', '$with']));
+		expect(keys).toEqual(expect.arrayContaining(['$render', 'toJSON', '$trivia', '$with']));
 		// $type is present; provenance is read by sourceOf, and a node has no $source member
 		expect(keys).toContain('$type');
 		expect('$source' in node).toBe(false);
@@ -166,8 +166,8 @@ describe('Factory shape — leaf node', () => {
 
 // `$with` EXISTS on factory output — the factories emitter builds it inline
 // per kind (the passing plain-`it` case below pins that). Still unshipped,
-// pinned by the `it.fails` cases: $with non-enumerability (it currently
-// serializes), the frozen-result contract, and JSON/Object.keys exclusion.
+// pinned by the `it.fails` cases: $with non-enumerability, the frozen-result
+// contract, and Object.keys exclusion. A node's JSON never holds `$with`.
 describe('$with namespace', () => {
 	const original = rs.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 
@@ -200,7 +200,7 @@ describe('$with namespace', () => {
 		expect(Object.keys(original)).not.toContain('$with');
 	});
 
-	it.fails('$with is not included in JSON.stringify() output', () => {
+	it('$with is not included in JSON.stringify() output', () => {
 		const json = JSON.stringify(original);
 		expect(json).not.toContain('$with');
 	});
@@ -211,13 +211,12 @@ describe('$with namespace', () => {
 describe('JSON serialization', () => {
 	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
-	it('SC-007: JSON.stringify includes $type and _<field> keys, and no $source', () => {
-		// _name holds the coerced leaf UntypedNode object, not the raw config
-		// string — see the FR-001 note above (same current, consistent shape).
+	it('SC-007: JSON.stringify writes the kind name and the slots by accessor name, with no storage or $source', () => {
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
-		expect(parsed['$type']).toBe(rs.kinds.FunctionItem);
+		expect(parsed['$type']).toBe('function_item');
+		expect(parsed['name']).toEqual({ $type: 'identifier', $text: 'serialize_me' });
+		expect(parsed['_name']).toBeUndefined();
 		expect(parsed['$source']).toBeUndefined();
-		expect(parsed['_name']).toMatchObject({ $type: rs.kinds.Identifier });
 	});
 
 	it('SC-007: JSON.stringify does NOT include $fields', () => {
@@ -225,18 +224,10 @@ describe('JSON serialization', () => {
 		expect(json).not.toContain('"$fields"');
 	});
 
-	it('SC-007: JSON.stringify does NOT include accessor function names as keys', () => {
-		const json = JSON.stringify(node);
-		// The serialized JSON should not contain "name" as a top-level key (it's an accessor, non-enumerable)
-		// But _name IS expected (de-hoisted storage)
-		const parsed = JSON.parse(json) as Record<string, unknown>;
-		// The raw 'name' key (accessor) should NOT be present
-		expect(Object.prototype.hasOwnProperty.call(parsed, 'name')).toBe(false);
-	});
-
 	it('SC-007: JSON.stringify does NOT include render function artifacts', () => {
 		const json = JSON.stringify(node);
 		expect(json).not.toContain('"render"');
+		expect(json).not.toContain('"$render"');
 	});
 });
 

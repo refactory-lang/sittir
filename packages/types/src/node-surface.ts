@@ -31,7 +31,7 @@ export interface HoldsTree {
 	readonly [TreeMember]: TreeToken;
 }
 
-/** A node: an object a factory built, a parse read, or a validator copied, stamped with which of them produced it. Every `.Bound` and `.Parsed` node is one. */
+/** A node: an object a factory built or a parse read, stamped with which of them produced it; a copy keeps its stamp. Every `.Bound` and `.Parsed` node is one. */
 export interface HoldsSource {
 	readonly [SourceMember]: 0 | 1 | 2;
 }

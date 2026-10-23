@@ -284,6 +284,15 @@ export function innerKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	return kinds;
 }
 
+export function innerRegions(nodeMap: NodeMap): ReadonlyMap<number, readonly string[]> {
+	const regions = new Map<number, readonly string[]>();
+	for (const node of nodeMap.nodes.values()) {
+		const site = node instanceof AbstractAssembledCompound ? node.innerSite : undefined;
+		if (site !== undefined && node.kindId !== undefined) regions.set(node.kindId, site.slots);
+	}
+	return new Map([...regions].sort(([a], [b]) => a - b));
+}
+
 const emptyFormsByNodeMap = new WeakMap<NodeMap, ReadonlyMap<string, EmptyForm>>();
 
 export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {

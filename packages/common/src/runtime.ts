@@ -76,8 +76,13 @@ export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly
 	return (hit === undefined ? value : hit[1](value)) as T;
 }
 
-export function listStorage<T = unknown>(value: unknown, item: (value: unknown) => unknown = (value) => value): T {
+export function listStorage<T = unknown>(
+	value: unknown,
+	item: (value: unknown) => unknown = (value) => value,
+	holes = false
+): T {
 	if (!Array.isArray(value)) return item(value) as T;
+	if (holes) return value.map((entry) => (entry === undefined || entry === null ? undefined : item(entry))) as T;
 	return value.map(item).filter((stored) => stored !== undefined) as T;
 }
 
