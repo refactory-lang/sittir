@@ -188,14 +188,18 @@ function _keywordOr<R>(
 /** A kind-enum slot's loose input. A stored kind id is already the slot's
  *  own discriminant; any other number is a numeric value and resolves as a
  *  leaf like every other shape. */
-function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
-	return typeof v === 'number' && _KIND_ID_STORED.has(v) ? (v as T) : resolve();
+function _resolveKindEnum<T>(v: _LooseFieldInput, stored: readonly number[], resolve: () => T): T {
+	return typeof v === 'number' && stored.includes(v) ? (v as T) : resolve();
 }
 
-function _resolveKindEnumItems<T>(v: _LooseFieldInput, resolve: (v: _LooseFieldInput) => readonly T[]): readonly T[] {
-	if (!Array.isArray(v)) return _resolveKindEnum(v, () => resolve(v));
+function _resolveKindEnumItems<T>(
+	v: _LooseFieldInput,
+	stored: readonly number[],
+	resolve: (v: _LooseFieldInput) => readonly T[]
+): readonly T[] {
+	if (!Array.isArray(v)) return _resolveKindEnum(v, stored, () => resolve(v));
 	return v.flatMap((item: _LooseFieldInput) =>
-		typeof item === 'number' && _KIND_ID_STORED.has(item) ? [item as T] : resolve([item])
+		typeof item === 'number' && stored.includes(item) ? [item as T] : resolve([item])
 	);
 }
 
@@ -834,7 +838,9 @@ export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typ
 export function resolveAnonymousNode_name(value: T.AnonymousNode.LooseConfig['name']): Admit<T.AnonymousNode['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])),
+			_resolveKindEnum(value, [TSKindId.Underscore], () =>
+				_resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])
+			),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);
@@ -1065,7 +1071,7 @@ export function resolveNamedNodePlain_name(
 ): Admit<T.NamedNodePlain['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
+			_resolveKindEnum(value, [TSKindId.Underscore], () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);

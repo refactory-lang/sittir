@@ -1052,12 +1052,13 @@ function storedFieldCall(
 	const baseCall = callFor(prop);
 	if (storageInfo?.kind !== 'kindEnum' && storageInfo?.kind !== 'mixedEnum') return baseCall;
 	const coercion = slotStorageCoercion(field as AssembledNonterminal, nodeMap, kindEntries, true, storageInfo);
+	const stored = `[${kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries).join(', ')}]`;
 	const resolved =
 		storageInfo.kind === 'kindEnum'
 			? `_resolveKindEnumScalar(${prop}, () => ${baseCall})`
 			: fieldMultiple
-				? `_resolveKindEnumItems(${prop}, (_v) => ${callFor('_v')})`
-				: `_resolveKindEnum(${prop}, () => ${baseCall})`;
+				? `_resolveKindEnumItems(${prop}, ${stored}, (_v) => ${callFor('_v')})`
+				: `_resolveKindEnum(${prop}, ${stored}, () => ${baseCall})`;
 	return storageCallExpr(resolved, coercion, fieldMultiple);
 }
 
@@ -1621,13 +1622,13 @@ function emitResolverHelpers(
 	lines.push("/** A kind-enum slot's loose input. A stored kind id is already the slot's");
 	lines.push(' *  own discriminant; any other number is a numeric value and resolves as a');
 	lines.push(' *  leaf like every other shape. */');
-	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {');
-	lines.push('  return typeof v === "number" && _KIND_ID_STORED.has(v) ? (v as T) : resolve();');
+	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, stored: readonly number[], resolve: () => T): T {');
+	lines.push('  return typeof v === "number" && stored.includes(v) ? (v as T) : resolve();');
 	lines.push('}');
 	lines.push('');
-	lines.push('function _resolveKindEnumItems<T>(v: _LooseFieldInput, resolve: (v: _LooseFieldInput) => readonly T[]): readonly T[] {');
-	lines.push('  if (!Array.isArray(v)) return _resolveKindEnum(v, () => resolve(v));');
-	lines.push('  return v.flatMap((item: _LooseFieldInput) => (typeof item === "number" && _KIND_ID_STORED.has(item) ? [item as T] : resolve([item])));');
+	lines.push('function _resolveKindEnumItems<T>(v: _LooseFieldInput, stored: readonly number[], resolve: (v: _LooseFieldInput) => readonly T[]): readonly T[] {');
+	lines.push('  if (!Array.isArray(v)) return _resolveKindEnum(v, stored, () => resolve(v));');
+	lines.push('  return v.flatMap((item: _LooseFieldInput) => (typeof item === "number" && stored.includes(item) ? [item as T] : resolve([item])));');
 	lines.push('}');
 	lines.push('');
 	lines.push('function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {');
