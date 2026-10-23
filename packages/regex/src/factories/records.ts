@@ -27,7 +27,6 @@ import {
 	builtArenaOf,
 	storeCell,
 	storeFlag,
-	storeInline,
 	storeList
 } from '@sittir/common/utils';
 
@@ -56,7 +55,7 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Pattern as const, { _content });
 	const record = arena.record(TSKindId.Pattern as const, 8);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -150,7 +149,7 @@ export function buildLookaroundAssertion(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LookaroundAssertion as const, { _content });
 	const record = arena.record(TSKindId.LookaroundAssertion as const, 21);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -178,7 +177,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
 	const record = arena.record(TSKindId.LookaheadAssertion as const, 17);
 	storeCell(arena, record.data, record.base + 2, _content);
-	storeInline(arena, record.data, record.base + 7, _pattern);
+	storeCell(arena, record.data, record.base + 7, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -208,7 +207,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
 	const record = arena.record(TSKindId.LookbehindAssertion as const, 17);
 	storeCell(arena, record.data, record.base + 2, _content);
-	storeInline(arena, record.data, record.base + 7, _pattern);
+	storeCell(arena, record.data, record.base + 7, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -357,8 +356,8 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ClassRange as const, { _start, _end });
 	const record = arena.record(TSKindId.ClassRange as const, 72);
-	storeInline(arena, record.data, record.base + 2, _start);
-	storeInline(arena, record.data, record.base + 37, _end);
+	storeCell(arena, record.data, record.base + 2, _start);
+	storeCell(arena, record.data, record.base + 37, _end);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -426,7 +425,7 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AnonymousCapturingGroup as const, { _pattern });
 	const record = arena.record(TSKindId.AnonymousCapturingGroup as const, 12);
-	storeInline(arena, record.data, record.base + 2, _pattern);
+	storeCell(arena, record.data, record.base + 2, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -459,7 +458,7 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 	const record = arena.record(TSKindId.NamedCapturingGroup as const, 22);
 	storeCell(arena, record.data, record.base + 2, _content);
 	storeCell(arena, record.data, record.base + 7, _group_name);
-	storeInline(arena, record.data, record.base + 12, _pattern);
+	storeCell(arena, record.data, record.base + 12, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -506,7 +505,7 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NonCapturingGroup as const, { _pattern });
 	const record = arena.record(TSKindId.NonCapturingGroup as const, 12);
-	storeInline(arena, record.data, record.base + 2, _pattern);
+	storeCell(arena, record.data, record.base + 2, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -623,7 +622,7 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CountQuantifier as const, { _content, _lazy });
 	const record = arena.record(TSKindId.CountQuantifier as const, 21);
-	storeInline(arena, record.data, record.base + 3, _content);
+	storeCell(arena, record.data, record.base + 3, _content);
 	if (_lazy) storeFlag(record.data, record.base + 2, 1);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -724,7 +723,7 @@ export function buildCharacterClassEscape(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CharacterClassEscape as const, { _content });
 	const record = arena.record(TSKindId.CharacterClassEscape as const, 33);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -794,7 +793,7 @@ export function buildUnicodePropertyValueExpression(
 		_unicode_property_value
 	});
 	const record = arena.record(TSKindId.UnicodePropertyValueExpression as const, 20);
-	storeInline(arena, record.data, record.base + 2, _unicode_property_value_expression_group);
+	storeCell(arena, record.data, record.base + 2, _unicode_property_value_expression_group);
 	storeCell(arena, record.data, record.base + 15, _unicode_property_value);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -980,8 +979,8 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TermGroup as const, { _content, _quantifier });
 	const record = arena.record(TSKindId.TermGroup as const, 60);
-	storeInline(arena, record.data, record.base + 2, _content);
-	storeInline(arena, record.data, record.base + 37, _quantifier);
+	storeCell(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 37, _quantifier);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1045,7 +1044,7 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 	handle?.verifyStored?.(TSKindId.CountQuantifierArm as const, { _decimal_digits, _count_quantifier_group });
 	const record = arena.record(TSKindId.CountQuantifierArm as const, 16);
 	storeCell(arena, record.data, record.base + 2, _decimal_digits);
-	storeInline(arena, record.data, record.base + 7, _count_quantifier_group);
+	storeCell(arena, record.data, record.base + 7, _count_quantifier_group);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1093,7 +1092,7 @@ export function buildCharacterClassEscapeArm(
 	});
 	const record = arena.record(TSKindId.CharacterClassEscapeArm as const, 29);
 	storeCell(arena, record.data, record.base + 2, _character_class_escape_text2);
-	storeInline(arena, record.data, record.base + 7, _unicode_property_value_expression);
+	storeCell(arena, record.data, record.base + 7, _unicode_property_value_expression);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1149,7 +1148,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.UnicodePropertyValueExpressionGroup as const, { _unicode_property_name });
 	const record = arena.record(TSKindId.UnicodePropertyValueExpressionGroup as const, 11);
-	storeInline(arena, record.data, record.base + 2, _unicode_property_name);
+	storeCell(arena, record.data, record.base + 2, _unicode_property_name);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1231,7 +1230,7 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupEnable as const, { _enabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupEnable as const, 17);
 	storeCell(arena, record.data, record.base + 2, _enabled);
-	storeInline(arena, record.data, record.base + 7, _pattern);
+	storeCell(arena, record.data, record.base + 7, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1271,7 +1270,7 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 	const record = arena.record(TSKindId.InlineFlagsGroupToggle as const, 22);
 	storeCell(arena, record.data, record.base + 2, _enabled);
 	storeCell(arena, record.data, record.base + 7, _disabled);
-	storeInline(arena, record.data, record.base + 12, _pattern);
+	storeCell(arena, record.data, record.base + 12, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1309,7 +1308,7 @@ export function buildInlineFlagsGroupDisable(
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupDisable as const, { _disabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupDisable as const, 17);
 	storeCell(arena, record.data, record.base + 2, _disabled);
-	storeInline(arena, record.data, record.base + 7, _pattern);
+	storeCell(arena, record.data, record.base + 7, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {

@@ -24,7 +24,6 @@ import {
 	builtArenaOf,
 	storeCell,
 	storeFlag,
-	storeInline,
 	storeList
 } from '@sittir/common/utils';
 
@@ -189,7 +188,7 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.String as const, { _string_content });
 	const record = arena.record(TSKindId.String as const, 8);
-	storeInline(arena, record.data, record.base + 2, _string_content);
+	storeCell(arena, record.data, record.base + 2, _string_content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -231,7 +230,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImmediateString as const, { _string_content });
 	const record = arena.record(TSKindId.ImmediateString as const, 8);
-	storeInline(arena, record.data, record.base + 2, _string_content);
+	storeCell(arena, record.data, record.base + 2, _string_content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -420,7 +419,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MissingNode as const, { _name, _elements });
 	const record = arena.record(TSKindId.MissingNode as const, 14);
-	storeInline(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 2, _name);
 	storeList(arena, record.data, record.base + 12, _elements, 5);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -452,7 +451,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AnonymousNode as const, { _name, _elements });
 	const record = arena.record(TSKindId.AnonymousNode as const, 14);
-	storeInline(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 2, _name);
 	storeList(arena, record.data, record.base + 12, _elements, 5);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -544,7 +543,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	storeCell(arena, record.data, record.base + 2, _prefix);
 	storeCell(arena, record.data, record.base + 7, _name);
 	storeCell(arena, record.data, record.base + 12, _type);
-	storeInline(arena, record.data, record.base + 17, _parameters);
+	storeCell(arena, record.data, record.base + 17, _parameters);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -785,7 +784,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	handle?.verifyStored?.(TSKindId.NamedNodeSupertyped as const, { _supertype, _name, _named_node_group, _elements });
 	const record = arena.record(TSKindId.NamedNodeSupertyped as const, 24);
 	storeCell(arena, record.data, record.base + 2, _supertype);
-	storeInline(arena, record.data, record.base + 7, _name);
+	storeCell(arena, record.data, record.base + 7, _name);
 	storeCell(arena, record.data, record.base + 17, _named_node_group);
 	storeList(arena, record.data, record.base + 22, _elements, 5);
 	const node = arena.view(record);

@@ -45,7 +45,6 @@ import {
 	builtArenaOf,
 	storeCell,
 	storeFlag,
-	storeInline,
 	storeList,
 	storeListOptions
 } from '@sittir/common/utils';
@@ -104,7 +103,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.SourceFile as const, { _shebang, _statements });
 	const record = arena.record(TSKindId.SourceFile as const, 12);
-	storeInline(arena, record.data, record.base + 2, _shebang);
+	storeCell(arena, record.data, record.base + 2, _shebang);
 	storeList(arena, record.data, record.base + 10, _statements, 5);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -205,8 +204,8 @@ export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MacroRule as const, { _left, _right });
 	const record = arena.record(TSKindId.MacroRule as const, 14);
-	storeInline(arena, record.data, record.base + 2, _left);
-	storeInline(arena, record.data, record.base + 8, _right);
+	storeCell(arena, record.data, record.base + 2, _left);
+	storeCell(arena, record.data, record.base + 8, _right);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -234,7 +233,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _type });
 	const record = arena.record(TSKindId.TokenBindingPattern as const, 15);
-	storeInline(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 10, _type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -605,7 +604,7 @@ export function buildNonSpecialToken(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NonSpecialToken as const, { _content });
 	const record = arena.record(TSKindId.NonSpecialToken as const, 21);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -751,7 +750,7 @@ function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AttributeItem as const, { _attribute });
 	const record = arena.record(TSKindId.AttributeItem as const, 26);
-	storeInline(arena, record.data, record.base + 2, _attribute);
+	storeCell(arena, record.data, record.base + 2, _attribute);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -796,7 +795,7 @@ function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeIt
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.InnerAttributeItem as const, { _attribute });
 	const record = arena.record(TSKindId.InnerAttributeItem as const, 26);
-	storeInline(arena, record.data, record.base + 2, _attribute);
+	storeCell(arena, record.data, record.base + 2, _attribute);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -829,7 +828,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	handle?.verifyStored?.(TSKindId.Attribute as const, { _path, _input });
 	const record = arena.record(TSKindId.Attribute as const, 22);
 	storeCell(arena, record.data, record.base + 2, _path);
-	storeInline(arena, record.data, record.base + 7, _input);
+	storeCell(arena, record.data, record.base + 7, _input);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -919,11 +918,11 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 		_body
 	});
 	const record = arena.record(TSKindId.UnionItem as const, 62);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 32, _type_parameters);
-	storeInline(arena, record.data, record.base + 42, _where_clause);
-	storeInline(arena, record.data, record.base + 52, _body);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 32, _type_parameters);
+	storeCell(arena, record.data, record.base + 42, _where_clause);
+	storeCell(arena, record.data, record.base + 52, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1019,11 +1018,11 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 		_body
 	});
 	const record = arena.record(TSKindId.EnumItem as const, 62);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 32, _type_parameters);
-	storeInline(arena, record.data, record.base + 42, _where_clause);
-	storeInline(arena, record.data, record.base + 52, _body);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 32, _type_parameters);
+	storeCell(arena, record.data, record.base + 42, _where_clause);
+	storeCell(arena, record.data, record.base + 52, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1111,7 +1110,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.EnumVariantList as const, { _elements });
 	const record = arena.record(TSKindId.EnumVariantList as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1166,9 +1165,9 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bo
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.EnumVariant as const, { _visibility_modifier, _name, _body, _value });
 	const record = arena.record(TSKindId.EnumVariant as const, 43);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 28, _body);
+	storeCell(arena, record.data, record.base + 28, _body);
 	storeCell(arena, record.data, record.base + 38, _value);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -1228,7 +1227,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FieldDeclarationList as const, { _elements });
 	const record = arena.record(TSKindId.FieldDeclarationList as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1281,8 +1280,8 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FieldDeclaration as const, { _visibility_modifier, _name, _type });
 	const record = arena.record(TSKindId.FieldDeclaration as const, 37);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
 	storeCell(arena, record.data, record.base + 32, _type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -1343,7 +1342,7 @@ function _buildOrderedFieldDeclarationList(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.OrderedFieldDeclarationList as const, { _attributes });
 	const record = arena.record(TSKindId.OrderedFieldDeclarationList as const, 8);
-	storeInline(arena, record.data, record.base + 2, _attributes);
+	storeCell(arena, record.data, record.base + 2, _attributes);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1395,7 +1394,7 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ExternCrateDeclaration as const, { _visibility_modifier, _name, _alias });
 	const record = arena.record(TSKindId.ExternCrateDeclaration as const, 33);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 23, _name);
 	storeCell(arena, record.data, record.base + 28, _alias);
 	const node = arena.view(record);
@@ -1447,7 +1446,7 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ConstItem as const, { _visibility_modifier, _name, _type, _value });
 	const record = arena.record(TSKindId.ConstItem as const, 38);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 23, _name);
 	storeCell(arena, record.data, record.base + 28, _type);
 	storeCell(arena, record.data, record.base + 33, _value);
@@ -1505,7 +1504,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.StaticItem as const, { _visibility_modifier, _ref, _mutable, _name, _type, _value });
 	const record = arena.record(TSKindId.StaticItem as const, 39);
-	storeInline(arena, record.data, record.base + 3, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 3, _visibility_modifier);
 	if (_ref) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
 	storeCell(arena, record.data, record.base + 24, _name);
@@ -1587,12 +1586,12 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		_trailing_where_clause
 	});
 	const record = arena.record(TSKindId.TypeItem as const, 67);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 32, _type_parameters);
-	storeInline(arena, record.data, record.base + 42, _where_clause);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 32, _type_parameters);
+	storeCell(arena, record.data, record.base + 42, _where_clause);
 	storeCell(arena, record.data, record.base + 52, _type);
-	storeInline(arena, record.data, record.base + 57, _trailing_where_clause);
+	storeCell(arena, record.data, record.base + 57, _trailing_where_clause);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1701,13 +1700,13 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 		_body
 	});
 	const record = arena.record(TSKindId.FunctionItem as const, 77);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _function_modifiers);
-	storeInline(arena, record.data, record.base + 29, _name);
-	storeInline(arena, record.data, record.base + 37, _type_parameters);
-	storeInline(arena, record.data, record.base + 47, _parameters);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _function_modifiers);
+	storeCell(arena, record.data, record.base + 29, _name);
+	storeCell(arena, record.data, record.base + 37, _type_parameters);
+	storeCell(arena, record.data, record.base + 47, _parameters);
 	storeCell(arena, record.data, record.base + 57, _return_type);
-	storeInline(arena, record.data, record.base + 62, _where_clause);
+	storeCell(arena, record.data, record.base + 62, _where_clause);
 	storeCell(arena, record.data, record.base + 72, _body);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -1820,13 +1819,13 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 		_where_clause
 	});
 	const record = arena.record(TSKindId.FunctionSignatureItem as const, 72);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _function_modifiers);
-	storeInline(arena, record.data, record.base + 29, _name);
-	storeInline(arena, record.data, record.base + 37, _type_parameters);
-	storeInline(arena, record.data, record.base + 47, _parameters);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _function_modifiers);
+	storeCell(arena, record.data, record.base + 29, _name);
+	storeCell(arena, record.data, record.base + 37, _type_parameters);
+	storeCell(arena, record.data, record.base + 47, _parameters);
 	storeCell(arena, record.data, record.base + 57, _return_type);
-	storeInline(arena, record.data, record.base + 62, _where_clause);
+	storeCell(arena, record.data, record.base + 62, _where_clause);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -1968,7 +1967,7 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.WhereClause as const, { _where_predicates });
 	const record = arena.record(TSKindId.WhereClause as const, 8);
-	storeInline(arena, record.data, record.base + 2, _where_predicates);
+	storeCell(arena, record.data, record.base + 2, _where_predicates);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2006,7 +2005,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 	handle?.verifyStored?.(TSKindId.WherePredicate as const, { _left, _bounds });
 	const record = arena.record(TSKindId.WherePredicate as const, 13);
 	storeCell(arena, record.data, record.base + 2, _left);
-	storeInline(arena, record.data, record.base + 7, _bounds);
+	storeCell(arena, record.data, record.base + 7, _bounds);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2076,13 +2075,13 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		_body
 	});
 	const record = arena.record(TSKindId.TraitItem as const, 65);
-	storeInline(arena, record.data, record.base + 3, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 3, _visibility_modifier);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-	storeInline(arena, record.data, record.base + 24, _name);
-	storeInline(arena, record.data, record.base + 33, _type_parameters);
-	storeInline(arena, record.data, record.base + 43, _bounds);
-	storeInline(arena, record.data, record.base + 49, _where_clause);
-	storeInline(arena, record.data, record.base + 59, _body);
+	storeCell(arena, record.data, record.base + 24, _name);
+	storeCell(arena, record.data, record.base + 33, _type_parameters);
+	storeCell(arena, record.data, record.base + 43, _bounds);
+	storeCell(arena, record.data, record.base + 49, _where_clause);
+	storeCell(arena, record.data, record.base + 59, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2155,10 +2154,10 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AssociatedType as const, { _name, _type_parameters, _bounds, _where_clause });
 	const record = arena.record(TSKindId.AssociatedType as const, 37);
-	storeInline(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 11, _type_parameters);
-	storeInline(arena, record.data, record.base + 21, _bounds);
-	storeInline(arena, record.data, record.base + 27, _where_clause);
+	storeCell(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 11, _type_parameters);
+	storeCell(arena, record.data, record.base + 21, _bounds);
+	storeCell(arena, record.data, record.base + 27, _where_clause);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2246,7 +2245,7 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.HigherRankedTraitBound as const, { _type_parameters, _type });
 	const record = arena.record(TSKindId.HigherRankedTraitBound as const, 17);
-	storeInline(arena, record.data, record.base + 2, _type_parameters);
+	storeCell(arena, record.data, record.base + 2, _type_parameters);
 	storeCell(arena, record.data, record.base + 12, _type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -2345,7 +2344,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TypeParameters as const, { _elements });
 	const record = arena.record(TSKindId.TypeParameters as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2435,8 +2434,8 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TypeParameter as const, { _name, _bounds, _default_type });
 	const record = arena.record(TSKindId.TypeParameter as const, 22);
-	storeInline(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 11, _bounds);
+	storeCell(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 11, _bounds);
 	storeCell(arena, record.data, record.base + 17, _default_type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -2471,8 +2470,8 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LifetimeParameter as const, { _name, _bounds });
 	const record = arena.record(TSKindId.LifetimeParameter as const, 17);
-	storeInline(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 11, _bounds);
+	storeCell(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 11, _bounds);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2573,7 +2572,7 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.UseDeclaration as const, { _visibility_modifier, _argument });
 	const record = arena.record(TSKindId.UseDeclaration as const, 28);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 23, _argument);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -2610,7 +2609,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 	handle?.verifyStored?.(TSKindId.ScopedUseList as const, { _path, _list });
 	const record = arena.record(TSKindId.ScopedUseList as const, 17);
 	storeCell(arena, record.data, record.base + 2, _path);
-	storeInline(arena, record.data, record.base + 7, _list);
+	storeCell(arena, record.data, record.base + 7, _list);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2694,7 +2693,7 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.UseList as const, { _use_clauses });
 	const record = arena.record(TSKindId.UseList as const, 8);
-	storeInline(arena, record.data, record.base + 2, _use_clauses);
+	storeCell(arena, record.data, record.base + 2, _use_clauses);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2836,7 +2835,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Parameters as const, { _elements });
 	const record = arena.record(TSKindId.Parameters as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -2878,7 +2877,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	handle?.verifyStored?.(TSKindId.SelfParameter as const, { _reference, _lifetime, _mutable });
 	const record = arena.record(TSKindId.SelfParameter as const, 12);
 	if (_reference) storeFlag(record.data, record.base + 2, 1);
-	storeInline(arena, record.data, record.base + 3, _lifetime);
+	storeCell(arena, record.data, record.base + 3, _lifetime);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -2997,7 +2996,7 @@ function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ExternModifier as const, { _abi });
 	const record = arena.record(TSKindId.ExternModifier as const, 13);
-	storeInline(arena, record.data, record.base + 2, _abi);
+	storeCell(arena, record.data, record.base + 2, _abi);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3025,7 +3024,7 @@ export function buildVisibilityModifier(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.VisibilityModifier as const, { _content });
 	const record = arena.record(TSKindId.VisibilityModifier as const, 19);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3198,7 +3197,7 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ForLifetimes as const, { _lifetimes });
 	const record = arena.record(TSKindId.ForLifetimes as const, 8);
-	storeInline(arena, record.data, record.base + 2, _lifetimes);
+	storeCell(arena, record.data, record.base + 2, _lifetimes);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3250,9 +3249,9 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FunctionType as const, { _for_lifetimes, _content, _parameters, _return_type });
 	const record = arena.record(TSKindId.FunctionType as const, 32);
-	storeInline(arena, record.data, record.base + 2, _for_lifetimes);
+	storeCell(arena, record.data, record.base + 2, _for_lifetimes);
 	storeCell(arena, record.data, record.base + 12, _content);
-	storeInline(arena, record.data, record.base + 17, _parameters);
+	storeCell(arena, record.data, record.base + 17, _parameters);
 	storeCell(arena, record.data, record.base + 27, _return_type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -3323,7 +3322,7 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TupleType as const, { _types });
 	const record = arena.record(TSKindId.TupleType as const, 8);
-	storeInline(arena, record.data, record.base + 2, _types);
+	storeCell(arena, record.data, record.base + 2, _types);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3363,7 +3362,7 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 	handle?.verifyStored?.(TSKindId.GenericFunction as const, { _function, _type_arguments });
 	const record = arena.record(TSKindId.GenericFunction as const, 17);
 	storeCell(arena, record.data, record.base + 2, _function);
-	storeInline(arena, record.data, record.base + 7, _type_arguments);
+	storeCell(arena, record.data, record.base + 7, _type_arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3407,7 +3406,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	handle?.verifyStored?.(TSKindId.GenericType as const, { _type, _type_arguments });
 	const record = arena.record(TSKindId.GenericType as const, 17);
 	storeCell(arena, record.data, record.base + 2, _type);
-	storeInline(arena, record.data, record.base + 7, _type_arguments);
+	storeCell(arena, record.data, record.base + 7, _type_arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3456,7 +3455,7 @@ export function buildGenericTypeWithTurbofish(
 	handle?.verifyStored?.(TSKindId.GenericTypeWithTurbofish as const, { _type, _type_arguments });
 	const record = arena.record(TSKindId.GenericTypeWithTurbofish as const, 17);
 	storeCell(arena, record.data, record.base + 2, _type);
-	storeInline(arena, record.data, record.base + 7, _type_arguments);
+	storeCell(arena, record.data, record.base + 7, _type_arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3556,7 +3555,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.UseBounds as const, { _bounds });
 	const record = arena.record(TSKindId.UseBounds as const, 8);
-	storeInline(arena, record.data, record.base + 2, _bounds);
+	storeCell(arena, record.data, record.base + 2, _bounds);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3620,7 +3619,7 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TypeArguments as const, { _elements });
 	const record = arena.record(TSKindId.TypeArguments as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3669,8 +3668,8 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TypeBinding as const, { _name, _type_arguments, _type });
 	const record = arena.record(TSKindId.TypeBinding as const, 26);
-	storeInline(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 11, _type_arguments);
+	storeCell(arena, record.data, record.base + 2, _name);
+	storeCell(arena, record.data, record.base + 11, _type_arguments);
 	storeCell(arena, record.data, record.base + 21, _type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -3719,7 +3718,7 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ReferenceType as const, { _lifetime, _mutable, _type });
 	const record = arena.record(TSKindId.ReferenceType as const, 17);
-	storeInline(arena, record.data, record.base + 3, _lifetime);
+	storeCell(arena, record.data, record.base + 3, _lifetime);
 	if (_mutable) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record.data, record.base + 12, _type);
 	const node = arena.view(record);
@@ -3759,7 +3758,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AbstractType as const, { _type_parameters, _trait });
 	const record = arena.record(TSKindId.AbstractType as const, 17);
-	storeInline(arena, record.data, record.base + 2, _type_parameters);
+	storeCell(arena, record.data, record.base + 2, _type_parameters);
 	storeCell(arena, record.data, record.base + 12, _trait);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -3876,7 +3875,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 	handle?.verifyStored?.(TSKindId.MacroInvocation as const, { _macro, _arguments });
 	const record = arena.record(TSKindId.MacroInvocation as const, 13);
 	storeCell(arena, record.data, record.base + 2, _macro);
-	storeInline(arena, record.data, record.base + 7, _arguments);
+	storeCell(arena, record.data, record.base + 7, _arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -3960,7 +3959,7 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, { _path, _name });
 	const record = arena.record(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, 16);
 	storeCell(arena, record.data, record.base + 2, _path);
-	storeInline(arena, record.data, record.base + 7, _name);
+	storeCell(arena, record.data, record.base + 7, _name);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4000,7 +3999,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifier as const, { _path, _name });
 	const record = arena.record(TSKindId.ScopedTypeIdentifier as const, 16);
 	storeCell(arena, record.data, record.base + 2, _path);
-	storeInline(arena, record.data, record.base + 7, _name);
+	storeCell(arena, record.data, record.base + 7, _name);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4284,7 +4283,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 	handle?.verifyStored?.(TSKindId.CallExpression as const, { _function, _arguments });
 	const record = arena.record(TSKindId.CallExpression as const, 17);
 	storeCell(arena, record.data, record.base + 2, _function);
-	storeInline(arena, record.data, record.base + 7, _arguments);
+	storeCell(arena, record.data, record.base + 7, _arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4347,7 +4346,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Arguments as const, { _elements });
 	const record = arena.record(TSKindId.Arguments as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4416,7 +4415,7 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _attributes, _expressions });
 	const record = arena.record(TSKindId.TupleExpression as const, 10);
 	storeList(arena, record.data, record.base + 2, _attributes, 5);
-	storeInline(arena, record.data, record.base + 4, _expressions);
+	storeCell(arena, record.data, record.base + 4, _expressions);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4457,7 +4456,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 	handle?.verifyStored?.(TSKindId.StructExpression as const, { _name, _body });
 	const record = arena.record(TSKindId.StructExpression as const, 17);
 	storeCell(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 7, _body);
+	storeCell(arena, record.data, record.base + 7, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4525,7 +4524,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FieldInitializerList as const, { _initializers });
 	const record = arena.record(TSKindId.FieldInitializerList as const, 8);
-	storeInline(arena, record.data, record.base + 2, _initializers);
+	storeCell(arena, record.data, record.base + 2, _initializers);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -4613,7 +4612,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attribute_item, _field, _value });
 	const record = arena.record(TSKindId.FieldInitializer as const, 21);
 	storeList(arena, record.data, record.base + 2, _attribute_item, 5);
-	storeInline(arena, record.data, record.base + 4, _field);
+	storeCell(arena, record.data, record.base + 4, _field);
 	storeCell(arena, record.data, record.base + 16, _value);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -4915,7 +4914,7 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.WhileExpression as const, { _label, _condition, _body });
 	const record = arena.record(TSKindId.WhileExpression as const, 21);
-	storeInline(arena, record.data, record.base + 2, _label);
+	storeCell(arena, record.data, record.base + 2, _label);
 	storeCell(arena, record.data, record.base + 11, _condition);
 	storeCell(arena, record.data, record.base + 16, _body);
 	const node = arena.view(record);
@@ -4949,7 +4948,7 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LoopExpression as const, { _label, _body });
 	const record = arena.record(TSKindId.LoopExpression as const, 16);
-	storeInline(arena, record.data, record.base + 2, _label);
+	storeCell(arena, record.data, record.base + 2, _label);
 	storeCell(arena, record.data, record.base + 11, _body);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -4988,7 +4987,7 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ForExpression as const, { _label, _pattern, _value, _body });
 	const record = arena.record(TSKindId.ForExpression as const, 26);
-	storeInline(arena, record.data, record.base + 2, _label);
+	storeCell(arena, record.data, record.base + 2, _label);
 	storeCell(arena, record.data, record.base + 11, _pattern);
 	storeCell(arena, record.data, record.base + 16, _value);
 	storeCell(arena, record.data, record.base + 21, _body);
@@ -5125,7 +5124,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.BreakExpression as const, { _label, _expression });
 	const record = arena.record(TSKindId.BreakExpression as const, 16);
-	storeInline(arena, record.data, record.base + 2, _label);
+	storeCell(arena, record.data, record.base + 2, _label);
 	storeCell(arena, record.data, record.base + 11, _expression);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -5152,7 +5151,7 @@ export function buildContinueExpression(value?: Admit<T.Label>): T.ContinueExpre
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ContinueExpression as const, { _label });
 	const record = arena.record(TSKindId.ContinueExpression as const, 11);
-	storeInline(arena, record.data, record.base + 2, _label);
+	storeCell(arena, record.data, record.base + 2, _label);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5237,7 +5236,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 	handle?.verifyStored?.(TSKindId.FieldExpression as const, { _value, _field });
 	const record = arena.record(TSKindId.FieldExpression as const, 19);
 	storeCell(arena, record.data, record.base + 2, _value);
-	storeInline(arena, record.data, record.base + 7, _field);
+	storeCell(arena, record.data, record.base + 7, _field);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5440,7 +5439,7 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Block as const, { _label, _statements, _trailing_expression });
 	const record = arena.record(TSKindId.Block as const, 18);
-	storeInline(arena, record.data, record.base + 2, _label);
+	storeCell(arena, record.data, record.base + 2, _label);
 	storeList(arena, record.data, record.base + 11, _statements, 5);
 	storeCell(arena, record.data, record.base + 13, _trailing_expression);
 	const node = arena.view(record);
@@ -5477,7 +5476,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 	handle?.verifyStored?.(TSKindId.GenericPattern as const, { _name, _type_arguments });
 	const record = arena.record(TSKindId.GenericPattern as const, 17);
 	storeCell(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 7, _type_arguments);
+	storeCell(arena, record.data, record.base + 7, _type_arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5540,7 +5539,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TuplePattern as const, { _elements });
 	const record = arena.record(TSKindId.TuplePattern as const, 8);
-	storeInline(arena, record.data, record.base + 2, _elements);
+	storeCell(arena, record.data, record.base + 2, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5597,7 +5596,7 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.SlicePattern as const, { _patterns });
 	const record = arena.record(TSKindId.SlicePattern as const, 8);
-	storeInline(arena, record.data, record.base + 2, _patterns);
+	storeCell(arena, record.data, record.base + 2, _patterns);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5635,7 +5634,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 	handle?.verifyStored?.(TSKindId.TupleStructPattern as const, { _type, _patterns });
 	const record = arena.record(TSKindId.TupleStructPattern as const, 13);
 	storeCell(arena, record.data, record.base + 2, _type);
-	storeInline(arena, record.data, record.base + 7, _patterns);
+	storeCell(arena, record.data, record.base + 7, _patterns);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5674,7 +5673,7 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 	handle?.verifyStored?.(TSKindId.StructPattern as const, { _type, _fields });
 	const record = arena.record(TSKindId.StructPattern as const, 13);
 	storeCell(arena, record.data, record.base + 2, _type);
-	storeInline(arena, record.data, record.base + 7, _fields);
+	storeCell(arena, record.data, record.base + 7, _fields);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5814,7 +5813,7 @@ export function buildNegativeLiteral(value: Admit<T.IntegerLiteral | T.FloatLite
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NegativeLiteral as const, { _value });
 	const record = arena.record(TSKindId.NegativeLiteral as const, 14);
-	storeInline(arena, record.data, record.base + 2, _value);
+	storeCell(arena, record.data, record.base + 2, _value);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5936,7 +5935,7 @@ export function buildLineComment(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LineComment as const, { _content });
 	const record = arena.record(TSKindId.LineComment as const, 11);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -5968,7 +5967,7 @@ export function buildBlockComment(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.BlockComment as const, { _content });
 	const record = arena.record(TSKindId.BlockComment as const, 11);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8064,7 +8063,7 @@ export function buildArrayExpressionList(
 	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _attributes, _elements });
 	const record = arena.record(TSKindId.ArrayExpressionList as const, 10);
 	storeList(arena, record.data, record.base + 2, _attributes, 5);
-	storeInline(arena, record.data, record.base + 4, _elements);
+	storeCell(arena, record.data, record.base + 4, _elements);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8111,7 +8110,7 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 	handle?.verifyStored?.(TSKindId.AttributeInput as const, { _value, _arguments });
 	const record = arena.record(TSKindId.AttributeInput as const, 13);
 	storeCell(arena, record.data, record.base + 2, _value);
-	storeInline(arena, record.data, record.base + 7, _arguments);
+	storeCell(arena, record.data, record.base + 7, _arguments);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8174,7 +8173,7 @@ export function buildClosureExpressionBlock(
 	if (_static) storeFlag(record.data, record.base + 2, 1);
 	if (_async) storeFlag(record.data, record.base + 2, 2);
 	if (_move) storeFlag(record.data, record.base + 2, 4);
-	storeInline(arena, record.data, record.base + 3, _parameters);
+	storeCell(arena, record.data, record.base + 3, _parameters);
 	storeCell(arena, record.data, record.base + 9, _return_type);
 	storeCell(arena, record.data, record.base + 14, _body);
 	const node = arena.view(record);
@@ -8229,7 +8228,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 	if (_static) storeFlag(record.data, record.base + 2, 1);
 	if (_async) storeFlag(record.data, record.base + 2, 2);
 	if (_move) storeFlag(record.data, record.base + 2, 4);
-	storeInline(arena, record.data, record.base + 3, _parameters);
+	storeCell(arena, record.data, record.base + 3, _parameters);
 	storeCell(arena, record.data, record.base + 9, _body);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -8461,11 +8460,11 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	});
 	const record = arena.record(TSKindId.ImplItemBody as const, 43);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-	storeInline(arena, record.data, record.base + 3, _type_parameters);
-	storeInline(arena, record.data, record.base + 13, _trait_clause);
+	storeCell(arena, record.data, record.base + 3, _type_parameters);
+	storeCell(arena, record.data, record.base + 13, _trait_clause);
 	storeCell(arena, record.data, record.base + 22, _type);
-	storeInline(arena, record.data, record.base + 27, _where_clause);
-	storeInline(arena, record.data, record.base + 37, _body);
+	storeCell(arena, record.data, record.base + 27, _where_clause);
+	storeCell(arena, record.data, record.base + 37, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8547,10 +8546,10 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 	});
 	const record = arena.record(TSKindId.ImplItemSemi as const, 37);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-	storeInline(arena, record.data, record.base + 3, _type_parameters);
-	storeInline(arena, record.data, record.base + 13, _trait_clause);
+	storeCell(arena, record.data, record.base + 3, _type_parameters);
+	storeCell(arena, record.data, record.base + 13, _trait_clause);
 	storeCell(arena, record.data, record.base + 22, _type);
-	storeInline(arena, record.data, record.base + 27, _where_clause);
+	storeCell(arena, record.data, record.base + 27, _where_clause);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8639,7 +8638,7 @@ export function buildVisibilityModifierPubScope(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.VisibilityModifierPubScope as const, { _content });
 	const record = arena.record(TSKindId.VisibilityModifierPubScope as const, 11);
-	storeInline(arena, record.data, record.base + 2, _content);
+	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8686,7 +8685,7 @@ function _buildVisibilityModifierPub(value?: Admit<T.VisibilityModifierPubScope>
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.VisibilityModifierPub as const, { _visibility_modifier_pub_scope });
 	const record = arena.record(TSKindId.VisibilityModifierPub as const, 15);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier_pub_scope);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier_pub_scope);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8768,7 +8767,7 @@ function _buildFunctionTypeFnForm(value?: Admit<T.FunctionModifiers>): T.Functio
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.FunctionTypeFnForm as const, { _function_modifiers });
 	const record = arena.record(TSKindId.FunctionTypeFnForm as const, 8);
-	storeInline(arena, record.data, record.base + 2, _function_modifiers);
+	storeCell(arena, record.data, record.base + 2, _function_modifiers);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -8799,7 +8798,7 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ModItemExternal as const, { _visibility_modifier, _name });
 	const record = arena.record(TSKindId.ModItemExternal as const, 28);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 23, _name);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -8838,9 +8837,9 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ModItemInline as const, { _visibility_modifier, _name, _body });
 	const record = arena.record(TSKindId.ModItemInline as const, 34);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 28, _body);
+	storeCell(arena, record.data, record.base + 28, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -9123,7 +9122,7 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 	handle?.verifyStored?.(TSKindId.ForeignModItemSemi as const, { _unsafe, _extern_modifier });
 	const record = arena.record(TSKindId.ForeignModItemSemi as const, 18);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-	storeInline(arena, record.data, record.base + 3, _extern_modifier);
+	storeCell(arena, record.data, record.base + 3, _extern_modifier);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -9158,8 +9157,8 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 	handle?.verifyStored?.(TSKindId.ForeignModItemBody as const, { _unsafe, _extern_modifier, _body });
 	const record = arena.record(TSKindId.ForeignModItemBody as const, 24);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-	storeInline(arena, record.data, record.base + 3, _extern_modifier);
-	storeInline(arena, record.data, record.base + 18, _body);
+	storeCell(arena, record.data, record.base + 3, _extern_modifier);
+	storeCell(arena, record.data, record.base + 18, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -9693,7 +9692,7 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 	const record = arena.record(TSKindId.FieldPatternShorthand as const, 12);
 	if (_ref) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
-	storeInline(arena, record.data, record.base + 3, _name);
+	storeCell(arena, record.data, record.base + 3, _name);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -9734,7 +9733,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 	const record = arena.record(TSKindId.FieldPatternNamed as const, 17);
 	if (_ref) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
-	storeInline(arena, record.data, record.base + 3, _name);
+	storeCell(arena, record.data, record.base + 3, _name);
 	storeCell(arena, record.data, record.base + 12, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -9772,7 +9771,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 	handle?.verifyStored?.(TSKindId.MacroDefinitionParen as const, { _name, _macro_rules });
 	const record = arena.record(TSKindId.MacroDefinitionParen as const, 13);
 	storeCell(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 7, _macro_rules);
+	storeCell(arena, record.data, record.base + 7, _macro_rules);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -9812,7 +9811,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 	handle?.verifyStored?.(TSKindId.MacroDefinitionBracket as const, { _name, _macro_rules });
 	const record = arena.record(TSKindId.MacroDefinitionBracket as const, 13);
 	storeCell(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 7, _macro_rules);
+	storeCell(arena, record.data, record.base + 7, _macro_rules);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -9851,7 +9850,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 	handle?.verifyStored?.(TSKindId.MacroDefinitionBrace as const, { _name, _macro_rules });
 	const record = arena.record(TSKindId.MacroDefinitionBrace as const, 13);
 	storeCell(arena, record.data, record.base + 2, _name);
-	storeInline(arena, record.data, record.base + 7, _macro_rules);
+	storeCell(arena, record.data, record.base + 7, _macro_rules);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10032,11 +10031,11 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 		_body
 	});
 	const record = arena.record(TSKindId.StructItemBrace as const, 62);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 32, _type_parameters);
-	storeInline(arena, record.data, record.base + 42, _where_clause);
-	storeInline(arena, record.data, record.base + 52, _body);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 32, _type_parameters);
+	storeCell(arena, record.data, record.base + 42, _where_clause);
+	storeCell(arena, record.data, record.base + 52, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10132,11 +10131,11 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 		_where_clause
 	});
 	const record = arena.record(TSKindId.StructItemTuple as const, 62);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 32, _type_parameters);
-	storeInline(arena, record.data, record.base + 42, _body);
-	storeInline(arena, record.data, record.base + 52, _where_clause);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 32, _type_parameters);
+	storeCell(arena, record.data, record.base + 42, _body);
+	storeCell(arena, record.data, record.base + 52, _where_clause);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10214,9 +10213,9 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.StructItemUnit as const, { _visibility_modifier, _name, _type_parameters });
 	const record = arena.record(TSKindId.StructItemUnit as const, 42);
-	storeInline(arena, record.data, record.base + 2, _visibility_modifier);
-	storeInline(arena, record.data, record.base + 23, _name);
-	storeInline(arena, record.data, record.base + 32, _type_parameters);
+	storeCell(arena, record.data, record.base + 2, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 23, _name);
+	storeCell(arena, record.data, record.base + 32, _type_parameters);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10275,7 +10274,7 @@ export function buildAttributedFieldDeclaration(
 	handle?.verifyStored?.(TSKindId.AttributedFieldDeclaration as const, { _attribute_item, _field_declaration });
 	const record = arena.record(TSKindId.AttributedFieldDeclaration as const, 43);
 	storeList(arena, record.data, record.base + 2, _attribute_item, 5);
-	storeInline(arena, record.data, record.base + 4, _field_declaration);
+	storeCell(arena, record.data, record.base + 4, _field_declaration);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10316,7 +10315,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 	handle?.verifyStored?.(TSKindId.AttributedEnumVariant as const, { _attribute_item, _enum_variant });
 	const record = arena.record(TSKindId.AttributedEnumVariant as const, 49);
 	storeList(arena, record.data, record.base + 2, _attribute_item, 5);
-	storeInline(arena, record.data, record.base + 4, _enum_variant);
+	storeCell(arena, record.data, record.base + 4, _enum_variant);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10354,7 +10353,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AttributedParameter as const, { _attribute_item, _content });
 	const record = arena.record(TSKindId.AttributedParameter as const, 35);
-	storeInline(arena, record.data, record.base + 2, _attribute_item);
+	storeCell(arena, record.data, record.base + 2, _attribute_item);
 	storeCell(arena, record.data, record.base + 30, _content);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -10393,7 +10392,7 @@ export function buildAttributedTypeParameter(
 	handle?.verifyStored?.(TSKindId.AttributedTypeParameter as const, { _attribute_item, _content });
 	const record = arena.record(TSKindId.AttributedTypeParameter as const, 28);
 	storeList(arena, record.data, record.base + 2, _attribute_item, 5);
-	storeInline(arena, record.data, record.base + 4, _content);
+	storeCell(arena, record.data, record.base + 4, _content);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
@@ -10484,7 +10483,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 	handle?.verifyStored?.(TSKindId.AttributedOrderedField as const, { _attribute_item, _visibility_modifier, _type });
 	const record = arena.record(TSKindId.AttributedOrderedField as const, 30);
 	storeList(arena, record.data, record.base + 2, _attribute_item, 5);
-	storeInline(arena, record.data, record.base + 4, _visibility_modifier);
+	storeCell(arena, record.data, record.base + 4, _visibility_modifier);
 	storeCell(arena, record.data, record.base + 25, _type);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -10525,7 +10524,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 	handle?.verifyStored?.(TSKindId.TypeArgument as const, { _content, _trait_bounds });
 	const record = arena.record(TSKindId.TypeArgument as const, 13);
 	storeCell(arena, record.data, record.base + 2, _content);
-	storeInline(arena, record.data, record.base + 7, _trait_bounds);
+	storeCell(arena, record.data, record.base + 7, _trait_bounds);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {

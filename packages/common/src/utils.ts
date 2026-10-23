@@ -724,4 +724,4 @@ export {
 	type RecordStub
 } from './record-view.ts';
 
-export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeInline, storeList, storeListOptions, type BuiltPlace, type BuiltText } from './built-arena.ts';
+export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltPlace, type BuiltText } from './built-arena.ts';
