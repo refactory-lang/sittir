@@ -40,7 +40,6 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 		name: '',
 		fileTypes: NO_FILE_TYPES,
 		rules,
-		supertypes: new Set(),
 		word: null
 	};
 }

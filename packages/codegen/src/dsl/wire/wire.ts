@@ -22,7 +22,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { isComplexBody, onlyAliasedSymbols, rulesEqual, unwrapPrec, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -84,7 +84,7 @@ export interface WireContext {
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
-	readonly aliasTargets: Set<string>;
+	readonly evaluatedBodies: Map<string, AnyRule>;
 	readonly automaticVariants: AutomaticVariants;
 	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
 	readonly textTokens: ReadonlyMap<string, readonly string[]>;
@@ -338,7 +338,7 @@ export function withWireContext<T>(
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
-		aliasTargets: new Set(),
+		evaluatedBodies: new Map(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
 		textTokens: getEnrichTextTokens(base),
@@ -557,7 +557,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),
-		aliasTargets: new Set(),
+		evaluatedBodies: new Map(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(baseArg),
 		textTokens: getEnrichTextTokens(base),
@@ -596,7 +596,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		}
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
-	recordAliasTargets(outRules, context);
+	recordEvaluatedBodies(outRules, context);
 	wrapRuleHook(outRules, context, [
 		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals)
 	]);
@@ -1056,23 +1056,47 @@ function wrapSupertypesCallback(userSupertypes: DollarFn<unknown[]> | undefined,
 	return function wiredSupertypes(this: unknown, $: unknown, previous?: unknown) {
 		const base = userSupertypes ? (userSupertypes as (d: unknown, p?: unknown) => unknown[]).call(this, $, previous) : ((previous as unknown[] | undefined) ?? []);
 		const listed = new Set(symbolNamesOf(base));
+		const aliasValues = namedAliasValues([...context.evaluatedBodies.values()]);
 		const flattened = [...context.flattenedParents]
-			.filter((name) => !listed.has(name) && !context.aliasTargets.has(name))
+			.filter((name) => !listed.has(name) && !aliasValues.has(name))
 			.map((name) => symbolizeRef($, name));
 		return [...base, ...flattened];
 	} as unknown as DollarFn<unknown[]>;
 }
 
-function recordAliasTargets(rules: Record<string, RuleFn>, context: WireContext): void {
+export function dropFlattenedParentAliases(grammar: { rules: Record<string, AnyRule>; supertypes?: unknown }, opts: WiredOpts): void {
+	const context = opts.__wireContext__;
+	if (context === undefined) return;
+	const listed = symbolNamesOf(grammar.supertypes);
+	const parents = new Set([...context.flattenedParents].filter((name) => listed.has(name)));
+	if (parents.size === 0) return;
 	const walker = new RuleWalker<AnyRule>();
+	const unaliased = (node: AnyRule): AnyRule => {
+		const alias = node as { type?: string; content?: AnyRule };
+		if (alias.type !== 'ALIAS' || alias.content === undefined) return node;
+		const target = unwrapPrec(alias.content) as { type?: string; name?: unknown } | undefined;
+		return target?.type === 'SYMBOL' && typeof target.name === 'string' && parents.has(target.name) ? alias.content : node;
+	};
+	for (const [name, rule] of Object.entries(grammar.rules)) grammar.rules[name] = unaliased(walker.map(rule, unaliased));
+}
+
+function namedAliasValues(bodies: readonly AnyRule[]): ReadonlySet<string> {
+	const walker = new RuleWalker<AnyRule>();
+	const values = new Set<string>();
+	for (const body of bodies)
+		walker.fold(body, values, (acc, node) => {
+			const alias = node as { type?: string; named?: boolean; value?: unknown };
+			if (alias.type === 'ALIAS' && alias.named !== false && typeof alias.value === 'string') acc.add(alias.value);
+			return acc;
+		});
+	return values;
+}
+
+function recordEvaluatedBodies(rules: Record<string, RuleFn>, context: WireContext): void {
 	for (const [name, fn] of Object.entries(rules)) {
-		rules[name] = function aliasRecordingRuleFn(this: unknown, $, previous) {
+		rules[name] = function bodyRecordingRuleFn(this: unknown, $, previous) {
 			const rule = (fn as (d: unknown, p: unknown) => AnyRule).call(this, $, previous);
-			walker.fold(rule, context.aliasTargets, (targets, node) => {
-				const alias = node as { type?: string; named?: boolean; value?: unknown };
-				if (alias.type === 'ALIAS' && alias.named !== false && typeof alias.value === 'string') targets.add(alias.value);
-				return targets;
-			});
+			context.evaluatedBodies.set(name, rule);
 			return rule;
 		} as RuleFn;
 	}

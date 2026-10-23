@@ -98,8 +98,12 @@ A grammar kind in a slot resolves to the first of: a claim placed by the
 enclosing kinds it sits in; its own claim; nothing, when it is unclaimed; a
 minted text, the enum's texts, or a keyword or punctuation literal; its
 element, when it is a container; its supertype's subtypes, each resolved the
-same way, when at least half of them resolve (a whole namespace is admitted
-only when every claimed kind in it is covered); otherwise an `<grammar:kind>`
+same way, when at least half of the subtypes that carry a kind resolve, and at
+least two of them when two or more carry one (a whole namespace is admitted
+only when every claimed kind in it is covered). A subtype that resolves to a
+keyword or punctuation literal alone carries no kind and does not count, so
+python's `_match_block` resolves through `match_block_block` although
+`match_block_empty` holds only a newline; otherwise an `<grammar:kind>`
 placeholder. A container is a kind with a container unwrap among the routes
 (`routes.ts::containerOf`). The element slot's terminals and kinds resolve with the container added to
 the chain of enclosing kinds, and a container never resolves through itself.

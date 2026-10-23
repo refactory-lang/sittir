@@ -28,6 +28,7 @@ import type { KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 export interface ValueArm {
 	readonly via: 'value';
 	readonly storage: TextValueStorage;
+	readonly variantOf?: string;
 }
 
 export interface NodeArm {
@@ -184,13 +185,14 @@ function derive(
 		for (const value of armValuesOf(slot, nodeMap)) {
 			const name = lowerCamelCase(value.variant);
 			const storage = textStorageOf(value, nodeMap);
+			const variantOf = value.variantOf === undefined ? {} : { variantOf: value.variantOf };
 			if (storage !== undefined) {
-				direct.push({ name, slot, residual, arm: { via: 'value', storage }, depth: DIRECT, merges: false });
+				direct.push({ name, slot, residual, arm: { via: 'value', storage, ...variantOf }, depth: DIRECT, merges: false });
 				continue;
 			}
 			const child = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
 			if (child !== undefined && isCallableArm(child, isEmitted)) {
-				const arm: NodeArm = { via: 'node', child, path: [], ...(value.variantOf === undefined ? {} : { variantOf: value.variantOf }) };
+				const arm: NodeArm = { via: 'node', child, path: [], ...variantOf };
 				direct.push({ name, slot, residual, arm, depth: DIRECT, merges: false });
 			}
 		}

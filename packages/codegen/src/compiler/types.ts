@@ -221,7 +221,6 @@ export interface NormalizedGrammar {
 	readonly name: string;
 	readonly root?: string;
 	readonly rules: Record<string, RenderRule>;
-	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
@@ -256,7 +255,6 @@ export interface SimplifiedGrammar {
 	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
-	readonly supertypes: Set<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;

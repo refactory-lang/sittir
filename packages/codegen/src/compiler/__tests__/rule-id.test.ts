@@ -9,10 +9,10 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 describe('rule ids', () => {
-	let python: Awaited<ReturnType<typeof evaluatePackage>>;
+	let rust: Awaited<ReturnType<typeof evaluatePackage>>;
 
 	beforeAll(async () => {
-		python = await evaluatePackage(grammarPackage('python'));
+		rust = await evaluatePackage(grammarPackage('rust'));
 	});
 
 	it('ruleIdPath reads back the path createRuleId wrote, whatever the owner name holds', () => {
@@ -38,30 +38,30 @@ describe('rule ids', () => {
 	});
 
 	it('a kind the catalog renames keeps its source rule id', async () => {
-		const raw = python;
+		const raw = rust;
 		const collapsed = collapseRenamedRules(raw, {
-			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
+			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('rust'), raw), raw)
 		});
-		expect(collapsed.rules['_match_block']).toBeUndefined();
-		expect(collapsed.ruleCatalog.rootsByKind.get('match_block')).toBe('rule:_match_block:root');
+		expect(collapsed.rules['_non_special_token']).toBeUndefined();
+		expect(collapsed.ruleCatalog.rootsByKind.get('non_special_token')).toBe('rule:_non_special_token:root');
 	});
 
 	it('a kind the catalog renames owns its variants under its new name', async () => {
-		const raw = python;
+		const raw = rust;
 		const collapsed = collapseRenamedRules(raw, {
-			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
+			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('rust'), raw), raw)
 		});
-		const arms = (collapsed.rules['match_block'] as { members: readonly Rule<'evaluate'>[] }).members;
-		expect(arms.map((arm) => arm.annotations?.variantOf)).toEqual(['match_block', 'match_block']);
+		const arms = (collapsed.rules['non_special_token'] as { members: readonly Rule<'evaluate'>[] }).members;
+		expect(arms.map((arm) => arm.annotations?.variantOf)).toEqual(Array(9).fill('non_special_token'));
 	});
 
 	it('a synthesized kind the catalog renames is recorded under its new name', async () => {
-		const evaluated = python;
-		const raw = { ...evaluated, evaluateSynthesized: new Set([...evaluated.evaluateSynthesized, '_match_block']) };
+		const evaluated = rust;
+		const raw = { ...evaluated, evaluateSynthesized: new Set([...evaluated.evaluateSynthesized, '_non_special_token']) };
 		const collapsed = collapseRenamedRules(raw, {
-			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
+			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('rust'), raw), raw)
 		});
-		expect(collapsed.evaluateSynthesized.has('match_block')).toBe(true);
-		expect(collapsed.evaluateSynthesized.has('_match_block')).toBe(false);
+		expect(collapsed.evaluateSynthesized.has('non_special_token')).toBe(true);
+		expect(collapsed.evaluateSynthesized.has('_non_special_token')).toBe(false);
 	});
 });

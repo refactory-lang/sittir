@@ -774,7 +774,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	if (handle !== undefined) admitChildren(handle, 'match_statement', { subjects: _subjects, body: _body });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.MatchStatement as const, { _subjects, _body });
-	const record = arena.record(TSKindId.MatchStatement as const, 21);
+	const record = arena.record(TSKindId.MatchStatement as const, 17);
 	storeInline(arena, record.data, record.base + 2, _subjects);
 	storeInline(arena, record.data, record.base + 8, _body);
 	const node = arena.view(record);
@@ -796,31 +796,6 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 		}
 	});
 	return stampBuilt(node) as unknown as T.MatchStatement.Bound;
-}
-
-export function buildMatchBlock<V extends Admit<T.MatchBlockBlock | T.MatchBlockEmpty>>(
-	value: V & RefuseUndeclared<V>
-): T.MatchBlock.Bound;
-export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>): T.MatchBlock.Bound {
-	const _content = value;
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'match_block', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MatchBlock as const, { _content });
-	const record = arena.record(TSKindId.MatchBlock as const, 11);
-	storeInline(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
-	bindRow(node, {
-		$with: {
-			content: (value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>) =>
-				rebuilt(node, handle, () => buildMatchBlock(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	});
-	return stampBuilt(node) as unknown as T.MatchBlock.Bound;
 }
 
 export function buildCaseClause<
@@ -6926,7 +6901,6 @@ export type FluentKindMap = {
 	elif_clause: T.ElifClause.Bound;
 	else_clause: T.ElseClause.Bound;
 	match_statement: T.MatchStatement.Bound;
-	match_block: T.MatchBlock.Bound;
 	case_clause: T.CaseClause.Bound;
 	for_statement: T.ForStatement.Bound;
 	while_statement: T.WhileStatement.Bound;
@@ -7126,7 +7100,6 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
-	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,

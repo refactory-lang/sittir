@@ -7,7 +7,7 @@ const py = await createEngine(python);
 
 const contentOf = (source: string) => {
 	const statement = py.parse(source).statements()[0]!;
-	if (!py.is.SimpleStatements(statement)) throw new Error('not a simple statement');
+	if (!py.is.simpleStatements(statement)) throw new Error('not a simple statement');
 	const element = statement.elements()[0]!;
 	if (!py.is.expressionStatement(element)) throw new Error('not an expression statement');
 	return element.content();

@@ -822,33 +822,6 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 	return node as unknown as T.MatchStatement.Parsed;
 }
 
-export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.MatchBlock as const,
-		content() {
-			return hydrateSlot<T.MatchBlockBlock | T.MatchBlockEmpty>(this, '_content', tree);
-		},
-		$with: {
-			content: (v: NonNullable<T.MatchBlock['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapMatchBlock({ ...$edited(data), _content: admitSlot(handle, 'match_block', 'content', v) }, tree)
-				)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.MatchBlock.Parsed;
-}
-
 export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7113,7 +7086,7 @@ function viewMatchStatement(data: RecordStub, tree: TreeHandle): T.MatchStatemen
 			return viewSlot<T.Subjects>(this, tree, 2, 6, 4);
 		},
 		body() {
-			return viewSlot<T.MatchBlock>(this, tree, 8, 13, 11);
+			return viewSlot<T.MatchBlock>(this, tree, 8, 9, 7);
 		},
 		$with: {
 			subjects: (...args: unknown[]) => rowWith(node, tree, _wrap, 'subjects', args),
@@ -7130,30 +7103,6 @@ function viewMatchStatement(data: RecordStub, tree: TreeHandle): T.MatchStatemen
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.MatchStatement.Parsed;
-}
-
-function viewMatchBlock(data: RecordStub, tree: TreeHandle): T.MatchBlock.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.MatchBlock as const,
-		content() {
-			return viewSlot<T.MatchBlockBlock | T.MatchBlockEmpty>(this, tree, 2, 9, 7);
-		},
-		$with: {
-			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.MatchBlock.Parsed;
 }
 
 function viewCaseClause(data: RecordStub, tree: TreeHandle): T.CaseClause.Parsed {
@@ -11486,7 +11435,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ElifClause]: (d, t) => wrapElifClause(d as unknown as T.ElifClause, t),
 	[TSKindId.ElseClause]: (d, t) => wrapElseClause(d as unknown as T.ElseClause, t),
 	[TSKindId.MatchStatement]: (d, t) => wrapMatchStatement(d as unknown as T.MatchStatement, t),
-	[TSKindId.MatchBlock]: (d, t) => wrapMatchBlock(d as unknown as T.MatchBlock, t),
 	[TSKindId.CaseClause]: (d, t) => wrapCaseClause(d as unknown as T.CaseClause, t),
 	[TSKindId.ForStatement]: (d, t) => wrapForStatement(d as unknown as T.ForStatement, t),
 	[TSKindId.WhileStatement]: (d, t) => wrapWhileStatement(d as unknown as T.WhileStatement, t),
@@ -11678,7 +11626,6 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.ElifClause]: viewElifClause,
 	[TSKindId.ElseClause]: viewElseClause,
 	[TSKindId.MatchStatement]: viewMatchStatement,
-	[TSKindId.MatchBlock]: viewMatchBlock,
 	[TSKindId.CaseClause]: viewCaseClause,
 	[TSKindId.ForStatement]: viewForStatement,
 	[TSKindId.WhileStatement]: viewWhileStatement,

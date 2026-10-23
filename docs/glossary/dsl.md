@@ -4750,6 +4750,7 @@ with the config's authored group patterns and `extras:` callback, then `wire(con
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options,
+then `dropFlattenedParentAliases`, which drops each alias over a parent wire listed as a supertype,
 then `stampWiredVariants`, which labels the rules wire created or changed in both pipelines,
 then `blankDeadEnrichMints`, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
@@ -6993,7 +6994,7 @@ Whether a kind is hidden storage the parser shows under an alias: its own row (`
 
 ### `packages/codegen/src/dsl/symbol-table.ts::isShownConcreteKind`
 
-Whether the parser shows a kind as a concrete node: its own row (`findOwnKindEntry`) exists, carries no supertype flag, and `surfaceHiddenOf` does not hold. A declared supertype the parser displays under a default alias (python `match_block`) is one. Link's `classifyHiddenChoiceRule` keeps such a kind concrete.
+Whether the parser shows a kind as a concrete node: its own row (`findOwnKindEntry`) exists, carries no supertype flag, and `surfaceHiddenOf` does not hold. A declared supertype the parser displays under a default alias is one. Link's `classifyHiddenChoiceRule` keeps such a kind concrete.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::isSurfaceHiddenKind`
 

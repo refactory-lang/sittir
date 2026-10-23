@@ -33,7 +33,6 @@ export const buildIfStatement = dispatched(() => backend().buildIfStatement);
 export const buildElifClause = dispatched(() => backend().buildElifClause);
 export const buildElseClause = dispatched(() => backend().buildElseClause);
 export const buildMatchStatement = dispatched(() => backend().buildMatchStatement);
-export const buildMatchBlock = dispatched(() => backend().buildMatchBlock);
 export const buildCaseClause = dispatched(() => backend().buildCaseClause);
 export const buildForStatement = dispatched(() => backend().buildForStatement);
 export const buildWhileStatement = dispatched(() => backend().buildWhileStatement);
@@ -232,7 +231,6 @@ export const _factoryMap = {
 	elif_clause: buildElifClause,
 	else_clause: buildElseClause,
 	match_statement: buildMatchStatement,
-	match_block: buildMatchBlock,
 	case_clause: buildCaseClause,
 	for_statement: buildForStatement,
 	while_statement: buildWhileStatement,

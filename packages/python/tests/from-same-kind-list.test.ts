@@ -8,7 +8,7 @@ for (const nodeStorage of ['object', 'arena'] as const) {
 	const py = await createEngine(python, { nodeStorage });
 	const argumentsOf = (source: string) => {
 		const statement = py.parse(source).statements()[0]!;
-		if (!py.is.SimpleStatements(statement)) throw new Error('not a simple statement');
+		if (!py.is.simpleStatements(statement)) throw new Error('not a simple statement');
 		const element = statement.elements()[0]!;
 		if (!py.is.expressionStatement(element)) throw new Error('not an expression statement');
 		const call = element.content();
