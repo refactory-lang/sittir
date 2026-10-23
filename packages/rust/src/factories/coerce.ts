@@ -4051,8 +4051,8 @@ export function coerceToFunctionModifiers(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('modifier' in head)) return input;
-		const v = (head as Record<string, unknown>)['modifier'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('modifiers' in head)) return input;
+		const v = (head as Record<string, unknown>)['modifiers'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildFunctionModifiers(
@@ -6075,7 +6075,7 @@ export function coerceToShorthandFieldInitializer(
 }
 
 export function resolveFieldInitializer_attributeItems(
-	value: T.FieldInitializer.LooseConfig['attributeItem']
+	value: T.FieldInitializer.LooseConfig['attributeItems']
 ): Admit<T.FieldInitializer['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
@@ -6102,7 +6102,7 @@ export function coerceToFieldInitializer(input: T.FieldInitializer.Loose): Retur
 	if (!_isLooseConfig<T.FieldInitializer.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldInitializer>;
 	return F.buildFieldInitializer({
-		attributeItem: resolveFieldInitializer_attributeItems(input.attributeItem),
+		attributeItems: resolveFieldInitializer_attributeItems(input.attributeItems),
 		field: resolveFieldInitializer_field(input.field),
 		value: resolveFieldInitializer_value(input.value)
 	});
@@ -6210,7 +6210,7 @@ export function resolveLetChain_left(value: T.LetChain.LooseConfig['left']): Adm
 	);
 }
 
-export function resolveLetChain_rights(value: T.LetChain.LooseConfig['right']): Admit<T.LetChain['_right']> {
+export function resolveLetChain_rights(value: T.LetChain.LooseConfig['rights']): Admit<T.LetChain['_right']> {
 	return listStorage(
 		_resolveKindEnumItems(value, (_v) => _resolveMany<T.LetCondition | T.Expression>(_v, _K12, _K46)),
 		(item) => coerceMixedEnumStorage(item, [])
@@ -6224,7 +6224,7 @@ export function coerceToLetChain(input: T.LetChain.Loose): ReturnType<typeof F.b
 	if (!_isLooseConfig<T.LetChain.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildLetChain>;
 	return F.buildLetChain({
 		left: resolveLetChain_left(input.left),
-		right: resolveLetChain_rights(input.right)
+		rights: resolveLetChain_rights(input.rights)
 	});
 }
 
@@ -10651,7 +10651,7 @@ export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): typeo
 }
 
 export function resolveAttributedFieldDeclaration_attributeItems(
-	value: T.AttributedFieldDeclaration.LooseConfig['attributeItem']
+	value: T.AttributedFieldDeclaration.LooseConfig['attributeItems']
 ): Admit<T.AttributedFieldDeclaration['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
@@ -10671,13 +10671,13 @@ export function coerceToAttributedFieldDeclaration(
 	if (!_isLooseConfig<T.AttributedFieldDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedFieldDeclaration>;
 	return F.buildAttributedFieldDeclaration({
-		attributeItem: resolveAttributedFieldDeclaration_attributeItems(input.attributeItem),
+		attributeItems: resolveAttributedFieldDeclaration_attributeItems(input.attributeItems),
 		fieldDeclaration: resolveAttributedFieldDeclaration_fieldDeclaration(input.fieldDeclaration)
 	});
 }
 
 export function resolveAttributedEnumVariant_attributeItems(
-	value: T.AttributedEnumVariant.LooseConfig['attributeItem']
+	value: T.AttributedEnumVariant.LooseConfig['attributeItems']
 ): Admit<T.AttributedEnumVariant['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
@@ -10697,7 +10697,7 @@ export function coerceToAttributedEnumVariant(
 	if (!_isLooseConfig<T.AttributedEnumVariant.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedEnumVariant>;
 	return F.buildAttributedEnumVariant({
-		attributeItem: resolveAttributedEnumVariant_attributeItems(input.attributeItem),
+		attributeItems: resolveAttributedEnumVariant_attributeItems(input.attributeItems),
 		enumVariant: resolveAttributedEnumVariant_enumVariant(input.enumVariant)
 	});
 }
@@ -10736,7 +10736,7 @@ export function coerceToAttributedParameter(
 }
 
 export function resolveAttributedTypeParameter_attributeItems(
-	value: T.AttributedTypeParameter.LooseConfig['attributeItem']
+	value: T.AttributedTypeParameter.LooseConfig['attributeItems']
 ): Admit<T.AttributedTypeParameter['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
@@ -10756,13 +10756,13 @@ export function coerceToAttributedTypeParameter(
 	if (!_isLooseConfig<T.AttributedTypeParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedTypeParameter>;
 	return F.buildAttributedTypeParameter({
-		attributeItem: resolveAttributedTypeParameter_attributeItems(input.attributeItem),
+		attributeItems: resolveAttributedTypeParameter_attributeItems(input.attributeItems),
 		content: resolveAttributedTypeParameter_content(input.content)
 	});
 }
 
 export function resolveAttributedArgument_attributeItems(
-	value: T.AttributedArgument.LooseConfig['attributeItem']
+	value: T.AttributedArgument.LooseConfig['attributeItems']
 ): Admit<T.AttributedArgument['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
@@ -10785,13 +10785,13 @@ export function coerceToAttributedArgument(
 	if (!_isLooseConfig<T.AttributedArgument.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedArgument>;
 	return F.buildAttributedArgument({
-		attributeItem: resolveAttributedArgument_attributeItems(input.attributeItem),
+		attributeItems: resolveAttributedArgument_attributeItems(input.attributeItems),
 		expression: resolveAttributedArgument_expression(input.expression)
 	});
 }
 
 export function resolveAttributedOrderedField_attributeItems(
-	value: T.AttributedOrderedField.LooseConfig['attributeItem']
+	value: T.AttributedOrderedField.LooseConfig['attributeItems']
 ): Admit<T.AttributedOrderedField['_attribute_item']> {
 	return _resolveManyBranch<T.AttributeItem>(value, 'attribute_item');
 }
@@ -10820,7 +10820,7 @@ export function coerceToAttributedOrderedField(
 	if (!_isLooseConfig<T.AttributedOrderedField.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedOrderedField>;
 	return F.buildAttributedOrderedField({
-		attributeItem: resolveAttributedOrderedField_attributeItems(input.attributeItem),
+		attributeItems: resolveAttributedOrderedField_attributeItems(input.attributeItems),
 		visibilityModifier: resolveAttributedOrderedField_visibilityModifier(input.visibilityModifier),
 		type: resolveAttributedOrderedField_type(input.type)
 	});

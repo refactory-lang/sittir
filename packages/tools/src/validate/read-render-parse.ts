@@ -45,6 +45,7 @@ import {
 	readNodeOf,
 	walkWrappedTree,
 	materializeDetached,
+	loadSlotAccessorOf,
 	emitValidatorMetrics,
 	loadNodeModel,
 	loadIsLeafKind,
@@ -959,6 +960,7 @@ export async function validateReadRenderParse(
 	parser.setLanguage(lang);
 
 	const kindNameFromId = await loadKindNameFromId(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine);
@@ -1040,6 +1042,7 @@ export async function validateReadRenderParse(
 				const seen = new Set<string>();
 				walkWrappedTree(
 					wrappedRoot,
+					accessorOf,
 					(w: TypedNode) => {
 						if (w.$named === false) return;
 						const displayKind = kindNameFromId?.(w.$type);
@@ -1137,7 +1140,7 @@ export async function validateReadRenderParse(
 						data =
 							recursive !== true && at !== undefined && handle.read
 								? (readUntyped(handle, at) as AnyUntypedNode)
-								: (materializeDetached(cand.node, onAccessorThrow) as AnyUntypedNode);
+								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
 						reportThrown({
 							name: `${entry.name} [${kind}]`,

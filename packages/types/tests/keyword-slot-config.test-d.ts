@@ -17,6 +17,7 @@ interface Required3 {
 	readonly _op: Op;
 	readonly _flags: Flags;
 	readonly _async: Async;
+	readonly __slotNames__?: { readonly _op: 'op'; readonly _flags: 'flags'; readonly _async: 'async' };
 }
 type RequiredConfig = ConfigOf<Required3>;
 
@@ -40,6 +41,7 @@ interface Optional3 {
 	readonly _op?: Op;
 	readonly _flags?: Flags;
 	readonly _async?: Async;
+	readonly __slotNames__?: { readonly _op: 'op'; readonly _flags: 'flags'; readonly _async: 'async' };
 }
 type OptionalConfig = ConfigOf<Optional3>;
 

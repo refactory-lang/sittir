@@ -36,6 +36,7 @@ describe('exercise roundtrip helpers', () => {
 			factorySlots: {
 				direct_child: {
 					children: {
+						propertyName: 'children',
 						required: true,
 						multiple: false,
 						nonEmpty: false
@@ -69,6 +70,7 @@ describe('exercise roundtrip helpers', () => {
 			factorySlots: {
 				spread_child: {
 					children: {
+						propertyName: 'children',
 						required: true,
 						multiple: true,
 						nonEmpty: true

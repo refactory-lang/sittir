@@ -138,7 +138,7 @@ function emitJsonFacts(
 	leaves: readonly number[],
 	units: readonly number[],
 	spread: readonly number[],
-	options: ReadonlyMap<number, readonly (readonly [string, string])[]>
+	options: ReadonlyMap<number, readonly string[]>
 ): string[] {
 	return [
 		'export const jsonFacts: NodeJSONFacts = Object.freeze({',
@@ -150,16 +150,16 @@ function emitJsonFacts(
 		`\tleaves: new Set<number>(${JSON.stringify(leaves)}),`,
 		`\tunits: new Set<number>(${JSON.stringify(units)}),`,
 		`\tblank: ${BLANK_KIND_ID},`,
-		`\toptions: Object.freeze<NodeJSONFacts['options']>({${[...options].map(([kindId, pairs]) => ` ${kindId}: ${JSON.stringify(pairs)}`).join(',')}${options.size > 0 ? ' ' : ''}})`,
+		`\toptions: Object.freeze<NodeJSONFacts['options']>({${[...options].map(([kindId, names]) => ` ${kindId}: ${JSON.stringify(names)}`).join(',')}${options.size > 0 ? ' ' : ''}})`,
 		'});'
 	];
 }
 
-function registeredOptionRows(nodeMap: NodeMap): ReadonlyMap<number, readonly (readonly [string, string])[]> {
-	const rows = new Map<number, readonly (readonly [string, string])[]>();
+function registeredOptionRows(nodeMap: NodeMap): ReadonlyMap<number, readonly string[]> {
+	const rows = new Map<number, readonly string[]>();
 	for (const node of nodeMap.nodes.values()) {
 		if (node.kindId === undefined || node.slots.length === 0) continue;
-		const registered = registeredSlots(node).map((slot) => [slot.propertyName, slot.configKey] as const);
+		const registered = registeredSlots(node).map((slot) => slot.propertyName);
 		if (registered.length > 0) rows.set(node.kindId, registered);
 	}
 	return new Map([...rows].sort(([a], [b]) => a - b));

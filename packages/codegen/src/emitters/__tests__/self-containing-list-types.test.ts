@@ -68,7 +68,7 @@ declare function loose(...args: Tuple.LooseArgs): Tuple.Bound;
 declare function strict(...args: Tuple.BuildArgs): Tuple.Bound;
 
 loose(tuple, parsedTuple, identifier);
-loose({ content: ['x', tuple, { content: ['y', parsedTuple] }] });
+loose({ contents: ['x', tuple, { contents: ['y', parsedTuple] }] });
 strict(tuple, parsedTuple, identifier);
 tuple.$with.contents(tuple, parsedTuple, identifier);
 

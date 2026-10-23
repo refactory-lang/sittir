@@ -384,6 +384,10 @@ export function snakeToCamel(name: string): string {
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
+export function storageKeyOf(storageName: string): string {
+	return `_${storageName}`;
+}
+
 export function slotPropertyName(slot: {
 	readonly name: string;
 	readonly values?: readonly { readonly multiplicity?: string }[];
@@ -1196,9 +1200,6 @@ export class AssembledNonterminal {
 	get name(): string {
 		return projectSlotNaming(this).name;
 	}
-	get configKey(): string {
-		return projectSlotNaming(this).configKey;
-	}
 	get propertyName(): string {
 		return projectSlotNaming(this).propertyName;
 	}
@@ -1218,7 +1219,7 @@ export class AssembledNonterminal {
 		return isMultiple(this) ? 'many' : 'one';
 	}
 	get storageKey(): string {
-		return `_${this.storageName}`;
+		return storageKeyOf(this.storageName);
 	}
 
 	constructor(init: AssembledNonterminalInit) {
@@ -1416,7 +1417,6 @@ export interface SlotNamingInputs {
 export function projectSlotNaming(slot: SlotNamingInputs): {
 	storageName: string;
 	name: string;
-	configKey: string;
 	propertyName: string;
 	paramName: string;
 	parseNames: readonly string[];
@@ -1438,12 +1438,10 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
 			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
-	const configKey = snakeToCamel(storageName);
 	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
 		name: storageName,
-		configKey,
 		propertyName,
 		paramName: safeParamName(propertyName),
 		parseNames

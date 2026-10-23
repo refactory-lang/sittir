@@ -116,31 +116,37 @@ describe('factory-map slot arity metadata', () => {
 		const data = buildFactoryMap(makeSlotArityNodeMap());
 
 		expect(expectFactorySlot(data, 'single_parent', 'identifier')).toEqual({
+			propertyName: 'identifier',
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
 		expect(expectFactorySlot(data, 'multi_parent', 'identifier')).toEqual({
+			propertyName: 'identifier',
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
 		expect(expectFactorySlot(data, 'multi_parent', 'number_literal')).toEqual({
+			propertyName: 'numberLiteral',
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
 		expect(expectFactorySlot(data, 'repeat_parent', 'items')).toEqual({
+			propertyName: 'items',
 			required: true,
 			multiple: true,
 			nonEmpty: true
 		});
 		expect(expectFactorySlot(data, 'optional_then_required_parent', 'identifier')).toEqual({
+			propertyName: 'identifier',
 			required: false,
 			multiple: false,
 			nonEmpty: false
 		});
 		expect(expectFactorySlot(data, 'optional_then_required_parent', 'number_literal')).toEqual({
+			propertyName: 'numberLiteral',
 			required: true,
 			multiple: false,
 			nonEmpty: false
@@ -150,6 +156,7 @@ describe('factory-map slot arity metadata', () => {
 		// pre-unification cardinality derivation that treated a
 		// choice-with-seq-arm as multi. The slot occurs exactly once.
 		expect(expectFactorySlot(data, 'ambient_like_parent', 'declaration')).toEqual({
+			propertyName: 'declaration',
 			required: true,
 			multiple: false,
 			nonEmpty: false

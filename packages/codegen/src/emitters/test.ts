@@ -247,7 +247,7 @@ function factoryCallArgs(
 	for (const f of node.slots) {
 		if (registeredSet.has(f)) continue;
 		if (isRequired(f)) {
-			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
+			typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
 		}
 	}
 	const renderConfigParts = [...typeConfigParts];
@@ -271,7 +271,7 @@ function factoryCallArgs(
 	const registeredOptionsArg =
 		registeredRequired.length === 0
 			? undefined
-			: `{ ${registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`).join(', ')} }`;
+			: `{ ${registeredRequired.map((f) => `${f.propertyName}: ${strictOptionDummy(f, nodeMap, kindEntries)}`).join(', ')} }`;
 	return { typeConfigArg, renderConfigArg, registeredOptionsArg };
 }
 
@@ -308,7 +308,7 @@ function childrenCallArgs(
 	const value = childrenCallValueArg(node, nodeMap, kindEntries, texts);
 	const registeredRequired = registeredSlots(node).filter(isRequired);
 	if (registeredRequired.length === 0) return value;
-	const optionsParts = registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`);
+	const optionsParts = registeredRequired.map((f) => `${f.propertyName}: ${strictOptionDummy(f, nodeMap, kindEntries)}`);
 	const options = `{ ${optionsParts.join(', ')} }`;
 	if (leadingOptionsOf(node, nodeMap) !== undefined) return value === '' ? options : `${options}, ${value}`;
 	return `${value === '' ? 'undefined' : value}, ${options}`;
@@ -387,7 +387,7 @@ function requiredFieldParts(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
-	return slots.filter(isRequired).map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
+	return slots.filter(isRequired).map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
 }
 
 function objectLiteralInner(text: string): string | undefined {
@@ -443,10 +443,10 @@ function subFactoryCallArgs(
 	}
 	if (child.parameterless) return objectFrom(residualParts);
 	if (seatsConfigChild(sub, nodeMap)) {
-		return objectFrom([...residualParts, `${sub.slot.configKey}: ${childArgs === '' ? '{}' : childArgs}`]);
+		return objectFrom([...residualParts, `${sub.slot.propertyName}: ${childArgs === '' ? '{}' : childArgs}`]);
 	}
 	const tuple = childArgs === '' ? '[]' : `[${childArgs}]`;
-	return objectFrom([...residualParts, `${sub.slot.configKey}: ${tuple}`]);
+	return objectFrom([...residualParts, `${sub.slot.propertyName}: ${tuple}`]);
 }
 
 interface SubFactoryBase {
@@ -494,7 +494,7 @@ function emitSubFactoryTests(
 		const registeredChain = (() => {
 			if (!(node instanceof AbstractAssembledCompound)) return '';
 			const required = registeredSlots(node).filter((f) => f !== sub.slot && isRequired(f));
-			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
+			return required.map((f) => `.$with.${f.propertyName}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
 		})();
 		cases.push(`    const node = ${callTarget}(${args})${registeredChain};`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
@@ -534,7 +534,7 @@ function emitSubFactoryTests(
 		const aliasRegisteredChain = (() => {
 			if (!(child instanceof AbstractAssembledCompound)) return '';
 			const required = registeredSlots(child).filter(isRequired);
-			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
+			return required.map((f) => `.$with.${f.propertyName}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
 		})();
 		if (child.modelType === 'keyword' || child.modelType === 'punctuation') {
 			cases.push(`    expect(${callTarget}).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);

@@ -542,7 +542,7 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.UnionItem['_type_parameters']>) =>
 							wrapUnionItem({ ...$edited(data), _type_parameters: v }, tree)
@@ -565,7 +565,7 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 							kind: TSKindId.FieldDeclarationList as const,
 							optional: false,
 							make: RAW.buildFieldDeclarationList,
-							element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
+							element: { keys: ['attributeItems', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 						},
 						(v: NonNullable<T.UnionItem['_body']>) => wrapUnionItem({ ...$edited(data), _body: v }, tree)
 					)
@@ -618,7 +618,7 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.EnumItem['_type_parameters']>) =>
 							wrapEnumItem({ ...$edited(data), _type_parameters: v }, tree)
@@ -640,7 +640,7 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 							kind: TSKindId.EnumVariantList as const,
 							optional: false,
 							make: RAW.buildEnumVariantList,
-							element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
+							element: { keys: ['attributeItems', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
 						},
 						(v: NonNullable<T.EnumItem['_body']>) => wrapEnumItem({ ...$edited(data), _body: v }, tree)
 					)
@@ -678,7 +678,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 							kind: TSKindId.EnumVariantListElements as const,
 							optional: true,
 							make: RAW.buildEnumVariantListElements,
-							element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
+							element: { keys: ['attributeItems', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
 						},
 						(v: NonNullable<T.EnumVariantList['_elements']>) =>
 							wrapEnumVariantList({ ...$edited(data), _elements: v }, tree)
@@ -776,7 +776,7 @@ export function wrapFieldDeclarationList(
 							kind: TSKindId.FieldDeclarationListElements as const,
 							optional: true,
 							make: RAW.buildFieldDeclarationListElements,
-							element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
+							element: { keys: ['attributeItems', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 						},
 						(v: NonNullable<T.FieldDeclarationList['_elements']>) =>
 							wrapFieldDeclarationList({ ...$edited(data), _elements: v }, tree)
@@ -869,7 +869,7 @@ export function wrapOrderedFieldDeclarationList(
 							kind: TSKindId.OrderedFieldDeclarationListElements as const,
 							optional: true,
 							make: RAW.buildOrderedFieldDeclarationListElements,
-							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
+							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 						},
 						(v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) =>
 							wrapOrderedFieldDeclarationList({ ...$edited(data), _attributes: v }, tree)
@@ -1072,7 +1072,7 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.TypeItem['_type_parameters']>) =>
 							wrapTypeItem({ ...$edited(data), _type_parameters: v }, tree)
@@ -1156,7 +1156,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.FunctionItem['_type_parameters']>) =>
 							wrapFunctionItem({ ...$edited(data), _type_parameters: v }, tree)
@@ -1248,7 +1248,7 @@ export function wrapFunctionSignatureItem(
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.FunctionSignatureItem['_type_parameters']>) =>
 							wrapFunctionSignatureItem({ ...$edited(data), _type_parameters: v }, tree)
@@ -1470,7 +1470,7 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.TraitItem['_type_parameters']>) =>
 							wrapTraitItem({ ...$edited(data), _type_parameters: v }, tree)
@@ -1532,7 +1532,7 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.AssociatedType['_type_parameters']>) =>
 							wrapAssociatedType({ ...$edited(data), _type_parameters: v }, tree)
@@ -1613,7 +1613,7 @@ export function wrapHigherRankedTraitBound(
 							kind: TSKindId.TypeParameters as const,
 							optional: false,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.HigherRankedTraitBound['_type_parameters']>) =>
 							wrapHigherRankedTraitBound({ ...$edited(data), _type_parameters: v }, tree)
@@ -1680,7 +1680,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 							kind: TSKindId.TypeParametersElements as const,
 							optional: false,
 							make: RAW.buildTypeParametersElements,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.TypeParameters['_elements']>) =>
 							wrapTypeParameters({ ...$edited(data), _elements: v }, tree)
@@ -2909,7 +2909,7 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.AbstractType['_type_parameters']>) =>
 							wrapAbstractType({ ...$edited(data), _type_parameters: v }, tree)
@@ -3436,7 +3436,7 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 							kind: TSKindId.Arguments as const,
 							optional: false,
 							make: RAW.buildArguments,
-							element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: RAW.buildAttributedArgument }
 						},
 						(v: NonNullable<T.CallExpression['_arguments']>) =>
 							wrapCallExpression({ ...$edited(data), _arguments: v }, tree)
@@ -3475,7 +3475,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 							kind: TSKindId.ArgumentsElements as const,
 							optional: true,
 							make: RAW.buildArgumentsElements,
-							element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: RAW.buildAttributedArgument }
 						},
 						(v: NonNullable<T.Arguments['_elements']>) => wrapArguments({ ...$edited(data), _elements: v }, tree)
 					)
@@ -6353,7 +6353,7 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 							kind: TSKindId.ArgumentsElements as const,
 							optional: true,
 							make: RAW.buildArgumentsElements,
-							element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: RAW.buildAttributedArgument }
 						},
 						(v: NonNullable<T.ArrayExpressionList['_elements']>) =>
 							wrapArrayExpressionList({ ...$edited(data), _elements: v }, tree)
@@ -6717,7 +6717,7 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.ImplItemBody['_type_parameters']>) =>
 							wrapImplItemBody({ ...$edited(data), _type_parameters: v }, tree)
@@ -6784,7 +6784,7 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.ImplItemSemi['_type_parameters']>) =>
 							wrapImplItemSemi({ ...$edited(data), _type_parameters: v }, tree)
@@ -8271,7 +8271,7 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.StructItemBrace['_type_parameters']>) =>
 							wrapStructItemBrace({ ...$edited(data), _type_parameters: v }, tree)
@@ -8294,7 +8294,7 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 							kind: TSKindId.FieldDeclarationList as const,
 							optional: false,
 							make: RAW.buildFieldDeclarationList,
-							element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
+							element: { keys: ['attributeItems', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 						},
 						(v: NonNullable<T.StructItemBrace['_body']>) => wrapStructItemBrace({ ...$edited(data), _body: v }, tree)
 					)
@@ -8347,7 +8347,7 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.StructItemTuple['_type_parameters']>) =>
 							wrapStructItemTuple({ ...$edited(data), _type_parameters: v }, tree)
@@ -8361,7 +8361,7 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 							kind: TSKindId.OrderedFieldDeclarationList as const,
 							optional: false,
 							make: RAW.buildOrderedFieldDeclarationList,
-							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
+							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 						},
 						(v: NonNullable<T.StructItemTuple['_body']>) => wrapStructItemTuple({ ...$edited(data), _body: v }, tree)
 					)
@@ -8417,7 +8417,7 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: RAW.buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
 						},
 						(v: NonNullable<T.StructItemUnit['_type_parameters']>) =>
 							wrapStructItemUnit({ ...$edited(data), _type_parameters: v }, tree)

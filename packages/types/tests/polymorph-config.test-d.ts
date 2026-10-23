@@ -22,6 +22,7 @@ interface FormWithoutChildren {
 	readonly $type: 1;
 	readonly $variant: 'bar';
 	readonly _x: string;
+	readonly __slotNames__?: { readonly _x: 'x' };
 }
 type FormConfig = ConfigOf<FormWithoutChildren>;
 
@@ -41,6 +42,7 @@ export const wrongVariant: FormConfig = { x: 'x', $variant: 'other' };
 interface InnerScalar {
 	readonly $type: 2;
 	readonly _value: number;
+	readonly __slotNames__?: { readonly _value: 'value' };
 }
 
 interface OuterScalarForm {

@@ -103,7 +103,7 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		if (typeof object.$text !== 'string') throw new Error(`${path}: ${name} is a leaf and needs its $text`);
 		node = buildAt(path, hooks, name, [{ text: object.$text }]);
 	} else {
-		const optionKeys = new Map(facts.options[kindId] ?? []);
+		const optionNames = new Set(facts.options[kindId] ?? []);
 		const slots: Record<string, unknown> = {};
 		const options: Record<string, unknown> = {};
 		for (const accessor of accessors) {
@@ -113,9 +113,8 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 			const value = Array.isArray(member)
 				? member.map((item, index) => (item === null ? undefined : revive(item, `${at}[${index}]`, hooks)))
 				: revive(member, at, hooks);
-			const option = optionKeys.get(accessor);
-			if (option === undefined) slots[accessor] = value;
-			else options[option] = value;
+			if (optionNames.has(accessor)) options[accessor] = value;
+			else slots[accessor] = value;
 		}
 		const hasOptions = Object.keys(options).length > 0;
 		const items = (Object.values(slots)[0] ?? []) as unknown[];

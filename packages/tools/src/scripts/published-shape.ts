@@ -33,10 +33,11 @@ if (rendered !== source) throw new Error(name + ': rendered ' + JSON.stringify(r
 console.log('@sittir/' + name + ': createEngine, parse and render from the installed package');
 `;
 
-const TYPES_CHECK = `import type { SetterKey } from '@sittir/types';
-export const camel: SetterKey<'type_arguments'> = 'typeArguments';
-// @ts-expect-error a setter key is camel-cased
-export const snake: SetterKey<'type_arguments'> = 'type_arguments';
+const TYPES_CHECK = `import type { SlotKey } from '@sittir/types';
+interface Node { readonly _argument: readonly string[]; readonly __slotNames__?: { readonly _argument: 'arguments' } }
+export const plural: SlotKey<Node, 'argument'> = 'arguments';
+// @ts-expect-error a slot key is the model's slot name, not the storage name
+export const storage: SlotKey<Node, 'argument'> = 'argument';
 `;
 
 const TYPES_CHECK_CONFIG = {

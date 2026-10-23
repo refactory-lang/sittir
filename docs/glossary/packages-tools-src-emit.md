@@ -43,8 +43,7 @@ for the elements the runtime resolves one by one) and `hoistedKinds`. `nested` i
 choice for a nested compound: its builder call, or a config object.
 
 The per-slot tables (`slotKinds`, `slotRequired`, `slotMultiple`, `slotDefaults`, `slotStorage`) are keyed by a slot's
-config key, `snakeToCamel` of its name: the key a printed config names it with. A pluralized repeated slot's accessor
-(`attributeItems`) is not that key (`attributeItem` is), so keying by the accessor left every such slot unloosened.
+model name (`slotPropertyName`): the key a printed config names it with, and the name its accessor reads it by, a repeated slot's plural included (`attributeItems`).
 
 ### `packages/tools/src/emit/factory-source.ts::printValue`
 

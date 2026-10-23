@@ -140,8 +140,8 @@ export interface NodeJSONFacts {
 	readonly blank: number;
 	/** The kinds whose builder takes their one repeated slot's items as its rest arguments, after its options: lists, and compounds with a sole repeated slot. */
 	readonly spread: ReadonlySet<number>;
-	/** Each kind's registered slots, by kind id: the accessor that reads one, and its key in the builder's options argument. */
-	readonly options: Readonly<Record<number, readonly (readonly [accessor: string, option: string])[]>>;
+	/** Each kind's registered slots, by kind id: the slot names its builder takes in its options argument. */
+	readonly options: Readonly<Record<number, readonly string[]>>;
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {

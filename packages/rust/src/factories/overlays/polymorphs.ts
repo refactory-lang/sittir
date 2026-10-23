@@ -99,14 +99,14 @@ export const attribute = Object.freeze({
 	};
 };
 
-const enumVariantListElements$item = <
+const enumVariantListElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'enumVariant']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -116,7 +116,7 @@ function enumVariantListElements$seated<A extends T.EnumVariantListElements.Buil
 function enumVariantListElements$seated(
 	...args: T.EnumVariantListElements.BuildArgs
 ): ReturnType<typeof F.buildEnumVariantListElements> {
-	return enumVariantListElements$item(F.buildEnumVariantListElements, F.buildAttributedEnumVariant)(...args);
+	return enumVariantListElements$items(F.buildEnumVariantListElements, F.buildAttributedEnumVariant)(...args);
 }
 function enumVariantListElements$seatedCoerce<const A extends T.EnumVariantListElements.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
@@ -124,7 +124,7 @@ function enumVariantListElements$seatedCoerce<const A extends T.EnumVariantListE
 function enumVariantListElements$seatedCoerce(
 	...args: T.EnumVariantListElements.LooseArgs
 ): ReturnType<typeof C.coerceToEnumVariantListElements> {
-	return enumVariantListElements$item(C.coerceToEnumVariantListElements, C.coerceToAttributedEnumVariant)(...args);
+	return enumVariantListElements$items(C.coerceToEnumVariantListElements, C.coerceToAttributedEnumVariant)(...args);
 }
 export const enumVariantListElements = Object.freeze({
 	...B.enumVariantListElements,
@@ -134,11 +134,11 @@ export const enumVariantListElements = Object.freeze({
 	coerce: typeof enumVariantListElements$seatedCoerce;
 };
 
-const enumVariantList$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const enumVariantList$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'enumVariant']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -147,7 +147,7 @@ function enumVariantList$seated<A extends T.EnumVariantList.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildEnumVariantList>;
 function enumVariantList$seated(...args: T.EnumVariantList.BuildArgs): ReturnType<typeof F.buildEnumVariantList> {
-	return enumVariantList$item(F.buildEnumVariantList, F.buildAttributedEnumVariant)(...args);
+	return enumVariantList$items(F.buildEnumVariantList, F.buildAttributedEnumVariant)(...args);
 }
 function enumVariantList$seatedCoerce(): T.EmptyEnumVariantList;
 function enumVariantList$seatedCoerce<const A extends T.EnumVariantList.LooseArgs>(
@@ -156,7 +156,7 @@ function enumVariantList$seatedCoerce<const A extends T.EnumVariantList.LooseArg
 function enumVariantList$seatedCoerce(
 	...args: T.EnumVariantList.LooseArgs
 ): ReturnType<typeof C.coerceToEnumVariantList> {
-	return enumVariantList$item(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant)(...args);
+	return enumVariantList$items(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant)(...args);
 }
 export const enumVariantList = Object.freeze({
 	...B.enumVariantList,
@@ -166,14 +166,14 @@ export const enumVariantList = Object.freeze({
 	coerce: typeof enumVariantList$seatedCoerce;
 };
 
-const fieldDeclarationListElements$item = <
+const fieldDeclarationListElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'fieldDeclaration']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -183,7 +183,7 @@ function fieldDeclarationListElements$seated<A extends T.FieldDeclarationListEle
 function fieldDeclarationListElements$seated(
 	...args: T.FieldDeclarationListElements.BuildArgs
 ): ReturnType<typeof F.buildFieldDeclarationListElements> {
-	return fieldDeclarationListElements$item(
+	return fieldDeclarationListElements$items(
 		F.buildFieldDeclarationListElements,
 		F.buildAttributedFieldDeclaration
 	)(...args);
@@ -194,7 +194,7 @@ function fieldDeclarationListElements$seatedCoerce<const A extends T.FieldDeclar
 function fieldDeclarationListElements$seatedCoerce(
 	...args: T.FieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof C.coerceToFieldDeclarationListElements> {
-	return fieldDeclarationListElements$item(
+	return fieldDeclarationListElements$items(
 		C.coerceToFieldDeclarationListElements,
 		C.coerceToAttributedFieldDeclaration
 	)(...args);
@@ -207,11 +207,11 @@ export const fieldDeclarationListElements = Object.freeze({
 	coerce: typeof fieldDeclarationListElements$seatedCoerce;
 };
 
-const fieldDeclarationList$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const fieldDeclarationList$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'fieldDeclaration']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -222,7 +222,7 @@ function fieldDeclarationList$seated<A extends T.FieldDeclarationList.BuildArgs>
 function fieldDeclarationList$seated(
 	...args: T.FieldDeclarationList.BuildArgs
 ): ReturnType<typeof F.buildFieldDeclarationList> {
-	return fieldDeclarationList$item(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration)(...args);
+	return fieldDeclarationList$items(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration)(...args);
 }
 function fieldDeclarationList$seatedCoerce(): T.EmptyFieldDeclarationList;
 function fieldDeclarationList$seatedCoerce<const A extends T.FieldDeclarationList.LooseArgs>(
@@ -231,7 +231,7 @@ function fieldDeclarationList$seatedCoerce<const A extends T.FieldDeclarationLis
 function fieldDeclarationList$seatedCoerce(
 	...args: T.FieldDeclarationList.LooseArgs
 ): ReturnType<typeof C.coerceToFieldDeclarationList> {
-	return fieldDeclarationList$item(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration)(...args);
+	return fieldDeclarationList$items(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration)(...args);
 }
 export const fieldDeclarationList = Object.freeze({
 	...B.fieldDeclarationList,
@@ -241,14 +241,14 @@ export const fieldDeclarationList = Object.freeze({
 	coerce: typeof fieldDeclarationList$seatedCoerce;
 };
 
-const orderedFieldDeclarationListElements$item = <
+const orderedFieldDeclarationListElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'visibilityModifier', 'type']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -258,7 +258,7 @@ function orderedFieldDeclarationListElements$seated<A extends T.OrderedFieldDecl
 function orderedFieldDeclarationListElements$seated(
 	...args: T.OrderedFieldDeclarationListElements.BuildArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> {
-	return orderedFieldDeclarationListElements$item(
+	return orderedFieldDeclarationListElements$items(
 		F.buildOrderedFieldDeclarationListElements,
 		F.buildAttributedOrderedField
 	)(...args);
@@ -271,7 +271,7 @@ function orderedFieldDeclarationListElements$seatedCoerce<
 function orderedFieldDeclarationListElements$seatedCoerce(
 	...args: T.OrderedFieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> {
-	return orderedFieldDeclarationListElements$item(
+	return orderedFieldDeclarationListElements$items(
 		C.coerceToOrderedFieldDeclarationListElements,
 		C.coerceToAttributedOrderedField
 	)(...args);
@@ -284,14 +284,14 @@ export const orderedFieldDeclarationListElements = Object.freeze({
 	coerce: typeof orderedFieldDeclarationListElements$seatedCoerce;
 };
 
-const orderedFieldDeclarationList$item = <
+const orderedFieldDeclarationList$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'visibilityModifier', 'type']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -302,7 +302,7 @@ function orderedFieldDeclarationList$seated<A extends T.OrderedFieldDeclarationL
 function orderedFieldDeclarationList$seated(
 	...args: T.OrderedFieldDeclarationList.BuildArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList> {
-	return orderedFieldDeclarationList$item(F.buildOrderedFieldDeclarationList, F.buildAttributedOrderedField)(...args);
+	return orderedFieldDeclarationList$items(F.buildOrderedFieldDeclarationList, F.buildAttributedOrderedField)(...args);
 }
 function orderedFieldDeclarationList$seatedCoerce(): T.EmptyOrderedFieldDeclarationList;
 function orderedFieldDeclarationList$seatedCoerce<const A extends T.OrderedFieldDeclarationList.LooseArgs>(
@@ -311,7 +311,7 @@ function orderedFieldDeclarationList$seatedCoerce<const A extends T.OrderedField
 function orderedFieldDeclarationList$seatedCoerce(
 	...args: T.OrderedFieldDeclarationList.LooseArgs
 ): ReturnType<typeof C.coerceToOrderedFieldDeclarationList> {
-	return orderedFieldDeclarationList$item(
+	return orderedFieldDeclarationList$items(
 		C.coerceToOrderedFieldDeclarationList,
 		C.coerceToAttributedOrderedField
 	)(...args);
@@ -324,14 +324,14 @@ export const orderedFieldDeclarationList = Object.freeze({
 	coerce: typeof orderedFieldDeclarationList$seatedCoerce;
 };
 
-const typeParametersElements$item = <
+const typeParametersElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -341,7 +341,7 @@ function typeParametersElements$seated<A extends T.TypeParametersElements.BuildA
 function typeParametersElements$seated(
 	...args: T.TypeParametersElements.BuildArgs
 ): ReturnType<typeof F.buildTypeParametersElements> {
-	return typeParametersElements$item(F.buildTypeParametersElements, F.buildAttributedTypeParameter)(...args);
+	return typeParametersElements$items(F.buildTypeParametersElements, F.buildAttributedTypeParameter)(...args);
 }
 function typeParametersElements$seatedCoerce<const A extends T.TypeParametersElements.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
@@ -349,7 +349,7 @@ function typeParametersElements$seatedCoerce<const A extends T.TypeParametersEle
 function typeParametersElements$seatedCoerce(
 	...args: T.TypeParametersElements.LooseArgs
 ): ReturnType<typeof C.coerceToTypeParametersElements> {
-	return typeParametersElements$item(C.coerceToTypeParametersElements, C.coerceToAttributedTypeParameter)(...args);
+	return typeParametersElements$items(C.coerceToTypeParametersElements, C.coerceToAttributedTypeParameter)(...args);
 }
 export const typeParametersElements = Object.freeze({
 	...B.typeParametersElements,
@@ -359,11 +359,11 @@ export const typeParametersElements = Object.freeze({
 	coerce: typeof typeParametersElements$seatedCoerce;
 };
 
-const typeParameters$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const typeParameters$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'content']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -371,13 +371,13 @@ function typeParameters$seated<A extends T.TypeParameters.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTypeParameters>;
 function typeParameters$seated(...args: T.TypeParameters.BuildArgs): ReturnType<typeof F.buildTypeParameters> {
-	return typeParameters$item(F.buildTypeParameters, F.buildAttributedTypeParameter)(...args);
+	return typeParameters$items(F.buildTypeParameters, F.buildAttributedTypeParameter)(...args);
 }
 function typeParameters$seatedCoerce<const A extends T.TypeParameters.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.TypeParameters.LooseArgs>
 ): ReturnType<typeof C.coerceToTypeParameters>;
 function typeParameters$seatedCoerce(...args: T.TypeParameters.LooseArgs): ReturnType<typeof C.coerceToTypeParameters> {
-	return typeParameters$item(C.coerceToTypeParameters, C.coerceToAttributedTypeParameter)(...args);
+	return typeParameters$items(C.coerceToTypeParameters, C.coerceToAttributedTypeParameter)(...args);
 }
 export const typeParameters = Object.freeze({
 	...B.typeParameters,
@@ -502,7 +502,7 @@ export const functionType = Object.freeze({
 	};
 };
 
-const parametersElements$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const parametersElements$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -516,7 +516,7 @@ function parametersElements$seated<A extends T.ParametersElements.BuildArgs>(
 function parametersElements$seated(
 	...args: T.ParametersElements.BuildArgs
 ): ReturnType<typeof F.buildParametersElements> {
-	return parametersElements$item(F.buildParametersElements, F.buildAttributedParameter)(...args);
+	return parametersElements$items(F.buildParametersElements, F.buildAttributedParameter)(...args);
 }
 function parametersElements$seatedCoerce<const A extends T.ParametersElements.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
@@ -524,7 +524,7 @@ function parametersElements$seatedCoerce<const A extends T.ParametersElements.Lo
 function parametersElements$seatedCoerce(
 	...args: T.ParametersElements.LooseArgs
 ): ReturnType<typeof C.coerceToParametersElements> {
-	return parametersElements$item(C.coerceToParametersElements, C.coerceToAttributedParameter)(...args);
+	return parametersElements$items(C.coerceToParametersElements, C.coerceToAttributedParameter)(...args);
 }
 export const parametersElements = Object.freeze({
 	...B.parametersElements,
@@ -534,7 +534,7 @@ export const parametersElements = Object.freeze({
 	coerce: typeof parametersElements$seatedCoerce;
 };
 
-const parameters$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const parameters$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -547,14 +547,14 @@ function parameters$seated<A extends T.Parameters.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildParameters>;
 function parameters$seated(...args: T.Parameters.BuildArgs): ReturnType<typeof F.buildParameters> {
-	return parameters$item(F.buildParameters, F.buildAttributedParameter)(...args);
+	return parameters$items(F.buildParameters, F.buildAttributedParameter)(...args);
 }
 function parameters$seatedCoerce(): T.EmptyParameters;
 function parameters$seatedCoerce<const A extends T.Parameters.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.Parameters.LooseArgs>
 ): ReturnType<typeof C.coerceToParameters>;
 function parameters$seatedCoerce(...args: T.Parameters.LooseArgs): ReturnType<typeof C.coerceToParameters> {
-	return parameters$item(C.coerceToParameters, C.coerceToAttributedParameter)(...args);
+	return parameters$items(C.coerceToParameters, C.coerceToAttributedParameter)(...args);
 }
 export const parameters = Object.freeze({
 	...B.parameters,
@@ -961,7 +961,10 @@ export const visibilityModifier = Object.freeze({
 	};
 };
 
-const typeArgumentsElements$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const typeArgumentsElements$items = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
 	parent: PF,
 	child: CF
 ) => {
@@ -975,7 +978,7 @@ function typeArgumentsElements$seated<A extends T.TypeArgumentsElements.BuildArg
 function typeArgumentsElements$seated(
 	...args: T.TypeArgumentsElements.BuildArgs
 ): ReturnType<typeof F.buildTypeArgumentsElements> {
-	return typeArgumentsElements$item(F.buildTypeArgumentsElements, F.buildTypeArgument)(...args);
+	return typeArgumentsElements$items(F.buildTypeArgumentsElements, F.buildTypeArgument)(...args);
 }
 function typeArgumentsElements$seatedCoerce<const A extends T.TypeArgumentsElements.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
@@ -983,7 +986,7 @@ function typeArgumentsElements$seatedCoerce<const A extends T.TypeArgumentsEleme
 function typeArgumentsElements$seatedCoerce(
 	...args: T.TypeArgumentsElements.LooseArgs
 ): ReturnType<typeof C.coerceToTypeArgumentsElements> {
-	return typeArgumentsElements$item(C.coerceToTypeArgumentsElements, C.coerceToTypeArgument)(...args);
+	return typeArgumentsElements$items(C.coerceToTypeArgumentsElements, C.coerceToTypeArgument)(...args);
 }
 export const typeArgumentsElements = Object.freeze({
 	...B.typeArgumentsElements,
@@ -993,7 +996,7 @@ export const typeArgumentsElements = Object.freeze({
 	coerce: typeof typeArgumentsElements$seatedCoerce;
 };
 
-const typeArguments$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const typeArguments$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -1005,13 +1008,13 @@ function typeArguments$seated<A extends T.TypeArguments.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildTypeArguments>;
 function typeArguments$seated(...args: T.TypeArguments.BuildArgs): ReturnType<typeof F.buildTypeArguments> {
-	return typeArguments$item(F.buildTypeArguments, F.buildTypeArgument)(...args);
+	return typeArguments$items(F.buildTypeArguments, F.buildTypeArgument)(...args);
 }
 function typeArguments$seatedCoerce<const A extends T.TypeArguments.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.TypeArguments.LooseArgs>
 ): ReturnType<typeof C.coerceToTypeArguments>;
 function typeArguments$seatedCoerce(...args: T.TypeArguments.LooseArgs): ReturnType<typeof C.coerceToTypeArguments> {
-	return typeArguments$item(C.coerceToTypeArguments, C.coerceToTypeArgument)(...args);
+	return typeArguments$items(C.coerceToTypeArguments, C.coerceToTypeArgument)(...args);
 }
 export const typeArguments = Object.freeze({
 	...B.typeArguments,
@@ -1021,11 +1024,11 @@ export const typeArguments = Object.freeze({
 	coerce: typeof typeArguments$seatedCoerce;
 };
 
-const argumentsElements$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const argumentsElements$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'expression']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1033,7 +1036,7 @@ function argumentsElements$seated<A extends T.ArgumentsElements.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildArgumentsElements>;
 function argumentsElements$seated(...args: T.ArgumentsElements.BuildArgs): ReturnType<typeof F.buildArgumentsElements> {
-	return argumentsElements$item(F.buildArgumentsElements, F.buildAttributedArgument)(...args);
+	return argumentsElements$items(F.buildArgumentsElements, F.buildAttributedArgument)(...args);
 }
 function argumentsElements$seatedCoerce<const A extends T.ArgumentsElements.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
@@ -1041,7 +1044,7 @@ function argumentsElements$seatedCoerce<const A extends T.ArgumentsElements.Loos
 function argumentsElements$seatedCoerce(
 	...args: T.ArgumentsElements.LooseArgs
 ): ReturnType<typeof C.coerceToArgumentsElements> {
-	return argumentsElements$item(C.coerceToArgumentsElements, C.coerceToAttributedArgument)(...args);
+	return argumentsElements$items(C.coerceToArgumentsElements, C.coerceToAttributedArgument)(...args);
 }
 export const argumentsElements = Object.freeze({
 	...B.argumentsElements,
@@ -1051,11 +1054,11 @@ export const argumentsElements = Object.freeze({
 	coerce: typeof argumentsElements$seatedCoerce;
 };
 
-const arguments_$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const arguments_$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'expression']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1064,14 +1067,14 @@ function arguments_$seated<A extends T.Arguments.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildArguments>;
 function arguments_$seated(...args: T.Arguments.BuildArgs): ReturnType<typeof F.buildArguments> {
-	return arguments_$item(F.buildArguments, F.buildAttributedArgument)(...args);
+	return arguments_$items(F.buildArguments, F.buildAttributedArgument)(...args);
 }
 function arguments_$seatedCoerce(): T.EmptyArguments;
 function arguments_$seatedCoerce<const A extends T.Arguments.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.Arguments.LooseArgs>
 ): ReturnType<typeof C.coerceToArguments>;
 function arguments_$seatedCoerce(...args: T.Arguments.LooseArgs): ReturnType<typeof C.coerceToArguments> {
-	return arguments_$item(C.coerceToArguments, C.coerceToAttributedArgument)(...args);
+	return arguments_$items(C.coerceToArguments, C.coerceToAttributedArgument)(...args);
 }
 export const arguments_ = Object.freeze({
 	...B.arguments_,
