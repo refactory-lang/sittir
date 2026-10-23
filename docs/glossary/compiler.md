@@ -313,7 +313,7 @@ A kind whose rule does not fit the model type it was classified as is recorded a
 
 The node map carries the grammar's `fileTypes`, required on the raw grammar and on every later phase, so a pass that does not carry it is a type error; consumers read it from the model.
 
-### `packages/codegen/src/compiler/assemble.ts::AssembledNodeMap.droppedKinds`
+### `packages/codegen/src/compiler/assemble.ts::AssembledNodeMap::droppedKinds`
 
 The kinds assemble recorded and left out of the model. Hydrate skips references to them (`HydrateSlotRefsConfig.reportedAbsentNames`), since their absence is already a record.
 
@@ -1666,18 +1666,18 @@ when it did not, the collection may never have run.
 Refuses a compilation whose compiler sink holds a `fail` (`EmitHaltedError`). Grammar diagnostics are not its
 concern: `compileGrammar` gated them before returning.
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.patchSites`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::patchSites`
 
 Every `edits:` entry the grammar applied, by owner kind, path and
 placeholder form. Read by the patch-site labelling and the override census.
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.stages`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::stages`
 
 The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when no layer departs
 from its base (`dsl/layer.ts::departsFromBase`). The first layer that departs records the stage bases, and evaluate
 evaluates them (`evaluate.ts::evaluatedStages`).
 
-### `packages/codegen/src/compiler/types.ts::NodeMap.irSurface`
+### `packages/codegen/src/compiler/types.ts::NodeMap::irSurface`
 
 What the model decided about `ir` (`IrSurface`), stamped once by `stampIrSurface` after slot refs are hydrated and read by every emitter through `irSurfaceOf`.
 
@@ -1725,14 +1725,14 @@ assemble is a compiler invariant and propagates.
 One stage's rule names, external names, grammar diagnostics and rule catalog; the catalog is absent when the
 stage's kind prediction failed and the front half never ran.
 
-### `packages/codegen/src/compiler/compile.ts::Compilation.stages`
+### `packages/codegen/src/compiler/compile.ts::Compilation::stages`
 
 `diagnoseEvaluationStages` of `RawGrammar.stages`, run inline in `compileGrammar` whenever the grammar evaluated
 them. `compileGrammar` judges the grammar's hand-written rules against the enriched stage (`diagnoseRuleCauses`)
 and folds both stages into `diagnosticRecords`. A stage's records are `stages.raw.diagnostics` and
 `stages.enriched.diagnostics`; the final stage's are in `grammarDiagnostics`.
 
-### `packages/codegen/src/compiler/compile.ts::Compilation.diagnosticRecords`
+### `packages/codegen/src/compiler/compile.ts::Compilation::diagnosticRecords`
 
 `deriveDiagnosticRecords` over the stages and the compiled grammar; empty when the grammar evaluated no stages.
 The override census and the patch-site labels read it.
@@ -1741,13 +1741,13 @@ The override census and the patch-site labels read it.
 
 `compileGrammar`'s config: the package, the generated id tables to link against, the diagnostic codes allowed through the gate, and how the package is evaluated (`evaluation`, which `dsl/evaluate-package.ts::evaluatePackage` takes unchanged: `unbound` to compile layer 1, `checkGeneratedLayers` to gate a generated top layer's fixpoint check).
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::ruleCauses`
 
 The grammar's `rules:` entries that carry a `reauthored` or `vocabulary`
 declaration, by rule name. With `undeclaredRules` it names every hand-written
 rule, which is what the hand-written rule ratchet counts.
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.undeclaredRules`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::undeclaredRules`
 
 The grammar's `rules:` entries with a bare body, sorted.
 
@@ -4691,7 +4691,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
  */
 ```
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.evaluateSynthesized`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::evaluateSynthesized`
 
 The names of the rules whose bodies sittir's evaluate added itself: the render-only rules (`renderAs:`) and the visible externals' bodies, which the layer record carries (`evaluate.ts::withRecords`). It says who supplied the rule body, not whether the parser has a symbol for the kind: most of these have none, but a visible external does. `canonical-rules.ts::predictKinds` leaves them out of kind prediction. `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, where `emitters/shared.ts::classifyParserSymbolEmission` looks a kind up in the parser catalog first and emits it when it is there; the set only classifies a kind that is missing from the parser catalog as intentionally synthesized, so it is skipped with a warning instead of being an error. link's rename carries the set to the parser-facing names (`renameRules`).
 
@@ -4699,7 +4699,7 @@ It is the only authorship fact evaluate records. Who authored any other rule is 
 
 It is a different fact from link's `synthesizedKinds` (`link.ts`), the kinds link itself synthesizes later. The two sets answer "who synthesized this kind" for different phases and are not to be merged.
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.layerDiagnostics`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::layerDiagnostics`
 
 Blocking diagnostics the DSL recorded while it evaluated the grammar. `diagnostics/grammar-diagnostics.ts::evaluateRecords` hands them to the compile gate beside evaluate's own records.
 
@@ -6075,7 +6075,7 @@ carried through a side channel.
  */
 ```
 
-### `packages/codegen/src/compiler/ctx.ts::BaseCtx.rules`
+### `packages/codegen/src/compiler/ctx.ts::BaseCtx::rules`
 
 ```text
 /** Derived accessor over `grammar` — see class doc comment for why this is
@@ -6267,7 +6267,7 @@ wire has no protected names and prunes nothing.
  */
 ```
 
-### `packages/codegen/src/compiler/link.ts::LinkCtx.kindEntries`
+### `packages/codegen/src/compiler/link.ts::LinkCtx::kindEntries`
 
 ```text
 /** Same catalog `canonicalizeRuleLiterals` stamps ids from — carried here so
@@ -6706,12 +6706,6 @@ whose choice holds none of the children's own members (typescript's
 // Used by both nameVariant (above) and Assemble's nameNode for kinds
 // that are operators / punctuation. Single source of truth for "what
 // do we call this token in TypeScript identifier space".
-```
-
-### `packages/codegen/src/compiler/link.ts::TOKEN_NAMES.<unknown>`
-
-```text
-// Multi-char tokens
 ```
 
 ### `packages/codegen/src/compiler/link.ts::resolveRule`
@@ -7364,37 +7358,37 @@ identifiers and numbers are read through the C parser, as the name tables are.
 // compiler-side importers keep working.
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSGrammar`
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag::TSGrammar`
 
 ```text
 /** Rule appears in `grammar.js` (codegen rule catalog). */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSNodeTypes`
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag::TSNodeTypes`
 
 ```text
 /** Kind appears in `node-types.json`. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSInternals`
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag::TSInternals`
 
 ```text
 /** Kind has a parser symbol — IDs come from `parser.c` internal metadata. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindUseFlag.Readable`
+### `packages/codegen/src/compiler/types.ts::KindUseFlag::Readable`
 
 ```text
 /** Sittir can ingest/hydrate the kind from parsed runtime nodes. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindUseFlag.Buildable`
+### `packages/codegen/src/compiler/types.ts::KindUseFlag::Buildable`
 
 ```text
 /** Sittir can produce/build it from factories or `.from()`. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindUseFlag.Renderable`
+### `packages/codegen/src/compiler/types.ts::KindUseFlag::Renderable`
 
 ```text
 /** Sittir can render/dispatch it. */
@@ -7404,7 +7398,7 @@ identifiers and numbers are read through the C parser, as the name tables are.
 
 The grammar's `reserved` field as tree-sitter has it: each wordset name mapped to its members as rules, in declaration order. `evaluate` records it verbatim (a member written as a string is a STRING rule), and it equals `.sittir/src/grammar.json`'s `reserved`, which is `{}` for a grammar that declares none. It is carried unchanged through link, normalize and simplify to the node map.
 
-### `packages/codegen/src/compiler/types.ts::RawGrammar.factoryInline`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::factoryInline`
 
 ```text
 /**
@@ -7426,7 +7420,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
  */
 ```
 
-### `packages/codegen/src/compiler/types.ts::LinkedGrammar.terminalAliasWireIds`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::terminalAliasWireIds`
 
 ```text
 /**
@@ -7880,7 +7874,7 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
 
 The normalize phase. It restructures sequences, choices, optionals and repeats for simplification (fan-out, factoring, prefix and suffix extraction, wrapper collapsing, single-use hidden-rule inlining) without changing named content. `applyNormalizationPasses` fixes the order: drop blanks, collapse, fan out, factor, inline, collapse again. A sequence keeps every member it names: two equal adjacent members are two children (`seq("'", "'")` is `''`). Variant tagging is classification and lives in link.
 
-### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.inlineKinds`
+### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx::inlineKinds`
 
 ```text
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
@@ -8310,7 +8304,7 @@ Link runs only on a grammar whose catalog prediction built: a failed prediction 
 
 Stamps `grammarRoot` on the node of the root rule link recorded (`NodeMap.root`).
 
-### `packages/codegen/src/compiler/link.ts::LinkCtx.root`
+### `packages/codegen/src/compiler/link.ts::LinkCtx::root`
 
 The grammar's root rule (`rootRuleName`, the first rule), read once when the link context is built. Link prunes and reports reachability from it and records it on the linked grammar, from where normalize and assemble carry it to `NodeMap.root`; no later phase re-derives it.
 

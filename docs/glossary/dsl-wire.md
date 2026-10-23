@@ -199,7 +199,7 @@ The sets apply through `transform/transform.ts::withDirectVariants(base, ...patc
 A field placeholder's rule keeps `_kw_x` only when the layer mints one text for `x` (`keyword-names.ts::resolveKeywordNames`); otherwise `_kw_x` stays blank, as it does over content with no string. A `rule('w', body)` mints `w` itself, visible or hidden as the author named
 it.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.symbols`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::symbols`
 
 The base grammar's predicted symbol facts (`baseSymbolSourceOf`), computed on first use. A patch asks it what a referenced name is to the parser (`wireSymbols`) before any parser exists.
 
@@ -207,7 +207,7 @@ The base grammar's predicted symbol facts (`baseSymbolSourceOf`), computed on fi
 
 The predicted `SymbolSource` of the base grammar a wire runs over (`predictedSymbolSourceOf` over its rules, externals, supertypes and inline names), deferred behind a thunk so a wire that never asks does not pay for the prediction. A base with no rules has no symbols to predict, so it yields none.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.textTokens`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::textTokens`
 
 The text tokens enrich minted (`getEnrichTextTokens`), each with the rules that reference it. `wireImpl` gives each one a deferred rule function (`makeDeferredContentFn`), so a patch that rewrites its body lands before the minted rule is read.
 
@@ -927,13 +927,13 @@ The active wire context's predicted symbol facts (`WireContext.symbols`), or und
 
 Whether the active wire context's base grammar lists a rule as a supertype.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.ruleCauses`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::ruleCauses`
 
 The `rules:` entries' declarations by name (`reauthored` or `vocabulary`),
 read from each rule function with `ruleCauseOf`. Together with
 `undeclaredRules` it partitions `authoredRuleNames`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.undeclaredRules`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::undeclaredRules`
 
 The `rules:` entries whose function carries no declaration (bare bodies).
 
@@ -955,30 +955,30 @@ lifts own.
 
 A patch site's identity, `owner|path|form`: the key of `WireContext.patchSites` and `WireContext.liftClaims`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.patchSites`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::patchSites`
 
 Every `edits:` entry applied under this wire context, keyed by
 owner|path|form so an entry recorded by a rule function that runs more than
 once counts once.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.currentDollar`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::currentDollar`
 
 The `$` of the rule callback running under this context, set and restored with `currentRuleKind` (`wrapOneRuleFn`); undefined between callbacks.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.inlineWrites`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::inlineWrites`
 
 The rule nodes a verb wrote while a rule callback ran, each with the kind whose callback wrote it (`wireNoteInlineWrite`). Keys are the nodes themselves, so a site is the member a path resolves to, however the path is spelt. A copy of a node is not in the map unless it is noted itself.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.applyingEntries`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::applyingEntries`
 
 True while a kind's `edits:` sets apply (`wireApplyingEntries`). Verb writes in that span are entries, not inline writes.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::baseRuleBodies`
 
 The rule bodies of the base `wire()` received (the enriched grammar's
 rules), read-only. A lift with no patched body falls back to them.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftBodies`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::liftBodies`
 
 The patched lift bodies: every enrich group-lift body a patch rewrote, by lift
 name. Patches write here, never into the base, so the upstream grammar and
@@ -1053,7 +1053,7 @@ Applies `edit` to a copy's body, inside the copy.
 
 Runs `fn` while a path is inside the hidden rule `rule` (`WireContext.entering`), and inside a copy (`insideCopy`), for a walk that edits a body before the copy is made. A rule already being entered returns `undefined` without running `fn`, so a hidden rule that reaches itself is entered once; so does a call outside a wire context.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.entering`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::entering`
 
 The hidden rules a path walk is inside (`wireEnteringRule`).
 
@@ -1093,16 +1093,16 @@ A part of a source's body, reached by index and field segments only (`edit-entry
 
 Adds a lift to the claims of every active patch site; a no-op outside a wire context or while no patch applies.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftClaims`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::liftClaims`
 
 The lifts each patch site rewrote or renamed, by `patchSiteKey`. `drainPatchSitesMetadata` copies them onto
 `PatchSite.lifts`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.activePatchSites`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::activePatchSites`
 
 The keys of the patch sites whose application is running, set by `wireWithPatchSites`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.source`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::source`
 
 The upstream base before enrich: `wire()`'s third argument, which defaults to the base it was given, since a
 grammar wired outside a layer pass ran no enrich. Evaluate reads it as the raw stage.
@@ -1121,7 +1121,7 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 /** Hidden-rule name → captured content body. */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftNames`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::liftNames`
 
 The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. Wire's entry resolves every rule body through it (`resolveLiftNames`), wire's list and `word` callbacks read it through `liftRenames`, and the conflict-derivation records follow it back to the lift.
 
@@ -1397,7 +1397,7 @@ are what the shape-free half of the load-time check can promise.
 // hit this index.
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::conflicts`
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::conflicts`
 
 ```text
 /**
@@ -1407,20 +1407,6 @@ are what the shape-free half of the load-time check can promise.
 ```
 
 Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and the layer pass sets the final list from the derived resolutions (`dsl/layer.ts::layerConflicts`).
-
-### `packages/codegen/src/dsl/wire/wire.ts::rules`
-
-```text
-/**
-	 * Rule<'evaluate'> bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
-	 * `B['rules'][K]` directly — the input rule's exact shape, preserved not
-	 * flattened. (`B` here is the ALREADY-ENRICHED schema from `enrich()`'s typed
-	 * return, so `B['rules'][K]` is the post-enrich shape; no re-application of
-	 * `EnrichRule`.) Keyed over the schema's CONCRETE rule names (mapping over
-	 * `NewRules` would absorb to `string` and lose per-key precision). Loose
-	 * `=> unknown` return accepts sittir DSL outputs.
-	 */
-```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
@@ -1604,7 +1590,9 @@ The body patterns (`GroupsConfig`), with the same `$` typing as `rules`: each en
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.rules`
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::rules`
+
+The per-rule `Rule<'evaluate'>` bodies, built with clean `$` builders. `previous` and `original` are typed per rule as `B['rules'][K]`, the input rule's exact shape, preserved rather than flattened. `B` is the schema already enriched by `enrich()`'s typed return, so `B['rules'][K]` is the post-enrich shape and `EnrichRule` is not applied again. The keys range over the schema's concrete rule names: mapping over `NewRules` would widen to `string` and lose per-key precision. The return is loose (`unknown`) so it accepts sittir DSL outputs.
 
 #### body
 
@@ -1615,21 +1603,21 @@ The body patterns (`GroupsConfig`), with the same `$` typing as `rules`: each en
 // assignable here (bivariant), so known keys retain their precise shape.
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.extras`
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::extras`
 
 `WireConfig` replaces tree-sitter's one-parameter `extras` callback with
 `($, previous?)`: the runtime hands the base grammar's extras as `previous`, and
 `overriddenList` builds the result from it, so a grammar that spreads the base
 extras types cleanly.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.rules.previous`
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::rules::previous`
 
 `previous` reaches a `rules` callback typed `any`, not as the base rule: the
 index-signature arm for new rule names is intersected with the per-base-rule
 arm, and the callback's contextual signature collapses to the `any` one. A
 callback that walks `previous` annotates the parameters it uses.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.factoryInline`
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::factoryInline`
 
 ```text
 /**
@@ -1685,7 +1673,7 @@ A whole-grammar operation sees every body at once, so its result does not depend
 
 Refuses an `edits` key that names no rule when the layer evaluates: no rule of the base (enrich's mints included) or of the config's `rules:`, and no kind the layer minted before wire reached the key. Wire evaluates in key order and a mint exists once the callback that mints it has run, so a key naming a mint follows the key that mints it. A copy of such a key made before its mint exists reads no body (`sourceBodyOf`). The refusal is the blocking `edit-site-missing` diagnostic, naming the grammar and the key (`ownerKind`). Given the layer pass's handle (`WireContext.layer`), wire records it there (`recordRefusal`); given none, it throws the diagnostic's message.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.layer`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::layer`
 
 The layer pass's handle (`WireLayer`), where wire's refusals and the lead entries it queues go. Absent outside a layer pass, where a refusal throws and a lead entry has no phase to run in.
 
@@ -1717,7 +1705,7 @@ Queues a lead entry for the layer's whole-grammar phase, its list the kind whose
 
 Queues a `narrow` entry for the layer's whole-grammar phase, as a `verbs/narrow.ts::NarrowEntry` of the kind whose callback is running, with its path. Outside a layer pass the entry has no phase to run in, so it throws.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.editedMints`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::editedMints`
 
 The `edits` keys that name neither a rule of the base nor one of the config's `rules:` (`composeOrSynthesizePatchedParents`). Each must name a kind the layer mints; wire's entry refuses one it reaches with no minted body (`refuseEditSite`).
 
@@ -1753,15 +1741,15 @@ A list of names as symbols, through the runtime's `sym`. Entries that are alread
 
 One of the base's lists (`extras`, `supertypes` or `precedences`), from a grammar result or a bare grammar, read through `overriddenList`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.lists`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::lists`
 
 The lists the entry evaluated (`evaluateWireLists`); absent until the runtime calls it.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedBodies`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::evaluatedBodies`
 
 The body of every rule callback as the entry evaluated it, in key order, then each deposit no callback or base rule holds; absent until the runtime calls the entry.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::evaluatedExternals`
 
 The names the grammar's `externals` callback returned, set when the runtime calls wire's entry. Lift-name resolution, which the entry runs after the rule callbacks, refuses a renamed lift among them.
 
@@ -2147,7 +2135,7 @@ Every `liftNames` key must be a rule enrich minted, else it throws. A renamed li
 
 The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` hole takes rendered text so it parses as a whole file, the priority order between reachable supertype hosts, and the kinds whose own host applies only when a variant is adopted. It passes through wire, evaluate and generate untouched and is emitted as data; the validator and the delimiter check both read it.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bindingEffects`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::bindingEffects`
 
 The field and alias effects the layer's patch sets had, in the order they applied (`verbs/effects.ts::BindingEffect`). The layer pass resolves them per owner into its effect log (`dsl/layer.ts::resolvedEffects`).
 

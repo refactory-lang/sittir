@@ -364,7 +364,7 @@ underscore in the type name but not in the key (`_identifier` has type name
 `_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
 type-name renames resolve that as a naming event.
 
-### `packages/codegen/src/compiler/model/node-map.ts::kindEntry`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::kindEntry`
 
 ```text
 /**
@@ -555,7 +555,7 @@ Distinct from `hidden`, which means "has no factory".
 /** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isUnnamed`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::isUnnamed`
 
 ```text
 /**
@@ -569,19 +569,19 @@ Distinct from `hidden`, which means "has no factory".
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::arity`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::arity`
 
 ```text
 /** Multiplicity: 'many' when any value has array/nonEmptyArray multiplicity, 'one' otherwise. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::storageKey`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::storageKey`
 
 ```text
 /** Canonical `_<storageName>` storage key (single source of truth for the `_` prefix convention). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::with`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::with`
 
 ```text
 /** Return a new instance with the given fields overridden; naming recomputed. */
@@ -946,7 +946,7 @@ can't be unified.
 // See glossary — full rationale.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::constructor`
 
 ```text
 /**
@@ -1014,9 +1014,9 @@ can't be unified.
 // falls through to `AssembledNodeBase`'s own `nameNode`-derived default.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::parameterless`
 
-A compound with a factory whose every slot fills itself takes no arguments: python's `match_block_empty` holds only the `_newline` layout token, regex's `lazy` only the literal `?`. The getter is guarded against re-entrancy, so a reference cycle reads as `false`.
+A compound with a factory whose every slot fills itself takes no arguments: python's `match_block_empty` holds only the `_newline` layout token, regex's `lazy` only the literal `?`. The getter is guarded against re-entrancy, so a reference cycle reads as `false`. The result is not memoized: slot values are still `UnresolvedRef` before `hydrateSlotRefs` runs, so a cached `false` would outlive the hydration. The node map is attached by `assemble()` once every node exists; test fixtures leave it unset and resolve to `false`. Determined content is what makes a kind take arguments: with none, an all-optional kind is configurable, not parameterless. Before pruning, or in a test fixture, determined slots still sit in the record and are classified in place.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::soleRequiredValue`
 
@@ -1151,13 +1151,11 @@ flatten and simplify joins use.
 /** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::subtypes`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::subtypes`
 
-```text
-/** Resolved concrete kind names in this supertype union. */
-```
+The resolved subtype list: hidden names are expanded to their concrete kinds. This differs from `rule.subtypes`, which carries the raw names as the grammar declares them, so `subtypes` is not replaced with `rule.subtypes`. Each entry's `.node` starts as an `UnresolvedRef`, because a subtype's own node may not exist yet during the single forward-referencing pass in `assemble.ts`. `hydrateSlotRefs` hydrates it to the real node once the full node map exists, the same two-pass pattern branch and group slots use. `storageKindId` is read off each `SubtypeRef`; `assemble.ts` stamps it once, at discovery, and this constructor never re-derives it.
 
-### `packages/codegen/src/compiler/model/node-map.ts::subtypeParseNames`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::subtypeParseNames`
 
 ```text
 /** Storage→parse name pairs for aliased subtype arms — see
@@ -1177,7 +1175,7 @@ flatten and simplify joins use.
 
 The separator string of the list's repeat rule, if any: `undefined` for a nonterminal separator (`separatorRule` makes the same distinction) or one that is not a fixed literal. A list's `rule` is always its raw REPEAT or REPEAT1 rule, since that is what classifies it as a list. `render-module.ts`'s `collectMetaData` reads it as a list's separator when no slot value carries a stamped one. Other compounds have no node-wide separator.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.slots`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::slots`
 
 ```text
 /**
@@ -1189,7 +1187,7 @@ The separator string of the list's repeat rule, if any: `undefined` for a nonter
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.slots`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::slots`
 
 ```text
 /**
@@ -1311,7 +1309,7 @@ literals are lexeme fragments and take no kind.
 /** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampArmFieldNamesAsParseName`
+### `packages/codegen/src/compiler/model/node-map.ts::DeriveCtx::stampArmFieldNamesAsParseName`
 
 ```text
 /**
@@ -1504,7 +1502,7 @@ The regex source the kind's whole text must match: the pattern composed from the
 
 ---
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.keywordConstructibleText`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::keywordConstructibleText`
 
 ```text
 /**
@@ -1639,7 +1637,7 @@ reads it back out after `assemble()` runs), so its owner is
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageInfo.enumKindsById`
+### `packages/codegen/src/compiler/model/node-map.ts::FieldStorageInfo::enumKindsById`
 
 ```text
 /**
@@ -1651,14 +1649,14 @@ reads it back out after `assemble()` runs), so its owner is
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.node`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::node`
 
 ```text
 // Node-reference target. Present for true references; absent for inline
 // literals (which carry `value` instead). Mutually exclusive with `value`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.storageKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::storageKindId`
 
 ```text
 // Parser kind id of the storage/render kind (`node`'s name), stamped at
@@ -1669,7 +1667,7 @@ reads it back out after `assemble()` runs), so its owner is
 // serialization (node-model.json5) never carries ids.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::storage`
 
 ```text
 // The value's storage kind — `node`, `kindId`, or `literal` — stamped once
@@ -1742,14 +1740,14 @@ Each expanded member records the enum it came through as `enumKind`: a
 member arm reached through an enum reference takes that enum's token seams
 (`literalSeamsOf`), not the seams of the slot's owner.
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.value`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::value`
 
 ```text
 // Inline string literal text (e.g. `'const'`, `'pub'`, an enum member /
 // pattern-matched anonymous token). Mutually exclusive with `node`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.resolvedKind`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::resolvedKind`
 
 ```text
 // For a literal: the resolved CST kind name the literal text maps to (a
@@ -1758,7 +1756,7 @@ member arm reached through an enum reference takes that enum's token seams
 // render still emits from `value`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.resolvedKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::resolvedKindId`
 
 ```text
 // Parser kind id alongside `resolvedKind`, resolved through the LITERAL
@@ -1767,7 +1765,7 @@ member arm reached through an enum reference takes that enum's token seams
 // `storageKindId`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseKind`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::parseKind`
 
 ```text
 // Parse-as kind ref: the CST kind this value
@@ -1777,14 +1775,14 @@ member arm reached through an enum reference takes that enum's token seams
 // `parseNames` project this.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::parseKindId`
 
 ```text
 // Parser kind id of the wire `$type` (`parseKind`'s name). Same stamped-
 // fact semantics as `storageKindId`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.parseName`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::parseName`
 
 ```text
 // Field-label routing key (union-slot design §5): set when this value
@@ -1796,7 +1794,7 @@ member arm reached through an enum reference takes that enum's token seams
 // routing keys become `fieldLabels ∪ kinds`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.optionalElement`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::optionalElement`
 
 ```text
 // Separated-list positions may be individually blank (array elision,
@@ -1806,7 +1804,7 @@ member arm reached through an enum reference takes that enum's token seams
 // array/nonEmptyArray multiplicities.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::NodeRef.immediate`
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::immediate`
 
 ```text
 // Literal-only token-wrapper flags (see interface doc).
@@ -1843,13 +1841,13 @@ from the model instead of recovering them from the subtype's name.
  *  `undefined` entries. See `NodeRef.optionalElement`. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot.trailingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot::trailingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot.leadingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot::leadingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
@@ -1941,7 +1939,7 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
  *  `'envelope'`/`'branch'`/`'polymorph'` and its constructing class. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.typeName`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::typeName`
 
 ```text
 // typeName / factoryName are writable so assemble()'s post-pass
@@ -1949,7 +1947,7 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
 // a visible sibling — same pattern as `irKey`.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.irKey`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::irKey`
 
 ```text
 /**
@@ -1964,19 +1962,19 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.typeKey`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::typeKey`
 
 The kind's key in the engine's kind-type map (`TypeKeyOf`, `engine.types`), stamped by `resolveIrKeys` for every node. It is the key `irKey` resolved to before the plan narrowed `irKey` to exported builders, so a kind with a parser id keeps its type key whether or not `ir` builds it.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.builderPath`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::builderPath`
 
 The path from `ir` to the builder for this kind (`ir.lineComment.docOuter` is `['lineComment', 'docOuter']`), undefined when no builder exists. `stampIrSurface` stamps it once the plan is known (`resolveBuilderPaths`); consumers read it rather than resolving a path from names.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.builderPathAlternates`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::builderPathAlternates`
 
 Every other `ir` path that builds this kind, present only when there is one: each owner route composed through each of the owner's own paths, and every supertype group the kind is a member of. A kind two owners declare (python `parenthesized_import_list`, under `futureImportStatement` and `importFromStatement`) lists both, and through each of them the `simpleStatement` group path to that owner. Paths under `strict`, `coerce` and the `synonym` role map are not routes.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.rule`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::rule`
 
 ```text
 /**
@@ -1995,7 +1993,7 @@ Every other `ir` path that builds this kind, present only when there is one: eac
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.annotations`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::annotations`
 
 The declarations stamped on the node's rule (`hoisted`, `variant`,
 `variantOf`, `default`), read straight off the rule.
@@ -2011,19 +2009,19 @@ The grammar-wide facts every node constructor reads about its kind: the parser's
 
 The kind's `renamedFrom`, `splitFrom` and `variantOf`, read from the construction's `KindFacts.provenance` as own keys, so a kind named like an `Object.prototype` member is never mistaken for one.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.renamedFrom`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::renamedFrom`
 
 The base kind grammar bindings renamed into this kind, or `undefined`. It is read from `KindFacts.provenance` once, when the node is built, and is the node model's only record of the rename.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.splitFrom`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::splitFrom`
 
 The kind a bindings split cloned this kind from, or `undefined`. A split clone mints its own rule ids, so the split never reaches the rule catalog; the node carries it instead, read from `KindFacts.provenance` once when the node is built.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.variantOf`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::variantOf`
 
 The kind this kind is an owned variant of (`ownedVariants`), or `undefined`, read from `KindFacts.provenance` once when the node is built.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.seated`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::seated`
 
 Whether the node seats on its parent: `seatedOf` its rule's annotations and
 its own kind entry, computed once when the node is built. It is the only
@@ -2032,18 +2030,18 @@ overlays (seating), wrap and the node model, which serializes it for the
 tools. The surface exclusions read `ownSurface`, which follows it for every
 node but a direct supertype arm.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.ownSurface`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::ownSurface`
 
 Whether the node has entries of its own on the generated surface: a bundle entry, an `ir` key, an `is` guard, generated tests and a key from the `irKey` phases. A node that does not seat has one. A seated node has none, being built through its parent, unless it is a direct arm of a supertype, declared by the grammar or made by link of a hidden choice (`KindFacts.supertypeArms`): such an arm keeps its seat and its parent route and also gets its own entries, so the low-level surface reaches it two ways. Stamped once in the constructor; the surface readers read it, and the seating readers (overlays, node model, wrap) read `seated`.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::diagnosticRule`
 
 ```text
 // Diagnostics-only raw view — behavior must never key off it (the
 // protected-rule convention above stands for every live consumer).
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.userFacing`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::userFacing`
 
 ```text
 /**
@@ -2085,14 +2083,14 @@ Whether the node has entries of its own on the generated surface: a bundle entry
  *  which the slot's own shape decides. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::storage`
 
 ```text
 /** The kind's {@link KindStorage}. Defaults to `node`; the fixed-text leaf
  *  classes override it. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.factoryInline`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::factoryInline`
 
 ```text
 /**
@@ -2110,7 +2108,7 @@ Whether the node has entries of its own on the generated surface: a bundle entry
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::constructor`
 
 #### body
 
@@ -2120,7 +2118,7 @@ Whether the node has entries of its own on the generated surface: a bundle entry
 // Default: use the derived factoryName.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit.trailingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit::trailingDelimiter`
 
 ```text
 /**
@@ -2137,25 +2135,25 @@ Whether the node has entries of its own on the generated surface: a bundle entry
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit.leadingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit::leadingDelimiter`
 
 ```text
 /** See `trailingDelimiter`'s doc comment — same rationale, `leading` side. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.trailingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::trailingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.trailingDelimiter`'s doc comment. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.leadingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::leadingDelimiter`
 
 ```text
 /** See `AssembledNonterminalInit.leadingDelimiter`'s doc comment. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.sourceRuleIds`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::sourceRuleIds`
 
 ```text
 /**
@@ -2169,14 +2167,14 @@ Whether the node has entries of its own on the generated surface: a bundle entry
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.metadata`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::metadata`
 
 ```text
 /** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
 	 *  never read here to drive logic or emission. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.ruleMetadata`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::ruleMetadata`
 
 ```text
 /** Blind passthrough of the owning rule's opaque
@@ -2368,7 +2366,7 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.simplifiedRule`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::simplifiedRule`
 
 ```text
 // rule narrowed to SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule —
@@ -2391,7 +2389,7 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.renderRule`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::renderRule`
 
 ```text
 /**
@@ -2403,7 +2401,7 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.variantChildKinds`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::variantChildKinds`
 
 ```text
 /**
@@ -2418,7 +2416,7 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound._slots`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::_slots`
 
 ```text
 /**
@@ -2440,36 +2438,6 @@ Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as i
 	 *     keys retained, collisions don't naturally occur in the current
 	 *     grammars.
 	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.<unknown>`
-
-```text
-// Cycle guard for the parameterless getter. Breaks re-entrant calls
-// (cyclic slot graphs) conservatively, replicating LFP-from-false semantics.
-// No memoization — results must not be cached pre-hydration (before
-// hydrateSlotRefs runs, slot values are UnresolvedRef and would produce a
-// false-negative that would be incorrectly cached for the post-hydration call).
-```
-
-```text
-// Node map back-reference for pre-hydration UnresolvedRef resolution in the
-// parameterless getter. Attached by assemble() after all nodes are constructed
-// (via attachNodeMap). Not set in test fixtures — those resolve false.
-// Private to prevent serialization walks from descending into the whole map.
-```
-
-```text
-// hidden nodes have no factory
-```
-
-#### body
-
-```text
-// Determined content is the whole point: with none, an all-optional
-// kind is configurable, not parameterless. Pre-prune (or in a test
-// fixture) determined slots still sit in the record — classify them
-// in place.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledBranch`
@@ -2659,7 +2627,7 @@ the rule shape.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.immediate`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf::immediate`
 
 ```text
 /**
@@ -2671,7 +2639,7 @@ the rule shape.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.tokenized`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf::tokenized`
 
 ```text
 /** This kind's rule lexes as one token (a consumed `token(...)`
@@ -2689,7 +2657,7 @@ the rule shape.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.resolvedKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::resolvedKindId`
 
 ```text
 /** Catalog id of `resolvedKind` — stamped once here, at construction, from
@@ -2716,7 +2684,7 @@ the rule shape.
 // stamping) — the literal-text lookup genuinely still fires here.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.resolvedKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation::resolvedKindId`
 
 ```text
 /** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
@@ -2764,7 +2732,7 @@ for a named non-word literal kind so it keeps its factory and type.
  *  condition and the `_` check go. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.resolvedKindIds`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::resolvedKindIds`
 
 ```text
 /**
@@ -2774,7 +2742,7 @@ for a named non-word literal kind so it keeps its factory and type.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum.resolvedByText`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::resolvedByText`
 
 ```text
 /**
@@ -2893,24 +2861,7 @@ emission).
 
 The variant subtype stamped as the default, when this supertype is variant-bearing and names one. Whether a variant-bearing supertype is callable without naming an arm is exactly whether this is defined.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
-
-```text
-// #subtypes stores the RESOLVED subtype list (hidden names expanded to
-// their concrete kinds) — this differs from rule.subtypes which carries
-// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
-//
-// Each entry's `.node` starts as an `UnresolvedRef` — supertypes are
-// constructed in the same single forward-referencing pass as every other
-// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
-// — and is hydrated to the real node by `hydrateSlotRefs` once the full
-// node map exists, the same two-pass pattern branch/group slot values
-// already use. `storageKindId` is read directly off each `SubtypeRef` —
-// assemble.ts's resolution helpers stamp it once, at discovery; this
-// constructor never re-derives it.
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.transitiveParseKinds`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::transitiveParseKinds`
 
 ```text
 // Transitive parse-kind closure through nested supertypes — e.g. python's
@@ -2926,14 +2877,14 @@ The variant subtype stamped as the default, when this supertype is variant-beari
 // answer "is this parse kind reachable here", by name.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.optionDefaultArm`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::optionDefaultArm`
 
 ```text
 The arm an `options:` choice at the supertype's variant site names as default. A slot holding the supertype falls
 back to it when the slot has no default of its own.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.display`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::display`
 
 The node's display and why it has it (`DisplayStamp`), stamped at
 construction by `stampDisplay` from the catalog the node is built with.
@@ -2951,7 +2902,7 @@ display. A supertype with no row is stamped `supertype`.
 // Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorRule`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separatorRule`
 
 ```text
 /**
@@ -2967,7 +2918,7 @@ display. A supertype with no row is stamped `supertype`.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.separatorTokenArms`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separatorTokenArms`
 
 The separator's token arms (STRING or SYMBOL rules), flattened once from
 `separatorRule` by `separatorArmsOf`; empty when the list has no
@@ -3021,7 +2972,7 @@ floored as `separator-default-undeclared`. The factory's options type, its
 runtime throw, the loose coercer's rest parameter and the polymorph seat
 all read it.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.leadingDelimiter`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::leadingDelimiter`
 
 ```text
 /**
@@ -3312,7 +3263,7 @@ The single-char tokens `c` for which some direct follower begins with `cc`: writ
 // this side (nullable multiplicity already decided undefined above).
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.soleSlot`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::soleSlot`
 
 ```text
 /** The one slot of a one-slot compound (an envelope's body, a polymorph's
@@ -3525,7 +3476,7 @@ and `separator` sites are per-kind keys with no top-level label.
 
 The catalog kinds of a list's separator token arms (`AssembledList.separatorTokenArms`): a string arm's token kind, a symbol arm's display name. A token with no catalog kind is a build error naming the list.
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig.renderRules`
+### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig::renderRules`
 
 ```text
 // The spaced render rules the synthesized spacing sites are read from;
@@ -4237,11 +4188,11 @@ which `indent()` and `dedent()` stand for). Every whitespace kind is a
 literal. A visible external outside the supertype is not whitespace and is
 skipped. Flanks are injected only when both indentation kinds are declared.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.padding`
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite::padding`
 
 Set on a token seam (never a kind's own edge) whose default is `space` and whose origin is a kind row's `preference`: the face pads the content between two tokens, as rust's `{` after and `}` before around an initializer list. The template emitter reads it to fold such a seam into the presence gate of the optional slot beside it.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite::address`
 
 ```text
 // The option key of the site: the slot site key under its kind for
@@ -4617,11 +4568,11 @@ bakes in and the arm the renderer resolves have one source. Resolution runs
 before the emitters walk the model, and a slot with no stamp is one no option
 addressed.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.registeredOption`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::registeredOption`
 
 Whether an `options:` declaration registered this slot as a spelling site: a slot whose values are literal text with no kind ids, such as `0x` and `0X`. A registered slot is no longer part of the configuration a caller supplies; its value is an option that defaults to `optionDefaultArm`.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.configSlots`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::configSlots`
 
 The slots a caller supplies, which is every slot except the ones registered as an option. The sole-slot classification reads this list, so a node with one real slot and one registered spelling takes that value directly.
 
@@ -4629,37 +4580,37 @@ The slots a caller supplies, which is every slot except the ones registered as a
 
 Stamps the slot a declared spelling site names with its default arm and marks it registered. A spelling site has no kind ids, so it never joins the native option table.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultArm`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::optionDefaultArm`
 
 The arm an option declared for this slot, stamped once resolution has run.
 The factory consults it to pick among arms a bare input fits, so the value it
 bakes in is the one the options block chose rather than a second declaration
 beside it. Undefined on a slot no option addressed.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultKind`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::optionDefaultKind`
 
 The kind of the arm `optionDefaultArm` names, stamped beside it from the site's
 own arm list. Undefined for a spelling arm (text, no kind) and for the blank
 arm. The factory map resolves it to the default's kind id with the same
 `armIdOf` the native options table uses.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedDelimiterArm`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::resolvedDelimiterArm`
 
 The delimiter member an option declared for this list, stamped once
 resolution has run. Absent when nothing addressed it, which the factory reads
 as `Delimiter.None`.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledList.resolvedSeparatorArm`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::resolvedSeparatorArm`
 
 The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerSite`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::innerSite`
 
 The gap the kind's one inner side renders at: the last of its `innerGaps`. A node has one inner side, so a kind with several gaps (tree-sitter-go's `expression_switch_statement`, an initializer then a body) renders the side once, at the gap of its body.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerGaps`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::innerGaps`
 
 Where an inner comment can sit in an empty node of this kind: one `InnerGap` per optional or repeat slot, keyed by the slot name, with `precedingTokens` counting the kind's unconditional literal tokens before it in render order.
 
@@ -4680,7 +4631,7 @@ Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `
 
 One inner-comment position of a kind: the empty slot that keys it (or `interior`), the number of the kind's unconditional literal tokens before it, and `slots`, the storage keys of every slot that shares its span between the tokens that flank it. A built node of the kind is empty when nothing that owns sides is stored in those slots (`innerRegions`).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.lineEnds`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::lineEnds`
 
 How this kind's text can end, read from its own rule: `open` for a pattern that accepts a line of arbitrary text but not text across a line break, `closed` for a literal or any other pattern, `empty` for an arm that may end with nothing, and `{ symbol }` for an arm that ends in another kind. A sequence ends as its last member does, falling back through members that can be empty; a choice ends as each of its arms. `lineTerminated` resolves the symbols through the node map.
 
@@ -4710,7 +4661,7 @@ The kind whose rule `ruleLineEnds` classifies, which the unreadable-pattern erro
 
 The one walk over a rule's edge. A sequence reads its outermost member on that edge, falling inward through members that can be empty; a choice reads each of its arms; an optional or repeated rule adds `empty`. `lineEnds` classifies the `end` terminals and `leadingTerminals` returns the `start` ones, so both edges share one reading of the rule.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.leadingTerminals`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::leadingTerminals`
 
 How this kind's text can begin, read from its own rule by `ruleEdgeTerminals`. Symbols are left for the caller to resolve through the node map, as `lineTerminated` does for the end edge.
 
@@ -4828,7 +4779,7 @@ The kinds whose template renders an inner side (`innerSite`), cached per node ma
 
 One kind's empty form: the emitted type name (`Empty<TypeName>`).
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::lexedInterior`
 
 ```text
 True when the kind is read as one text and rendered from slots around literal runs: the top rule is a structured
@@ -4860,15 +4811,15 @@ only through it, found as a fixpoint over the grammar's normalized rules' refere
 doc-comment variants and their markers). Those own no seams; the trivia kind's
 own edges stay, since it still sits among its neighbours. Stamped once at the end of assemble as `AssembledNodeBase.triviaInterior`; render-rules and `innerGaps` read the stamp.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.grammarRoot`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::grammarRoot`
 
 Whether the kind is the grammar's root rule, stamped once in assemble (`stampGrammarRoot`) from the root link records. Only the root holds extras outside its own tokens.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.externalRole`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::externalRole`
 
 The structural-whitespace role (`indent`, `dedent` or `newline`) the grammar declares for this external kind with `role()`, stamped by assemble (`stampExternalRoles`). `lineBreakTerminated` reads the `newline` role. Undefined for every kind without a declaration.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.triviaInterior`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::triviaInterior`
 
 Whether the kind is a trivia kind or reachable only through one (`stampTriviaInterior`): lexically one unit, with no interior seam and no inner gap.
 
@@ -4897,7 +4848,7 @@ Both render-rule passes, with the `options:` block resolved between them.
 `stamp` runs on the spaced rules before each seam pass: seam fallbacks read
 the static-spacing stamp, and a declared separator arm can move it.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias::aliasTypeId`
 
 ```text
 Required: the parser's
@@ -4907,7 +4858,7 @@ grammar symbol, and the wrap layer's `_ALIAS_ENVELOPES` set (these ids)
 makes `_kindOf` dispatch the node to the envelope.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts.aliasTypeId`
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts::aliasTypeId`
 
 ```text
 The alias type id, set by assemble for a kind classified 'alias'. The
@@ -5280,7 +5231,7 @@ The literal delimiters a kind's text carries around its one text content: `open`
 
 One side of a full form: the `texts` it may be spelled with (one for a fixed delimiter, several for a spelling choice), and the `slot` (a field name) that records which was typed, when there is a choice.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.fullForm`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::fullForm`
 
 The kind's full form, stamped by `stampFullForms`; undefined when the kind's text is not literal delimiters around one text content.
 
@@ -5386,7 +5337,7 @@ member name with no lower-case letter is already screaming and passes through.
 
 Whether a slot needs no value from the caller. An optional slot, and a required slot holding fixed text, always qualify. A required slot qualifies when it holds exactly one value, that value is a reference to a kind that has a factory, and that kind can itself be built with no argument (`argumentOptional`). A required array slot, or a slot with several alternatives (a reference beside a literal), never qualifies: a node-reference-plus-terminal choice has no single default to build. Nothing recurses through a forwarded target on its own; the target's own `argumentOptional` is the only question asked of it. `argumentOptional` and `emptyDefaultOf` both read this one predicate, so "this slot is filled when omitted" has one derivation.
 
-### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.argumentOptional`
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::argumentOptional`
 
 A compound can be built with no argument when every config slot (the slots no registered option carries) is filled when omitted.
 

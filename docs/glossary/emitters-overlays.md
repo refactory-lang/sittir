@@ -9,13 +9,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::PolymorphWires.bundledKinds`
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::PolymorphWires::bundledKinds`
 
 ```text
 /** Kinds the bundle exports, so their overlay entry carries a `strict` of its own. */
 ```
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::PolymorphWireSet.forwarded`
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::PolymorphWireSet::forwarded`
 
 The elements seats a forwarding owner takes from its list (`forwardedSeatsOf`): the owner's builder forwards its arguments to the raw list builder, which takes built elements only, so an owner whose list seats a group must build a config element itself before forwarding. The owner's entry applies the same seat method the list's entry does, over the owner's own raw builder and coercer; a seat config is replaced by the built group and every other argument (a built list, an options bag, built elements, nothing) passes through to the owner unchanged, so the owner's dispatch is not restated here. Its parameters are the owner's argument rows (`T.<Owner>.BuildArgs`; on the loose side also the coercer's own direct parameter), which already union the list's.
 

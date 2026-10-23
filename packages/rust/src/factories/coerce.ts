@@ -20,6 +20,7 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	configFieldOr,
+	currentHandle,
 	isNodeOfKind,
 	isNodeValue,
 	listStorage
@@ -2620,6 +2621,7 @@ export function coerceToSourceFile<const I extends T.SourceFile.Loose>(
 export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> {
 	if (!_isLooseConfig<T.SourceFile.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildSourceFile>;
+	currentHandle()?.admit(TSKindId.SourceFile, [input]);
 	return F.buildSourceFile({
 		shebang: resolveSourceFile_shebang(input?.shebang),
 		statements: resolveSourceFile_statements(input?.statements)
@@ -2692,6 +2694,7 @@ export function coerceToMacroRule<const I extends T.MacroRule.Loose>(
 ): ReturnType<typeof F.buildMacroRule>;
 export function coerceToMacroRule(input: T.MacroRule.Loose): ReturnType<typeof F.buildMacroRule> {
 	if (!_isLooseConfig<T.MacroRule.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMacroRule>;
+	currentHandle()?.admit(TSKindId.MacroRule, [input]);
 	return F.buildMacroRule({
 		left: resolveMacroRule_left(input.left),
 		right: resolveMacroRule_right(input.right)
@@ -2755,6 +2758,7 @@ export function coerceToTokenBindingPattern(
 ): ReturnType<typeof F.buildTokenBindingPattern> {
 	if (!_isLooseConfig<T.TokenBindingPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTokenBindingPattern>;
+	currentHandle()?.admit(TSKindId.TokenBindingPattern, [input]);
 	return F.buildTokenBindingPattern({
 		name: resolveTokenBindingPattern_name(input.name),
 		type: resolveTokenBindingPattern_type(input.type)
@@ -2792,6 +2796,7 @@ export function coerceToTokenRepetitionPattern(
 ): ReturnType<typeof F.buildTokenRepetitionPattern> {
 	if (!_isLooseConfig<T.TokenRepetitionPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTokenRepetitionPattern>;
+	currentHandle()?.admit(TSKindId.TokenRepetitionPattern, [input]);
 	return F.buildTokenRepetitionPattern({
 		tokenPatterns: resolveTokenRepetitionPattern_tokenPatterns(input.tokenPatterns),
 		separator: resolveTokenRepetitionPattern_separator(input.separator),
@@ -2826,6 +2831,7 @@ export function coerceToTokenRepetition<const I extends T.TokenRepetition.Loose>
 export function coerceToTokenRepetition(input: T.TokenRepetition.Loose): ReturnType<typeof F.buildTokenRepetition> {
 	if (!_isLooseConfig<T.TokenRepetition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTokenRepetition>;
+	currentHandle()?.admit(TSKindId.TokenRepetition, [input]);
 	return F.buildTokenRepetition({
 		tokens: resolveTokenRepetition_tokens(input.tokens),
 		separator: resolveTokenRepetition_separator(input.separator),
@@ -3620,6 +3626,7 @@ export function coerceToAttribute<const I extends T.Attribute.Loose>(
 ): ReturnType<typeof F.buildAttribute>;
 export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F.buildAttribute> {
 	if (!_isLooseConfig<T.Attribute.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
+	currentHandle()?.admit(TSKindId.Attribute, [input]);
 	return F.buildAttribute({
 		path: resolveAttribute_path(input.path),
 		input: resolveAttribute_input(input.input)
@@ -3633,6 +3640,7 @@ export function coerceToDeclarationList<const A extends T.DeclarationList.LooseA
 export function coerceToDeclarationList(
 	...input: T.DeclarationList.LooseArgs
 ): ReturnType<typeof F.buildDeclarationList> {
+	currentHandle()?.admit(TSKindId.DeclarationList, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList)) {
 		const data = input[0];
 		const stored = (data as unknown as { _declarations?: unknown })._declarations;
@@ -3691,6 +3699,7 @@ export function coerceToUnionItem<const I extends T.UnionItem.Loose>(
 ): ReturnType<typeof F.buildUnionItem>;
 export function coerceToUnionItem(input: T.UnionItem.Loose): ReturnType<typeof F.buildUnionItem> {
 	if (!_isLooseConfig<T.UnionItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildUnionItem>;
+	currentHandle()?.admit(TSKindId.UnionItem, [input]);
 	return F.buildUnionItem({
 		visibilityModifier: resolveUnionItem_visibilityModifier(input.visibilityModifier),
 		name: resolveUnionItem_name(input.name),
@@ -3731,6 +3740,7 @@ export function coerceToEnumItem<const I extends T.EnumItem.Loose>(
 ): ReturnType<typeof F.buildEnumItem>;
 export function coerceToEnumItem(input: T.EnumItem.Loose): ReturnType<typeof F.buildEnumItem> {
 	if (!_isLooseConfig<T.EnumItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildEnumItem>;
+	currentHandle()?.admit(TSKindId.EnumItem, [input]);
 	return F.buildEnumItem({
 		visibilityModifier: resolveEnumItem_visibilityModifier(input.visibilityModifier),
 		name: resolveEnumItem_name(input.name),
@@ -3803,6 +3813,7 @@ export function coerceToEnumVariant<const I extends T.EnumVariant.Loose>(
 export function coerceToEnumVariant(input: T.EnumVariant.Loose): ReturnType<typeof F.buildEnumVariant> {
 	if (!_isLooseConfig<T.EnumVariant.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildEnumVariant>;
+	currentHandle()?.admit(TSKindId.EnumVariant, [input]);
 	return F.buildEnumVariant({
 		visibilityModifier: resolveEnumVariant_visibilityModifier(input.visibilityModifier),
 		name: resolveEnumVariant_name(input.name),
@@ -3869,6 +3880,7 @@ export function coerceToFieldDeclaration<const I extends T.FieldDeclaration.Loos
 export function coerceToFieldDeclaration(input: T.FieldDeclaration.Loose): ReturnType<typeof F.buildFieldDeclaration> {
 	if (!_isLooseConfig<T.FieldDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclaration>;
+	currentHandle()?.admit(TSKindId.FieldDeclaration, [input]);
 	return F.buildFieldDeclaration({
 		visibilityModifier: resolveFieldDeclaration_visibilityModifier(input.visibilityModifier),
 		name: resolveFieldDeclaration_name(input.name),
@@ -3942,6 +3954,7 @@ export function coerceToExternCrateDeclaration(
 ): ReturnType<typeof F.buildExternCrateDeclaration> {
 	if (!_isLooseConfig<T.ExternCrateDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExternCrateDeclaration>;
+	currentHandle()?.admit(TSKindId.ExternCrateDeclaration, [input]);
 	return F.buildExternCrateDeclaration({
 		visibilityModifier: resolveExternCrateDeclaration_visibilityModifier(input.visibilityModifier),
 		name: resolveExternCrateDeclaration_name(input.name),
@@ -3978,6 +3991,7 @@ export function coerceToConstItem<const I extends T.ConstItem.Loose>(
 ): ReturnType<typeof F.buildConstItem>;
 export function coerceToConstItem(input: T.ConstItem.Loose): ReturnType<typeof F.buildConstItem> {
 	if (!_isLooseConfig<T.ConstItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildConstItem>;
+	currentHandle()?.admit(TSKindId.ConstItem, [input]);
 	return F.buildConstItem({
 		visibilityModifier: resolveConstItem_visibilityModifier(input.visibilityModifier),
 		name: resolveConstItem_name(input.name),
@@ -4025,6 +4039,7 @@ export function coerceToStaticItem<const I extends T.StaticItem.Loose>(
 ): ReturnType<typeof F.buildStaticItem>;
 export function coerceToStaticItem(input: T.StaticItem.Loose): ReturnType<typeof F.buildStaticItem> {
 	if (!_isLooseConfig<T.StaticItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildStaticItem>;
+	currentHandle()?.admit(TSKindId.StaticItem, [input]);
 	return F.buildStaticItem({
 		visibilityModifier: resolveStaticItem_visibilityModifier(input.visibilityModifier),
 		byReference: resolveStaticItem_byReference(input.byReference),
@@ -4075,6 +4090,7 @@ export function coerceToTypeItem<const I extends T.TypeItem.Loose>(
 ): ReturnType<typeof F.buildTypeItem>;
 export function coerceToTypeItem(input: T.TypeItem.Loose): ReturnType<typeof F.buildTypeItem> {
 	if (!_isLooseConfig<T.TypeItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTypeItem>;
+	currentHandle()?.admit(TSKindId.TypeItem, [input]);
 	return F.buildTypeItem({
 		visibilityModifier: resolveTypeItem_visibilityModifier(input.visibilityModifier),
 		name: resolveTypeItem_name(input.name),
@@ -4138,6 +4154,7 @@ export function coerceToFunctionItem<const I extends T.FunctionItem.Loose>(
 export function coerceToFunctionItem(input: T.FunctionItem.Loose): ReturnType<typeof F.buildFunctionItem> {
 	if (!_isLooseConfig<T.FunctionItem.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionItem>;
+	currentHandle()?.admit(TSKindId.FunctionItem, [input]);
 	return F.buildFunctionItem({
 		visibilityModifier: resolveFunctionItem_visibilityModifier(input.visibilityModifier),
 		functionModifiers: resolveFunctionItem_functionModifiers(input.functionModifiers),
@@ -4203,6 +4220,7 @@ export function coerceToFunctionSignatureItem(
 ): ReturnType<typeof F.buildFunctionSignatureItem> {
 	if (!_isLooseConfig<T.FunctionSignatureItem.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionSignatureItem>;
+	currentHandle()?.admit(TSKindId.FunctionSignatureItem, [input]);
 	return F.buildFunctionSignatureItem({
 		visibilityModifier: resolveFunctionSignatureItem_visibilityModifier(input.visibilityModifier),
 		functionModifiers: resolveFunctionSignatureItem_functionModifiers(input.functionModifiers),
@@ -4220,6 +4238,7 @@ export function coerceToFunctionModifiers<const A extends T.FunctionModifiers.Lo
 export function coerceToFunctionModifiers(
 	...input: T.FunctionModifiers.LooseArgs
 ): ReturnType<typeof F.buildFunctionModifiers> {
+	currentHandle()?.admit(TSKindId.FunctionModifiers, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers)) {
 		const data = input[0];
 		const stored = (data as unknown as { _modifier?: unknown })._modifier;
@@ -4438,6 +4457,7 @@ export function coerceToWherePredicate<const I extends T.WherePredicate.Loose>(
 export function coerceToWherePredicate(input: T.WherePredicate.Loose): ReturnType<typeof F.buildWherePredicate> {
 	if (!_isLooseConfig<T.WherePredicate.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildWherePredicate>;
+	currentHandle()?.admit(TSKindId.WherePredicate, [input]);
 	return F.buildWherePredicate({
 		left: resolveWherePredicate_left(input.left),
 		bounds: resolveWherePredicate_bounds(input.bounds)
@@ -4483,6 +4503,7 @@ export function coerceToTraitItem<const I extends T.TraitItem.Loose>(
 ): ReturnType<typeof F.buildTraitItem>;
 export function coerceToTraitItem(input: T.TraitItem.Loose): ReturnType<typeof F.buildTraitItem> {
 	if (!_isLooseConfig<T.TraitItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTraitItem>;
+	currentHandle()?.admit(TSKindId.TraitItem, [input]);
 	return F.buildTraitItem({
 		visibilityModifier: resolveTraitItem_visibilityModifier(input.visibilityModifier),
 		unsafe: resolveTraitItem_unsafe(input.unsafe),
@@ -4524,6 +4545,7 @@ export function coerceToAssociatedType<const I extends T.AssociatedType.Loose>(
 export function coerceToAssociatedType(input: T.AssociatedType.Loose): ReturnType<typeof F.buildAssociatedType> {
 	if (!_isLooseConfig<T.AssociatedType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAssociatedType>;
+	currentHandle()?.admit(TSKindId.AssociatedType, [input]);
 	return F.buildAssociatedType({
 		name: resolveAssociatedType_name(input.name),
 		typeParameters: resolveAssociatedType_typeParameters(input.typeParameters),
@@ -4536,6 +4558,7 @@ export function coerceToTraitBounds<const A extends T.TraitBounds.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.TraitBounds.LooseArgs>
 ): ReturnType<typeof F.buildTraitBounds>;
 export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnType<typeof F.buildTraitBounds> {
+	currentHandle()?.admit(TSKindId.TraitBounds, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds)) {
 		const data = input[0];
 		const stored = (data as unknown as { _bounds?: unknown })._bounds;
@@ -4590,6 +4613,7 @@ export function coerceToHigherRankedTraitBound(
 ): ReturnType<typeof F.buildHigherRankedTraitBound> {
 	if (!_isLooseConfig<T.HigherRankedTraitBound.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildHigherRankedTraitBound>;
+	currentHandle()?.admit(TSKindId.HigherRankedTraitBound, [input]);
 	return F.buildHigherRankedTraitBound({
 		typeParameters: resolveHigherRankedTraitBound_typeParameters(input.typeParameters),
 		type: resolveHigherRankedTraitBound_type(input.type)
@@ -4687,6 +4711,7 @@ export function coerceToConstParameter<const I extends T.ConstParameter.Loose>(
 export function coerceToConstParameter(input: T.ConstParameter.Loose): ReturnType<typeof F.buildConstParameter> {
 	if (!_isLooseConfig<T.ConstParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildConstParameter>;
+	currentHandle()?.admit(TSKindId.ConstParameter, [input]);
 	return F.buildConstParameter({
 		name: resolveConstParameter_name(input.name),
 		type: resolveConstParameter_type(input.type),
@@ -4719,6 +4744,7 @@ export function coerceToTypeParameter<const I extends T.TypeParameter.Loose>(
 export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {
 	if (!_isLooseConfig<T.TypeParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeParameter>;
+	currentHandle()?.admit(TSKindId.TypeParameter, [input]);
 	return F.buildTypeParameter({
 		name: resolveTypeParameter_name(input.name),
 		bounds: resolveTypeParameter_bounds(input.bounds),
@@ -4746,6 +4772,7 @@ export function coerceToLifetimeParameter(
 ): ReturnType<typeof F.buildLifetimeParameter> {
 	if (!_isLooseConfig<T.LifetimeParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLifetimeParameter>;
+	currentHandle()?.admit(TSKindId.LifetimeParameter, [input]);
 	return F.buildLifetimeParameter({
 		name: resolveLifetimeParameter_name(input.name),
 		bounds: resolveLifetimeParameter_bounds(input.bounds)
@@ -4797,6 +4824,7 @@ export function coerceToLetDeclaration<const I extends T.LetDeclaration.Loose>(
 export function coerceToLetDeclaration(input: T.LetDeclaration.Loose): ReturnType<typeof F.buildLetDeclaration> {
 	if (!_isLooseConfig<T.LetDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLetDeclaration>;
+	currentHandle()?.admit(TSKindId.LetDeclaration, [input]);
 	return F.buildLetDeclaration({
 		mutable: resolveLetDeclaration_mutable(input.mutable),
 		name: resolveLetDeclaration_name(input.name),
@@ -4845,6 +4873,7 @@ export function coerceToUseDeclaration<const I extends T.UseDeclaration.Loose>(
 export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnType<typeof F.buildUseDeclaration> {
 	if (!_isLooseConfig<T.UseDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildUseDeclaration>;
+	currentHandle()?.admit(TSKindId.UseDeclaration, [input]);
 	return F.buildUseDeclaration({
 		visibilityModifier: resolveUseDeclaration_visibilityModifier(input.visibilityModifier),
 		argument: resolveUseDeclaration_argument(input.argument)
@@ -4877,6 +4906,7 @@ export function coerceToScopedUseList<const I extends T.ScopedUseList.Loose>(
 export function coerceToScopedUseList(input?: T.ScopedUseList.Loose): ReturnType<typeof F.buildScopedUseList> {
 	if (!_isLooseConfig<T.ScopedUseList.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildScopedUseList>;
+	currentHandle()?.admit(TSKindId.ScopedUseList, [input]);
 	return F.buildScopedUseList({
 		path: resolveScopedUseList_path(input?.path),
 		list: resolveScopedUseList_list(input?.list) ?? F.buildUseList()
@@ -4933,6 +4963,7 @@ export function coerceToUseAsClause<const I extends T.UseAsClause.Loose>(
 export function coerceToUseAsClause(input: T.UseAsClause.Loose): ReturnType<typeof F.buildUseAsClause> {
 	if (!_isLooseConfig<T.UseAsClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildUseAsClause>;
+	currentHandle()?.admit(TSKindId.UseAsClause, [input]);
 	return F.buildUseAsClause({
 		name: resolveUseAsClause_name(input.name),
 		alias: resolveUseAsClause_alias(input.alias)
@@ -5007,6 +5038,7 @@ export function coerceToSelfParameter<const I extends T.SelfParameter.Loose>(
 export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType<typeof F.buildSelfParameter> {
 	if (!_isLooseConfig<T.SelfParameter.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildSelfParameter>;
+	currentHandle()?.admit(TSKindId.SelfParameter, [input]);
 	return F.buildSelfParameter({
 		reference: resolveSelfParameter_reference(input?.reference),
 		lifetime: resolveSelfParameter_lifetime(input?.lifetime),
@@ -5037,6 +5069,7 @@ export function coerceToVariadicParameter(
 ): ReturnType<typeof F.buildVariadicParameter> {
 	if (!_isLooseConfig<T.VariadicParameter.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildVariadicParameter>;
+	currentHandle()?.admit(TSKindId.VariadicParameter, [input]);
 	return F.buildVariadicParameter({
 		mutable: resolveVariadicParameter_mutable(input?.mutable),
 		pattern: resolveVariadicParameter_pattern(input?.pattern)
@@ -5066,6 +5099,7 @@ export function coerceToParameter<const I extends T.Parameter.Loose>(
 ): ReturnType<typeof F.buildParameter>;
 export function coerceToParameter(input: T.Parameter.Loose): ReturnType<typeof F.buildParameter> {
 	if (!_isLooseConfig<T.Parameter.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildParameter>;
+	currentHandle()?.admit(TSKindId.Parameter, [input]);
 	return F.buildParameter({
 		mutable: resolveParameter_mutable(input.mutable),
 		name: resolveParameter_name(input.name),
@@ -5167,6 +5201,7 @@ export function coerceToQualifiedType<const I extends T.QualifiedType.Loose>(
 export function coerceToQualifiedType(input: T.QualifiedType.Loose): ReturnType<typeof F.buildQualifiedType> {
 	if (!_isLooseConfig<T.QualifiedType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildQualifiedType>;
+	currentHandle()?.admit(TSKindId.QualifiedType, [input]);
 	return F.buildQualifiedType({
 		type: resolveQualifiedType_type(input.type),
 		alias: resolveQualifiedType_alias(input.alias)
@@ -5209,6 +5244,7 @@ export function coerceToArrayType<const I extends T.ArrayType.Loose>(
 ): ReturnType<typeof F.buildArrayType>;
 export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
 	if (!_isLooseConfig<T.ArrayType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildArrayType>;
+	currentHandle()?.admit(TSKindId.ArrayType, [input]);
 	return F.buildArrayType({
 		element: resolveArrayType_element(input.element),
 		length: resolveArrayType_length(input.length)
@@ -5272,6 +5308,7 @@ export function coerceToFunctionType<const I extends T.FunctionType.Loose>(
 export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<typeof F.buildFunctionType> {
 	if (!_isLooseConfig<T.FunctionType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionType>;
+	currentHandle()?.admit(TSKindId.FunctionType, [input]);
 	return F.buildFunctionType({
 		forLifetimes: resolveFunctionType_forLifetimes(input.forLifetimes),
 		content: resolveFunctionType_content(input.content),
@@ -5323,6 +5360,7 @@ export function coerceToGenericFunction<const I extends T.GenericFunction.Loose>
 export function coerceToGenericFunction(input: T.GenericFunction.Loose): ReturnType<typeof F.buildGenericFunction> {
 	if (!_isLooseConfig<T.GenericFunction.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericFunction>;
+	currentHandle()?.admit(TSKindId.GenericFunction, [input]);
 	return F.buildGenericFunction({
 		function: resolveGenericFunction_function(input.function),
 		typeArguments: resolveGenericFunction_typeArguments(input.typeArguments)
@@ -5345,6 +5383,7 @@ export function coerceToGenericType<const I extends T.GenericType.Loose>(
 export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<typeof F.buildGenericType> {
 	if (!_isLooseConfig<T.GenericType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericType>;
+	currentHandle()?.admit(TSKindId.GenericType, [input]);
 	return F.buildGenericType({
 		type: resolveGenericType_type(input.type),
 		typeArguments: resolveGenericType_typeArguments(input.typeArguments)
@@ -5371,6 +5410,7 @@ export function coerceToGenericTypeWithTurbofish(
 ): ReturnType<typeof F.buildGenericTypeWithTurbofish> {
 	if (!_isLooseConfig<T.GenericTypeWithTurbofish.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericTypeWithTurbofish>;
+	currentHandle()?.admit(TSKindId.GenericTypeWithTurbofish, [input]);
 	return F.buildGenericTypeWithTurbofish({
 		type: resolveGenericTypeWithTurbofish_type(input.type),
 		typeArguments: resolveGenericTypeWithTurbofish_typeArguments(input.typeArguments)
@@ -5397,6 +5437,7 @@ export function coerceToBoundedType<const I extends T.BoundedType.Loose>(
 export function coerceToBoundedType(input: T.BoundedType.Loose): ReturnType<typeof F.buildBoundedType> {
 	if (!_isLooseConfig<T.BoundedType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildBoundedType>;
+	currentHandle()?.admit(TSKindId.BoundedType, [input]);
 	return F.buildBoundedType({
 		left: resolveBoundedType_left(input.left),
 		right: resolveBoundedType_right(input.right)
@@ -5480,6 +5521,7 @@ export function coerceToTypeBinding<const I extends T.TypeBinding.Loose>(
 export function coerceToTypeBinding(input: T.TypeBinding.Loose): ReturnType<typeof F.buildTypeBinding> {
 	if (!_isLooseConfig<T.TypeBinding.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeBinding>;
+	currentHandle()?.admit(TSKindId.TypeBinding, [input]);
 	return F.buildTypeBinding({
 		name: resolveTypeBinding_name(input.name),
 		typeArguments: resolveTypeBinding_typeArguments(input.typeArguments),
@@ -5512,6 +5554,7 @@ export function coerceToReferenceType<const I extends T.ReferenceType.Loose>(
 export function coerceToReferenceType(input: T.ReferenceType.Loose): ReturnType<typeof F.buildReferenceType> {
 	if (!_isLooseConfig<T.ReferenceType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReferenceType>;
+	currentHandle()?.admit(TSKindId.ReferenceType, [input]);
 	return F.buildReferenceType({
 		lifetime: resolveReferenceType_lifetime(input.lifetime),
 		exclusive: resolveReferenceType_exclusive(input.exclusive),
@@ -5547,6 +5590,7 @@ export function coerceToAbstractType<const I extends T.AbstractType.Loose>(
 export function coerceToAbstractType(input: T.AbstractType.Loose): ReturnType<typeof F.buildAbstractType> {
 	if (!_isLooseConfig<T.AbstractType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAbstractType>;
+	currentHandle()?.admit(TSKindId.AbstractType, [input]);
 	return F.buildAbstractType({
 		typeParameters: resolveAbstractType_typeParameters(input.typeParameters),
 		trait: resolveAbstractType_trait(input.trait)
@@ -5602,6 +5646,7 @@ export function coerceToMacroInvocation<const I extends T.MacroInvocation.Loose>
 export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnType<typeof F.buildMacroInvocation> {
 	if (!_isLooseConfig<T.MacroInvocation.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroInvocation>;
+	currentHandle()?.admit(TSKindId.MacroInvocation, [input]);
 	return F.buildMacroInvocation({
 		function: resolveMacroInvocation_function(input.function),
 		arguments: resolveMacroInvocation_arguments(input.arguments)
@@ -5650,6 +5695,7 @@ export function coerceToScopedIdentifier<const I extends T.ScopedIdentifier.Loos
 export function coerceToScopedIdentifier(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.buildScopedIdentifier> {
 	if (!_isLooseConfig<T.ScopedIdentifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildScopedIdentifier>;
+	currentHandle()?.admit(TSKindId.ScopedIdentifier, [input]);
 	return F.buildScopedIdentifier({
 		path: resolveScopedIdentifier_path(input.path),
 		name: resolveScopedIdentifier_name(input.name)
@@ -5690,6 +5736,7 @@ export function coerceToScopedTypeIdentifierInExpressionPosition(
 ): ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition> {
 	if (!_isLooseConfig<T.ScopedTypeIdentifierInExpressionPosition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
+	currentHandle()?.admit(TSKindId.ScopedTypeIdentifierInExpressionPosition, [input]);
 	return F.buildScopedTypeIdentifierInExpressionPosition({
 		path: resolveScopedTypeIdentifierInExpressionPosition_path(input.path),
 		name: resolveScopedTypeIdentifierInExpressionPosition_name(input.name)
@@ -5736,6 +5783,7 @@ export function coerceToScopedTypeIdentifier(
 ): ReturnType<typeof F.buildScopedTypeIdentifier> {
 	if (!_isLooseConfig<T.ScopedTypeIdentifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildScopedTypeIdentifier>;
+	currentHandle()?.admit(TSKindId.ScopedTypeIdentifier, [input]);
 	return F.buildScopedTypeIdentifier({
 		path: resolveScopedTypeIdentifier_path(input.path),
 		name: resolveScopedTypeIdentifier_name(input.name)
@@ -5766,6 +5814,7 @@ export function coerceToUnaryExpression<const I extends T.UnaryExpression.Loose>
 export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
 	if (!_isLooseConfig<T.UnaryExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildUnaryExpression>;
+	currentHandle()?.admit(TSKindId.UnaryExpression, [input]);
 	return F.buildUnaryExpression({
 		operator: resolveUnaryExpression_operator(input.operator),
 		argument: resolveUnaryExpression_argument(input.argument)
@@ -5875,6 +5924,7 @@ export function coerceToBinaryExpression<const I extends T.BinaryExpression.Loos
 export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
 	if (!_isLooseConfig<T.BinaryExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildBinaryExpression>;
+	currentHandle()?.admit(TSKindId.BinaryExpression, [input]);
 	return F.buildBinaryExpression({
 		left: resolveBinaryExpression_left(input.left),
 		operator: resolveBinaryExpression_operator(input.operator),
@@ -5908,6 +5958,7 @@ export function coerceToAssignmentExpression(
 ): ReturnType<typeof F.buildAssignmentExpression> {
 	if (!_isLooseConfig<T.AssignmentExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAssignmentExpression>;
+	currentHandle()?.admit(TSKindId.AssignmentExpression, [input]);
 	return F.buildAssignmentExpression({
 		left: resolveAssignmentExpression_left(input.left),
 		right: resolveAssignmentExpression_right(input.right)
@@ -5962,6 +6013,7 @@ export function coerceToCompoundAssignmentExpr(
 ): ReturnType<typeof F.buildCompoundAssignmentExpr> {
 	if (!_isLooseConfig<T.CompoundAssignmentExpr.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCompoundAssignmentExpr>;
+	currentHandle()?.admit(TSKindId.CompoundAssignmentExpr, [input]);
 	return F.buildCompoundAssignmentExpr({
 		left: resolveCompoundAssignmentExpr_left(input.left),
 		operator: resolveCompoundAssignmentExpr_operator(input.operator),
@@ -5995,6 +6047,7 @@ export function coerceToTypeCastExpression(
 ): ReturnType<typeof F.buildTypeCastExpression> {
 	if (!_isLooseConfig<T.TypeCastExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeCastExpression>;
+	currentHandle()?.admit(TSKindId.TypeCastExpression, [input]);
 	return F.buildTypeCastExpression({
 		expression: resolveTypeCastExpression_expression(input.expression),
 		type: resolveTypeCastExpression_type(input.type)
@@ -6126,6 +6179,7 @@ export function coerceToCallExpression<const I extends T.CallExpression.Loose>(
 export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnType<typeof F.buildCallExpression> {
 	if (!_isLooseConfig<T.CallExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCallExpression>;
+	currentHandle()?.admit(TSKindId.CallExpression, [input]);
 	return F.buildCallExpression({
 		function: resolveCallExpression_function(input.function),
 		arguments: resolveCallExpression_arguments(input.arguments) ?? F.buildArguments()
@@ -6209,6 +6263,7 @@ export function coerceToTupleExpression<const I extends T.TupleExpression.Loose>
 export function coerceToTupleExpression(input: T.TupleExpression.Loose): ReturnType<typeof F.buildTupleExpression> {
 	if (!_isLooseConfig<T.TupleExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTupleExpression>;
+	currentHandle()?.admit(TSKindId.TupleExpression, [input]);
 	return F.buildTupleExpression({
 		attributes: resolveTupleExpression_attributes(input.attributes),
 		elements: resolveTupleExpression_elements(input.elements)
@@ -6241,6 +6296,7 @@ export function coerceToStructExpression<const I extends T.StructExpression.Loos
 export function coerceToStructExpression(input: T.StructExpression.Loose): ReturnType<typeof F.buildStructExpression> {
 	if (!_isLooseConfig<T.StructExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStructExpression>;
+	currentHandle()?.admit(TSKindId.StructExpression, [input]);
 	return F.buildStructExpression({
 		name: resolveStructExpression_name(input.name),
 		body: resolveStructExpression_body(input.body) ?? F.buildFieldInitializerList()
@@ -6298,6 +6354,7 @@ export function coerceToShorthandFieldInitializer(
 ): ReturnType<typeof F.buildShorthandFieldInitializer> {
 	if (!_isLooseConfig<T.ShorthandFieldInitializer.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildShorthandFieldInitializer>;
+	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [input]);
 	return F.buildShorthandFieldInitializer({
 		attributes: resolveShorthandFieldInitializer_attributes(input.attributes),
 		field: resolveShorthandFieldInitializer_field(input.field)
@@ -6331,6 +6388,7 @@ export function coerceToFieldInitializer<const I extends T.FieldInitializer.Loos
 export function coerceToFieldInitializer(input: T.FieldInitializer.Loose): ReturnType<typeof F.buildFieldInitializer> {
 	if (!_isLooseConfig<T.FieldInitializer.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldInitializer>;
+	currentHandle()?.admit(TSKindId.FieldInitializer, [input]);
 	return F.buildFieldInitializer({
 		attributes: resolveFieldInitializer_attributes(input.attributes),
 		field: resolveFieldInitializer_field(input.field),
@@ -6399,6 +6457,7 @@ export function coerceToIfExpression<const I extends T.IfExpression.Loose>(
 export function coerceToIfExpression(input: T.IfExpression.Loose): ReturnType<typeof F.buildIfExpression> {
 	if (!_isLooseConfig<T.IfExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildIfExpression>;
+	currentHandle()?.admit(TSKindId.IfExpression, [input]);
 	return F.buildIfExpression({
 		condition: resolveIfExpression_condition(input.condition),
 		consequence: resolveIfExpression_consequence(input.consequence) ?? F.buildBlock(),
@@ -6428,6 +6487,7 @@ export function coerceToLetCondition<const I extends T.LetCondition.Loose>(
 export function coerceToLetCondition(input: T.LetCondition.Loose): ReturnType<typeof F.buildLetCondition> {
 	if (!_isLooseConfig<T.LetCondition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLetCondition>;
+	currentHandle()?.admit(TSKindId.LetCondition, [input]);
 	return F.buildLetCondition({
 		pattern: resolveLetCondition_pattern(input.pattern),
 		value: resolveLetCondition_value(input.value)
@@ -6453,6 +6513,7 @@ export function coerceToLetChain<const I extends T.LetChain.Loose>(
 ): ReturnType<typeof F.buildLetChain>;
 export function coerceToLetChain(input: T.LetChain.Loose): ReturnType<typeof F.buildLetChain> {
 	if (!_isLooseConfig<T.LetChain.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildLetChain>;
+	currentHandle()?.admit(TSKindId.LetChain, [input]);
 	return F.buildLetChain({
 		left: resolveLetChain_left(input.left),
 		rights: resolveLetChain_rights(input.rights)
@@ -6498,6 +6559,7 @@ export function coerceToMatchExpression<const I extends T.MatchExpression.Loose>
 export function coerceToMatchExpression(input: T.MatchExpression.Loose): ReturnType<typeof F.buildMatchExpression> {
 	if (!_isLooseConfig<T.MatchExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMatchExpression>;
+	currentHandle()?.admit(TSKindId.MatchExpression, [input]);
 	return F.buildMatchExpression({
 		subject: resolveMatchExpression_subject(input.subject),
 		body: resolveMatchExpression_body(input.body) ?? F.buildMatchBlock()
@@ -6556,6 +6618,7 @@ export function coerceToLastMatchArm(
 ): ReturnType<typeof F.buildLastMatchArm> {
 	if (!_isLooseConfig<T.LastMatchArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLastMatchArm>;
+	currentHandle()?.admit(TSKindId.LastMatchArm, [input]);
 	return F.buildLastMatchArm(
 		{
 			attributes: resolveLastMatchArm_attributes(input.attributes),
@@ -6590,6 +6653,7 @@ export function coerceToMatchPattern<const I extends T.MatchPattern.Loose>(
 export function coerceToMatchPattern(input: T.MatchPattern.Loose): ReturnType<typeof F.buildMatchPattern> {
 	if (!_isLooseConfig<T.MatchPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMatchPattern>;
+	currentHandle()?.admit(TSKindId.MatchPattern, [input]);
 	return F.buildMatchPattern({
 		pattern: resolveMatchPattern_pattern(input.pattern),
 		condition: resolveMatchPattern_condition(input.condition)
@@ -6623,6 +6687,7 @@ export function coerceToWhileExpression<const I extends T.WhileExpression.Loose>
 export function coerceToWhileExpression(input: T.WhileExpression.Loose): ReturnType<typeof F.buildWhileExpression> {
 	if (!_isLooseConfig<T.WhileExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildWhileExpression>;
+	currentHandle()?.admit(TSKindId.WhileExpression, [input]);
 	return F.buildWhileExpression({
 		label: resolveWhileExpression_label(input.label),
 		condition: resolveWhileExpression_condition(input.condition),
@@ -6648,6 +6713,7 @@ export function coerceToLoopExpression<const I extends T.LoopExpression.Loose>(
 export function coerceToLoopExpression(input?: T.LoopExpression.Loose): ReturnType<typeof F.buildLoopExpression> {
 	if (!_isLooseConfig<T.LoopExpression.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildLoopExpression>;
+	currentHandle()?.admit(TSKindId.LoopExpression, [input]);
 	return F.buildLoopExpression({
 		label: resolveLoopExpression_label(input?.label),
 		body: resolveLoopExpression_body(input?.body) ?? F.buildBlock()
@@ -6686,6 +6752,7 @@ export function coerceToForExpression<const I extends T.ForExpression.Loose>(
 export function coerceToForExpression(input: T.ForExpression.Loose): ReturnType<typeof F.buildForExpression> {
 	if (!_isLooseConfig<T.ForExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildForExpression>;
+	currentHandle()?.admit(TSKindId.ForExpression, [input]);
 	return F.buildForExpression({
 		label: resolveForExpression_label(input.label),
 		left: resolveForExpression_left(input.left),
@@ -6721,6 +6788,7 @@ export function coerceToClosureParameters<const A extends T.ClosureParameters.Lo
 export function coerceToClosureParameters(
 	...input: T.ClosureParameters.LooseArgs
 ): ReturnType<typeof F.buildClosureParameters> {
+	currentHandle()?.admit(TSKindId.ClosureParameters, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters)) {
 		const data = input[0];
 		const stored = (data as unknown as { _parameters?: unknown })._parameters;
@@ -6786,6 +6854,7 @@ export function coerceToBreakExpression<const I extends T.BreakExpression.Loose>
 export function coerceToBreakExpression(input?: T.BreakExpression.Loose): ReturnType<typeof F.buildBreakExpression> {
 	if (!_isLooseConfig<T.BreakExpression.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildBreakExpression>;
+	currentHandle()?.admit(TSKindId.BreakExpression, [input]);
 	return F.buildBreakExpression({
 		label: resolveBreakExpression_label(input?.label),
 		expression: resolveBreakExpression_expression(input?.expression)
@@ -6840,6 +6909,7 @@ export function coerceToIndexExpression<const I extends T.IndexExpression.Loose>
 export function coerceToIndexExpression(input: T.IndexExpression.Loose): ReturnType<typeof F.buildIndexExpression> {
 	if (!_isLooseConfig<T.IndexExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildIndexExpression>;
+	currentHandle()?.admit(TSKindId.IndexExpression, [input]);
 	return F.buildIndexExpression({
 		object: resolveIndexExpression_object(input.object),
 		index: resolveIndexExpression_index(input.index)
@@ -6897,6 +6967,7 @@ export function coerceToFieldExpression<const I extends T.FieldExpression.Loose>
 export function coerceToFieldExpression(input: T.FieldExpression.Loose): ReturnType<typeof F.buildFieldExpression> {
 	if (!_isLooseConfig<T.FieldExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldExpression>;
+	currentHandle()?.admit(TSKindId.FieldExpression, [input]);
 	return F.buildFieldExpression({
 		object: resolveFieldExpression_object(input.object),
 		property: resolveFieldExpression_property(input.property)
@@ -6939,6 +7010,7 @@ export function coerceToAsyncBlock<const I extends T.AsyncBlock.Loose>(
 export function coerceToAsyncBlock(input?: T.AsyncBlock.Loose): ReturnType<typeof F.buildAsyncBlock> {
 	if (!_isLooseConfig<T.AsyncBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildAsyncBlock>;
+	currentHandle()?.admit(TSKindId.AsyncBlock, [input]);
 	return F.buildAsyncBlock({
 		move: resolveAsyncBlock_move(input?.move),
 		body: resolveAsyncBlock_body(input?.body) ?? F.buildBlock()
@@ -6959,6 +7031,7 @@ export function coerceToGenBlock<const I extends T.GenBlock.Loose>(
 export function coerceToGenBlock(input?: T.GenBlock.Loose): ReturnType<typeof F.buildGenBlock> {
 	if (!_isLooseConfig<T.GenBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildGenBlock>;
+	currentHandle()?.admit(TSKindId.GenBlock, [input]);
 	return F.buildGenBlock({
 		move: resolveGenBlock_move(input?.move),
 		body: resolveGenBlock_body(input?.body) ?? F.buildBlock()
@@ -7010,6 +7083,7 @@ export function coerceToBlock<const I extends T.Block.Loose>(
 export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildBlock> {
 	if (!_isLooseConfig<T.Block.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildBlock>;
+	currentHandle()?.admit(TSKindId.Block, [input]);
 	return F.buildBlock({
 		label: resolveBlock_label(input?.label),
 		statements: resolveBlock_statements(input?.statements),
@@ -7035,6 +7109,7 @@ export function coerceToGenericPattern<const I extends T.GenericPattern.Loose>(
 export function coerceToGenericPattern(input: T.GenericPattern.Loose): ReturnType<typeof F.buildGenericPattern> {
 	if (!_isLooseConfig<T.GenericPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericPattern>;
+	currentHandle()?.admit(TSKindId.GenericPattern, [input]);
 	return F.buildGenericPattern({
 		name: resolveGenericPattern_name(input.name),
 		typeArguments: resolveGenericPattern_typeArguments(input.typeArguments)
@@ -7116,6 +7191,7 @@ export function coerceToTupleStructPattern(
 ): ReturnType<typeof F.buildTupleStructPattern> {
 	if (!_isLooseConfig<T.TupleStructPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTupleStructPattern>;
+	currentHandle()?.admit(TSKindId.TupleStructPattern, [input]);
 	return F.buildTupleStructPattern({
 		type: resolveTupleStructPattern_type(input.type),
 		patterns: resolveTupleStructPattern_patterns(input.patterns)
@@ -7138,6 +7214,7 @@ export function coerceToStructPattern<const I extends T.StructPattern.Loose>(
 export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<typeof F.buildStructPattern> {
 	if (!_isLooseConfig<T.StructPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStructPattern>;
+	currentHandle()?.admit(TSKindId.StructPattern, [input]);
 	return F.buildStructPattern({
 		type: resolveStructPattern_type(input.type),
 		fields: resolveStructPattern_fields(input.fields)
@@ -7227,6 +7304,7 @@ export function coerceToCapturedPattern<const I extends T.CapturedPattern.Loose>
 export function coerceToCapturedPattern(input: T.CapturedPattern.Loose): ReturnType<typeof F.buildCapturedPattern> {
 	if (!_isLooseConfig<T.CapturedPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCapturedPattern>;
+	currentHandle()?.admit(TSKindId.CapturedPattern, [input]);
 	return F.buildCapturedPattern({
 		name: resolveCapturedPattern_name(input.name),
 		pattern: resolveCapturedPattern_pattern(input.pattern)
@@ -7254,6 +7332,7 @@ export function coerceToReferencePattern<const I extends T.ReferencePattern.Loos
 export function coerceToReferencePattern(input: T.ReferencePattern.Loose): ReturnType<typeof F.buildReferencePattern> {
 	if (!_isLooseConfig<T.ReferencePattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReferencePattern>;
+	currentHandle()?.admit(TSKindId.ReferencePattern, [input]);
 	return F.buildReferencePattern({
 		exclusive: resolveReferencePattern_exclusive(input.exclusive),
 		pattern: resolveReferencePattern_pattern(input.pattern)
@@ -7299,6 +7378,7 @@ export function coerceToStringLiteral<const I extends T.StringLiteral.Loose>(
 export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
 	if (!_isLooseConfig<T.StringLiteral.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStringLiteral>;
+	currentHandle()?.admit(TSKindId.StringLiteral, [input]);
 	return F.buildStringLiteral({
 		stringOpen: resolveStringLiteral_stringOpen(input.stringOpen),
 		elements: resolveStringLiteral_elements(input.elements)
@@ -7329,6 +7409,7 @@ export function coerceToRawStringLiteral<const I extends T.RawStringLiteral.Loos
 export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> {
 	if (!_isLooseConfig<T.RawStringLiteral.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
+	currentHandle()?.admit(TSKindId.RawStringLiteral, [input]);
 	return F.buildRawStringLiteral({
 		rawStringLiteralStart: resolveRawStringLiteral_rawStringLiteralStart(input.rawStringLiteralStart),
 		stringContent: resolveRawStringLiteral_stringContent(input.stringContent),
@@ -7486,6 +7567,7 @@ export function coerceToMacroRules<const A extends T.MacroRules.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.MacroRules.LooseArgs>
 ): ReturnType<typeof F.buildMacroRules>;
 export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType<typeof F.buildMacroRules> {
+	currentHandle()?.admit(TSKindId.MacroRules, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7513,6 +7595,7 @@ export function coerceToEnumVariantListElements<const A extends T.EnumVariantLis
 export function coerceToEnumVariantListElements(
 	...input: T.EnumVariantListElements.LooseArgs
 ): ReturnType<typeof F.buildEnumVariantListElements> {
+	currentHandle()?.admit(TSKindId.EnumVariantListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumVariantListElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7545,6 +7628,7 @@ export function coerceToFieldDeclarationListElements<const A extends T.FieldDecl
 export function coerceToFieldDeclarationListElements(
 	...input: T.FieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildFieldDeclarationListElements> {
+	currentHandle()?.admit(TSKindId.FieldDeclarationListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldDeclarationListElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7579,6 +7663,7 @@ export function coerceToOrderedFieldDeclarationListElements<
 export function coerceToOrderedFieldDeclarationListElements(
 	...input: T.OrderedFieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> {
+	currentHandle()?.admit(TSKindId.OrderedFieldDeclarationListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.OrderedFieldDeclarationListElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7654,6 +7739,7 @@ export function coerceToWherePredicates<const A extends T.WherePredicates.LooseA
 export function coerceToWherePredicates(
 	...input: T.WherePredicates.LooseArgs
 ): ReturnType<typeof F.buildWherePredicates> {
+	currentHandle()?.admit(TSKindId.WherePredicates, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WherePredicates)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7685,6 +7771,7 @@ export function coerceToTypeParametersElements<const A extends T.TypeParametersE
 export function coerceToTypeParametersElements(
 	...input: T.TypeParametersElements.LooseArgs
 ): ReturnType<typeof F.buildTypeParametersElements> {
+	currentHandle()?.admit(TSKindId.TypeParametersElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7722,6 +7809,7 @@ export function coerceToUseClauses<const A extends T.UseClauses.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.UseClauses.LooseArgs>
 ): ReturnType<typeof F.buildUseClauses>;
 export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType<typeof F.buildUseClauses> {
+	currentHandle()?.admit(TSKindId.UseClauses, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseClauses)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7821,6 +7909,7 @@ export function coerceToParametersElements<const A extends T.ParametersElements.
 export function coerceToParametersElements(
 	...input: T.ParametersElements.LooseArgs
 ): ReturnType<typeof F.buildParametersElements> {
+	currentHandle()?.admit(TSKindId.ParametersElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7910,6 +7999,7 @@ export function coerceToLifetimes<const A extends T.Lifetimes.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Lifetimes.LooseArgs>
 ): ReturnType<typeof F.buildLifetimes>;
 export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<typeof F.buildLifetimes> {
+	currentHandle()?.admit(TSKindId.Lifetimes, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7935,6 +8025,7 @@ export function coerceToTypes<const A extends T.Types.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
 ): ReturnType<typeof F.buildTypes>;
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
+	currentHandle()?.admit(TSKindId.Types, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -7989,6 +8080,7 @@ export function coerceToUseBoundsElements<const A extends T.UseBoundsElements.Lo
 export function coerceToUseBoundsElements(
 	...input: T.UseBoundsElements.LooseArgs
 ): ReturnType<typeof F.buildUseBoundsElements> {
+	currentHandle()?.admit(TSKindId.UseBoundsElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseBoundsElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8020,6 +8112,7 @@ export function coerceToTypeArgumentsElements<const A extends T.TypeArgumentsEle
 export function coerceToTypeArgumentsElements(
 	...input: T.TypeArgumentsElements.LooseArgs
 ): ReturnType<typeof F.buildTypeArgumentsElements> {
+	currentHandle()?.admit(TSKindId.TypeArgumentsElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeArgumentsElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8132,6 +8225,7 @@ export function coerceToArgumentsElements<const A extends T.ArgumentsElements.Lo
 export function coerceToArgumentsElements(
 	...input: T.ArgumentsElements.LooseArgs
 ): ReturnType<typeof F.buildArgumentsElements> {
+	currentHandle()?.admit(TSKindId.ArgumentsElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentsElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8286,6 +8380,7 @@ export function coerceToExpressions<const A extends T.Expressions.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Expressions.LooseArgs>
 ): ReturnType<typeof F.buildExpressions>;
 export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnType<typeof F.buildExpressions> {
+	currentHandle()?.admit(TSKindId.Expressions, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Expressions)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8383,6 +8478,7 @@ export function coerceToFieldInitializerListElements<const A extends T.FieldInit
 export function coerceToFieldInitializerListElements(
 	...input: T.FieldInitializerListElements.LooseArgs
 ): ReturnType<typeof F.buildFieldInitializerListElements> {
+	currentHandle()?.admit(TSKindId.FieldInitializerListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldInitializerListElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8416,6 +8512,7 @@ export function coerceToTuplePatternElements<const A extends T.TuplePatternEleme
 export function coerceToTuplePatternElements(
 	...input: T.TuplePatternElements.LooseArgs
 ): ReturnType<typeof F.buildTuplePatternElements> {
+	currentHandle()?.admit(TSKindId.TuplePatternElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TuplePatternElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8486,6 +8583,7 @@ export function coerceToPatterns<const A extends T.Patterns.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.Patterns.LooseArgs>
 ): ReturnType<typeof F.buildPatterns>;
 export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildPatterns> {
+	currentHandle()?.admit(TSKindId.Patterns, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8556,6 +8654,7 @@ export function coerceToStructPatternElements<const A extends T.StructPatternEle
 export function coerceToStructPatternElements(
 	...input: T.StructPatternElements.LooseArgs
 ): ReturnType<typeof F.buildStructPatternElements> {
+	currentHandle()?.admit(TSKindId.StructPatternElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StructPatternElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _item?: unknown })._item;
@@ -8673,6 +8772,7 @@ export function coerceToIntegerLiteralDecimal(
 ): ReturnType<typeof F.buildIntegerLiteralDecimal> {
 	if (!_isLooseConfig<T.IntegerLiteralDecimal.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralDecimal>;
+	currentHandle()?.admit(TSKindId.IntegerLiteralDecimal, [input]);
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralDecimal.LooseConfig;
@@ -8706,6 +8806,7 @@ export function coerceToIntegerLiteralHex(
 ): ReturnType<typeof F.buildIntegerLiteralHex> {
 	if (!_isLooseConfig<T.IntegerLiteralHex.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralHex>;
+	currentHandle()?.admit(TSKindId.IntegerLiteralHex, [input]);
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralHex.LooseConfig;
@@ -8739,6 +8840,7 @@ export function coerceToIntegerLiteralBinary(
 ): ReturnType<typeof F.buildIntegerLiteralBinary> {
 	if (!_isLooseConfig<T.IntegerLiteralBinary.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralBinary>;
+	currentHandle()?.admit(TSKindId.IntegerLiteralBinary, [input]);
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralBinary.LooseConfig;
@@ -8772,6 +8874,7 @@ export function coerceToIntegerLiteralOctal(
 ): ReturnType<typeof F.buildIntegerLiteralOctal> {
 	if (!_isLooseConfig<T.IntegerLiteralOctal.LooseConfig | string | number | bigint>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralOctal>;
+	currentHandle()?.admit(TSKindId.IntegerLiteralOctal, [input]);
 	const _cfg = (
 		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
 	) as T.IntegerLiteralOctal.LooseConfig;
@@ -8799,6 +8902,7 @@ export function coerceToCharLiteralPlain<const I extends T.CharLiteralPlain.Loos
 export function coerceToCharLiteralPlain(input: T.CharLiteralPlain.Loose): ReturnType<typeof F.buildCharLiteralPlain> {
 	if (!_isLooseConfig<T.CharLiteralPlain.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildCharLiteralPlain>;
+	currentHandle()?.admit(TSKindId.CharLiteralPlain, [input]);
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralPlain.LooseConfig;
 	return F.buildCharLiteralPlain({
 		byte: resolveCharLiteralPlain_byte(_cfg.byte),
@@ -8834,6 +8938,7 @@ export function coerceToCharLiteralEscapedSimple(
 ): ReturnType<typeof F.buildCharLiteralEscapedSimple> {
 	if (!_isLooseConfig<T.CharLiteralEscapedSimple.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedSimple>;
+	currentHandle()?.admit(TSKindId.CharLiteralEscapedSimple, [input]);
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedSimple.LooseConfig;
 	return F.buildCharLiteralEscapedSimple({
 		byte: resolveCharLiteralEscapedSimple_byte(_cfg.byte),
@@ -8861,6 +8966,7 @@ export function coerceToCharLiteralEscapedUnicodeFixed(
 ): ReturnType<typeof F.buildCharLiteralEscapedUnicodeFixed> {
 	if (!_isLooseConfig<T.CharLiteralEscapedUnicodeFixed.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedUnicodeFixed>;
+	currentHandle()?.admit(TSKindId.CharLiteralEscapedUnicodeFixed, [input]);
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedUnicodeFixed.LooseConfig;
 	return F.buildCharLiteralEscapedUnicodeFixed({
 		byte: resolveCharLiteralEscapedUnicodeFixed_byte(_cfg.byte),
@@ -8888,6 +8994,7 @@ export function coerceToCharLiteralEscapedUnicodeBraced(
 ): ReturnType<typeof F.buildCharLiteralEscapedUnicodeBraced> {
 	if (!_isLooseConfig<T.CharLiteralEscapedUnicodeBraced.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedUnicodeBraced>;
+	currentHandle()?.admit(TSKindId.CharLiteralEscapedUnicodeBraced, [input]);
 	const _cfg = (
 		typeof input === 'string' ? { content: input } : input
 	) as T.CharLiteralEscapedUnicodeBraced.LooseConfig;
@@ -8917,6 +9024,7 @@ export function coerceToCharLiteralEscapedHex(
 ): ReturnType<typeof F.buildCharLiteralEscapedHex> {
 	if (!_isLooseConfig<T.CharLiteralEscapedHex.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedHex>;
+	currentHandle()?.admit(TSKindId.CharLiteralEscapedHex, [input]);
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedHex.LooseConfig;
 	return F.buildCharLiteralEscapedHex({
 		byte: resolveCharLiteralEscapedHex_byte(_cfg.byte),
@@ -9058,6 +9166,7 @@ export function coerceToArrayExpressionSemi(
 ): ReturnType<typeof F.buildArrayExpressionSemi> {
 	if (!_isLooseConfig<T.ArrayExpressionSemi.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildArrayExpressionSemi>;
+	currentHandle()?.admit(TSKindId.ArrayExpressionSemi, [input]);
 	return F.buildArrayExpressionSemi({
 		attributes: resolveArrayExpressionSemi_attributes(input.attributes),
 		element: resolveArrayExpressionSemi_element(input.element),
@@ -9086,6 +9195,7 @@ export function coerceToArrayExpressionList(
 ): ReturnType<typeof F.buildArrayExpressionList> {
 	if (!_isLooseConfig<T.ArrayExpressionList.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildArrayExpressionList>;
+	currentHandle()?.admit(TSKindId.ArrayExpressionList, [input]);
 	return F.buildArrayExpressionList({
 		attributes: resolveArrayExpressionList_attributes(input?.attributes),
 		elements: resolveArrayExpressionList_elements(input?.elements)
@@ -9113,6 +9223,7 @@ export function coerceToAttributeInput<const I extends T.AttributeInput.Loose>(
 export function coerceToAttributeInput(input?: T.AttributeInput.Loose): ReturnType<typeof F.buildAttributeInput> {
 	if (!_isLooseConfig<T.AttributeInput.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributeInput>;
+	currentHandle()?.admit(TSKindId.AttributeInput, [input]);
 	return F.buildAttributeInput({
 		value: resolveAttributeInput_value(input?.value),
 		arguments: resolveAttributeInput_arguments(input?.arguments)
@@ -9166,6 +9277,7 @@ export function coerceToClosureExpressionBlock(
 ): ReturnType<typeof F.buildClosureExpressionBlock> {
 	if (!_isLooseConfig<T.ClosureExpressionBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildClosureExpressionBlock>;
+	currentHandle()?.admit(TSKindId.ClosureExpressionBlock, [input]);
 	return F.buildClosureExpressionBlock({
 		static: resolveClosureExpressionBlock_static(input?.static),
 		async: resolveClosureExpressionBlock_async(input?.async),
@@ -9219,6 +9331,7 @@ export function coerceToClosureExpressionExpr(
 ): ReturnType<typeof F.buildClosureExpressionExpr> {
 	if (!_isLooseConfig<T.ClosureExpressionExpr.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClosureExpressionExpr>;
+	currentHandle()?.admit(TSKindId.ClosureExpressionExpr, [input]);
 	return F.buildClosureExpressionExpr({
 		static: resolveClosureExpressionExpr_static(input.static),
 		async: resolveClosureExpressionExpr_async(input.async),
@@ -9448,6 +9561,7 @@ export function coerceToImplItemBody<const I extends T.ImplItemBody.Loose>(
 export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<typeof F.buildImplItemBody> {
 	if (!_isLooseConfig<T.ImplItemBody.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImplItemBody>;
+	currentHandle()?.admit(TSKindId.ImplItemBody, [input]);
 	return F.buildImplItemBody({
 		unsafe: resolveImplItemBody_unsafe(input.unsafe),
 		typeParameters: resolveImplItemBody_typeParameters(input.typeParameters),
@@ -9500,6 +9614,7 @@ export function coerceToImplItemSemi<const I extends T.ImplItemSemi.Loose>(
 export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<typeof F.buildImplItemSemi> {
 	if (!_isLooseConfig<T.ImplItemSemi.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImplItemSemi>;
+	currentHandle()?.admit(TSKindId.ImplItemSemi, [input]);
 	return F.buildImplItemSemi({
 		unsafe: resolveImplItemSemi_unsafe(input.unsafe),
 		typeParameters: resolveImplItemSemi_typeParameters(input.typeParameters),
@@ -9696,6 +9811,7 @@ export function coerceToModItemExternal<const I extends T.ModItemExternal.Loose>
 export function coerceToModItemExternal(input: T.ModItemExternal.Loose): ReturnType<typeof F.buildModItemExternal> {
 	if (!_isLooseConfig<T.ModItemExternal.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildModItemExternal>;
+	currentHandle()?.admit(TSKindId.ModItemExternal, [input]);
 	return F.buildModItemExternal({
 		visibilityModifier: resolveModItemExternal_visibilityModifier(input.visibilityModifier),
 		name: resolveModItemExternal_name(input.name)
@@ -9722,6 +9838,7 @@ export function coerceToModItemInline<const I extends T.ModItemInline.Loose>(
 export function coerceToModItemInline(input: T.ModItemInline.Loose): ReturnType<typeof F.buildModItemInline> {
 	if (!_isLooseConfig<T.ModItemInline.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildModItemInline>;
+	currentHandle()?.admit(TSKindId.ModItemInline, [input]);
 	return F.buildModItemInline({
 		visibilityModifier: resolveModItemInline_visibilityModifier(input.visibilityModifier),
 		name: resolveModItemInline_name(input.name),
@@ -9753,6 +9870,7 @@ export function coerceToOrPatternBinary<const I extends T.OrPatternBinary.Loose>
 export function coerceToOrPatternBinary(input: T.OrPatternBinary.Loose): ReturnType<typeof F.buildOrPatternBinary> {
 	if (!_isLooseConfig<T.OrPatternBinary.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildOrPatternBinary>;
+	currentHandle()?.admit(TSKindId.OrPatternBinary, [input]);
 	return F.buildOrPatternBinary({
 		left: resolveOrPatternBinary_left(input.left),
 		right: resolveOrPatternBinary_right(input.right)
@@ -9884,6 +10002,7 @@ export function coerceToRangeExpressionBinary(
 ): ReturnType<typeof F.buildRangeExpressionBinary> {
 	if (!_isLooseConfig<T.RangeExpressionBinary.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangeExpressionBinary>;
+	currentHandle()?.admit(TSKindId.RangeExpressionBinary, [input]);
 	return F.buildRangeExpressionBinary({
 		start: resolveRangeExpressionBinary_start(input.start),
 		operator: resolveRangeExpressionBinary_operator(input.operator),
@@ -10042,6 +10161,7 @@ export function coerceToForeignModItemSemi(
 ): ReturnType<typeof F.buildForeignModItemSemi> {
 	if (!_isLooseConfig<T.ForeignModItemSemi.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForeignModItemSemi>;
+	currentHandle()?.admit(TSKindId.ForeignModItemSemi, [input]);
 	return F.buildForeignModItemSemi({
 		unsafe: resolveForeignModItemSemi_unsafe(input?.unsafe),
 		externModifier: resolveForeignModItemSemi_externModifier(input?.externModifier) ?? F.buildExternModifier()
@@ -10074,6 +10194,7 @@ export function coerceToForeignModItemBody(
 ): ReturnType<typeof F.buildForeignModItemBody> {
 	if (!_isLooseConfig<T.ForeignModItemBody.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForeignModItemBody>;
+	currentHandle()?.admit(TSKindId.ForeignModItemBody, [input]);
 	return F.buildForeignModItemBody({
 		unsafe: resolveForeignModItemBody_unsafe(input?.unsafe),
 		externModifier: resolveForeignModItemBody_externModifier(input?.externModifier) ?? F.buildExternModifier(),
@@ -10110,6 +10231,7 @@ export function coerceToMatchArmWithComma(
 ): ReturnType<typeof F.buildMatchArmWithComma> {
 	if (!_isLooseConfig<T.MatchArmWithComma.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMatchArmWithComma>;
+	currentHandle()?.admit(TSKindId.MatchArmWithComma, [input]);
 	return F.buildMatchArmWithComma({
 		attributes: resolveMatchArmWithComma_attributes(input.attributes),
 		pattern: resolveMatchArmWithComma_pattern(input.pattern),
@@ -10155,6 +10277,7 @@ export function coerceToMatchArmBlockEnding(
 ): ReturnType<typeof F.buildMatchArmBlockEnding> {
 	if (!_isLooseConfig<T.MatchArmBlockEnding.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMatchArmBlockEnding>;
+	currentHandle()?.admit(TSKindId.MatchArmBlockEnding, [input]);
 	return F.buildMatchArmBlockEnding({
 		attributes: resolveMatchArmBlockEnding_attributes(input.attributes),
 		pattern: resolveMatchArmBlockEnding_pattern(input.pattern),
@@ -10287,6 +10410,7 @@ export function coerceToTokenTreePatternParen<const A extends T.TokenTreePattern
 export function coerceToTokenTreePatternParen(
 	...input: T.TokenTreePatternParen.LooseArgs
 ): ReturnType<typeof F.buildTokenTreePatternParen> {
+	currentHandle()?.admit(TSKindId.TokenTreePatternParen, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10309,6 +10433,7 @@ export function coerceToTokenTreePatternBracket<const A extends T.TokenTreePatte
 export function coerceToTokenTreePatternBracket(
 	...input: T.TokenTreePatternBracket.LooseArgs
 ): ReturnType<typeof F.buildTokenTreePatternBracket> {
+	currentHandle()?.admit(TSKindId.TokenTreePatternBracket, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10331,6 +10456,7 @@ export function coerceToTokenTreePatternBrace<const A extends T.TokenTreePattern
 export function coerceToTokenTreePatternBrace(
 	...input: T.TokenTreePatternBrace.LooseArgs
 ): ReturnType<typeof F.buildTokenTreePatternBrace> {
+	currentHandle()?.admit(TSKindId.TokenTreePatternBrace, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10351,6 +10477,7 @@ export function coerceToTokenTreeParen<const A extends T.TokenTreeParen.LooseArg
 	...input: A & RefuseUndeclared<A, T.TokenTreeParen.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreeParen>;
 export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): ReturnType<typeof F.buildTokenTreeParen> {
+	currentHandle()?.admit(TSKindId.TokenTreeParen, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10375,6 +10502,7 @@ export function coerceToTokenTreeBracket<const A extends T.TokenTreeBracket.Loos
 export function coerceToTokenTreeBracket(
 	...input: T.TokenTreeBracket.LooseArgs
 ): ReturnType<typeof F.buildTokenTreeBracket> {
+	currentHandle()?.admit(TSKindId.TokenTreeBracket, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10397,6 +10525,7 @@ export function coerceToTokenTreeBrace<const A extends T.TokenTreeBrace.LooseArg
 	...input: A & RefuseUndeclared<A, T.TokenTreeBrace.LooseArgs>
 ): ReturnType<typeof F.buildTokenTreeBrace>;
 export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): ReturnType<typeof F.buildTokenTreeBrace> {
+	currentHandle()?.admit(TSKindId.TokenTreeBrace, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10421,6 +10550,7 @@ export function coerceToDelimTokenTreeParen<const A extends T.DelimTokenTreePare
 export function coerceToDelimTokenTreeParen(
 	...input: T.DelimTokenTreeParen.LooseArgs
 ): ReturnType<typeof F.buildDelimTokenTreeParen> {
+	currentHandle()?.admit(TSKindId.DelimTokenTreeParen, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10446,6 +10576,7 @@ export function coerceToDelimTokenTreeBracket<const A extends T.DelimTokenTreeBr
 export function coerceToDelimTokenTreeBracket(
 	...input: T.DelimTokenTreeBracket.LooseArgs
 ): ReturnType<typeof F.buildDelimTokenTreeBracket> {
+	currentHandle()?.admit(TSKindId.DelimTokenTreeBracket, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10471,6 +10602,7 @@ export function coerceToDelimTokenTreeBrace<const A extends T.DelimTokenTreeBrac
 export function coerceToDelimTokenTreeBrace(
 	...input: T.DelimTokenTreeBrace.LooseArgs
 ): ReturnType<typeof F.buildDelimTokenTreeBrace> {
+	currentHandle()?.admit(TSKindId.DelimTokenTreeBrace, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -10515,6 +10647,7 @@ export function coerceToFieldPatternShorthand(
 ): ReturnType<typeof F.buildFieldPatternShorthand> {
 	if (!_isLooseConfig<T.FieldPatternShorthand.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldPatternShorthand>;
+	currentHandle()?.admit(TSKindId.FieldPatternShorthand, [input]);
 	return F.buildFieldPatternShorthand({
 		ref: resolveFieldPatternShorthand_ref(input.ref),
 		mutable: resolveFieldPatternShorthand_mutable(input.mutable),
@@ -10557,6 +10690,7 @@ export function coerceToFieldPatternNamed(
 ): ReturnType<typeof F.buildFieldPatternNamed> {
 	if (!_isLooseConfig<T.FieldPatternNamed.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldPatternNamed>;
+	currentHandle()?.admit(TSKindId.FieldPatternNamed, [input]);
 	return F.buildFieldPatternNamed({
 		ref: resolveFieldPatternNamed_ref(input.ref),
 		mutable: resolveFieldPatternNamed_mutable(input.mutable),
@@ -10585,6 +10719,7 @@ export function coerceToMacroDefinitionParen(
 ): ReturnType<typeof F.buildMacroDefinitionParen> {
 	if (!_isLooseConfig<T.MacroDefinitionParen.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroDefinitionParen>;
+	currentHandle()?.admit(TSKindId.MacroDefinitionParen, [input]);
 	return F.buildMacroDefinitionParen({
 		name: resolveMacroDefinitionParen_name(input.name),
 		macroRules: resolveMacroDefinitionParen_macroRules(input.macroRules)
@@ -10611,6 +10746,7 @@ export function coerceToMacroDefinitionBracket(
 ): ReturnType<typeof F.buildMacroDefinitionBracket> {
 	if (!_isLooseConfig<T.MacroDefinitionBracket.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroDefinitionBracket>;
+	currentHandle()?.admit(TSKindId.MacroDefinitionBracket, [input]);
 	return F.buildMacroDefinitionBracket({
 		name: resolveMacroDefinitionBracket_name(input.name),
 		macroRules: resolveMacroDefinitionBracket_macroRules(input.macroRules)
@@ -10637,6 +10773,7 @@ export function coerceToMacroDefinitionBrace(
 ): ReturnType<typeof F.buildMacroDefinitionBrace> {
 	if (!_isLooseConfig<T.MacroDefinitionBrace.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroDefinitionBrace>;
+	currentHandle()?.admit(TSKindId.MacroDefinitionBrace, [input]);
 	return F.buildMacroDefinitionBrace({
 		name: resolveMacroDefinitionBrace_name(input.name),
 		macroRules: resolveMacroDefinitionBrace_macroRules(input.macroRules)
@@ -10678,6 +10815,7 @@ export function coerceToRangePatternPrefix(
 ): ReturnType<typeof F.buildRangePatternPrefix> {
 	if (!_isLooseConfig<T.RangePatternPrefix.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangePatternPrefix>;
+	currentHandle()?.admit(TSKindId.RangePatternPrefix, [input]);
 	return F.buildRangePatternPrefix({
 		content: resolveRangePatternPrefix_content(input.content),
 		right: resolveRangePatternPrefix_right(input.right)
@@ -10719,6 +10857,7 @@ export function coerceToRangePatternWithLeftWithRight(
 ): ReturnType<typeof F.buildRangePatternWithLeftWithRight> {
 	if (!_isLooseConfig<T.RangePatternWithLeftWithRight.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
+	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [input]);
 	return F.buildRangePatternWithLeftWithRight({
 		content: resolveRangePatternWithLeftWithRight_content(input.content),
 		right: resolveRangePatternWithLeftWithRight_right(input.right)
@@ -10768,6 +10907,7 @@ export function coerceToRangePatternWithLeft(
 ): ReturnType<typeof F.buildRangePatternWithLeft> {
 	if (!_isLooseConfig<T.RangePatternWithLeft.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeft>;
+	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [input]);
 	return F.buildRangePatternWithLeft({
 		left: resolveRangePatternWithLeft_left(input.left),
 		content: resolveRangePatternWithLeft_content(input.content)
@@ -10810,6 +10950,7 @@ export function coerceToStructItemBrace<const I extends T.StructItemBrace.Loose>
 export function coerceToStructItemBrace(input: T.StructItemBrace.Loose): ReturnType<typeof F.buildStructItemBrace> {
 	if (!_isLooseConfig<T.StructItemBrace.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStructItemBrace>;
+	currentHandle()?.admit(TSKindId.StructItemBrace, [input]);
 	return F.buildStructItemBrace({
 		visibilityModifier: resolveStructItemBrace_visibilityModifier(input.visibilityModifier),
 		name: resolveStructItemBrace_name(input.name),
@@ -10855,6 +10996,7 @@ export function coerceToStructItemTuple<const I extends T.StructItemTuple.Loose>
 export function coerceToStructItemTuple(input: T.StructItemTuple.Loose): ReturnType<typeof F.buildStructItemTuple> {
 	if (!_isLooseConfig<T.StructItemTuple.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStructItemTuple>;
+	currentHandle()?.admit(TSKindId.StructItemTuple, [input]);
 	return F.buildStructItemTuple({
 		visibilityModifier: resolveStructItemTuple_visibilityModifier(input.visibilityModifier),
 		name: resolveStructItemTuple_name(input.name),
@@ -10888,6 +11030,7 @@ export function coerceToStructItemUnit<const I extends T.StructItemUnit.Loose>(
 export function coerceToStructItemUnit(input: T.StructItemUnit.Loose): ReturnType<typeof F.buildStructItemUnit> {
 	if (!_isLooseConfig<T.StructItemUnit.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStructItemUnit>;
+	currentHandle()?.admit(TSKindId.StructItemUnit, [input]);
 	return F.buildStructItemUnit({
 		visibilityModifier: resolveStructItemUnit_visibilityModifier(input.visibilityModifier),
 		name: resolveStructItemUnit_name(input.name),
@@ -10919,6 +11062,7 @@ export function coerceToAttributedFieldDeclaration(
 ): ReturnType<typeof F.buildAttributedFieldDeclaration> {
 	if (!_isLooseConfig<T.AttributedFieldDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedFieldDeclaration>;
+	currentHandle()?.admit(TSKindId.AttributedFieldDeclaration, [input]);
 	return F.buildAttributedFieldDeclaration({
 		attributeItems: resolveAttributedFieldDeclaration_attributeItems(input.attributeItems),
 		fieldDeclaration: resolveAttributedFieldDeclaration_fieldDeclaration(input.fieldDeclaration)
@@ -10945,6 +11089,7 @@ export function coerceToAttributedEnumVariant(
 ): ReturnType<typeof F.buildAttributedEnumVariant> {
 	if (!_isLooseConfig<T.AttributedEnumVariant.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedEnumVariant>;
+	currentHandle()?.admit(TSKindId.AttributedEnumVariant, [input]);
 	return F.buildAttributedEnumVariant({
 		attributeItems: resolveAttributedEnumVariant_attributeItems(input.attributeItems),
 		enumVariant: resolveAttributedEnumVariant_enumVariant(input.enumVariant)
@@ -10978,6 +11123,7 @@ export function coerceToAttributedParameter(
 ): ReturnType<typeof F.buildAttributedParameter> {
 	if (!_isLooseConfig<T.AttributedParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedParameter>;
+	currentHandle()?.admit(TSKindId.AttributedParameter, [input]);
 	return F.buildAttributedParameter({
 		attributeItem: resolveAttributedParameter_attributeItem(input.attributeItem),
 		content: resolveAttributedParameter_content(input.content)
@@ -11004,6 +11150,7 @@ export function coerceToAttributedTypeParameter(
 ): ReturnType<typeof F.buildAttributedTypeParameter> {
 	if (!_isLooseConfig<T.AttributedTypeParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedTypeParameter>;
+	currentHandle()?.admit(TSKindId.AttributedTypeParameter, [input]);
 	return F.buildAttributedTypeParameter({
 		attributeItems: resolveAttributedTypeParameter_attributeItems(input.attributeItems),
 		content: resolveAttributedTypeParameter_content(input.content)
@@ -11033,6 +11180,7 @@ export function coerceToAttributedArgument(
 ): ReturnType<typeof F.buildAttributedArgument> {
 	if (!_isLooseConfig<T.AttributedArgument.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedArgument>;
+	currentHandle()?.admit(TSKindId.AttributedArgument, [input]);
 	return F.buildAttributedArgument({
 		attributeItems: resolveAttributedArgument_attributeItems(input.attributeItems),
 		expression: resolveAttributedArgument_expression(input.expression)
@@ -11068,6 +11216,7 @@ export function coerceToAttributedOrderedField(
 ): ReturnType<typeof F.buildAttributedOrderedField> {
 	if (!_isLooseConfig<T.AttributedOrderedField.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedOrderedField>;
+	currentHandle()?.admit(TSKindId.AttributedOrderedField, [input]);
 	return F.buildAttributedOrderedField({
 		attributeItems: resolveAttributedOrderedField_attributeItems(input.attributeItems),
 		visibilityModifier: resolveAttributedOrderedField_visibilityModifier(input.visibilityModifier),
@@ -11098,6 +11247,7 @@ export function coerceToTypeArgument<const I extends T.TypeArgument.Loose>(
 export function coerceToTypeArgument(input: T.TypeArgument.Loose): ReturnType<typeof F.buildTypeArgument> {
 	if (!_isLooseConfig<T.TypeArgument.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeArgument>;
+	currentHandle()?.admit(TSKindId.TypeArgument, [input]);
 	return F.buildTypeArgument({
 		content: resolveTypeArgument_content(input.content),
 		traitBounds: resolveTypeArgument_traitBounds(input.traitBounds)
@@ -11122,6 +11272,7 @@ export function coerceToMatchBlockArms<const I extends T.MatchBlockArms.Loose>(
 export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnType<typeof F.buildMatchBlockArms> {
 	if (!_isLooseConfig<T.MatchBlockArms.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMatchBlockArms>;
+	currentHandle()?.admit(TSKindId.MatchBlockArms, [input]);
 	return F.buildMatchBlockArms({
 		arms: resolveMatchBlockArms_arms(input.arms),
 		lastArm: resolveMatchBlockArms_lastArm(input.lastArm)
@@ -11260,6 +11411,7 @@ export function coerceToReceiverParameterDeclaration(
 ): ReturnType<typeof F.buildReceiverParameterDeclaration> {
 	if (!_isLooseConfig<T.ReceiverParameterDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReceiverParameterDeclaration>;
+	currentHandle()?.admit(TSKindId.ReceiverParameterDeclaration, [input]);
 	return F.buildReceiverParameterDeclaration({
 		mutable: resolveReceiverParameterDeclaration_mutable(input.mutable),
 		type: resolveReceiverParameterDeclaration_type(input.type)
@@ -11286,6 +11438,7 @@ export function coerceToAttributedParameterReceiver(
 ): ReturnType<typeof F.buildAttributedParameterReceiver> {
 	if (!_isLooseConfig<T.AttributedParameterReceiver.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAttributedParameterReceiver>;
+	currentHandle()?.admit(TSKindId.AttributedParameterReceiver, [input]);
 	return F.buildAttributedParameterReceiver({
 		attributeItem: resolveAttributedParameterReceiver_attributeItem(input.attributeItem),
 		content: resolveAttributedParameterReceiver_content(input.content)
@@ -11317,6 +11470,7 @@ export function coerceToParametersElementsReceiver(
 ): ReturnType<typeof F.buildParametersElementsReceiver> {
 	if (!_isLooseConfig<T.ParametersElementsReceiver.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildParametersElementsReceiver>;
+	currentHandle()?.admit(TSKindId.ParametersElementsReceiver, [input]);
 	return F.buildParametersElementsReceiver({
 		receiver: resolveParametersElementsReceiver_receiver(input.receiver),
 		parametersElementsReceiverGroup: resolveParametersElementsReceiver_parametersElementsReceiverGroup(
