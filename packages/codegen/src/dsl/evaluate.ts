@@ -531,8 +531,11 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 }
 
 async function importedGrammar(entryPath: string): Promise<unknown> {
-	const url = pathToFileURL(entryPath);
-	url.searchParams.set('content', sha256File(entryPath));
+	const queryAt = entryPath.indexOf('?');
+	const file = queryAt < 0 ? entryPath : entryPath.slice(0, queryAt);
+	const url = pathToFileURL(file);
+	url.search = queryAt < 0 ? '' : entryPath.slice(queryAt);
+	url.searchParams.set('content', sha256File(file));
 	const mod = (await import(url.href)) as {
 		default?: unknown;
 		grammar?: unknown;
