@@ -67,7 +67,14 @@ A parsed tree is a JavaScript object that owns its `ParsedTree` and frees itself
 - The engine parses into a `Tree`, reads through it, and renders with it as the source table (`ParsedTree` is already a `SourceTable`).
 - The JavaScript engine reads, renders and disposes through tree objects. The `FinalizationRegistry`, `disposeTree` and the live-tree table go.
 
-The migration has to answer one question first: a coordinate that arrives without its tree object, such as a bare handle in a built node's slot. A render that takes one tree cannot render a node whose coordinates name several. Either the caller passes every tree the node names, or the coordinate carries its tree object.
+### A coordinate carries its tree
+
+A parsed node's coordinate holds its `Tree` itself, not the tree's id. The render reads each coordinate's tree from the coordinate, and holding a node keeps its tree alive. The accepted cost is a pointer per reference, and a long-lived built node keeps its source trees in memory.
+
+- **The wire.** A coordinate crosses as its tree object, its descendant index and its span. `$treeHandle` packs no tree id, and nothing looks a tree up by id. The tree keeps its id as its identity (`TreeClaim`), never as the way to reach it.
+- **The hold is the coordinate.** Today a read object holds its tree through a token (`holdTree`) while its coordinate names the tree by id, and dropping the token (`detachCoordinates`) leaves a bare handle that the render refuses until the tree is held again. After the migration a copy of a node copies its coordinates and so holds their trees. The token, `holdTree`, `detachCoordinates` and the validators' detach-then-hold pairs go. A bare handle with no tree object does not exist.
+- **Built slots.** A built node's slot that takes a parsed node holds that node's coordinate, tree object included, where today it holds a handle whose tree the table must still have. A built node made from the nodes of two trees holds both, and each coordinate slices its own tree's source. It renders with no tree layer of options (render options spec, Precedence). One made from one tree's nodes renders over that tree's layer, found from its coordinates.
+- **The render takes no tree.** `render(node, options)` finds every source it needs on the node, and the tree argument that today names the one tree a render reads goes.
 
 ## Packaging
 
@@ -89,7 +96,8 @@ engine-api reviews the sittir-core parts:
 - the counter's move and `TreeClaim`;
 - the `napi8` move;
 - the `Tree` class in `napi_engine!`;
-- the end of the live-tree table.
+- the end of the live-tree table;
+- the coordinate's tree object: the wire, the hold, built slots, and the render without a tree argument.
 
 ## Verification
 
@@ -98,11 +106,11 @@ On every platform of the release matrix (macOS arm64; Linux x64 and arm64 with g
 - the runtime defined only in the engine; no addon defines a `ts_*` symbol, and each imports only what its scanner reads;
 - one tree-id counter, with `globalThis` untouched;
 - tree objects: a full read renders back the source; trees made and dropped are freed by GC; a tree of another grammar is refused;
+- coordinates: a built node holding nodes of two trees renders both sources with no tree layer, and one holding one tree's nodes renders over that tree's layer; a built node alone keeps its source trees alive, and dropping it frees them; no coordinate crosses the boundary without its tree object;
 - version skew refused both ways: the same version with another stamp at load, and a new version through the mapped loader error;
 - the standing gates: `validate:native` rows identical, the full suite, `cargo test --workspace --no-default-features`, workspace type-check and lint;
 - throughput, RSS and package sizes re-measured on CI runners against the last static release.
 
-## Open questions
+## Out of scope
 
-1. **The JavaScript engine package.** The earlier packaging discussion had a JavaScript-only `@sittir/engine` package taking `createEngine` and the engine surface over from `@sittir/common`. Shape A decides only the native library. Does that move still come with this migration, or separately?
-2. **A coordinate without its tree object** (Trees as objects, above).
+- **The JavaScript engine package.** A JavaScript-only `@sittir/engine` package taking `createEngine` and the engine surface over from `@sittir/common` is its own later change. This migration decides only the native library.
