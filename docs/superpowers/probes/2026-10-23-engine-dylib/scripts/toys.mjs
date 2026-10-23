@@ -53,7 +53,7 @@ if (scenario === 'napi-shared') {
 	if (b.ok) {
 		report.ids = [a.claimTreeId(), b.ok.claimTreeId(), a.claimTreeId(), b.ok.claimTreeId()];
 		report.engine = { a: a.engine(), b: b.ok.engine() };
-		report.mallocSlots = { a: a.mallocSlots(), b: b.ok.mallocSlots() };
+		report.mallocSlot = { a: a.mallocSlot(), b: b.ok.mallocSlot() };
 		report.scannerRoundtrip = [a.scannerRoundtrip(), b.ok.scannerRoundtrip()];
 		report.parseWithoutLanguage = [a.parseWithoutLanguage(), b.ok.parseWithoutLanguage()];
 	}
