@@ -214,7 +214,7 @@ export interface LinkedGrammar {
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
 	readonly splicedNames?: ReadonlySet<string>;
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly generatedIdTables: GeneratedIdTables;
 }
 
 export interface NormalizedGrammar {

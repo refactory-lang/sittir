@@ -7149,11 +7149,11 @@ Predicts the parser's symbol table from the evaluated grammar by porting tree-si
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
+A predicted symbol table, its predicted field table (`predictedFields`), and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted id tables, their kind-catalog rows and key collisions, or why they could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -7173,11 +7173,11 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names and key collisions beside them.
+The id tables `predictKindCatalog` predicts and the rows they hold, with the grammar's undefined names and key collisions beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 
-The kind-catalog rows tree-sitter would generate for a grammar: `predictSymbolTable` turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are, and without `lexicalRank`, which the prediction does not derive faithfully. A grammar with undefined names still gets the rows of its defined names; the names come back in `undefinedNames`, and an undefined name has no row.
+The id tables tree-sitter would generate for a grammar, and the kind-catalog rows they hold. The kind ids are `predictSymbolTable` turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are. The field ids are the predicted field names joined as the parser's are (`joinIdNames` with `deriveFieldRuntimeName`). The folds are empty. The rows leave out `lexicalRank`, which the prediction does not derive faithfully. A grammar with undefined names still gets the rows of its defined names; the names come back in `undefinedNames`, and an undefined name has no row.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictedKindsOf`
 
@@ -7194,10 +7194,6 @@ A `catalogSymbolSource` for a grammar whose rules still carry the names the cata
 ### `packages/codegen/src/dsl/symbol-table.ts::predictedSymbolSourceOf`
 
 The `SymbolSource` of a grammar before any parser.c exists: its predicted kind catalog (`predictKindCatalog`), asked through `renameAwareSymbolSource`. A name the grammar leaves undefined has no row, so `hasSymbol` and `isTerminal` are false for it; the failure itself is reported from `RawGrammar.predictedKinds`, never here. Enrich builds one per rule set it classifies (`enrich-ctx.ts::enrichSymbolSource`).
-### `packages/codegen/src/dsl/symbol-table.ts::kindCatalogOf`
-
-The one route to the kind catalog the front half reads: the parser's rows, as stamped by the tables' owner (link stamps the declared visible externals before it reads them), when id tables are passed, else the rows evaluate predicted (`RawGrammar.predictedKinds`), ids included. Link, the grammar diagnostics, the diagnostics tool and the upstream compile all read it.
-
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::PolicyStep`
 
 Whether a derived conflict is one upstream declared: `upstream-declared` when the conflict's rules, each mapped to its upstream source and deduplicated, are exactly a set upstream listed in its own `conflicts`; otherwise `default`. Every conflict is resolved with AddConflict either way; the step is a record, not a choice between resolutions.
@@ -7410,6 +7406,18 @@ The precedence wrapper types, which carry no slot topology.
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedIdTablesOf`
+
+The id tables an evaluated grammar predicts for itself (`RawGrammar.predictedKinds`), for a compile of a grammar tree-sitter did not generate: an unbound or base evaluation, a stage grammar, or a synthetic grammar in a test. A grammar whose tables could not be predicted is refused with the prediction's failure. Its kind and field ids equal the parser's for every grammar tree-sitter generates; the predicted-id-tables test pins that against each package's parser.c.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedFields`
+
+The field table tree-sitter generates: every field name in the expanded syntax variables, sorted, with ids from 1 and C names `field_<name>`. It walks the variables after repeat expansion, because expansion moves a repeated body, and the fields in it, into an auxiliary variable; a field inside a token left with the token when it was extracted.
+
+### `packages/codegen/src/dsl/symbol-table.ts::deriveFieldRuntimeName`
+
+A field's name from its C name when the name table has no entry for it: the C name without its `field_` prefix. The parser's tables and the predicted ones join field ids through it.
 
 ### `packages/codegen/src/dsl/bind.ts::isRecord`
 
@@ -8825,6 +8833,10 @@ The options of a package evaluation: the entry it reads (`resolve-grammar.ts::Pa
 ### `packages/codegen/src/dsl/evaluate-package.ts::readsGrammarBindings`
 
 Whether evaluating the package with these options reads its grammar bindings: exactly when the evaluation is not `unbound` and its entry (`resolve-grammar.ts::packageSourceEntry`, the one `evaluatePackage` evaluates) is the package's own `grammar.sittir.ts`. The upstream grammar, taken for `base` or for a package with no `grammar.sittir.ts`, carries no grammar bindings. `compileGrammar` checks the grammar bindings for freshness exactly when it holds.
+
+### `packages/codegen/src/dsl/evaluate-package.ts::evaluatesGeneratedGrammar`
+
+Whether evaluating the package with these options evaluates the grammar tree-sitter generated its parser from: exactly when the evaluation is not `unbound` and its entry is the package's default one. A package with no `grammar.sittir.ts` generates from its upstream grammar, so its `base` evaluation is that grammar too. `compiler/compile.ts::evaluationIdTables` reads the parser's tables exactly when it holds.
 
 ### `packages/codegen/src/dsl/resolve-grammar.ts::resolveGrammarJsPath`
 

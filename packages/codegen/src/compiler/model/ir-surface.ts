@@ -18,13 +18,13 @@ import {
 	type AssembledNode,
 	type TextValueStorage
 } from './node-map.ts';
-import { collectCatalogKinds, collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../emitters/kind-discriminant.ts';
+import { collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 import { lowerCamelCase } from './casing.ts';
 import { supertypeMemberName } from '../../dsl/arm-names.ts';
 import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
 import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
 
-type KindEntries = ReturnType<typeof collectKindEntries> | undefined;
+type KindEntries = ReturnType<typeof collectKindEntries>;
 
 export interface IrKeyedNode {
 	readonly key: string;
@@ -49,7 +49,7 @@ function irKeyedNodes(nodeMap: NodeMap, kindEntries: KindEntries): IrKeyedNode[]
 		if (!(node instanceof AbstractAssembledCompound) && !(node instanceof AssembledList)) continue;
 		if (node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.ownSurface) continue;
 		if (node instanceof AssembledAlias) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (!hasCatalogEntry(kindEntries, kind)) continue;
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		const key = node.irKey;
 		if (key === undefined || !isValidIdent(key) || used.has(key)) continue;
@@ -94,19 +94,19 @@ export function hasOneSurface(node: AssembledNode): boolean {
 export function isFlatLeafOrKeyword(
 	kind: string,
 	node: AssembledNode,
-	kindEntries: ReturnType<typeof collectKindEntries> | undefined
+	kindEntries: ReturnType<typeof collectKindEntries>
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
 	if (!hasOneSurface(node) || (isBuilderTextLeaf(node) && node.surfaceHidden)) return false;
 	if (isDepthLeaf(node)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey)) return false;
-	return !kindEntries || hasCatalogEntry(kindEntries, kind);
+	return hasCatalogEntry(kindEntries, kind);
 }
 
 export function hasFlatEntry(
 	kind: string,
 	node: AssembledNode,
-	kindEntries: ReturnType<typeof collectKindEntries> | undefined
+	kindEntries: ReturnType<typeof collectKindEntries>
 ): boolean {
 	return isFlatLeafOrKeyword(kind, node, kindEntries) && node.annotations?.tokenForm !== true;
 }
@@ -245,7 +245,7 @@ function valueKindOf(host: AssembledNode, name: string, storage: TextValueStorag
 export function armIsForm(host: AssembledNode, sub: SubFactory, kindEntries: ArmRoutes['kindEntries']): boolean {
 	if (sub.arm.variantOf !== host.kind) return false;
 	if (sub.arm.via !== 'value') return true;
-	const row = sub.arm.storage.via === 'kindId' && kindEntries !== undefined ? findOwnKindEntry(kindEntries, sub.arm.storage.kind) : undefined;
+	const row = sub.arm.storage.via === 'kindId' ? findOwnKindEntry(kindEntries, sub.arm.storage.kind) : undefined;
 	return row !== undefined && row.anon !== true;
 }
 
@@ -331,7 +331,7 @@ export interface ArmRouteSet {
 }
 
 export interface ArmRoutes {
-	readonly kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly kindEntries: readonly KindEnumEntry[];
 	readonly isEmitted: (kind: string) => boolean;
 	readonly keyByKind: ReadonlyMap<string, string>;
 	readonly bundledKinds: ReadonlySet<string>;
@@ -487,7 +487,7 @@ function deriveIrPlan(
 			if (sub instanceof AssembledSupertype || isBuilderlessPunctuationLeaf(sub)) continue;
 			if ((sub instanceof AbstractAssembledCompound || sub instanceof AssembledList) && !hasOneSurface(sub) && !bundleKeyByKind.has(subKind))
 				continue;
-			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
+			if (!hasCatalogEntry(kindEntries, subKind)) continue;
 			const memberKey = memberKeyFor(subKind, kind);
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
@@ -545,10 +545,8 @@ export interface IrSurface {
 	readonly plan: IrPlan;
 }
 
-export function stampIrSurface(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): void {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
+export function stampIrSurface(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): void {
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const keyed = irKeyedNodes(nodeMap, kindEntries);
 	const bundles = keyed.filter((entry) => !hasOneSurface(entry.node));
 	const ownText = keyed.filter((entry) => hasOneSurface(entry.node));

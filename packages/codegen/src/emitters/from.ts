@@ -7,7 +7,6 @@ import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType,
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
-	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindDiscriminantExprForId,
 	hasCatalogEntry,
@@ -104,8 +103,7 @@ import type { CodegenEmitter } from './emitter.ts';
 export interface EmitFromConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	generatedIdTables?: GeneratedIdTables;
-	kindEntries?: readonly KindEnumEntry[];
+	generatedIdTables: GeneratedIdTables;
 }
 
 function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
@@ -150,13 +148,11 @@ function buildKindInterner(
 
 const RAW_IMPORT = `import * as RawBuilders from './raw.js';`;
 
-function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
+function emitNamespaceImports(lines: string[]): void {
 	lines.push(RAW_IMPORT);
 	lines.push(`import type * as T from '../types-internal.js';`);
-	if (kindEntries) {
-		lines.push(`import { TSKindId } from '../kinds.js';`);
-		lines.push(`import { KIND_NAMES } from '../types.js';`);
-	}
+	lines.push(`import { TSKindId } from '../kinds.js';`);
+	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
@@ -189,13 +185,13 @@ function emitFromFieldInputType(lines: string[]): void {
 function emitFromMapDeclaration(
 	lines: string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): void {
 	lines.push('export const _fromMap = {');
 	for (const [kind, node] of nodeMap.nodes) {
 		if (classifyFromEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		if (!node.fromFunctionName) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (!hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${JSON.stringify(kind)}: ${node.fromFunctionName},`);
 	}
 	lines.push('} as const;');
@@ -221,7 +217,7 @@ export namespace from {
 		output: string[],
 		node: AssembledNode,
 		_nodeMap: NodeMap,
-		_kindEntries: readonly KindEnumEntry[] | undefined
+		_kindEntries: readonly KindEnumEntry[]
 	): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		const form = leafFromForm(node);
@@ -234,7 +230,7 @@ export namespace from {
 		node: BranchLikeForFrom,
 		nodeMap: NodeMap,
 		intern: KindInterner,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		kindEntries: readonly KindEnumEntry[]
 	): void {
 		output.push(emitBranchFrom(node, nodeMap, intern, kindEntries));
 	}
@@ -244,7 +240,7 @@ export namespace from {
 		node: AssembledList,
 		nodeMap: NodeMap,
 		intern: KindInterner,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		kindEntries: readonly KindEnumEntry[]
 	): void {
 		const result = emitSeparatedListFrom(node, kindEntries, nodeMap, intern);
 		if (result) output.push(result);
@@ -340,7 +336,7 @@ function emitBranchFrom(
 	node: FormChildForFrom,
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	if (fromEmitsChildrenCoercer(node, nodeMap)) {
 		return emitChildrenFrom(
@@ -544,10 +540,9 @@ interface ChildrenFromNode {
 
 function kindDiscriminantCheck(
 	kind: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): string {
-	if (!kindEntries) return `'${kind}'`;
 	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
@@ -558,7 +553,7 @@ function emitRestParamFromResolver(
 	tName: string,
 	elementType: string,
 	kind: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	storageKey: string,
 	unwrapConfigKey: string | undefined,
@@ -569,7 +564,7 @@ function emitRestParamFromResolver(
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const source = leadingOptions === undefined ? 'input' : '_rest';
 	const split = leadingOptions === undefined ? [] : leadingOptionsSplit(leadingOptions, source, 'readonly unknown[]', 'input');
-	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
+	const hasNumericDiscriminant = findOwnKindEntry(kindEntries, kind) !== undefined;
 	const unwrap =
 		unwrapConfigKey === undefined
 			? []
@@ -623,7 +618,7 @@ function emitRepeatedChildrenFrom(
 	elementType: string,
 	slot: AssembledNonterminal,
 	kind: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	intern: KindInterner,
 	storageKey: string,
@@ -659,13 +654,13 @@ function emitSingularChildrenFrom(
 	slot: AssembledNonterminal,
 	intern: KindInterner,
 	kind: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	storageKey: string,
 	inputWiden?: string
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
-	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
+	const hasNumericDiscriminant = findOwnKindEntry(kindEntries, kind) !== undefined;
 	if (!hasNumericDiscriminant) {
 		return [
 			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
@@ -701,7 +696,7 @@ function emitSingularChildrenFrom(
 
 function emitChildrenFrom(
 	node: ChildrenFromNode,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	intern: KindInterner
 ): string {
@@ -710,7 +705,7 @@ function emitChildrenFrom(
 	const tName = `T.${node.typeName}`;
 	const facts = node.childSlotFacts;
 	const elementType = facts
-		? childElementType({ children: node.slots ?? [] }, nodeMap)
+		? childElementType({ children: node.slots ?? [] }, nodeMap, kindEntries)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	let inputWiden: string | undefined;
 	if (facts && !facts.multiple) {
@@ -761,7 +756,7 @@ function emitChildrenFrom(
 
 function emitSeparatedListFrom(
 	node: AssembledList,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	intern: KindInterner
 ): string | undefined {
@@ -907,14 +902,14 @@ function altKindDiscriminants(
 	tokenKinds: readonly string[],
 	values: readonly NodeOrTerminal[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string[] {
 	return tokenKinds.map((t) => {
 		const stampedId = values.find(
 			(v) => isNodeRef(v) && storageKindOfRef(v.node) === t && v.storageKindId !== undefined
 		)?.storageKindId;
 		const stamped =
-			stampedId !== undefined && kindEntries !== undefined
+			stampedId !== undefined
 				? kindDiscriminantExprForId(stampedId, kindEntries)
 				: undefined;
 		return stamped ?? kindDiscriminantCheck(t, kindEntries, nodeMap);
@@ -978,9 +973,9 @@ function resolveFieldCall(
 	fieldMultiple: boolean,
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	applyKeywordPresence = true,
-	elementTypeOverride?: string,
-	kindEntries?: readonly KindEnumEntry[]
+	applyKeywordPresence: boolean,
+	elementTypeOverride: string | undefined,
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	if (applyKeywordPresence) {
 		const kwCall = keywordPresenceResolverCall(prop, field, nodeMap);
@@ -1018,13 +1013,13 @@ function storedFieldCall(
 	fieldMultiple: boolean,
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	elementTypeOverride?: string,
-	kindEntries?: readonly KindEnumEntry[]
+	elementTypeOverride: string | undefined,
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const { leafKinds, branchKinds, tokenKinds } = slotResolverKinds(field, nodeMap);
 
 	const elementType =
-		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap) : undefined);
+		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap, kindEntries) : undefined);
 
 	const callFor = (value: string): string =>
 		buildSingleKindFastPath(
@@ -1077,7 +1072,7 @@ export interface TextKindCheck {
 	readonly pattern?: RegExp;
 }
 
-export function leafTextChecks(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly TextKindCheck[] {
+export function leafTextChecks(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly TextKindCheck[] {
 	return buildLeafRegistryEntries(nodeMap, kindEntries).textChecks;
 }
 
@@ -1085,7 +1080,7 @@ export function textCheckAccepts(check: TextKindCheck, text: string): boolean {
 	return check.values !== undefined ? check.values.includes(text) : check.pattern?.test(text) === true;
 }
 
-function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): LeafRegistry {
+function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): LeafRegistry {
 	const registryEntries: string[] = [];
 	const textChecks: TextKindCheck[] = [];
 	for (const entry of builtFromText(nodeMap, kindEntries)) {
@@ -1129,8 +1124,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 	return { entries: registryEntries, textChecks: rankTextKinds(textChecks, kindEntries) };
 }
 
-function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly KindEnumEntry[] | undefined): TextKindCheck[] {
-	if (kindEntries === undefined) return [...checks];
+function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly KindEnumEntry[]): TextKindCheck[] {
 	const rankOf = ({ kind }: TextKindCheck): number => {
 		const rank = findKindEntry(kindEntries, kind)?.lexicalRank;
 		if (rank === undefined) throw new Error(`from: text kind '${kind}' has no lexical rank in the catalog`);
@@ -1183,11 +1177,11 @@ interface ScalarResolution {
 	readonly resolves: boolean;
 }
 
-function scalarResolutionOf(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ScalarResolution {
+function scalarResolutionOf(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): ScalarResolution {
 	const scalars = scalarLeafKinds(nodeMap);
 	const numeric = numericLeafKinds(nodeMap);
 	const booleanMember = (kind: string): string | undefined =>
-		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
+		findKindEntry(kindEntries, kind)?.member;
 	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
 	const falseMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.falseKind);
 	return {
@@ -1230,7 +1224,7 @@ function forwardsBareString(kind: string, nodeMap: NodeMap, seen: ReadonlySet<st
 
 export function bareAcceptClosure(
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): Map<string, ReadonlySet<string>> {
 	const acceptedBy = (kind: string, seen: Set<string>): Set<string> => {
 		const names = new Set<string>();
@@ -1261,9 +1255,9 @@ function isLeafRegistryKind(kind: string, node: AssembledNode): boolean {
 function emitBareRoutingTables(
 	lines: string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): void {
-	const idOf = (kind: string): number | undefined => (kindEntries ? findKindEntry(kindEntries, kind)?.id : undefined);
+	const idOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
 	const idStored: number[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.storage !== 'kindId') continue;
@@ -1432,13 +1426,13 @@ function soleElementKindOf(node: AssembledNode, nodeMap: NodeMap): string | unde
 
 function collectWrapChildrenEntries(
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): WrapChildrenEntry[] {
 	const entries: WrapChildrenEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isWrapChildrenKind(kind, node, nodeMap, kindEntries)) continue;
 		const factoryName = node.rawFactoryName;
-		const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind);
+		const entry = findKindEntry(kindEntries, kind);
 		if (factoryName === undefined || entry === undefined) continue;
 		const childSurface: 'direct' | 'spread' | 'array' =
 			node instanceof AssembledList ? 'array' : soleSlotFacts(node, nodeMap)?.multiple ? 'spread' : 'direct';
@@ -1458,7 +1452,7 @@ function collectWrapChildrenEntries(
 function emitWrapWithChildrenTable(
 	lines: string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): void {
 	const entries = collectWrapChildrenEntries(nodeMap, kindEntries);
 	if (entries.length === 0) return;
@@ -1547,7 +1541,7 @@ function emitWrapWithChildrenTable(
 function emitResolverHelpers(
 	lines: string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): void {
 	const { entries: registryEntries, textChecks } = buildLeafRegistryEntries(nodeMap, kindEntries);
 
@@ -1659,7 +1653,7 @@ function emitResolverHelpers(
 		if (own !== undefined && node.rawFactoryName !== undefined) {
 			byText.push([own, kind]);
 			const aliased = keywordAliasContent(node, nodeMap);
-			const content = aliased === undefined || kindEntries === undefined ? undefined : fixedTextEntryOf(aliased.ref, nodeMap, kindEntries)?.discriminant;
+			const content = aliased === undefined ? undefined : fixedTextEntryOf(aliased.ref, nodeMap, kindEntries)?.discriminant;
 			if (aliased !== undefined && content === undefined) {
 				throw new Error(`from: alias '${kind}' over keyword '${aliased.text}' has no kind catalog row to build it from`);
 			}
@@ -1836,7 +1830,7 @@ function emitResolverHelpers(
 
 export class FromEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
-	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #kindEntries: readonly KindEnumEntry[];
 	readonly #internKinds: KindInterner;
 	readonly #kindTableLiterals: string[];
 	readonly #namedEntries: Map<string, string>;
@@ -1844,12 +1838,8 @@ export class FromEmitter implements CodegenEmitter<string> {
 	readonly #output: string[] = [];
 
 	constructor(config: EmitFromConfig) {
-		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries } = config;
-		const kindEntries =
-			providedKindEntries ??
-			(generatedIdTables
-				? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-				: undefined);
+		const { nodeMap, generatedIdTables } = config;
+		const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 
 		const supertypeByKey = buildSupertypeByKey(nodeMap);
 		const kindTableIndex = new Map<string, number>();
@@ -1858,7 +1848,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const internKinds = buildKindInterner(supertypeByKey, kindTableIndex, kindTableLiterals, namedEntries);
 
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-		emitNamespaceImports(lines, kindEntries);
+		emitNamespaceImports(lines);
 		emitFromFieldInputType(lines);
 
 		this.#nodeMap = nodeMap;

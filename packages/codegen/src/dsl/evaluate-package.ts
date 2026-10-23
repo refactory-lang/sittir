@@ -9,6 +9,9 @@ export type PackageEvaluationOptions = PackageSourceOptions & EvaluateOptions;
 export const readsGrammarBindings = (pkg: GrammarPackage, options: PackageEvaluationOptions = {}): boolean =>
 	options.unbound !== true && packageSourceEntry(pkg, options) === packageEntryPath(pkg);
 
+export const evaluatesGeneratedGrammar = (pkg: GrammarPackage, options: PackageEvaluationOptions = {}): boolean =>
+	options.unbound !== true && packageSourceEntry(pkg, options) === packageSourceEntry(pkg);
+
 export function evaluatePackage(pkg: GrammarPackage, options?: PackageEvaluationOptions): Promise<RawGrammar> {
 	return evaluate(packageSourceEntry(pkg, options), upstreamFileTypes(pkg), options);
 }

@@ -24,7 +24,7 @@ import { printRecordLines } from './record-lines.ts';
 import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
-import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
+import { collectKindEntries } from './kind-discriminant.ts';
 import { relaxationTable, type RelaxationTable } from './kind-id-rust.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { declaredDelimiterDefault } from './factories.ts';
@@ -34,7 +34,7 @@ import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 export interface EmitNodeModelConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	generatedIdTables?: GeneratedIdTables;
+	generatedIdTables: GeneratedIdTables;
 }
 
 interface SerializedValue {
@@ -145,10 +145,8 @@ export function printNodeModel(data: SerializedNodeModel): string {
 	return printRecordLines(data);
 }
 
-export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): SerializedNodeModel {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
+export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): SerializedNodeModel {
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const factoryData = buildFactoryMap(nodeMap, kindEntries);
 	const wires = collectPolymorphWires(nodeMap, { silent: true });
 	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
@@ -184,7 +182,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		fieldAliasMap: factoryData.fieldAliasMap,
 		displayUnions: Object.fromEntries([...(nodeMap.displayUnions ?? [])].sort(([a], [b]) => compareOrdinal(a, b))),
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
-		relaxes: kindEntries === undefined ? null : relaxationTable(nodeMap, kindEntries),
+		relaxes: relaxationTable(nodeMap, kindEntries),
 		nodes
 	};
 }

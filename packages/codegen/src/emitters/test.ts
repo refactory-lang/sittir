@@ -17,7 +17,6 @@ import {
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
-	collectCatalogKinds,
 	kindDiscriminantExpr,
 	kindDiscriminantExprForId,
 	hasCatalogEntry,
@@ -48,7 +47,7 @@ import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './ov
 export interface EmitTestsConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	generatedIdTables?: GeneratedIdTables;
+	generatedIdTables: GeneratedIdTables;
 	expectTestFailures?: Readonly<Record<string, string>>;
 	renderBodies?: ReadonlyMap<string, Body>;
 }
@@ -76,10 +75,9 @@ function rendersText(kind: string, nodeMap: NodeMap, bodies: ReadonlyMap<string,
 
 function testTypeDiscriminant(
 	kind: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): string {
-	if (!kindEntries) return `'${kind}'`;
 	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
@@ -88,7 +86,7 @@ function dummyNodeLiteral(
 	kind: string,
 	dummyText: string,
 	nodeMap: NodeMap | undefined,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	storage: readonly string[] = []
 ): string {
 	const typeExpr = nodeMap ? testTypeDiscriminant(kind, kindEntries, nodeMap) : `'${kind}'`;
@@ -98,12 +96,7 @@ function dummyNodeLiteral(
 
 export function emitTests(config: EmitTestsConfig): string {
 	const { nodeMap } = config;
-	const allKinds = config.generatedIdTables
-		? collectCatalogKinds(config.generatedIdTables)
-		: Array.from(nodeMap.nodes.keys());
-	const kindEntries = config.generatedIdTables
-		? collectKindEntries(allKinds, nodeMap, config.generatedIdTables)
-		: undefined;
+	const kindEntries = collectKindEntries(nodeMap, config.generatedIdTables);
 	const polymorphWires = collectPolymorphWires(nodeMap, { silent: true });
 	const { renderBodies } = config;
 	const writesTextOf = (kind: string): boolean => renderBodies === undefined || rendersText(kind, nodeMap, renderBodies, new Set());
@@ -115,7 +108,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		"import { isNode, Source, sourceOf, stampBuilt } from '@sittir/common/utils';",
 		"import language from '../src/index.ts';",
 		'',
-		`const { ${kindEntries ? 'build: ir, kinds: TSKindId' : 'build: ir'} } = await createEngine(language);`,
+		'const { build: ir, kinds: TSKindId } = await createEngine(language);',
 		'',
 		'function expectBuiltNode(node: object): void {',
 		'  expect(sourceOf(node)).toBe(Source.Factory);',
@@ -129,7 +122,7 @@ export function emitTests(config: EmitTestsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.surfaceHidden) continue;
 		if (!node.factoryName) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (!hasCatalogEntry(kindEntries, kind)) continue;
 		const key = node.irKey;
 		if (!key) continue;
 		if (!isValidIdent(key)) continue;
@@ -181,7 +174,7 @@ function emitBranchTest(
 	kind: string,
 	key: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	writesTextOf: (kind: string) => boolean
 ): void {
 	if (!(node instanceof AbstractAssembledCompound) || node instanceof AssembledList || !node.ownSurface) return;
@@ -239,7 +232,7 @@ function pushRenderTest(
 function factoryCallArgs(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	strict = false
 ): { typeConfigArg: string; renderConfigArg: string; registeredOptionsArg: string | undefined } {
 	const registeredSet = new Set(registeredSlots(node));
@@ -278,7 +271,7 @@ function factoryCallArgs(
 function soleSlotDummyKind(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): { facts: SoleSlotFacts; firstKindName: string | undefined } | null {
 	const facts = soleSlotFacts(node, nodeMap);
 	if (facts === null) return null;
@@ -302,7 +295,7 @@ function patternSlotDummy(slot: AssembledNonterminal): string | undefined {
 function childrenCallArgs(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	texts: string[]
 ): string {
 	const value = childrenCallValueArg(node, nodeMap, kindEntries, texts);
@@ -317,7 +310,7 @@ function childrenCallArgs(
 function childrenCallValueArg(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	texts: string[]
 ): string {
 	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
@@ -334,7 +327,7 @@ function childrenCallValueArg(
 function subFactoryChildrenArgs(
 	node: AuthoredCompound,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
 	if (patternDummy !== undefined) return patternDummy;
@@ -346,7 +339,7 @@ function subFactoryChildrenArgs(
 function childBareCallArgs(
 	child: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	withOptions = false
 ): string | undefined {
 	switch (child.modelType) {
@@ -385,7 +378,7 @@ function childBareCallArgs(
 function requiredFieldParts(
 	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string[] {
 	return slots.filter(isRequired).map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
 }
@@ -404,7 +397,7 @@ function objectFrom(parts: readonly string[]): string {
 function subFactoryCallArgs(
 	sub: SubFactory,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	isEmitted: (kind: string) => boolean,
 	bundledKinds: ReadonlySet<string>,
 	visiting: ReadonlySet<string> = new Set(),
@@ -466,7 +459,7 @@ function emitSubFactoryTests(
 	kind: string,
 	base: SubFactoryBase | undefined,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	polymorphWires: PolymorphWires,
 	expectTestFailures: Readonly<Record<string, string>> | undefined,
 	writesTextOf: (kind: string) => boolean
@@ -511,7 +504,7 @@ function emitSubFactoryTests(
 			cases.push(
 				`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
 			);
-		} else if (kindEntries && seatedEnumId !== undefined) {
+		} else if (seatedEnumId !== undefined) {
 			cases.push(
 				`    expect((node as any).${slotProp}()).toBe(${kindDiscriminantExprForId(seatedEnumId, kindEntries)});`
 			);
@@ -558,7 +551,7 @@ function emitChildrenTest(
 	node: AssembledNode,
 	kind: string,
 	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	writesText: boolean
 ): void {
@@ -583,7 +576,7 @@ function emitSeparatedListTest(
 	node: AssembledNode,
 	kind: string,
 	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): void {
 	if (node.modelType !== 'list') return;
@@ -611,7 +604,7 @@ function emitLeafTest(
 	node: AssembledNode,
 	kind: string,
 	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): void {
 	const pattern = node.modelType === 'pattern' ? node.textPattern : undefined;
@@ -681,7 +674,7 @@ function emitKeywordTest(
 	node: AssembledNode,
 	kind: string,
 	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): void {
 	if (!isBuilderTextLeaf(node)) return;
@@ -696,7 +689,7 @@ function emitKeywordTest(
 function resolveConcreteKind(
 	candidates: readonly string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	onPath: ReadonlySet<string>
 ): string {
 	const seen = new Set<string>();
@@ -713,7 +706,7 @@ function resolveConcreteKind(
 			queue.push(...node.subtypeNames);
 			continue;
 		}
-		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
+		if (!hasCatalogEntry(kindEntries, current)) continue;
 		if (node.surfaceHidden && classifyFactoryEmission(current, node, { nodeMap, kindEntries }) !== 'emit') continue;
 		if (node.modelType === 'pattern' || isFixedTextLeaf(node)) return current;
 		if (node.modelType === 'enum') enumCandidates.push(current);
@@ -727,7 +720,7 @@ function resolveConcreteKind(
 function stubCloses(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	blocked: ReadonlySet<string>,
 	budget: number
 ): boolean {
@@ -741,18 +734,14 @@ function stubCloses(
 	return node.slots
 		.filter(isRequired)
 		.every((slot) => {
-			const kinds = stubKindsOf(slot, nodeMap, kindEntries);
+			const kinds = stubKindsOf(slot, nodeMap);
 			return kinds.length === 0 || kinds.some((k) => stubCloses(k, nodeMap, kindEntries, nextBlocked, budget - 1));
 		});
 }
 
-function stubKindsOf(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): readonly string[] {
+function stubKindsOf(field: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {
 	if (patternSlotDummy(field) !== undefined) return [];
-	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
 	if (isTextEnum(storageInfo) || ['boolean', 'bitflag', 'kindEnum'].includes(storageInfo.kind)) return [];
 	return slotKindNames(field);
 }
@@ -769,9 +758,9 @@ interface DummyOptions {
 function strictOptionDummy(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
-	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
 	if (storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum') {
 		const enumKind = storageInfo.enumKinds[0];
 		if (enumKind !== undefined && kindEntries && hasCatalogEntry(kindEntries, enumKind)) {
@@ -784,14 +773,14 @@ function strictOptionDummy(
 function dummyValueForField(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	depth: number,
 	visiting: ReadonlySet<string>,
 	options?: DummyOptions
 ): string {
 	const patternDummy = patternSlotDummy(field);
 	if (patternDummy !== undefined) return patternDummy;
-	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
 	if (isTextEnum(storageInfo)) {
 		return JSON.stringify(storageInfo.texts[0]);
 	}
@@ -817,7 +806,7 @@ function dummyValueForField(
 		}
 	}
 
-	const kinds = stubKindsOf(field, nodeMap, kindEntries);
+	const kinds = stubKindsOf(field, nodeMap);
 	if (kinds.length === 0) return "'test' as any";
 	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries, visiting);
 	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting, options);
@@ -826,7 +815,7 @@ function dummyValueForField(
 function buildDummyStub(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	depth: number,
 	visiting: ReadonlySet<string>,
 	options?: DummyOptions
@@ -861,8 +850,8 @@ function buildDummyStub(
 
 function dummyValue(
 	field: AssembledNonterminal,
-	nodeMap?: NodeMap,
-	kindEntries?: readonly KindEnumEntry[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
 	strict = false
 ): string {
 	if (nodeMap) {
@@ -870,7 +859,7 @@ function dummyValue(
 		if (kw === 'boolean') return 'true';
 		if (kw === 'bitflag') return '0 as never';
 		if (strict) {
-			const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+			const storageInfo = resolveFieldStorageInfo(field, nodeMap);
 			const text = storageInfo.texts[0];
 			if (storageInfo.kind === 'kindEnum' && text !== undefined) return kindEnumTextExpr(text, kindEntries);
 		}

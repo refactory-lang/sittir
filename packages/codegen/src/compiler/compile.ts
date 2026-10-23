@@ -1,4 +1,5 @@
-import { evaluatePackage, readsGrammarBindings, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
+import { evaluatePackage, evaluatesGeneratedGrammar, readsGrammarBindings, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
+import { loadPackageIdTables } from './generated-metadata.ts';
 import { assertPackageBindingsFresh } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { stampIrSurface } from './model/ir-surface.ts';
@@ -9,7 +10,7 @@ import { blockedRecords, expectationsInEitherSpelling, collectGrammarDiagnostics
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from './types.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { predictedIdTablesOf, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { diagnoseEvaluationStages, type StageDiagnoses } from './stage.ts';
 import { authoredRuleNames, diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';
@@ -18,7 +19,7 @@ import { deriveDiagnosticRecords, type DiagnosticRecord } from './diagnostics/di
 export interface Compilation {
 	readonly grammar: string;
 	readonly package: GrammarPackage;
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly generatedIdTables: GeneratedIdTables;
 	readonly raw: RawGrammar;
 	readonly linked: LinkedGrammar;
 	readonly normalized: NormalizedGrammar;
@@ -44,7 +45,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,
-		generatedIdTables: cfg.generatedIdTables,
+		generatedIdTables: cfg.generatedIdTables ?? (await evaluationIdTables(cfg.package, cfg.evaluation, evaluated)),
 		allowDiagnostics: cfg.allowDiagnostics
 	});
 	if (!diagnosis.passed) throw new GrammarDiagnosticError(diagnosis.blocked, diagnosis.grammarDiagnostics);
@@ -75,10 +76,18 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	};
 }
 
+export async function evaluationIdTables(
+	pkg: GrammarPackage,
+	evaluation: PackageEvaluationOptions | undefined,
+	evaluated: RawGrammar
+): Promise<GeneratedIdTables> {
+	return evaluatesGeneratedGrammar(pkg, evaluation) ? loadPackageIdTables(pkg) : predictedIdTablesOf(evaluated);
+}
+
 export interface DiagnoseGrammarConfig {
 	readonly grammar: string;
 	readonly evaluated: RawGrammar;
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly generatedIdTables: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
 }
 

@@ -2160,7 +2160,7 @@ export function resolveImportFromStatement_content(
 ): Admit<T.ImportFromStatement['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.WildcardImport], () =>
-			_resolveOne<'*' | T.ImportList | T.ParenthesizedImportList>(value, _K4, _K2)
+			_resolveOne<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(value, _K4, _K2)
 		),
 		[['*', TSKindId.WildcardImport] as const]
 	);
@@ -3453,13 +3453,13 @@ export function resolveSimplePattern_content(
 						| T.DictPattern
 						| T.String
 						| T.ConcatenatedString
-						| 'True'
-						| 'False'
-						| 'None'
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.None
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
-						| '_'
+						| TSKindId.WildcardPattern
 					>(value, _K18, _K19)
 				),
 				[
@@ -3501,13 +3501,13 @@ export function coerceToSimplePattern(input: T.SimplePattern.Loose): ReturnType<
 								| T.DictPattern
 								| T.String
 								| T.ConcatenatedString
-								| 'True'
-								| 'False'
-								| 'None'
+								| TSKindId.True
+								| TSKindId.False
+								| TSKindId.None
 								| T.SimplePatternNegative
 								| T.ComplexPattern
 								| T.DottedName
-								| '_'
+								| TSKindId.WildcardPattern
 							>(
 								configFieldOr(input, 'content', () => input),
 								_K18,
@@ -3582,13 +3582,13 @@ export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): Return
 								| T.DictPattern
 								| T.String
 								| T.ConcatenatedString
-								| 'True'
-								| 'False'
-								| 'None'
+								| TSKindId.True
+								| TSKindId.False
+								| TSKindId.None
 								| T.SimplePatternNegative
 								| T.ComplexPattern
 								| T.DottedName
-								| '_'
+								| TSKindId.WildcardPattern
 							>(_e, _K18, _K19)
 						),
 						[
@@ -3655,13 +3655,13 @@ export function resolveKeyValuePattern_key(
 						| T.DictPattern
 						| T.String
 						| T.ConcatenatedString
-						| 'True'
-						| 'False'
-						| 'None'
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.None
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
-						| '_'
+						| TSKindId.WildcardPattern
 					>(value, _K18, _K19)
 				),
 				[
@@ -3721,13 +3721,13 @@ export function resolveKeywordPattern_value(
 						| T.DictPattern
 						| T.String
 						| T.ConcatenatedString
-						| 'True'
-						| 'False'
-						| 'None'
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.None
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
-						| '_'
+						| TSKindId.WildcardPattern
 					>(value, _K18, _K19)
 				),
 				[
@@ -3764,7 +3764,9 @@ export function resolveSplatPattern_operator(
 export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): Admit<T.SplatPattern['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.Underscore], () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
+			_resolveKindEnum(value, [TSKindId.Underscore], () =>
+				_resolveOneLeaf<T.Identifier | TSKindId.Underscore>(value, 'identifier')
+			),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);
@@ -5293,7 +5295,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		return F.buildStringContent(
 			...(listStorage(
 				_resolveKindEnumItems(children, [TSKindId.NotEscapeSequence], (_v) =>
-					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment>(
+					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>(
 						_v,
 						_K36,
 						_super_escape_sequence
@@ -5314,7 +5316,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 	return F.buildStringContent(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.NotEscapeSequence], (_v) =>
-				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment>(
+				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>(
 					_v,
 					_K36,
 					_super_escape_sequence
@@ -6354,7 +6356,12 @@ export function resolvePrintStatementChevron_printChevronArguments(
 ): Admit<T.PrintStatementChevron['_print_chevron_arguments']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.Comma], () =>
-			_resolveOneBranch<T.PrintChevronArguments | ','>(value, 'print_chevron_arguments', [TSKindId.Comma], true)
+			_resolveOneBranch<T.PrintChevronArguments | TSKindId.Comma>(
+				value,
+				'print_chevron_arguments',
+				[TSKindId.Comma],
+				true
+			)
 		),
 		[[',', TSKindId.Comma] as const]
 	);
@@ -7328,7 +7335,7 @@ export function resolveMatchBlockEmpty_newline(
 	value: T.MatchBlockEmpty.LooseConfig['newline'] | undefined
 ): Admit<T.MatchBlockEmpty['_newline']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n'>(value, '_newline')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<TSKindId.Newline>(value, '_newline')),
 		[['\n', TSKindId.Newline] as const]
 	);
 }
@@ -7344,7 +7351,7 @@ export function coerceToMatchBlockEmpty(input?: T.MatchBlockEmpty.Loose): Return
 			_resolveKindEnumScalar(
 				configFieldOr(input, 'newline', () => input),
 				() =>
-					_resolveOneLeaf<'\n'>(
+					_resolveOneLeaf<TSKindId.Newline>(
 						configFieldOr(input, 'newline', () => input),
 						'_newline'
 					)
@@ -7410,7 +7417,7 @@ export function resolveSuiteEmpty_newline(
 	value: T.SuiteEmpty.LooseConfig['newline'] | undefined
 ): Admit<T.SuiteEmpty['_newline']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n'>(value, '_newline')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<TSKindId.Newline>(value, '_newline')),
 		[['\n', TSKindId.Newline] as const]
 	);
 }
@@ -7426,7 +7433,7 @@ export function coerceToSuiteEmpty(input?: T.SuiteEmpty.Loose): ReturnType<typeo
 			_resolveKindEnumScalar(
 				configFieldOr(input, 'newline', () => input),
 				() =>
-					_resolveOneLeaf<'\n'>(
+					_resolveOneLeaf<TSKindId.Newline>(
 						configFieldOr(input, 'newline', () => input),
 						'_newline'
 					)

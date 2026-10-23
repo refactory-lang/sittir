@@ -41,7 +41,7 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	return report(await invoke('stage', 'diagnoseEvaluationStage', rawGrammar.stages[stage]));
 }
 
-export async function diagnoseEvaluated(grammar: string, evaluated: RawGrammar, generatedIdTables?: GeneratedIdTables): Promise<number> {
+export async function diagnoseEvaluated(grammar: string, evaluated: RawGrammar, generatedIdTables: GeneratedIdTables): Promise<number> {
 	const diagnosis = await invoke('compile', 'diagnoseGrammar', { grammar, evaluated, generatedIdTables });
 	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnosis.grammarDiagnostics)) + '\n');
 	if (diagnosis.passed) return 0;

@@ -12503,7 +12503,12 @@ export namespace UnionPattern {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<
+				>
+		  ]
+		| [
+				children: Readonly<
+					NonEmptyArray<
+						LooseValue<
 							| T.ClassPattern
 							| T.SplatPattern
 							| T.UnionPattern
@@ -12512,62 +12517,17 @@ export namespace UnionPattern {
 							| T.DictPattern
 							| T.String
 							| T.ConcatenatedString
-							| 'True'
-							| 'False'
-							| 'None'
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.None
 							| T.SimplePatternNegative
 							| T.ComplexPattern
 							| T.DottedName
-							| '_',
+							| TSKindId.WildcardPattern,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
-					  >
-				>
-		  ]
-		| [
-				children: Readonly<
-					NonEmptyArray<
-						| LooseValue<
-								| T.ClassPattern
-								| T.SplatPattern
-								| T.UnionPattern
-								| T.CaseListPattern
-								| T.CaseTuplePattern
-								| T.DictPattern
-								| T.String
-								| T.ConcatenatedString
-								| TSKindId.True
-								| TSKindId.False
-								| TSKindId.None
-								| T.SimplePatternNegative
-								| T.ComplexPattern
-								| T.DottedName
-								| TSKindId.WildcardPattern,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								| T.ClassPattern
-								| T.SplatPattern
-								| T.UnionPattern
-								| T.CaseListPattern
-								| T.CaseTuplePattern
-								| T.DictPattern
-								| T.String
-								| T.ConcatenatedString
-								| 'True'
-								| 'False'
-								| 'None'
-								| T.SimplePatternNegative
-								| T.ComplexPattern
-								| T.DottedName
-								| '_',
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						>
 					>
 				>
 		  ];
@@ -14105,29 +14065,17 @@ export namespace StringContent {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<
-							T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
 				>
 		  ]
 		| [
 				children: Readonly<
 					NonEmptyArray<
-						| LooseValue<
-								T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						LooseValue<
+							T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+						>
 					>
 				>
 		  ];

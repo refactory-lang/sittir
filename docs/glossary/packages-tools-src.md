@@ -38,7 +38,7 @@ Compatibility entry point for `compileNodeMap`. Tools that need an assembled nod
 
 ### `packages/tools/src/codegen-surface.ts::compileNodeMap`
 
-Loads the package and generated ID tables, then returns `compileGrammar`'s node map. With `unbound`, it compiles the grammar without its grammar bindings and without the generated ID tables, which name the bound kinds: the base grammar's model, which the grammar bindings are derived against. Canonical grammar diagnosis resolves declared preferences through the existing site resolver, and compilation hydrates slot references. Both tool loader names share this path; phase-specific tools retain `evaluateGrammar` and `buildSimplifiedGrammar`.
+The node map of `compileGrammarOf`. Both tool loader names share this path; phase-specific tools retain `evaluateGrammar` and `buildSimplifiedGrammar`.
 
 ### `packages/tools/src/sync-base.ts::syncBase`
 
@@ -151,6 +151,14 @@ The repo-relative path of `post-generate.ts`, where parity fixture extraction st
 ### `packages/tools/src/codegen-surface.ts::codegenModuleFiles`
 
 The absolute path of every codegen module the surface can load (`MODULES`), so what the tools run through `load` and `invoke` can be hashed like their static imports.
+
+### `packages/tools/src/codegen-surface.ts::compileGrammarOf`
+
+`compileGrammar` for a grammar by name, with the id tables its evaluation reads. With `unbound`, it compiles the grammar without its grammar bindings, against the tables that grammar predicts: the base grammar's model, which the grammar bindings are derived against.
+
+### `packages/tools/src/codegen-surface.ts::Compilation`
+
+What `compileGrammar` returns, as the tools see it through the codegen surface.
 
 ### `packages/tools/src/regen.ts::inPool`
 

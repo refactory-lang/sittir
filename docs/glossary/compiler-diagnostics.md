@@ -857,3 +857,7 @@ Prints diagnostics by severity: info goes to stdout, and warning, error and fail
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics`
 
 One blocking record per rule `dsl/eof-placement.ts::eofPlacements` refuses, naming the rule as `ownerKind`, with `details` holding the rule (`kind`), the start rule (`start`) and both placements. A rule with an `eof()` in a token gets `eof-in-token`, the more specific mistake: a lexical token cannot match the end of input, and tree-sitter's DSL forbids the shape, so the record refuses it at evaluate (`evaluateRecords`) rather than leaving it to the parser generator. Any other refused rule gets `eof-not-last`: an `eof()` is legal only last in the start rule, where it changes nothing because the start rule always runs to the end of the input. Neither code can be expected (`UNEXPECTABLE_CODES`).
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromMissingParserTables`
+
+The `missing-parser-tables` record: a generated grammar's package has no parser.c to read its id tables from. It names the path and the `gen` command that writes it. It cannot proceed, and `loadPackageIdTables` throws it directly rather than through the gate, so no `--allow-diagnostic` can waive it.

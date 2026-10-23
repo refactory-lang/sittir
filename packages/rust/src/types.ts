@@ -19513,33 +19513,21 @@ export namespace FunctionModifiers {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<
-							'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
 				>
 		  ]
 		| [
 				children: Readonly<
 					NonEmptyArray<
-						| LooseValue<
-								| TSKindId.AsyncKeyword
-								| TSKindId.DefaultKeyword
-								| TSKindId.ConstKeyword
-								| TSKindId.UnsafeKeyword
-								| T.ExternModifier,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						LooseValue<
+							| TSKindId.AsyncKeyword
+							| TSKindId.DefaultKeyword
+							| TSKindId.ConstKeyword
+							| TSKindId.UnsafeKeyword
+							| T.ExternModifier,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+						>
 					>
 				>
 		  ];
@@ -25141,20 +25129,16 @@ export namespace DelimTokenTreeParen {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					)[]
+					LooseValue<
+						T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
 				>
 		  ];
 	export type Kind = TSKindId.DelimTokenTreeParen;
@@ -25191,20 +25175,16 @@ export namespace DelimTokenTreeBracket {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					)[]
+					LooseValue<
+						T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
 				>
 		  ];
 	export type Kind = TSKindId.DelimTokenTreeBracket;
@@ -25241,20 +25221,16 @@ export namespace DelimTokenTreeBrace {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					)[]
+					LooseValue<
+						T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
 				>
 		  ];
 	export type Kind = TSKindId.DelimTokenTreeBrace;

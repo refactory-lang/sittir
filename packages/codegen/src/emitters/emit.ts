@@ -16,15 +16,14 @@ import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
 import { emitTypesModules } from './types.ts';
 import { emitConsts } from './consts.ts';
-import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
-import { indentChars, newlineArms } from '../compiler/model/layout-kinds.ts';
+import { addressTablesFor, emitOptions } from './options.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
 import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
-import { collectCatalogKinds, collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
+import { collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
 import { grammarRenderInputs, RenderModuleEmitter } from './render-module.ts';
 import { isGrammar } from '../grammars.ts';
 import {
@@ -48,7 +47,7 @@ import type { OverlayName } from './overlays/module.ts';
 export interface EmitAllConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	generatedIdTables?: GeneratedIdTables;
+	generatedIdTables: GeneratedIdTables;
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	strict?: boolean;
@@ -82,24 +81,14 @@ export interface EmitAllResult {
 	reparseHosts?: string;
 	renderModule?: RenderModuleBundle;
 	rootTreeTypeName?: string;
-	kindEntries?: readonly KindEnumEntry[];
+	kindEntries: readonly KindEnumEntry[];
 }
 
-type RenderModuleEmission =
-	| { tag: 'emit'; validGrammar: GrammarName; generatedIdTables: GeneratedIdTables }
-	| { tag: 'skip' };
+type RenderModuleEmission = { tag: 'emit'; validGrammar: GrammarName } | { tag: 'skip' };
 
-function classifyRenderModuleEmission(
-	grammar: string,
-	emitRenderModule: boolean | undefined,
-	generatedIdTables: GeneratedIdTables | undefined
-): RenderModuleEmission {
-	if (emitRenderModule !== true) return { tag: 'skip' };
-	if (!isGrammar(grammar)) return { tag: 'skip' };
-	if (generatedIdTables === undefined) {
-		throw new Error(`render module: ${grammar} has no parser kind ids; generate the parser before emitting the render module`);
-	}
-	return { tag: 'emit', validGrammar: grammar, generatedIdTables };
+function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
+	if (emitRenderModule !== true || !isGrammar(grammar)) return { tag: 'skip' };
+	return { tag: 'emit', validGrammar: grammar };
 }
 
 export function emitAll(config: EmitAllConfig): EmitAllResult {
@@ -120,23 +109,18 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		diagnostics
 	} = config;
 	assertReparseHostKeys(grammar, reparseHosts, new Set([...nodeMap.nodes.keys(), ...collectGeneratedKindEntries(generatedIdTables).flatMap((entry) => (entry.parseName === undefined ? [entry.kind] : [entry.kind, entry.parseName]))]));
-	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule, generatedIdTables);
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
-	const rulesConfig = kindEntries
-		? { nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals, nodeMap) }
-		: undefined;
-	const resolvedRules = rulesConfig
-		? resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced))
-		: undefined;
+	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
+	const resolvedRules = resolveRenderRules(
+		{ nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(visibleExternals, nodeMap) },
+		(spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)
+	);
 
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
 		nodeMap,
 		strict,
 		generatedIdTables,
-		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
 		triviaKinds,
@@ -146,29 +130,21 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const fromEmitter = new FromEmitter({
 		grammar,
 		nodeMap,
-		generatedIdTables,
-		kindEntries
+		generatedIdTables
 	});
 
 	const wrapEmitter = new WrapEmitter({
 		grammar,
 		nodeMap,
 		generatedIdTables,
-		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
 		rootKind
 	});
 
-	const renderRules = resolvedRules?.seamed;
-	const sitePreferences =
-		kindEntries && renderRules
-			? collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock })
-			: undefined;
-	const addressTables =
-		kindEntries && renderRules && sitePreferences
-			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
-			: undefined;
+	const renderRules = resolvedRules.seamed;
+	const sitePreferences = collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock });
+	const addressTables = addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock);
 	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, diagnostics });
 
 	const renderModuleEmitterInst =
@@ -176,12 +152,11 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			? new RenderModuleEmitter({
 					grammar: renderModuleEmission.validGrammar,
 					nodeMap,
-					generatedIdTables: renderModuleEmission.generatedIdTables,
+					generatedIdTables,
 					...grammarRenderInputs(renderModuleEmission.validGrammar, {
 						renderRules,
 						options: optionsBlock,
 						visibleExternals,
-						kindEntries,
 						sites: sitePreferences,
 						addresses: addressTables
 					})
@@ -212,7 +187,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		entryRows: polymorphsOverlay.entryRows
 	});
 	const consts = emitConsts({ grammar, nodeMap });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap), newlineArms: newlineArms(nodeMap) });
+	const options = emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables });
 	const irNamespace = emitIr({ grammar, nodeMap });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
@@ -260,7 +235,7 @@ interface NodeDispatchEmitters {
 
 interface NodeDispatchContext {
 	readonly nodeMap: NodeMap;
-	readonly kindEntries: ReturnType<typeof collectKindEntries> | undefined;
+	readonly kindEntries: ReturnType<typeof collectKindEntries>;
 	readonly inlineKinds: readonly string[] | undefined;
 	readonly synthesizedKinds: ReadonlySet<string> | undefined;
 }

@@ -239,6 +239,10 @@ export const PUNCTUATION_KEY_SUFFIX = '_punctuation';
 
 type ParsedIdEntry = GeneratedIdEntry & { readonly parser: KindParserMetadata };
 
+export function deriveFieldRuntimeName(cName: string): string {
+	return cName.startsWith('field_') ? cName.slice('field_'.length) : cName;
+}
+
 export function joinIdNames(
 	ids: ReadonlyMap<string, CEnumEntry>,
 	names: ReadonlyMap<string, string>,
@@ -458,9 +462,9 @@ export type GeneratedIdTable =
 	| Record<string, number | GeneratedIdEntry>;
 
 export interface GeneratedIdTables {
-	readonly kindIds?: GeneratedIdTable;
-	readonly fieldIds?: GeneratedIdTable;
-	readonly folds?: ReadonlyMap<number, readonly number[]>;
+	readonly kindIds: GeneratedIdTable;
+	readonly fieldIds: GeneratedIdTable;
+	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly sourceArtifact: string;
 }
 
@@ -485,11 +489,11 @@ export interface GeneratedKindEntry {
 }
 
 export function stampVisibleExternals(
-	tables: GeneratedIdTables | undefined,
+	tables: GeneratedIdTables,
 	grammar: { readonly visibleExternals?: Readonly<Record<string, unknown>> }
-): GeneratedIdTables | undefined {
+): GeneratedIdTables {
 	const declared = Object.keys(grammar.visibleExternals ?? {});
-	if (tables?.kindIds === undefined || declared.length === 0) return tables;
+	if (declared.length === 0) return tables;
 	const stamped = new Map(toEntries(tables.kindIds));
 	for (const name of declared) {
 		const row = stamped.get(name);
@@ -507,8 +511,7 @@ export function symbolNameIsNotable(
 	return symbolName !== undefined && (symbolName !== kind || literalRule === true);
 }
 
-export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefined): readonly GeneratedKindEntry[] {
-	if (!tables?.kindIds) return [];
+export function collectGeneratedKindEntries(tables: GeneratedIdTables): readonly GeneratedKindEntry[] {
 	return toEntries(tables.kindIds)
 		.filter(([, entry]) => entry.id !== undefined)
 		.map(([kind, entry]) => ({
@@ -535,9 +538,9 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 }
 
 export function generatedFieldIds(
-	tables: GeneratedIdTables | undefined
+	tables: GeneratedIdTables
 ): readonly { readonly name: string; readonly id: number }[] {
-	return toEntries(tables?.fieldIds)
+	return toEntries(tables.fieldIds)
 		.filter((row): row is readonly [string, GeneratedIdEntry & { readonly id: number }] => row[1].id !== undefined)
 		.map(([name, entry]) => ({ name, id: entry.id }))
 		.sort((a, b) => a.id - b.id);
@@ -1178,6 +1181,8 @@ function clearDefaultAliases(
 
 export interface PredictedSymbolTable extends ParserSymbolTable {
 	readonly undefinedNames: readonly string[];
+	readonly fields: ReadonlyMap<string, CEnumEntry>;
+	readonly fieldNames: ReadonlyMap<string, string>;
 }
 
 export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTable {
@@ -1339,12 +1344,37 @@ export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTa
 			supertypes: supertypeCNames,
 			tokenCount
 		},
-		undefinedNames: [...undefinedNames]
+		undefinedNames: [...undefinedNames],
+		...predictedFields(syntax)
 	};
 }
 
+function predictedFields(variables: readonly Variable[]): Pick<PredictedSymbolTable, 'fields' | 'fieldNames'> {
+	const names = new Set<string>();
+	const visit = (rule: InternedRule): void => {
+		if (rule.type === 'META') {
+			if (rule.params.field !== undefined) names.add(rule.params.field);
+			visit(rule.rule);
+		} else if (rule.type === 'SEQ' || rule.type === 'CHOICE') rule.members.forEach(visit);
+		else if (rule.type === 'REPEAT') visit(rule.content);
+	};
+	for (const variable of variables) visit(variable.rule);
+	const fields = new Map<string, CEnumEntry>();
+	const fieldNames = new Map<string, string>();
+	for (const name of [...names].sort()) {
+		const cName = `field_${sanitizeCIdentifier(name)}`;
+		fields.set(cName, { cName, id: fields.size + 1 });
+		fieldNames.set(cName, name);
+	}
+	return { fields, fieldNames };
+}
+
 export type PredictedKinds =
-	| { readonly entries: readonly GeneratedKindEntry[]; readonly keyCollisions: readonly KindKeyCollision[] }
+	| {
+			readonly entries: readonly GeneratedKindEntry[];
+			readonly keyCollisions: readonly KindKeyCollision[];
+			readonly tables: GeneratedIdTables;
+		}
 	| { readonly failure: string; readonly undefinedNames: readonly string[] };
 
 export function undefinedNamesOf(kinds: PredictedKinds | undefined): readonly string[] {
@@ -1353,6 +1383,13 @@ export function undefinedNamesOf(kinds: PredictedKinds | undefined): readonly st
 
 export function predictedEntriesOf(kinds: PredictedKinds | undefined): readonly GeneratedKindEntry[] {
 	return kinds !== undefined && 'entries' in kinds ? kinds.entries : [];
+}
+
+export function predictedIdTablesOf(grammar: { readonly predictedKinds?: PredictedKinds }): GeneratedIdTables {
+	const kinds = grammar.predictedKinds;
+	if (kinds === undefined) throw new Error('symbol-table: the grammar carries no predicted kinds to take id tables from');
+	if ('failure' in kinds) throw new Error(`symbol-table: no id tables can be predicted: ${kinds.failure}`);
+	return kinds.tables;
 }
 
 const PREDICTED_KIND_FIELDS = [
@@ -1402,28 +1439,36 @@ export function assertPredictedKindEntries(
 }
 
 export interface PredictedKindCatalog {
+	readonly tables: GeneratedIdTables;
 	readonly entries: readonly GeneratedKindEntry[];
 	readonly undefinedNames: readonly string[];
 	readonly keyCollisions: readonly KindKeyCollision[];
 }
 
-export function predictKindCatalog(
-	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
-): PredictedKindCatalog {
+type PredictableGrammar = PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> };
+
+export function predictKindCatalog(grammar: PredictableGrammar): PredictedKindCatalog {
 	const table = predictSymbolTable(grammar);
 	const { ids: kindIds, collisions } = kindTableOfSymbolTable(table, grammar);
-	const entries = collectGeneratedKindEntries(stampVisibleExternals({ kindIds, sourceArtifact: 'predicted' }, grammar)).map(
-		({ lexicalRank: _lexicalRank, ...entry }) => entry
+	const tables = stampVisibleExternals(
+		{
+			kindIds,
+			fieldIds: joinIdNames(table.fields, table.fieldNames, deriveFieldRuntimeName).ids,
+			folds: new Map(),
+			sourceArtifact: 'predicted'
+		},
+		grammar
 	);
-	return { entries, undefinedNames: table.undefinedNames, keyCollisions: collisions };
+	const entries = collectGeneratedKindEntries(tables).map(({ lexicalRank: _lexicalRank, ...entry }) => entry);
+	return { tables, entries, undefinedNames: table.undefinedNames, keyCollisions: collisions };
 }
 
 export function predictedKindsOf(
 	grammar: PredictedGrammar & { readonly visibleExternals?: Readonly<Record<string, unknown>> }
 ): PredictedKinds {
 	try {
-		const { entries, undefinedNames, keyCollisions } = predictKindCatalog(grammar);
-		if (undefinedNames.length === 0) return { entries, keyCollisions };
+		const { tables, entries, undefinedNames, keyCollisions } = predictKindCatalog(grammar);
+		if (undefinedNames.length === 0) return { entries, keyCollisions, tables };
 		return {
 			failure: `symbol-table: ${undefinedNames.map((name) => `'${name}'`).join(', ')} name no rule and no external`,
 			undefinedNames
@@ -1431,15 +1476,6 @@ export function predictedKindsOf(
 	} catch (error) {
 		return { failure: error instanceof Error ? error.message : String(error), undefinedNames: [] };
 	}
-}
-
-export function kindCatalogOf(
-	tables: GeneratedIdTables | undefined,
-	grammar: { readonly predictedKinds?: PredictedKinds }
-): readonly GeneratedKindEntry[] {
-	return tables === undefined
-		? predictedEntriesOf(grammar.predictedKinds)
-		: collectGeneratedKindEntries(tables);
 }
 
 export function catalogRenames(names: Iterable<string>, entries: readonly KindEntryLike[]): ReadonlyMap<string, string> {

@@ -86,7 +86,7 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, kindCatalogOf, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
+import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collectGeneratedKindEntries, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -98,7 +98,7 @@ import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
 
 export interface LinkOptions {
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly generatedIdTables: GeneratedIdTables;
 	readonly diagnostics?: DiagnosticSink;
 }
 
@@ -116,7 +116,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 			externalRoles: Map<string, ExternalRole>;
 			inline?: readonly string[];
 			hiddenNamedArmChoices: ReadonlySet<string>;
-			kindEntries?: readonly GeneratedKindEntry[];
+			kindEntries: readonly GeneratedKindEntry[];
 		}
 	) {
 		super(init);
@@ -124,7 +124,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.externalRoles = init.externalRoles;
 		this.inline = init.inline;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
-		this.kindEntries = init.kindEntries ?? [];
+		this.kindEntries = init.kindEntries;
 		this.root = rootRuleName(init.grammar.rules);
 	}
 
@@ -143,9 +143,9 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	}
 }
 
-export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
-	const generatedIdTables = stampVisibleExternals(ctx?.generatedIdTables, evaluated);
-	const kindEntries = kindCatalogOf(generatedIdTables, evaluated);
+export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
+	const generatedIdTables = stampVisibleExternals(ctx.generatedIdTables, evaluated);
+	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
 	const raw = stampParserVisibility(spliceTextLeaves(collapseRenamedRules(evaluated, catalogCtx), catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
