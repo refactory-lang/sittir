@@ -1,21 +1,19 @@
 # Manual arena benchmarks
 
-The **Arena benchmarks** workflow runs on request. A push to a `bench/<name>`
-branch runs every benchmark on that commit; on the default branch it can also
-be dispatched for `eager`, `corpus`, or `all`. A push to any other branch, a
-pull request or a schedule never runs it. It has no performance threshold and
-no required CI status. Broken runs, changed workload fingerprints or changed
-runtime inputs still fail their job.
+The **Arena benchmarks** workflow runs on request: it is dispatched for
+`eager`, `corpus`, or `all`, at the branch to measure. A push, a pull request
+or a schedule never runs it. It has no performance threshold and no required
+CI status. Broken runs, changed workload fingerprints or changed runtime
+inputs still fail their job.
 
 ```sh
-git push origin HEAD:refs/heads/bench/<name>
 gh workflow run benchmarks.yml --ref <branch> -f benchmark=corpus
 ```
 
-GitHub requires the dispatcher definition to exist on the repository's default
-branch before manual dispatch is available; once it does, `--ref` selects the
-branch to measure. A `bench/` push needs no such registration, so a commit on
-an unmerged branch is measured by pushing it there. See [GitHub's manual-run
+GitHub offers manual dispatch only for a workflow the repository's default
+branch holds, so the dispatcher is registered there, and a dispatched run reads
+the workflow from the ref it targets. The reusable jobs it calls need only be
+on the branch measured. See [GitHub's manual-run
 contract](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
 
 The dispatcher first calls a shared [build](../../../../.github/workflows/benchmark-build.yml)

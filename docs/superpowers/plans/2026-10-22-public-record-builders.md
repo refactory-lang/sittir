@@ -66,9 +66,9 @@ the last slice.
 
 ## Measurement
 
-Every slice is measured with the `Arena benchmarks` workflow, not local runs.
-Pushing a commit to a `bench/<name>` branch runs the whole workflow; on
-master it can also be dispatched for one benchmark.
+Every slice is measured with the `Arena benchmarks` workflow, not local runs:
+the dispatcher is on master, and each run is dispatched at the slice's branch
+(`gh workflow run benchmarks.yml --ref <branch>`).
 
 - **Corpus job.** `sittir tool bench-storage --validation` pairs object and
   arena engines over the complete validation buckets. Its factory and IR
