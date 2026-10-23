@@ -30,6 +30,20 @@ export interface TriviaFacts<Kind extends number = number> {
 	 * continuations. Comments are content and are not among them.
 	 */
 	readonly layout: ReadonlySet<number>;
+	/**
+	 * Engine plumbing, not for callers: for each kind with an inner side, the
+	 * storage keys of the slots inside its inner gap, between the tokens that
+	 * flank it. A built node of the kind is empty when none of them holds a
+	 * child that owns sides; a slot outside the gap (a terminator after the
+	 * closing brace) does not count.
+	 */
+	readonly innerRegions: ReadonlyMap<number, readonly string[]>;
+	/**
+	 * Engine plumbing, not for callers: the kind ids a node stores as a bare
+	 * kind id whose kind the parser names, such as an empty statement's `;`.
+	 * Inside an inner gap such a unit owns sides; an anonymous token does not.
+	 */
+	readonly namedUnits: ReadonlySet<number>;
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 	readonly spelled?: readonly SpelledTrivia[];
@@ -341,11 +355,12 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 */
 	readonly reviver: (key: string, value: unknown) => unknown;
 	/**
-	 * Whether `node` is this engine's node of a kind with inner gaps and no child of it holds
-	 * sides, so it takes `$trivia.inner`. A child holds sides when it is named, not an extra or
-	 * `ERROR`, and has width: read from the tree for a parsed node, so its zero-width automatic
-	 * semicolon holds none, and from the rendered text for a built one. A child with text (a real
-	 * `;`) holds sides.
+	 * Whether `node` is this engine's node of a kind with an inner gap and nothing in it holds
+	 * sides, so it takes `$trivia.inner`. A parsed node answers from its tree: no child is named,
+	 * not an extra or `ERROR`, and with width. A built node answers from what it stores inside the
+	 * gap: a stored node, text, or token of a named kind (a real `;`) holds sides; an anonymous
+	 * token does not, nor does a slot outside the gap, such as typescript's automatic-semicolon
+	 * terminator after `}`, which still renders.
 	 */
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N

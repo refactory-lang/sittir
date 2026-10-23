@@ -34,6 +34,37 @@ export const triviaFacts = Object.freeze({
 		342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359
 	]),
 	layout: new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]),
+	innerRegions: new Map<number, readonly string[]>([
+		[176, ['_shebang', '_statements']],
+		[195, ['_declarations']],
+		[199, ['_elements']],
+		[201, ['_elements']],
+		[203, ['_attributes']],
+		[227, ['_use_clauses']],
+		[230, ['_elements']],
+		[249, ['_bounds']],
+		[277, ['_elements']],
+		[283, ['_initializers']],
+		[293, ['_match_block_arms']],
+		[302, ['_parameters']],
+		[313, ['_statements', '_trailing_expression']],
+		[316, ['_elements']],
+		[317, ['_patterns']],
+		[367, ['_attributes', '_elements']],
+		[405, ['_token_patterns']],
+		[406, ['_token_patterns']],
+		[407, ['_token_patterns']],
+		[408, ['_tokens']],
+		[409, ['_tokens']],
+		[410, ['_tokens']],
+		[411, ['_delim_tokens']],
+		[412, ['_delim_tokens']],
+		[413, ['_delim_tokens']]
+	]),
+	namedUnits: new Set<number>([
+		58, 125, 126, 127, 163, 164, 168, 169, 170, 171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364,
+		421, 426
+	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s))+)$/u,
 		kindIdByText: Object.freeze({ '': 168, ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })

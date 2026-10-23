@@ -10052,7 +10052,9 @@ Emits `triviaFacts`, the grammar's `TriviaFacts<TSKindId>` (checked with `satisf
 - `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
 - `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node;
 - `listKinds` (`listKindIds`), engine plumbing: the kind ids of the grammar's list kinds, whose rebuilt nodes keep the source identity of the list they replace;
-- `layout` (`layoutTriviaKindIds`): the kind ids of the trivia members that spell layout rather than content, which a consumer that prints content without format leaves out (`seatTableSides`).
+- `layout` (`layoutTriviaKindIds`): the kind ids of the trivia members that spell layout rather than content, which a consumer that prints content without format leaves out (`seatTableSides`);
+- `innerRegions` (`innerRegions`), engine plumbing: for each kind with an inner side, the storage keys inside its inner gap, over which a built node's emptiness is judged;
+- `namedUnits` (`namedUnitKindIds`), engine plumbing: the unit kind ids the parser names, the only stored units that own sides inside that gap.
 
 The render engine passes both sets to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
 
@@ -12322,6 +12324,14 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 // 'list' shares 'branch's wrap function — see
 // isSlotBearingCompound's doc comment (shared.ts).
 ```
+
+### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
+
+The unit kinds (`unitKindIds`) whose kind the parser names, read from the kind catalog's `anon` stamp: an empty statement's `;`, `true`, `self`, not a `$` or `{`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+
+### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
+
+The sorted kind ids of the unit kinds (keyword or punctuation model type, with a kind id) that `keep` accepts: the one walk behind `unitKindIds` and `namedUnitKindIds`.
 
 
 ### `packages/codegen/src/emitters/render-module.ts::module`

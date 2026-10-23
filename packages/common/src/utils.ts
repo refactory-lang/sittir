@@ -3,7 +3,7 @@ import { mapTriviaEntries } from './trivia.ts';
 import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { register, registered, type Role } from './identity.ts';
@@ -85,27 +85,20 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	return handle === undefined ? result : handle.settle(result);
 }
 
-/**
- * Whether the node has no child with width. Only such a node can hold inner trivia, since a
- * comment beside any child has that child to lead or trail.
- *
- * @param node - A built or parsed node.
- * @returns Whether no child holds sides: a child holds sides when it is named, not an extra or
- *   `ERROR`, and has width. A parsed node's width is read from its tree, so a zero-width child
- *   (typescript's automatic semicolon) holds none. A built node's child has the width of its
- *   rendered text, and every child a built node stores renders text (a stored automatic semicolon
- *   renders `"\n"`), so a built node is empty when every `_`-keyed storage entry is absent or an
- *   empty list.
- */
 export function isEmptyNode(node: AnyUntypedNode): boolean {
 	const tree = treeOf(node);
 	const handle = treeHandleOf(node);
 	if (tree?.isEmpty !== undefined && handle !== undefined) return tree.isEmpty(decodeIndex(handle));
+	const facts = engineOf(node)?.trivia;
+	return storesNothingIn(node, typeof node.$type === 'number' ? facts?.innerRegions.get(node.$type) : undefined, facts?.namedUnits);
+}
+
+export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] | undefined, namedUnits?: ReadonlySet<number>): boolean {
 	const record = node as unknown as Record<string, unknown>;
-	for (const key of Object.keys(record)) {
-		if (key.charCodeAt(0) !== 95) continue;
-		const value = record[key];
-		if (value != null && !(Array.isArray(value) && value.length === 0)) return false;
+	const owns = (value: unknown): boolean =>
+		Array.isArray(value) ? value.some(owns) : typeof value === 'number' ? (namedUnits?.has(value) ?? true) : value != null;
+	for (const key of region ?? Object.keys(record)) {
+		if (key.charCodeAt(0) === 95 && owns(record[key])) return false;
 	}
 	return true;
 }

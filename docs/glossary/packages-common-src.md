@@ -838,6 +838,20 @@ The one seat that wraps and registers: the wrapper the registry holds at the val
 
 The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
 
+### `packages/common/src/utils.ts::isEmptyNode`
+
+Whether a node can hold inner trivia: nothing in it owns sides, since a comment beside any child has that child to lead or trail. Emptiness is about side ownership, not about what renders.
+
+- A parsed node answers from its tree (`TreeHandle.isEmpty`): no child is named, not an extra or `ERROR`, and with width.
+- A built node answers from what it stores (`storesNothingIn`), over its kind's inner region (`TriviaFacts.innerRegions`) with the named units (`TriviaFacts.namedUnits`), read through the node's engine (`engineOf`). A slot outside the gap does not count, so a typescript block whose only stored value is its automatic-semicolon terminator after `}` is empty, though the terminator still renders. A stored token of an anonymous kind (rust's `$` in `a!($)`) does not count either, while a named one (an empty statement's `;`) does.
+- A node with no engine, or of a kind with no inner region, is judged over every `_`-keyed slot, every unit counting.
+
+The two rules are held to one answer by `inner-region-parity.test.ts`. The one disagreement is scm `missing_node` in `(MISSING) @cap`, where the tree counts the capture after `)`; it is named there until the tree's rule reads the same gaps. `rebuilt` and `$trivia.inner` (`triviaWriter`) ask it, and so does `engine.isEmptyNode`, which also requires a kind with an inner side.
+
+### `packages/common/src/utils.ts::storesNothingIn`
+
+Whether a node stores nothing that owns sides in the slots `region` names, or in every `_`-keyed slot when it names none. A slot owns sides when it holds a node, a coordinate, text or a presence (any value other than `null`/`undefined`), or a unit whose kind id is in `namedUnits`. Every unit counts when no `namedUnits` is given. A list owns sides when any item does. It is the stored half of `isEmptyNode`, exported so the corpus parity test applies it to parsed nodes too.
+
 ### `packages/common/src/node-data.ts::sideOf`
 
 The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools: the entries of `sideRead`, which decides per side where it lives. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope and its content are one parser node, and the envelope holds that node's sides: the content (`envelopeKindOf`) reads none from the table, so every reader meets a comment there once.

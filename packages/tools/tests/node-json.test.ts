@@ -304,6 +304,22 @@ describe('a comment written through $trivia reads back as the node a parsed comm
 	});
 });
 
+describe('an empty node keeps its inner comment through JSON', () => {
+	it.each(['function f(){/* c */}', 'if (a) {/* c */}'])('%s', (source) => {
+		const root = ts.parse(source);
+		const revived = JSON.parse(JSON.stringify(root), ts.reviver) as object;
+		expect(JSON.stringify(revived)).toBe(JSON.stringify(root));
+		expect(String(revived)).toContain('/* c */');
+	});
+
+	it.each([
+		['a kind whose delimiters are a choice of tokens has no inner gap', 'type T = {/* c */};'],
+		['an alias envelope has no gap of its own for its content’s inner side', 'interface I {/* c */}']
+	])('known gap, %s: %s loses its comment', (_, source) => {
+		expect(String(JSON.parse(JSON.stringify(ts.parse(source)), ts.reviver))).not.toContain('/* c */');
+	});
+});
+
 describe('a rebuilt node reads each side from where that side lives', () => {
 	type Rebuildable = { readonly $trivia: Record<'leading' | 'trailing', (...items: unknown[]) => unknown>; readonly $with: Record<string, (value: unknown) => Rebuildable> };
 	const comments = (text: string): number => (text.match(/\/\/ [lt]\b/g) ?? []).length;

@@ -31,6 +31,26 @@ export const triviaFacts = Object.freeze({
 	]),
 	listKinds: new Set<number>([382, 383, 385, 388, 389, 390, 391, 397]),
 	layout: new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]),
+	innerRegions: new Map<number, readonly string[]>([
+		[188, ['_hash_bang_line', '_statements']],
+		[191, ['_export_specifiers']],
+		[200, ['_import_specifiers']],
+		[209, ['_statements']],
+		[227, ['_cases']],
+		[236, ['_properties']],
+		[237, ['_properties']],
+		[240, ['_elements']],
+		[241, ['_elements']],
+		[282, ['_elements']],
+		[286, ['_members']],
+		[287, ['_elements']],
+		[321, ['_elements']],
+		[377, ['_tuple_type_members']]
+	]),
+	namedUnits: new Set<number>([
+		128, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 225, 253, 277, 278, 279, 280, 281, 325, 362, 393, 404,
+		412, 436, 437
+	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
 		kindIdByText: Object.freeze({ '': 180, ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })

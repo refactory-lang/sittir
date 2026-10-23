@@ -32,6 +32,23 @@ export const triviaFacts = Object.freeze({
 		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290
 	]),
 	layout: new Set<number>([106, 107, 115, 116, 117, 122, 123, 124, 125, 126]),
+	innerRegions: new Map<number, readonly string[]>([
+		[127, ['_statements']],
+		[165, ['_elements']],
+		[176, ['_arguments']],
+		[186, ['_elements']],
+		[196, ['_elements']],
+		[197, ['_patterns']],
+		[232, ['_collection_elements']],
+		[234, ['_elements']],
+		[235, ['_elements']],
+		[273, ['_elements']],
+		[274, ['_elements']],
+		[292, ['_alternative']]
+	]),
+	namedUnits: new Set<number>([
+		64, 70, 71, 72, 107, 115, 116, 117, 122, 123, 124, 125, 126, 137, 147, 148, 149, 252, 257, 258, 279
+	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 122, ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })

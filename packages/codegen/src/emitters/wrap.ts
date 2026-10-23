@@ -31,10 +31,18 @@ export function listKindIds(nodeMap: NodeMap): number[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
 }
 
-export function unitKindIds(nodeMap: NodeMap): number[] {
+function unitKindIdsWhere(nodeMap: NodeMap, keep: (node: AssembledNode) => boolean): number[] {
 	return [...nodeMap.nodes.values()]
-		.flatMap((node) => ((node.modelType === 'keyword' || node.modelType === 'punctuation') && node.kindId !== undefined ? [node.kindId] : []))
+		.flatMap((node) => ((node.modelType === 'keyword' || node.modelType === 'punctuation') && node.kindId !== undefined && keep(node) ? [node.kindId] : []))
 		.sort((a, b) => a - b);
+}
+
+export function unitKindIds(nodeMap: NodeMap): number[] {
+	return unitKindIdsWhere(nodeMap, () => true);
+}
+
+export function namedUnitKindIds(nodeMap: NodeMap): number[] {
+	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry?.anon !== true);
 }
 
 export function layoutMemberKindIds(nodeMap: NodeMap): number[] {

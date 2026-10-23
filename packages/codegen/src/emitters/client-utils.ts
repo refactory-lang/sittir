@@ -1,12 +1,12 @@
 import type { StructureRow } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
-import { whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
+import { innerRegions, whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { classifyFactoryShape, compareOrdinal, keywordPresenceValue, registeredSlots, wireRoutesOf, type WireRoutes } from './shared.ts';
 import { AssembledSupertype, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
 import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
-import { layoutTriviaKindIds, listKindIds, rebuildWrapperKindIds, unitKindIds } from './wrap.ts';
+import { layoutTriviaKindIds, listKindIds, namedUnitKindIds, rebuildWrapperKindIds, unitKindIds } from './wrap.ts';
 import { builtFromText, storedTextKinds } from './built-from-text.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 
@@ -34,7 +34,9 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 			config.triviaKinds ?? [],
 			rebuildWrapperKindIds(config.nodeMap),
 			listKindIds(config.nodeMap),
-			layoutTriviaKindIds(config.nodeMap)
+			layoutTriviaKindIds(config.nodeMap),
+			innerRegions(config.nodeMap),
+			namedUnitKindIds(config.nodeMap)
 		),
 		'',
 		...emitQuerySlots(querySlotRows(config.nodeMap)),
@@ -59,7 +61,9 @@ function emitTriviaFacts(
 	triviaKinds: readonly string[],
 	rebuildWrappers: readonly number[],
 	listKinds: readonly number[],
-	layoutKinds: readonly number[]
+	layoutKinds: readonly number[],
+	regions: ReadonlyMap<number, readonly string[]>,
+	namedUnits: readonly number[]
 ): string[] {
 	const facts = [
 		"    kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type)",
@@ -68,6 +72,8 @@ function emitTriviaFacts(
 		`    rebuildWrappers: new Set<number>(${JSON.stringify(rebuildWrappers)})`,
 		`    listKinds: new Set<number>(${JSON.stringify(listKinds)})`,
 		`    layout: new Set<number>(${JSON.stringify(layoutKinds)})`,
+		`    innerRegions: new Map<number, readonly string[]>(${JSON.stringify([...regions])})`,
+		`    namedUnits: new Set<number>(${JSON.stringify(namedUnits)})`,
 		...(whitespace === undefined
 			? []
 			: [
