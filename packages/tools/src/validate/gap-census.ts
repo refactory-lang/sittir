@@ -4,7 +4,7 @@ import { sourceSpans, spanSlicer } from '@sittir/common';
 import { spanOf } from '@sittir/common/utils';
 import { computeRunCensus, renderRunCensus } from './gap-runs.ts';
 import { gapClassOf, type GapClass } from '../exercise/default-diff.ts';
-import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode } from './common.ts';
+import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, loadSlotAccessorOf, type SlotAccessorOf, type TSNode } from './common.ts';
 
 function adjacentPairs<T extends object>(items: readonly T[]): [T, T][] {
 	const pairs: [T, T][] = [];
@@ -192,20 +192,17 @@ interface RebuiltList {
 	readonly rendered: string;
 }
 
-const camelOf = (slot: string): string => slot.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
-
 const isArrayLike = (value: unknown): value is ArrayLike<unknown> =>
 	typeof value === 'object' && value !== null && typeof (value as { length?: unknown }).length === 'number';
 
 const holdsMany = (owner: unknown, value: unknown): value is ArrayLike<unknown> =>
 	isArrayLike(value) && (spanOf(value) === undefined || isArrayLike(owner));
 
-function* slotValuesOf(node: TypedNode): Generator<{ camel: string; values: unknown[]; many: boolean }> {
+function* slotValuesOf(node: TypedNode, accessorOf: SlotAccessorOf): Generator<{ camel: string; values: unknown[]; many: boolean }> {
 	const record = node as unknown as Record<string, unknown>;
+	const { accessors } = accessorOf(node.$type);
 	const names = new Set([
-		...Object.getOwnPropertyNames(node)
-			.filter((key) => key.startsWith('_') && !key.startsWith('$'))
-			.map((key) => camelOf(key.slice(1))),
+		...Object.getOwnPropertyNames(node).flatMap((key) => (accessors[key] === undefined ? [] : [accessors[key]])),
 		...Object.keys(node.$with ?? {})
 	]);
 	for (const camel of names) {
@@ -221,10 +218,10 @@ function* slotValuesOf(node: TypedNode): Generator<{ camel: string; values: unkn
 	}
 }
 
-function rebuiltLists(root: TypedNode, kindName: (id: number) => string, rebuildFailures: string[]): RebuiltList[] {
+function rebuiltLists(root: TypedNode, kindName: (id: number) => string, accessorOf: SlotAccessorOf, rebuildFailures: string[]): RebuiltList[] {
 	const lists: RebuiltList[] = [];
 	const visit = (node: TypedNode): void => {
-		for (const { camel, values, many } of slotValuesOf(node)) {
+		for (const { camel, values, many } of slotValuesOf(node, accessorOf)) {
 			const items = values.filter(isTypedNode);
 			if (many && items.length >= 2) {
 				const rebuild = node.$with?.[camel];
@@ -266,6 +263,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const nameOf = await loadKindNameFromId(grammar);
 	const kindName = (id: number): string => nameOf?.(id) ?? String(id);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 	return (name, source) => {
@@ -287,7 +285,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		const rebuildFailures: string[] = [];
 		let lists: RebuiltList[];
 		try {
-			lists = rebuiltLists(engine.parse(source) as unknown as TypedNode, kindName, rebuildFailures);
+			lists = rebuiltLists(engine.parse(source) as unknown as TypedNode, kindName, accessorOf, rebuildFailures);
 		} catch {
 			return { ...UNMEASURED, status: 'unrendered' };
 		}

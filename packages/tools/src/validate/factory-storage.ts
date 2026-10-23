@@ -35,6 +35,7 @@ import {
 	buildReadHandle,
 	walkWrappedTree,
 	materialize,
+	loadSlotAccessorOf,
 	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -548,6 +549,7 @@ export async function validateFactoryStorage(
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
 	const { listSeparators } = await loadNodeModel(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const render = emptyBuiltRenderRun();
 
 	const entries = loadCorpusEntries(grammar);
@@ -651,7 +653,7 @@ export async function validateFactoryStorage(
 		const wrappedRoot = readNode(handle) as TypedNode;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
-		walkWrappedTree(wrappedRoot, (w: TypedNode) => {
+		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
@@ -683,7 +685,7 @@ export async function validateFactoryStorage(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = materialize(cand.node);
+				const referenceData = materialize(cand.node, accessorOf);
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 

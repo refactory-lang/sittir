@@ -26,19 +26,19 @@ const KINDS = [
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
 
-const slot = (multiple = false) => ({ unnamed: false, slotCount: 1, required: false, multiple, nonEmpty: false });
+const slot = (propertyName: string, multiple = false) => ({ propertyName, unnamed: false, slotCount: 1, required: false, multiple, nonEmpty: false });
 
 const factorySlots = {
-	clause: { clause_group: slot(), body: slot() },
-	_clause_group: { parameter: slot(), type: slot() },
-	comparison: { left: slot(), comparators: slot(true) },
-	_comparison_comparator: { operators: slot(), right: slot() },
-	header: { content: slot(), name: slot() },
-	_header_kind: { kind: slot(), left: slot() },
-	tree: { content: slot() },
-	_tree_paren: { tokens: slot(true) },
-	block: { arms: slot() },
-	_block_arms: { arm: slot(true), last: slot() }
+	clause: { clause_group: slot('clauseGroup'), body: slot('body') },
+	_clause_group: { parameter: slot('parameter'), type: slot('type') },
+	comparison: { left: slot('left'), comparators: slot('comparators', true) },
+	_comparison_comparator: { operators: slot('operators'), right: slot('right') },
+	header: { content: slot('content'), name: slot('name') },
+	_header_kind: { kind: slot('kind'), left: slot('left') },
+	tree: { content: slot('content') },
+	_tree_paren: { tokens: slot('tokens', true) },
+	block: { arms: slot('arms') },
+	_block_arms: { arm: slot('arm', true), last: slot('last') }
 };
 
 const factoryFields = { _tree_paren: ['tokens'] };
@@ -162,7 +162,7 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			factoryShapes: { ...factoryShapes, _kind_left: 'config' },
 			fieldAliasMap: {},
 			factoryFields,
-			factorySlots: { ...factorySlots, _kind_left: { x: slot() } },
+			factorySlots: { ...factorySlots, _kind_left: { x: slot('x') } },
 			surface: {
 				entries: { header: { strict: vi.fn(), kind: { leftX: { strict: inner } } } },
 				seats: nestedSeats,

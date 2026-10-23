@@ -35,18 +35,18 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
 
-const grouping$groupingGroup = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+const grouping$groupingGroups = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
 	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['groupExpression', 'anchor']);
 	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['groupingGroup'];
+		const seat = _o(config)['groupingGroups'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
 		return _fwd<ReturnType<PF>>(
 			parent,
-			{ ..._o(config), groupingGroup: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) },
+			{ ..._o(config), groupingGroups: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) },
 			options
 		);
 	};
@@ -55,13 +55,13 @@ function grouping$seated<A extends T.Grouping.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildGrouping>;
 function grouping$seated(...args: T.Grouping.BuildArgs): ReturnType<typeof F.buildGrouping> {
-	return grouping$groupingGroup(F.buildGrouping, F.buildGroupingGroup)(...args);
+	return grouping$groupingGroups(F.buildGrouping, F.buildGroupingGroup)(...args);
 }
 function grouping$seatedCoerce<const A extends T.Grouping.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.Grouping.LooseArgs>
 ): ReturnType<typeof C.coerceToGrouping>;
 function grouping$seatedCoerce(...args: T.Grouping.LooseArgs): ReturnType<typeof C.coerceToGrouping> {
-	return grouping$groupingGroup(C.coerceToGrouping, C.coerceToGroupingGroup)(...args);
+	return grouping$groupingGroups(C.coerceToGrouping, C.coerceToGroupingGroup)(...args);
 }
 export const grouping = Object.freeze({
 	...B.grouping,

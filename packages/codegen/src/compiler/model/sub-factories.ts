@@ -315,22 +315,22 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		const direct = shape === 'direct' ? resolveDirectFactorySlot(group, nodeMap) : undefined;
-		const fields = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.configKey];
+		const fields = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.propertyName];
 		if (fields === undefined) continue;
-		found.push(direct === undefined ? { slot, group, fields } : { slot, group, directKey: direct.configKey, fields });
+		found.push(direct === undefined ? { slot, group, fields } : { slot, group, directKey: direct.propertyName, fields });
 	}
 	const seats = found.map(({ fields, ...seat }) => {
 		const taken = new Set([
-			...node.slots.filter((other) => other !== seat.slot).map((other) => other.configKey),
+			...node.slots.filter((other) => other !== seat.slot).map((other) => other.propertyName),
 			...found.filter((other) => other.slot !== seat.slot).flatMap((other) => other.fields)
 		]);
-		return { ...seat, keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.configKey, field) : field, field })) };
+		return { ...seat, keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.propertyName, field) : field, field })) };
 	});
 	const claimed = new Map<string, FlattenedSeat>();
 	for (const seat of seats) {
 		for (const { key, field } of seat.keys) {
 			const holder = claimed.get(key);
-			if (holder !== undefined || node.slots.some((slot) => slot !== seat.slot && slot.configKey === key)) {
+			if (holder !== undefined || node.slots.some((slot) => slot !== seat.slot && slot.propertyName === key)) {
 				throw new Error(
 					`flattenSeatsOf: '${node.kind}' seats '${seat.group.kind}' in '${seat.slot.propertyName}', and the group's key '${field}' collides with ${holder === undefined ? 'another slot of the parent' : `a key of '${holder.group.kind}'`} even as '${key}'`
 				);
@@ -459,7 +459,7 @@ export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {
 }
 
 export function configKeysOf(node: AssembledNode): readonly string[] {
-	return isSlotBearingCompound(node) ? node.slots.map((f) => f.configKey) : [];
+	return isSlotBearingCompound(node) ? node.slots.map((f) => f.propertyName) : [];
 }
 
 export function subFactoriesOf(node: AssembledNode, nodeMap: NodeMap, opts: SubFactoryOptions = {}): SubFactorySet {
@@ -486,7 +486,7 @@ function mergedKeysOf(
 	if (visiting.has(arm.child.kind)) return [];
 	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
 	if (nested === undefined) return [];
-	const residualKeys = nested.residual.map((f) => f.configKey);
+	const residualKeys = nested.residual.map((f) => f.propertyName);
 	return [...residualKeys, ...armConfigKeys(nested, nodeMap, opts, new Set([...visiting, arm.child.kind]))];
 }
 
@@ -497,7 +497,7 @@ function sharedKeysOf(
 	visiting: ReadonlySet<string>
 ): readonly string[] | undefined {
 	if (!armIsConfigShaped(sub, nodeMap, opts)) return undefined;
-	const residual = new Set(sub.residual.map((f) => f.configKey));
+	const residual = new Set(sub.residual.map((f) => f.propertyName));
 	return mergedKeysOf(sub, nodeMap, opts, visiting).filter((key) => residual.has(key));
 }
 
@@ -514,8 +514,8 @@ export function armConfigKeys(
 	if (visiting.has(arm.child.kind)) return [];
 	const nested = subFactoriesOf(arm.child, nodeMap, opts).entries.find((e) => e.name === arm.path[0]);
 	if (nested === undefined) return [];
-	const residualKeys = nested.residual.map((f) => f.configKey);
+	const residualKeys = nested.residual.map((f) => f.propertyName);
 	if (nested.arm.via === 'value') return residualKeys;
 	const deeper = nested.arm.path.length > 0 ? armConfigKeys(nested, nodeMap, opts, new Set([...visiting, arm.child.kind])) : [];
-	return [...residualKeys, nested.slot.configKey, ...deeper];
+	return [...residualKeys, nested.slot.propertyName, ...deeper];
 }

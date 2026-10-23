@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { PLAIN_KINDS, toNodeData } from '@sittir/common/utils';
+import { loadSlotAccessorOf, walkWrappedTree, type SlotAccessorOf } from '../validate/common.ts';
 
 v8.setFlagsFromString('--allow-natives-syntax');
 const hasFastProperties = new Function('o', 'return %HasFastProperties(o)') as (o: object) => boolean;
@@ -31,32 +32,22 @@ const engineOf = async (grammar: string): Promise<Engine> => {
 	return (await createEngine(language)) as unknown as Engine;
 };
 
-const typedNodesOf = (value: unknown, seen = new Set<object>()): object[] => {
-	const camel = (slot: string) => slot.replace(/^_/, '').replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
-	const walk = (node: any): void => {
-		if (node === null || typeof node !== 'object') return;
-		if (Array.isArray(node)) return node.forEach(walk);
-		if (seen.has(node)) return;
-		seen.add(node);
-		for (const key of Object.keys(node)) {
-			if (!key.startsWith('_') || node[key] == null) continue;
-			const reader = node[camel(key)];
-			walk(typeof reader === 'function' ? reader.call(node) : node[key]);
-		}
-	};
-	walk(value);
-	return [...seen].filter((node) => typeof (node as { $type?: unknown }).$type === 'number');
+const typedNodesOf = (value: unknown, accessorOf: SlotAccessorOf): object[] => {
+	const nodes = new Set<object>();
+	walkWrappedTree(value, accessorOf, (node) => nodes.add(node));
+	return [...nodes];
 };
 
 const built = async (): Promise<void> => {
 	const rs = await engineOf('rust');
+	const accessorOf = await loadSlotAccessorOf('rust');
 	const b = rs.build;
 	const chain = (depth: number): unknown =>
 		depth === 0
 			? b.identifier('a')
 			: b.binaryExpression({ left: chain(depth - 1), operator: '+', right: b.callExpression({ function: b.identifier('f'), arguments: b.arguments(b.identifier('x'), b.identifier('y')) }) });
 	const trees = Array.from({ length: 400 }, () => b.letDeclaration({ pattern: b.identifier('v'), value: chain(6) }));
-	const nodes = trees.flatMap((tree) => typedNodesOf(tree));
+	const nodes = trees.flatMap((tree) => typedNodesOf(tree, accessorOf));
 	console.log(`built trees: ${nodes.length} nodes, ${nodes.filter(hasFastProperties).length} with fast properties`);
 	const render = best(() => trees.forEach((tree) => rs.render(tree)), 8);
 	console.log(`engine.render over built trees: ${((render * 1000) / nodes.length).toFixed(2)} us per node`);
@@ -70,7 +61,7 @@ const built = async (): Promise<void> => {
 const parsed = async (grammar: string, file: string): Promise<void> => {
 	const engine = await engineOf(grammar);
 	const tree = engine.parse(readFileSync(resolve(root, file), 'utf8'), { depth: Infinity });
-	const nodes = typedNodesOf(tree);
+	const nodes = typedNodesOf(tree, await loadSlotAccessorOf(grammar));
 	console.log(`${grammar} ${file}: ${nodes.length} nodes, ${nodes.filter(hasFastProperties).length} with fast properties`);
 	console.log(`  toNodeData(root): ${(best(() => toNodeData(tree as Parameters<typeof toNodeData>[0], PLAIN_KINDS), 8) * 1000).toFixed(0)} us`);
 	console.log(`  engine.render(untouched root): ${(best(() => engine.render(tree), 8) * 1000).toFixed(0)} us`);

@@ -922,7 +922,7 @@ export const structure: StructureTable = Object.freeze({
 		nonEmpty: [['_variable_declarator', 'using_declaration.variableDeclarators']],
 		nodeOnly: [
 			['_kind', 'UsingDeclaration.kind', 'a kind id'],
-			['_variable_declarator', 'UsingDeclaration.variableDeclarator', 'a built VariableDeclarator']
+			['_variable_declarator', 'UsingDeclaration.variableDeclarators', 'a built VariableDeclarator']
 		]
 	},
 	209: { kind: 'statement_block', nodeOnly: [['_statements', 'StatementBlock.statements', 'a built Statement']] },
@@ -1059,10 +1059,10 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_value', 'value']],
 		nodeOnly: [
 			['_value', 'SwitchCase.value', 'a built Expression / SequenceExpression'],
-			['_body', 'SwitchCase.body', 'a built Statement']
+			['_body', 'SwitchCase.bodies', 'a built Statement']
 		]
 	},
-	229: { kind: 'switch_default', nodeOnly: [['_body', 'SwitchDefault.body', 'a built Statement']] },
+	229: { kind: 'switch_default', nodeOnly: [['_body', 'SwitchDefault.bodies', 'a built Statement']] },
 	230: {
 		kind: 'catch_clause',
 		required: [['_body', 'body']],
@@ -1146,7 +1146,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'class',
 		required: [['_body', 'body']],
 		nodeOnly: [
-			['_decorator', 'Class.decorator', 'a built Decorator'],
+			['_decorator', 'Class.decorators', 'a built Decorator'],
 			['_name', 'Class.name', 'a built TypeIdentifier'],
 			['_type_parameters', 'Class.typeParameters', 'a built TypeParameters'],
 			['_heritage', 'Class.heritage', 'a built ClassHeritage'],
@@ -1160,7 +1160,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
-			['_decorator', 'ClassDeclaration.decorator', 'a built Decorator'],
+			['_decorator', 'ClassDeclaration.decorators', 'a built Decorator'],
 			['_name', 'ClassDeclaration.name', 'a built TypeIdentifier'],
 			['_type_parameters', 'ClassDeclaration.typeParameters', 'a built TypeParameters'],
 			['_heritage', 'ClassDeclaration.heritage', 'a built ClassHeritage'],
@@ -1372,7 +1372,7 @@ export const structure: StructureTable = Object.freeze({
 	270: {
 		kind: 'sequence_expression',
 		nonEmpty: [['_expression', 'sequence_expression.children']],
-		nodeOnly: [['_expression', 'SequenceExpression.expression', 'a built Expression']]
+		nodeOnly: [['_expression', 'SequenceExpression.expressions', 'a built Expression']]
 	},
 	272: { kind: 'template_string', nodeOnly: [['_elements', 'TemplateString.elements', 'buildTemplateChars(…)']] },
 	273: {
@@ -1501,7 +1501,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'public_field_definition',
 		required: [['_name', 'name']],
 		nodeOnly: [
-			['_decorator', 'PublicFieldDefinition.decorator', 'a built Decorator'],
+			['_decorator', 'PublicFieldDefinition.decorators', 'a built Decorator'],
 			['_declare', 'PublicFieldDefinition.declare', 'a boolean'],
 			['_accessibility_modifier', 'PublicFieldDefinition.accessibilityModifier', 'a kind id'],
 			['_static', 'PublicFieldDefinition.static', 'a boolean'],
@@ -1671,7 +1671,7 @@ export const structure: StructureTable = Object.freeze({
 	310: {
 		kind: 'implements_clause',
 		nonEmpty: [['_type', 'implements_clause.children']],
-		nodeOnly: [['_type', 'ImplementsClause.type', 'a built Type']]
+		nodeOnly: [['_type', 'ImplementsClause.types', 'a built Type']]
 	},
 	311: {
 		kind: 'ambient_declaration',
@@ -1691,7 +1691,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
-			['_decorator', 'AbstractClassDeclaration.decorator', 'a built Decorator'],
+			['_decorator', 'AbstractClassDeclaration.decorators', 'a built Decorator'],
 			['_name', 'AbstractClassDeclaration.name', 'a built TypeIdentifier'],
 			['_type_parameters', 'AbstractClassDeclaration.typeParameters', 'a built TypeParameters'],
 			['_heritage', 'AbstractClassDeclaration.heritage', 'a built ClassHeritage'],
@@ -1752,7 +1752,7 @@ export const structure: StructureTable = Object.freeze({
 	319: {
 		kind: 'extends_type_clause',
 		nonEmpty: [['_type', 'extends_type_clause.children']],
-		nodeOnly: [['_type', 'ExtendsTypeClause.type', 'a built TypeIdentifier / NestedTypeIdentifier / GenericType']]
+		nodeOnly: [['_type', 'ExtendsTypeClause.types', 'a built TypeIdentifier / NestedTypeIdentifier / GenericType']]
 	},
 	320: {
 		kind: 'enum_declaration',
@@ -1798,7 +1798,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'required_parameter',
 		required: [['_pattern', 'pattern']],
 		nodeOnly: [
-			['_decorator', 'RequiredParameter.decorator', 'a built Decorator'],
+			['_decorator', 'RequiredParameter.decorators', 'a built Decorator'],
 			['_accessibility_modifier', 'RequiredParameter.accessibilityModifier', 'a kind id'],
 			['_override', 'RequiredParameter.override', 'a boolean'],
 			['_readonly', 'RequiredParameter.readonly', 'a boolean'],
@@ -1811,7 +1811,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'optional_parameter',
 		required: [['_pattern', 'pattern']],
 		nodeOnly: [
-			['_decorator', 'OptionalParameter.decorator', 'a built Decorator'],
+			['_decorator', 'OptionalParameter.decorators', 'a built Decorator'],
 			['_accessibility_modifier', 'OptionalParameter.accessibilityModifier', 'a kind id'],
 			['_override', 'OptionalParameter.override', 'a boolean'],
 			['_readonly', 'OptionalParameter.readonly', 'a boolean'],
@@ -2287,7 +2287,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'class_body_member_method',
 		required: [['_method_definition', 'methodDefinition']],
 		nodeOnly: [
-			['_decorator', 'ClassBodyMemberMethod.decorator', 'a built Decorator'],
+			['_decorator', 'ClassBodyMemberMethod.decorators', 'a built Decorator'],
 			['_method_definition', 'ClassBodyMemberMethod.methodDefinition', 'a built MethodDefinition']
 		]
 	},
@@ -2502,7 +2502,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'export_statement_default_declaration',
 		required: [['_content', 'content']],
 		nodeOnly: [
-			['_decorator', 'ExportStatementDefaultDeclaration.decorator', 'a built Decorator'],
+			['_decorator', 'ExportStatementDefaultDeclaration.decorators', 'a built Decorator'],
 			[
 				'_content',
 				'ExportStatementDefaultDeclaration.content',

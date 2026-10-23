@@ -270,7 +270,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
+		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.propertyName;
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
 		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');

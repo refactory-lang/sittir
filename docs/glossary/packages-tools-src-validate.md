@@ -745,11 +745,12 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 ```text
 /**
  * Walk a wrapped tree via declared getters, calling `visit` on each
- * encountered wrapped node. Enumeration uses `Object.keys` + accessor
- * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's hydration ($type on every node is the grammar-symbol
- * wire identity stamped by the read).
+ * encountered wrapped node. A stored member is read through the accessor
+ * the model names for it (`slotAccessorOf`, by the node's stamped kind id);
+ * a stored member the model has no slot for (a list's `_delimiter`) is
+ * plain data. Each child materializes through the wrap layer's hydration
+ * ($type on every node is the grammar-symbol wire identity stamped by the
+ * read).
  *
  * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
@@ -1461,8 +1462,8 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
  * `nodeToConfig`'s output. `nodeToConfig` only writes the literal
  * `children` key for genuinely UNNAMED ($other-derived) slots — a
  * spread-shape kind whose sole field has a real grammar name (e.g.
- * python `module`'s `statement`) gets that key instead
- * (`slotConfigKey`'s field-origin branch: `snakeToCamel(slot.name)`).
+ * python `module`'s `statement`) gets that slot's model name instead
+ * (`slotKeyOf`).
  * Without `factoryFields`, such kinds always read `undefined` here and
  * the spread call silently invokes the factory with zero arguments.
  *
@@ -1791,6 +1792,18 @@ A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `col
 ### `packages/tools/src/validate/common.ts::isLeafModelType`
 
 Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
+
+### `packages/tools/src/validate/common.ts::slotKeyOf`
+
+The key a config holds a kind's slot under: the slot's model name, read from the factory slot metadata (`FactorySlotMeta.propertyName`), which the node-model reader derives once (`slotPropertyName`). The validators build every config through it and never camel-case or pluralize a slot name themselves. A slot with no metadata throws, naming the kind and slot, instead of falling back to a guessed key.
+
+### `packages/tools/src/validate/common.ts::slotAccessorOf`
+
+A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). It answers the kind's name with the map (`KindSlots`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind, and so does a slot whose model-named accessor the node does not have as a reader (`resolveWrappedStorageValue`): the model and the generated node disagree. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
+
+### `packages/tools/src/validate/common.ts::slotNameOf`
+
+A kind's slot, by its model slot name (the storage name a seat table or `factoryFields` lists), to the name a config builds it by and its accessor reads it by, from the loaded model (`LoadedNodeModel.slotAccessors`). The factory-source printer keys a seated slot (`wrapSeatedConfig`) and a trivia entry's content slot through it. A slot the model does not have throws, naming the kind and slot.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

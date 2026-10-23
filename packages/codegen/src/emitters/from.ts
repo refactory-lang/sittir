@@ -323,9 +323,9 @@ function spelledReturnType(
 	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[]
 ): string {
 	return spelled.reduce((type, [side, slot]) => {
-		if (side === 'close') throw new Error(`from: a spelled closing delimiter ('${slot.configKey}') has no typed form`);
+		if (side === 'close') throw new Error(`from: a spelled closing delimiter ('${slot.propertyName}') has no typed form`);
 		const typed = `SpelledAffix<I, ${literalUnion(fullForm.open.texts)}, ${JSON.stringify(slot.optionDefaultArm)}>`;
-		const key = slot.configKey;
+		const key = slot.propertyName;
 		return `WithSpelling<${type}, ${JSON.stringify(key)}, O extends { ${key}: infer P } ? P : ${typed}>`;
 	}, returnType);
 }
@@ -385,7 +385,7 @@ function emitBranchFrom(
 	const resolverSlots = slots;
 	for (const f of resolverSlots) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
-		const key = JSON.stringify(f.configKey);
+		const key = JSON.stringify(f.propertyName);
 		// `input` being optional (argumentOptional) only ever leaves ONE
 		// required field forwarding to an empty-constructible target — the
 		// call site passes it as `input?.<key>`, so its own resolver has to
@@ -481,7 +481,7 @@ function emitBranchFrom(
 		if (bareContent !== undefined) {
 			const bareShape = numericSlotShape(bareContent);
 			lines.push(
-				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.propertyName}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		if (canDirectFactoryCall) {
@@ -502,8 +502,8 @@ function emitBranchFrom(
 			const callOptions =
 				spelled.length === 0
 					? optionsArg
-					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.configKey}: _spelled.${side}`).join(', ')}, ...options }`;
-			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.configKey)}, () => ${bare})`;
+					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.propertyName}: _spelled.${side}`).join(', ')}, ...options }`;
+			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
@@ -524,9 +524,9 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of slots) {
-				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
+				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.propertyName}`);
 				const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
-				lines.push(`    ${f.configKey}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call},`);
+				lines.push(`    ${f.propertyName}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call},`);
 			}
 			lines.push(`  }${optionsArg});`);
 		}
@@ -649,7 +649,7 @@ function emitRepeatedChildrenFrom(
 		kindEntries,
 		nodeMap,
 		storageKey,
-		slot.configKey,
+		slot.propertyName,
 		(varExpr, isSelfUnwrap) =>
 			call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr, isSelfUnwrap),
 		'',
@@ -1115,9 +1115,9 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			const shape = classifyFactoryShape(node, nodeMap);
 			const config = `lexedConfig(text, TOKEN_INTERIORS[${JSON.stringify(kind)}], ${JSON.stringify(kind)})`;
 			const registered = registeredSlots(node);
-			const spelling = registered.length === 0 ? '' : `, { ${registered.map((slot) => `${slot.configKey}: cfg[${JSON.stringify(slot.configKey)}]`).join(', ')} } as never`;
-			const configSlot = interior.slots.find((slot) => !slot.flag && !registered.some((r) => r.configKey === slot.configKey));
-			const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.configKey)}] as never` : 'cfg as never';
+			const spelling = registered.length === 0 ? '' : `, { ${registered.map((slot) => `${slot.propertyName}: cfg[${JSON.stringify(slot.propertyName)}]`).join(', ')} } as never`;
+			const configSlot = interior.slots.find((slot) => !slot.flag && !registered.some((r) => r.propertyName === slot.propertyName));
+			const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.propertyName)}] as never` : 'cfg as never';
 			textChecks.push({ kind, pattern: new RegExp(interior.regex, 'su') });
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { pattern: interiorPattern(TOKEN_INTERIORS[${JSON.stringify(kind)}]), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`

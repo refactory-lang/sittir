@@ -3,11 +3,12 @@ import { createEngine } from '@sittir/common';
 import { treeOf } from '@sittir/common/utils';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import python from '../../python/src/index.ts';
-import { loadNativeEngine, materializeDetached, tableSides } from '../src/validate/common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, tableSides } from '../src/validate/common.ts';
 import { candidateData } from '../src/validate/read-render-parse.ts';
 
 const py = await createEngine(python);
 const native = await loadNativeEngine('python');
+const accessorOf = await loadSlotAccessorOf('python');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
 const triviaOf = (node: object): NodeTrivia | undefined => (node as { readonly $_layout?: { readonly trivia?: NodeTrivia } }).$_layout?.trivia;
 
@@ -21,7 +22,7 @@ function caseBlock(source: string): AnyUntypedNode {
 	const block = suite.block();
 	const tree = treeOf(block);
 	if (tree === undefined) throw new Error('expected a parsed block');
-	const data = materializeDetached(block) as AnyUntypedNode & { $_layout?: object };
+	const data = materializeDetached(block, accessorOf) as AnyUntypedNode & { $_layout?: object };
 	return { ...data, $_layout: { ...data.$_layout, trivia: tableSides(block, tree, (read) => read) } } as AnyUntypedNode;
 }
 
