@@ -636,6 +636,74 @@ impl<G: EngineGrammar> ParsedTree<G> {
             .collect()
     }
 
+    /// `plan` over nodes of `kinds` as scm (`query_scm::scm_of`), with the
+    /// notes on where it differs from the native plan.
+    pub fn scm_of(&self, kinds: &[KindId], plan: Option<&crate::query::PlanSpec>, dialect: crate::query::Dialect) -> Result<(String, Vec<String>), String> {
+        let language = self.tree.language();
+        let router = |grammar: KindId, display: KindId| self.grammar.router(grammar, display);
+        crate::query_scm::scm_of(&crate::query_scm::ScmGrammar { language: &language, router: &router }, kinds, plan, dialect)
+    }
+
+    /// The query `source` compiles to in this tree's language.
+    pub fn scm_query(&self, source: String, notes: Vec<String>) -> Result<crate::query_scm::ScmQuery, String> {
+        crate::query_scm::ScmQuery::new(&self.tree.language(), source, notes)
+    }
+
+    /// How many nodes under `from` (itself included) `query` holds on.
+    pub fn scm_count(&self, from: Address, query: &crate::query_scm::ScmQuery) -> Result<usize, String> {
+        let start = self.node_at(from)?.ok_or_else(|| format!("{from:?} names no node of tree {}", self.tree_id))?;
+        Ok(query.matching(start, self.source.as_bytes(), None).len())
+    }
+
+    /// The nodes under `from` (itself included) `query` holds on, in
+    /// pre-order, each as the coordinate a walk returns for it.
+    pub fn scm_descendants(&self, from: Address, query: &crate::query_scm::ScmQuery) -> Result<DescendantBatch, String> {
+        let index = self.index_of(from)?;
+        let origin = encode_handle(self.tree_id, index);
+        let start = node_at_index(&self.tree, index).ok_or_else(|| format!("{from:?} names no node of tree {}", self.tree_id))?;
+        let found = query.matching(start, self.source.as_bytes(), None);
+        let mut items = Vec::new();
+        if !found.is_empty() {
+            let ctx = self.read_ctx();
+            let mut cursor = self.tree.walk();
+            crate::read::goto(&mut cursor, index);
+            let mut depth = 0usize;
+            'walk: loop {
+                let node = cursor.node();
+                if found.contains(&node.id()) {
+                    items.push(QueryItem::Node(QueryCoordinate::from(ctx.coordinate(&node, crate::read::index_of(&cursor)))));
+                }
+                if cursor.goto_first_child() {
+                    depth += 1;
+                    continue;
+                }
+                loop {
+                    if depth == 0 {
+                        break 'walk;
+                    }
+                    if cursor.goto_next_sibling() {
+                        break;
+                    }
+                    cursor.goto_parent();
+                    depth -= 1;
+                }
+            }
+        }
+        Ok(DescendantBatch { items, resume: None, origin, spans: None })
+    }
+
+    /// Whether `query` holds on each node `addresses` names, a pattern
+    /// starting at the node itself.
+    pub fn scm_holds(&self, addresses: &[Address], query: &crate::query_scm::ScmQuery) -> Result<Vec<bool>, String> {
+        addresses
+            .iter()
+            .map(|&address| {
+                let node = self.node_at(address)?.ok_or_else(|| format!("{address:?} names no node of tree {}", self.tree_id))?;
+                Ok(query.matching(node, self.source.as_bytes(), Some(0)).contains(&node.id()))
+            })
+            .collect()
+    }
+
     /// The descendant index of the node `address` names.
     fn index_of(&self, address: Address) -> Result<NodeIndex, String> {
         let missing = || format!("{address:?} names no node of tree {}", self.tree_id);
@@ -675,6 +743,23 @@ impl<G: EngineGrammar> ParsedTree<G> {
         limit: u32,
         depth: Option<u32>,
     ) -> Result<DescendantBatch, String> {
+        self.descendants_with(from, kinds, plan, &[], resume, limit, depth)
+    }
+
+    /// [`Self::descendants`], and with each item the values each of
+    /// `subjects` admits on it (`query::subject_values`) when any are given.
+    #[allow(clippy::too_many_arguments, reason = "the walk's arguments, plus its subjects")]
+    pub fn descendants_with(
+        &self,
+        from: Address,
+        kinds: &[KindId],
+        plan: Option<&Plan>,
+        subjects: &[crate::query::SpanSubject],
+        resume: Option<&[ChildPosition]>,
+        limit: u32,
+        depth: Option<u32>,
+    ) -> Result<DescendantBatch, String> {
+        let mut spans: Option<Vec<Vec<Vec<[u32; 3]>>>> = (!subjects.is_empty()).then(Vec::new);
         let depth = depth.map_or(usize::MAX, |levels| levels as usize);
         let index = self.index_of(from)?;
         let origin = encode_handle(self.tree_id, index);
@@ -719,12 +804,25 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 })
             {
                 items.push(unit.map_or_else(|| QueryItem::Node(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1]))), QueryItem::Unit));
+                if let Some(spans) = spans.as_mut() {
+                    crate::read::goto(&mut at, indexes[indexes.len() - 1]);
+                    spans.push(
+                        subjects
+                            .iter()
+                            .map(|subject| {
+                                let mut values = Vec::new();
+                                crate::query::subject_values(&mut at, &query, subject, &mut values);
+                                values
+                            })
+                            .collect(),
+                    );
+                }
                 if crate::types::narrow(items.len()) >= limit {
-                    return Ok(DescendantBatch { items, resume: Some(path), origin });
+                    return Ok(DescendantBatch { items, resume: Some(path), origin, spans });
                 }
             }
         }
-        Ok(DescendantBatch { items, resume: None, origin })
+        Ok(DescendantBatch { items, resume: None, origin, spans })
     }
 
     /// Step `cursor` to the next node in pre-order below the walk's start, at

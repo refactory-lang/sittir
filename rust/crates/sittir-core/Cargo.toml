@@ -18,6 +18,7 @@ read-debug-checks = []
 napi-bindings = ["dep:napi", "dep:napi-derive"]
 
 [dependencies]
+regress = "0.12"
 regex = "1"
 sittir-node-macros = { path = "../sittir-node-macros" }
 serde = { workspace = true }

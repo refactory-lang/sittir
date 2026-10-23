@@ -60,6 +60,14 @@ macro_rules! napi_engine {
             static LIVE_TREES: ::std::cell::RefCell<
                 ::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>,
             > = ::std::cell::RefCell::new(::std::collections::HashMap::new());
+
+            /// Probe: `where` plans compiled once, by the id
+            /// `probe_compile_plan` returned.
+            static PROBE_PLANS: ::std::cell::RefCell<::std::vec::Vec<$crate::query::Plan>> = ::std::cell::RefCell::new(::std::vec::Vec::new());
+
+            /// Probe: scm queries compiled once, by the id `probe_scm`
+            /// returned.
+            static PROBE_SCM: ::std::cell::RefCell<::std::vec::Vec<$crate::query_scm::ScmQuery>> = ::std::cell::RefCell::new(::std::vec::Vec::new());
         }
 
         /// Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -454,6 +462,169 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// Probe: compile a `where` plan (JSON, see `query::PlanSpec`)
+            /// once, its patterns in `dialect` (`"rust"` or `"es"`), and
+            /// return the id the other probe calls take.
+            #[::napi_derive::napi]
+            pub fn probe_compile_plan(&mut self, plan: String, dialect: String) -> ::napi::Result<u32> {
+                let dialect = $crate::napi_engine::probe_dialect(&dialect)?;
+                let spec: $crate::query::PlanSpec = ::serde_json::from_str(&plan).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let plan = $crate::query::Plan::compile_in(spec, dialect).map_err(::napi::Error::from_reason)?;
+                PROBE_PLANS.with(|plans| {
+                    let mut plans = plans.borrow_mut();
+                    plans.push(plan);
+                    Ok($crate::types::narrow(plans.len() - 1))
+                })
+            }
+
+            /// Probe: `plan_holds` with a plan `probe_compile_plan` compiled.
+            #[::napi_derive::napi]
+            pub fn probe_plan_holds(&mut self, addresses: String, plan: u32) -> ::napi::Result<Vec<bool>> {
+                let addresses: Vec<$crate::query::Address> =
+                    ::serde_json::from_str(&addresses).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let Some(first) = addresses.first() else { return Ok(Vec::new()) };
+                let (tree_id, _) = $crate::engine::decode_handle(first.tree_handle());
+                PROBE_PLANS.with(|plans| {
+                    let plans = plans.borrow();
+                    let plan = plans.get(plan as usize).ok_or_else(|| ::napi::Error::from_reason(format!("no plan {plan}")))?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        parsed.plan_holds(&addresses, plan).map_err(::napi::Error::from_reason)
+                    })
+                })
+            }
+
+            /// Probe: `descendants` with a plan `probe_compile_plan` compiled,
+            /// and with each item the values each of `subjects` (a JSON array
+            /// of `query::SpanSubject`) admits on it.
+            #[::napi_derive::napi]
+            pub fn probe_descendants(
+                &mut self,
+                from: String,
+                #[napi(ts_arg_type = "Array<import('../src/types.ts').TSKindId> | undefined | null")] kinds: Option<Vec<$crate::types::KindId>>,
+                resume: Option<Vec<$crate::types::ChildPosition>>,
+                limit: f64,
+                plan: Option<u32>,
+                subjects: Option<String>,
+                depth: Option<f64>,
+            ) -> ::napi::Result<String> {
+                let limit: u32 = $crate::napi_engine::checked_whole(limit, "limit")?;
+                let depth = depth.map(|levels| $crate::napi_engine::checked_whole::<u32>(levels, "depth")).transpose()?;
+                let subjects: Vec<$crate::query::SpanSubject> = match subjects {
+                    Some(json) => ::serde_json::from_str(&json).map_err(|e| ::napi::Error::from_reason(e.to_string()))?,
+                    None => Vec::new(),
+                };
+                let from = $crate::napi_engine::address_from_json(&from)?;
+                let kinds = kinds.unwrap_or_default();
+                let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
+                PROBE_PLANS.with(|plans| {
+                    let plans = plans.borrow();
+                    let plan = plan.map(|id| plans.get(id as usize).ok_or_else(|| ::napi::Error::from_reason(format!("no plan {id}")))).transpose()?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        let batch = parsed
+                            .descendants_with(from, &kinds, plan, &subjects, resume.as_deref(), limit.max(1), depth)
+                            .map_err(::napi::Error::from_reason)?;
+                        ::serde_json::to_string(&batch).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    })
+                })
+            }
+
+            /// Probe: compile `plan` (JSON, see `query::PlanSpec`; none for a
+            /// kind filter alone) over nodes of `kinds` to scm, in the language
+            /// of the tree `from` names, its patterns in `dialect`. As JSON
+            /// `{ id, scm, notes }`, or `{ gap }` where scm cannot say it.
+            #[::napi_derive::napi]
+            pub fn probe_scm(
+                &mut self,
+                from: String,
+                #[napi(ts_arg_type = "Array<import('../src/types.ts').TSKindId>")] kinds: Vec<$crate::types::KindId>,
+                plan: Option<String>,
+                dialect: String,
+            ) -> ::napi::Result<String> {
+                let dialect = $crate::napi_engine::probe_dialect(&dialect)?;
+                let plan: Option<$crate::query::PlanSpec> = plan
+                    .map(|json| ::serde_json::from_str(&json).map_err(|e| ::napi::Error::from_reason(e.to_string())))
+                    .transpose()?;
+                let from = $crate::napi_engine::address_from_json(&from)?;
+                let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let compiled = parsed.scm_of(&kinds, plan.as_ref(), dialect).and_then(|(scm, notes)| parsed.scm_query(scm, notes));
+                    let json = match compiled {
+                        Ok(query) => {
+                            let json = ::serde_json::json!({ "scm": query.source, "notes": query.notes });
+                            PROBE_SCM.with(|queries| {
+                                let mut queries = queries.borrow_mut();
+                                queries.push(query);
+                                let mut json = json;
+                                json["id"] = ::serde_json::json!(queries.len() - 1);
+                                json
+                            })
+                        }
+                        Err(gap) => ::serde_json::json!({ "gap": gap }),
+                    };
+                    Ok(json.to_string())
+                })
+            }
+
+            /// Probe: the nodes under `from` the scm query `query` holds on,
+            /// in pre-order, as a walk's batch (JSON).
+            #[::napi_derive::napi]
+            pub fn probe_scm_descendants(&mut self, from: String, query: u32) -> ::napi::Result<String> {
+                let from = $crate::napi_engine::address_from_json(&from)?;
+                let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
+                PROBE_SCM.with(|queries| {
+                    let queries = queries.borrow();
+                    let query = queries.get(query as usize).ok_or_else(|| ::napi::Error::from_reason(format!("no query {query}")))?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        let batch = parsed.scm_descendants(from, query).map_err(::napi::Error::from_reason)?;
+                        ::serde_json::to_string(&batch).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    })
+                })
+            }
+
+            /// Probe: how many nodes under `from` the scm query `query` holds
+            /// on, with no coordinates made.
+            #[::napi_derive::napi]
+            pub fn probe_scm_count(&mut self, from: String, query: u32) -> ::napi::Result<u32> {
+                let from = $crate::napi_engine::address_from_json(&from)?;
+                let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
+                PROBE_SCM.with(|queries| {
+                    let queries = queries.borrow();
+                    let query = queries.get(query as usize).ok_or_else(|| ::napi::Error::from_reason(format!("no query {query}")))?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        parsed.scm_count(from, query).map($crate::types::narrow).map_err(::napi::Error::from_reason)
+                    })
+                })
+            }
+
+            /// Probe: whether the scm query `query` holds on each node
+            /// `addresses` names, a pattern starting at the node.
+            #[::napi_derive::napi]
+            pub fn probe_scm_holds(&mut self, addresses: String, query: u32) -> ::napi::Result<Vec<bool>> {
+                let addresses: Vec<$crate::query::Address> =
+                    ::serde_json::from_str(&addresses).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let Some(first) = addresses.first() else { return Ok(Vec::new()) };
+                let (tree_id, _) = $crate::engine::decode_handle(first.tree_handle());
+                PROBE_SCM.with(|queries| {
+                    let queries = queries.borrow();
+                    let query = queries.get(query as usize).ok_or_else(|| ::napi::Error::from_reason(format!("no query {query}")))?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        parsed.scm_holds(&addresses, query).map_err(::napi::Error::from_reason)
+                    })
+                })
+            }
+
             /// Render a typed node object (napi-native, numeric `$type`).
             ///
             /// The options a render takes are the call's own over the layer
@@ -578,6 +749,15 @@ pub fn compile_plan(json: &str) -> napi::Result<crate::query::Plan> {
         .map_err(|e| e.to_string())
         .and_then(crate::query::Plan::compile)
         .map_err(napi::Error::from_reason)
+}
+
+/// Probe: a regex dialect by name.
+pub fn probe_dialect(name: &str) -> napi::Result<crate::query::Dialect> {
+    match name {
+        "rust" => Ok(crate::query::Dialect::Rust),
+        "es" => Ok(crate::query::Dialect::Es),
+        other => Err(napi::Error::from_reason(format!("no regex dialect {other:?}"))),
+    }
 }
 
 /// A node's address from its JSON (`query::Address`).

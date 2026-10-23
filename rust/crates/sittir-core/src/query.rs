@@ -18,6 +18,10 @@ pub struct DescendantBatch {
     pub items: Vec<QueryItem>,
     pub resume: Option<Vec<crate::types::ChildPosition>>,
     pub origin: crate::types::TreeHandle,
+    /// With subjects (`ParsedTree::descendants_with`): per item, per subject,
+    /// the values the subject admits on it (`subject_values`).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub spans: Option<Vec<Vec<Vec<[u32; 3]>>>>,
 }
 
 /// One element a walk found, as it crosses: the coordinate a read of its
@@ -138,10 +142,47 @@ pub enum Anchor {
     Only,
 }
 
+/// The regex dialect a plan's `match` leaves compile under: Rust's `regex`
+/// crate, or ECMAScript with the `u` flag (the `regress` crate), the dialect
+/// JavaScript `holds` runs.
+#[derive(serde::Deserialize, Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
+#[serde(rename_all = "lowercase")]
+pub enum Dialect {
+    #[default]
+    Rust,
+    Es,
+}
+
+/// A compiled `match` pattern in one dialect.
+pub enum Matcher {
+    Rust(regex::Regex),
+    Es(regress::Regex),
+}
+
+impl Matcher {
+    /// Compile `pattern` in `dialect`; a pattern the dialect cannot compile is
+    /// refused.
+    pub fn new(pattern: &str, dialect: Dialect) -> Result<Matcher, String> {
+        match dialect {
+            Dialect::Rust => regex::Regex::new(pattern).map(Matcher::Rust).map_err(|e| e.to_string()),
+            Dialect::Es => regress::Regex::with_flags(pattern, "u").map(Matcher::Es).map_err(|e| e.to_string()),
+        }
+    }
+
+    /// Whether the pattern matches somewhere in `text`.
+    #[must_use]
+    pub fn is_match(&self, text: &str) -> bool {
+        match self {
+            Matcher::Rust(pattern) => pattern.is_match(text),
+            Matcher::Es(pattern) => pattern.find(text).is_some(),
+        }
+    }
+}
+
 /// A [`PlanSpec`] with its patterns compiled.
 pub enum Plan {
     Eq { slots: Slots, text: String },
-    Match { slots: Slots, pattern: regex::Regex },
+    Match { slots: Slots, pattern: Matcher },
     Present { slots: Slots },
     Is { subject: Subject, types: Vec<crate::types::KindId> },
     Child { slots: Slots, anchor: Option<Anchor>, of: Box<Plan> },
@@ -173,18 +214,21 @@ pub struct QueryCtx<'a> {
 struct Hit<'s> {
     node: Option<(crate::types::NodeIndex, crate::types::KindId)>,
     text: &'s str,
+    span: Span,
 }
 
 impl Plan {
     /// Compile a recorded plan. A pattern the `regex` crate cannot compile (a
     /// back-reference, a look-around) is refused, never matched differently.
     pub fn compile(spec: PlanSpec) -> Result<Plan, String> {
+        Plan::compile_in(spec, Dialect::Rust)
+    }
+
+    /// Compile a recorded plan, its patterns in `dialect`.
+    pub fn compile_in(spec: PlanSpec, dialect: Dialect) -> Result<Plan, String> {
         Ok(match spec {
             PlanSpec::Eq { slots, text } => Plan::Eq { slots, text },
-            PlanSpec::Match { slots, pattern } => Plan::Match {
-                slots,
-                pattern: regex::Regex::new(&pattern).map_err(|e| e.to_string())?,
-            },
+            PlanSpec::Match { slots, pattern } => Plan::Match { slots, pattern: Matcher::new(&pattern, dialect)? },
             PlanSpec::Present { slots } => Plan::Present { slots },
             PlanSpec::Is { own, slots, types } => Plan::Is {
                 subject: match (own, slots) {
@@ -194,10 +238,10 @@ impl Plan {
                 },
                 types,
             },
-            PlanSpec::Child { slots, anchor, of } => Plan::Child { slots, anchor, of: Box::new(Plan::compile(*of)?) },
-            PlanSpec::Not { of } => Plan::Not(Box::new(Plan::compile(*of)?)),
-            PlanSpec::And { of } => Plan::And(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
-            PlanSpec::Or { of } => Plan::Or(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
+            PlanSpec::Child { slots, anchor, of } => Plan::Child { slots, anchor, of: Box::new(Plan::compile_in(*of, dialect)?) },
+            PlanSpec::Not { of } => Plan::Not(Box::new(Plan::compile_in(*of, dialect)?)),
+            PlanSpec::And { of } => Plan::And(of.into_iter().map(|p| Plan::compile_in(p, dialect)).collect::<Result<_, _>>()?),
+            PlanSpec::Or { of } => Plan::Or(of.into_iter().map(|p| Plan::compile_in(p, dialect)).collect::<Result<_, _>>()?),
         })
     }
 
@@ -249,6 +293,38 @@ fn any_hit(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>, slots: &Slots, mut t
     slot_hits(cursor, ctx, slots, &mut |hit| found |= test(&hit)) && found
 }
 
+/// A subject a walk reports the values of: a slot by its numbers, or the node
+/// itself (`{"self": true}`).
+#[derive(serde::Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum SpanSubject {
+    Own {
+        #[serde(rename = "self")]
+        own: bool,
+    },
+    Slots(Slots),
+}
+
+/// The values `subject` admits on the node the cursor is on, as
+/// `[start, end, kind]`: each value's byte span and its kind as the read
+/// stores it (`u32::MAX` for a group of a token's text), or the node's own
+/// span and stamped kind for `self`. The cursor was created at the tree's
+/// root and ends where it started.
+pub fn subject_values(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>, subject: &SpanSubject, out: &mut Vec<[u32; 3]>) {
+    match subject {
+        SpanSubject::Own { .. } => {
+            let node = cursor.node();
+            let span = Span::of(&node);
+            out.push([span.start, span.end, u32::from((ctx.stamp)(&node).get())]);
+        }
+        SpanSubject::Slots(slots) => {
+            slot_hits(cursor, ctx, slots, &mut |hit| {
+                out.push([hit.span.start, hit.span.end, hit.node.map_or(u32::MAX, |(_, kind)| u32::from(kind.get()))]);
+            });
+        }
+    }
+}
+
 /// Visit each value the slot holds on the node the cursor is on, as the
 /// node's read finds it (`Router`), allocating only to survey the tokens of
 /// a spelled enum member. `false` when the node
@@ -271,7 +347,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
                         Ok(Route::Slot { slot: at, .. }) if at == slot => {
                             let node = cursor.node();
                             let kind = unit(slot, cursor).unwrap_or_else(|| (ctx.stamp)(&node));
-                            visit(Hit { node: Some((child.index, kind)), text: text(&node) });
+                            visit(Hit { node: Some((child.index, kind)), text: text(&node), span: Span::of(&node) });
                         }
                         Ok(_) => {}
                         Err(_) => routed = false,
@@ -287,7 +363,9 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
         Router::Interior(interior, captures) => {
             let Some(groups) = interior.captures(text(&node)) else { return false };
             if let Some(group) = captures.get(slot.index()).and_then(|name| groups.name(name)) {
-                visit(Hit { node: None, text: group.as_str() });
+                let base = Span::of(&node).start;
+                let span = Span { start: base + crate::types::narrow(group.start()), end: base + crate::types::narrow(group.end()) };
+                visit(Hit { node: None, text: group.as_str(), span });
             }
             true
         }
@@ -297,7 +375,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
             }
             if !wraps_hidden {
                 let kind = unit(cursor).unwrap_or_else(|| crate::read::grammar_id(&node));
-                visit(Hit { node: Some((index_of(cursor), kind)), text: text(&node) });
+                visit(Hit { node: Some((index_of(cursor), kind)), text: text(&node), span: Span::of(&node) });
                 return true;
             }
             let mut wrapped = None;
@@ -307,7 +385,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
                     if !child.trivia {
                         let node = cursor.node();
                         let kind = unit(cursor).unwrap_or_else(|| (ctx.stamp)(&node));
-                        wrapped = Some(Hit { node: Some((child.index, kind)), text: text(&node) });
+                        wrapped = Some(Hit { node: Some((child.index, kind)), text: text(&node), span: Span::of(&node) });
                         break;
                     }
                     if !cursor.goto_next_sibling() {
