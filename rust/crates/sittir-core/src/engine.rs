@@ -1142,6 +1142,42 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
     }
 
+    /// Probe: measures the list slots of every node whose kind routes its
+    /// children one at a time (`Router::Children`), each by `node_slots`, as
+    /// a fold at parse would. Answers `[nodes, routed, with_lists, lists]`.
+    pub fn probe_measure_list_slots(&self) -> [u32; 4] {
+        let mut counts = [0u32; 4];
+        let mut cursor = self.tree.walk();
+        let mut index = 0u32;
+        loop {
+            let node = cursor.node();
+            counts[0] += 1;
+            let routed = self.grammar.router(crate::read::grammar_id(&node), crate::read::display_id(&node));
+            if matches!(routed, Some(crate::read::Router::Children(..))) {
+                counts[1] += 1;
+                let lists = self.node_slots(NodeIndex::new(index)).layouts.len();
+                counts[2] += u32::from(lists > 0);
+                counts[3] += crate::types::narrow(lists);
+            }
+            index += 1;
+            if cursor.goto_first_child() {
+                continue;
+            }
+            while !cursor.goto_next_sibling() {
+                if !cursor.goto_parent() {
+                    return counts;
+                }
+            }
+        }
+    }
+
+    /// Probe: assigns the tree's trivia table alone, the part of
+    /// `node_slots`'s work a first read of any side also does. Answers its
+    /// run count.
+    pub fn probe_trivia(&self) -> u32 {
+        crate::types::narrow(self.trivia_table().runs().len())
+    }
+
     /// The tree's trivia table, assigned on first use.
     pub fn trivia_table(&self) -> &TriviaTable {
         self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds(), self.level_width))

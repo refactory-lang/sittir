@@ -376,6 +376,22 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.stored_layout()))
             }
 
+            /// Probe: measures the list slots of every node of the live tree
+            /// `treeId` whose kind routes its children
+            /// (`ParsedTree::probe_measure_list_slots`): `[nodes, routed,
+            /// withLists, lists]`.
+            #[::napi_derive::napi]
+            pub fn probe_measure_list_slots(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<Vec<u32>> {
+                with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.probe_measure_list_slots().to_vec()))
+            }
+
+            /// Probe: assigns the live tree `treeId`'s trivia table alone
+            /// (`ParsedTree::probe_trivia`), answering its run count.
+            #[::napi_derive::napi]
+            pub fn probe_trivia(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<u32> {
+                with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.probe_trivia()))
+            }
+
             /// The work the live tree `treeId`'s layout reads have done so far
             /// (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
             /// diagnostic. Refuses a tree that is not live.
