@@ -10,6 +10,7 @@ const rs = await createEngine(await languageByName('rust'));
 const py = await createEngine(await languageByName('python'));
 const scm = await createEngine(await languageByName('scm'));
 const ts = await createEngine(await languageByName('typescript'));
+const rx = await createEngine(await languageByName('regex'));
 
 type Json = { readonly [key: string]: unknown };
 const json = (node: unknown): Json => JSON.parse(JSON.stringify(node)) as Json;
@@ -182,6 +183,27 @@ describe('engine.reviver builds JSON back into nodes', () => {
 		const array = ts.parse('[a, , b];\n');
 		expect(JSON.stringify(roundTrip(ts, array))).toBe(JSON.stringify(array));
 		expect(String(roundTrip(ts, array))).toMatch(/a, ?, b/);
+	});
+
+	it('writes a kind aliased under a display name as its model kind, and revives it at the alias site', () => {
+		for (const [engine, source, kind] of [
+			[rs, 'fn f() {\n    if let Some(x) = a && b {}\n}\n', '_let_chain'],
+			[ts, 'a.b = 1;\nfor (a.b of c) {}\n', '_lhs_expression'],
+			[py, 'x = 1\n', '_simple_statements'],
+			[py, 'match x:\n    case 1:\n        pass\n', '_simple_pattern']
+		] as const) {
+			const root = (engine as typeof rs).parse(source);
+			expect(find(json(root), kind), `${kind} in ${source}`).toBeDefined();
+			const revived = roundTrip(engine as typeof rs, root);
+			expect(JSON.stringify(revived)).toBe(JSON.stringify(root));
+			expect(String(revived)).toBe(source);
+		}
+	});
+
+	it('revives a token kind id among a list slot’s items as that token', () => {
+		const root = rx.parse('[\\-a]');
+		expect(find(json(root), 'character_class')?.classAtoms).toEqual([{ $type: 'bslash_dash' }, { $type: 'class_character', $text: 'a' }]);
+		expect(String(roundTrip(rx, root))).toBe('[\\-a]');
 	});
 
 	it('round-trips each form a kind built from text takes, with a leading comment kept out of its text', () => {
