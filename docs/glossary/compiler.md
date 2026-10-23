@@ -1738,7 +1738,7 @@ The override census and the patch-site labels read it.
 
 ### `packages/codegen/src/compiler/compile.ts::evaluationIdTables`
 
-The id tables an evaluation of a package compiles with: the parser's (`loadPackageIdTables`) when the evaluation is the grammar tree-sitter generated (`dsl/evaluate-package.ts::evaluatesGeneratedGrammar`), else the ones the evaluated grammar predicts (`dsl/symbol-table.ts::predictedIdTablesOf`), since the parser's describe a different grammar. `compileGrammar` and the tools that link or probe an evaluation themselves read it, so the choice is made in one place.
+The id tables an evaluation of a package compiles with: the parser's (`loadPackageIdTables`) when the evaluation reads the grammar bindings tree-sitter generated its parser from (`dsl/evaluate-package.ts::readsGrammarBindings`), else the ones the evaluated grammar predicts (`dsl/symbol-table.ts::predictedIdTablesOf`), since the parser's describe a different grammar. `compileGrammar` and the tools that link or probe an evaluation themselves read it, so the choice is made in one place.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
 

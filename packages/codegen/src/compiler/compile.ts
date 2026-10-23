@@ -1,4 +1,4 @@
-import { evaluatePackage, evaluatesGeneratedGrammar, readsGrammarBindings, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
+import { evaluatePackage, readsGrammarBindings, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
 import { assertPackageBindingsFresh } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
@@ -81,7 +81,7 @@ export async function evaluationIdTables(
 	evaluation: PackageEvaluationOptions | undefined,
 	evaluated: RawGrammar
 ): Promise<GeneratedIdTables> {
-	return evaluatesGeneratedGrammar(pkg, evaluation) ? loadPackageIdTables(pkg) : predictedIdTablesOf(evaluated);
+	return readsGrammarBindings(pkg, evaluation) ? loadPackageIdTables(pkg) : predictedIdTablesOf(evaluated);
 }
 
 export interface DiagnoseGrammarConfig {
