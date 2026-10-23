@@ -134,8 +134,8 @@ export interface NodeJSONFacts {
 	readonly layout: ReadonlySet<number>;
 	/** The kinds whose nodes hold their text. */
 	readonly leaves: ReadonlySet<number>;
-	/** The alias envelopes built from their content's text, which their builder checks by the envelope's own rule rather than the content kind's. */
-	readonly textEnvelopes: ReadonlySet<number>;
+	/** The alias envelopes built from their content's text, which their builder checks by the envelope's own rule rather than the content kind's: each envelope's kind id to the kind id of the content it holds. */
+	readonly textEnvelopes: ReadonlyMap<number, number>;
 	/** The kinds a slot holds as a kind id. */
 	readonly units: ReadonlySet<number>;
 	/** The kind id an optional slot holds when it chose none. */

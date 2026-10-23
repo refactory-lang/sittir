@@ -11604,17 +11604,6 @@
       "_content": {
         "$type": 1,
         "$text": "Item"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "Item",
@@ -66372,17 +66361,6 @@
       "_content": {
         "$type": 1,
         "$text": "RHS"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "RHS",
@@ -66412,17 +66390,6 @@
       "_content": {
         "$type": 1,
         "$text": "Self"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "Self",
@@ -87053,17 +87020,6 @@
       "_content": {
         "$type": 1,
         "$text": "A"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            169
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "A",
@@ -95528,17 +95484,6 @@
       "_content": {
         "$type": 1,
         "$text": "napi_module"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            169
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "napi_module",
@@ -166063,17 +166008,6 @@
       "_content": {
         "$type": 1,
         "$text": "Person"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "Person",
@@ -166106,17 +166040,6 @@
       "_content": {
         "$type": 1,
         "$text": "Person"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "Person",
@@ -187056,17 +186979,6 @@
       "_content": {
         "$type": 1,
         "$text": "B"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            169
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "B",
@@ -188013,17 +187925,6 @@
       "_content": {
         "$type": 1,
         "$text": "K"
-      },
-      "$_layout": {
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "K",
@@ -188053,17 +187954,6 @@
       "_content": {
         "$type": 1,
         "$text": "L"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            168
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "L",
@@ -195341,17 +195231,6 @@
       "_content": {
         "$type": 1,
         "$text": "c_void"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            169
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "c_void",
@@ -195410,17 +195289,6 @@
       "_content": {
         "$type": 1,
         "$text": "c_void"
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            169
-          ]
-        },
-        "changed": {
-          "leading": true,
-          "trailing": true
-        }
       }
     },
     "expectedOutput": "c_void",

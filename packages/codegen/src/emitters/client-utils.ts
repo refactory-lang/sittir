@@ -41,7 +41,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		'',
 		...emitJsonFacts(
 			storedTextKinds(config.nodeMap, config.kindEntries).flatMap(({ node }) => (node.kindId === undefined ? [] : [node.kindId])).sort((a, b) => a - b),
-			textEnvelopeKindIds(config.nodeMap, config.kindEntries),
+			textEnvelopeContents(config.nodeMap, config.kindEntries),
 			unitKindIds(config.nodeMap),
 			spreadKindIds(config.nodeMap),
 			registeredOptionRows(config.nodeMap)
@@ -135,15 +135,19 @@ export function buildTriviaNodeType(triviaTypeNames: readonly string[]): string 
 	return triviaTypeNames.length > 0 ? triviaTypeNames.join(' | ') : 'AnyUntypedNode';
 }
 
-function textEnvelopeKindIds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): number[] {
-	return builtFromText(nodeMap, kindEntries)
-		.flatMap((entry) => (entry.form === 'alias' && entry.node.kindId !== undefined ? [entry.node.kindId] : []))
-		.sort((a, b) => a - b);
+function textEnvelopeContents(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ReadonlyMap<number, number> {
+	const rows: [number, number][] = [];
+	for (const entry of builtFromText(nodeMap, kindEntries)) {
+		if (entry.form !== 'alias' || entry.node.kindId === undefined) continue;
+		if (entry.leaf.kindId === undefined) throw new Error(`json facts: text envelope '${entry.kind}' holds '${entry.leaf.kind}', which has no kind id`);
+		rows.push([entry.node.kindId, entry.leaf.kindId]);
+	}
+	return new Map(rows.sort(([a], [b]) => a - b));
 }
 
 function emitJsonFacts(
 	leaves: readonly number[],
-	textEnvelopes: readonly number[],
+	textEnvelopes: ReadonlyMap<number, number>,
 	units: readonly number[],
 	spread: readonly number[],
 	options: ReadonlyMap<number, readonly string[]>
@@ -156,7 +160,7 @@ function emitJsonFacts(
 		'\tlayout: triviaFacts.layout,',
 		`\tspread: new Set<number>(${JSON.stringify(spread)}),`,
 		`\tleaves: new Set<number>(${JSON.stringify(leaves)}),`,
-		`\ttextEnvelopes: new Set<number>(${JSON.stringify(textEnvelopes)}),`,
+		`\ttextEnvelopes: new Map<number, number>(${JSON.stringify([...textEnvelopes])}),`,
 		`\tunits: new Set<number>(${JSON.stringify(units)}),`,
 		`\tblank: ${BLANK_KIND_ID},`,
 		`\toptions: Object.freeze<NodeJSONFacts['options']>({${[...options].map(([kindId, names]) => ` ${kindId}: ${JSON.stringify(names)}`).join(',')}${options.size > 0 ? ' ' : ''}})`,

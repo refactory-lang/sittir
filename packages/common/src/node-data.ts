@@ -231,6 +231,16 @@ export function placeOf(node: object): SourceIdentity | undefined {
 	return { token, treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
 }
 
+/**
+ * The display id of the alias envelope whose content `node` is, read from the same parser node:
+ * its source identity carries the envelope's display id, which the reader stamps only there.
+ * `undefined` for any other node. The envelope holds that parser node's sides.
+ */
+export function envelopeKindOf(node: object): number | undefined {
+	const stamp = placeOf(node)?.kind ?? coordinateOf(node)?.$type;
+	return stamp !== undefined && stamp !== (node as { readonly $type?: unknown }).$type ? stamp : undefined;
+}
+
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
 export function carryPlace(from: object, to: object): void {
 	const source = placeOf(from);
@@ -435,6 +445,7 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
  * was rebuilt from (`placeOf`).
  */
 export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
+	if (envelopeKindOf(node) !== undefined) return [];
 	const at = tableAt(node);
 	if (at !== undefined) return at.tree.triviaSide(at.index, side) as TriviaEntry[];
 	const stored = triviaOf(node)?.[side];
@@ -514,7 +525,8 @@ function rootEdges(node: object): ChangedEdges {
  * The node that takes a render root's edges: the root, unless it is an alias
  * envelope whose content is the same parser node (the content's coordinate
  * carries the envelope's display id, which the reader stamps only there), in
- * which case the content holds that node's sides and takes the edges.
+ * which case the content, whose coordinate names that node to the render,
+ * takes the edges.
  */
 function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknown> | undefined {
 	if (!isRecord(node)) return undefined;
@@ -524,7 +536,7 @@ function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknow
 
 /** Whether `child` is the content of the alias envelope `holder`, the same parser node: its coordinate carries the envelope's display id. */
 function isAliasContent(holder: Record<string, unknown>, child: unknown): boolean {
-	return isRecord(child) && child.$type !== holder.$type && coordinateOf(child)?.$type === holder.$type;
+	return isRecord(child) && envelopeKindOf(child) === holder.$type;
 }
 
 /** The siblings beside the node a source identity names, while its tree lives. */
@@ -648,8 +660,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
 	if (separator !== undefined) setLayout(out, 'separator', separator);
 	if (given?.span !== undefined) setLayout(out, 'span', given.span);
-	const content = fold ? undefined : Object.keys(value).flatMap((key) => (isStorageKey(key) && isAliasContent(value, value[key]) ? [value[key] as object] : []))[0];
-	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
+	const trivia = fold ? triviaOf(value) : sided ? sidesOf(value) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 		setLayout(out, 'trivia', entriesData(trivia as TriviaSides<unknown>));

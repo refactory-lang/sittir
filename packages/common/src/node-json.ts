@@ -99,7 +99,8 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 	}
 	if (facts.units.has(kindId)) return kindId;
 	let node: unknown;
-	const envelopeText = facts.textEnvelopes.has(kindId) ? contentText(object, accessors) : undefined;
+	const contentKind = facts.textEnvelopes.get(kindId);
+	const envelopeText = contentKind === undefined ? undefined : contentText(object, accessors, contentKind, facts);
 	if (envelopeText !== undefined) {
 		node = buildAt(path, hooks, name, [{ text: envelopeText }]);
 	} else if (facts.leaves.has(kindId)) {
@@ -133,12 +134,13 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 	return hooks.settle(node);
 }
 
-function contentText(envelope: Record<string, unknown>, accessors: ReadonlySet<string>): string | undefined {
+function contentText(envelope: Record<string, unknown>, accessors: ReadonlySet<string>, contentKind: number, facts: NodeJSONFacts): string | undefined {
 	const [accessor] = accessors;
 	const content = accessor === undefined ? undefined : envelope[accessor];
-	if (accessors.size !== 1 || content === null || typeof content !== 'object') return undefined;
+	if (accessors.size !== 1 || content === null || typeof content !== 'object' || Array.isArray(content)) return undefined;
 	const members = content as Record<string, unknown>;
-	if (COMMENT_SIDES.some(([, key]) => key in members)) return undefined;
+	if (Object.keys(members).some((key) => key !== '$type' && key !== '$text')) return undefined;
+	if (typeof members.$type !== 'string' || kindIdOf(members.$type, facts) !== contentKind) return undefined;
 	return typeof members.$text === 'string' ? members.$text : undefined;
 }
 

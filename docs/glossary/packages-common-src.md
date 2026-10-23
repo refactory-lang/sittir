@@ -590,7 +590,7 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
 
 ### `packages/common/src/node-data.ts::evidenceOf`
 
@@ -836,7 +836,7 @@ The role an alias envelope's content accessor hydrates in: `aliasContent` when t
 
 ### `packages/common/src/node-data.ts::sideOf`
 
-The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
+The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope and its content are one parser node, and the envelope holds that node's sides: the content (`envelopeKindOf`) has none, so every reader meets a comment there once.
 
 ### `packages/common/src/node-data.ts::sidesOf`
 
@@ -877,6 +877,10 @@ A read value given a node's text member: an object whose `$text` is a string get
 ### `packages/common/src/node-data.ts::hasNodeText`
 
 Whether a value has a text member in either form, a node's `$text()` method or native data's `$text` string, decided by the member's type alone. It never calls the method: a node's text is made strictly on access, and a method backed by the tree's native `text(span)` would otherwise cost a native call and a string on every check. `isNode`, which every coercer runs, tests text presence here; code that needs the text itself reads it through `nodeText`.
+
+### `packages/common/src/node-data.ts::envelopeKindOf`
+
+The display id of the alias envelope whose content a node is, read from the same parser node, else `undefined`. The reader stamps a coordinate with the grammar id, except at an alias envelope, where it stamps the display id; the envelope and its content are wrapped from that one coordinate, so the content is the node whose stamp (its own coordinate's, or the one an edit carried forward, `placeOf`) differs from its own kind. Over the corpora this matches "shares its holder's tree handle" exactly. The contract: an alias content's comments belong to its envelope. `sideOf` gives the content no sides, and a `$trivia` write through the content lands on the one parser node, which the envelope reads once and every writer (JSON, render) writes once. `isAliasContent` asks this of a holder's child.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 
@@ -936,4 +940,4 @@ A node's JSON, the body of every node's `toJSON`. What the node's kind is decide
 
 ### `packages/common/src/node-json.ts::contentText`
 
-The text a text envelope's JSON carries in its one slot: the content leaf's `$text`. A content written with comments, or with no text, gives none, and the envelope then revives through its slots. The reviver builds an envelope with text through the envelope's own builder, never the content kind's, because the content kind's reserved words do not bind the envelope: `x.default` writes its property as `{ $type: 'property_identifier', content: { $type: 'identifier', $text: 'default' } }`, and `identifier` refuses `default` while `property_identifier` admits it.
+The text a text envelope's JSON carries in its one slot: the content leaf's `$text`, when the content is written as the kind the envelope holds (`jsonFacts.textEnvelopes`) with no member but `$type` and `$text`. Any other content (another kind, an `ERROR`, an unknown kind, comments) gives none, and the envelope revives through its slots, which refuse what it cannot hold at the content's path. The reviver builds an envelope with text through the envelope's own builder, never the content kind's, because the content kind's reserved words do not bind the envelope: `x.default` writes its property as `{ $type: 'property_identifier', content: { $type: 'identifier', $text: 'default' } }`, and `identifier` refuses `default` while `property_identifier` admits it.

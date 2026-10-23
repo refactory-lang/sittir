@@ -10084,9 +10084,9 @@ Emits `structure`, the factories emitter's structure table as a frozen object ke
 
 Emits the grammar's `jsonFacts`, what its nodes are written to JSON by (`nodeJSON`) and revived by. Three of its members are the facts `utils.ts` already holds, referenced rather than copied: the kind names (`KIND_NAMES`), the slots by accessor (`querySlots`) and the layout trivia (`triviaFacts.layout`). The rest are emitted from the sources the rest of codegen uses: the leaves that store their text (`storedTextKinds`, the set the wraps give `wrapLeaf`), the units (`unitKindIds`, the keyword and punctuation kinds a slot holds as a kind id) and the blank arm's id (`BLANK_KIND_ID`), which JSON writes as `null`.
 
-### `packages/codegen/src/emitters/client-utils.ts::textEnvelopeKindIds`
+### `packages/codegen/src/emitters/client-utils.ts::textEnvelopeContents`
 
-The kind ids of the alias envelopes built from their content's text: the `alias` form of `builtFromText`. They become `jsonFacts.textEnvelopes`, which tells the reviver to build such an envelope from its content's text, so the envelope's own text check applies (a property name may be a word the content kind reserves).
+The alias envelopes built from their content's text (the `alias` form of `builtFromText`), each envelope's kind id paired with the kind id of the content leaf it holds. They become `jsonFacts.textEnvelopes`, which tells the reviver to build such an envelope from its content's text, so the envelope's own text check applies (a property name may be a word the content kind reserves), and only when the content is written as that kind. A content leaf with no kind id fails emission.
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 

@@ -206,6 +206,14 @@ describe('engine.reviver builds JSON back into nodes', () => {
 		expect(String(roundTrip(rx, root))).toBe('[\\-a]');
 	});
 
+	it('refuses envelope content that is not the envelope’s content kind, naming its path', () => {
+		expect(() => JSON.parse('{"$type":"property_identifier","content":{"$type":"ERROR","$text":"foo"}}', ts.reviver)).toThrow(
+			'$.content: an ERROR node cannot be built'
+		);
+		expect(() => JSON.parse('{"$type":"property_identifier","content":{"$type":"bogus","$text":"foo"}}', ts.reviver)).toThrow("$.content: unknown kind 'bogus'");
+		expect(() => JSON.parse('{"$type":"property_identifier","content":{"$type":"number","$text":"1"}}', ts.reviver)).toThrow('$.content');
+	});
+
 	it('round-trips each form a kind built from text takes, with a leading comment kept out of its text', () => {
 		for (const [engine, source, kind] of [
 			[rs, '// c\nconst A: T = 0x1F_u8;\n', 'integer_literal_hex'],
@@ -220,6 +228,52 @@ describe('engine.reviver builds JSON back into nodes', () => {
 			expect(find(written, kind), `${kind} in ${source}`).toBeDefined();
 			expect(JSON.stringify(roundTrip(engine as typeof rs, root))).toBe(JSON.stringify(root));
 			expect(JSON.stringify(find(written, kind))).not.toContain('// c');
+		}
+	});
+});
+
+describe('a parsed alias envelope and its content are one node, whose comments the envelope holds', () => {
+	type Sided = { readonly $trivia: { leading(...items: unknown[]): readonly unknown[] } };
+	type Member = { expression(): { property(): Sided & { content(): Sided } } };
+	const property = () => (ts.parse('x./* c */normal;\n').statements()[0] as unknown as Member).expression().property();
+	const comments = (text: string): number => (text.match(/\/\* c \*\//g) ?? []).length;
+
+	it('writes and renders a comment at an envelope once, through three revivals', () => {
+		for (const [engine, source] of [
+			[ts, 'x./* c */normal;\n'],
+			[ts, 'a./* c */b = 1;\n'],
+			[ts, 'let a: /* c */ T;\n'],
+			[rs, 'const A: /* c */ T = 0;\n'],
+			[ts, 'interface I /* c */ { a: T }\n']
+		] as const) {
+			let node: unknown = (engine as typeof rs).parse(source);
+			const written = JSON.stringify(node);
+			let entries = 0;
+			everyObject(JSON.parse(written), (object) => {
+				for (const key of ['leadingComments', 'trailingComments', 'innerComments']) entries += ((object[key] as unknown[] | undefined) ?? []).length;
+			});
+			expect(entries, source).toBe(1);
+			for (let cycle = 1; cycle <= 3; cycle++) {
+				node = JSON.parse(JSON.stringify(node), (engine as typeof rs).reviver);
+				expect(JSON.stringify(node), `${source} cycle ${cycle}`).toBe(written);
+				expect(comments(String(node)), `${source} cycle ${cycle}`).toBe(1);
+			}
+		}
+	});
+
+	it('reads the comment on the envelope and none on its content', () => {
+		const envelope = property();
+		expect(envelope.$trivia.leading().filter((entry) => typeof entry !== 'number')).toHaveLength(1);
+		expect(envelope.content().$trivia.leading()).toEqual([]);
+	});
+
+	it('revives a commented word reserved only for identifiers', () => {
+		for (const [source, word] of [['x./* c */default;\n', 'default'], ['({ /* c */ class: 1 });\n', 'class'], ['class A { /* c */ delete() {} }\n', 'delete']] as const) {
+			const parsed = ts.parse(source);
+			const revived = JSON.parse(JSON.stringify(parsed), ts.reviver) as object;
+			expect(JSON.stringify(revived)).toBe(JSON.stringify(parsed));
+			expect(String(revived)).toContain(word);
+			expect(comments(String(revived))).toBe(1);
 		}
 	});
 });

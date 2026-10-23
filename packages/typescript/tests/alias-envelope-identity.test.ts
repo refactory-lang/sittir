@@ -47,5 +47,10 @@ describe("a trivia write on a content that shares its envelope's parser node", (
 		expect(out).toContain('// c\n');
 		expect(out.endsWith('let b = 1;\n')).toBe(true);
 		expect(ts.parse(out).$errors).toEqual([]);
+		const comments = (entries: readonly unknown[]) => entries.filter((entry) => typeof entry !== 'number');
+		expect(comments(envelope.$trivia[side]())).toHaveLength(1);
+		expect(content.$trivia[side]()).toEqual([]);
+		expect(out.split('// c').length - 1).toBe(1);
+		expect(JSON.stringify(root).match(/"(?:leading|trailing)Comments":\[\{/g)).toHaveLength(1);
 	});
 });
