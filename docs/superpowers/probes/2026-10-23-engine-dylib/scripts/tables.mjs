@@ -30,13 +30,14 @@ const row = (cells) => `| ${cells.join(' | ')} |`;
 const table = (head, rows) => [row(head), row(head.map(() => '---')), ...rows.map(row)].join('\n');
 const header = (first) => [first, ...platforms.map((p) => p.name)];
 
-/** A packaged grammar's files by role: the addon, the engine copy, the std copy. */
+const ROLES = { addon: (f) => f.endsWith('.node'), engine: (f) => f.includes('sittir_engine'), std: (f) => /^(lib)?std-/.test(f) };
+
+/** A packaged grammar's image of one role (sections.mjs bytes), or undefined. */
+const image = (build, grammar, role) => Object.entries(build.images[grammar]).find(([file]) => ROLES[role](file))?.[1];
+
+/** A packaged grammar's file bytes by role, and the package's total. */
 function files(build, grammar) {
-	const sizes = build.sizes[grammar];
-	const by = (test) => Object.entries(sizes).filter(([file]) => test(file)).reduce((sum, [, bytes]) => sum + bytes, 0);
-	const addon = by((f) => f.endsWith('.node'));
-	const engine = by((f) => f.includes('sittir_engine'));
-	const std = by((f) => /^(lib)?std-/.test(f));
+	const [addon, engine, std] = Object.keys(ROLES).map((role) => image(build, grammar, role)?.file ?? 0);
 	return { addon, engine, std, total: addon + engine + std };
 }
 
@@ -60,6 +61,21 @@ out.push(
 			]
 		]
 	),
+	''
+);
+
+out.push('#### What the images hold, release profile (MiB: code / Rust crate metadata / symbol tables / rest)', '');
+const parts = (b) => (b ? `${mib(b.code)} / ${mib(b.metadata)} / ${mib(b.symbols)} / ${mib(b.rest)}` : '');
+out.push(
+	table(header('image'), [
+		...['rust', 'regex'].flatMap((g) => [
+			[`\`sittir-${g}.node\`, today`, ...platforms.map((p) => parts(image(p.variants['today-release'], g, 'addon')))],
+			[`\`sittir-${g}.node\`, dylib`, ...platforms.map((p) => parts(image(p.variants['dylib-release'], g, 'addon')))]
+		]),
+		['engine copy', ...platforms.map((p) => parts(image(p.variants['dylib-release'], 'rust', 'engine')))],
+		['std copy', ...platforms.map((p) => parts(image(p.variants['dylib-release'], 'rust', 'std')))],
+		['sittir-core without napi (shape B)', ...platforms.map((p) => parts(p.core.bytes))]
+	]),
 	''
 );
 
@@ -114,8 +130,8 @@ out.push(`Sources timed per pass: ${sources.join('; ')}. Failed runs: ${platform
 out.push('#### Shape B: sittir-core without napi, as a dylib (stripped)', '');
 out.push(
 	table(header(''), [
-		['file', ...platforms.map((p) => `${mib(p.core.fileBytes)} MiB`)],
-		['code (text section)', ...platforms.map((p) => `${mib(p.core.textBytes)} MiB`)],
+		['file', ...platforms.map((p) => `${mib(p.core.bytes.file)} MiB`)],
+		['code', ...platforms.map((p) => `${mib(p.core.bytes.code)} MiB`)],
 		[
 			'measured RSS per extra grammar under A (all five minus rust alone, over four)',
 			...platforms.map((p) => `${mib((medians(p, 'memory:5:dylib-release').workedRss - medians(p, 'memory:1:dylib-release').workedRss) / 4)} MiB`)

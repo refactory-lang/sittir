@@ -14,12 +14,14 @@
 // target directory is emptied first, sccache is off, nothing is downloaded;
 // the build is timed by bash's `time -p` (wall, user and system seconds).
 // Every packaged image is stripped (`strip -x`, keeping the exported
-// symbols the loader binds) and re-signed ad hoc on macOS.
+// symbols the loader binds) and re-signed ad hoc on macOS, and its bytes
+// broken down by kind (sections.mjs).
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { host, libFile, packageAddon } from './layout.mjs';
+import { sections } from './sections.mjs';
 
 const GRAMMARS = ['rust', 'typescript', 'python', 'scm', 'regex'];
 const VARIANTS = {
@@ -54,7 +56,7 @@ const strip = (file) => {
 	execFileSync('strip', ['-x', file], { stdio: 'ignore' });
 	if (process.platform === 'darwin') execFileSync('codesign', ['--force', '--sign', '-', file], { stdio: 'ignore' });
 };
-const sizes = {};
+const images = {};
 for (const grammar of GRAMMARS) {
 	const dir = join(out, grammar);
 	if (variant.engine) {
@@ -63,12 +65,12 @@ for (const grammar of GRAMMARS) {
 		mkdirSync(dir, { recursive: true });
 		execFileSync('cp', [libFile(built, `sittir_${grammar}`), join(dir, `sittir-${grammar}.node`)]);
 	}
-	sizes[grammar] = {};
+	images[grammar] = {};
 	for (const file of readdirSync(dir)) {
 		strip(join(dir, file));
-		sizes[grammar][file] = statSync(join(dir, file)).size;
+		images[grammar][file] = sections(join(dir, file));
 	}
 }
-const result = { variant: values.variant, host, packages, time, sizes };
+const result = { variant: values.variant, host, packages, time, images };
 writeFileSync(join(out, 'build.json'), `${JSON.stringify(result, null, 2)}\n`);
 console.log(JSON.stringify(result));
