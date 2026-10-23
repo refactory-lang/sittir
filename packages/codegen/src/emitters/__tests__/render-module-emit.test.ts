@@ -277,9 +277,9 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
 		const src = await getRustTemplatesRs();
-		expect(extractStructBody(src, 'ReferenceTypeNode')).toContain('pub mutable: bool,');
+		expect(extractStructBody(src, 'ReferenceTypeNode')).toContain('pub exclusive: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
-			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierNode::MutableSpecifier), "{}");'
+			'let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive, MutableSpecifierNode::MutableSpecifier), "{}");'
 		);
 		expect(src).not.toContain('::napi::ValueType::Boolean');
 	});
@@ -615,8 +615,8 @@ describe('node read facts', () => {
 		);
 	});
 
-	it('gives a list owner its minimum depth and its tokens, and no named inner gap', () => {
-		expect(args('ParametersNode')).toBe('kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN]');
+	it('gives a parameter branch its tokens and no list forwarding depth or named inner gap', () => {
+		expect(args('ParametersNode')).toBe('kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN]');
 	});
 
 	it('selects list reading from its item slot and preserves its separator and optional flank', () => {
@@ -862,7 +862,7 @@ describe('the payload ceiling', () => {
 describe('list storage', () => {
 	it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', async () => {
 		const rust = await getNodeRsForGrammar('python');
-		expect(rust).toContain('pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseNode>>');
+		expect(rust).toContain('pub handlers: Vec<::sittir_core::SlotValue<ExceptClauseNode>>');
 		expect(rust).not.toMatch(/Option<Vec</);
 		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>');
 	}, 120_000);

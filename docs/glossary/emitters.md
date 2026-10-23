@@ -411,6 +411,11 @@ descends into its content slot finds an arm for whichever reaches.
 
 Whether a kind gets a top-level factory, and the skip reason when it does not. A presence marker (`isHiddenPresenceMarker`) is skipped as a hidden keyword literal; `buildFactoryMapEntries` skips the same kinds, and both read that one model predicate.
 
+Hidden punctuation with an explicitly assigned builder, including layout arms
+stamped by assemble, passes the surface gate. Ordinary punctuation without a
+builder remains omitted. IR and factory emission therefore honor the same
+model-level builder decision.
+
 ### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
@@ -13744,7 +13749,7 @@ field filter, so they cannot disagree on which sites live in the base.
 ### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
 
 Whether a spacing site keeps a field on its node: only list facts do —
-the separator row and a list's gap sites (`before`, `after`, `gap`), which
+the separator row and a list's separator gap sites (a `separator` address), which
 the reader's gap classifier stamps per node. A token seam and a list flank
 have no per-node value; the body reads them from the resolved options with
 `w.site_at`, and a kind edge lives in the node's base `edges`.
@@ -14276,7 +14281,7 @@ node field, an `Option<u16>` named by the site key.
 ### `packages/codegen/src/emitters/render-module.ts::kindEdgeSidesOf`
 
 A kind's own edge sites among its synthesized sites, by field name to side:
-the seams `isKindEdge` accepts, their side read from the parsed seam label.
+the seams `isKindEdge` accepts, their side read from their seam address.
 
 ### `packages/codegen/src/emitters/render-module.ts::edgeArmSlotsOf`
 

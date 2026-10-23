@@ -27,7 +27,7 @@ describe('a relaxed keyword used as a name reads and builds as the word rule', (
 			expect(root.$render()).toBe(source);
 		});
 		it(`builds identifier('${word}') where the grammar relaxes it`, () => {
-			const built = py.build.assignmentEq({ left: py.build.identifier(word), right: py.build.integer('1') });
+			const built = py.build.assignmentEq({ name: py.build.identifier(word), value: py.build.integer('1') });
 			expect(built.$render().toString()).toBe(`${word} = 1`);
 		});
 	}

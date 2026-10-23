@@ -18,7 +18,11 @@ export function draftsIntoBuilders(): string[] {
 	const body = fn.body();
 	const draftBody = body.$with.statements(...body.statements());
 	const params = fn.parameters();
-	const draftParams = params.$with.elements(...params);
+	const elements = params.elements();
+	if (elements === undefined || !ts.is.formalParametersElements(elements)) return [];
+	const [first, ...rest] = elements;
+	if (first === undefined) return [];
+	const draftParams = params.$with.elements(ts.build.formalParametersElements(first, ...rest));
 	return [
 		ts.build.functionDeclaration({ name: 'g', parameters: ts.build.formalParameters(), body: draftBody }).$render(),
 		ts.build.functionDeclaration({ name: 'g', parameters: draftParams, body: ts.build.statementBlock() }).$render(),

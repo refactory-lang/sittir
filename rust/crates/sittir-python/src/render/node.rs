@@ -5288,7 +5288,7 @@ impl ::sittir_core::render::Render for DefaultParameterNameNodeSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
-pub enum ListSplatPatternTargetNodeSlot {
+pub enum ListSplatPatternPatternNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierNode),
     #[kind(kind::SUBSCRIPT)]
@@ -5299,37 +5299,37 @@ pub enum ListSplatPatternTargetNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetNodeSlot {
+impl ::sittir_core::prepare::Prepare for ListSplatPatternPatternNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ListSplatPatternTargetNodeSlot::Identifier(t) => t.prepare(ctx),
-            ListSplatPatternTargetNodeSlot::Subscript(t) => t.prepare(ctx),
-            ListSplatPatternTargetNodeSlot::Attribute(t) => t.prepare(ctx),
-            ListSplatPatternTargetNodeSlot::Verbatim(t) => t.prepare(ctx),
+            ListSplatPatternPatternNodeSlot::Identifier(t) => t.prepare(ctx),
+            ListSplatPatternPatternNodeSlot::Subscript(t) => t.prepare(ctx),
+            ListSplatPatternPatternNodeSlot::Attribute(t) => t.prepare(ctx),
+            ListSplatPatternPatternNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ListSplatPatternTargetNodeSlot::Identifier(t) => t.gap_edges(),
-            ListSplatPatternTargetNodeSlot::Subscript(t) => t.gap_edges(),
-            ListSplatPatternTargetNodeSlot::Attribute(t) => t.gap_edges(),
-            ListSplatPatternTargetNodeSlot::Verbatim(t) => t.gap_edges(),
+            ListSplatPatternPatternNodeSlot::Identifier(t) => t.gap_edges(),
+            ListSplatPatternPatternNodeSlot::Subscript(t) => t.gap_edges(),
+            ListSplatPatternPatternNodeSlot::Attribute(t) => t.gap_edges(),
+            ListSplatPatternPatternNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ListSplatPatternTargetNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ListSplatPatternTargetNodeSlot::Subscript(t) => t.snapshot_edge(),
-            ListSplatPatternTargetNodeSlot::Attribute(t) => t.snapshot_edge(),
-            ListSplatPatternTargetNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            ListSplatPatternPatternNodeSlot::Identifier(t) => t.snapshot_edge(),
+            ListSplatPatternPatternNodeSlot::Subscript(t) => t.snapshot_edge(),
+            ListSplatPatternPatternNodeSlot::Attribute(t) => t.snapshot_edge(),
+            ListSplatPatternPatternNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ListSplatPatternTargetNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ListSplatPatternTargetNodeSlot::Subscript(t) => t.source_separator(ctx),
-            ListSplatPatternTargetNodeSlot::Attribute(t) => t.source_separator(ctx),
-            ListSplatPatternTargetNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            ListSplatPatternPatternNodeSlot::Identifier(t) => t.source_separator(ctx),
+            ListSplatPatternPatternNodeSlot::Subscript(t) => t.source_separator(ctx),
+            ListSplatPatternPatternNodeSlot::Attribute(t) => t.source_separator(ctx),
+            ListSplatPatternPatternNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5337,7 +5337,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for ListSplatPatternTargetNodeSlot {
+impl ::sittir_core::view::KindOf for ListSplatPatternPatternNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
@@ -5348,13 +5348,13 @@ impl ::sittir_core::view::KindOf for ListSplatPatternTargetNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ListSplatPatternTargetNodeSlot {
+impl ::sittir_core::render::Render for ListSplatPatternPatternNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ListSplatPatternTargetNodeSlot::Identifier(inner) => inner.render(w),
-            ListSplatPatternTargetNodeSlot::Subscript(inner) => inner.render(w),
-            ListSplatPatternTargetNodeSlot::Attribute(inner) => inner.render(w),
-            ListSplatPatternTargetNodeSlot::Verbatim(inner) => inner.render(w),
+            ListSplatPatternPatternNodeSlot::Identifier(inner) => inner.render(w),
+            ListSplatPatternPatternNodeSlot::Subscript(inner) => inner.render(w),
+            ListSplatPatternPatternNodeSlot::Attribute(inner) => inner.render(w),
+            ListSplatPatternPatternNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -10757,12 +10757,12 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
 pub struct NamedExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5)]
-    pub name: ::sittir_core::SlotValue<IdentifierNode>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 7, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_left")]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
+    pub left: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_right")]
+    #[slot(field = field::RIGHT, word = 7, width = 5)]
+    pub right: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
 impl ::sittir_core::view::KindOf for NamedExpressionNode {
@@ -10787,8 +10787,8 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.name.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.left.prepare(ctx)?;
+        self.right.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -11371,7 +11371,7 @@ pub struct CaseClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_case_patterns")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::CASE_PATTERNS, word = 2, width = 5)]
     pub case_patterns: ::sittir_core::SlotValue<CasePatternsNode>,
     #[wire(key = "_guard")]
     #[slot(field = field::GUARD, word = 7, width = 5)]
@@ -11552,17 +11552,17 @@ pub struct TryStatementNode {
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteNode>,
-    #[wire(key = "_except_clauses")]
-    #[slot(field = field::EXCEPT_CLAUSES, word = 7, width = 2, run = 5)]
-    pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseNode>>,
-    #[wire(key = "_else_clause")]
-    #[slot(field = field::ELSE_CLAUSE, word = 9, width = 5)]
-    pub else_clause: Option<::sittir_core::SlotValue<ElseClauseNode>>,
-    #[wire(key = "_finally_clause")]
-    #[slot(field = field::FINALLY_CLAUSE, word = 14, width = 5)]
-    pub finally_clause: Option<::sittir_core::SlotValue<FinallyClauseNode>>,
-    #[wire(key = "_except_clauses_separator_space")]
-    pub except_clauses_separator_space: Option<KindId>,
+    #[wire(key = "_handlers")]
+    #[slot(field = field::HANDLERS, word = 7, width = 2, run = 5)]
+    pub handlers: Vec<::sittir_core::SlotValue<ExceptClauseNode>>,
+    #[wire(key = "_alternative")]
+    #[slot(field = field::ALTERNATIVE, word = 9, width = 5)]
+    pub alternative: Option<::sittir_core::SlotValue<ElseClauseNode>>,
+    #[wire(key = "_finalizer")]
+    #[slot(field = field::FINALIZER, word = 14, width = 5)]
+    pub finalizer: Option<::sittir_core::SlotValue<FinallyClauseNode>>,
+    #[wire(key = "_handlers_separator_space")]
+    pub handlers_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for TryStatementNode {
@@ -11587,13 +11587,13 @@ impl ::sittir_core::prepare::Prepare for TryStatementNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_slot_gaps(self.except_clauses.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_except_clauses"));
-        self.except_clauses_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.except_clauses.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.handlers.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_handlers"));
+        self.handlers_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_TRY_STATEMENT_HANDLERS_SEPARATOR_SPACE).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.handlers.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_HANDLERS, ctx);
         self.body.prepare(ctx)?;
-        self.except_clauses.prepare(ctx)?;
-        self.else_clause.prepare(ctx)?;
-        self.finally_clause.prepare(ctx)?;
+        self.handlers.prepare(ctx)?;
+        self.alternative.prepare(ctx)?;
+        self.finalizer.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -11672,9 +11672,9 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseNode {
 pub struct FinallyClauseNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_block")]
-    #[slot(field = field::BLOCK, word = 2, width = 5)]
-    pub block: ::sittir_core::SlotValue<SuiteNode>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY, word = 2, width = 5)]
+    pub body: ::sittir_core::SlotValue<SuiteNode>,
 }
 
 impl ::sittir_core::view::KindOf for FinallyClauseNode {
@@ -11699,7 +11699,7 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.block.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -12322,9 +12322,9 @@ pub struct ClassDefinitionNode {
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS, word = 7, width = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParameterNode>>,
-    #[wire(key = "_superclasses")]
-    #[slot(field = field::SUPERCLASSES, word = 12, width = 5)]
-    pub superclasses: Option<::sittir_core::SlotValue<ArgumentListNode>>,
+    #[wire(key = "_bases")]
+    #[slot(field = field::BASES, word = 12, width = 5)]
+    pub bases: Option<::sittir_core::SlotValue<ArgumentListNode>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 17, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteNode>,
@@ -12354,7 +12354,7 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionNode {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
-        self.superclasses.prepare(ctx)?;
+        self.bases.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
@@ -12378,7 +12378,7 @@ pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_types")]
-    #[slot(word = 2, width = 5)]
+    #[slot(field = field::TYPES, word = 2, width = 5)]
     pub types: ::sittir_core::SlotValue<TypesNode>,
 }
 
@@ -13500,9 +13500,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternNode {
 pub struct ListPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_patterns")]
-    #[slot(word = 2, width = 5)]
-    pub patterns: Option<::sittir_core::SlotValue<PatternsNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
+    pub elements: Option<::sittir_core::SlotValue<PatternsNode>>,
 }
 
 impl ::sittir_core::view::KindOf for ListPatternNode {
@@ -13527,7 +13527,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -13552,9 +13552,9 @@ pub struct DefaultParameterNode {
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<DefaultParameterNameNodeSlot>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 7, width = 5)]
-    pub value: ::sittir_core::SlotValue<ExpressionNode>,
+    #[wire(key = "_default")]
+    #[slot(field = field::DEFAULT, word = 7, width = 5)]
+    pub default: ::sittir_core::SlotValue<ExpressionNode>,
 }
 
 impl ::sittir_core::view::KindOf for DefaultParameterNode {
@@ -13580,7 +13580,7 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNode {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.default.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -13608,9 +13608,9 @@ pub struct TypedDefaultParameterNode {
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 12, width = 5)]
-    pub value: ::sittir_core::SlotValue<ExpressionNode>,
+    #[wire(key = "_default")]
+    #[slot(field = field::DEFAULT, word = 12, width = 5)]
+    pub default: ::sittir_core::SlotValue<ExpressionNode>,
 }
 
 impl ::sittir_core::view::KindOf for TypedDefaultParameterNode {
@@ -13637,7 +13637,7 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterNode {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.default.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -13659,9 +13659,9 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterNode {
 pub struct ListSplatPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_target")]
-    #[slot(field = field::TARGET, word = 2, width = 5)]
-    pub target: ::sittir_core::SlotValue<Box<ListSplatPatternTargetNodeSlot>>,
+    #[wire(key = "_pattern")]
+    #[slot(field = field::PATTERN, word = 2, width = 5)]
+    pub pattern: ::sittir_core::SlotValue<Box<ListSplatPatternPatternNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ListSplatPatternNode {
@@ -13686,7 +13686,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.target.prepare(ctx)?;
+        self.pattern.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -13708,9 +13708,9 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternNode {
 pub struct DictionarySplatPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_target")]
-    #[slot(field = field::TARGET, word = 2, width = 5)]
-    pub target: ::sittir_core::SlotValue<ListSplatPatternTargetNodeSlot>,
+    #[wire(key = "_pattern")]
+    #[slot(field = field::PATTERN, word = 2, width = 5)]
+    pub pattern: ::sittir_core::SlotValue<ListSplatPatternPatternNodeSlot>,
 }
 
 impl ::sittir_core::view::KindOf for DictionarySplatPatternNode {
@@ -13735,7 +13735,7 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.target.prepare(ctx)?;
+        self.pattern.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14363,9 +14363,9 @@ pub struct AttributeNode {
     #[wire(key = "_object")]
     #[slot(field = field::OBJECT, word = 2, width = 5)]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
-    #[wire(key = "_attribute")]
-    #[slot(field = field::ATTRIBUTE, word = 7, width = 5)]
-    pub attribute: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_property")]
+    #[slot(field = field::PROPERTY, word = 7, width = 5)]
+    pub property: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
 impl ::sittir_core::view::KindOf for AttributeNode {
@@ -14391,7 +14391,7 @@ impl ::sittir_core::prepare::Prepare for AttributeNode {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
-        self.attribute.prepare(ctx)?;
+        self.property.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -14413,9 +14413,9 @@ impl ::sittir_core::prepare::Prepare for AttributeNode {
 pub struct SubscriptNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
+    #[wire(key = "_object")]
+    #[slot(field = field::OBJECT, word = 2, width = 5)]
+    pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionNode>>,
     #[wire(key = "_subscripts")]
     #[slot(word = 7, width = 5)]
     pub subscripts: ::sittir_core::SlotValue<SubscriptsNode>,
@@ -14443,7 +14443,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.object.prepare(ctx)?;
         self.subscripts.prepare(ctx)?;
         Ok(())
     }
@@ -14728,9 +14728,9 @@ pub struct SplatTypeNode {
     #[wire(key = "_operator")]
     #[slot(field = field::OPERATOR, word = 2, width = 5)]
     pub operator: ::sittir_core::SlotValue<SplatTypeOperatorNodeSlot>,
-    #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 7, width = 5)]
-    pub name: ::sittir_core::SlotValue<IdentifierNode>,
+    #[wire(key = "_type")]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
+    pub type_: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
 impl ::sittir_core::view::KindOf for SplatTypeNode {
@@ -14760,7 +14760,7 @@ impl ::sittir_core::prepare::Prepare for SplatTypeNode {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
-        self.name.prepare(ctx)?;
+        self.type_.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15047,9 +15047,9 @@ impl ::sittir_core::prepare::Prepare for KeywordArgumentNode {
 pub struct ListNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_collection_elements")]
-    #[slot(word = 2, width = 5)]
-    pub collection_elements: Option<::sittir_core::SlotValue<CollectionElementsNode>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
+    pub elements: Option<::sittir_core::SlotValue<CollectionElementsNode>>,
 }
 
 impl ::sittir_core::view::KindOf for ListNode {
@@ -15074,7 +15074,7 @@ impl ::sittir_core::prepare::Prepare for ListNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.collection_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15096,9 +15096,9 @@ impl ::sittir_core::prepare::Prepare for ListNode {
 pub struct SetNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_collection_elements")]
-    #[slot(word = 2, width = 5)]
-    pub collection_elements: ::sittir_core::SlotValue<CollectionElementsNode>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
+    pub elements: ::sittir_core::SlotValue<CollectionElementsNode>,
 }
 
 impl ::sittir_core::view::KindOf for SetNode {
@@ -15123,7 +15123,7 @@ impl ::sittir_core::prepare::Prepare for SetNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.collection_elements.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15736,9 +15736,9 @@ impl ::sittir_core::prepare::Prepare for IfClauseNode {
 pub struct ConditionalExpressionNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 2, width = 5)]
-    pub body: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_consequence")]
+    #[slot(field = field::CONSEQUENCE, word = 2, width = 5)]
+    pub consequence: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_condition")]
     #[slot(field = field::CONDITION, word = 7, width = 5)]
     pub condition: ::sittir_core::SlotValue<Box<ExpressionNode>>,
@@ -15769,7 +15769,7 @@ impl ::sittir_core::prepare::Prepare for ConditionalExpressionNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.body.prepare(ctx)?;
+        self.consequence.prepare(ctx)?;
         self.condition.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
         Ok(())
@@ -18920,12 +18920,12 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionNode {
 pub struct AssignmentEqNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 2, width = 5)]
-    pub left: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
-    #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 7, width = 5)]
-    pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 5)]
+    pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
+    pub value: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentEqNode {
@@ -18950,8 +18950,8 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.left.prepare(ctx)?;
-        self.right.prepare(ctx)?;
+        self.name.prepare(ctx)?;
+        self.value.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18973,9 +18973,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqNode {
 pub struct AssignmentTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 2, width = 5)]
-    pub left: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 5)]
+    pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
@@ -19003,7 +19003,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.left.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
     }
@@ -19026,15 +19026,15 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeNode {
 pub struct AssignmentTypedNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 2, width = 5)]
-    pub left: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 2, width = 5)]
+    pub name: ::sittir_core::SlotValue<ForStatementLeftNodeSlot>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
-    #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 12, width = 5)]
-    pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
+    #[wire(key = "_value")]
+    #[slot(field = field::VALUE, word = 12, width = 5)]
+    pub value: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for AssignmentTypedNode {
@@ -19059,9 +19059,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.left.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
-        self.right.prepare(ctx)?;
+        self.value.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -23911,7 +23911,7 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterNameNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTargetNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for ListSplatPatternPatternNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::Subscript(t) => t.seat_target(table, ctx),
@@ -24596,14 +24596,14 @@ fn render_expression_statement(node: &ExpressionStatementNode, w: &mut dyn ::sit
 }
 
 fn render_named_expression(node: &NamedExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
-    let value = &node.value;
+    let left = &node.left;
+    let right = &node.right;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_BEFORE);
     w.text(":=")?;
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -24785,22 +24785,22 @@ fn render_while_statement(node: &WhileStatementNode, w: &mut dyn ::sittir_core::
 }
 
 fn render_try_statement(node: &TryStatementNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let alternative = View::new(&node.alternative, "{}");
     let body = &node.body;
-    let else_clause = View::new(&node.else_clause, "{}");
-    let except_clauses = ListView {
-        items: &node.except_clauses,
+    let finalizer = View::new(&node.finalizer, "{}");
+    let handlers = ListView {
+        items: &node.handlers,
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.except_clauses_separator_space.unwrap_or(KindId::BLANK),
+        after: node.handlers_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_except_clauses"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_handlers"),
     };
-    let finally_clause = View::new(&node.finally_clause, "{}");
     w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("try")?;
     w.site_at(options::SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER);
@@ -24808,9 +24808,9 @@ fn render_try_statement(node: &TryStatementNode, w: &mut dyn ::sittir_core::rend
     w.text(":")?;
     w.site_at(options::SITE_TRY_STATEMENT_COLON_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    except_clauses.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_else_clause", ::sittir_core::types::ItemIndex(0), w, |w| else_clause.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_finally_clause", ::sittir_core::types::ItemIndex(0), w, |w| finally_clause.render(w))?;
+    handlers.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_alternative", ::sittir_core::types::ItemIndex(0), w, |w| alternative.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_finalizer", ::sittir_core::types::ItemIndex(0), w, |w| finalizer.render(w))?;
     w.edge(::sittir_core::types::KindId(158), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -24837,14 +24837,14 @@ fn render_except_clause(node: &ExceptClauseNode, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_finally_clause(node: &FinallyClauseNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let block = &node.block;
+    let body = &node.body;
     w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("finally")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER);
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FINALLY_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_block", ::sittir_core::types::ItemIndex(0), w, |w| block.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(160), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -25036,16 +25036,16 @@ fn render_type_alias_statement(node: &TypeAliasStatementNode, w: &mut dyn ::sitt
 }
 
 fn render_class_definition(node: &ClassDefinitionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let bases = View::new(&node.bases, "{}");
     let body = &node.body;
     let name = &node.name;
-    let superclasses = View::new(&node.superclasses, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.edge(::sittir_core::types::KindId(173), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("class")?;
     w.site_at(options::SITE_CLASS_DEFINITION_CLASS_KEYWORD_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type_parameters", ::sittir_core::types::ItemIndex(0), w, |w| type_parameters.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_superclasses", ::sittir_core::types::ItemIndex(0), w, |w| superclasses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_bases", ::sittir_core::types::ItemIndex(0), w, |w| bases.render(w))?;
     w.site_at(options::SITE_CLASS_DEFINITION_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_CLASS_DEFINITION_COLON_AFTER);
@@ -25361,12 +25361,12 @@ fn render_tuple_pattern(node: &TuplePatternNode, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_list_pattern(node: &ListPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let patterns = View::new(&node.patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_patterns", ::sittir_core::types::ItemIndex(0), w, |w| patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -25374,22 +25374,22 @@ fn render_list_pattern(node: &ListPatternNode, w: &mut dyn ::sittir_core::render
 }
 
 fn render_default_parameter(node: &DefaultParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let default = &node.default;
     let name = &node.name;
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_DEFAULT_PARAMETER_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_default", ::sittir_core::types::ItemIndex(0), w, |w| default.render(w))?;
     w.edge(::sittir_core::types::KindId(198), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_typed_default_parameter(node: &TypedDefaultParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let default = &node.default;
     let name = &node.name;
     let type_ = &node.type_;
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE);
@@ -25399,27 +25399,27 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterNode, w: &mut dyn 
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_default", ::sittir_core::types::ItemIndex(0), w, |w| default.render(w))?;
     w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_list_splat_pattern(node: &ListSplatPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let target = &node.target;
+    let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("*")?;
     w.site_at(options::SITE_LIST_SPLAT_PATTERN_STAR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_target", ::sittir_core::types::ItemIndex(0), w, |w| target.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_dictionary_splat_pattern(node: &DictionarySplatPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let target = &node.target;
+    let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("**")?;
     w.site_at(options::SITE_DICTIONARY_SPLAT_PATTERN_STAR_STAR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_target", ::sittir_core::types::ItemIndex(0), w, |w| target.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -25581,23 +25581,23 @@ fn render_yield(node: &YieldNode, w: &mut dyn ::sittir_core::render::RenderSink)
 }
 
 fn render_attribute(node: &AttributeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let attribute = &node.attribute;
     let object = &node.object;
+    let property = &node.property;
     w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_ATTRIBUTE_DOT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_attribute", ::sittir_core::types::ItemIndex(0), w, |w| attribute.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_property", ::sittir_core::types::ItemIndex(0), w, |w| property.render(w))?;
     w.edge(::sittir_core::types::KindId(220), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_subscript(node: &SubscriptNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let object = &node.object;
     let subscripts = &node.subscripts;
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(221), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_object", ::sittir_core::types::ItemIndex(0), w, |w| object.render(w))?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_BEFORE);
     w.text("[")?;
     w.site_at(options::SITE_SUBSCRIPT_LBRACK_AFTER);
@@ -25653,12 +25653,12 @@ fn render_type(node: &TypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -
 }
 
 fn render_splat_type(node: &SplatTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let name = &node.name;
     let operator = &node.operator;
+    let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     w.site_at(options::SITE_SPLAT_TYPE_OPERATOR_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.edge(::sittir_core::types::KindId(226), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -25726,12 +25726,12 @@ fn render_keyword_argument(node: &KeywordArgumentNode, w: &mut dyn ::sittir_core
 }
 
 fn render_list(node: &ListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let collection_elements = View::new(&node.collection_elements, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_collection_elements", ::sittir_core::types::ItemIndex(0), w, |w| collection_elements.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -25739,11 +25739,11 @@ fn render_list(node: &ListNode, w: &mut dyn ::sittir_core::render::RenderSink) -
 }
 
 fn render_set(node: &SetNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let collection_elements = &node.collection_elements;
+    let elements = &node.elements;
     w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_SET_LBRACE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_collection_elements", ::sittir_core::types::ItemIndex(0), w, |w| collection_elements.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
     w.site_at(options::SITE_SET_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(233), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -25922,10 +25922,10 @@ fn render_if_clause(node: &IfClauseNode, w: &mut dyn ::sittir_core::render::Rend
 
 fn render_conditional_expression(node: &ConditionalExpressionNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = &node.alternative;
-    let body = &node.body;
     let condition = &node.condition;
+    let consequence = &node.consequence;
     w.edge(::sittir_core::types::KindId(245), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_consequence", ::sittir_core::types::ItemIndex(0), w, |w| consequence.render(w))?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_BEFORE);
     w.text("if")?;
     w.site_at(options::SITE_CONDITIONAL_EXPRESSION_IF_KEYWORD_AFTER);
@@ -26660,23 +26660,23 @@ fn render_except_clause_exception(node: &ExceptClauseExceptionNode, w: &mut dyn 
 }
 
 fn render_assignment_eq(node: &AssignmentEqNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let right = &node.right;
+    let name = &node.name;
+    let value = &node.value;
     w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_EQ_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(286), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_assignment_type(node: &AssignmentTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
+    let name = &node.name;
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(287), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPE_COLON_AFTER);
@@ -26686,11 +26686,11 @@ fn render_assignment_type(node: &AssignmentTypeNode, w: &mut dyn ::sittir_core::
 }
 
 fn render_assignment_typed(node: &AssignmentTypedNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let left = &node.left;
-    let right = &node.right;
+    let name = &node.name;
     let type_ = &node.type_;
+    let value = &node.value;
     w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_COLON_AFTER);
@@ -26698,7 +26698,7 @@ fn render_assignment_typed(node: &AssignmentTypedNode, w: &mut dyn ::sittir_core
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_BEFORE);
     w.text("=")?;
     w.site_at(options::SITE_ASSIGNMENT_TYPED_EQ_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(288), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -28283,4 +28283,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, SplatPatternOperatorNodeSlot, SplatPatternNameNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternTargetNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, SplatPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, NamesNode, AsPatternTargetNode, FormatExpressionNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, LbraceNode, RbraceNode, UnderscoreNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, PipeNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, SplatPatternOperatorNodeSlot, SplatPatternNameNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, SplatPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, NamesNode, AsPatternTargetNode, FormatExpressionNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, LbraceNode, RbraceNode, UnderscoreNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, PipeNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, TriviaNode);

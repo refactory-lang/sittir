@@ -269,6 +269,11 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const orphanedExtras = new Map<string, ValidatorSkip>();
 	const unreadKinds = new Map<string, CorpusEntry>();
 	const storageKindOf = (kindId: number): string => storageKindNameFromId?.(kindId) ?? '';
+	const factoryStorageKind = (kindId: number): string | undefined => {
+		const storage = storageKindNameFromId?.(kindId);
+		return storage !== undefined && storage in fromMap && storage in factoryMap ? storage : undefined;
+	};
+	const factoryKindNameFromId = (kindId: number): string | undefined => factoryStorageKind(kindId) ?? kindNameFromId?.(kindId);
 	const occurrenceKind = (node: TSNode): string =>
 		physicalDisplayKind(node.type, storageKindNameFromId?.(node.grammarId), displayUnions);
 	const nativeKindName = (id: number): string | undefined => {
@@ -373,11 +378,11 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		// The read node's $type is the storage stamp; in an alias context the
 		// CST face name (`kind`) differs from it (a decorator's member chain
 		// wears the member_expression face over the decorator_member_expression
-		// storage kind). Storage identity picks the from/factory pair — the
-		// face is only how the corpus walk found the node.
-		const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
-		const readKind =
-			readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
+		// storage kind). Storage identity picks the from/factory pair and the
+		// slot tables the config reads, for the node and every child it holds —
+		// the face is only how the corpus walk found the node, and a display
+		// that two storage kinds share has no slot table of its own.
+		const readKind = (typeof readData.$type === 'number' ? factoryStorageKind(readData.$type) : undefined) ?? kind;
 		const readKindId = kindIdFromName?.(readKind);
 		const readText = nodeText(readData);
 		const aliasRead =
@@ -417,7 +422,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: factoryKindNameFromId
 					});
 					if (shape === 'direct' || shape === 'forwarded') {
 						// Direct-call shape: use the sole field when metadata
@@ -461,7 +466,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: factoryKindNameFromId
 					});
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 					const options = separatedListFactoryOptions(readData);
@@ -476,7 +481,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: factoryKindNameFromId
 					});
 					const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 					factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);

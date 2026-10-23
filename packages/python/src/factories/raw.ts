@@ -620,27 +620,27 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression<
-	NameSlot extends T.NamedExpression.Config['name'],
-	ValueSlot extends T.NamedExpression.Config['value']
->(config: RefusingConfig<T.NamedExpression.Config, { name: NameSlot; value: ValueSlot }>): T.NamedExpression.Bound;
+	LeftSlot extends T.NamedExpression.Config['left'],
+	RightSlot extends T.NamedExpression.Config['right']
+>(config: RefusingConfig<T.NamedExpression.Config, { left: LeftSlot; right: RightSlot }>): T.NamedExpression.Bound;
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Bound {
 	currentHandle()?.admit(TSKindId.NamedExpression, [config]);
-	const _name = config.name;
-	const _value = kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value);
+	const _left = config.left;
+	const _right = kindIdStorage<NonNullable<T.NamedExpression['_right']>>(config.right);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedExpression as const,
 		$named: true as const,
-		_name,
-		_value,
+		_left,
+		_right,
 		$with: {
-			name: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildNamedExpression({ ...config, name: value })),
-			value: (value: Admit<NonNullable<T.NamedExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildNamedExpression({ ...config, value: value }))
+			left: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNamedExpression({ ...config, left: value })),
+			right: (value: Admit<NonNullable<T.NamedExpression.Config>['right']>) =>
+				rebuilt(node, handle, () => buildNamedExpression({ ...config, right: value }))
 		},
-		name: () => hydrateStoredSlot(node, '_name'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1072,44 +1072,42 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 
 export function buildTryStatement<
 	BodySlot extends T.TryStatement.Config['body'],
-	ExceptClausesSlot extends T.TryStatement.Config['exceptClauses'],
-	ElseClauseSlot extends T.TryStatement.Config['elseClause'],
-	FinallyClauseSlot extends T.TryStatement.Config['finallyClause']
+	HandlersSlot extends T.TryStatement.Config['handlers'],
+	AlternativeSlot extends T.TryStatement.Config['alternative'],
+	FinalizerSlot extends T.TryStatement.Config['finalizer']
 >(
 	config: RefusingConfig<
 		T.TryStatement.Config,
-		{ body: BodySlot; exceptClauses: ExceptClausesSlot; elseClause: ElseClauseSlot; finallyClause: FinallyClauseSlot }
+		{ body: BodySlot; handlers: HandlersSlot; alternative: AlternativeSlot; finalizer: FinalizerSlot }
 	>
 ): T.TryStatement.Bound;
 export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Bound {
 	currentHandle()?.admit(TSKindId.TryStatement, [config]);
 	const _body = config.body;
-	const _except_clauses = listStorage<NonNullable<T.TryStatement['_except_clauses']>>(config.exceptClauses ?? []);
-	const _else_clause = config.elseClause;
-	const _finally_clause = config.finallyClause;
+	const _handlers = listStorage<NonNullable<T.TryStatement['_handlers']>>(config.handlers ?? []);
+	const _alternative = config.alternative;
+	const _finalizer = config.finalizer;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TryStatement as const,
 		$named: true as const,
 		_body,
-		_except_clauses,
-		_else_clause,
-		_finally_clause,
+		_handlers,
+		_alternative,
+		_finalizer,
 		$with: {
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildTryStatement({ ...config, body: value })),
-			exceptClauses: (...values: Admit<T.ExceptClause[]>) =>
-				rebuilt(node, handle, () =>
-					buildTryStatement({ ...config, exceptClauses: restItems('exceptClauses', values) })
-				),
-			elseClause: (value?: Admit<T.ElseClause>) =>
-				rebuilt(node, handle, () => buildTryStatement({ ...config, elseClause: value })),
-			finallyClause: (value?: Admit<T.FinallyClause>) =>
-				rebuilt(node, handle, () => buildTryStatement({ ...config, finallyClause: value }))
+			handlers: (...values: Admit<T.ExceptClause[]>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, handlers: restItems('handlers', values) })),
+			alternative: (value?: Admit<T.ElseClause>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, alternative: value })),
+			finalizer: (value?: Admit<T.FinallyClause>) =>
+				rebuilt(node, handle, () => buildTryStatement({ ...config, finalizer: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		exceptClauses: () => hydrateStoredSlots(node, '_except_clauses'),
-		elseClause: () => hydrateStoredSlot(node, '_else_clause'),
-		finallyClause: () => hydrateStoredSlot(node, '_finally_clause'),
+		handlers: () => hydrateStoredSlots(node, '_handlers'),
+		alternative: () => hydrateStoredSlot(node, '_alternative'),
+		finalizer: () => hydrateStoredSlot(node, '_finalizer'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1162,16 +1160,16 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 
 export function buildFinallyClause<V extends Admit<T.Suite>>(value: V & RefuseUndeclared<V>): T.FinallyClause.Bound;
 export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound {
-	const _block = value;
+	const _body = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FinallyClause as const,
 		$named: true as const,
-		_block,
+		_body,
 		$with: {
-			block: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFinallyClause(value))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFinallyClause(value))
 		},
-		block: () => hydrateStoredSlot(node, '_block'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1640,19 +1638,19 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 export function buildClassDefinition<
 	NameSlot extends T.ClassDefinition.Config['name'],
 	TypeParametersSlot extends T.ClassDefinition.Config['typeParameters'],
-	SuperclassesSlot extends T.ClassDefinition.Config['superclasses'],
+	BasesSlot extends T.ClassDefinition.Config['bases'],
 	BodySlot extends T.ClassDefinition.Config['body']
 >(
 	config: RefusingConfig<
 		T.ClassDefinition.Config,
-		{ name: NameSlot; typeParameters: TypeParametersSlot; superclasses: SuperclassesSlot; body: BodySlot }
+		{ name: NameSlot; typeParameters: TypeParametersSlot; bases: BasesSlot; body: BodySlot }
 	>
 ): T.ClassDefinition.Bound;
 export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassDefinition.Bound {
 	currentHandle()?.admit(TSKindId.ClassDefinition, [config]);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _superclasses = config.superclasses;
+	const _bases = config.bases;
 	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
@@ -1660,7 +1658,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 		$named: true as const,
 		_name,
 		_type_parameters,
-		_superclasses,
+		_bases,
 		_body,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
@@ -1673,19 +1671,19 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 						(value?: Admit<T.TypeParameter>) => buildClassDefinition({ ...config, typeParameters: value })
 					)
 				),
-			superclasses: (...args: unknown[]) =>
+			bases: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ArgumentList as const, optional: true, make: buildArgumentList },
-						(value?: Admit<T.ArgumentList>) => buildClassDefinition({ ...config, superclasses: value })
+						(value?: Admit<T.ArgumentList>) => buildClassDefinition({ ...config, bases: value })
 					)
 				),
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildClassDefinition({ ...config, body: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
-		superclasses: () => hydrateStoredSlot(node, '_superclasses'),
+		bases: () => hydrateStoredSlot(node, '_bases'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2758,16 +2756,16 @@ export function buildListPattern(...args: unknown[]) {
 			);
 }
 function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
-	const _patterns = hydrateStored(value);
-	const listView = ownerView(_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_patterns');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListPattern as const,
 		$named: true as const,
-		_patterns,
+		_elements,
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -2776,10 +2774,10 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 					)
 				)
 		},
-		patterns: () => hydrateStoredSlot(node, '_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2801,26 +2799,28 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 
 export function buildDefaultParameter<
 	NameSlot extends T.DefaultParameter.Config['name'],
-	ValueSlot extends T.DefaultParameter.Config['value']
->(config: RefusingConfig<T.DefaultParameter.Config, { name: NameSlot; value: ValueSlot }>): T.DefaultParameter.Bound;
+	DefaultSlot extends T.DefaultParameter.Config['default']
+>(
+	config: RefusingConfig<T.DefaultParameter.Config, { name: NameSlot; default: DefaultSlot }>
+): T.DefaultParameter.Bound;
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Bound {
 	currentHandle()?.admit(TSKindId.DefaultParameter, [config]);
 	const _name = config.name;
-	const _value = kindIdStorage<NonNullable<T.DefaultParameter['_value']>>(config.value);
+	const _default = kindIdStorage<NonNullable<T.DefaultParameter['_default']>>(config.default);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DefaultParameter as const,
 		$named: true as const,
 		_name,
-		_value,
+		_default,
 		$with: {
 			name: (value: Admit<T.Identifier | T.TuplePattern>) =>
 				rebuilt(node, handle, () => buildDefaultParameter({ ...config, name: value })),
-			value: (value: Admit<NonNullable<T.DefaultParameter.Config>['value']>) =>
-				rebuilt(node, handle, () => buildDefaultParameter({ ...config, value: value }))
+			default: (value: Admit<NonNullable<T.DefaultParameter.Config>['default']>) =>
+				rebuilt(node, handle, () => buildDefaultParameter({ ...config, default: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		default: () => hydrateStoredSlot(node, '_default'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2836,33 +2836,33 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 export function buildTypedDefaultParameter<
 	NameSlot extends T.TypedDefaultParameter.Config['name'],
 	TypeSlot extends T.TypedDefaultParameter.Config['type'],
-	ValueSlot extends T.TypedDefaultParameter.Config['value']
+	DefaultSlot extends T.TypedDefaultParameter.Config['default']
 >(
-	config: RefusingConfig<T.TypedDefaultParameter.Config, { name: NameSlot; type: TypeSlot; value: ValueSlot }>
+	config: RefusingConfig<T.TypedDefaultParameter.Config, { name: NameSlot; type: TypeSlot; default: DefaultSlot }>
 ): T.TypedDefaultParameter.Bound;
 export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Config): T.TypedDefaultParameter.Bound {
 	currentHandle()?.admit(TSKindId.TypedDefaultParameter, [config]);
 	const _name = config.name;
 	const _type = config.type;
-	const _value = kindIdStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value);
+	const _default = kindIdStorage<NonNullable<T.TypedDefaultParameter['_default']>>(config.default);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypedDefaultParameter as const,
 		$named: true as const,
 		_name,
 		_type,
-		_value,
+		_default,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, name: value })),
 			type: (value: Admit<T.Type>) =>
 				rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, type: value })),
-			value: (value: Admit<NonNullable<T.TypedDefaultParameter.Config>['value']>) =>
-				rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, value: value }))
+			default: (value: Admit<NonNullable<T.TypedDefaultParameter.Config>['default']>) =>
+				rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, default: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		default: () => hydrateStoredSlot(node, '_default'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2881,17 +2881,17 @@ export function buildListSplatPattern<V extends Admit<T.Identifier | T.Subscript
 export function buildListSplatPattern(
 	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.ListSplatPattern.Bound {
-	const _target = value;
+	const _pattern = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplatPattern as const,
 		$named: true as const,
-		_target,
+		_pattern,
 		$with: {
-			target: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+			pattern: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
 				rebuilt(node, handle, () => buildListSplatPattern(value))
 		},
-		target: () => hydrateStoredSlot(node, '_target'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2910,17 +2910,17 @@ export function buildDictionarySplatPattern<V extends Admit<T.Identifier | T.Sub
 export function buildDictionarySplatPattern(
 	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.DictionarySplatPattern.Bound {
-	const _target = value;
+	const _pattern = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplatPattern as const,
 		$named: true as const,
-		_target,
+		_pattern,
 		$with: {
-			target: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+			pattern: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
 				rebuilt(node, handle, () => buildDictionarySplatPattern(value))
 		},
-		target: () => hydrateStoredSlot(node, '_target'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3366,26 +3366,26 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 
 export function buildAttribute<
 	ObjectSlot extends T.Attribute.Config['object'],
-	AttributeSlot extends T.Attribute.Config['attribute']
->(config: RefusingConfig<T.Attribute.Config, { object: ObjectSlot; attribute: AttributeSlot }>): T.Attribute.Bound;
+	PropertySlot extends T.Attribute.Config['property']
+>(config: RefusingConfig<T.Attribute.Config, { object: ObjectSlot; property: PropertySlot }>): T.Attribute.Bound;
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	currentHandle()?.admit(TSKindId.Attribute, [config]);
 	const _object = kindIdStorage<NonNullable<T.Attribute['_object']>>(config.object);
-	const _attribute = config.attribute;
+	const _property = config.property;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Attribute as const,
 		$named: true as const,
 		_object,
-		_attribute,
+		_property,
 		$with: {
 			object: (value: Admit<NonNullable<T.Attribute.Config>['object']>) =>
 				rebuilt(node, handle, () => buildAttribute({ ...config, object: value })),
-			attribute: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildAttribute({ ...config, attribute: value }))
+			property: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildAttribute({ ...config, property: value }))
 		},
 		object: () => hydrateStoredSlot(node, '_object'),
-		attribute: () => hydrateStoredSlot(node, '_attribute'),
+		property: () => hydrateStoredSlot(node, '_property'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3399,22 +3399,22 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 }
 
 export function buildSubscript<
-	ValueSlot extends T.Subscript.Config['value'],
+	ObjectSlot extends T.Subscript.Config['object'],
 	SubscriptsSlot extends T.Subscript.Config['subscripts']
->(config: RefusingConfig<T.Subscript.Config, { value: ValueSlot; subscripts: SubscriptsSlot }>): T.Subscript.Bound;
+>(config: RefusingConfig<T.Subscript.Config, { object: ObjectSlot; subscripts: SubscriptsSlot }>): T.Subscript.Bound;
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	currentHandle()?.admit(TSKindId.Subscript, [config]);
-	const _value = kindIdStorage<NonNullable<T.Subscript['_value']>>(config.value);
+	const _object = kindIdStorage<NonNullable<T.Subscript['_object']>>(config.object);
 	const _subscripts = config.subscripts;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscript as const,
 		$named: true as const,
-		_value,
+		_object,
 		_subscripts,
 		$with: {
-			value: (value: Admit<NonNullable<T.Subscript.Config>['value']>) =>
-				rebuilt(node, handle, () => buildSubscript({ ...config, value: value })),
+			object: (value: Admit<NonNullable<T.Subscript.Config>['object']>) =>
+				rebuilt(node, handle, () => buildSubscript({ ...config, object: value })),
 			subscripts: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -3424,7 +3424,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 					)
 				)
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		object: () => hydrateStoredSlot(node, '_object'),
 		subscripts: () => hydrateStoredSlot(node, '_subscripts'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3599,26 +3599,26 @@ export function buildType(
 	return stampBuilt(node) as unknown as T.Type.Bound;
 }
 
-export function buildSplatType<NameSlot extends T.SplatType.Config['name']>(
-	config: RefusingConfig<T.SplatType.Config, { name: NameSlot }>
+export function buildSplatType<TypeSlot extends T.SplatType.Config['type']>(
+	config: RefusingConfig<T.SplatType.Config, { type: TypeSlot }>
 ): T.SplatType.Bound;
 export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 	currentHandle()?.admit(TSKindId.SplatType, [config]);
 	const _operator = kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator);
-	const _name = config.name;
+	const _type = config.type;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SplatType as const,
 		$named: true as const,
 		_operator,
-		_name,
+		_type,
 		$with: {
 			operator: (value: Admit<NonNullable<T.SplatType.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildSplatType({ ...config, operator: value })),
-			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType({ ...config, name: value }))
+			type: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType({ ...config, type: value }))
 		},
 		operator: () => _operator,
-		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3835,16 +3835,16 @@ export function buildList(...args: unknown[]) {
 			);
 }
 function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
-	const _collection_elements = hydrateStored(value);
-	const listView = ownerView(_collection_elements, '_item');
-	if (listView.stored === undefined) refuseReadStub('_collection_elements');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.List as const,
 		$named: true as const,
-		_collection_elements,
+		_elements,
 		$with: {
-			collectionElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -3853,10 +3853,10 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 					)
 				)
 		},
-		collectionElements: () => hydrateStoredSlot(node, '_collection_elements'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.collectionElements(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3902,16 +3902,16 @@ export function buildSet(...args: unknown[]) {
 		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSet>[0]);
 }
 function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
-	const _collection_elements = hydrateStored(value);
-	const listView = ownerView(_collection_elements, '_item');
-	if (listView.stored === undefined) refuseReadStub('_collection_elements');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Set as const,
 		$named: true as const,
-		_collection_elements,
+		_elements,
 		$with: {
-			collectionElements: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -3920,10 +3920,10 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 					)
 				)
 		},
-		collectionElements: () => hydrateStoredSlot(node, '_collection_elements'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.collectionElements(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4428,36 +4428,36 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 }
 
 export function buildConditionalExpression<
-	BodySlot extends T.ConditionalExpression.Config['body'],
+	ConsequenceSlot extends T.ConditionalExpression.Config['consequence'],
 	ConditionSlot extends T.ConditionalExpression.Config['condition'],
 	AlternativeSlot extends T.ConditionalExpression.Config['alternative']
 >(
 	config: RefusingConfig<
 		T.ConditionalExpression.Config,
-		{ body: BodySlot; condition: ConditionSlot; alternative: AlternativeSlot }
+		{ consequence: ConsequenceSlot; condition: ConditionSlot; alternative: AlternativeSlot }
 	>
 ): T.ConditionalExpression.Bound;
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Bound {
 	currentHandle()?.admit(TSKindId.ConditionalExpression, [config]);
-	const _body = kindIdStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body);
+	const _consequence = kindIdStorage<NonNullable<T.ConditionalExpression['_consequence']>>(config.consequence);
 	const _condition = kindIdStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition);
 	const _alternative = kindIdStorage<NonNullable<T.ConditionalExpression['_alternative']>>(config.alternative);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConditionalExpression as const,
 		$named: true as const,
-		_body,
+		_consequence,
 		_condition,
 		_alternative,
 		$with: {
-			body: (value: Admit<NonNullable<T.ConditionalExpression.Config>['body']>) =>
-				rebuilt(node, handle, () => buildConditionalExpression({ ...config, body: value })),
+			consequence: (value: Admit<NonNullable<T.ConditionalExpression.Config>['consequence']>) =>
+				rebuilt(node, handle, () => buildConditionalExpression({ ...config, consequence: value })),
 			condition: (value: Admit<NonNullable<T.ConditionalExpression.Config>['condition']>) =>
 				rebuilt(node, handle, () => buildConditionalExpression({ ...config, condition: value })),
 			alternative: (value: Admit<NonNullable<T.ConditionalExpression.Config>['alternative']>) =>
 				rebuilt(node, handle, () => buildConditionalExpression({ ...config, alternative: value }))
 		},
-		body: () => hydrateStoredSlot(node, '_body'),
+		consequence: () => hydrateStoredSlot(node, '_consequence'),
 		condition: () => hydrateStoredSlot(node, '_condition'),
 		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
@@ -6994,27 +6994,27 @@ export function buildExceptClauseException(
 }
 
 export function buildAssignmentEq<
-	LeftSlot extends T.AssignmentEq.Config['left'],
-	RightSlot extends T.AssignmentEq.Config['right']
->(config: RefusingConfig<T.AssignmentEq.Config, { left: LeftSlot; right: RightSlot }>): T.AssignmentEq.Bound;
+	NameSlot extends T.AssignmentEq.Config['name'],
+	ValueSlot extends T.AssignmentEq.Config['value']
+>(config: RefusingConfig<T.AssignmentEq.Config, { name: NameSlot; value: ValueSlot }>): T.AssignmentEq.Bound;
 export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq.Bound {
 	currentHandle()?.admit(TSKindId.AssignmentEq, [config]);
-	const _left = config.left;
-	const _right = kindIdStorage<NonNullable<T.AssignmentEq['_right']>>(config.right);
+	const _name = config.name;
+	const _value = kindIdStorage<NonNullable<T.AssignmentEq['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentEq as const,
 		$named: true as const,
-		_left,
-		_right,
+		_name,
+		_value,
 		$with: {
-			left: (value: Admit<T.Pattern | T.PatternList>) =>
-				rebuilt(node, handle, () => buildAssignmentEq({ ...config, left: value })),
-			right: (value: Admit<NonNullable<T.AssignmentEq.Config>['right']>) =>
-				rebuilt(node, handle, () => buildAssignmentEq({ ...config, right: value }))
+			name: (value: Admit<T.Pattern | T.PatternList>) =>
+				rebuilt(node, handle, () => buildAssignmentEq({ ...config, name: value })),
+			value: (value: Admit<NonNullable<T.AssignmentEq.Config>['value']>) =>
+				rebuilt(node, handle, () => buildAssignmentEq({ ...config, value: value }))
 		},
-		left: () => hydrateStoredSlot(node, '_left'),
-		right: () => hydrateStoredSlot(node, '_right'),
+		name: () => hydrateStoredSlot(node, '_name'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7028,25 +7028,25 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 }
 
 export function buildAssignmentType<
-	LeftSlot extends T.AssignmentType.Config['left'],
+	NameSlot extends T.AssignmentType.Config['name'],
 	TypeSlot extends T.AssignmentType.Config['type']
->(config: RefusingConfig<T.AssignmentType.Config, { left: LeftSlot; type: TypeSlot }>): T.AssignmentType.Bound;
+>(config: RefusingConfig<T.AssignmentType.Config, { name: NameSlot; type: TypeSlot }>): T.AssignmentType.Bound;
 export function buildAssignmentType(config: T.AssignmentType.Config): T.AssignmentType.Bound {
 	currentHandle()?.admit(TSKindId.AssignmentType, [config]);
-	const _left = config.left;
+	const _name = config.name;
 	const _type = config.type;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentType as const,
 		$named: true as const,
-		_left,
+		_name,
 		_type,
 		$with: {
-			left: (value: Admit<T.Pattern | T.PatternList>) =>
-				rebuilt(node, handle, () => buildAssignmentType({ ...config, left: value })),
+			name: (value: Admit<T.Pattern | T.PatternList>) =>
+				rebuilt(node, handle, () => buildAssignmentType({ ...config, name: value })),
 			type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildAssignmentType({ ...config, type: value }))
 		},
-		left: () => hydrateStoredSlot(node, '_left'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7061,34 +7061,34 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 }
 
 export function buildAssignmentTyped<
-	LeftSlot extends T.AssignmentTyped.Config['left'],
+	NameSlot extends T.AssignmentTyped.Config['name'],
 	TypeSlot extends T.AssignmentTyped.Config['type'],
-	RightSlot extends T.AssignmentTyped.Config['right']
+	ValueSlot extends T.AssignmentTyped.Config['value']
 >(
-	config: RefusingConfig<T.AssignmentTyped.Config, { left: LeftSlot; type: TypeSlot; right: RightSlot }>
+	config: RefusingConfig<T.AssignmentTyped.Config, { name: NameSlot; type: TypeSlot; value: ValueSlot }>
 ): T.AssignmentTyped.Bound;
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Bound {
 	currentHandle()?.admit(TSKindId.AssignmentTyped, [config]);
-	const _left = config.left;
+	const _name = config.name;
 	const _type = config.type;
-	const _right = kindIdStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right);
+	const _value = kindIdStorage<NonNullable<T.AssignmentTyped['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentTyped as const,
 		$named: true as const,
-		_left,
+		_name,
 		_type,
-		_right,
+		_value,
 		$with: {
-			left: (value: Admit<T.Pattern | T.PatternList>) =>
-				rebuilt(node, handle, () => buildAssignmentTyped({ ...config, left: value })),
+			name: (value: Admit<T.Pattern | T.PatternList>) =>
+				rebuilt(node, handle, () => buildAssignmentTyped({ ...config, name: value })),
 			type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildAssignmentTyped({ ...config, type: value })),
-			right: (value: Admit<NonNullable<T.AssignmentTyped.Config>['right']>) =>
-				rebuilt(node, handle, () => buildAssignmentTyped({ ...config, right: value }))
+			value: (value: Admit<NonNullable<T.AssignmentTyped.Config>['value']>) =>
+				rebuilt(node, handle, () => buildAssignmentTyped({ ...config, value: value }))
 		},
-		left: () => hydrateStoredSlot(node, '_left'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		right: () => hydrateStoredSlot(node, '_right'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

@@ -1,15 +1,16 @@
+import { nativeRuleFn } from './enrich.ts';
 import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts';
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
-import { refine as refineImpl, type FormMap } from './primitives/refine.ts';
-import type { GrammarResult, EnrichedGrammar } from './enrich.ts';
-import type { WiredOpts } from './wire/wire.ts';
+import { refine as refineImpl, type FormMap, type RefinePlaceholder } from './primitives/refine.ts';
+import { edit as editImpl, replace as replaceImpl } from './transform/transform.ts';
+import { copy as copyImpl } from './primitives/copy.ts';
+import type { PatchMap } from './wire/wire.ts';
 import type {
 	FieldRule,
 	AliasRule,
 	GrammarRule,
-	GrammarJson,
 	AuthoringRule,
 	SymbolRule,
 	ToGrammarRule,
@@ -28,11 +29,12 @@ export { flatten } from './primitives/flatten.ts';
 export { regex } from './primitives/regex.ts';
 export { arm } from './primitives/arm.ts';
 export { preference } from './primitives/preference.ts';
-export { enrich } from './enrich.ts';
+export { pendingBase as enrich, layerOptions as wire } from './layer.ts';
+export type { LayerConfig, LayerOptions, PendingBase } from './layer.ts';
 export type { GrammarResult } from './enrich.ts';
-export { wire } from './wire/wire.ts';
-export { sittirGrammar } from './sittir-grammar.ts';
-export { bindings, lead, match, rename, split } from './bind.ts';
+export { lead } from './primitives/lead.ts';
+export { match, narrow } from './primitives/narrow.ts';
+export { rename } from './primitives/rename.ts';
 export { reauthored, vocabulary } from './primitives/rule-cause.ts';
 export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts';
 export type { WireConfig, WiredOpts } from './wire/wire.ts';
@@ -60,9 +62,35 @@ interface AuthoringRole {
 export const role = roleImpl as unknown as AuthoringRole;
 
 interface AuthoringRefine {
+	(forms: FormMap): RefinePlaceholder;
 	<R extends AuthoringRule>(original: R, forms: FormMap): R;
 }
 export const refine = refineImpl as unknown as AuthoringRefine;
+
+interface AuthoringEdit {
+	<R extends AuthoringRule>(previous: R, ...sets: readonly PatchMap[]): R;
+}
+export const edit = editImpl as unknown as AuthoringEdit;
+
+interface AuthoringCopy {
+	(source: string | SymbolRule<string>, path?: string): AuthoringRule;
+}
+export const copy = copyImpl as unknown as AuthoringCopy;
+
+type AuthoringReplacement = AuthoringRule | (($: Readonly<Record<string, SymbolRule<string>>>, member: GrammarRule) => AuthoringRule);
+interface AuthoringReplace {
+	<R extends AuthoringRule>(previous: R, path: string, rule: AuthoringReplacement): R;
+}
+export const replace = replaceImpl as unknown as AuthoringReplace;
+
+type DslFn = (...args: readonly unknown[]) => unknown;
+
+function runtimeDsl(name: string, member?: string): DslFn {
+	return (...args) => {
+		const owner = nativeRuleFn<DslFn & Readonly<Record<string, DslFn>>>(name);
+		return member === undefined ? owner(...args) : owner[member]!(...args);
+	};
+}
 
 interface AuthoringPrec {
 	<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;
@@ -72,20 +100,19 @@ interface AuthoringPrec {
 	right<R extends AuthoringRule>(value: number | string, rule: R): PrecRightRule<ToGrammarRule<R>>;
 	dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 }
-export const prec = (globalThis as unknown as { prec: unknown }).prec as unknown as AuthoringPrec;
+export const prec = Object.assign(runtimeDsl('prec'), {
+	left: runtimeDsl('prec', 'left'),
+	right: runtimeDsl('prec', 'right'),
+	dynamic: runtimeDsl('prec', 'dynamic')
+}) as unknown as AuthoringPrec;
 
 interface AuthoringReserved {
 	<R extends AuthoringRule>(contextName: string, rule: R): ReservedRule<ToGrammarRule<R>>;
 }
-export const reserved = (globalThis as unknown as { reserved: unknown }).reserved as unknown as AuthoringReserved;
+export const reserved = runtimeDsl('reserved') as unknown as AuthoringReserved;
 
 interface AuthoringToken {
 	<R extends AuthoringRule>(rule: R): TokenRule<ToGrammarRule<R>>;
 	immediate<R extends AuthoringRule>(rule: R): ImmediateTokenRule<ToGrammarRule<R>>;
 }
-export const token = (globalThis as unknown as { token: unknown }).token as unknown as AuthoringToken;
-
-interface AuthoringGrammar {
-	<B extends GrammarJson>(base: EnrichedGrammar<B>, options: WiredOpts): GrammarResult;
-}
-export const grammar = (globalThis as unknown as { grammar: unknown }).grammar as unknown as AuthoringGrammar;
+export const token = Object.assign(runtimeDsl('token'), { immediate: runtimeDsl('token', 'immediate') }) as unknown as AuthoringToken;

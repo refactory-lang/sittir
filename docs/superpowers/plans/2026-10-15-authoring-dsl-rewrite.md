@@ -811,6 +811,34 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 - 814a28e87: a captured child that shares a union slot of its owner takes no field, and its member reads the slot by kind. The bindings had fielded one arm of `export_statement_default_declaration`'s content union, which minted a `union-slot-routed` diagnostic.
 - 16f4124e5: the generated roots list `packages/<g>/tests/nodes.test.ts` and `packages/<g>/vitest.config.ts`, which codegen writes on every run, so the output gate and sync-base see them.
 
+## The master merge before the PR
+
+**Landed** on `feat/authoring-dsl`: 0ff5d6f07 merges master at ee57e396b, which brings the compiler front-load and node JSON, and 9e7623bbf adds the unknown-key refusal (§3.5).
+
+- The front-load landed on master first, so the merge leaves `compiler/` and `emitters/` logic equal to master by path. The census `git diff --name-only origin/master...HEAD -- packages/codegen/src/{compiler,emitters} ':!**/overlays/**' ':!**/__tests__/**'` is empty.
+- Their tests are master's, with five expectation edits that this branch's facts need:
+  - slot-hints;
+  - types-list-storage and render-module-emit, for the bound field names and the receiver lead's layout;
+  - stage, for `_layout`;
+  - post-evaluate-invariant, for the record keys.
+
+  generate-diagnostics-gate keeps this branch's stated timeouts.
+- Gated against master: the rows are unchanged in every grammar. typescript keeps this branch's conflict-resolution row (67 → 74, as at a2ad6e92b).
+- Generated files against a2ad6e92b: 127 move.
+  - 48 now equal master's, and 18 are the clean union of both sides' changes.
+  - 58 are regenerated where both sides changed the file:
+    - the python and rust parser artifacts, since both sides edit those grammars;
+    - every input hash, including the grammar bindings modules';
+    - the emitted factories, types, guards and node models, and the native crates: master's emitter changes over this branch's kinds and slots;
+    - the native test fixtures.
+  - typescript's node-model-portable.json5 moves for this merge alone. The arrow function's `parameters` claim now takes formal_parameters' items, as every other owner's does, because the receiver lead leaves formal_parameters a choice the derivation cannot see through (unmapped back to 16).
+  - rust's portable.ts also loses the typed-self method entry (placed back to 54). The portable-surface plan's Task 3b-2 restates it.
+- Four files master moved keep a2ad6e92b's bytes:
+  - regex's node-model.json5, which already equals master's;
+  - scm's node-model.json5, which already carries master's display union; the rest of its difference from master is this branch's seats;
+  - the scm and typescript resolutions.json, because the conflict hash keys only what the derivation reads (Stage 7).
+- 9e7623bbf writes no generated file. From here, "byte-identical to the previous commit" means equal to 9e7623bbf.
+
 ## Then
 
 - The wiring plan's 2b continues on Stage 1's state.

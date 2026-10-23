@@ -1,5 +1,8 @@
 import { applyHost, hostTemplateFor, lineStartsInsideTokens, type ReparseHosts } from '@sittir/common';
+import { load } from '../codegen-surface.ts';
 import type { TSNode, TSTree } from './common.ts';
+
+const { isParserHiddenName } = await load('rulePatterns');
 
 const HOLE = '$r';
 const WRAPPER_MODEL_TYPES: ReadonlySet<string> = new Set(['list', 'alias', 'envelope']);
@@ -95,15 +98,6 @@ function contextOf(parent: TSNode, child: TSNode): string {
  * Deterministic: the corpus order, sorted names and lengths decide every tie.
  */
 export function deriveReparseHosts(input: DeriveHostsInput): Record<string, string> {
-	const occurrences = new Map<string, Occurrence[]>();
-	input.corpus.forEach(({ tree }, entry) => {
-		for (const node of namedNodes(tree.rootNode)) {
-			const list = occurrences.get(node.type) ?? [];
-			list.push({ entry, node });
-			occurrences.set(node.type, list);
-		}
-	});
-
 	const modelNames = new Set<string>([...input.admits.keys(), ...input.kindToSupertypes.keys()]);
 	for (const set of input.admits.values()) for (const name of set) modelNames.add(name);
 	for (const list of input.kindToSupertypes.values()) for (const name of list) modelNames.add(name);
@@ -111,6 +105,20 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	for (const name of modelNames) {
 		for (const id of input.kindIdsOf(name)) byId.set(id, [...(byId.get(id) ?? []), name]);
 	}
+	const namesOf = (node: TSNode): readonly string[] =>
+		[...new Set([node.type, ...(byId.get(node.grammarId) ?? []), ...(byId.get(nodeIdOf(node)) ?? [])])].filter(
+			(name) => !isParserHiddenName(name)
+		);
+	const occurrences = new Map<string, Occurrence[]>();
+	input.corpus.forEach(({ tree }, entry) => {
+		for (const node of namedNodes(tree.rootNode)) {
+			for (const name of namesOf(node)) {
+				const list = occurrences.get(name) ?? [];
+				list.push({ entry, node });
+				occurrences.set(name, list);
+			}
+		}
+	});
 	const ids: IdIndex = {
 		visible: new Set([...occurrences.values()].flatMap((list) => list.map((o) => nodeIdOf(o.node)))),
 		namesOf: (id) => byId.get(id) ?? []
@@ -148,12 +156,15 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 			const candidates: { context: string; parent: string; template: string }[] = [];
 			for (const { node } of occurrences.get(kind) ?? []) {
 				const parent = node.parent;
-				if (parent === null || !hostable.has(parent.type)) continue;
+				if (parent === null) continue;
 				if (!admitsKind(input, ids, parent, node)) continue;
-				const parentHost = hostOf(parent.type);
-				if (parentHost === undefined) continue;
-				const context = contextOf(parent, node);
-				candidates.push({ context, parent: parent.type, template: parentHost.split(HOLE).join(context) });
+				for (const parentName of namesOf(parent)) {
+					if (!hostable.has(parentName)) continue;
+					const parentHost = hostOf(parentName);
+					if (parentHost === undefined) continue;
+					const context = contextOf(parent, node);
+					candidates.push({ context, parent: parentName, template: parentHost.split(HOLE).join(context) });
+				}
 			}
 			candidates.sort((a, b) => a.context.length - b.context.length || (a.parent < b.parent ? -1 : a.parent > b.parent ? 1 : 0));
 			const seen = new Set<string>();

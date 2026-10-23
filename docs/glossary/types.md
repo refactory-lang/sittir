@@ -82,31 +82,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/types/rule.ts::replaceAtPath`
-
-```text
-/**
- * Return a new rule tree with the sub-rule at `path` replaced by
- * `replacement`. Pure — no mutation of input. Path segments index into:
- *   - seq.members[i] / choice.members[i]
- *   - wrapper.content (path '0' for optional/repeat/repeat1/field/
- *     token/alias/variant/clause/group)
- *
- * Throws if any segment fails to address.
- */
-```
-
-```text
-// ---------------------------------------------------------------
-// Path-addressed rule rewriting
-//
-// Slash-separated positional paths (e.g. '1/1/0/1/3') used by
-// `patches:` / `groups:` in grammar.sittir.ts. See
-// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
-// for the path semantics.
-// ---------------------------------------------------------------
-```
-
 ### `packages/codegen/src/types/rule.ts::sym`
 
 ```text
@@ -1659,7 +1634,7 @@ The ref's own storage identity: the rule, or literal symbol, that parsed it.
 
 ### `packages/codegen/src/types/rule.ts::BlankRule`
 
-tree-sitter's empty rule, as tree-sitter's `blank()` builds it; sittir's `blank()` builds the empty choice. Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.
+tree-sitter's empty rule, as `blank()` builds it (`dsl/builders.ts::structuralBuilder`). Only the evaluate phase holds one: the compile boundary lowers a bare `BLANK` to the empty choice that the compile phases read as their one blank (`compiler/canonical-rules.ts::canonicalRule`), and a choice with a blank arm becomes `OPTIONAL` there.
 
 ### `packages/codegen/src/types/spacing.ts::SpacingAddress`
 
@@ -1677,7 +1652,7 @@ every member of the choice (`RuleAnnotations.spacing`) and carry it on the
 part, the site and the emitted row. `spacingLabelOf` spells it as the site's
 label and `siteKey` as its key under a slot. Nothing reads a token or a side
 back out of a spelled label: the one parser, `parseSpacingAddress`, serves
-wire's check of authored `patches:` keys.
+wire's check of authored `edits:` keys.
 
 ### `packages/codegen/src/types/spacing.ts::SeamAddress`
 

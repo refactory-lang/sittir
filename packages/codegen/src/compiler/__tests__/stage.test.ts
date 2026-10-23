@@ -14,9 +14,12 @@ describe('evaluation stages', () => {
 	it('a wired grammar with rules: carries its base evaluated with no wire config, raw and enriched', async () => {
 		const raw = await evaluate(fixture('rule-cause-grammar.ts'), NO_FILE_TYPES);
 		expect(raw.stages).toBeDefined();
-		for (const stage of [raw.stages!.raw, raw.stages!.enriched]) {
+		for (const [stage, ruleNames] of [
+			[raw.stages!.raw, ['a', 'b', 'c']],
+			[raw.stages!.enriched, ['_layout', 'a', 'b', 'c']]
+		] as const) {
 			const diagnosis = diagnoseEvaluationStage(stage);
-			expect([...diagnosis.ruleNames].sort()).toEqual(['a', 'b', 'c']);
+			expect([...diagnosis.ruleNames].sort()).toEqual(ruleNames);
 			expect(Array.isArray(diagnosis.diagnostics)).toBe(true);
 		}
 	});

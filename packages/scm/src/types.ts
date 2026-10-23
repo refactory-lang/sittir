@@ -817,7 +817,8 @@ export interface NamedNodeGroupChildren {
 		readonly namedNodeExpressions: SlotHint<
 			NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>,
 			false,
-			true
+			true,
+			T.NamedNodeExpressionArm.Config
 		>;
 	};
 	readonly anchor: () => boolean;
@@ -839,7 +840,12 @@ export interface NamedNodeGroupAnchoredLast {
 	};
 	readonly __slotHints__?: {
 		readonly anchor: SlotHint<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor'], true>;
-		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], true, true>;
+		readonly namedNodeExpressions: SlotHint<
+			(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[],
+			true,
+			true,
+			T.NamedNodeExpressionArm.Config
+		>;
 		readonly last: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
 	};
 	readonly anchor: () => boolean;
@@ -2359,8 +2365,34 @@ export namespace NamedNodeGroupChildren {
 	}
 	export type Loose = LooseFor<TSKindId.NamedNodeGroupChildren>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedNodeGroupChildren>;
-	export type BuildArgs = [config: ConfigOf<T.NamedNodeGroupChildren>];
-	export type LooseArgs = [config: T.NamedNodeGroupChildren.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.NamedNodeGroupChildren>
+			| (OmitEach<NonNullable<ConfigOf<T.NamedNodeGroupChildren>>, 'namedNodeExpressions'> & {
+					namedNodeExpressions: ReadonlyArray<
+						| T.NamedNodeExpressionArm.BuildArgs[0]
+						| (NonNullable<ConfigOf<T.NamedNodeGroupChildren>> extends { readonly namedNodeExpressions?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.NamedNodeGroupChildren.Loose
+			| (OmitEach<NonNullable<T.NamedNodeGroupChildren.Loose>, 'namedNodeExpressions'> & {
+					namedNodeExpressions: ReadonlyArray<
+						| T.NamedNodeExpressionArm.LooseArgs[0]
+						| (NonNullable<T.NamedNodeGroupChildren.Loose> extends { readonly namedNodeExpressions?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
 	export type Kind = TSKindId.NamedNodeGroupChildren;
 	type NonEmptySlots = Proven<
 		[
@@ -2391,8 +2423,34 @@ export namespace NamedNodeGroupAnchoredLast {
 	}
 	export type Loose = LooseFor<TSKindId.NamedNodeGroupAnchoredLast>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedNodeGroupAnchoredLast>;
-	export type BuildArgs = [config: ConfigOf<T.NamedNodeGroupAnchoredLast>];
-	export type LooseArgs = [config: T.NamedNodeGroupAnchoredLast.Loose];
+	export type BuildArgs = [
+		config:
+			| ConfigOf<T.NamedNodeGroupAnchoredLast>
+			| (OmitEach<NonNullable<ConfigOf<T.NamedNodeGroupAnchoredLast>>, 'namedNodeExpressions'> & {
+					namedNodeExpressions: ReadonlyArray<
+						| T.NamedNodeExpressionArm.BuildArgs[0]
+						| (NonNullable<ConfigOf<T.NamedNodeGroupAnchoredLast>> extends { readonly namedNodeExpressions?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
+	export type LooseArgs = [
+		config:
+			| T.NamedNodeGroupAnchoredLast.Loose
+			| (OmitEach<NonNullable<T.NamedNodeGroupAnchoredLast.Loose>, 'namedNodeExpressions'> & {
+					namedNodeExpressions: ReadonlyArray<
+						| T.NamedNodeExpressionArm.LooseArgs[0]
+						| (NonNullable<T.NamedNodeGroupAnchoredLast.Loose> extends { readonly namedNodeExpressions?: infer E }
+								? E extends readonly (infer I)[]
+									? I
+									: never
+								: never)
+					>;
+			  })
+	];
 	export type Kind = TSKindId.NamedNodeGroupAnchoredLast;
 }
 export namespace Anchor {

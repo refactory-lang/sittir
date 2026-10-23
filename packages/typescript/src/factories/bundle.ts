@@ -188,36 +188,23 @@ export const decoratorCallExpression = bundle(F.buildDecoratorCallExpression, C.
 	max: 1
 });
 export const classBody = bundle(F.buildClassBody, C.coerceToClassBody);
-export const formalParameters = bundle(F.buildFormalParameters, C.coerceToFormalParameters);
+export const formalParameters = bundle(F.buildFormalParameters, C.coerceToFormalParameters, {
+	key: 'formalParameters',
+	max: 1
+});
 export const classStaticBlock = bundle(F.buildClassStaticBlock, C.coerceToClassStaticBlock, {
 	key: 'classStaticBlock',
 	max: 2
 });
 export const restPattern = bundle(F.buildRestPattern, C.coerceToRestPattern, { key: 'restPattern', max: 1 });
-export const methodDefinition = bundle(F.buildMethodDefinition, C.coerceToMethodDefinition, {
-	key: 'methodDefinition',
-	max: 1
-});
 export const pair = bundle(F.buildPair, C.coerceToPair, { key: 'pair', max: 1 });
 export const pairPattern = bundle(F.buildPairPattern, C.coerceToPairPattern, { key: 'pairPattern', max: 1 });
 export const computedPropertyName = bundle(F.buildComputedPropertyName, C.coerceToComputedPropertyName, {
 	key: 'computedPropertyName',
 	max: 1
 });
-export const publicFieldDefinition = bundle(F.buildPublicFieldDefinition, C.coerceToPublicFieldDefinition, {
-	key: 'publicFieldDefinition',
-	max: 1
-});
 export const nonNullExpression = bundle(F.buildNonNullExpression, C.coerceToNonNullExpression, {
 	key: 'nonNullExpression',
-	max: 1
-});
-export const methodSignature = bundle(F.buildMethodSignature, C.coerceToMethodSignature, {
-	key: 'methodSignature',
-	max: 1
-});
-export const abstractMethodSignature = bundle(F.buildAbstractMethodSignature, C.coerceToAbstractMethodSignature, {
-	key: 'abstractMethodSignature',
 	max: 1
 });
 export const functionSignature = bundle(F.buildFunctionSignature, C.coerceToFunctionSignature, {
@@ -545,3 +532,71 @@ export const forHeaderUsingKind = bundle(F.buildForHeaderUsingKind, C.coerceToFo
 	key: 'forHeaderUsingKind',
 	max: 1
 });
+export const formalParametersSetAccessorSignature = bundle(
+	F.buildFormalParametersSetAccessorSignature,
+	C.coerceToFormalParametersSetAccessorSignature,
+	{ key: 'formalParametersSetAccessorSignature', max: 1 }
+);
+export const setterParameter = bundle(F.buildSetterParameter, C.coerceToSetterParameter, {
+	key: 'setterParameter',
+	max: 1
+});
+export const methodDefinitionPlain = bundle(F.buildMethodDefinitionPlain, C.coerceToMethodDefinitionPlain, {
+	key: 'methodDefinitionPlain',
+	max: 1
+});
+export const methodDefinitionGetter = bundle(F.buildMethodDefinitionGetter, C.coerceToMethodDefinitionGetter, {
+	key: 'methodDefinitionGetter',
+	max: 1
+});
+export const methodDefinitionSetter = bundle(F.buildMethodDefinitionSetter, C.coerceToMethodDefinitionSetter, {
+	key: 'methodDefinitionSetter',
+	max: 1
+});
+export const methodSignaturePlain = bundle(F.buildMethodSignaturePlain, C.coerceToMethodSignaturePlain, {
+	key: 'methodSignaturePlain',
+	max: 1
+});
+export const methodSignatureGetter = bundle(F.buildMethodSignatureGetter, C.coerceToMethodSignatureGetter, {
+	key: 'methodSignatureGetter',
+	max: 1
+});
+export const methodSignatureSetter = bundle(F.buildMethodSignatureSetter, C.coerceToMethodSignatureSetter, {
+	key: 'methodSignatureSetter',
+	max: 1
+});
+export const abstractMethodSignaturePlain = bundle(
+	F.buildAbstractMethodSignaturePlain,
+	C.coerceToAbstractMethodSignaturePlain,
+	{ key: 'abstractMethodSignaturePlain', max: 1 }
+);
+export const abstractMethodSignatureGetter = bundle(
+	F.buildAbstractMethodSignatureGetter,
+	C.coerceToAbstractMethodSignatureGetter,
+	{ key: 'abstractMethodSignatureGetter', max: 1 }
+);
+export const abstractMethodSignatureSetter = bundle(
+	F.buildAbstractMethodSignatureSetter,
+	C.coerceToAbstractMethodSignatureSetter,
+	{ key: 'abstractMethodSignatureSetter', max: 1 }
+);
+export const publicFieldDefinitionPlain = bundle(
+	F.buildPublicFieldDefinitionPlain,
+	C.coerceToPublicFieldDefinitionPlain,
+	{ key: 'publicFieldDefinitionPlain', max: 1 }
+);
+export const publicFieldDefinitionAccessor = bundle(
+	F.buildPublicFieldDefinitionAccessor,
+	C.coerceToPublicFieldDefinitionAccessor,
+	{ key: 'publicFieldDefinitionAccessor', max: 1 }
+);
+export const receiverParameterDeclaration = bundle(
+	F.buildReceiverParameterDeclaration,
+	C.coerceToReceiverParameterDeclaration,
+	{ key: 'receiverParameterDeclaration', max: 1 }
+);
+export const formalParametersElementsReceiver = bundle(
+	F.buildFormalParametersElementsReceiver,
+	C.coerceToFormalParametersElementsReceiver,
+	{ key: 'formalParametersElementsReceiver', max: 1 }
+);

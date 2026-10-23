@@ -1668,13 +1668,14 @@ concern: `compileGrammar` gated them before returning.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::patchSites`
 
-Every `patches:` entry the grammar applied, by owner kind, path and
+Every `edits:` entry the grammar applied, by owner kind, path and
 placeholder form. Read by the patch-site labelling and the override census.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::stages`
 
-The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when the grammar does
-not depart from its base (`departsFromBase`).
+The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when no layer departs
+from its base (`dsl/layer.ts::departsFromBase`). The first layer that departs records the stage bases, and evaluate
+evaluates them (`evaluate.ts::evaluatedStages`).
 
 ### `packages/codegen/src/compiler/types.ts::NodeMap::irSurface`
 
@@ -1682,7 +1683,7 @@ What the model decided about `ir` (`IrSurface`), stamped once by `stampIrSurface
 
 ### `packages/codegen/src/compiler/types.ts::EvaluationStages`
 
-`{ raw, enriched }`, each a `StageEvaluation`: the outcome of `evaluateStages`.
+`{ raw, enriched }`, each a `StageEvaluation`: the outcome of `evaluatedStages`.
 
 ### `packages/codegen/src/compiler/types.ts::StageEvaluation`
 
@@ -1691,21 +1692,22 @@ canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
 
 ### `packages/codegen/src/compiler/types.ts::derivationRecords`
 
-The conflict-derivation records `sittirGrammar` attached
+The conflict-derivation records the layer pass recorded
 (`dsl/wire/derivation-records.ts::DerivationRecords`), carried from evaluation
 to the diagnostics: the conflict loop's fresh-process evaluate reads the
 upstream context from them, and `diagnoseGrammar` reports the resolutions,
 the upstream sets no resolution needs, and authored conflicts. Absent for a
-grammar not built by `sittirGrammar`.
+grammar no layer pass built.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
-A grammar as sittir's `grammar()` returns it: rules exactly as the DSL built
-them, without a rule catalog or reference list. It carries what the compile
-boundary needs to finish the grammar — `evaluateSynthesized` for kind
+A grammar as sittir evaluates it: what its `grammar()` call built, with the
+top layer's records (`evaluate.ts::evaluatedGrammarOf`), rules exactly as the
+DSL built them, without a rule catalog or reference list. It carries what the
+compile boundary needs to finish the grammar — `evaluateSynthesized` for kind
 prediction and `protectedRuleNames` for the orphan pass — and nothing reads it as
-compiler input except `canonicalGrammar`. It is also what an extending grammar
-receives as its base.
+compiler input except `canonicalGrammar`. The `grammar()` result an extending
+grammar receives as its base holds its rules and lists alone.
 
 ### `packages/codegen/src/compiler/stage.ts::diagnoseEvaluationStage`
 
@@ -1734,6 +1736,10 @@ and folds both stages into `diagnosticRecords`. A stage's records are `stages.ra
 
 `deriveDiagnosticRecords` over the stages and the compiled grammar; empty when the grammar evaluated no stages.
 The override census and the patch-site labels read it.
+
+### `packages/codegen/src/compiler/compile.ts::CompileGrammarConfig`
+
+`compileGrammar`'s config: the package, the generated id tables to link against, the diagnostic codes allowed through the gate, and how the package is evaluated (`evaluation`, which `dsl/evaluate-package.ts::evaluatePackage` takes unchanged: `unbound` to compile layer 1, `checkGeneratedLayers` to gate a generated top layer's fixpoint check).
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::ruleCauses`
 
@@ -4687,7 +4693,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::evaluateSynthesized`
 
-The names of the rules whose bodies sittir's evaluate injected itself: render-only rules (`renderAs:`), visible externals, wire deposits no rule callback declared, and the body-pattern-group fallback. It says who supplied the rule body, not whether the parser has a symbol for the kind: most of these have none, but a visible external does. `canonical-rules.ts::predictKinds` leaves them out of kind prediction. `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, where `emitters/shared.ts::classifyParserSymbolEmission` looks a kind up in the parser catalog first and emits it when it is there; the set only classifies a kind that is missing from the parser catalog as intentionally synthesized, so it is skipped with a warning instead of being an error. link's rename carries the set to the parser-facing names (`renameRules`).
+The names of the rules whose bodies sittir's evaluate added itself: the render-only rules (`renderAs:`) and the visible externals' bodies, which the layer record carries (`evaluate.ts::withRecords`). It says who supplied the rule body, not whether the parser has a symbol for the kind: most of these have none, but a visible external does. `canonical-rules.ts::predictKinds` leaves them out of kind prediction. `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, where `emitters/shared.ts::classifyParserSymbolEmission` looks a kind up in the parser catalog first and emits it when it is there; the set only classifies a kind that is missing from the parser catalog as intentionally synthesized, so it is skipped with a warning instead of being an error. link's rename carries the set to the parser-facing names (`renameRules`).
 
 It is the only authorship fact evaluate records. Who authored any other rule is answered elsewhere: `RuleProvenanceStage` (`compiler/diagnostics/diagnostic-records.ts`) says which stage first declares a rule (upstream, enrich or wire), and wire holds the authored rule names and patch sites.
 
@@ -4855,7 +4861,7 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 
 ### `packages/codegen/src/compiler/types.ts::orphanedSyntheticGroups`
 
-The rules enrich added that the wired grammar never reaches: the dead set `blankDeadEnrichMints` computed and blanked (`getDeadEnrichMints`). The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
+The rules enrich added that the wired grammar never reaches: the dead mints the layer passes blanked (`dsl/layer.ts::completeLayer`), read from the top layer's record. The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
 
 ### `packages/codegen/src/compiler/types.ts::textTokens`
 
@@ -4865,8 +4871,10 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 
 ```text
 /**
-	 * `groups:` body-pattern entries (hidden `_<key>` names) whose pattern
-	 * matched ZERO positions during evaluate's `applyPatternReplacement` —
+	 * `groups:` body-pattern entries (hidden `_<key>` names) that no final
+	 * rule of their layer references, as each layer pass finds them
+	 * (`dsl/wire/wire.ts::unmatchedGroupPatterns`) and its record keeps
+	 * them, its base's first —
 	 * the elevation they declare silently never fired. Surfaced as the
 	 * `body-pattern-zero-match` diagnostic by
 	 * `collectGrammarDiagnosticsForGrammar`.
@@ -5034,9 +5042,9 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 
 ### `packages/codegen/src/compiler/types.ts::automaticVariants`
 
-The wire context's automatic-variant record, carried by evaluate so link can
-tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
-grammar that never ran through `wire()`; then no label is automatic.
+The automatic-variant record of the wire run that evaluated the grammar, the top layer's from its record or a
+stage's own, so link can tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
+grammar no wire ran over; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
 
@@ -5119,9 +5127,9 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where a kind came from: `renamedFrom` maps a kind the grammar bindings renamed to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where a kind came from: `renamedFrom` maps a kind a layer renamed to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). An inheriting layer projects the first two from its effects (`dsl/verbs/effects.ts::provenanceOf`), evaluate spreads them onto the evaluated grammar (`evaluate.ts::importAndExtractGrammar`), and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
-A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
+A `splitFrom` value names the source as the layer that copied it named it, and link renames the values with the keys, so the base name of a copy of a renamed kind is one more step through `renamedFrom`.
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar`
 
@@ -6376,11 +6384,10 @@ wire has no protected names and prunes nothing.
 #### body
 
 ```text
-// visibleExternals: nothing to register here. evaluate's
-// drainVisibleExternalsMetadata already injected each body into the
-// rules map under the HIDDEN name (the storage identity, mirroring
-// drainRenderAsMetadata), replacing the external's empty-pattern
-// placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
+// visibleExternals: nothing to register here. evaluate already
+// injected each body into the rules map under the HIDDEN name (the
+// storage identity, as for renderAs; `evaluate.ts::withRecords`),
+// replacing the external's empty-pattern placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
 // parse identity. Registering under the VISIBLE name here instead
 // creates a second node colliding on the same typeName — the native node
 // struct then emits from the empty placeholder (no render text).

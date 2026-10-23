@@ -12,13 +12,13 @@ export const records = {
 	ExportClauseNode: { words: 7, export_specifiers: { word: 2, width: 5 } },
 	ExportSpecifierNode: {
 		words: 17,
-		export_kind: { word: 2, width: 5 },
+		type_only: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		alias: { word: 12, width: 5 }
 	},
 	ImportStatementNode: {
 		words: 22,
-		import_clause: { word: 2, width: 5 },
+		type_only: { word: 2, width: 5 },
 		from_clause: { word: 7, width: 5 },
 		import_attribute: { word: 12, width: 5 },
 		terminator: { word: 17, width: 5 }
@@ -59,7 +59,7 @@ export const records = {
 	},
 	ForInStatementNode: {
 		words: 13,
-		await_: { word: 2, bit: 0 },
+		async_: { word: 2, bit: 0 },
 		header: { word: 3, width: 5 },
 		body: { word: 8, width: 5 }
 	},
@@ -73,7 +73,7 @@ export const records = {
 	TryStatementNode: {
 		words: 17,
 		body: { word: 2, width: 5 },
-		handler: { word: 7, width: 5 },
+		handlers: { word: 7, width: 5 },
 		finalizer: { word: 12, width: 5 }
 	},
 	WithStatementNode: { words: 12, object: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
@@ -160,7 +160,7 @@ export const records = {
 	},
 	NewExpressionNode: {
 		words: 17,
-		constructor: { word: 2, width: 5 },
+		function: { word: 2, width: 5 },
 		type_arguments: { word: 7, width: 5 },
 		arguments: { word: 12, width: 5 }
 	},
@@ -168,7 +168,7 @@ export const records = {
 	MemberExpressionNode: {
 		words: 17,
 		object: { word: 2, width: 5 },
-		separator: { word: 7, width: 5 },
+		optional_chain: { word: 7, width: 5 },
 		property: { word: 12, width: 5 }
 	},
 	SubscriptExpressionNode: {
@@ -180,7 +180,7 @@ export const records = {
 	LhsExpressionNode: { words: 7, content: { word: 2, width: 5 } },
 	AssignmentExpressionNode: {
 		words: 13,
-		using: { word: 2, bit: 0 },
+		disposable: { word: 2, bit: 0 },
 		left: { word: 3, width: 5 },
 		right: { word: 8, width: 5 }
 	},
@@ -217,7 +217,7 @@ export const records = {
 	IdentifierNode: { words: 2 },
 	PrivatePropertyIdentifierNode: { words: 6, content: { word: 2, width: 4 } },
 	ArgumentsNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	DecoratorNode: { words: 7, expression: { word: 2, width: 5 } },
+	DecoratorNode: { words: 7, content: { word: 2, width: 5 } },
 	DecoratorMemberExpressionNode: { words: 12, object: { word: 2, width: 5 }, property: { word: 7, width: 5 } },
 	DecoratorCallExpressionNode: {
 		words: 17,
@@ -229,65 +229,10 @@ export const records = {
 	FormalParametersNode: { words: 7, elements: { word: 2, width: 5 } },
 	ClassStaticBlockNode: { words: 12, terminator: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	RestPatternNode: { words: 7, lhs_expression: { word: 2, width: 5 } },
-	MethodDefinitionNode: {
-		words: 38,
-		accessibility_modifier: { word: 3, width: 5 },
-		static_: { word: 2, bit: 0 },
-		override_: { word: 2, bit: 1 },
-		readonly: { word: 2, bit: 2 },
-		async_: { word: 2, bit: 3 },
-		accessor_kind: { word: 8, width: 5 },
-		name: { word: 13, width: 5 },
-		optional: { word: 2, bit: 4 },
-		type_parameters: { word: 18, width: 5 },
-		parameters: { word: 23, width: 5 },
-		return_type: { word: 28, width: 5 },
-		body: { word: 33, width: 5 }
-	},
 	PairNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	PairPatternNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	ComputedPropertyNameNode: { words: 7, expression: { word: 2, width: 5 } },
-	PublicFieldDefinitionNode: {
-		words: 30,
-		decorator: { word: 3, width: 2, run: 5 },
-		declare: { word: 2, bit: 0 },
-		accessibility_modifier: { word: 5, width: 5 },
-		static_: { word: 2, bit: 1 },
-		override_: { word: 2, bit: 2 },
-		readonly: { word: 2, bit: 3 },
-		abstract_: { word: 2, bit: 4 },
-		accessor: { word: 2, bit: 5 },
-		name: { word: 10, width: 5 },
-		optionality: { word: 15, width: 5 },
-		type_: { word: 20, width: 5 },
-		value: { word: 25, width: 5 }
-	},
 	NonNullExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
-	MethodSignatureNode: {
-		words: 33,
-		accessibility_modifier: { word: 3, width: 5 },
-		static_: { word: 2, bit: 0 },
-		override_: { word: 2, bit: 1 },
-		readonly: { word: 2, bit: 2 },
-		async_: { word: 2, bit: 3 },
-		accessor_kind: { word: 8, width: 5 },
-		name: { word: 13, width: 5 },
-		optional: { word: 2, bit: 4 },
-		type_parameters: { word: 18, width: 5 },
-		parameters: { word: 23, width: 5 },
-		return_type: { word: 28, width: 5 }
-	},
-	AbstractMethodSignatureNode: {
-		words: 33,
-		accessibility_modifier: { word: 3, width: 5 },
-		override_: { word: 2, bit: 0 },
-		accessor_kind: { word: 8, width: 5 },
-		name: { word: 13, width: 5 },
-		optional: { word: 2, bit: 1 },
-		type_parameters: { word: 18, width: 5 },
-		parameters: { word: 23, width: 5 },
-		return_type: { word: 28, width: 5 }
-	},
 	FunctionSignatureNode: {
 		words: 28,
 		async_: { word: 2, bit: 0 },
@@ -299,8 +244,8 @@ export const records = {
 	},
 	DecoratorParenthesizedExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
 	TypeAssertionNode: { words: 12, type_arguments: { word: 2, width: 5 }, expression: { word: 7, width: 5 } },
-	AsExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_annotation: { word: 7, width: 5 } },
-	SatisfiesExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_annotation: { word: 7, width: 5 } },
+	AsExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	SatisfiesExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	InstantiationExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	ImportRequireClauseNode: { words: 12, name: { word: 2, width: 5 }, source: { word: 7, width: 5 } },
 	ExtendsClauseNode: { words: 4, types: { word: 2, width: 2, run: 5 } },
@@ -353,7 +298,7 @@ export const records = {
 		accessibility_modifier: { word: 5, width: 5 },
 		override_: { word: 2, bit: 0 },
 		readonly: { word: 2, bit: 1 },
-		pattern: { word: 10, width: 5 },
+		name: { word: 10, width: 5 },
 		type_: { word: 15, width: 5 },
 		value: { word: 20, width: 5 }
 	},
@@ -363,7 +308,7 @@ export const records = {
 		accessibility_modifier: { word: 5, width: 5 },
 		override_: { word: 2, bit: 0 },
 		readonly: { word: 2, bit: 1 },
-		pattern: { word: 10, width: 5 },
+		name: { word: 10, width: 5 },
 		type_: { word: 15, width: 5 },
 		value: { word: 20, width: 5 }
 	},
@@ -466,10 +411,10 @@ export const records = {
 		const_: { word: 2, bit: 0 },
 		name: { word: 3, width: 5 },
 		constraint: { word: 8, width: 5 },
-		value: { word: 13, width: 5 }
+		default: { word: 13, width: 5 }
 	},
 	DefaultTypeNode: { words: 7, type_: { word: 2, width: 5 } },
-	ConstraintNode: { words: 12, content: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	ConstraintNode: { words: 12, content: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
 	ConstructSignatureNode: {
 		words: 18,
 		abstract_: { word: 2, bit: 0 },
@@ -498,6 +443,7 @@ export const records = {
 	TupleTypeMembersNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ImportClauseGroupNode: { words: 7, content: { word: 2, width: 5 } },
 	CatchClauseGroupNode: { words: 12, parameter: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	GetAccessorSignatureNode: { words: 7, type_: { word: 2, width: 5 } },
 	AmbientDeclarationGlobalNode: { words: 7, body: { word: 2, width: 5 } },
 	AmbientDeclarationModuleNode: {
 		words: 17,
@@ -507,10 +453,10 @@ export const records = {
 	},
 	ObjectTypeContentNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ExportStatementNamespaceExportNode: { words: 12, name: { word: 2, width: 5 }, terminator: { word: 7, width: 5 } },
-	ExportStatementEqualsExportNode: { words: 12, expression: { word: 2, width: 5 }, terminator: { word: 7, width: 5 } },
+	ExportStatementEqualsExportNode: { words: 12, value: { word: 2, width: 5 }, terminator: { word: 7, width: 5 } },
 	CommentLineNode: { words: 6, content: { word: 2, width: 4 } },
 	CommentBlockNode: { words: 6, content: { word: 2, width: 4 } },
-	LiteralTypeNegativeNumberNode: { words: 7, argument: { word: 2, width: 5 } },
+	LiteralTypeNegativeNumberNode: { words: 7, value: { word: 2, width: 5 } },
 	NumberHexNode: { words: 10, prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
 	NumberFloatPointNode: {
 		words: 22,
@@ -571,10 +517,10 @@ export const records = {
 	},
 	ImportStatementClauseFromNode: { words: 12, import_clause: { word: 2, width: 5 }, source: { word: 7, width: 5 } },
 	YieldExpressionDelegateNode: { words: 7, expression: { word: 2, width: 5 } },
-	ImportSpecifierNameNode: { words: 12, import_kind: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	ImportSpecifierNameNode: { words: 12, type_only: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ImportSpecifierAsNode: {
 		words: 17,
-		import_kind: { word: 2, width: 5 },
+		type_only: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		alias: { word: 12, width: 5 }
 	},
@@ -610,7 +556,7 @@ export const records = {
 	},
 	ExportStatementDefaultFromNode: {
 		words: 13,
-		type_: { word: 2, bit: 0 },
+		type_only: { word: 2, bit: 0 },
 		content: { word: 3, width: 5 },
 		terminator: { word: 8, width: 5 }
 	},
@@ -672,9 +618,148 @@ export const records = {
 		operator: { word: 13, width: 5 },
 		right: { word: 18, width: 5 }
 	},
+	FormalParametersSetAccessorSignatureNode: { words: 7, elements: { word: 2, width: 5 } },
+	FormalParametersElementsSetAccessorSignatureNode: { words: 7, item: { word: 2, width: 5 } },
+	SetterParameterNode: {
+		words: 20,
+		decorator: { word: 3, width: 2, run: 5 },
+		accessibility_modifier: { word: 5, width: 5 },
+		override_: { word: 2, bit: 0 },
+		readonly: { word: 2, bit: 1 },
+		pattern: { word: 10, width: 5 },
+		type_: { word: 15, width: 5 }
+	},
+	MethodDefinitionPlainNode: {
+		words: 33,
+		accessibility_modifier: { word: 3, width: 5 },
+		static_: { word: 2, bit: 0 },
+		override_: { word: 2, bit: 1 },
+		readonly: { word: 2, bit: 2 },
+		async_: { word: 2, bit: 3 },
+		generator: { word: 2, bit: 4 },
+		name: { word: 8, width: 5 },
+		optional: { word: 2, bit: 5 },
+		type_parameters: { word: 13, width: 5 },
+		parameters: { word: 18, width: 5 },
+		return_type: { word: 23, width: 5 },
+		body: { word: 28, width: 5 }
+	},
+	MethodDefinitionGetterNode: {
+		words: 23,
+		accessibility_modifier: { word: 3, width: 5 },
+		static_: { word: 2, bit: 0 },
+		override_: { word: 2, bit: 1 },
+		name: { word: 8, width: 5 },
+		type_: { word: 13, width: 5 },
+		body: { word: 18, width: 5 }
+	},
+	MethodDefinitionSetterNode: {
+		words: 23,
+		accessibility_modifier: { word: 3, width: 5 },
+		static_: { word: 2, bit: 0 },
+		override_: { word: 2, bit: 1 },
+		name: { word: 8, width: 5 },
+		parameters: { word: 13, width: 5 },
+		body: { word: 18, width: 5 }
+	},
+	MethodSignaturePlainNode: {
+		words: 28,
+		accessibility_modifier: { word: 3, width: 5 },
+		static_: { word: 2, bit: 0 },
+		override_: { word: 2, bit: 1 },
+		readonly: { word: 2, bit: 2 },
+		async_: { word: 2, bit: 3 },
+		generator: { word: 2, bit: 4 },
+		name: { word: 8, width: 5 },
+		optional: { word: 2, bit: 5 },
+		type_parameters: { word: 13, width: 5 },
+		parameters: { word: 18, width: 5 },
+		return_type: { word: 23, width: 5 }
+	},
+	MethodSignatureGetterNode: {
+		words: 18,
+		accessibility_modifier: { word: 3, width: 5 },
+		static_: { word: 2, bit: 0 },
+		override_: { word: 2, bit: 1 },
+		name: { word: 8, width: 5 },
+		type_: { word: 13, width: 5 }
+	},
+	MethodSignatureSetterNode: {
+		words: 18,
+		accessibility_modifier: { word: 3, width: 5 },
+		static_: { word: 2, bit: 0 },
+		override_: { word: 2, bit: 1 },
+		name: { word: 8, width: 5 },
+		parameters: { word: 13, width: 5 }
+	},
+	AbstractMethodSignaturePlainNode: {
+		words: 28,
+		accessibility_modifier: { word: 3, width: 5 },
+		override_: { word: 2, bit: 0 },
+		generator: { word: 2, bit: 1 },
+		name: { word: 8, width: 5 },
+		optional: { word: 2, bit: 2 },
+		type_parameters: { word: 13, width: 5 },
+		parameters: { word: 18, width: 5 },
+		return_type: { word: 23, width: 5 }
+	},
+	AbstractMethodSignatureGetterNode: {
+		words: 18,
+		accessibility_modifier: { word: 3, width: 5 },
+		override_: { word: 2, bit: 0 },
+		name: { word: 8, width: 5 },
+		type_: { word: 13, width: 5 }
+	},
+	AbstractMethodSignatureSetterNode: {
+		words: 18,
+		accessibility_modifier: { word: 3, width: 5 },
+		override_: { word: 2, bit: 0 },
+		name: { word: 8, width: 5 },
+		parameters: { word: 13, width: 5 }
+	},
+	PublicFieldDefinitionPlainNode: {
+		words: 30,
+		decorator: { word: 3, width: 2, run: 5 },
+		declare: { word: 2, bit: 0 },
+		accessibility_modifier: { word: 5, width: 5 },
+		static_: { word: 2, bit: 1 },
+		override_: { word: 2, bit: 2 },
+		readonly: { word: 2, bit: 3 },
+		abstract_: { word: 2, bit: 4 },
+		name: { word: 10, width: 5 },
+		optionality: { word: 15, width: 5 },
+		type_: { word: 20, width: 5 },
+		value: { word: 25, width: 5 }
+	},
+	PublicFieldDefinitionAccessorNode: {
+		words: 25,
+		decorator: { word: 3, width: 2, run: 5 },
+		accessibility_modifier: { word: 5, width: 5 },
+		static_: { word: 2, bit: 0 },
+		abstract_: { word: 2, bit: 1 },
+		override_: { word: 2, bit: 2 },
+		name: { word: 10, width: 5 },
+		type_: { word: 15, width: 5 },
+		value: { word: 20, width: 5 }
+	},
 	HtmlCommentNode: { words: 2 },
 	JsxTextNode: { words: 2 },
 	TemplateCharsNode: { words: 2 },
+	ReceiverParameterDeclarationNode: {
+		words: 20,
+		decorator: { word: 3, width: 2, run: 5 },
+		accessibility_modifier: { word: 5, width: 5 },
+		override_: { word: 2, bit: 0 },
+		readonly: { word: 2, bit: 1 },
+		type_: { word: 10, width: 5 },
+		value: { word: 15, width: 5 }
+	},
+	FormalParametersElementsReceiverNode: {
+		words: 12,
+		receiver: { word: 2, width: 5 },
+		formal_parameters_elements_receiver_group: { word: 7, width: 5 }
+	},
+	FormalParametersElementsReceiverGroupNode: { words: 7, elements: { word: 2, width: 5 } },
 	TernaryQmarkNode: { words: 2 },
 	ErrorRecoveryNode: { words: 2 },
 	StatementIdentifierNode: { words: 7, content: { word: 2, width: 5 } },

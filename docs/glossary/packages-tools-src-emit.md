@@ -499,21 +499,6 @@ A spread builder given a leading options object (a plain object, never a printed
 
 The printing counterpart of a grammar's `ir` bindings: every kind's `strict`, plus one entry per mount name its seats declare, and under each the mounted kind's own arm mounts (`mountArmPrinters`), printing `ir.<parent>.<mount>….strict(…)`. A mount prints the built kind with the id stamped on the kind's printing entry (`PrintingEntry.kindId`), never one looked up by the map key, which may be a hidden kind's public name. Handing this to `buildFactoryNodeFromReference` as the surface makes the printer take the same seat projection the validators take, so the emitted spelling is the one `ir-storage` builds rather than a second derivation of it.
 
-### `packages/tools/src/emit/factory-source.ts::absorbedKindsOf`
-
-```text
-/**
- * A hoisted child whose OWN surface is a rest-parameter one (`spread`, or a
- * separated list's `elements`) and that its parent takes POSITIONALLY is
- * absorbed: its arguments splice straight into the parent's call, because the
- * parent's own factory already offers those rest parameters. A parent with
- * named keys takes the same child as a tuple on its slot, which is the tuple
- * seat. Every other hoisted child prints its own call, and so does one that
- * seats children of its own: those arrive as the child's configs, which only
- * the child's own builder knows how to take.
- */
-```
-
 ### `packages/tools/src/emit/factory-source.ts::variantFormsOf`
 
 ```text
@@ -618,7 +603,7 @@ The factory map handed to the dispatch holds, for a `constant`-shaped kind, the 
 
 The arguments an owner prints in place of its list's call: an owner is a kind that forwards to a list (`forwardsTo`), and its factory takes the list's own arguments, so `owner(list(a, b))` is spelled `owner(a, b)`. One case keeps the list's call: the list carries trivia of its own, which the owner's call would have nowhere to hold. Seat config elements and an options bag go to the owner as they would to the list.
 
-The owner route is tried before the absorbed-list form, so a hoisted list with no seats is also spelled through its owner's arguments, options included.
+The `forwardsTo` fact is the only test: a list is spread into a call only when its owner forwards to that exact child, so a hoisted list with no seats is spelled through its owner's arguments, options included, and a direct choice that holds a list keeps the list's own call.
 
 On the loose surface a slot whose kind is the owner keeps the owner's call (`PrintedFacts.ownsList`) where `loosenValue` would otherwise drop the owner as a single-slot wrapper and leave the list's call.
 

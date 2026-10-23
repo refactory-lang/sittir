@@ -400,12 +400,12 @@ export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.At
 	const node = {
 		...data,
 		$type: TSKindId.AttributeItem as const,
-		attribute() {
-			return hydrateSlot<T.Attribute>(this, '_attribute', tree);
+		content() {
+			return hydrateSlot<T.Attribute>(this, '_content', tree);
 		},
 		$with: {
-			attribute: (v: NonNullable<T.AttributeItem['_attribute']>) =>
-				rebuilt(node, handle, () => wrapAttributeItem({ ...$edited(data), _attribute: v }, tree))
+			content: (v: NonNullable<T.AttributeItem['_content']>) =>
+				rebuilt(node, handle, () => wrapAttributeItem({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -426,12 +426,12 @@ export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.InnerAttributeItem as const,
-		attribute() {
-			return hydrateSlot<T.Attribute>(this, '_attribute', tree);
+		content() {
+			return hydrateSlot<T.Attribute>(this, '_content', tree);
 		},
 		$with: {
-			attribute: (v: NonNullable<T.InnerAttributeItem['_attribute']>) =>
-				rebuilt(node, handle, () => wrapInnerAttributeItem({ ...$edited(data), _attribute: v }, tree))
+			content: (v: NonNullable<T.InnerAttributeItem['_content']>) =>
+				rebuilt(node, handle, () => wrapInnerAttributeItem({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -993,8 +993,8 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		visibilityModifier() {
 			return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
 		},
-		ref() {
-			return this._ref;
+		byReference() {
+			return this._by_reference;
 		},
 		mutable() {
 			return this._mutable;
@@ -1011,8 +1011,8 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 		$with: {
 			visibilityModifier: (v: NonNullable<T.StaticItem['_visibility_modifier']>) =>
 				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _visibility_modifier: v }, tree)),
-			ref: (v: NonNullable<T.StaticItem['_ref']>) =>
-				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _ref: v }, tree)),
+			byReference: (v: NonNullable<T.StaticItem['_by_reference']>) =>
+				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _by_reference: v }, tree)),
 			mutable: (v: NonNullable<T.StaticItem['_mutable']>) =>
 				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _mutable: v }, tree)),
 			name: (v: NonNullable<T.StaticItem['_name']>) =>
@@ -1053,8 +1053,8 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 		whereClause() {
 			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
 		},
-		type() {
-			return hydrateSlot<T.Type>(this, '_type', tree);
+		value() {
+			return hydrateSlot<T.Type>(this, '_value', tree);
 		},
 		trailingWhereClause() {
 			return hydrateSlot<T.WhereClause | undefined>(this, '_trailing_where_clause', tree);
@@ -1086,8 +1086,8 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 						(v: NonNullable<T.TypeItem['_where_clause']>) => wrapTypeItem({ ...$edited(data), _where_clause: v }, tree)
 					)
 				),
-			type: (v: NonNullable<T.TypeItem['_type']>) =>
-				rebuilt(node, handle, () => wrapTypeItem({ ...$edited(data), _type: v }, tree)),
+			value: (v: NonNullable<T.TypeItem['_value']>) =>
+				rebuilt(node, handle, () => wrapTypeItem({ ...$edited(data), _value: v }, tree)),
 			trailingWhereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1162,20 +1162,8 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 							wrapFunctionItem({ ...$edited(data), _type_parameters: v }, tree)
 					)
 				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: RAW.buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
-						},
-						(v: NonNullable<T.FunctionItem['_parameters']>) =>
-							wrapFunctionItem({ ...$edited(data), _parameters: v }, tree)
-					)
-				),
+			parameters: (v: NonNullable<T.FunctionItem['_parameters']>) =>
+				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _parameters: v }, tree)),
 			returnType: (v: NonNullable<T.FunctionItem['_return_type']>) =>
 				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _return_type: v }, tree)),
 			whereClause: (...args: unknown[]) =>
@@ -1254,20 +1242,8 @@ export function wrapFunctionSignatureItem(
 							wrapFunctionSignatureItem({ ...$edited(data), _type_parameters: v }, tree)
 					)
 				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: RAW.buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
-						},
-						(v: NonNullable<T.FunctionSignatureItem['_parameters']>) =>
-							wrapFunctionSignatureItem({ ...$edited(data), _parameters: v }, tree)
-					)
-				),
+			parameters: (v: NonNullable<T.FunctionSignatureItem['_parameters']>) =>
+				rebuilt(node, handle, () => wrapFunctionSignatureItem({ ...$edited(data), _parameters: v }, tree)),
 			returnType: (v: NonNullable<T.FunctionSignatureItem['_return_type']>) =>
 				rebuilt(node, handle, () => wrapFunctionSignatureItem({ ...$edited(data), _return_type: v }, tree)),
 			whereClause: (...args: unknown[]) =>
@@ -1726,16 +1702,16 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
-		value() {
-			return hydrateSlot<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this, '_value', tree);
+		default() {
+			return hydrateSlot<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this, '_default', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.ConstParameter['_name']>) =>
 				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _name: v }, tree)),
 			type: (v: NonNullable<T.ConstParameter['_type']>) =>
 				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _type: v }, tree)),
-			value: (v: NonNullable<T.ConstParameter['_value']>) =>
-				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _value: v }, tree))
+			default: (v: NonNullable<T.ConstParameter['_default']>) =>
+				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _default: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1762,16 +1738,16 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		bounds() {
 			return hydrateSlot<T.TraitBounds | undefined>(this, '_bounds', tree);
 		},
-		defaultType() {
-			return hydrateSlot<T.Type | undefined>(this, '_default_type', tree);
+		default() {
+			return hydrateSlot<T.Type | undefined>(this, '_default', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.TypeParameter['_name']>) =>
 				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _name: v }, tree)),
 			bounds: (v: NonNullable<T.TypeParameter['_bounds']>) =>
 				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _bounds: v }, tree)),
-			defaultType: (v: NonNullable<T.TypeParameter['_default_type']>) =>
-				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _default_type: v }, tree))
+			default: (v: NonNullable<T.TypeParameter['_default']>) =>
+				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _default: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1826,8 +1802,8 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 		mutable() {
 			return this._mutable;
 		},
-		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+		name() {
+			return hydrateSlot<T.Pattern>(this, '_name', tree);
 		},
 		type() {
 			return hydrateSlot<T.Type | undefined>(this, '_type', tree);
@@ -1841,8 +1817,8 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 		$with: {
 			mutable: (v: NonNullable<T.LetDeclaration['_mutable']>) =>
 				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _mutable: v }, tree)),
-			pattern: (v: NonNullable<T.LetDeclaration['_pattern']>) =>
-				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _pattern: v }, tree)),
+			name: (v: NonNullable<T.LetDeclaration['_name']>) =>
+				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _name: v }, tree)),
 			type: (v: NonNullable<T.LetDeclaration['_type']>) =>
 				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _type: v }, tree)),
 			value: (v: NonNullable<T.LetDeclaration['_value']>) =>
@@ -1993,17 +1969,17 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 	const node = {
 		...data,
 		$type: TSKindId.UseAsClause as const,
-		path() {
+		name() {
 			return hydrateSlot<
 				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
-			>(this, '_path', tree);
+			>(this, '_name', tree);
 		},
 		alias() {
 			return hydrateSlot<T.Identifier>(this, '_alias', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.UseAsClause['_path']>) =>
-				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _path: v }, tree)),
+			name: (v: NonNullable<T.UseAsClause['_name']>) =>
+				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _name: v }, tree)),
 			alias: (v: NonNullable<T.UseAsClause['_alias']>) =>
 				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _alias: v }, tree))
 		},
@@ -2073,41 +2049,16 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 
 export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Parameters.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Parameters as const,
 		elements() {
-			return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
+			return hydrateSlot<T.ParametersElements | T.ParametersElementsReceiver | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.ParametersElements as const,
-							optional: true,
-							make: RAW.buildParametersElements,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
-						},
-						(v: NonNullable<T.Parameters['_elements']>) => wrapParameters({ ...$edited(data), _elements: v }, tree)
-					)
-				)
+			elements: (v: NonNullable<T.Parameters['_elements']>) =>
+				rebuilt(node, handle, () => wrapParameters({ ...$edited(data), _elements: v }, tree))
 		},
-		length: listView.stored?.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () =>
-			listItems(ownerElements(node.elements(), 'items'), {
-				kind: TSKindId.AttributedParameter,
-				content: 'content',
-				decorations: ['_attribute_item']
-			}),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2120,7 +2071,6 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.Parameters.Parsed;
 }
 
@@ -2200,7 +2150,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 			return this._mutable;
 		},
 		name() {
-			return hydrateSlot<T.Pattern | TSKindId.Self>(this, '_name', tree);
+			return hydrateSlot<T.Pattern>(this, '_name', tree);
 		},
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
@@ -2465,20 +2415,8 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 				),
 			content: (v: NonNullable<T.FunctionType['_content']>) =>
 				rebuilt(node, handle, () => wrapFunctionType({ ...$edited(data), _content: v }, tree)),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: RAW.buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
-						},
-						(v: NonNullable<T.FunctionType['_parameters']>) =>
-							wrapFunctionType({ ...$edited(data), _parameters: v }, tree)
-					)
-				),
+			parameters: (v: NonNullable<T.FunctionType['_parameters']>) =>
+				rebuilt(node, handle, () => wrapFunctionType({ ...$edited(data), _parameters: v }, tree)),
 			returnType: (v: NonNullable<T.FunctionType['_return_type']>) =>
 				rebuilt(node, handle, () => wrapFunctionType({ ...$edited(data), _return_type: v }, tree))
 		},
@@ -2853,8 +2791,8 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		lifetime() {
 			return hydrateSlot<T.Lifetime | undefined>(this, '_lifetime', tree);
 		},
-		mutable() {
-			return this._mutable;
+		exclusive() {
+			return this._exclusive;
 		},
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
@@ -2862,8 +2800,8 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 		$with: {
 			lifetime: (v: NonNullable<T.ReferenceType['_lifetime']>) =>
 				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _lifetime: v }, tree)),
-			mutable: (v: NonNullable<T.ReferenceType['_mutable']>) =>
-				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _mutable: v }, tree)),
+			exclusive: (v: NonNullable<T.ReferenceType['_exclusive']>) =>
+				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _exclusive: v }, tree)),
 			type: (v: NonNullable<T.ReferenceType['_type']>) =>
 				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _type: v }, tree))
 		},
@@ -2970,15 +2908,15 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.MacroInvocation as const,
-		macro() {
-			return hydrateSlot<T.ScopedIdentifier | T.Identifier>(this, '_macro', tree);
+		function() {
+			return hydrateSlot<T.ScopedIdentifier | T.Identifier>(this, '_function', tree);
 		},
 		arguments() {
 			return hydrateSlot<T.DelimTokenTree>(this, '_arguments', tree);
 		},
 		$with: {
-			macro: (v: NonNullable<T.MacroInvocation['_macro']>) =>
-				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _macro: v }, tree)),
+			function: (v: NonNullable<T.MacroInvocation['_function']>) =>
+				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _function: v }, tree)),
 			arguments: (v: NonNullable<T.MacroInvocation['_arguments']>) =>
 				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _arguments: v }, tree))
 		},
@@ -3133,14 +3071,14 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 		operator() {
 			return this._operator;
 		},
-		operand() {
-			return hydrateSlot<T.Expression>(this, '_operand', tree);
+		argument() {
+			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
 		$with: {
 			operator: (v: NonNullable<T.UnaryExpression['_operator']>) =>
 				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operator: v }, tree)),
-			operand: (v: NonNullable<T.UnaryExpression['_operand']>) =>
-				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operand: v }, tree))
+			argument: (v: NonNullable<T.UnaryExpression['_argument']>) =>
+				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _argument: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3161,12 +3099,12 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.Tr
 	const node = {
 		...data,
 		$type: TSKindId.TryExpression as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		argument() {
+			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.TryExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapTryExpression({ ...$edited(data), _value: v }, tree))
+			argument: (v: NonNullable<T.TryExpression['_argument']>) =>
+				rebuilt(node, handle, () => wrapTryExpression({ ...$edited(data), _argument: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3296,15 +3234,15 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.TypeCastExpression as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		expression() {
+			return hydrateSlot<T.Expression>(this, '_expression', tree);
 		},
 		type() {
 			return hydrateSlot<T.Type>(this, '_type', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.TypeCastExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _value: v }, tree)),
+			expression: (v: NonNullable<T.TypeCastExpression['_expression']>) =>
+				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _expression: v }, tree)),
 			type: (v: NonNullable<T.TypeCastExpression['_type']>) =>
 				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _type: v }, tree))
 		},
@@ -3547,21 +3485,21 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): 
 		attributes() {
 			return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 		},
-		expressions() {
-			return hydrateSlot<T.Expressions>(this, '_expressions', tree);
+		elements() {
+			return hydrateSlot<T.Expressions>(this, '_elements', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.TupleExpression['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapTupleExpression({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
 				),
-			expressions: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Expressions as const, optional: false, make: RAW.buildExpressions },
-						(v: NonNullable<T.TupleExpression['_expressions']>) =>
-							wrapTupleExpression({ ...$edited(data), _expressions: v }, tree)
+						(v: NonNullable<T.TupleExpression['_elements']>) =>
+							wrapTupleExpression({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
@@ -3682,16 +3620,16 @@ export function wrapShorthandFieldInitializer(
 		attributes() {
 			return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 		},
-		name() {
-			return hydrateSlot<T.Identifier>(this, '_name', tree);
+		field() {
+			return hydrateSlot<T.Identifier>(this, '_field', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapShorthandFieldInitializer({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
 				),
-			name: (v: NonNullable<T.ShorthandFieldInitializer['_name']>) =>
-				rebuilt(node, handle, () => wrapShorthandFieldInitializer({ ...$edited(data), _name: v }, tree))
+			field: (v: NonNullable<T.ShorthandFieldInitializer['_field']>) =>
+				rebuilt(node, handle, () => wrapShorthandFieldInitializer({ ...$edited(data), _field: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3712,8 +3650,8 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.FieldInitializer as const,
-		attributeItems() {
-			return hydrateSlots<T.AttributeItem>(this, '_attribute_item', tree);
+		attributes() {
+			return hydrateSlots<T.AttributeItem>(this, '_attributes', tree);
 		},
 		field() {
 			return hydrateSlot<T.FieldIdentifier | T.IntegerLiteral>(this, '_field', tree);
@@ -3722,9 +3660,9 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 			return hydrateSlot<T.Expression>(this, '_value', tree);
 		},
 		$with: {
-			attributeItems: (...v: NonNullable<T.FieldInitializer['_attribute_item']>[number][]) =>
+			attributes: (...v: NonNullable<T.FieldInitializer['_attributes']>[number][]) =>
 				rebuilt(node, handle, () =>
-					wrapFieldInitializer({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree)
+					wrapFieldInitializer({ ...$edited(data), _attributes: restItems('attributes', v) }, tree)
 				),
 			field: (v: NonNullable<T.FieldInitializer['_field']>) =>
 				rebuilt(node, handle, () => wrapFieldInitializer({ ...$edited(data), _field: v }, tree)),
@@ -3903,15 +3841,15 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.MatchExpression as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		subject() {
+			return hydrateSlot<T.Expression>(this, '_subject', tree);
 		},
 		body() {
 			return hydrateSlot<T.MatchBlock>(this, '_body', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.MatchExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _value: v }, tree)),
+			subject: (v: NonNullable<T.MatchExpression['_subject']>) =>
+				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _subject: v }, tree)),
 			body: (v: NonNullable<T.MatchExpression['_body']>) =>
 				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _body: v }, tree))
 		},
@@ -4190,11 +4128,11 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 		label() {
 			return hydrateSlot<T.Label | undefined>(this, '_label', tree);
 		},
-		pattern() {
-			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
+		left() {
+			return hydrateSlot<T.Pattern>(this, '_left', tree);
 		},
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		right() {
+			return hydrateSlot<T.Expression>(this, '_right', tree);
 		},
 		body() {
 			return hydrateSlot<T.Block>(this, '_body', tree);
@@ -4202,10 +4140,10 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 		$with: {
 			label: (v: NonNullable<T.ForExpression['_label']>) =>
 				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _label: v }, tree)),
-			pattern: (v: NonNullable<T.ForExpression['_pattern']>) =>
-				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _pattern: v }, tree)),
-			value: (v: NonNullable<T.ForExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _value: v }, tree)),
+			left: (v: NonNullable<T.ForExpression['_left']>) =>
+				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _left: v }, tree)),
+			right: (v: NonNullable<T.ForExpression['_right']>) =>
+				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _right: v }, tree)),
 			body: (v: NonNullable<T.ForExpression['_body']>) =>
 				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _body: v }, tree))
 		},
@@ -4423,17 +4361,17 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): 
 	const node = {
 		...data,
 		$type: TSKindId.FieldExpression as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		object() {
+			return hydrateSlot<T.Expression>(this, '_object', tree);
 		},
-		field() {
-			return hydrateSlot<T.FieldIdentifier | T.IntegerLiteral>(this, '_field', tree);
+		property() {
+			return hydrateSlot<T.FieldIdentifier | T.IntegerLiteral>(this, '_property', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.FieldExpression['_value']>) =>
-				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _value: v }, tree)),
-			field: (v: NonNullable<T.FieldExpression['_field']>) =>
-				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _field: v }, tree))
+			object: (v: NonNullable<T.FieldExpression['_object']>) =>
+				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _object: v }, tree)),
+			property: (v: NonNullable<T.FieldExpression['_property']>) =>
+				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _property: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4688,26 +4626,26 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 
 export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.SlicePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._patterns, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.SlicePattern as const,
-		patterns() {
-			return hydrateSlot<T.Patterns | undefined>(this, '_patterns', tree);
+		elements() {
+			return hydrateSlot<T.Patterns | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.SlicePattern['_patterns']>) => wrapSlicePattern({ ...$edited(data), _patterns: v }, tree)
+						(v: NonNullable<T.SlicePattern['_elements']>) => wrapSlicePattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4892,15 +4830,15 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.ReferencePattern as const,
-		mutable() {
-			return this._mutable;
+		exclusive() {
+			return this._exclusive;
 		},
 		pattern() {
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			mutable: (v: NonNullable<T.ReferencePattern['_mutable']>) =>
-				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _mutable: v }, tree)),
+			exclusive: (v: NonNullable<T.ReferencePattern['_exclusive']>) =>
+				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _exclusive: v }, tree)),
 			pattern: (v: NonNullable<T.ReferencePattern['_pattern']>) =>
 				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _pattern: v }, tree))
 		},
@@ -8519,11 +8457,7 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
 			return hydrateSlot<T.AttributeItem | undefined>(this, '_attribute_item', tree);
 		},
 		content() {
-			return hydrateSlot<T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(
-				this,
-				'_content',
-				tree
-			);
+			return hydrateSlot<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(this, '_content', tree);
 		},
 		$with: {
 			attributeItem: (v: NonNullable<T.AttributedParameter['_attribute_item']>) =>
@@ -8719,6 +8653,225 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.MatchBlockArms.Parsed;
+}
+
+export function wrapReceiverParameterDeclaration(
+	data: T.ReceiverParameterDeclaration,
+	tree: TreeHandle
+): T.ReceiverParameterDeclaration.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ReceiverParameterDeclaration as const,
+		mutable() {
+			return this._mutable;
+		},
+		type() {
+			return hydrateSlot<T.Type>(this, '_type', tree);
+		},
+		$with: {
+			mutable: (v: NonNullable<T.ReceiverParameterDeclaration['_mutable']>) =>
+				rebuilt(node, handle, () => wrapReceiverParameterDeclaration({ ...$edited(data), _mutable: v }, tree)),
+			type: (v: NonNullable<T.ReceiverParameterDeclaration['_type']>) =>
+				rebuilt(node, handle, () => wrapReceiverParameterDeclaration({ ...$edited(data), _type: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReceiverParameterDeclaration.Parsed;
+}
+
+export function wrapAttributedParameterReceiver(
+	data: T.AttributedParameterReceiver,
+	tree: TreeHandle
+): T.AttributedParameterReceiver.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.AttributedParameterReceiver as const,
+		attributeItem() {
+			return hydrateSlot<T.AttributeItem | undefined>(this, '_attribute_item', tree);
+		},
+		content() {
+			return hydrateSlot<T.ReceiverParameterDeclaration | T.SelfParameter>(this, '_content', tree);
+		},
+		$with: {
+			attributeItem: (v: NonNullable<T.AttributedParameterReceiver['_attribute_item']>) =>
+				rebuilt(node, handle, () => wrapAttributedParameterReceiver({ ...$edited(data), _attribute_item: v }, tree)),
+			content: (v: NonNullable<T.AttributedParameterReceiver['_content']>) =>
+				rebuilt(node, handle, () => wrapAttributedParameterReceiver({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedParameterReceiver.Parsed;
+}
+
+export function wrapParametersElementsReceiver(
+	data: T.ParametersElementsReceiver,
+	tree: TreeHandle
+): T.ParametersElementsReceiver.Parsed {
+	const handle = currentHandle();
+	const readGroup_receiver = () => hydrateSlot<T.AttributedParameterReceiver | undefined>(node, '_receiver', tree);
+	const node = {
+		...data,
+		$type: TSKindId.ParametersElementsReceiver as const,
+		receiver() {
+			return hydrateSlot<T.AttributedParameterReceiver>(this, '_receiver', tree);
+		},
+		parametersElementsReceiverGroup() {
+			return hydrateSlot<T.ParametersElementsReceiverGroup | undefined>(
+				this,
+				'_parameters_elements_receiver_group',
+				tree
+			);
+		},
+		$with: {
+			receiver: (v: NonNullable<T.ParametersElementsReceiver['_receiver']>) =>
+				rebuilt(node, handle, () => wrapParametersElementsReceiver({ ...$edited(data), _receiver: v }, tree)),
+			parametersElementsReceiverGroup: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElementsReceiverGroup as const,
+							optional: true,
+							make: RAW.buildParametersElementsReceiverGroup,
+							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+						},
+						(v: NonNullable<T.ParametersElementsReceiver['_parameters_elements_receiver_group']>) =>
+							wrapParametersElementsReceiver({ ...$edited(data), _parameters_elements_receiver_group: v }, tree)
+					)
+				),
+			attributeItem: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							kind: TSKindId.AttributedParameterReceiver as const,
+							make: RAW.buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'attributeItem',
+						args,
+						(v: NonNullable<T.ParametersElementsReceiver['_receiver']>) =>
+							wrapParametersElementsReceiver({ ...$edited(data), _receiver: v }, tree),
+						() => readGroup_receiver.call(node)
+					)
+				),
+			content: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							kind: TSKindId.AttributedParameterReceiver as const,
+							make: RAW.buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'content',
+						args,
+						(v: NonNullable<T.ParametersElementsReceiver['_receiver']>) =>
+							wrapParametersElementsReceiver({ ...$edited(data), _receiver: v }, tree),
+						() => readGroup_receiver.call(node)
+					)
+				)
+		},
+		attributeItem:
+			data._receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
+		content: data._receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
+		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ParametersElementsReceiver.Parsed;
+}
+
+export function wrapParametersElementsReceiverGroup(
+	data: T.ParametersElementsReceiverGroup,
+	tree: TreeHandle
+): T.ParametersElementsReceiverGroup.Parsed {
+	const handle = currentHandle();
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
+	const node = {
+		...data,
+		$type: TSKindId.ParametersElementsReceiverGroup as const,
+		elements() {
+			return hydrateSlot<T.ParametersElements | undefined>(this, '_elements', tree);
+		},
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElements as const,
+							optional: true,
+							make: RAW.buildParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+						},
+						(v: NonNullable<T.ParametersElementsReceiverGroup['_elements']>) =>
+							wrapParametersElementsReceiverGroup({ ...$edited(data), _elements: v }, tree)
+					)
+				)
+		},
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listView.stored?.length ?? 0);
+	return node as unknown as T.ParametersElementsReceiverGroup.Parsed;
 }
 
 export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.TypeIdentifier.Parsed {
@@ -9098,6 +9251,14 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.AttributedOrderedField]: (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
 	[TSKindId.TypeArgument]: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	[TSKindId.MatchBlockArms]: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
+	[TSKindId.ReceiverParameterDeclaration]: (d, t) =>
+		wrapReceiverParameterDeclaration(d as unknown as T.ReceiverParameterDeclaration, t),
+	[TSKindId.AttributedParameterReceiver]: (d, t) =>
+		wrapAttributedParameterReceiver(d as unknown as T.AttributedParameterReceiver, t),
+	[TSKindId.ParametersElementsReceiver]: (d, t) =>
+		wrapParametersElementsReceiver(d as unknown as T.ParametersElementsReceiver, t),
+	[TSKindId.ParametersElementsReceiverGroup]: (d, t) =>
+		wrapParametersElementsReceiverGroup(d as unknown as T.ParametersElementsReceiverGroup, t),
 	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(d as unknown as T.TypeIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(d as unknown as T.FieldIdentifier, t),
 	[TSKindId.CrateVisibilityModifier]: (d, t) =>

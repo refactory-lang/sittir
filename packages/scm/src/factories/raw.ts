@@ -867,11 +867,17 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 		$with: {
 			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupChildren({ ...config, anchor: value })),
-			namedNodeExpressions: (
-				...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>
-			) =>
+			namedNodeExpressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: restItems('namedNodeExpressions', values) })
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
+						(...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>) =>
+							buildNamedNodeGroupChildren({
+								...config,
+								namedNodeExpressions: restItems('namedNodeExpressions', values)
+							})
+					)
 				)
 		},
 		anchor: () => _anchor,
@@ -916,12 +922,17 @@ export function buildNamedNodeGroupAnchoredLast(
 		$with: {
 			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, anchor: value })),
-			namedNodeExpressions: (...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
+			namedNodeExpressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					buildNamedNodeGroupAnchoredLast({
-						...config,
-						namedNodeExpressions: restItems('namedNodeExpressions', values)
-					})
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
+						(...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
+							buildNamedNodeGroupAnchoredLast({
+								...config,
+								namedNodeExpressions: restItems('namedNodeExpressions', values)
+							})
+					)
 				),
 			last: (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, last: value }))

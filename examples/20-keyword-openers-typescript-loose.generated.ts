@@ -10,16 +10,16 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 			typeParameters: ts.build.typeParameter({
 				name: "T",
 			}),
-			parameters: [ts.build.requiredParameter({
-				pattern: "a",
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+				name: "a",
 				type: ts.build.genericType({
 					name: "Array",
 					typeArguments: "T",
 				}),
 			}), ts.build.requiredParameter({
-				pattern: "b",
+				name: "b",
 				type: ts.build.tupleType(ts.kinds.NumberKeyword, ts.kinds.StringKeyword),
-			})],
+			})),
 			returnType: ts.build.arrayType(ts.build.parenthesizedType(ts.build.unionType({
 				left: ts.kinds.NumberKeyword,
 				right: ts.kinds.StringKeyword,
@@ -109,7 +109,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				}),
 			}), ts.build.throwStatement(ts.build.parenthesizedExpressionTyped({
 				expression: ts.build.newExpression({
-					constructor_: "Error",
+					function: "Error",
 					arguments: ts.build.stringDouble("x"),
 				}),
 			})), ts.build.expressionStatement(ts.build.awaitExpression(ts.build.parenthesizedExpressionTyped({
@@ -123,7 +123,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					expression: "x",
 				}),
 			})), ts.build.expressionStatement(ts.build.newExpression({
-				constructor_: ts.build.parenthesizedExpressionTyped({
+				function: ts.build.parenthesizedExpressionTyped({
 					expression: "Foo",
 				}),
 				arguments: ts.build.arguments(),
@@ -148,7 +148,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					name: "y",
 					value: ts.build.asExpression({
 						expression: "x",
-						typeAnnotation: ts.build.parenthesizedType("Foo"),
+						type: ts.build.parenthesizedType("Foo"),
 					}),
 				})],
 			}), ts.build.lexicalDeclaration({
@@ -158,9 +158,9 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					value: ts.build.arrowFunction({
 						async: true,
 						content: ts.build.callSignature({
-							parameters: ts.build.requiredParameter({
-								pattern: "z",
-							}),
+							parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+								name: "z",
+							})),
 						}),
 						body: ts.build.parenthesizedExpressionTyped({
 							expression: "z",
@@ -177,7 +177,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				argument: ts.build.parenthesizedExpressionTyped({
 					expression: ts.build.memberExpression({
 						object: "a",
-						separator: ts.kinds.Dot,
+						optionalChain: ts.kinds.Dot,
 						property: "b",
 					}),
 				}),
@@ -237,7 +237,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 							object: "a",
 							index: "0",
 						}),
-						separator: ts.kinds.Dot,
+						optionalChain: ts.kinds.Dot,
 						property: "b",
 					}),
 				})],
@@ -248,7 +248,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 							function: "foo",
 							arguments: "x",
 						}),
-						separator: ts.kinds.Dot,
+						optionalChain: ts.kinds.Dot,
 						property: "bar",
 					}),
 					index: "1",

@@ -274,17 +274,6 @@ describe('Evaluate — edge cases', () => {
 		});
 	});
 
-	describe('desugar-divergence — body-pattern-group fallback', () => {
-		it('records a divergence event when a groups: entry mints with no wire-side deposit', async () => {
-			const raw = await evaluate(fixture('body-pattern-group-divergence-grammar.js'), NO_FILE_TYPES);
-			// `_orphan_group` is referenced nowhere else in the grammar, so it's
-			// pruned from the final catalog as unreachable — the divergence
-			// event itself is the proof the fallback fired, independent of
-			// whether the minted rule survives reachability pruning.
-			expect(raw.desugarDivergences).toEqual([{ site: 'body-pattern-group', name: '_orphan_group' }]);
-		});
-	});
-
 	describe('coerceToRule — invalid input (private helper, exercised through evaluate())', () => {
 		it('rejects a grammar body that resolves to an undefined rule', async () => {
 			const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
@@ -666,7 +655,7 @@ module.exports = grammar(base, {
 });
 
 describe('evaluateSynthesized', () => {
-	it('names the rules evaluate itself adds: visible externals and render-only rules, not the grammar\'s own', async () => {
+	it("names the rules evaluate itself adds: visible externals and render-only rules, not the grammar's own", async () => {
 		const scm = await evaluatePackage(grammarPackage('scm'));
 		expect([...scm.evaluateSynthesized].filter((kind) => scm.ruleCatalog.rootsByKind.has(kind)).sort()).toEqual([
 			'_blankline',

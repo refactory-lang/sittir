@@ -746,7 +746,9 @@ Typescript (`typescript-samples-*.txt`):
     `statement.import.type` refinement. A refinement could not hold it: `export type * from` is
     one node with the `type` keyword and the `*`, so it would be `statement.export.all` and a
     type refinement at once. Flow's `import typeof` stays `statement.import.typeof`.
-22. **How the edit's output meets enrich's group synthesis.** Ruled by the maintainer: enrich
+22. **How the edit's output meets enrich's group synthesis.** **Superseded by Q-S15 (2026-10-13):** complete grammar.sittir enrich→wire, require the configured bindings layer's enrich to be a strict no-op, then wire binding edits. There is no enrich after those edits. Reuse the canonical wire/group primitive when minting receiver groups; preserve one naming derivation. Automatic variant stamping runs in the shared DSL on grammar()'s final result. The earlier ruling below is historical evidence, not the implementation order.
+
+    Earlier ruling by the maintainer: enrich
     runs again, whole, over every rule a grammar-bindings edit newly creates, "pretty much splits
     and merges, but may include others". A renamed rule does not pass again. The lead stays in
     `bindGrammar`, after the patches (question 13 holds). The probe's `two-rules-plain-group`

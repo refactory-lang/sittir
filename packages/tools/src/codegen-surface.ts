@@ -67,15 +67,20 @@ const MODULES = {
 	optionsBlock: '../../codegen/src/dsl/wire/options-block.ts',
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
+	rulePatterns: '../../codegen/src/dsl/rule-patterns.ts',
 	types: '../../codegen/src/emitters/types.ts',
 	templates: '../../codegen/src/emitters/templates.ts',
 	from: '../../codegen/src/emitters/from.ts',
 	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
 	bind: '../../codegen/src/dsl/bind.ts',
 	nodeModel: '../../codegen/src/emitters/node-model.ts',
+	sourceParser: '../../codegen/src/transpile/source-parser.ts',
+	evaluateForDerivation: '../../codegen/src/transpile/evaluate-for-derivation.ts',
 	nodeModelRead: '../../codegen/src/emitters/node-model-read.ts',
 	recordLines: '../../codegen/src/emitters/record-lines.ts',
 	wrap: '../../codegen/src/emitters/wrap.ts',
+	contentHash: '../../codegen/src/util/content-hash.ts',
+	writeFileAtomic: '../../codegen/src/util/write-file-atomic.ts',
 	vocabularyPaths: '../../codegen/src/bindings/vocabulary-paths.ts'
 } as const;
 
@@ -117,15 +122,20 @@ export interface CodegenSurface {
 	optionsBlock: typeof import('../../codegen/src/dsl/wire/options-block.ts');
 	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
+	rulePatterns: typeof import('../../codegen/src/dsl/rule-patterns.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');
 	templates: typeof import('../../codegen/src/emitters/templates.ts');
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');
 	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
+	sourceParser: typeof import('../../codegen/src/transpile/source-parser.ts');
+	evaluateForDerivation: typeof import('../../codegen/src/transpile/evaluate-for-derivation.ts');
 	nodeModelRead: typeof import('../../codegen/src/emitters/node-model-read.ts');
 	recordLines: typeof import('../../codegen/src/emitters/record-lines.ts');
 	wrap: typeof import('../../codegen/src/emitters/wrap.ts');
+	contentHash: typeof import('../../codegen/src/util/content-hash.ts');
+	writeFileAtomic: typeof import('../../codegen/src/util/write-file-atomic.ts');
 	vocabularyPaths: typeof import('../../codegen/src/bindings/vocabulary-paths.ts');
 }
 

@@ -1,14 +1,9 @@
 import { RuleWalker } from '../rule-walker.ts';
 import type { AnyRule } from '../../types/rule.ts';
-import type { GrammarResult } from '../enrich.ts';
-import { upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
-import { liftRenames } from './lift-names.ts';
+import { upstreamConflictSets, upstreamSymbolNames } from './wire.ts';
+import { liftRenames, type LiftName } from './lift-names.ts';
 import type { ConflictResolutionRecord } from '../conflict-resolutions.ts';
 import { baseRulesOf } from '../shared.ts';
-
-type WiredGrammar = GrammarResult['grammar'];
-
-export const DERIVATION_RECORDS_KEY = '__derivationRecords__' as const;
 
 export interface DerivationRecords {
 	readonly upstreamConflicts: readonly (readonly string[])[];
@@ -48,26 +43,26 @@ function dynamicPrecedenceOf(rules: Readonly<Record<string, AnyRule>>): Record<s
 	return values;
 }
 
-export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
-	const upstreamSymbols = upstreamSymbolNames(base);
-	const edges = new Map<string, string>();
-	for (const [oldName, newName] of liftRenames(opts.__wireContext__?.liftNames)) {
-		if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
-	}
-	for (const [name, owner] of variantEdgesOf(grammar.rules)) {
-		if (name !== owner && !upstreamSymbols.has(name)) edges.set(name, owner);
-	}
-	const records: DerivationRecords = {
-		upstreamConflicts: upstreamConflictSets(base),
-		sourceEdges: Object.fromEntries(edges),
-		...conflicts,
-		upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf<AnyRule>(base) ?? {}),
-		dynamicPrecedence: dynamicPrecedenceOf(grammar.rules)
-	};
-	Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
+export interface DerivationCtx {
+	readonly upstream: unknown;
+	readonly liftNames: ReadonlyMap<string, LiftName> | undefined;
+	readonly conflicts: ConflictConfig;
 }
 
-export function getDerivationRecords(grammar: unknown): DerivationRecords | undefined {
-	if (!grammar || typeof grammar !== 'object') return undefined;
-	return (grammar as Record<string, unknown>)[DERIVATION_RECORDS_KEY] as DerivationRecords | undefined;
+export function derivationRecordsOf(rules: Readonly<Record<string, AnyRule>>, ctx: DerivationCtx): DerivationRecords {
+	const upstreamSymbols = upstreamSymbolNames(ctx.upstream);
+	const edges = new Map<string, string>();
+	for (const [oldName, newName] of liftRenames(ctx.liftNames)) {
+		if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
+	}
+	for (const [name, owner] of variantEdgesOf(rules)) {
+		if (name !== owner && !upstreamSymbols.has(name)) edges.set(name, owner);
+	}
+	return {
+		upstreamConflicts: upstreamConflictSets(ctx.upstream),
+		sourceEdges: Object.fromEntries(edges),
+		...ctx.conflicts,
+		upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf<AnyRule>(ctx.upstream) ?? {}),
+		dynamicPrecedence: dynamicPrecedenceOf(rules)
+	};
 }

@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, formsOf, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -383,7 +383,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						list ||= resolved.list;
 						scalar ||= resolved.scalar;
 					}
-					f.optional = true;
+					f.optional ||= route.route !== 'nested' || !route.multiple;
 					f.multiple ||= list;
 					f.scalar ||= !multiple && (scalar || !list);
 					f.grammars.add(input.grammar);
@@ -423,10 +423,12 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
 			if (container.captures.length === 0) continue;
 			const targets = new Set(
-				(slotFor(input.model, slots, container.element)?.kinds ?? []).flatMap((k) => {
-					const direct = directVocab(input, k, [container.kind]);
-					return direct === undefined ? [] : [direct];
-				})
+				(slotFor(input.model, slots, container.element)?.kinds ?? []).flatMap((k) =>
+					formsOf(input.model, k).flatMap((form) => {
+						const direct = directVocab(input, form, [container.kind]);
+						return direct === undefined ? [] : [direct];
+					})
+				)
 			);
 			if (targets.size === 0) {
 				untargeted.push(`${input.grammar}: ${container.kind} (${container.captures.map((c) => c.name).join(', ')})`);

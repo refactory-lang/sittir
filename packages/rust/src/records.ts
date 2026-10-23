@@ -23,8 +23,8 @@ export const records = {
 		operator: { word: 9, width: 5 }
 	},
 	NonSpecialTokenNode: { words: 7, content: { word: 2, width: 5 } },
-	AttributeItemNode: { words: 7, attribute: { word: 2, width: 5 } },
-	InnerAttributeItemNode: { words: 7, attribute: { word: 2, width: 5 } },
+	AttributeItemNode: { words: 7, content: { word: 2, width: 5 } },
+	InnerAttributeItemNode: { words: 7, content: { word: 2, width: 5 } },
 	AttributeNode: { words: 12, path: { word: 2, width: 5 }, input: { word: 7, width: 5 } },
 	DeclarationListNode: { words: 4, declarations: { word: 2, width: 2, run: 5 } },
 	UnionItemNode: {
@@ -75,7 +75,7 @@ export const records = {
 	StaticItemNode: {
 		words: 23,
 		visibility_modifier: { word: 3, width: 5 },
-		ref_: { word: 2, bit: 0 },
+		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
 		name: { word: 8, width: 5 },
 		type_: { word: 13, width: 5 },
@@ -87,7 +87,7 @@ export const records = {
 		name: { word: 7, width: 5 },
 		type_parameters: { word: 12, width: 5 },
 		where_clause: { word: 17, width: 5 },
-		type_: { word: 22, width: 5 },
+		value: { word: 22, width: 5 },
 		trailing_where_clause: { word: 27, width: 5 }
 	},
 	FunctionItemNode: {
@@ -139,19 +139,19 @@ export const records = {
 		words: 17,
 		name: { word: 2, width: 5 },
 		type_: { word: 7, width: 5 },
-		value: { word: 12, width: 5 }
+		default: { word: 12, width: 5 }
 	},
 	TypeParameterNode: {
 		words: 17,
 		name: { word: 2, width: 5 },
 		bounds: { word: 7, width: 5 },
-		default_type: { word: 12, width: 5 }
+		default: { word: 12, width: 5 }
 	},
 	LifetimeParameterNode: { words: 12, name: { word: 2, width: 5 }, bounds: { word: 7, width: 5 } },
 	LetDeclarationNode: {
 		words: 23,
 		mutable: { word: 2, bit: 0 },
-		pattern: { word: 3, width: 5 },
+		name: { word: 3, width: 5 },
 		type_: { word: 8, width: 5 },
 		value: { word: 13, width: 5 },
 		alternative: { word: 18, width: 5 }
@@ -159,7 +159,7 @@ export const records = {
 	UseDeclarationNode: { words: 12, visibility_modifier: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
 	ScopedUseListNode: { words: 12, path: { word: 2, width: 5 }, list: { word: 7, width: 5 } },
 	UseListNode: { words: 7, use_clauses: { word: 2, width: 5 } },
-	UseAsClauseNode: { words: 12, path: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
+	UseAsClauseNode: { words: 12, name: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
 	UseWildcardNode: { words: 7, use_wildcard_group: { word: 2, width: 5 } },
 	ParametersNode: { words: 7, elements: { word: 2, width: 5 } },
 	SelfParameterNode: {
@@ -200,17 +200,17 @@ export const records = {
 	ReferenceTypeNode: {
 		words: 13,
 		lifetime: { word: 3, width: 5 },
-		mutable: { word: 2, bit: 0 },
+		exclusive: { word: 2, bit: 0 },
 		type_: { word: 8, width: 5 }
 	},
 	AbstractTypeNode: { words: 12, type_parameters: { word: 2, width: 5 }, trait_: { word: 7, width: 5 } },
 	DynamicTypeNode: { words: 7, trait_: { word: 2, width: 5 } },
-	MacroInvocationNode: { words: 12, macro_: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
+	MacroInvocationNode: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
 	ScopedIdentifierNode: { words: 12, path: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ScopedTypeIdentifierInExpressionPositionNode: { words: 12, path: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ScopedTypeIdentifierNode: { words: 12, path: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	UnaryExpressionNode: { words: 12, operator: { word: 2, width: 5 }, operand: { word: 7, width: 5 } },
-	TryExpressionNode: { words: 7, value: { word: 2, width: 5 } },
+	UnaryExpressionNode: { words: 12, operator: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
+	TryExpressionNode: { words: 7, argument: { word: 2, width: 5 } },
 	BinaryExpressionNode: {
 		words: 17,
 		left: { word: 2, width: 5 },
@@ -224,19 +224,19 @@ export const records = {
 		operator: { word: 7, width: 5 },
 		right: { word: 12, width: 5 }
 	},
-	TypeCastExpressionNode: { words: 12, value: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	TypeCastExpressionNode: { words: 12, expression: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	ReturnExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
 	YieldExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
 	CallExpressionNode: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
 	ArgumentsNode: { words: 7, elements: { word: 2, width: 5 } },
 	ParenthesizedExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
-	TupleExpressionNode: { words: 9, attributes: { word: 2, width: 2, run: 5 }, expressions: { word: 4, width: 5 } },
+	TupleExpressionNode: { words: 9, attributes: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 5 } },
 	StructExpressionNode: { words: 12, name: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	FieldInitializerListNode: { words: 7, initializers: { word: 2, width: 5 } },
-	ShorthandFieldInitializerNode: { words: 9, attributes: { word: 2, width: 2, run: 5 }, name: { word: 4, width: 5 } },
+	ShorthandFieldInitializerNode: { words: 9, attributes: { word: 2, width: 2, run: 5 }, field: { word: 4, width: 5 } },
 	FieldInitializerNode: {
 		words: 14,
-		attribute_item: { word: 2, width: 2, run: 5 },
+		attributes: { word: 2, width: 2, run: 5 },
 		field: { word: 4, width: 5 },
 		value: { word: 9, width: 5 }
 	},
@@ -250,7 +250,7 @@ export const records = {
 	LetConditionNode: { words: 12, pattern: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	LetChainNode: { words: 9, left: { word: 2, width: 5 }, right: { word: 7, width: 2, run: 5 } },
 	ElseClauseNode: { words: 7, body: { word: 2, width: 5 } },
-	MatchExpressionNode: { words: 12, value: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
+	MatchExpressionNode: { words: 12, subject: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	MatchBlockNode: { words: 7, match_block_arms: { word: 2, width: 5 } },
 	LastMatchArmNode: {
 		words: 19,
@@ -270,8 +270,8 @@ export const records = {
 	ForExpressionNode: {
 		words: 22,
 		label: { word: 2, width: 5 },
-		pattern: { word: 7, width: 5 },
-		value: { word: 12, width: 5 },
+		left: { word: 7, width: 5 },
+		right: { word: 12, width: 5 },
 		body: { word: 17, width: 5 }
 	},
 	ConstBlockNode: { words: 7, body: { word: 2, width: 5 } },
@@ -281,7 +281,7 @@ export const records = {
 	ContinueExpressionNode: { words: 7, label: { word: 2, width: 5 } },
 	IndexExpressionNode: { words: 12, object: { word: 2, width: 5 }, index: { word: 7, width: 5 } },
 	AwaitExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
-	FieldExpressionNode: { words: 12, value: { word: 2, width: 5 }, field: { word: 7, width: 5 } },
+	FieldExpressionNode: { words: 12, object: { word: 2, width: 5 }, property: { word: 7, width: 5 } },
 	UnsafeBlockNode: { words: 7, body: { word: 2, width: 5 } },
 	AsyncBlockNode: { words: 8, move_: { word: 2, bit: 0 }, body: { word: 3, width: 5 } },
 	GenBlockNode: { words: 8, move_: { word: 2, bit: 0 }, body: { word: 3, width: 5 } },
@@ -294,13 +294,13 @@ export const records = {
 	},
 	GenericPatternNode: { words: 12, name: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	TuplePatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	SlicePatternNode: { words: 7, patterns: { word: 2, width: 5 } },
+	SlicePatternNode: { words: 7, elements: { word: 2, width: 5 } },
 	TupleStructPatternNode: { words: 12, type_: { word: 2, width: 5 }, patterns: { word: 7, width: 5 } },
 	StructPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	MutPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
 	RefPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
 	CapturedPatternNode: { words: 12, name: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	ReferencePatternNode: { words: 8, mutable: { word: 2, bit: 0 }, pattern: { word: 3, width: 5 } },
+	ReferencePatternNode: { words: 8, exclusive: { word: 2, bit: 0 }, pattern: { word: 3, width: 5 } },
 	NegativeLiteralNode: { words: 7, value: { word: 2, width: 5 } },
 	StringLiteralNode: { words: 9, string_open: { word: 2, width: 5 }, elements: { word: 7, width: 2, run: 5 } },
 	RawStringLiteralNode: {
@@ -535,6 +535,14 @@ export const records = {
 	RawStringLiteralEndNode: { words: 2 },
 	DocCommentNode: { words: 2 },
 	BlockCommentContentNode: { words: 2 },
+	ReceiverParameterDeclarationNode: { words: 8, mutable: { word: 2, bit: 0 }, type_: { word: 3, width: 5 } },
+	AttributedParameterReceiverNode: { words: 12, attribute_item: { word: 2, width: 5 }, content: { word: 7, width: 5 } },
+	ParametersElementsReceiverNode: {
+		words: 12,
+		receiver: { word: 2, width: 5 },
+		parameters_elements_receiver_group: { word: 7, width: 5 }
+	},
+	ParametersElementsReceiverGroupNode: { words: 7, elements: { word: 2, width: 5 } },
 	StringCloseNode: { words: 2 },
 	ErrorSentinelNode: { words: 2 },
 	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
