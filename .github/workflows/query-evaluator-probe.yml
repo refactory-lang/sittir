@@ -1,0 +1,68 @@
+# The one-query-evaluator probe's measurements, on dedicated runners: each
+# runner builds the python, typescript and rust addons in the release profile
+# from this branch (today's evaluator and every candidate in one build), then
+# runs where-cost.mts. Runs on the probe branch only.
+name: query evaluator probe
+
+on:
+  push:
+    branches: [probe/one-query-evaluator]
+    paths:
+      - .github/workflows/query-evaluator-probe.yml
+      - rust/crates/sittir-core/**
+      - docs/superpowers/probes/2026-10-23-one-query-evaluator/where-cost.mts
+
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+  PROBE: docs/superpowers/probes/2026-10-23-one-query-evaluator
+
+jobs:
+  measure:
+    name: measure (${{ matrix.name }})
+    runs-on: ${{ matrix.host }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: linux-x64-gnu, host: ubuntu-22.04 }
+          - { name: macos-arm64, host: macos-14 }
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # where-cost reads its repository corpus at the probe's base commit.
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: pnpm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Rust (pinned)
+        uses: ./.github/actions/rust-toolchain
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Machine
+        shell: bash
+        run: |
+          rustc -vV
+          python3 --version
+          node -p 'const os = require("node:os"); JSON.stringify({ cpus: os.cpus().length, model: os.cpus()[0].model, memory: os.totalmem() })'
+      - name: Build the addons (release)
+        shell: bash
+        run: |
+          for grammar in python typescript rust; do
+            pnpm --dir "rust/crates/sittir-$grammar" run build
+          done
+      - name: where-cost
+        shell: bash
+        run: pnpm exec tsx "$PROBE/where-cost.mts" --out "$RUNNER_TEMP/where-cost" --runs 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: where-cost-${{ matrix.name }}
+          path: ${{ runner.temp }}/where-cost/
+          if-no-files-found: ignore
