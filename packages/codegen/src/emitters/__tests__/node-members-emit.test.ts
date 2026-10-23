@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
-import { makeMinimalNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeMinimalNodeMap, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { nodeMemberLines } from '../node-members.ts';
 
 const functionBody = (source: string, name: string): string => {
@@ -10,7 +10,7 @@ const functionBody = (source: string, name: string): string => {
 };
 
 describe('a node writes its members in its literal', () => {
-	const source = emitFactories({ grammar: 'synth', nodeMap: makeMinimalNodeMap() });
+	const source = emitFactories({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries))});
 
 	it('a text leaf builds its engine handle and members inline', () => {
 		const body = functionBody(source, 'buildIdentifier');
@@ -43,7 +43,7 @@ describe('nodeMemberLines', () => {
 describe('a wrapped node writes its members in its literal', () => {
 	it('a plain kind captures the engine handle and rebuilds through rebuilt', async () => {
 		const { emitWrap } = await import('../../__tests__/helpers/emit-wrap.ts');
-		const wrap = emitWrap({ grammar: 'synth', nodeMap: makeMinimalNodeMap() });
+		const wrap = emitWrap({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries))});
 		const body = functionBody(wrap, 'wrapCallExpression');
 		expect(body).toContain('const handle = currentHandle();');
 		expect(body).toContain('$render: () => renderText(handle, node),');

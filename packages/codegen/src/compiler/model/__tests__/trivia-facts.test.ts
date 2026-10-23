@@ -1,3 +1,5 @@
+import { diagnosePredicted } from '../../../__tests__/helpers/linked.ts';
+import { predictedIdTablesOf } from '../../../dsl/symbol-table.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
@@ -185,7 +187,7 @@ describe('trivia model facts', () => {
 
 	it('reads a symbol whitespace extra through the rule it names', async () => {
 		const raw = await evaluateTempGrammar({ extras: '$._ws', rules: "_ws: () => token(repeat1(/[ \\t]/))" }, '');
-		const { nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+		const { nodeMap } = diagnosePredicted(raw);
 		expect(lexicalExtrasRun(nodeMap)?.test(' \t ')).toBe(true);
 		expect(whitespaceTriviaKinds(nodeMap)).toContain('_space');
 	}, 60_000);

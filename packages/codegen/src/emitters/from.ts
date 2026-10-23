@@ -1125,12 +1125,12 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 }
 
 function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly KindEnumEntry[]): TextKindCheck[] {
-	const rankOf = ({ kind }: TextKindCheck): number => {
-		const rank = findKindEntry(kindEntries, kind)?.lexicalRank;
-		if (rank === undefined) throw new Error(`from: text kind '${kind}' has no lexical rank in the catalog`);
-		return rank;
-	};
-	return [...checks].sort((a, b) => rankOf(a) - rankOf(b));
+	const ranked = checks.map((check) => {
+		const rank = findKindEntry(kindEntries, check.kind)?.lexicalRank;
+		if (rank === undefined) throw new Error(`from: text kind '${check.kind}' has no lexical rank in the catalog`);
+		return { check, rank };
+	});
+	return ranked.sort((a, b) => a.rank - b.rank).map(({ check }) => check);
 }
 
 function emitResolveByKindHelper(lines: string[]): void {

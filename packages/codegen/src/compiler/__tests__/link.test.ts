@@ -14,17 +14,8 @@ import {
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { stampLabelProvenance } from '../variant-structural.ts';
-import {
-	link,
-	enrichPositions,
-	computeParentSets,
-	applyOverridePolymorphs,
-	liftSeparators,
-	LinkCtx,
-	canonicalizeRuleLiterals,
-	reportKindIdStampMisses,
-	type KindIdStampMisses
-} from '../link.ts';
+import { link, enrichPositions, computeParentSets, applyOverridePolymorphs, liftSeparators, LinkCtx, canonicalizeRuleLiterals, reportKindIdStampMisses, type KindIdStampMisses } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import type { Rule, SymbolRef, SymbolRule, StringRule, PatternRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
@@ -69,7 +60,7 @@ describe('Link — reference resolution', () => {
 				]
 			}
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// source_file's repeat content should reference 'statement' as a symbol
 		// Link keeps visible symbol references (they become named children)
 		// Hidden symbols get inlined
@@ -91,7 +82,7 @@ describe('Link — reference resolution', () => {
 				]
 			}
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 
 		function assertNoRefTypes(rule: Rule<'link'>): void {
 			if ('type' in rule) {
@@ -116,7 +107,7 @@ describe('Link — reference resolution', () => {
 		const raw = makeRaw({
 			items: { type: REPEAT1, content: { type: STRING, value: 'x' } }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// PR-P Task 2: Link no longer wraps pure-terminal subtrees as TerminalRule.
 		// The rule arrives as its original REPEAT1 type directly; assemble's
 		// classifyTerminalFallback (via isAllTextShape) handles classification.
@@ -132,9 +123,9 @@ describe('Link — reference resolution', () => {
 				immediate: false
 			}
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// The wrapper is consumed by normalize's `token` builder, not here.
-		expect(linked.rules['comment']).toEqual({ type: TOKEN, content: { type: STRING, value: '//' }, immediate: false, hidden: false });
+		expect(linked.rules['comment']).toEqual({ type: TOKEN, content: { type: STRING, value: '//', resolvedKindId: 1 }, immediate: false, hidden: false });
 	});
 
 	it('keeps a token.immediate wrapper structurally, immediacy on the wrapper', () => {
@@ -145,10 +136,37 @@ describe('Link — reference resolution', () => {
 				immediate: true
 			}
 		});
-		const linked = link(raw);
-		expect(linked.rules['esc']).toEqual({ type: TOKEN, content: { type: STRING, value: '\\n' }, immediate: true, hidden: false });
+		const linked = linkPredicted(raw);
+		expect(linked.rules['esc']).toEqual({ type: TOKEN, content: { type: STRING, value: '\\n', resolvedKindId: 1 }, immediate: true, hidden: false });
 	});
 });
+
+function aliasedSourceRaw(arms: readonly ('lhs' | 'rest')[]): RawGrammar {
+	const sym = (name: string): Rule<'evaluate'> => ({ type: SYMBOL, name });
+	const alias = (hidden: string, shown: string): Rule<'evaluate'> => ({ type: ALIAS, named: true, value: shown, content: sym(hidden) }) as Rule<'evaluate'>;
+	return makeRaw(
+		{
+			source: { type: CHOICE, members: [sym('pattern'), sym('assignment'), sym('spread')] },
+			pattern: {
+				type: CHOICE,
+				members: [
+					...(arms.includes('lhs') ? [alias('_lhs_expression', 'lhs_expression')] : []),
+					sym('identifier'),
+					...(arms.includes('rest') ? [alias('_rest_target', 'rest_target')] : []),
+					sym('rest_pattern')
+				]
+			},
+			_lhs_expression: { type: CHOICE, members: [sym('identifier'), sym('member_expression')] },
+			_rest_target: { type: SEQ, members: [{ type: STRING, value: '...' }, sym('identifier')] },
+			assignment: { type: SEQ, members: [sym('_lhs_expression'), { type: STRING, value: '=' }, sym('identifier')] },
+			spread: { type: SEQ, members: [sym('_rest_target'), { type: STRING, value: ';' }] },
+			rest_pattern: { type: SEQ, members: [{ type: STRING, value: '..' }, sym('identifier')] },
+			member_expression: { type: SEQ, members: [sym('identifier'), { type: STRING, value: '.' }, sym('identifier')] },
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		},
+		{ supertypes: ['pattern'] }
+	);
+}
 
 describe('Link — hidden rule classification', () => {
 	it('classifies hidden choice-of-symbols in supertypes as supertype', () => {
@@ -166,18 +184,18 @@ describe('Link — hidden rule classification', () => {
 			},
 			{ supertypes: ['_expression'] }
 		);
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// (debt PR-P1) `SupertypeRule.source` is deleted (item 3: link's
 		// classifier now returns its classification/source via ClassifyResult
 		// instead of stamping it onto the rule).
 		expect(linked.rules['_expression']).toEqual({
 			type: 'SUPERTYPE',
 			name: '_expression',
-			hidden: true,
+			hidden: false,
 			declared: true,
 			subtypes: [
-				{ type: 'SYMBOL', name: 'binary_expression', inline: false },
-				{ type: 'SYMBOL', name: 'identifier', inline: false }
+				{ type: 'SYMBOL', name: 'binary_expression', inline: false, kindId: 1 },
+				{ type: 'SYMBOL', name: 'identifier', inline: false, kindId: 2 }
 			]
 		});
 	});
@@ -195,7 +213,7 @@ describe('Link — hidden rule classification', () => {
 			number: { type: PATTERN, value: '[0-9]+' },
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
-		const rule = link(raw).rules['_operand']!;
+		const rule = linkPredicted(raw).rules['_operand']!;
 		expect(rule.type).toBe('SUPERTYPE');
 		expect('declared' in rule).toBe(false);
 	});
@@ -211,57 +229,26 @@ describe('Link — hidden rule classification', () => {
 				]
 			}
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// PR-P: enum-shaped choices are type 'choice'; isEnumChoiceRule detects them.
 		// Hidden choice of strings → normalized to ChoiceRule (was EnumRule).
 		expect(linked.rules['_visibility']!.type).toBe('CHOICE');
 	});
 
-	// R12/decision-7 V2 Task 1: `classifyHiddenChoiceRule` stamps `variantArms`
-	// on the `SupertypeRule` it produces — the declared structural fact that
-	// replaces the former narrow wire-metadata read in assemble.ts (see
-	// `RuleBase.variantArms`'s doc comment, types/rule.ts, and
-	// assemble.ts's `variantChildKindsSet` construction).
 	describe('classifyHiddenChoiceRule — variantArms stamp', () => {
-		it('stamps variantArms for a genuinely alias-minted SYMBOL arm (aliasedFrom present)', () => {
-			// Matches python's `_simple_pattern` shape: one arm is a SYMBOL
-			// whose `.name` is the ALIAS TARGET (visible) and `.aliasedFrom`
-			// is the hidden source — the post-link form of an
-			// `alias($._simple_pattern_negative, $.simple_pattern_negative)`
-			// construct. `identifier` is an ordinary symbol ref with no
-			// `aliasedFrom` — ordinary supertype-compatible, not alias-minted.
-			const raw = makeRaw(
-				{
-					_simple_pattern: {
-						type: CHOICE,
-						members: [
-							{ type: SYMBOL, name: 'identifier' },
-							{ type: SYMBOL, name: '_simple_pattern_negative', aliasedTo: 'simple_pattern_negative' }
-						]
-					},
-					identifier: { type: PATTERN, value: '[a-z]+' }
-					// `simple_pattern_negative` (visible) and
-					// `_simple_pattern_negative` (hidden) intentionally have
-					// NO independent rule entries here — matching the real
-					// alias-mint shape (no separate top-level body).
-				},
-				{ supertypes: ['_simple_pattern'] }
-			);
-			const linked = link(raw);
-			expect(linked.rules['_simple_pattern']).toEqual({
+		it('stamps variantArms for an alias-minted arm whose hidden source is also referenced bare', () => {
+			const linked = linkPredicted(aliasedSourceRaw(['lhs']));
+			expect(linked.rules['pattern']).toEqual({
 				type: 'SUPERTYPE',
-				name: '_simple_pattern',
-				hidden: true,
+				name: 'pattern',
+				hidden: false,
 				declared: true,
-				// Each subtype ref stamps its own storage→parse alias inline
-				// (`aliasedFrom`) rather than a separate parallel map — the
-				// parse name carries the alias occurrence's own runtime symbol
-				// id for dispatch (see `SymbolRule.aliasedFrom`/`aliasedFromId`).
 				subtypes: [
-					{ type: 'SYMBOL', name: 'identifier', inline: false },
-					{ type: 'SYMBOL', name: '_simple_pattern_negative', aliasedTo: 'simple_pattern_negative', inline: true }
+					{ type: 'SYMBOL', name: '_lhs_expression', aliasedTo: 'lhs_expression', aliasedToId: expect.any(Number), kindId: expect.any(Number) },
+					{ type: 'SYMBOL', name: 'identifier', inline: false, kindId: expect.any(Number) },
+					{ type: 'SYMBOL', name: 'rest_pattern', inline: false, kindId: expect.any(Number) }
 				],
-				variantArms: ['_simple_pattern_negative']
+				variantArms: ['_lhs_expression']
 			});
 		});
 
@@ -280,64 +267,20 @@ describe('Link — hidden rule classification', () => {
 				},
 				{ supertypes: ['_expression'] }
 			);
-			const linked = link(raw);
+			const linked = linkPredicted(raw);
 			const rule = linked.rules['_expression'] as { variantArms?: readonly string[] };
 			expect(rule.variantArms).toBeUndefined();
 		});
 
-		it('collects ALL alias-minted arms — not just the first — while excluding ordinary sibling refs (mixed case)', () => {
-			const raw = makeRaw(
-				{
-					_pattern: {
-						type: CHOICE,
-						members: [
-							{ type: SYMBOL, name: 'identifier' },
-							{ type: SYMBOL, name: '_wildcard_pattern', aliasedTo: 'wildcard_pattern' },
-							{ type: SYMBOL, name: 'tuple_pattern' },
-							{ type: SYMBOL, name: '_rest_pattern', aliasedTo: 'rest_pattern' }
-						]
-					},
-					identifier: { type: PATTERN, value: '[a-z]+' },
-					tuple_pattern: { type: STRING, value: 'tuple' }
-				},
-				{ supertypes: ['_pattern'] }
-			);
-			const linked = link(raw);
-			const rule = linked.rules['_pattern'] as { variantArms?: readonly string[] };
-			expect(rule.variantArms).toEqual(['_wildcard_pattern', '_rest_pattern']);
+		it('collects every alias-minted arm, not just the first, while excluding ordinary sibling refs', () => {
+			const rule = linkPredicted(aliasedSourceRaw(['lhs', 'rest'])).rules['pattern'] as { variantArms?: readonly string[] };
+			expect(rule.variantArms).toEqual(['_lhs_expression', '_rest_target']);
 		});
 
-		it('a raw ALIAS member authored pre-link is alias-minted (resolveRule collapses it to SYMBOL+aliasedFrom before classification runs, matching subtypes’ own naming)', () => {
-			// `link()`'s `resolveRule` pass runs BEFORE `classifyHiddenChoiceRule`
-			// — a raw ALIAS authored in `raw.rules` (this fixture) is already a
-			// SYMBOL with `aliasedFrom` by classification time (verified: rust's
-			// real `alias($._wildcard_pattern, $.wildcard_pattern)` construct
-			// takes this exact path). `variantArms` records the SAME name
-			// `subtypes` does for this arm shape (`aliasedFrom`, the hidden
-			// source) — `isAliasMintedRef`'s bare-ALIAS branch only fires for a
-			// rule shape that survives raw INTO classification unresolved,
-			// which link's own resolve pass never produces.
-			const raw = makeRaw(
-				{
-					_pattern: {
-						type: CHOICE,
-						members: [
-							{ type: SYMBOL, name: 'identifier' },
-							{
-								type: ALIAS,
-								named: true,
-								value: 'wildcard_pattern',
-								content: { type: SYMBOL, name: '_wildcard_pattern' }
-							}
-						]
-					},
-					identifier: { type: PATTERN, value: '[a-z]+' }
-				},
-				{ supertypes: ['_pattern'] }
-			);
-			const linked = link(raw);
-			const rule = linked.rules['_pattern'] as { variantArms?: readonly string[] };
-			expect(rule.variantArms).toEqual(['_wildcard_pattern']);
+		it('names an alias-minted arm by its hidden source, as its subtype ref does', () => {
+			const rule = linkPredicted(aliasedSourceRaw(['rest'])).rules['pattern'] as { variantArms?: readonly string[]; subtypes: { name: string; aliasedTo?: string }[] };
+			expect(rule.variantArms).toEqual(['_rest_target']);
+			expect(rule.subtypes.filter((s) => s.aliasedTo !== undefined).map((s) => s.name)).toEqual(['_rest_target']);
 		});
 	});
 });
@@ -363,7 +306,7 @@ describe('Link — field provenance', () => {
 			},
 			block: { type: STRING, value: '{}' }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const item = linked.rules['item'] as any;
 		expect(readRuleMetadata(item.members[0].metadata)?.fieldSource).toBe('override');
 	});
@@ -381,14 +324,14 @@ describe('Link — output contract', () => {
 			},
 			{ supertypes: ['_expression'] }
 		);
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		expect(linked.supertypes).toBeInstanceOf(Set);
 		expect(linked.supertypes.has('_expression')).toBe(true);
 	});
 
 	it('returns word from raw grammar', () => {
 		const raw = makeRaw({ id: { type: PATTERN, value: '[a-z]+' } }, { word: 'id' });
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		expect(linked.word).toBe('id');
 	});
 });
@@ -396,6 +339,7 @@ describe('Link — output contract', () => {
 describe('Link — top-level alias bodies', () => {
 	it('captures the dereferenced body for hidden alias sources', () => {
 		const raw = makeRaw({
+			source: { type: SEQ, members: [{ type: SYMBOL, name: '_type_identifier' }, { type: SYMBOL, name: 'identifier' }] },
 			_type_identifier: {
 				type: ALIAS,
 				named: true,
@@ -404,7 +348,7 @@ describe('Link — top-level alias bodies', () => {
 			},
 			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
 			type: 'PATTERN',
 			value: '[A-Za-z_]\\w*',
@@ -441,7 +385,7 @@ describe('Link — top-level alias bodies', () => {
 			},
 			{ supertypes: ['_expression'] }
 		);
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// The non-dereference guarantee is now enforced by a different
 		// mechanism: `_expression` is a complex-body alias target
 		// (deriveComplexAliasTargetHidden), so collectTopLevelAliasBodies
@@ -505,7 +449,7 @@ describe('Link — T019a cycle detection', () => {
 			}
 		});
 		// Should not throw — cycles are flagged, not fatal
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		expect(linked.rules['_recursive']).toBeDefined();
 	});
 });
@@ -534,7 +478,7 @@ describe('Link — T016a hidden choice classification', () => {
 			},
 			{ references: refs }
 		);
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// All hidden choices → supertype (Link classifies, Assemble passes through)
 		expect(linked.rules['_helper']!.type).toBe('SUPERTYPE');
 	});
@@ -573,7 +517,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			},
 			expr: { type: PATTERN, value: '.*' }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const stmt = linked.rules['statement'] as any;
 		expect(stmt.type).toBe('CHOICE');
 		expect(stmt.members.every((m: any) => m.type === 'SEQ')).toBe(true);
@@ -610,7 +554,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			},
 			expr: { type: PATTERN, value: '.*' }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const assignment = linked.rules['assignment'] as any;
 		expect(assignment.type).not.toBe('polymorph');
 		// Polymorph classification comes only from variant() metadata and
@@ -766,7 +710,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			},
 			expr: { type: PATTERN, value: '.*' }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		// Rule stays as choice (not replaced with polymorph) after de-polymorph.
 		expect(linked.rules['assignment']!.type).toBe('CHOICE');
 	});
@@ -807,7 +751,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			},
 			num: { type: PATTERN, value: '[0-9]+' }
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const literal = linked.rules['literal'] as any;
 		expect(literal.type).toBe('CHOICE');
 		// No variant wrappers — branches travel as bare seqs through Link.
@@ -822,6 +766,7 @@ describe('liftSeparators lifts a choice-of-literals separator without a diagnost
 			diagnostics,
 			supertypes: new Set(),
 			externalRoles: new Map(),
+			kindEntries: [],
 			hiddenNamedArmChoices: new Set()
 		});
 	}
@@ -870,6 +815,7 @@ describe('liftSeparators: a list whose first element carries a required separato
 			diagnostics: new DiagnosticSink(),
 			supertypes: new Set(),
 			externalRoles: new Map(),
+			kindEntries: [],
 			hiddenNamedArmChoices: new Set()
 		});
 	const item: Rule<'link'> = { type: FIELD, name: 'item', content: { type: SYMBOL, name: 'item' } } as Rule<'link'>;
@@ -907,6 +853,7 @@ describe('liftSeparators: a separated list inside a longer seq', () => {
 			diagnostics: new DiagnosticSink(),
 			supertypes: new Set(),
 			externalRoles: new Map(),
+			kindEntries: [],
 			hiddenNamedArmChoices: new Set()
 		});
 	const item: Rule<'link'> = { type: SYMBOL, name: 'item' } as Rule<'link'>;
@@ -969,6 +916,7 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 			diagnostics: new DiagnosticSink(),
 			supertypes: new Set(),
 			externalRoles: new Map(),
+			kindEntries: [],
 			hiddenNamedArmChoices: new Set()
 		});
 	}
@@ -1079,14 +1027,10 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(misses.symbols.size).toBe(0);
 	});
 
-	it('records a full miss (and leaves the rule unstamped) when neither identity resolves', () => {
-		// A non-empty catalog is required to engage stamping at all — an
-		// empty table means "no id tables supplied", which is a deliberate
-		// no-op, not a miss.
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+	it('records a full miss (and leaves the rule unstamped) when neither identity resolves, even against an empty table', () => {
 		const misses = noMisses();
 		const rule: Rule<'link'> = { type: SYMBOL, name: 'unknown_kind', inline: false };
-		const result = canonicalizeRuleLiterals(rule, entries, false, misses);
+		const result = canonicalizeRuleLiterals(rule, [], false, misses);
 		expect(result).toBe(rule);
 		expect(misses.symbols.has('unknown_kind')).toBe(true);
 	});
@@ -1230,14 +1174,13 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 	}
 
 	it('reports an inline-array kind as unstamped (warning) and inline-excluded (info), not vaporized', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = {
 			symbols: new Set(['_declaration_statement']),
 			literals: new Set(),
 			aliasTargets: new Set()
 		};
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set());
+		reportKindIdStampMisses(misses, sink, new Set(['_declaration_statement']), new Set());
 		const all = sink.all();
 		const unstamped = all.find((d) => d.code === 'kindid-unstamped-symbols');
 		expect(unstamped?.details).toEqual({ kinds: ['_declaration_statement'] });
@@ -1253,10 +1196,9 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 	});
 
 	it('reports a non-inline kind as unstamped (warning) and vaporized (info)', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(), new Set());
+		reportKindIdStampMisses(misses, sink, new Set(), new Set());
 		const all = sink.all();
 		const unstamped = all.find((d) => d.code === 'kindid-unstamped-symbols');
 		expect(unstamped?.details).toEqual({ kinds: ['comment'] });
@@ -1271,24 +1213,22 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 	});
 
 	it('reports an unstamped literal as warning severity too', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(), literals: new Set(['r#"']), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(), new Set());
+		reportKindIdStampMisses(misses, sink, new Set(), new Set());
 		const unstampedLiterals = sink.all().find((d) => d.code === 'kindid-unstamped-literals');
 		expect(unstampedLiterals?.details).toEqual({ texts: ['r#"'] });
 		expect(unstampedLiterals?.severity).toBe('warning');
 	});
 
 	it('splits a mixed miss set: inline kinds excluded from the vaporized bucket, literals handled the same way', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = {
 			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
 			literals: new Set(['r#"']),
 			aliasTargets: new Set()
 		};
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set());
+		reportKindIdStampMisses(misses, sink, new Set(['_declaration_statement']), new Set());
 		const diagnostics = stampDiagnostics(sink);
 		expect(diagnostics).toContainEqual({
 			code: 'kindid-vaporized-symbols',
@@ -1301,10 +1241,9 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 	});
 
 	it('emits nothing vaporized when every miss is inline-excluded, but tags it kindid-inline-excluded-symbols instead', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['_suite']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(['_suite']), new Set());
+		reportKindIdStampMisses(misses, sink, new Set(['_suite']), new Set());
 		const diagnostics = stampDiagnostics(sink);
 		expect(diagnostics.some((d) => d.code.startsWith('kindid-vaporized'))).toBe(false);
 		expect(diagnostics).toContainEqual({
@@ -1314,7 +1253,6 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 	});
 
 	it('partitions a mixed miss set exhaustively: every symbol lands in exactly one of inline-excluded, vaporized, or unclassified', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		// `r#"` is a bare anonymous-token miss — literal text, not a rule name,
 		// so it can never appear in `inlineKinds` (a name set) except by
 		// accidental string collision; it lands in vaporized-literals regardless
@@ -1333,7 +1271,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		// against the old two-bucket design: vaporized ∪ inline-excluded used
 		// to be defined as complementary by construction, so a reachable-but-
 		// unaccounted miss like `comment` had no way to surface as a real gap.
-		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set(['comment']));
+		reportKindIdStampMisses(misses, sink, new Set(['_declaration_statement']), new Set(['comment']));
 		const diagnostics = stampDiagnostics(sink);
 		expect(diagnostics).toContainEqual({
 			code: 'kindid-inline-excluded-symbols',
@@ -1364,24 +1302,23 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 	});
 
 	it('reports an unclassified symbol as warning severity', () => {
-		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set(), aliasTargets: new Set() };
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(), new Set(['comment']));
+		reportKindIdStampMisses(misses, sink, new Set(), new Set(['comment']));
 		const unclassified = sink.all().find((d) => d.code === 'kindid-unclassified-symbols');
 		expect(unclassified?.details).toEqual({ kinds: ['comment'] });
 		expect(unclassified?.severity).toBe('warning');
 		expect(sink.all().some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
 	});
 
-	// End-to-end through link() itself (not a hand-built inlineKinds set):
+	// End-to-end through linkPredicted() itself (not a hand-built inlineKinds set):
 	// `raw.inline` (evaluate's own DSL-level record) drops inherited
-	// base-grammar inline entries, so link() must read the grammar's
+	// base-grammar inline entries, so linkPredicted() must read the grammar's
 	// COMPILED inline list (grammar.json) instead. These five kinds are all
 	// declared inline in typescript's compiled grammar via base-grammar
 	// inheritance, not typescript's own raw.inline — a regression back to
 	// `new Set(raw.inline)` reports every one of them as VAPORIZED.
-	it('link() classifies base-grammar-inherited inline kinds as inline-excluded, not VAPORIZED', async () => {
+	it('linkPredicted() classifies base-grammar-inherited inline kinds as inline-excluded, not VAPORIZED', async () => {
 		// loadGeneratedIdTables/loadGrammarJsonInlineList resolve
 		// packages/<grammar>/... relative to process.cwd() — chdir to the repo
 		// root for this call so the test passes regardless of which directory
@@ -1437,9 +1374,11 @@ describe('link — variantChildren is stamped on the linked grammar', () => {
 					},
 					{ type: STRING, value: ']' }
 				]
-			} as unknown as Rule<'evaluate'>
+			} as unknown as Rule<'evaluate'>,
+			_semi_body: { type: STRING, value: ';' } as Rule<'evaluate'>,
+			_list_body: { type: STRING, value: ',' } as Rule<'evaluate'>
 		});
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		expect(linked.variantChildren).toBeDefined();
 		expect(linked.variantChildren?.get('array_expression')).toEqual([
 			{ kind: 'array_expression_semi', name: 'semi', definedBy: 'override' },

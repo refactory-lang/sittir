@@ -27,7 +27,7 @@ function hintHomeFixture(declared: boolean) {
 		'block',
 		declared
 	);
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), new Map());
 	return { nodeMap, generatedIdTables, addresses };
 }

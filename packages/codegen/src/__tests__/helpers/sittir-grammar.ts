@@ -21,7 +21,7 @@ export async function evaluateSittirGrammar(
 		writeFileSync(join(dir, '.sittir', 'resolutions.json'), JSON.stringify(resolutions));
 		writeFileSync(
 			join(dir, 'grammar.sittir.ts'),
-			`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { sittirGrammar, bindings, rename, split, field, alias, preference, variant } from ${DSL};\nexport default sittirGrammar(base, { resolutions, name: '${name}', ${config} });\n`
+			`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { sittirGrammar, bindings, rename, split, field, alias, preference, variant, refine } from ${DSL};\nexport default sittirGrammar(base, { resolutions, name: '${name}', ${config} });\n`
 		);
 		return await evaluate(join(dir, 'grammar.sittir.ts'), NO_FILE_TYPES, options);
 	} finally {

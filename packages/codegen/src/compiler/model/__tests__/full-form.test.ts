@@ -1,9 +1,10 @@
+import { diagnosePredicted } from '../../../__tests__/helpers/linked.ts';
+import { predictedIdTablesOf } from '../../../dsl/symbol-table.ts';
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../../__tests__/helpers/sittir-grammar.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { compileGrammar } from '../../compile.ts';
-import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
 import type { NodeMap } from '../../types.ts';
@@ -17,7 +18,7 @@ function nodeMapOf(grammar: string): Promise<NodeMap> {
 	let nodeMap = compiled.get(grammar);
 	if (nodeMap === undefined) {
 		nodeMap = (async () =>
-			(await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap)();
+			(await compileGrammar({ package: grammarPackage(grammar) })).nodeMap)();
 		compiled.set(grammar, nodeMap);
 	}
 	return nodeMap;
@@ -60,7 +61,7 @@ describe('full form stamp', () => {
 
 	it('takes the literal runs around an enum that is the whole content', async () => {
 		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-go/grammar.js'), 'go');
-		const { nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+		const { nodeMap } = diagnosePredicted(raw);
 		expect(fullFormOf(nodeMap, 'rune_literal_arm2_arm5')).toEqual({ open: { texts: ["'\\"] }, close: { texts: ["'"] } });
 		const content = nodeMap.nodes.get('rune_literal_arm2_arm5')?.slots.find((slot) => slot.name === 'content');
 		expect(content?.values.map((value) => ('value' in value ? [value.value, value.resolvedKind] : undefined))).toEqual(

@@ -1,6 +1,6 @@
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compiler/compile.ts';
-import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { allGrammars, grammarPackage } from '../../grammars.ts';
 import { listOptionKeys, listViewHint, listViewPlanOf } from '../factories.ts';
 
@@ -15,12 +15,12 @@ describe('the list-view plan', () => {
 
 	for (const grammar of allGrammars()) {
 		it(`${grammar}: every list view's spec keys are the keys of its marker's options`, async () => {
-			const generatedIdTables = await loadGeneratedIdTables(grammar);
-			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
+			const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage(grammar) });
+			const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 			let views = 0;
 			for (const node of nodeMap.nodes.values()) {
-				const plan = listViewPlanOf(node, nodeMap, undefined);
-				const hint = listViewHint(node, nodeMap, undefined);
+				const plan = listViewPlanOf(node, nodeMap, kindEntries);
+				const hint = listViewHint(node, nodeMap, kindEntries);
 				expect(plan === undefined).toBe(hint === undefined);
 				if (plan === undefined || hint === undefined) continue;
 				views++;

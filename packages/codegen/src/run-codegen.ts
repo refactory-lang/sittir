@@ -8,7 +8,6 @@ import { validateRenderableFromNodeMap, formatRenderableReport } from './validat
 
 import { generate } from './compiler/generate.ts';
 import { compileGrammar, type Compilation } from './compiler/compile.ts';
-import { loadPackageIdTables } from './compiler/generated-metadata.ts';
 import {
 	GrammarDiagnosticError,
 	blockedRecords,
@@ -142,11 +141,7 @@ interface GatedCompilation {
 }
 
 async function gatedCompilation(pkg: GrammarPackage, allowDiagnostics: ReadonlySet<string>): Promise<GatedCompilation> {
-	const gated = await compileGrammar({
-		package: pkg,
-		generatedIdTables: await loadPackageIdTables(pkg),
-		allowDiagnostics
-	}).then(
+	const gated = await compileGrammar({ package: pkg, allowDiagnostics }).then(
 		(compilation): GatedCompilation => ({ records: compilation.grammarDiagnostics, blocked: [], compilation }),
 		(error: unknown): GatedCompilation => {
 			if (!(error instanceof GrammarDiagnosticError)) throw error;

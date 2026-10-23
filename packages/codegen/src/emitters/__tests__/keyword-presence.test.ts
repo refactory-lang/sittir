@@ -1,3 +1,5 @@
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { PATTERN, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
@@ -46,19 +48,19 @@ const ref = (name: string, multiplicity: NodeOrTerminal['multiplicity']): NodeOr
 	multiplicity
 });
 
-function makeKeyword(kind: string, text: string): AssembledKeyword {
-	return new AssembledKeyword(kind, { type: STRING, value: text });
+function makeKeyword(kind: string, text: string, kindEntries: readonly GeneratedKindEntry[]): AssembledKeyword {
+	return new AssembledKeyword(kind, { type: STRING, value: text }, { kindEntries });
 }
 
-function makeEnum(kind: string, values: string[]): AssembledEnum {
+function makeEnum(kind: string, values: string[], kindEntries: readonly GeneratedKindEntry[]): AssembledEnum {
 	return new AssembledEnum(kind, {
 		type: 'enum',
 		members: values.map((v) => ({ type: 'STRING', value: v }))
-	} as any);
+	} as any, { kindEntries });
 }
 
-function makeLeaf(kind: string): AssembledPattern {
-	return new AssembledPattern(kind, { type: PATTERN, value: '' });
+function makeLeaf(kind: string, kindEntries: readonly GeneratedKindEntry[]): AssembledPattern {
+	return new AssembledPattern(kind, { type: PATTERN, value: '' }, { kindEntries });
 }
 
 // ---------------------------------------------------------------------------
@@ -74,7 +76,7 @@ describe('keywordPresenceKind', () => {
 
 		it('optional(SYMBOL(_kw_mut)) where _kw_mut = "mut" → boolean', () => {
 			const f = makeField([ref('_kw_mut', 'optional')]);
-			const nm = makeNodeMap([['_kw_mut', makeKeyword('_kw_mut', 'mut')]]);
+			const nm = makeNodeMap([['_kw_mut', withGeneratedIdTablesNode((kindEntries) => makeKeyword('_kw_mut', 'mut', kindEntries))]]);
 			expect(keywordPresenceKind(f, nm)).toBe('boolean');
 		});
 
@@ -85,7 +87,7 @@ describe('keywordPresenceKind', () => {
 
 		it("repeat(_kw_async) degenerate one-literal → 'boolean'", () => {
 			const f = makeField([ref('_kw_async', 'array')]);
-			const nm = makeNodeMap([['_kw_async', makeKeyword('_kw_async', 'async')]]);
+			const nm = makeNodeMap([['_kw_async', withGeneratedIdTablesNode((kindEntries) => makeKeyword('_kw_async', 'async', kindEntries))]]);
 			expect(keywordPresenceKind(f, nm)).toBe('boolean');
 		});
 	});
@@ -104,8 +106,8 @@ describe('keywordPresenceKind', () => {
 		it("repeat1(SYMBOL(_kw_a) | SYMBOL(_kw_b)) → 'bitflag'", () => {
 			const f = makeField([ref('_kw_a', 'nonEmptyArray'), ref('_kw_b', 'nonEmptyArray')]);
 			const nm = makeNodeMap([
-				['_kw_a', makeKeyword('_kw_a', 'a')],
-				['_kw_b', makeKeyword('_kw_b', 'b')]
+				['_kw_a', withGeneratedIdTablesNode((kindEntries) => makeKeyword('_kw_a', 'a', kindEntries))],
+				['_kw_b', withGeneratedIdTablesNode((kindEntries) => makeKeyword('_kw_b', 'b', kindEntries))]
 			]);
 			expect(keywordPresenceKind(f, nm)).toBe('bitflag');
 		});
@@ -117,19 +119,19 @@ describe('keywordPresenceKind', () => {
 			// resolveEntryLiteral returns undefined because enum isn't
 			// single-value. So the single-entry-optional branch doesn't fire.
 			const f = makeField([ref('enum_vis', 'optional')]);
-			const nm = makeNodeMap([['enum_vis', makeEnum('enum_vis', ['pub', 'priv'])]]);
+			const nm = makeNodeMap([['enum_vis', withGeneratedIdTablesNode((kindEntries) => makeEnum('enum_vis', ['pub', 'priv'], kindEntries))]]);
 			expect(keywordPresenceKind(f, nm)).toBeNull();
 		});
 
 		it('repeat(choice(STRING, SYMBOL($.kind))) → null (non-literal symbol disqualifies)', () => {
 			const f = makeField([terminal('const', 'array'), ref('mutable_specifier', 'array')]);
-			const nm = makeNodeMap([['mutable_specifier', makeLeaf('mutable_specifier')]]);
+			const nm = makeNodeMap([['mutable_specifier', withGeneratedIdTablesNode((kindEntries) => makeLeaf('mutable_specifier', kindEntries))]]);
 			expect(keywordPresenceKind(f, nm)).toBeNull();
 		});
 
 		it('optional($.kind) → null (non-literal symbol)', () => {
 			const f = makeField([ref('identifier', 'optional')]);
-			const nm = makeNodeMap([['identifier', makeLeaf('identifier')]]);
+			const nm = makeNodeMap([['identifier', withGeneratedIdTablesNode((kindEntries) => makeLeaf('identifier', kindEntries))]]);
 			expect(keywordPresenceKind(f, nm)).toBeNull();
 		});
 
@@ -157,7 +159,7 @@ describe('keywordPresenceValue', () => {
 
 	it('returns the keyword text for optional(SYMBOL(_kw_async))', () => {
 		const f = makeField([ref('_kw_async', 'optional')]);
-		const nm = makeNodeMap([['_kw_async', makeKeyword('_kw_async', 'async')]]);
+		const nm = makeNodeMap([['_kw_async', withGeneratedIdTablesNode((kindEntries) => makeKeyword('_kw_async', 'async', kindEntries))]]);
 		expect(keywordPresenceValue(f, nm)).toBe('async');
 	});
 

@@ -11,6 +11,7 @@ import { evaluate } from '../evaluate.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { link } from '../../compiler/link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { transform } from '../transform/transform.ts';
@@ -317,7 +318,7 @@ describe('Evaluate — edge cases', () => {
 			const hiddenRef = expressionStatement.members.find((m) => m.type === 'SYMBOL' && m.name === '_expression');
 			expect(hiddenRef).toEqual(expect.objectContaining({ inline: true }));
 			expect(hiddenRef?.hidden).toBeUndefined();
-			expect(link(raw).rules['_expression']?.hidden).toBe(true);
+			expect(linkPredicted(raw).rules['_expression']?.hidden).toBe(true);
 		});
 
 		it('enriches references with optional=true when the ref is wrapped in optional()', async () => {
@@ -418,7 +419,7 @@ describe('Evaluate — evaluate()', () => {
 			// PR-P: enum-shaped choices are type 'CHOICE' now.
 			expect(operatorKinds.sort()).toEqual(['CHOICE', 'STRING', 'STRING']);
 
-			const normalized = normalizeGrammar(link(raw));
+			const normalized = normalizeGrammar(linkPredicted(raw));
 			const nodeMap = assemble(AssembleCtx.from(normalized));
 			const node = nodeMap.nodes.get('binary_expression');
 			expect(node && 'slots' in node).toBe(true);

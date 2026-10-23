@@ -38,7 +38,7 @@ export interface ParserSymbolTable {
 	readonly facts: ParserSymbolFacts;
 }
 
-export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: unknown): JoinedIds {
+export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: unknown, lexicalRanks?: ReadonlyMap<string, number>): JoinedIds {
 	const symbolTextFacts = resolveSymbolTextFacts(table.names, collectGrammarFacts(grammarJson));
 	const joined = joinIdNames(
 		table.symbols,
@@ -46,7 +46,7 @@ export function kindTableOfSymbolTable(table: ParserSymbolTable, grammarJson: un
 		deriveSymbolRuntimeName(symbolTextFacts),
 		symbolTextFacts,
 		table.facts,
-		collectLexicalRanks(grammarJson)
+		lexicalRanks
 	);
 	joined.ids.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
 	return joined;
@@ -381,7 +381,7 @@ interface GrammarJsonRule {
 	readonly metadata?: { readonly symbolSource?: string };
 }
 
-function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, number> {
+export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, number> {
 	const grammar = grammarJson as
 		| { rules?: Record<string, GrammarJsonRule>; externals?: readonly GrammarJsonRule[] }
 		| undefined;
@@ -1459,7 +1459,7 @@ export function predictKindCatalog(grammar: PredictableGrammar): PredictedKindCa
 		},
 		grammar
 	);
-	const entries = collectGeneratedKindEntries(tables).map(({ lexicalRank: _lexicalRank, ...entry }) => entry);
+	const entries = collectGeneratedKindEntries(tables);
 	return { tables, entries, undefinedNames: table.undefinedNames, keyCollisions: collisions };
 }
 

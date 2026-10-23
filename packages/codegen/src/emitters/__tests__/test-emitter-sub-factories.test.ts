@@ -1,9 +1,11 @@
+import type { NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { link } from '../../compiler/link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -30,7 +32,7 @@ function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule
 	return stamped as Record<string, Rule<'evaluate'>>;
 }
 
-function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
+function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMapWithIdTables {
 	const raw: RawGrammar = {
 		name: 'synth',
 		fileTypes: [],
@@ -47,14 +49,10 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 		word: null,
 		references: []
 	};
-	const linked = link(raw);
-	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(AssembleCtx.from(normalized));
-	stampIrSurface(nodeMap);
-	return nodeMap;
+	return assemblePredicted(raw);
 }
 
-function commentNodeMap(): NodeMap {
+function commentNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		comment: {
 			type: CHOICE,
@@ -83,8 +81,8 @@ function commentNodeMap(): NodeMap {
 
 describe('emitTests sub-factories', () => {
 	it('emits a sub-factories describe block with one test per sub-factory', () => {
-		const nodeMap = commentNodeMap();
-		const text = emitTests({ grammar: 'synth', nodeMap });
+		const { nodeMap, generatedIdTables } = commentNodeMap();
+		const text = emitTests({ grammar: 'synth', nodeMap, generatedIdTables });
 
 		expect(text).toContain("describe('comment sub-factories'");
 		expect(text).toContain('ir.comment.doc(');
@@ -94,10 +92,11 @@ describe('emitTests sub-factories', () => {
 	});
 
 	it('pins a known-failing sub-factory case with it.skip and a reason comment', () => {
-		const nodeMap = commentNodeMap();
+		const { nodeMap, generatedIdTables } = commentNodeMap();
 		const text = emitTests({
 			grammar: 'synth',
 			nodeMap,
+			generatedIdTables,
 			expectTestFailures: { 'comment.doc': 'render omits doc marker' }
 		});
 
@@ -106,9 +105,9 @@ describe('emitTests sub-factories', () => {
 	});
 
 	it('asserts a non-empty render only for a kind whose render writes text', () => {
-		const nodeMap = commentNodeMap();
+		const { nodeMap, generatedIdTables } = commentNodeMap();
 		const sections = (bodies: Parameters<typeof emitTests>[0]['renderBodies']) =>
-			emitTests({ grammar: 'synth', nodeMap, renderBodies: bodies }).split("describe('").filter((section) => section.startsWith('comment'));
+			emitTests({ grammar: 'synth', nodeMap, generatedIdTables, renderBodies: bodies }).split("describe('").filter((section) => section.startsWith('comment'));
 		const layoutOnly = new Map([['comment', [...tokenSeam('\n'), ...slot('content')]], ['comment_doc', tokenSeam('\n')], ['comment_plain', tokenSeam('\n')]]);
 		for (const section of sections(layoutOnly)) expect(section).not.toContain('toBeGreaterThan(0)');
 		const written = new Map([['comment', [...text('//'), ...slot('content')]]]);

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { AssembledBranch } from '../model/node-map.ts';
@@ -48,7 +49,7 @@ describe('NodeMap back-pointer maps', () => {
 			word: null,
 			references: []
 		};
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		// Return the post-normalize rules — that's what assemble walks, so
@@ -78,7 +79,7 @@ describe('NodeMap back-pointer maps', () => {
 			word: null,
 			references: []
 		};
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		return { ...normalized, nodeMap: assemble(AssembleCtx.from(normalized)) };
 	}

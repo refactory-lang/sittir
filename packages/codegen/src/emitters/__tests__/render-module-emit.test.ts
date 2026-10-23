@@ -105,10 +105,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, generatedIdTables)
+		AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables })
 	);
 
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const rulesConfig = {
 		nodeMap,
 		kindEntries,
@@ -116,10 +116,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 	};
 	const prepass = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, prepass);
+	stampStaticSpacing(nodeMap, grammar, prepass, kindEntries);
 	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
-	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced)).seamed;
-	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
+	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
 

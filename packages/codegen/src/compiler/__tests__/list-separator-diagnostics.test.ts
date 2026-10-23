@@ -1,3 +1,5 @@
+import { diagnosePredicted } from '../../__tests__/helpers/linked.ts';
+import { predictedIdTablesOf } from '../../dsl/symbol-table.ts';
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -13,7 +15,7 @@ const LIST_CODES = ['separator-pattern', 'separator-default-undeclared', 'field-
 describe('list separator and flank shapes are blocking records', () => {
 	it('tree-sitter-go: newline-or-semicolon separators with no declared default are recorded, a headless repeat is not a list with a flank, and floors clear the records at the gate', async () => {
 		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-go/grammar.js'), 'go');
-		const { diagnostics, nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+		const { diagnostics, nodeMap } = diagnosePredicted(raw);
 		const records = diagnostics.filter((d) => LIST_CODES.includes(d.code));
 		const owners = (code: string): string[] => records.filter((d) => d.code === code).map((d) => d.ownerKind!).sort();
 		expect(owners('separator-pattern')).toEqual([]);
@@ -48,15 +50,15 @@ describe('list separator and flank shapes are blocking records', () => {
 			separator: { value: separator, trailing: 'optional' }
 		};
 		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member' };
-		const nodes = new Map<string, AssembledNode>();
-		nodes.set('member_list', new AssembledList('member_list', rule, undefined, { separatorRule: separator, simplifiedRule: simplified, renderRule: simplified }));
-		nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
 		const kindEntries = [
 			{ kind: 'member_list', id: 1 },
 			{ kind: 'member', id: 2 },
 			{ kind: 'comma', id: 3, symbolName: ',', literalText: ',', anon: true },
 			{ kind: 'semi', id: 4, symbolName: ';', literalText: ';', anon: true }
 		];
+		const nodes = new Map<string, AssembledNode>();
+		nodes.set('member_list', new AssembledList('member_list', rule, { kindEntries }, { kindEntries, separatorRule: separator, simplifiedRule: simplified, renderRule: simplified }));
+		nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 		const records = undeclaredSeparatorDiagnostics('test', { nodeMap: makeNodeMapWith(nodes), kindEntries });
 		expect(records).toEqual([
 			expect.objectContaining({ code: 'separator-default-undeclared', severity: 'error', canProceed: false, ownerKind: 'member_list', slotName: 'member', details: { arms: ['comma', 'semi'] } })

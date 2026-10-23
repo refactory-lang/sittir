@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { emitKindIdRust } from '../../emitters/kind-id-rust.ts';
 import type { RawGrammar } from '../types.ts';
@@ -38,7 +38,7 @@ function makeMinimalFixture(): {
 			word: null,
 			references: []
 		},
-		generatedIdTables: {
+		generatedIdTables: { fieldIds: new Map(), folds: new Map(),
 			kindIds: {
 				[ERROR_KIND_NAME]: ERROR_KIND_ROW,
 				call_expression: {
@@ -72,7 +72,7 @@ function makeMinimalFixture(): {
 describe('emitKindIdRust', () => {
 	it('emits per-kind KindId constants in SCREAMING_SNAKE_CASE', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 
@@ -89,7 +89,7 @@ describe('emitKindIdRust', () => {
 
 	it('emits generated header comment referencing the grammar', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 
@@ -105,7 +105,7 @@ describe('emitKindIdRust', () => {
 
 	it('entries are sorted by numeric id', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 
@@ -172,7 +172,7 @@ describe('emitKindIdRust', () => {
 		// path. Since `_field_identifier` won't be in nodeMap.nodes for this grammar,
 		// it will be filtered out by `collectKindEntries` — which is the correct
 		// behavior. Verify that the two visible kinds still emit correctly.
-		const generatedIdTables: GeneratedIdTables = {
+		const generatedIdTables: GeneratedIdTables = { fieldIds: new Map(), folds: new Map(),
 			kindIds: {
 				[ERROR_KIND_NAME]: ERROR_KIND_ROW,
 				call_expression: {
@@ -213,7 +213,7 @@ describe('emitKindIdRust', () => {
 			sourceArtifact: 'parser.wasm'
 		};
 
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 

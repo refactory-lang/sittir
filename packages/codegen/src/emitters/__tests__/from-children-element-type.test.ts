@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
@@ -8,7 +9,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 
 /**
@@ -19,7 +20,7 @@ import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
  * via `childElementType`), not from whichever field happens to be
  * `fields[0]`.
  */
-function makeFieldPatternNodeMap(withMarkers: boolean) {
+function makeFieldPatternNodeMap(withMarkers: boolean, kindEntries: readonly GeneratedKindEntry[]) {
 	const markers: SeqRule<'link'>['members'] = [
 		{ type: FIELD, name: 'ref', content: { type: OPTIONAL, content: { type: STRING, value: 'ref' } } },
 		{
@@ -43,16 +44,16 @@ function makeFieldPatternNodeMap(withMarkers: boolean) {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const parentRender = flatten(parentRule);
-	nodes.set('field_pattern', new AssembledBranch('field_pattern', parentRender, parentRender));
-	nodes.set('_mutable_specifier', new AssembledKeyword('_mutable_specifier', { type: STRING, value: 'mut' }));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('field_pattern_named', new AssembledPattern('field_pattern_named', { type: PATTERN, value: '.+' }));
+	nodes.set('field_pattern', new AssembledBranch('field_pattern', parentRender, parentRender, { kindEntries }));
+	nodes.set('_mutable_specifier', new AssembledKeyword('_mutable_specifier', { type: STRING, value: 'mut' }, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('field_pattern_named', new AssembledPattern('field_pattern_named', { type: PATTERN, value: '.+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 describe('from() children element type', () => {
 	it('unions every choice arm of the sole slot, matching the factory signature', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(false) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeFieldPatternNodeMap(false, kindEntries))});
 
 		expect(src).toContain('T.Identifier | T.FieldPatternNamed');
 		expect(src).not.toContain('never | T.FieldPattern');
@@ -62,7 +63,7 @@ describe('from() children element type', () => {
 		// ref / mutable_specifier are configurable keyword markers: the
 		// kind is multi-slot for surface purposes and takes a config object,
 		// so from() must not treat it as child-spread.
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeFieldPatternNodeMap(true) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeFieldPatternNodeMap(true, kindEntries))});
 
 		expect(src).not.toContain('"mut" | T.Identifier | T.FieldPatternNamed');
 	});

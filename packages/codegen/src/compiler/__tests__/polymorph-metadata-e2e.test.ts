@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { deriveVariantChildren } from '../variant-structural.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
@@ -19,7 +20,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
 describe('polymorph metadata — structural e2e', () => {
 	it('python: assignment polymorph variants are derived structurally', async () => {
 		const raw = await evaluatePackage(grammarPackage('python'));
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const structural = deriveVariantChildren(linked.rules);
 		const assignmentVariants = structural.get('assignment');
 		expect(assignmentVariants).toEqual([
@@ -31,7 +32,7 @@ describe('polymorph metadata — structural e2e', () => {
 
 	it('rust: polymorph variants derived structurally for converted rules', async () => {
 		const raw = await evaluatePackage(grammarPackage('rust'));
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const structural = deriveVariantChildren(linked.rules);
 
 		const closureVariants = structural.get('closure_expression');

@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { emittedTemplates } from './support/emitted-templates.ts';
 import { slot } from '../render-body.ts';
@@ -10,7 +11,7 @@ import { emitRenderModule } from '../render-module.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
-function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
+function makeRepeatedUnnamedChoiceNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -28,13 +29,13 @@ function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const parentRender = flatten(parentRule);
-	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRender, parentRender));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRender, parentRender, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
-function makeOptionalUnnamedHelperNodeMap(): NodeMap {
+function makeOptionalUnnamedHelperNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -57,11 +58,11 @@ function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const parentRender = flatten(parentRule);
-	nodes.set('parent_helper', new AssembledBranch('parent_helper', parentRender, parentRender));
+	nodes.set('parent_helper', new AssembledBranch('parent_helper', parentRender, parentRender, { kindEntries }));
 	const helperRender = flatten(helperRule);
-	nodes.set('_helper', new AssembledBranch('_helper', helperRender, helperRender));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('_helper', new AssembledBranch('_helper', helperRender, helperRender, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 

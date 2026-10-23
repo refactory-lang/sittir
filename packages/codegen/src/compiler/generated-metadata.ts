@@ -8,6 +8,7 @@ import { fromMissingParserTables, GrammarDiagnosticError } from './diagnostics/g
 import {
 	deriveFieldRuntimeName,
 	joinIdNames,
+	collectLexicalRanks,
 	kindTableOfSymbolTable,
 	type CEnumEntry,
 	type ParserSymbolFacts,
@@ -68,7 +69,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 		if (rawId !== undefined && publicId !== undefined) folds.set(publicId, [...(folds.get(publicId) ?? []), rawId]);
 	}
 	return {
-		kindIds: collisionFreeIds(kindTableOfSymbolTable(table, grammarJson), sourceArtifact),
+		kindIds: collisionFreeIds(kindTableOfSymbolTable(table, grammarJson, collectLexicalRanks(grammarJson)), sourceArtifact),
 		fieldIds: collisionFreeIds(joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName), sourceArtifact),
 		folds,
 		sourceArtifact

@@ -53,7 +53,7 @@ describe('countSlots — Table 1 distribution', () => {
 function slotsLen(rule: Rule): number {
 	// Suppress unnamed-choice warnings in convergence tests.
 	setUnnamedChoiceWarner(() => {});
-	const result = collectSlots(flatten(rule) as Rule);
+	const result = collectSlots(flatten(rule) as Rule, undefined, { kindEntries: [] });
 	setUnnamedChoiceWarner((kind) => console.warn(`unnamed choice slot: ${kind ?? '(unknown)'}`));
 	return result.length;
 }

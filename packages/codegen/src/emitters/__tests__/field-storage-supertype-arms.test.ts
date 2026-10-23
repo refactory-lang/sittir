@@ -36,8 +36,8 @@ function makeTokenTreeNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('token_tree', new AssembledBranch('token_tree', flatten(treeRule), flatten(treeRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('token_tree', new AssembledBranch('token_tree', flatten(treeRule), flatten(treeRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }, { kindEntries }));
 	nodes.set(
 		'_primitive_type',
@@ -49,7 +49,7 @@ function makeTokenTreeNodeMap() {
 	);
 	nodes.set(
 		'_token',
-		new AssembledSupertype('_token', tokenRule, [{ name: 'identifier' }, { name: 'self' }, { name: '_primitive_type' }])
+		new AssembledSupertype('_token', tokenRule, [{ name: 'identifier' }, { name: 'self' }, { name: '_primitive_type' }], { kindEntries })
 	);
 	return makeNodeMapWith(nodes);
 }

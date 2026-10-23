@@ -3,7 +3,7 @@ import { ALIAS, CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-ty
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { compileGrammar } from '../compile.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { loadPackageIdTables } from '../generated-metadata.ts';
@@ -56,15 +56,14 @@ describe('a declared supertype the parser shows as a visible node', () => {
 	}
 
 	it('a declared supertype referenced only under its own named alias stays concrete', () => {
-		const generatedIdTables = { kindIds: { parent: 900, shown: 901 }, sourceArtifact: 'synthetic' };
-		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(aliasedParentRaw(['parent']), { generatedIdTables }))));
-		expect(nodeMap.nodes.get('parent')).toBeDefined();
-		expect(nodeMap.nodes.get('parent')).not.toBeInstanceOf(AssembledSupertype);
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(aliasedParentRaw(['parent'])))));
+		expect(nodeMap.nodes.get('shown')).toBeDefined();
+		expect(nodeMap.nodes.get('shown')).not.toBeInstanceOf(AssembledSupertype);
 	});
 
 	it('a choice of kinds referenced only under its own named alias, not declared a supertype, stays concrete', () => {
-		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(aliasedParentRaw([])))));
-		expect(nodeMap.nodes.get('parent')).toBeDefined();
-		expect(nodeMap.nodes.get('parent')).not.toBeInstanceOf(AssembledSupertype);
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(aliasedParentRaw([])))));
+		expect(nodeMap.nodes.get('shown')).toBeDefined();
+		expect(nodeMap.nodes.get('shown')).not.toBeInstanceOf(AssembledSupertype);
 	});
 });

@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { AbstractAssembledCompound, AssembledSupertype } from '../model/node-map.ts';
@@ -25,7 +26,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>) {
 		word: null,
 		references: []
 	};
-	return assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+	return assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(raw))));
 }
 
 describe('hidden choice-of-kinds rules are supertypes', () => {

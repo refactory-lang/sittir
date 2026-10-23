@@ -6,6 +6,7 @@
  * longer exists at assemble.
  */
 
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { FIELD, REPEAT, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveSlots, isTerminalValue, AssembledPunctuation } from '../model/node-map.ts';
@@ -54,7 +55,7 @@ describe('token wrapper lexical facts', () => {
 			name: 'x',
 			content: { type: REPEAT, content: { type: STRING, value: 'foo' } }
 		};
-		const slots = deriveSlots(flatten(rule));
+		const slots = deriveSlots(flatten(rule), { kindEntries: [] });
 		const terminal = slots.find((s) => s.name === 'x')!.values.find(isTerminalValue);
 		expect(terminal!.immediate).toBeUndefined();
 		expect(terminal!.tokenized).toBeUndefined();
@@ -64,7 +65,7 @@ describe('token wrapper lexical facts', () => {
 		// Post-link shape of `token.immediate('!')`: the wrapper is consumed
 		// and its facts live on the literal it wrapped.
 		const stamped: StringRule = { type: STRING, value: '!', tokenized: true, immediate: true };
-		const tok = new AssembledPunctuation('_inner_marker', stamped);
+		const tok = withGeneratedIdTablesNode((kindEntries) => new AssembledPunctuation('_inner_marker', stamped, { kindEntries }));
 		expect(tok.immediate).toBe(true);
 		expect(tok.tokenized).toBe(true);
 		expect(tok.text).toBe('!');
@@ -72,7 +73,7 @@ describe('token wrapper lexical facts', () => {
 
 	it('AssembledPunctuation returns immediate=false when rule is plain StringRule', () => {
 		const strRule: StringRule = { type: STRING, value: 'pub' };
-		const tok = new AssembledPunctuation('_kw_pub', strRule);
+		const tok = withGeneratedIdTablesNode((kindEntries) => new AssembledPunctuation('_kw_pub', strRule, { kindEntries }));
 		expect(tok.immediate).toBe(false);
 		expect(tok.tokenized).toBe(false);
 		expect(tok.text).toBe('pub');

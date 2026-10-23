@@ -13,6 +13,8 @@
  * name (`_member`, via `canonicalSeparatedListField`, shared.ts).
  */
 
+import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
@@ -25,7 +27,7 @@ import {
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import {kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
@@ -35,17 +37,17 @@ import type { KindEnumEntry } from '../kind-discriminant.ts';
 const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
 const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
-function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }) {
+function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }, kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
 		})
 	);
-	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -55,6 +57,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
 	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true }
 ];
+const ID_TABLES = kindIdTablesOf(KIND_ENTRIES);
 
 function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, resolved?: { readonly separator?: string; readonly delimiter?: string }): string {
 	const node = nodeMap.nodes.get('member_list');
@@ -62,10 +65,10 @@ function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>, resolved?: { readon
 		if (resolved?.separator !== undefined) node.resolvedSeparatorArm = resolved.separator;
 		if (resolved?.delimiter !== undefined) node.resolvedDelimiterArm = resolved.delimiter;
 	}
-	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
+	return emitFactories({ grammar: 'test', nodeMap, generatedIdTables: ID_TABLES });
 }
 
-function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
+function makeMultiKindMemberNodeMap(kindEntries: readonly GeneratedKindEntry[]): ReturnType<typeof makeNodeMapWith> {
 	// multiplicity: 'array' (not 'nonEmptyArray') deliberately — the elements
 	// type takes the bare-array form ("(A | B)[]") rather than
 	// NonEmptyArray<A | B>, which is the actual shape the union-parenthesization
@@ -90,14 +93,14 @@ function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
 			simplifiedRule: contentSimplifiedRule,
 			renderRule: contentRenderRule
 		})
 	);
-	nodes.set('memberA', new AssembledPattern('memberA', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('memberB', new AssembledPattern('memberB', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('memberA', new AssembledPattern('memberA', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('memberB', new AssembledPattern('memberB', { type: PATTERN, value: '[0-9]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -116,7 +119,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), { separator: 'semi' });
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries), ID_TABLES).nodeMap, { separator: 'semi' });
 
 		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(...elements: A & RefuseUndeclared<A>): ');
 		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(options: ');
@@ -146,7 +149,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries), ID_TABLES).nodeMap);
 		expect(emitted).not.toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(...elements: A & RefuseUndeclared<A>): ');
 		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(options: ');
 		expect(emitted).toContain('separator: TSKindId.Comma | TSKindId.Semi');
@@ -162,7 +165,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
 		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(...elements: A & RefuseUndeclared<A>): ');
 		expect(emitted).toContain('export function buildMemberList<A extends NonEmptyArray<Admit<T.Member>>>(options: ');
@@ -180,7 +183,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional', leading: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
 		expect(emitted).not.toContain('separator?:');
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
@@ -196,7 +199,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' } }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
 		expect(emitted).toContain(
 			'export function buildMemberList(...elements: NonEmptyArray<Admit<T.Member>>): T.MemberList.Bound {'
@@ -207,7 +210,7 @@ describe('factories emitter — separatedList', () => {
 	});
 
 	it('multi-kind element choice on a plain (non-nonEmpty) repeat: parenthesizes the union before appending []', () => {
-		const emitted = emit(makeMultiKindMemberNodeMap());
+		const emitted = emit(withIdTables((kindEntries) => makeMultiKindMemberNodeMap(kindEntries), ID_TABLES).nodeMap);
 
 		// Correct: the union is parenthesized before the array suffix.
 		expect(emitted).toContain('export function buildMemberList<A extends Admit<T.MemberA | T.MemberB>[]>(...elements: A & RefuseUndeclared<A>): ');
@@ -227,7 +230,7 @@ describe('factories emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional', leading: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap;
 		const listNode = nodeMap.nodes.get('member_list')!;
 		const forwardingSlot = new AssembledNonterminal({
 			values: [{ node: listNode, multiplicity: 'single' }],
@@ -235,17 +238,15 @@ describe('factories emitter — separatedList', () => {
 			hasLeadingDelimiter: false,
 			sourceRuleIds: []
 		});
+		const generatedIdTables = kindIdTablesOf([...KIND_ENTRIES, { id: 5, kind: 'wrapper' }]);
 		nodeMap.nodes.set(
 			'wrapper',
 			new AssembledBranch('wrapper', MEMBER_ELEMENT_SIMPLIFIED_RULE, MEMBER_ELEMENT_RENDER_RULE, {
+				kindEntries: collectGeneratedKindEntries(generatedIdTables),
 				slots: [forwardingSlot]
 			})
 		);
-		const emitted = emitFactories({
-			grammar: 'test',
-			nodeMap,
-			kindEntries: [...KIND_ENTRIES, { id: 5, kind: 'wrapper', member: 'Wrapper' }]
-		});
+		const emitted = emitFactories({ grammar: 'test', nodeMap, generatedIdTables });
 
 		const wrapperOverloads = [...emitted.matchAll(/^export function buildWrapper(<[^\n]*>)?\(([^\n]*)\): ReturnType<typeof _buildWrapper>;$/gm)].map(
 			(m) => ({ typeParams: m[1], params: m[2]! })

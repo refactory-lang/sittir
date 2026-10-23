@@ -17,9 +17,9 @@ async function emittedKindIds(grammar: GrammarName) {
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const nodeMap = assemble(
-		AssembleCtx.from(normalizeGrammar(linked), generatedIdTables)
+		AssembleCtx.from({ ...normalizeGrammar(linked), generatedIdTables: generatedIdTables })
 	);
-	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const entries = collectKindEntries(nodeMap, generatedIdTables);
 	const idOf = (kind: string): number => {
 		const id = entries.find((entry) => entry.kind === kind)?.id;
 		if (id === undefined) throw new Error(`no kind entry for ${kind}`);

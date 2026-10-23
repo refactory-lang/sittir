@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -8,7 +9,7 @@ import {
 	type NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 /**
  * Mirrors rust's `try_block.body`: a wrapper whose one required field
@@ -20,10 +21,10 @@ import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
  * optionality came from a shallow, local "does THIS node have a required
  * slot" scan instead of the same recursive fact.
  */
-function makeNodeMap() {
+function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const rule = flatten({ type: STRING, value: '{}' });
 	// `block`: no fields at all — trivially constructible with no argument.
-	const block = new AssembledBranch('block', rule, rule, { slots: [] });
+	const block = new AssembledBranch('block', rule, rule, { kindEntries, slots: [] });
 	const bodyRef: NodeOrTerminal = { node: block, storageKindId: 1, multiplicity: 'single' };
 	const bodySlot = new AssembledNonterminal({
 		values: [bodyRef],
@@ -33,7 +34,7 @@ function makeNodeMap() {
 		fieldName: 'body'
 	});
 	// `try_block`: one required field, forwarding positionally to `block`.
-	const tryBlock = new AssembledBranch('try_block', rule, rule, { slots: [bodySlot] });
+	const tryBlock = new AssembledBranch('try_block', rule, rule, { kindEntries, slots: [bodySlot] });
 
 	const nodes = new Map<string, AssembledNode>([
 		['block', block],
@@ -44,7 +45,7 @@ function makeNodeMap() {
 }
 
 describe('the loose coercer takes no argument wherever the strict surface derives one (rule 7)', () => {
-	const emitted = emitFrom({ grammar: 'synth', nodeMap: makeNodeMap() });
+	const emitted = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries))});
 
 	it("computes the wrapper's own optionality from argumentOptional, not a local required-field scan", () => {
 		expect(emitted).toContain('export function coerceToTryBlock(input?:');
