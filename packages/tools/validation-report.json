@@ -4,7 +4,7 @@
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
 		"rust": {"digest":"a372b16c795a24537bbf5fbdb5686be8c4781d20ea52e37ce6a30bcf47594fd3","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
 		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
-		"typescript": {"digest":"f9123925e2ef7effbe7c3aa2e790e33fe730c0af7ae88e143b49d943b4fb5189","counts":{"conflict-resolution":{"info":74},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
+		"typescript": {"digest":"773019219636df6c08ff62d967677d0bb65a37bac5d5de0cc547abdafd5c24a3","counts":{"conflict-resolution":{"info":74},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
 	},
 	"rows": [
 		{"source":"validator","grammar":"python","backend":"native","kind":"factory: _simple_statements","count":6,"entries":["Complex case patterns on complex numbers","Control-flow statements","Literals","Maybe sequence pattern right hand side precedence validation","Raise statements","Return statements"],"stage":"built-render-parse-excluded","code":"built-render-parse-excluded","severity":"info","message":"hidden-kind","label":"factory: _simple_statements"},
