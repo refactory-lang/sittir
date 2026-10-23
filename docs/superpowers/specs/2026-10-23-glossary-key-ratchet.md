@@ -38,14 +38,26 @@ owners are exact. Infigraph's doctor stays a manual cross-check, not a gate.
 
 ## Declaration enumeration
 
-Undocumented declarations are the exported set:
-1. an exported top-level declaration: `function`, `class`, `interface`, `type`, `enum`,
-   `const`, `let`, `var`;
-2. a member of an exported class or interface: a method, accessor, property, or
-   parameter property, keyed by its owner (`Owner::member`).
+A named thing the compiler resolves inside an owner is a declaration. `::` separates
+every level of nesting. The enumerator reports, for each file in scope:
 
-Undocumented = enumerated declarations minus keys that resolve to them under the rule
-above. Non-exported declarations and members of non-exported classes are not counted.
+1. top-level declarations: `function`, `class`, `interface`, `type`, `enum`, `const`,
+   `let`, `var`, exported or not;
+2. members of a class or interface: a method, accessor, property, or parameter
+   property, at any depth, keyed `Owner::member`;
+3. members of an enum: keyed `Enum::Member`;
+4. named properties of a named const object literal, at any depth, keyed
+   `Const::prop` and `Const::prop::nested`;
+5. members of a type literal (`type T = { … }`, including generic aliases), at any
+   depth, keyed `Alias::member` and `Alias::member::nested`.
+
+Undocumented declarations are the exported subset of the above: exported top-level
+declarations, plus members of exported classes, interfaces, enums, const objects, and
+type literals. Non-exported declarations and members of non-exported owners are not
+counted.
+
+Undocumented = enumerated exported declarations minus keys that resolve to them under the
+rule above.
 
 ## Classes
 
@@ -60,6 +72,8 @@ segment of `qual` after splitting on `::`. The first matching row is the class.
 | `no-declaration` | no | `name` is not declared in `file` under the owner the key gives |
 | `wrong-owner` | no | `Owner::name`; `name` is declared, but not by `Owner` |
 | `dot-separated` | no | the qualifier uses `.` as a separator; the key must use `::` |
+| `placeholder` | no | the name is `<unknown>`, a relocation artifact; no declaration has that name |
+| `out-of-scope-file` | no | the file is outside the four glossary trees |
 | `file-missing` | no | the file does not exist |
 
 A key with `Owner.member` (dot separator) is broken even when the member exists: it is
@@ -72,6 +86,10 @@ them; it does not rewrite them. `dot-separated`, `wrong-owner`, `no-declaration`
 
 Abstract-class getters need no exception under this rule: a getter declared once in its
 file is a bare unique name, and its key is valid as written.
+
+Enum members, named object-literal properties, and type-literal members follow the same
+rule at any depth. `RuleBase::separator::terminated` is a nested type-literal member, and
+`REPARSE_WRAPPERS::rust::mut_pattern` is a nested property of a named const object.
 
 ## Today's counts (2026-10-23)
 
