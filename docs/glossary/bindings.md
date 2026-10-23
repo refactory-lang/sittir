@@ -1713,3 +1713,39 @@ The store under `dir` for code whose digest is `reader`. A read's entry is `<dir
 ### `packages/codegen/src/bindings/module.ts::assertPackageBindingsFresh`
 
 `assertBindingsFresh` for a grammar package: the hash its generated layer exports (`loadBindingsHash`) against its `bindings.scm` (`facts.ts::bindingsPathIn`). `compileGrammar` runs it before it evaluates the package's top layer (`dsl/evaluate-package.ts::readsGrammarBindings`); `evaluatePackage` does not, so the tools that read a package while its grammar bindings are stale still evaluate it.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headSite`
+
+Projects one capture site onto the lead. Its `down` path is rewritten by `headPath`, rooted at the enclosing kind that `siteRoot` finds for the site, and every other field of the site is kept, so the capture reads the same slot from the receiver side.
+
+### `packages/codegen/src/bindings/lead-facts.ts::matchesNamed`
+
+Lists every admit in a lead's admits tree whose kind is the given kind, descending into each admit's `within` admits. The admits are nested by enclosing kind, so a lookup by kind has to walk the nesting; matches come back in tree order.
+
+### `packages/codegen/src/bindings/lead-facts.ts::ClaimIndices`
+
+The positions one claim takes in a projected claim list, split by side: `plain` is the claim as its unprojected kind, `head` is the claim as the receiver's head. `projectLead` records both sides so `memberWithClaims` can keep a member's claims on the side that member reads.
+
+### `packages/codegen/src/bindings/lead-facts.ts::memberWithClaims`
+
+Maps a member's claim indices through the projection and keeps the ones on the requested side (`plain`, `head`, or `both`). A member with no claims passes through unchanged, and a member whose claims all fall away returns undefined so the caller drops it. Why: each step below a parameter list is classified on its own, so an ordinary parameter's constraints stay on the rest list rather than being redirected to the receiver.
+
+### `packages/codegen/src/bindings/lead-facts.ts::projectedMembers`
+
+Builds the member list after a lead projection. A member the lead heads contributes its head projection, plus its plain projection unless it is the receiver member itself. A member whose owner is a variant kind contributes a plain projection and a head projection taken from the variant bindings. Any other member keeps both sides.
+
+### `packages/codegen/src/bindings/lead-facts.ts::projectLead`
+
+Applies one lead effect to a facts record. The facts are rebound through the effect's variant map. Each claim is projected: a claim the receiver owns keeps only its head form, and a claim on a variant kind keeps its plain form and gains a head form. The indices are recorded, and members, containers and unclaimed facts for variant kinds are projected to match. Why: a lead composes the head's admits in the context of the field and the rest in the context of the item.
+
+### `packages/codegen/src/bindings/pinned-memo.ts::read`
+
+Returns the value for an input in a mode, from an on-disk memo, and computes it only when no entry exists. The entry is keyed by the mode directory and the sha256 of the input, and it records the reader that produced it, so an entry written by a different reader is recomputed. Writes go beside the target and are renamed into place, so a reader never sees a partial entry. Why: pinned reads are stored on disk so that they survive across processes.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::Reader`
+
+The state a pinned typescript read needs: the kinds, the engine over the typescript API, and the pinned build. The module keeps one promise of it, so the pinned build loads once per process.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::Span`
+
+A readonly range in the typescript source, given by its `start` and `end` offsets. It is the span type a pinned typescript read reports for a region of the source.

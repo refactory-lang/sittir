@@ -469,3 +469,7 @@ The names a layer's renames vacated: each rename's source. Their rules are the b
 ### `packages/codegen/src/dsl/verbs/rename.ts::renamedLists`
 
 A layer's lists under its renames (`effects.ts::renameMapOf`), each key renamed as `kinds` says (`ListRename`). With no rename it returns the input itself, so a layer that renames nothing passes its lists through untouched.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal::constructor`
+
+Stores the refusal's code (a `VerbRefusalCode`, the key a caller switches on), its reason, and its details (empty when none are given), and passes the reason to `Error` as the message.

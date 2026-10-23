@@ -624,3 +624,7 @@ Builds the parser of the completed authored layer, layer 1, for source-query val
 ### `packages/codegen/src/transpile/scratch-entry.ts::withScratchEntry`
 
 Runs `run` in a scratch parser directory, `<tmp>/<grammar>/.sittir/`, whose `grammar.js` re-exports one of the package's layers by absolute file URL, beside a copy of the package's `tree-sitter.json`; the directory is removed after, whether `run` returns or throws. A `tree-sitter generate` there builds the chosen layer without touching the package's `.sittir/`, which holds the top layer's outputs. The layer's own relative imports, `resolutions.json` among them, resolve from the layer's file, so they are the package's.
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::unprintable`
+
+Throws that the value has no canonical JSON form. `canonical()` calls it for a value that JSON would drop or turn into null (functions, bigints, non-finite numbers, non-plain objects, undefined array elements). Why: a snapshot or a conflict hash must not flatten such a value silently.

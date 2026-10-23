@@ -15383,3 +15383,11 @@ Each kind id that has registered slots, mapped to the slot property names its bu
 ### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
 
 The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.
+
+### `packages/typescript/grammar.sittir.ts::AccessorPositions`
+
+The positions, within a method form's edit paths, of the slots an accessor arm writes: the `override` slot, the `dropped` slots that an accessor blanks, the `kind` slot that names `get` or `set`, the `optional` slot, and the `signature` slot. `accessorArms` takes them as data, so the same arm builder serves each method form.
+
+### `packages/typescript/grammar.sittir.ts::accessorArms`
+
+Builds the three variants of an accessor-capable method form: `plain`, `getter` and `setter`. Plain keeps the original, with `override` set and the `*` and optional slots filled. The getter and setter blank the dropped and optional slots, name their accessor kind, and replace the signature with the matching accessor signature rule. Why: the ECMAScript accessor productions take no `?`, `*`, `async` or type parameters, and a setter takes exactly one parameter, so each accessor is a separate arm of the form.
