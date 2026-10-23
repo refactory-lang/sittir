@@ -18,13 +18,16 @@
  *      change adds has no base). This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
  *      top of it. A kind departs by name: it is in the base's `kinds` and
- *      missing from the head's. In a row that records its cases by kind
- *      (`casesByKind`) on both sides, every kind is compared on its own,
- *      whether or not the row's pass fell: a kind that did not depart (one
- *      still in `kinds`, or a key that is not one of the base's kinds) may
- *      not lose a case unless `baselineCounterChange` declares the row
- *      (`case-loss`), and a departed kind's lost cases are allowed and
- *      listed in the passing verdict. A gain never offsets a loss. A pass
+ *      missing from the head's; with no `kinds` on either side, no kind
+ *      departs. In a row whose base records its cases by kind
+ *      (`casesByKind`), every kind is compared on its own, whether or not
+ *      the row's pass fell, and the head must record them too: a kind that
+ *      did not depart (one still in `kinds`, or a key that is not one of
+ *      the base's kinds) may not lose a case unless `baselineCounterChange`
+ *      declares the row and names each such kind in its `cases`, with the
+ *      base's and the head's counts (`case-loss`). A departed kind's lost
+ *      cases are allowed and listed in the passing verdict. A gain never
+ *      offsets a loss. A pass
  *      drop is a regression unless the row's fail count (`total - pass`)
  *      did not rise and every lost case belongs to a departed kind; a
  *      declaration does not excuse it. `roundtrip` counts corpus rows and
@@ -83,6 +86,7 @@ import { pathToFileURL } from 'node:url';
 import type {
 	BackendBaseline,
 	CounterPair,
+	DeclaredRowChange,
 	GrammarEntry,
 	ParityFixtures,
 	RoundtripResult,
@@ -520,12 +524,11 @@ interface CaseLosses {
 
 function caseLosses(baseGrammar: GrammarEntry, headGrammar: GrammarEntry, { b, h }: ComparedRow): CaseLosses | undefined {
 	const baseCases = b.casesByKind;
-	const headCases = h.casesByKind;
-	if (baseGrammar.kinds === undefined || headGrammar.kinds === undefined || baseCases === undefined || headCases === undefined) {
-		return undefined;
-	}
-	const head = new Set(headGrammar.kinds);
-	const departed = new Set(baseGrammar.kinds.filter((kind) => !head.has(kind)));
+	if (baseCases === undefined) return undefined;
+	const headCases = h.casesByKind ?? {};
+	const headKinds = headGrammar.kinds;
+	const head = new Set(headKinds);
+	const departed = new Set(headKinds === undefined ? [] : (baseGrammar.kinds ?? []).filter((kind) => !head.has(kind)));
 	const lost = Object.entries(baseCases)
 		.map(([kind, cases]): KindLoss => [kind, cases - (headCases[kind] ?? 0)])
 		.filter(([, cases]) => cases > 0);
@@ -544,7 +547,7 @@ function unexplainedDrop({ b, h }: ComparedRow, { before, after }: ComparedMetri
 	const failBefore = b.total - before;
 	const failAfter = h.total - after;
 	if (failAfter > failBefore) return `its fail count rose ${failBefore} → ${failAfter}`;
-	if (losses === undefined) return 'no kind departure explains it: one side records no kinds or no cases by kind for this row';
+	if (losses === undefined) return 'no kind departure explains it: the base records no cases by kind for this row';
 	if (losses.kept.length === 0) return undefined;
 	const departed = losses.departed.length === 0 ? '' : `; departed ${lossText(losses.departed)}`;
 	return `cases lost by kinds that did not depart: ${lossText(losses.kept)}${departed}`;
@@ -597,7 +600,7 @@ function checkCounts(base: BackendBaseline, head: BackendBaseline, explained: st
 			if (losses === undefined) continue;
 			const [kept] = losses.kept;
 			if (kept !== undefined) {
-				const mismatch = declarationMismatch(head.baselineCounterChange?.grammars[g]?.[row.row], row.row, row.b, row.h);
+				const mismatch = caseLossMismatch(head.baselineCounterChange?.grammars[g]?.[row.row], row, losses.kept);
 				if (mismatch !== undefined) {
 					const note = `cases lost by kinds that did not depart: ${lossText(losses.kept)} (${mismatch})`;
 					const [kind] = kept;
@@ -650,9 +653,7 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 	return null;
 }
 
-type DeclaredChange = { readonly from: CounterPair; readonly to: CounterPair };
-
-function declarationMismatch(declared: DeclaredChange | undefined, row: string, b: CounterPair, h: CounterPair): string | undefined {
+function declarationMismatch(declared: DeclaredRowChange | undefined, row: string, b: CounterPair, h: CounterPair): string | undefined {
 	if (declared === undefined) return `${row} has no baselineCounterChange declaration`;
 	if (declared.from.total !== b.total || declared.from.pass !== b.pass) {
 		return `${row} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`;
@@ -661,6 +662,34 @@ function declarationMismatch(declared: DeclaredChange | undefined, row: string, 
 		return `${row} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`;
 	}
 	return undefined;
+}
+
+function caseLossMismatch(declared: DeclaredRowChange | undefined, { row, b, h }: ComparedRow, kept: readonly KindLoss[]): string | undefined {
+	const counters = declarationMismatch(declared, row, b, h);
+	if (counters !== undefined || declared === undefined) return counters;
+	const undeclared = kept
+		.map(([kind]): KindChange => [kind, b.casesByKind?.[kind] ?? 0, h.casesByKind?.[kind] ?? 0])
+		.filter(([kind, from, to]) => declared.cases?.[kind]?.from !== from || declared.cases[kind]?.to !== to);
+	if (undeclared.length === 0) return undefined;
+	return `${row}'s declaration does not name ${undeclared.map(([kind, from, to]) => `${kind} ${from} → ${to}`).join(', ')} in its cases`;
+}
+
+type KindChange = readonly [kind: string, from: number, to: number];
+
+function checkHeadKeepsInventories(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	const missing = (path: string): RegressionVerdict => ({
+		ok: false,
+		reason: 'schema-violation',
+		summary: `schema violation: head.${path} is missing, though the base records it`,
+		details: { path: `head.${path}`, note: 'a collected head records every kind enumeration and case inventory its base does' }
+	});
+	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
+		if (baseGrammar.kinds !== undefined && headGrammar.kinds === undefined) return missing(`grammars.${g}.kinds`);
+		for (const row of comparedRows(g, baseGrammar, headGrammar)) {
+			if (row.b.casesByKind !== undefined && row.h.casesByKind === undefined) return missing(`${row.path}.casesByKind`);
+		}
+	}
+	return null;
 }
 
 function declaredCounterChangeHolds(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
@@ -838,6 +867,9 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 
 	const dropped = checkDroppedGrammars(base, head);
 	if (dropped) return dropped;
+
+	const inventories = checkHeadKeepsInventories(base, head);
+	if (inventories) return inventories;
 
 	const leftOutRise = checkLeftOutRise(base, head);
 	if (leftOutRise) return leftOutRise;

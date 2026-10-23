@@ -102,9 +102,20 @@ export interface CounterPair {
 	pass: number;
 }
 
+export interface CaseCountChange {
+	from: number;
+	to: number;
+}
+
+export interface DeclaredRowChange {
+	from: CounterPair;
+	to: CounterPair;
+	cases?: Readonly<Record<string, CaseCountChange>>;
+}
+
 export interface BaselineCounterChange {
 	reason: string;
-	grammars: Readonly<Record<string, Readonly<Record<string, { from: CounterPair; to: CounterPair }>>>>;
+	grammars: Readonly<Record<string, Readonly<Record<string, DeclaredRowChange>>>>;
 }
 
 export interface BackendBaseline {

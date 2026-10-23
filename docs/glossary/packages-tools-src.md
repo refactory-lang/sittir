@@ -178,7 +178,7 @@ Rule 3: the first row whose fail count (`total - metric`) rose without a declara
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::declarationMismatch`
 
-Why a `baselineCounterChange` entry does not cover a row: there is none, its `from` is not the base's counters, or its `to` is not the head's. Undefined when it covers the row. The declared total drop (`declaredCounterChangeHolds`) and the declared fail rise (`checkFailRise`) both read a declaration this way.
+Why a `baselineCounterChange` entry does not cover a row: there is none, its `from` is not the base's counters, or its `to` is not the head's. Undefined when it covers the row. The declared total drop (`declaredCounterChangeHolds`) the declared fail rise (`checkFailRise`) and the declared case loss (`caseLossMismatch`, which also reads its `cases`) all read a declaration this way.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::validateCasesByKind`
 
@@ -190,7 +190,7 @@ One row the base records, with the metrics it is compared on: a validator's `pas
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::caseLosses`
 
-The cases a row lost, kind by kind: each kind whose cases in the head's `casesByKind` fall short of the base's, split into kinds that departed (in the base's `kinds` and missing from the head's) and kinds that did not, which are the kinds still in `kinds` and the keys that are not one of the base's kinds. A gain is never netted against a loss. Undefined when either side records no `kinds` or this row's cases by kind.
+The cases a row lost, kind by kind: each kind whose cases in the head's `casesByKind` fall short of the base's, split into kinds that departed (in the base's `kinds` and missing from the head's) and kinds that did not, which are the kinds still in `kinds` and the keys that are not one of the base's kinds. With no `kinds` on either side, no kind departs, so every loss is compared. A gain is never netted against a loss. Undefined only when the base records no cases by kind for the row, as a baseline collected before the field existed does; `checkHeadKeepsInventories` has already rejected a head that drops them.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::unexplainedDrop`
 
@@ -198,7 +198,15 @@ Why a row's pass drop is a regression, or undefined when it is not: its fail cou
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::checkCounts`
 
-Rule 1, per row of `comparedRows`. A pass drop that `unexplainedDrop` does not excuse is a `pass-count-drop`. Then, whether or not the pass fell, a loss of cases by a kind that did not depart is a `case-loss` unless `baselineCounterChange` declares the row (`declarationMismatch`). A row where departed kinds lost cases is added to `explained` with those kinds and their cases, which the passing verdict carries and the CLI prints, so the departures a change relies on are visible in CI output.
+Rule 1, per row of `comparedRows`. A pass drop that `unexplainedDrop` does not excuse is a `pass-count-drop`. Then, whether or not the pass fell, a loss of cases by a kind that did not depart is a `case-loss` unless the row's declaration covers it (`caseLossMismatch`). A row where departed kinds lost cases is added to `explained` with those kinds and their cases, which the passing verdict carries and the CLI prints, so the departures a change relies on are visible in CI output.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::caseLossMismatch`
+
+Why a row's declaration does not cover its case losses: its counters do not match (`declarationMismatch`), or its `cases` does not name every kind that did not depart and lost cases, each with the base's and the head's count. Binding a declaration to the counts of the kinds that moved keeps it to the one comparison it was written for: once the change merges, the base holds the declared `to` counts, so a later move of cases in the same row, even one that leaves the row's pass and total where they were, is not covered.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::checkHeadKeepsInventories`
+
+Rejects a head that records less than its base: `kinds` the base records, or the `casesByKind` of a row the base records them for. A collected head always records both, so an omission is an edited or truncated record, and without the rejection it would switch the per-kind comparison off. A base without them, collected before the fields existed, still loads.
 
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
@@ -231,3 +239,7 @@ One validator's counts and failing kinds. `casesByKind` counts its cases under t
 ### `packages/tools/src/scripts/collect-baseline.ts::ParityFixtures`
 
 The render fixtures replayed for a grammar: counts, failures by kind id, and the fixtures the regen left out. `casesByKind` counts the fixtures under their `pattern`, the kind each was generated for.
+
+### `packages/tools/src/scripts/collect-baseline.ts::DeclaredRowChange`
+
+One row's declared change in `baselineCounterChange`: its counters before (`from`) and after (`to`), and, for cases moved or lost by kinds that did not depart, `cases`, naming each such kind with its count in the base and in the head.

@@ -401,9 +401,73 @@ describe('checkRegression', () => {
 			);
 			head.baselineCounterChange = {
 				reason: 'a case moves from b to c',
-				grammars: { typescript: { factoryStorage: { from: { pass: 30, total: 30 }, to: { pass: 30, total: 30 } } } }
+				grammars: {
+					typescript: {
+						factoryStorage: { from: { pass: 30, total: 30 }, to: { pass: 30, total: 30 }, cases: { b: { from: 6, to: 5 } } }
+					}
+				}
 			};
 			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('a declaration that does not name the kind and its counts excuses no case loss', () => {
+			const base = inventoried();
+			const head = clone(base);
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { a: 19, b: 5, c: 6 } };
+			head.baselineCounterChange = {
+				reason: 'a case moves from b to c',
+				grammars: { typescript: { factoryStorage: { from: { pass: 30, total: 30 }, to: { pass: 30, total: 30 } } } }
+			};
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.details.note).toBe(
+				"cases lost by kinds that did not depart: b (1 case) (factoryStorage's declaration does not name b 6 → 5 in its cases)"
+			);
+		});
+
+		it('a merged declaration does not excuse a later move of cases in the same row', () => {
+			const base = inventoried();
+			const merged = clone(base);
+			merged.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { a: 19, b: 5, c: 6 } };
+			merged.baselineCounterChange = {
+				reason: 'a case moves from b to c',
+				grammars: {
+					typescript: {
+						factoryStorage: { from: { pass: 30, total: 30 }, to: { pass: 30, total: 30 }, cases: { b: { from: 6, to: 5 } } }
+					}
+				}
+			};
+			expect(checkRegression(base, retotal(merged)).ok).toBe(true);
+			const later = clone(merged);
+			later.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { a: 19, b: 6, c: 5 } };
+			const verdict = checkRegression(merged, retotal(later));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('case-loss');
+			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.casesByKind.c');
+		});
+
+		it('with no kinds on either side, no kind departs and every loss is compared', () => {
+			const base = inventoried();
+			delete base.grammars.typescript!.kinds;
+			const head = clone(base);
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 30), casesByKind: { a: 19, b: 5, c: 6 } };
+			const verdict = checkRegression(base, retotal(head));
+			expectFail(verdict);
+			expect(verdict.reason).toBe('case-loss');
+		});
+
+		it.each([
+			['kinds', (g: GrammarEntry) => delete g.kinds, 'head.grammars.typescript.kinds'],
+			['a row\'s cases by kind', (g: GrammarEntry) => delete g.validators.factoryStorage.casesByKind, 'head.grammars.typescript.validators.factoryStorage.casesByKind'],
+			['the parity fixtures\' cases by kind', (g: GrammarEntry) => delete g.parityFixtures.casesByKind, 'head.grammars.typescript.parityFixtures.casesByKind']
+		] as const)('a head that omits %s the base records is rejected', (_, omit, path) => {
+			const base = inventoried();
+			const head = clone(base);
+			omit(head.grammars.typescript!);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('schema-violation');
+			expect(verdict.details.path).toBe(path);
 		});
 
 		it('a lost case under a key that is not one of the base\'s kinds fails', () => {
@@ -491,6 +555,7 @@ describe('checkRegression', () => {
 			const verdict = checkRegression(base, head);
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.validators.from.pass');
+			expect(verdict.details.note).toBe('cases lost by kinds that did not depart: a (1 case)');
 		});
 
 		it('a row whose base records no cases by kind explains no drop', () => {
