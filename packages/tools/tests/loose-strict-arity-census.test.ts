@@ -27,6 +27,7 @@ const visibleOverloads = (source: ts.SourceFile): Map<string, ts.FunctionDeclara
 const spanOfRest = (node: ts.TypeNode): number => {
 	if (ts.isParenthesizedTypeNode(node)) return spanOfRest(node.type);
 	if (ts.isUnionTypeNode(node)) return Math.max(...node.types.map(spanOfRest));
+	if (ts.isIntersectionTypeNode(node)) return Math.min(...node.types.map(spanOfRest));
 	if (!ts.isTupleTypeNode(node)) return Number.POSITIVE_INFINITY;
 	const open = node.elements.some(
 		(element) => ts.isRestTypeNode(element) || (ts.isNamedTupleMember(element) && element.dotDotDotToken !== undefined)

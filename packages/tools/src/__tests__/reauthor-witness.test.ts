@@ -16,7 +16,8 @@ for (const grammar of await invoke('grammars', 'allGrammars')) {
 	const { ruleCauses = {} } = await evaluateGrammar(grammar);
 	for (const [rule, declaration] of Object.entries(ruleCauses)) {
 		if (declaration.kind !== 'reauthored') continue;
-		for (const { cause, witnesses = [] } of declaration.causes) for (const { text, kind } of witnesses) cases.push({ grammar, rule, text, kind, cause });
+		for (const { cause, witnesses = [] } of declaration.causes)
+			for (const { text, kind } of witnesses) cases.push({ grammar, rule, text, kind, cause });
 	}
 }
 

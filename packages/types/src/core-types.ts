@@ -54,28 +54,24 @@ export interface ByteSpan {
  * Runtime node shape — grammar-agnostic. Used by @sittir/common functions
  * that accept any node regardless of grammar.
  *
- * Spec 008 US7: metadata keys are `$`-prefixed to eliminate the entire
- * class of field-name-vs-discriminant collisions (e.g. Python's
- * `type_alias_statement` has a field literally named `type`). The `$source`
- * provenance tag lets `.from()` dispatch with a clean equality check
- * instead of structural `isNode` probing.
+ * Metadata keys are `$`-prefixed so they never collide with a field name
+ * (Python's `type_alias_statement` has a field literally named `type`).
+ * Holding this shape does not make an object a node: a node holds a source
+ * stamp or a tree token, which no literal can carry.
  */
 export interface AnyUntypedNode {
-	/**
-	 * Kind discriminant. Numeric (TSKindId) for parser.c-derived kinds.
-	 * String for synthesized kinds pending numeric ID assignment.
-	 */
-	$type: number | string;
-	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
-	$source?: 0 | 1 | 2;
+	/** Kind discriminant: the language's kind id (`TSKindId`). */
+	$type: number;
 	/** Variant subtype name — set by factory, absent on readUntypedNode output. */
 	$variant?: string;
 	/**
 	 * The text of a text leaf: a read leaf carries the bytes it spans, a built
 	 * one the text it was built from. A node with slots has none; it renders
 	 * from its slots, or, untouched, from the bytes its `$_layout.at` names.
+	 * A node's is the method `$text()`; native node data carries the string.
+	 * `nodeText` reads either.
 	 */
-	$text?: string;
+	$text?: string | (() => string);
 	/**
 	 * A node's layout as the native node carries it: where a read node came
 	 * from (`at`), and the trivia it owns, whether read or written.
@@ -158,9 +154,8 @@ export interface TriviaFlanks {
  */
 export interface ErrorNode extends AnyUntypedNode, TriviaFlanks {
 	readonly $type: ErrorKindId;
-	readonly $source: 0 | 1;
-	/** The region's own source text. */
-	readonly $text: string;
+	/** The region's own source text: one string, made by this call. */
+	$text(): string;
 }
 
 /** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */
@@ -172,7 +167,9 @@ export type GrammarTriviaEntry<Trivia> = TriviaItem<Trivia> | string;
  * The trivia positions of a node: `leading` and `trailing`. Called with items, a position
  * sets its entries, keeps the other position, and returns the node, so calls chain; called
  * with none, it returns the entries the position holds. An item is a trivia node or the
- * text of a comment.
+ * text of a comment. A parsed alias envelope and its content are one source node whose
+ * comments belong to the envelope: the content's positions read none, and a write through
+ * the content lands on the envelope.
  */
 export interface TriviaSetter<Self = AnyUntypedNode, Trivia = any> {
 	leading(): readonly TriviaItem<Trivia>[];

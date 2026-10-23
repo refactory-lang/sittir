@@ -2,7 +2,7 @@ import type { AnyUntypedNode } from '@sittir/types';
 import { isCoordinate, type TreeHandle } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-import { accessorCandidatesForStorageKey } from '../validate/common.ts';
+import type { SlotAccessorOf } from '../validate/common.ts';
 
 interface CommonModule {
 	buildReadHandle(grammar: string, source: string): Promise<TreeHandle>;
@@ -10,7 +10,8 @@ interface CommonModule {
 	readNodeOf(grammar: string): Promise<((tree: TreeHandle) => unknown) | null>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
+	loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf>;
+	materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
 }
 
 interface AccessorThrowRecord {
@@ -21,7 +22,7 @@ interface AccessorThrowRecord {
 }
 
 interface WalkNode {
-	readonly $type: string | number;
+	readonly $type: number;
 	readonly [key: string]: unknown;
 }
 
@@ -48,19 +49,19 @@ function isWalkNode(value: unknown): value is WalkNode {
 		value !== null &&
 		typeof value === 'object' &&
 		'$type' in value &&
-		(typeof (value as { $type?: unknown }).$type === 'string' ||
-			typeof (value as { $type?: unknown }).$type === 'number')
+		typeof (value as { $type?: unknown }).$type === 'number'
 	);
 }
 
 function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
-	return typeof node.$type === 'number' ? (kindNameFromId?.(node.$type) ?? String(node.$type)) : node.$type;
+	return kindNameFromId?.(node.$type) ?? String(node.$type);
 }
 
-export function collectChildren(node: WalkNode): unknown[] {
+export function collectChildren(node: WalkNode, accessorOf: SlotAccessorOf): unknown[] {
 	const children: unknown[] = [];
 	const members = node as unknown as Record<string, unknown>;
-	const readers = new Set(Object.keys(members).flatMap((key) => accessorCandidatesForStorageKey(key)));
+	const { accessors } = accessorOf(node.$type);
+	const readers = new Set(Object.keys(members).flatMap((key) => (accessors[key] === undefined ? [] : [accessors[key]])));
 	for (const name of readers) {
 		const reader = members[name];
 		if (typeof reader !== 'function' || reader.length !== 0) continue;
@@ -73,7 +74,7 @@ export function collectChildren(node: WalkNode): unknown[] {
 	return children;
 }
 
-function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
+function walkTree(root: unknown, accessorOf: SlotAccessorOf, visit: (node: WalkNode) => void): void {
 	const seenCoords = new Set<number>();
 	const seenRefs = new WeakSet<object>();
 
@@ -90,7 +91,7 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 		seenRefs.add(ref);
 		if (coordKey !== undefined) seenCoords.add(coordKey);
 		visit(value);
-		for (const child of collectChildren(value)) {
+		for (const child of collectChildren(value, accessorOf)) {
 			visitValue(child);
 		}
 	};
@@ -111,6 +112,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 	}
 
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
+	const accessorOf = await common.loadSlotAccessorOf(grammar);
 	// Native engine render — same engine the validators use; the
 	// removed legacy-core renderer had no SpacingWriter, so its output was
 	// seam-less garbage for any grammar with word-word seams.
@@ -125,13 +127,13 @@ export async function run(opts: WalkOptions): Promise<number> {
 		accessorThrows.push(rec);
 	};
 
-	walkTree(root, (node) => {
+	walkTree(root, accessorOf, (node) => {
 		const kind = resolveKindName(node, kindNameFromId);
 		counts.set(kind, (counts.get(kind) ?? 0) + 1);
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = common.materialize(node, onAccessorThrow);
+			const renderable = common.materialize(node, accessorOf, onAccessorThrow);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {

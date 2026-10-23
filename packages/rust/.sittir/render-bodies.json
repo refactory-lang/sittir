@@ -1732,6 +1732,12 @@
 			"field": "continue_expression_after"
 		}
 	],
+	"crate_visibility_modifier": [
+		{
+			"kind": "text",
+			"text": "crate"
+		}
+	],
 	"declaration_list": [
 		{
 			"kind": "seam",
@@ -3948,15 +3954,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "comma",
+					"test": "trailing_comma",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "comma_before"
-						},
-						{
 							"kind": "slot",
-							"name": "comma"
+							"name": "trailing_comma"
 						}
 					]
 				}

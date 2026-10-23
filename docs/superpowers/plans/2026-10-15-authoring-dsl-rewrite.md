@@ -765,6 +765,10 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 
 - [ ] **Step 1:** Test that adding an option or a patch site leaves the hash unchanged, while changing a rule or a source edge changes it.
 - [ ] **Step 2:** Implement, regenerate twice, and compare. Commit with the regenerated `resolutions.json` files.
+  - **Landed:** 84116dc02, then 8b6fb09dd, on `feat/authoring-dsl`. Where it differs from the steps above:
+    - The hash also covers the upstream context the policy maps upstream's conflicts through (`upstreamConflicts`, `sourceEdges`, `baseNames`). `derivationInputsOf` builds it once, for the hash and the derivation alike.
+    - A layer withdraws the inherited conflict sets its own clean run reports unnecessary (8b6fb09dd). TypeScript's receiver split leaves three base sets unneeded at the bound layer, and tree-sitter warned about them on every regen. Withdrawals are recomputed on every clean run, a reuse included, and `withdrawn` is written only when it holds a set.
+    - Gate: every resolution array is byte-identical and only the `grammarHash` fields move; a second forced regen reuses every section; parser.c and parser.wasm are byte-identical; rows 201 = 201. After the withdrawal, typescript's grammar.json holds 68 conflict sets, not 71, and tree-sitter reports no unnecessary conflict at any layer.
 
 ## Stage 8: the deriver writes field entries directly
 
@@ -777,6 +781,7 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 - Modify: `packages/codegen/src/dsl/bind.ts`. Delete `fieldRenameGrammar`, `fieldWrapGrammar` and `renameFields`. `fieldRenameIssue`, `fieldWrapIssue`, `sharedHosts` and `childFields` stay, as derivation analysis.
 
 - [ ] **Step 1:** Implement, regenerate the layers, and run `tool output-gate --check` against Stage 7. Commit.
+  - **Landed:** 03e8cd004. Each rename and wrap resolves on layer 1's rules in one walk, and an alias at its symbol in the fielded geometry. `fieldRenameGrammar`, `fieldWrapGrammar`, `renameFields` and `wrapTargets` are deleted. Of 17 fixtures pinned from the old route, 16 are equal. The 17th, a wrap inside a visible group's alias, is refused by the deriver before the writer runs. The three grammar.bindings.ts are byte-identical, every generated file matches, and rows 201 = 201.
 
 ## Stage 9: the `rename` verb
 
@@ -796,6 +801,15 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
   - The rename effect rewrites every inherited record `RECORD_RENAMES` names (Task 1.1 pins each), and gives `renamedFrom`.
   - A fixture layer with a rename generates with the pinned CLI.
 - [ ] **Step 2:** Implement and run the gate. Commit.
+  - **Landed:** 123c7de9e. Where it differs from the steps above:
+    - The rename runs in the layer's whole-grammar phase, after the leads.
+    - It is also refused on the first layer, which records no provenance, and on a factory-inline kind (brainstorm's rulings, spec §3.3).
+    - No layer uses it: every generated file and every snapshot equals Stage 8's, and rows 201 = 201.
+
+## Fixes on the branch
+
+- 814a28e87: a captured child that shares a union slot of its owner takes no field, and its member reads the slot by kind. The bindings had fielded one arm of `export_statement_default_declaration`'s content union, which minted a `union-slot-routed` diagnostic.
+- 16f4124e5: the generated roots list `packages/<g>/tests/nodes.test.ts` and `packages/<g>/vitest.config.ts`, which codegen writes on every run, so the output gate and sync-base see them.
 
 ## Then
 

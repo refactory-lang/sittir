@@ -27,7 +27,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 			required: [['_definition', 'definition']],
 			nonEmpty: [['_decorator', 'decorated_definition.decorators']],
 			nodeOnly: [
-				['_decorator', 'DecoratedDefinition.decorator', 'a built Decorator'],
+				['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator'],
 				['_definition', 'DecoratedDefinition.definition', 'a built ClassDefinition / FunctionDefinition']
 			]
 		});

@@ -61,7 +61,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 				body: py.build.identifier("i"),
 				clauses: py.build.comprehensionClauses.strict(py.build.forInClause.strict({
 					left: py.build.identifier("i"),
-					right: [py.build.parenthesizedExpression.strict(py.build.identifier("a"))],
+					rights: [py.build.parenthesizedExpression.strict(py.build.identifier("a"))],
 				}), py.build.ifClause.strict(py.build.parenthesizedExpression.strict(py.build.identifier("i")))),
 			}),
 		}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
@@ -75,14 +75,14 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			value: py.build.dictionary.strict(py.build.pair.strict({
 				key: py.build.string.strict({
 					stringStart: py.build.stringStart("\""),
-					content: [py.build.stringContent.strict(py.build.stringFragment("k"))],
+					contents: [py.build.stringContent.strict(py.build.stringFragment("k"))],
 					stringEnd: py.build.stringEnd("\""),
 				}),
 				value: py.build.parenthesizedExpression.strict(py.build.integerDecimal.plain("1")),
 			}), py.build.pair.strict({
 				key: py.build.string.strict({
 					stringStart: py.build.stringStart("\""),
-					content: [py.build.stringContent.strict(py.build.stringFragment("j"))],
+					contents: [py.build.stringContent.strict(py.build.stringFragment("j"))],
 					stringEnd: py.build.stringEnd("\""),
 				}),
 				value: py.build.list.strict(py.build.integerDecimal.plain("2")),
@@ -91,7 +91,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			name: py.build.identifier("s"),
 			value: py.build.string.strict({
 				stringStart: py.build.stringStart("f\""),
-				content: [py.build.stringContent.strict(py.build.stringFragment("a")), py.build.interpolation.strict({
+				contents: [py.build.stringContent.strict(py.build.stringFragment("a")), py.build.interpolation.strict({
 					expression: py.build.parenthesizedExpression.strict(py.build.identifier("x")),
 				})],
 				stringEnd: py.build.stringEnd("\""),

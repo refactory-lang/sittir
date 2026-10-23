@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { transform as transformRule } from '../transform/transform.ts';
 import { arm } from '../primitives/arm.ts';
 import { withWireContext } from '../wire/wire.ts';

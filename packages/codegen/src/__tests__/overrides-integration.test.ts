@@ -1,7 +1,7 @@
 import { SEQ } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { existsSync } from 'node:fs';
-import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../dsl/evaluate-package.ts';
 import { grammarPackage, layerPath } from '../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from './helpers/timeouts.ts';
 

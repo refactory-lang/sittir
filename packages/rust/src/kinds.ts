@@ -471,9 +471,10 @@ export enum TSKindId {
 	StructPatternElementsRepeat1 = 466,
 	DelimTokenTreeParenRepeat1 = 467,
 	_MatchBlockArmsRepeat1 = 468,
-	FieldIdentifier = 469,
-	ShorthandFieldIdentifier = 471,
-	TypeIdentifier = 472,
+	CrateVisibilityModifier = 469,
+	FieldIdentifier = 470,
+	ShorthandFieldIdentifier = 472,
+	TypeIdentifier = 473,
 	Error = 65535
 }
 Object.freeze(TSKindId);

@@ -5,6 +5,7 @@ import { isStorageKey, PLAIN_KINDS, toNodeData, treeTokenOf } from '@sittir/comm
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import python from '../../python/src/index.ts';
+import { loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
 
 v8.setFlagsFromString('--allow-natives-syntax');
 const hasFastProperties = new Function('o', 'return %HasFastProperties(o)') as (o: object) => boolean;
@@ -15,6 +16,7 @@ const rs = await createEngine(rust);
 const ts = await createEngine(typescript);
 const py = await createEngine(python);
 const { identifier: buildIdentifier } = (await rust.load()).build;
+const rustSlots = await loadSlotAccessorOf('rust');
 
 const parsedMatchBlock = () => {
 	const item = rs.parse('fn f() { match x { 1 => 1, _ => 2 } }\n').statements()[0]!;
@@ -45,7 +47,6 @@ const classes: Record<string, () => object> = {
 
 const TRANSPORT_METADATA = new Set([
 	'$type',
-	'$source',
 	'$named',
 	'$text',
 	'$other',
@@ -117,21 +118,9 @@ describe('a built node without an engine, or with trivia, keeps fast properties'
 });
 
 const typedNodesOf = (root: unknown): object[] => {
-	const seen = new Set<object>();
-	const camel = (slot: string) => slot.replace(/^_/, '').replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
-	const walk = (node: any): void => {
-		if (node === null || typeof node !== 'object') return;
-		if (Array.isArray(node)) return node.forEach(walk);
-		if (seen.has(node)) return;
-		seen.add(node);
-		for (const key of Object.keys(node)) {
-			if (!key.startsWith('_') || node[key] == null) continue;
-			const reader = node[camel(key)];
-			walk(typeof reader === 'function' ? reader.call(node) : node[key]);
-		}
-	};
-	walk(root);
-	return [...seen].filter((node) => typeof (node as { $type?: unknown }).$type === 'number');
+	const nodes = new Set<object>();
+	walkWrappedTree(root, rustSlots, (node) => nodes.add(node));
+	return [...nodes];
 };
 
 describe('a parsed plain kind keeps fast properties', () => {

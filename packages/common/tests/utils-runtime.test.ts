@@ -3,6 +3,7 @@ import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
 import { holdReadTree } from '../src/node-data.ts';
 import { mintTreeToken } from '../src/tree-token.ts';
+import { stampBuilt } from '../src/source-stamp.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import { withMembers as withMethods } from './support/members.ts';
 import {
@@ -27,31 +28,41 @@ describe('@sittir/common/utils runtime surface', () => {
 
 	it('renders through the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>() };
-		const node = inEngine(liveHandle({ render, trivia }), () => withMethods({ $type: 1, $source: 2, _name: 'x' }));
+		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>() };
+		const node = inEngine(liveHandle({ render, trivia }), () => withMethods(stampBuilt({ $type: 1, _name: 'x' })));
 
 		expect(node.$render()).toBe('rendered');
 		expect(node.$trivia.trailing(node)).toBe(node);
 		expect((node as unknown as { $_layout?: { trivia?: unknown } }).$_layout?.trivia).toEqual({ trailing: [node] });
-		const triviaNodeA: AnyUntypedNode = { $type: 2, $source: 2, $text: 'a' };
-		const triviaNodeB: AnyUntypedNode = { $type: 3, $source: 2, $text: 'b' };
+		const triviaNodeA: AnyUntypedNode = stampBuilt({ $type: 2, $text: 'a' });
+		const triviaNodeB: AnyUntypedNode = stampBuilt({ $type: 3, $text: 'b' });
 		expect(node.$trivia.leading(triviaNodeA, triviaNodeB)).toBe(node);
 		expect((node as unknown as { $_layout?: { trivia?: unknown } }).$_layout?.trivia).toEqual({ trailing: [node], leading: [triviaNodeA, triviaNodeB] });
 		expect(render).toHaveBeenCalledTimes(1);
 		expect(render).toHaveBeenCalledWith(node);
 	});
 
+	it('isNode never reads a text member, and a text member makes no node', () => {
+		const text = vi.fn(() => 'x');
+		expect(isNode(stampBuilt({ $type: 1, $text: text }))).toBe(true);
+		expect(isNode({ $type: 1, $text: text })).toBe(false);
+		expect(isNode({ $type: 1, $text: 'x' })).toBe(false);
+		expect(text).not.toHaveBeenCalled();
+	});
+
 	it('guards and coercers behave consistently', () => {
-		expect(isNode({ $type: 1, $source: 2, _name: 'x' })).toBe(true);
+		expect(isNode(stampBuilt({ $type: 1, _name: 'x' }))).toBe(true);
+		expect(isNode({ $type: 1, $source: 2, _name: 'x' })).toBe(false);
 		expect(isNode({ $type: 1 })).toBe(false);
 		const read = { $type: 1, $text: 'x' };
 		holdReadTree(read, mintTreeToken(1));
 		expect(isParsedNode(read)).toBe(true);
 		expect(isParsedNode({ ...read })).toBe(false);
 		expect(isParsedNode({ $type: 1, $source: Source.Ts })).toBe(false);
-		expect(isFactoryNode({ $type: 1, $source: Source.Factory })).toBe(true);
+		expect(isFactoryNode(stampBuilt({ $type: 1 }))).toBe(true);
+		expect(isFactoryNode({ $type: 1, $source: Source.Factory })).toBe(false);
 		expect(isFactoryNode(read)).toBe(false);
-		expect(isFactoryNode({ $type: 1, _name: 'x' })).toBe(true);
+		expect(isFactoryNode({ $type: 1, _name: 'x' })).toBe(false);
 		expect(isParsedNode({ $type: 1 })).toBe(false);
 		expect(isFactoryNode({ $type: 1 })).toBe(false);
 		expect(hasKind({ kind: 'node' })).toBe(true);

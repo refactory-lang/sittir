@@ -270,17 +270,18 @@ describe('a single hoisted group flattens onto its parent', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
+		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.propertyName;
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
-		expect(out).toContain('const clause$seated: (...args: T.Clause.BuildArgs) => ReturnType<typeof F.buildClause> =');
+		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');
+		expect(out).toContain('function clause$seated(...args: T.Clause.BuildArgs): ReturnType<typeof F.buildClause> {');
 		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
 		const { buildArgs } = seatedRows(nodeMap, 'clause');
 		expect(buildArgs).toContain(`WithoutGroup<`);
 		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);
 		expect(buildArgs).toContain(`, '${seatKey}'> & (T.ClauseGroup.BuildArgs[0] | NoneOf<${groupKeys}>))`);
 		expect(out).toContain('export const clause = Object.freeze({');
-		expect(out).toContain(`= clause$flatten$${seatKey}(F.buildClause, F.buildClauseGroup);`);
+		expect(out).toContain(`return clause$flatten$${seatKey}(F.buildClause, F.buildClauseGroup)(...args);`);
 		const seated = '...bundle(clause$seated, clause$seatedCoerce, { key: "clause", max: 1 }),';
 		expect(out).toContain(seated);
 		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf(seated));
@@ -318,9 +319,9 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
 		expect(out).toContain('const comparison$comparators =');
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
-		expect(out).toContain('= comparison$comparators(F.buildComparison, F.buildComparisonComparator);');
+		expect(out).toContain('return comparison$comparators(F.buildComparison, F.buildComparisonComparator)(...args);');
 		expect(out).toContain('...bundle(comparison$seated, comparison$seatedCoerce, { key: "comparison", max: 1 }),');
-		expect(out).toContain('const comparison$seated: (...args: T.Comparison.BuildArgs) =>');
+		expect(out).toContain('function comparison$seated<A extends T.Comparison.BuildArgs>(...args: A & RefuseUndeclared<A>):');
 		expect(seatedRows(nodeMap, 'comparison').buildArgs).toContain('{ comparators: ReadonlyArray<T.ComparisonComparator.BuildArgs[0]');
 	});
 });
@@ -395,7 +396,7 @@ describe('a mount route carries the seats of its own parent', () => {
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
 		const out = emitPolymorphsOverlay({ nodeMap }).text;
-		expect(out).toContain('const clause$seated');
+		expect(out).toContain('function clause$seated');
 		expect(out).toContain('clause$block(clause$seated,');
 		expect(out).not.toContain('clause$block(F.buildClause,');
 	});
@@ -436,7 +437,7 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
 		expect(out).toContain('const own = _o(config)["pattern"];');
 		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
-		expect(out).toMatch(/= arm\$flatten\$pattern\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
+		expect(out).toMatch(/return arm\$flatten\$pattern\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\)\(\.\.\.args\);/);
 		expect(out).toContain("import { TSKindId } from '../../types.js';");
 	});
 });
@@ -521,8 +522,8 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
 		const out = emitPolymorphsOverlay({ nodeMap }).text.split('\n');
-		const seat = out.find((line) => line.startsWith('const items$seatedCoerce: '));
-		expect(seat).toContain('(...args: T.Items.LooseArgs) =>');
+		const seat = out.find((line) => line.startsWith('function items$seatedCoerce<'));
+		expect(seat).toContain('<const A extends T.Items.LooseArgs>(...args: A & RefuseUndeclared<A, T.Items.LooseArgs>)');
 		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, undefined)!.looseArgs;
 		expect(row.startsWith('[options: ')).toBe(true);
 		expect(row).not.toMatch(/(^|\| )\[element: /);

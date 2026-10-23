@@ -7,7 +7,7 @@ import type {
 	MaxArity,
 	StrictFlavor
 } from '@sittir/types';
-import { isNode as isAnyNode } from './utils.ts';
+import { isNode as isAnyNode, nodeText } from './utils.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -50,9 +50,8 @@ export function rejectKeywordText<T>(value: T, where: string, word: number, keyw
 		for (const item of value) rejectKeywordText(item, where, word, keywords);
 		return value;
 	}
-	if (isRecord(value) && value.$type === word && typeof value.$text === 'string' && keywords.includes(value.$text)) {
-		throw new Error(`${where}: '${value.$text}' is this slot's keyword`);
-	}
+	const text = isRecord(value) && value.$type === word ? nodeText(value) : undefined;
+	if (text !== undefined && keywords.includes(text)) throw new Error(`${where}: '${text}' is this slot's keyword`);
 	return value;
 }
 
@@ -61,9 +60,8 @@ export function rejectReservedText<T>(value: T, where: string, word: number, res
 		for (const item of value) rejectReservedText(item, where, word, reserved);
 		return value;
 	}
-	if (isRecord(value) && value.$type === word && typeof value.$text === 'string' && reserved.has(value.$text)) {
-		throw new Error(`${where}: '${value.$text}' is a reserved word`);
-	}
+	const text = isRecord(value) && value.$type === word ? nodeText(value) : undefined;
+	if (text !== undefined && reserved.has(text)) throw new Error(`${where}: '${text}' is a reserved word`);
 	return value;
 }
 
@@ -78,8 +76,13 @@ export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly
 	return (hit === undefined ? value : hit[1](value)) as T;
 }
 
-export function listStorage<T = unknown>(value: unknown, item: (value: unknown) => unknown = (value) => value): T {
+export function listStorage<T = unknown>(
+	value: unknown,
+	item: (value: unknown) => unknown = (value) => value,
+	holes = false
+): T {
 	if (!Array.isArray(value)) return item(value) as T;
+	if (holes) return value.map((entry) => (entry === undefined || entry === null ? undefined : item(entry))) as T;
 	return value.map(item).filter((stored) => stored !== undefined) as T;
 }
 
@@ -155,9 +158,7 @@ export function coerceBitflagStorage(value: unknown, texts: readonly string[]): 
 
 function extractNodeText(value: unknown): string | undefined {
 	if (typeof value === 'string') return value;
-	if (isAnyNode(value)) return typeof value.$text === 'string' ? value.$text : undefined;
-	if (isRecord(value) && typeof value.$text === 'string') return value.$text;
-	return undefined;
+	return nodeText(value);
 }
 
 type AnyFlavorFn = (...args: never[]) => unknown;

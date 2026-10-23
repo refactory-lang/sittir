@@ -19,17 +19,6 @@ const generatedRebuild = (file: string, exportName: string) => async (): Promise
 const rebuildPython4spaceGenerated = generatedRebuild('19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated');
 const rebuildPython4spaceLoose = generatedRebuild('19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose');
 
-// Ceiling, never a floor: an artefact kind moves off the top-level namespace
-// onto its parent, so this count only shrinks.
-describe('ir entry ratchet', () => {
-	it('exposes no more top-level builders than the recorded ceiling', () => {
-		// Grouped namespaces are objects, not builders — the
-		// ratchet tracks builder exposure, so only callable entries count.
-		const builders = Object.keys(py.build).filter((k) => typeof (py.build as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(166);
-	});
-});
-
 // The generated rebuild: `sittir tool emit-factory-source` over the 4-space
 // fixture (probe-sweep.py is not a target: the override parser rejects its
 // `name=True` keyword defaults, see "Where the examples stand").

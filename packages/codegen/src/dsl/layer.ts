@@ -32,6 +32,7 @@ import type { LiftName } from './wire/lift-names.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	authoredFieldSites,
+	dropFlattenedParentAliases,
 	evaluatedConfig,
 	factoryInlineNamesOf,
 	layerSymbols,
@@ -479,6 +480,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 	const projections = ctx.inherited === undefined ? undefined : appendProvenance(ctx.inherited.projections, provenanceOf(ctx.effects, rules));
 	const renamed = renamedLists({ ...evaluated, conflicts: layerConflicts(ctx), supertypes: ctx.lists.supertypes, inline: ctx.lists.inline }, LAYER_LIST_RENAMES, ctx.effects);
 	const view = { grammar: { ...ctx.grammar, rules, supertypes: renamed.supertypes, inline: renamed.inline } };
+	const unaliased = dropFlattenedParentAliases(view.grammar, { __wireContext__: wire });
 	stampWiredVariants(view, ctx.base, wire.automaticVariants, new Set(wire.elementSupertypes.keys()));
 	const dead = deadEnrichMints(view.grammar, { mints: getEnrichMints(ctx.base), protectedNames: ctx.protectedNames });
 	const blank = nativeRuleFn<() => Rule>('blank');
@@ -493,7 +495,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 	const vacated = vacatedNames(ctx.effects);
 	const bodies = new Map<string, unknown>();
 	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || vacated.has(name) || isRecord(body) ? rules[name] : body);
-	for (const name of ctx.created) if (!bodies.has(name)) bodies.set(name, rules[name]);
+	for (const name of [...ctx.created, ...unaliased]) if (!bodies.has(name)) bodies.set(name, rules[name]);
 	const lists: LayerLists = {
 		...renamed,
 		inline: withoutDeadNames(renamed.inline, dead) as readonly unknown[],

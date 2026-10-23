@@ -46,7 +46,8 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	g.repeat1 = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'REPEAT1', content }) as Rule<'evaluate'>;
 	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> =>
 		({ type: 'FIELD', name, content }) as Rule<'evaluate'>;
-	g.alias = (rule: unknown, value: unknown): Rule<'evaluate'> => {
+	g.alias = (rule: unknown, given: unknown): Rule<'evaluate'> => {
+		const value = given instanceof ReferenceError ? (given as ReferenceError & { readonly symbol?: unknown }).symbol : given;
 		if (typeof value === 'string') {
 			return { type: 'ALIAS', content: rule, named: false, value } as Rule<'evaluate'>;
 		}

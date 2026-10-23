@@ -11,6 +11,8 @@ import { ERROR_KIND_ROW, type GeneratedKindEntry } from '../../dsl/symbol-table.
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts';
 import { emitTypesModules } from '../types.ts';
+import { emitIs } from '../is.ts';
+import { resolveIrKeys } from '../../compiler/assemble.ts';
 
 function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 	const members = [
@@ -36,11 +38,12 @@ function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 			{ separatorRule: undefined, simplifiedRule, renderRule, kindEntries }
 		)
 	);
+	resolveIrKeys(nodes);
 	return makeNodeMapWith(nodes);
 }
 
 it.each(['typescript', 'typescript6'])(
-	'compiles self-containing list argument rows with %s (#577)',
+	'compiles self-containing list argument rows with %s',
 	(compiler) => {
 		const root = fileURLToPath(new URL('../../../../..', import.meta.url));
 		const dir = mkdtempSync(join(root, '.self-containing-list-'));
@@ -54,6 +57,7 @@ it.each(['typescript', 'typescript6'])(
 			writeFileSync(join(dir, 'kinds.ts'), modules.kinds);
 			writeFileSync(join(dir, 'types.ts'), modules.types);
 			writeFileSync(join(dir, 'types-internal.ts'), modules.internal);
+			writeFileSync(join(dir, 'is.ts'), emitIs({ grammar: 'synth', nodeMap, generatedIdTables }));
 			writeFileSync(
 				join(dir, 'check.ts'),
 				`import type { Tuple, Identifier, NamespaceMap, TSKindId } from './types.ts';
@@ -66,7 +70,7 @@ declare function loose(...args: Tuple.LooseArgs): Tuple.Bound;
 declare function strict(...args: Tuple.BuildArgs): Tuple.Bound;
 
 loose(tuple, parsedTuple, identifier);
-loose({ content: ['x', tuple, { content: ['y', parsedTuple] }] });
+loose({ contents: ['x', tuple, { contents: ['y', parsedTuple] }] });
 strict(tuple, parsedTuple, identifier);
 tuple.$with.contents(tuple, parsedTuple, identifier);
 

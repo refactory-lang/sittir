@@ -11,21 +11,21 @@
  */
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
 import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-common.ts';
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
-import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
+import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
-import { seamRenderRules, spaceRenderRules, spacingSitesOf, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
@@ -115,9 +115,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 		options: raw.options,
 		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 	};
-	const spacedRules = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, spacedRules);
-	const renderRules = seamRenderRules(spacedRules, rulesConfig);
+	const prepass = spaceRenderRules(rulesConfig);
+	stampStaticSpacing(nodeMap, grammar, prepass);
+	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced)).seamed;
 	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
@@ -129,16 +130,6 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	_models.set(grammar, built);
 	return built;
 }
-
-it('applies a seated alias address to both parser identities that share its display', async () => {
-	const { nodeMap, renderRules } = await modelFor('python');
-	const sites = spacingSitesOf(renderRules, nodeMap).filter(
-		(site) => site.kind === 'for_in_clause' && site.slot === 'right' && site.seat?.display === 'lambda_expression'
-	);
-	expect(sites).toHaveLength(2);
-	expect(new Set(sites.map((site) => nodeMap.nodes.get(site.seat!.kind)?.kindId)).size).toBe(2);
-	await expect(getNodeRsForGrammar('python')).resolves.toContain('Node');
-}, FULL_PIPELINE_TIMEOUT);
 
 async function getNodeRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
@@ -844,27 +835,27 @@ describe('the envelope pin gate is wired to the real pipeline', () => {
 });
 
 describe('the payload ceiling', () => {
-	it('boxes each pinned payload in every choice the reader reads, and nowhere unboxed', async () => {
-		const src = await getRustTemplatesRs();
-		expect(BOXED_PAYLOADS.rust!.length).toBeGreaterThan(0);
-		for (const name of BOXED_PAYLOADS.rust!) {
-			expect(src).toMatch(new RegExp(`\\n    \\w+\\(Box<${name}>\\),`));
-			expect(src.replace(/\npub enum TriviaNode \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n    \\w+\\(${name}\\),`));
-		}
-	});
+	const boxedIn = (src: string): string[] =>
+		[...new Set([...src.replace(/\npub enum TriviaNode \{[^}]*\}/, '').matchAll(/\n {4}\w+\(Box<(\w+)>\),/g)].map((m) => m[1]!))].sort();
 
-	it('asserts every payload against the ceiling, each one way', async () => {
+	it('asserts every payload against the ceiling once, the boxed ones over it and the rest within', async () => {
 		const src = await getRustTemplatesRs();
 		const assertions = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) (<=|>) (\d+), "/gm)];
-		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]).sort();
-		expect(over).toEqual([...BOXED_PAYLOADS.rust!].sort());
+		const over = assertions.filter((m) => m[2] === '>').map((m) => m[1]!).sort();
+		expect(over.length).toBeGreaterThan(0);
+		expect(boxedIn(src)).toEqual(expect.arrayContaining(over));
 		expect(assertions.every((m) => Number(m[3]) === PAYLOAD_CEILING_BYTES)).toBe(true);
 		expect(new Set(assertions.map((m) => m[1])).size).toBe(assertions.length);
 	});
 
-	it('refuses a pin no choice holds', () => {
-		const [stale] = BOXED_PAYLOADS.rust!;
-		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
+	it('holds each payload over the ceiling boxed in every choice', async () => {
+		const src = await getRustTemplatesRs();
+		const over = [...src.matchAll(/^const _: \(\) = assert!\(::core::mem::size_of::<(\w+)>\(\) > /gm)].map((m) => m[1]!);
+		for (const name of over) expect(src.replace(/\npub enum TriviaNode \{[^}]*\}/, '')).not.toMatch(new RegExp(`\\n {4}\\w+\\(${name}\\),`));
+	});
+
+	it('refuses a boxed payload no choice holds', () => {
+		expect(() => payloadCeilingAssertions(['UnheldNode'], new Set())).toThrow('UnheldNode is boxed but no choice holds it');
 	});
 });
 

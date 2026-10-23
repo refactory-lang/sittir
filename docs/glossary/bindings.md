@@ -103,8 +103,12 @@ A grammar kind in a slot resolves to the first of: a claim placed by the
 enclosing kinds it sits in; its own claim; nothing, when it is unclaimed; a
 minted text, the enum's texts, or a keyword or punctuation literal; its
 element, when it is a container; its supertype's subtypes, each resolved the
-same way, when at least half of them resolve (a whole namespace is admitted
-only when every claimed kind in it is covered); otherwise an `<grammar:kind>`
+same way, when at least half of the subtypes that carry a kind resolve, and at
+least two of them when two or more carry one (a whole namespace is admitted
+only when every claimed kind in it is covered). A subtype that resolves to a
+keyword or punctuation literal alone carries no kind and does not count, so
+python's `_match_block` resolves through `match_block_block` although
+`match_block_empty` holds only a newline; otherwise an `<grammar:kind>`
 placeholder. A container is a kind with a container unwrap among the routes
 (`routes.ts::containerOf`). The element slot's terminals and kinds resolve with the container added to
 the chain of enclosing kinds, and a container never resolves through itself.
@@ -285,6 +289,18 @@ The vocabulary as the bindings consult it, assembled from `readVocabularySource`
 
 Every kind is keyed by its `$kind` and carries its own members (each optional or required, and a flag when `Member.flag` says so), its parent, and the value it is refined by, when it is an owner's refinement. `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` and no kind of the same name is not a vocabulary kind.
 
+### `packages/codegen/src/bindings/vocabulary-paths.ts::VOCABULARY_PATHS_FILE`
+
+Where the vocabulary path list is written: `packages/common/src/portable/vocabulary-paths.ts`. It sits beside the portable trees that read it, in the runtime package, because `@sittir/types` holds no runtime values and every top-level file in the vocabulary folder is read as a vocabulary source (`isVocabularySource`).
+
+### `packages/codegen/src/bindings/vocabulary-paths.ts::emitVocabularyPaths`
+
+The source of the vocabulary path list: every kind path of the vocabulary (`readVocabulary`'s `kinds`, which includes the kinds features declare), sorted by code point, one quoted path per line, in a frozen `vocabularyPaths` array declared `as const`, so its element type is the union of the paths and types the shared portable trees (`portable/tree.ts::PortableKindTree`). The text is already in the repository's format, so the committed file and this emitter's output compare byte for byte.
+
+### `packages/codegen/src/bindings/vocabulary-paths.ts::writeVocabularyPaths`
+
+Reads the vocabulary and writes `emitVocabularyPaths`'s output to `VOCABULARY_PATHS_FILE`, leaving the file untouched when it already holds that text. The path list belongs to no grammar, so it has one writer, `regenerateGrammars`, which calls this once per run before any grammar generates; the per-grammar generations run in parallel and would otherwise race on the file.
+
 ### `packages/codegen/src/bindings/vocabulary.ts::Declared`
 
 One interface as declared, plain JSON so it crosses the pinned child:
@@ -448,7 +464,7 @@ Generation refused over a grammar's committed grammar bindings: missing, or deri
 
 ### `packages/codegen/src/bindings/hash.ts::assertBindingsFresh`
 
-Codegen's check of a grammar's generated layer: it throws `StaleBindingsError` with the message `bindingsStaleness` gives, and passes when that gives none. `compileGrammar` runs it before it evaluates either layer, with the hash `module.ts::loadBindingsHash` reads, so a stale layer is reported as stale and never evaluated. Compiling layer 1 alone skips it, since that is the compile the inventory regenerates the layer from. The base grammar's own staleness is the generated-output freshness check's.
+Codegen's check of a grammar's generated layer: it throws `StaleBindingsError` with the message `bindingsStaleness` gives, and passes when that gives none. `compileGrammar` runs it before it evaluates a package's top layer (`module.ts::assertPackageBindingsFresh`, with the hash `module.ts::loadBindingsHash` reads), so a stale layer is reported as stale and never evaluated. Compiling layer 1 alone (`unbound`) skips it, since that is the compile the inventory regenerates the layer from. The base grammar's own staleness is the generated-output freshness check's.
 
 ### `packages/codegen/src/bindings/hash.ts::bindingsStaleness`
 
@@ -608,7 +624,7 @@ The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exp
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsHash`
 
-The hash a package's generated layer exports, read through the pinned TypeScript reader (the `exportedStrings` mode, `pinned-typescript.ts::exportedStringsInProcess`) without evaluating the layer; `undefined` when the package commits no layer or the layer exports no hash. Reading the file rather than importing it keeps `compileGrammar` from evaluating a stale layer before `hash.ts::assertBindingsFresh` reports it.
+The hash a package's generated layer exports, read through the pinned TypeScript reader (the `exportedStrings` mode, `pinned-typescript.ts::exportedStringsInProcess`) without evaluating the layer; `undefined` when the package commits no layer or the layer exports no hash. Reading the file rather than importing it keeps `assertPackageBindingsFresh` from evaluating a stale layer before `hash.ts::assertBindingsFresh` reports it.
 
 ### `packages/codegen/src/bindings/module.ts::editCall`
 
@@ -1553,6 +1569,10 @@ The refusal a predicate on a node of a match tree gives: `match` states kinds as
 
 Reads a node's pattern as a `match` tree: its kind, and the one restriction its tests state, a field (or no field) and the kinds it admits, each read in turn. An alternation (of options with nothing below them, as `childFacts` requires) gives one restriction admitting each option; any other child is a restriction of its own. A kind narrowed two ways is written as one claim per way, which the derivation unions (`leads.ts::unionMatch`). It refuses what `match` cannot say: a predicate on any node of the tree (`predicateReason`), a quantified child, a negated field, a token (a text test), a wildcard, a grouping, a second restriction on one kind, and an alternation whose options sit under different fields. The one reading of a pattern as a match tree, for a member's lead match and a claim's own.
 
+### `packages/codegen/src/bindings/pinned-reader.ts::leafText`
+
+The text of a leaf the bindings reader meets, in either form a leaf takes: the method `$text()`, or the `$text` string of a pinned build that predates the method. The reader runs on the pinned build and loads no current source, so it cannot use `nodeText` and reads the two forms itself. A leaf with no text is refused rather than read as empty.
+
 ### `packages/codegen/src/bindings/leads.ts::LeadDerivation`
 
 What the lead derivation gives: the leads, sorted by list, and the `lead-refused` records for every claim it could not turn into one.
@@ -1690,3 +1710,6 @@ The entry stored at `file`, or nothing when there is none or its bytes are not a
 ### `packages/codegen/src/bindings/pinned-memo.ts::pinnedMemo`
 
 The store under `dir` for code whose digest is `reader`. A read's entry is `<dir>/<mode>/<sha256 of input>.json`. It answers when its `reader` is this digest and it holds a value; otherwise `run` answers and its value replaces the entry (`writeFileAtomic`), so each mode and input has one entry, the latest code's answer. A rejected `run` stores nothing, so a failure is never memoized. Two checkouts whose reader code differs replace each other's entry for the same input, each paying one child start.
+### `packages/codegen/src/bindings/module.ts::assertPackageBindingsFresh`
+
+`assertBindingsFresh` for a grammar package: the hash its generated layer exports (`loadBindingsHash`) against its `bindings.scm` (`facts.ts::bindingsPathIn`). `compileGrammar` runs it before it evaluates the package's top layer (`dsl/evaluate-package.ts::readsGrammarBindings`); `evaluatePackage` does not, so the tools that read a package while its grammar bindings are stale still evaluate it.

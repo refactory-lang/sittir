@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from './_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -22,7 +22,7 @@ const TAIL = ", a: () => 'a', b: () => 'b'";
 const kRule = (body: string) => `source: ($) => repeat($.k), k: ($) => seq('k', ${body})${TAIL}`;
 
 const run = async (body: string) => {
-	const raw = await evaluateTempGrammar({ extras: '', rules: kRule(body) }, '', { bindings: '' });
+	const raw = await evaluateTempGrammar({ extras: '', rules: kRule(body) }, '');
 	const normalized = normalizeGrammar(link(raw));
 	const map = assemble(AssembleCtx.from(normalized));
 	const node = map.nodes.get('k') as unknown as { variantChildKinds?: unknown } | undefined;
@@ -77,14 +77,5 @@ describe('eof() in a choice (item 8)', () => {
 		expect(withEof.normKeys).toEqual(reference.normKeys);
 		expect(withEof.nodeKeys).toEqual(reference.nodeKeys);
 		expect((withEof.variantChildKinds as { kind: string }[]).map((entry) => entry.kind)).toEqual(['a']);
-	}, 60_000);
-});
-
-describe('a seq that steps into a blank (item 10)', () => {
-	it('a transform path that steps into a BLANK records edit-site-missing', async () => {
-		const raw = await evaluateTempGrammar({ extras: '', rules: kRule('blank()') }, '', {
-			bindings: "edits: { k: { '1/0': ($) => 'x' } }"
-		});
-		expect(raw.layerDiagnostics).toEqual([expect.objectContaining({ code: 'edit-site-missing' })]);
 	}, 60_000);
 });

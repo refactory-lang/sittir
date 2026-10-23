@@ -447,4 +447,3 @@ describe('Normalize — collapseWrappers (T062)', () => {
 		expect(collapseWrappers(choice).type).toBe('STRING');
 	});
 });
-

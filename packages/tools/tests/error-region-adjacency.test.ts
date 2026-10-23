@@ -34,7 +34,7 @@ describe('an ERROR region keeps the source bytes beside it wherever its owner re
 		if (first === undefined || !rs.is.functionItem(first)) throw new Error('expected a function item');
 		const [entry] = first.$trivia.trailing();
 		if (!isErrorNode(entry)) throw new Error('expected an ERROR entry');
-		expect([entry.$text, entry.$before, entry.$after]).toEqual(['@@', ' ', ' ']);
+		expect([entry.$text(), entry.$before, entry.$after]).toEqual(['@@', ' ', ' ']);
 		expect(rs.render(entry as never).toString()).toBe('@@');
 	});
 

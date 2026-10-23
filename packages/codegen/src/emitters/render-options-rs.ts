@@ -571,6 +571,17 @@ export function seatTablesOf(plan: RenderOptionsPlan): SeatTable[] {
 	}));
 }
 
+function separatorSitesOf(plan: RenderOptionsPlan): Map<number, number> {
+	const rows = new Map<number, number>();
+	plan.spacingSites.forEach((site, index) => {
+		if (site.role !== 'separator') return;
+		if (site.kindId === undefined) throw new Error(`separator site '${site.address}' of '${site.source}' has no kind id`);
+		if (rows.has(site.kindId)) throw new Error(`${site.source} has two separator sites`);
+		rows.set(site.kindId, index);
+	});
+	return rows;
+}
+
 export function carriesPerNodeValue(site: SpacingSite): boolean {
 	return site.role === 'separator' || site.spacing?.at === 'separator';
 }
@@ -747,6 +758,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	}
 	L.push('/// Per kind id of a wrapper, the way its seat passes through to the node it holds.');
 	L.push(...denseCells('SEAT_WRAPPERS', 'SeatPath', new Map(plan.seatWrappers.map((row) => [row.id, row.field === undefined ? 'SeatPath::Content' : `SeatPath::Field(${idLiteral('FieldId', row.field)})`]))));
+	L.push("/// Per kind id of a list, the site its items' separator reads.");
+	L.push(...denseTable('SEPARATOR_SITES', 'SiteId', separatorSitesOf(plan)));
 	L.push('#[must_use]');
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
@@ -756,6 +769,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        edge_rows: EDGE_ROWS,');
 	L.push('        kind_flags: KIND_FLAGS,');
 	L.push('        seat_wrappers: SEAT_WRAPPERS,');
+	L.push('        separator_sites: SEPARATOR_SITES,');
 	L.push('        sites: SITE_SPECS,');
 	L.push(`        newline: ${rustStringLiteral(plan.newline)}.to_string(),`);
 	if (plan.indent !== '') L.push(`        indent: ${rustStringLiteral(plan.indent)}.to_string(),`);

@@ -1,4 +1,4 @@
-import { grammarTypePrefix, languageApiName } from '../grammars.ts';
+import { grammarNodeTypeName, grammarTypePrefix, languageApiName } from '../grammars.ts';
 import { spelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { ownTextLeaf } from './shared.ts';
@@ -54,10 +54,10 @@ function triviaHook(config: EmitEngineConfig): string {
 	return members.length === 1 ? 'triviaFacts' : `Object.freeze({ ${members.join(', ')} })`;
 }
 
-function triviaImports(config: EmitEngineConfig): string {
+function factoryImports(config: EmitEngineConfig): string {
 	const names = (module: 'raw' | 'coerce'): string[] => [
 		...new Set([
-			...(module === 'coerce' && config.commentCoercer !== undefined ? [config.commentCoercer] : []),
+			...(module === 'coerce' ? ['buildByKind', ...(config.commentCoercer !== undefined ? [config.commentCoercer] : [])] : []),
 			...(config.spelledTrivia ?? []).filter((form) => form.module === module).map((form) => form.builder)
 		])
 	];
@@ -136,27 +136,28 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { isMember, membersOf, type is } from './is.js';
-${config.portable === true ? "import { portable, queryFlags, querySlotFlags } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
-import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarTypePrefix(grammar)}Node, ${grammarTypeMapName(grammar)} } from './types.js';
+${config.portable === true ? "import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarNodeTypeName(grammar)}, ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { querySlots, structure, triviaFacts } from './utils.js';
-${triviaImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
+import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
+${factoryImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, hydrate, type ${rootTreeTypeName} } from './wrap.js';
 
 export interface ${api} extends LanguageAPI {
 	readonly name: '${grammar}';
 	readonly build: typeof ir;
-	readonly is: typeof is;
-	readonly kinds: typeof TSKindId;
+	readonly is: typeof is${config.portable === true ? ' & { readonly portable: PortableIs }' : ''};
+	readonly kinds: typeof TSKindId${config.portable === true ? ' & { readonly portable: PortableKinds }' : ''};
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ${rootTreeTypeName};
-	readonly node: ${grammarTypePrefix(grammar)}Node;
+	readonly node: ${grammarNodeTypeName(grammar)};
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: ${grammarTypeMapName(grammar)}['empty'];
-${config.portable === true ? '\treadonly portable: typeof portable;\n' : ''}}
+${config.portable === true ? '\treadonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };\n' : ''}}
 
 export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>({
 	name: '${grammar}',
@@ -164,11 +165,13 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	build: ir,
 	trivia: ${triviaHook(config)},
 	querySlots,
+	json: jsonFacts,
+	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ',\n\tportable,\n\tqueryFlags,\n\tquerySlotFlags' : ''}
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ',\n\tportable: rows,\n\tqueryFlags,\n\tquerySlotFlags' : ''}
 });
 `;
 }

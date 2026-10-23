@@ -31,9 +31,8 @@ import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage, REPO_ROOT } from '../../grammars.ts';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
@@ -1414,7 +1413,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		]) {
 			expect(vaporized).not.toContain(kind);
 		}
-	}, FULL_PIPELINE_TIMEOUT);
+	});
 });
 
 describe('link — variantChildren is stamped on the linked grammar', () => {

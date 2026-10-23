@@ -2,9 +2,10 @@ import { resolveRoutes, type GrammarInput, type ReadEntry } from '../../../bindi
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
+import { grammarNodeTypeName } from '../../../grammars.ts';
 import { valueParseKindsOf } from '../../../compiler/model/node-map.ts';
-import { memberKindsOf } from '../../../compiler/model/supertype-members.ts';
-import { expandToConcreteParseKinds, isSlotBearingCompound } from '../../shared.ts';
+import { isSlotBearingCompound } from '../../shared.ts';
+import { membershipKindsOf } from '../../membership.ts';
 import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
 import { presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
@@ -20,7 +21,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const typeOf = (kind: string) => (kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.id);
 	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotSubjectOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
 	const kindIdOf = (kind: string) => kindDiscriminantExpr(kind, nodeMap, kindEntries);
-	const typesOf = (kind: string): readonly number[] => [...new Set(expandToConcreteParseKinds([kind], nodeMap).flatMap((member) => typeOf(member) ?? []))];
+	const typesOf = (kind: string): readonly number[] => [...new Set(membershipKindsOf([kind], nodeMap).flatMap((member) => typeOf(member) ?? []))];
 	const flags = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
 	const plansByKind = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
 	const flagTypes: (readonly [string, readonly string[]])[] = [];
@@ -48,7 +49,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	}
 	const slotFlags = slotFlagsOf({
 		nodes: nodeMap.nodes.values(),
-		kindsOf: (slot) => expandToConcreteParseKinds(valueParseKindsOf(slot), nodeMap).flatMap((kind) => memberKindsOf(kind, nodeMap)),
+		kindsOf: (slot) => membershipKindsOf(valueParseKindsOf(slot), nodeMap),
 		plans: plansByKind,
 		typeOf,
 		typesOf
@@ -63,6 +64,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	return {
 		nodeModel: emitPortableNodeModel(routes, readTest),
 		surface: emitPortableSurface({
+			nodeType: grammarNodeTypeName(nodeMap.name),
 			routes,
 			readTest,
 			kindIdOf,

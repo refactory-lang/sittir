@@ -6,7 +6,7 @@ import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
 import { field } from '../primitives/field.ts';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const transform: typeof transformRule = (rule, patches) => withWireContext(null, () => transformRule(rule, patches)).result;
 

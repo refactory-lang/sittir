@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
-import { makeSiteKindsNodeMap, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { ERROR_KIND_ROW, collectGeneratedKindEntries, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
-import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
+import { displayFamilyNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
@@ -24,31 +21,12 @@ function twinsOf(kinds: readonly string[]): SitePreference[] {
 
 function hintHomeFixture(declared: boolean) {
 	const sites = twinsOf(['first_block', 'second_block']);
-	const build = (kindEntries: readonly GeneratedKindEntry[]) =>
-		makeSiteKindsNodeMap([...sites, ...SPACING.map((arm) => ({ kind: arm.kind }))], kindEntries);
-	const { generatedIdTables } = withGeneratedIdTables(build);
-	if (!(generatedIdTables.kindIds instanceof Map)) throw new Error('fixture kind IDs must be a map');
-	for (const kind of ['first_block', 'second_block']) {
-		const row = generatedIdTables.kindIds.get(kind)!;
-		generatedIdTables.kindIds.set(kind, { ...row, parser: { ...row.parser!, symbolName: 'block' } });
-	}
-	generatedIdTables.kindIds.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
-	const baseModel = build(collectGeneratedKindEntries(generatedIdTables));
-	const nodeMap = {
-		...baseModel,
-		displayUnions: declared
-			? new Map([
-					[
-						'block',
-						[
-							{ storage: 'first_block', literal: false },
-							{ storage: 'second_block', literal: false }
-						]
-					]
-				])
-			: undefined
-	};
-	stampIrSurface(nodeMap, generatedIdTables);
+	const { nodeMap, generatedIdTables } = displayFamilyNodeMap(
+		[...sites, ...SPACING.map((arm) => ({ kind: arm.kind }))],
+		['first_block', 'second_block'],
+		'block',
+		declared
+	);
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), new Map());
 	return { nodeMap, generatedIdTables, addresses };

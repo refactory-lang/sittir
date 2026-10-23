@@ -1,3 +1,4 @@
+
 ### `packages/codegen/src/compiler/supertype-closure.ts::stampSupertypeClosures`
 
 Flattens each supertype's membership through nested supertypes, at the end of
@@ -1628,11 +1629,11 @@ and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with t
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
-Before it evaluates anything it refuses a stale generated layer (`bindings/hash.ts::assertBindingsFresh`
-over the hash the package's `grammar.bindings.ts` exports, which `bindings/module.ts::loadBindingsHash` reads, and its `bindings.scm`), so
-codegen never runs with grammar bindings derived from other sources than the ones on disk, and never evaluates a layer it refuses.
-With `checkGeneratedLayers` it also gates a generated top layer's fixpoint check (`evaluate.ts::generatedLayerDiagnostics`), which `gen` asks for. With `unbound` it compiles layer 1 (`grammars.ts::layerPath`) and skips the staleness check: the
-base grammar's compilation, whose model the grammar bindings are derived against.
+Before it evaluates a package with its grammar bindings (`dsl/evaluate-package.ts::readsGrammarBindings`), it refuses stale ones (`bindings/module.ts::assertPackageBindingsFresh`), so
+nothing the compile evaluates or generates uses grammar bindings derived from other sources than the ones on disk.
+The config's `evaluation` options pass through to `evaluatePackage` unchanged.
+With `unbound` it evaluates the package without its grammar bindings: the
+base grammar's compilation, whose model the grammar bindings are derived against. With `base` it evaluates the upstream grammar alone, as it does for a package with no `grammar.sittir.ts`. None of these reads the grammar bindings, so none is checked.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
@@ -1664,422 +1665,6 @@ when it did not, the collection may never have run.
 
 Refuses a compilation whose compiler sink holds a `fail` (`EmitHaltedError`). Grammar diagnostics are not its
 concern: `compileGrammar` gated them before returning.
-
-### `packages/codegen/src/compiler/evaluate.ts::seq`
-
-```text
-/**
- * Sequence combinator — matches all members in order. Builds tree-sitter's
- * SEQ as is: a single member stays wrapped (the compile boundary flattens
- * it, `canonicalRuleTree`).
- *
- * @remarks
- * The separated-list LIFT — commaSep1 (`seq(x, repeat(seq(sep, x)))`) →
- * `repeat1{separator}` and trailing-separator absorption — is NOT performed
- * here. It runs once in the `link` pass (compiler/lift-separators.ts), after
- * wire and enrich-injection, so author callbacks see the un-lifted shape and
- * every separated list — authored or synthesized — is lifted from one place.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Structural grouping
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::choice`
-
-Coerces its members and builds tree-sitter's CHOICE as is — a single member
-stays wrapped and same-name FIELD members are not factored (both happen at
-the compile boundary, `canonicalRuleTree`). The one rewrite is
-a choice with a blank arm, which builds `optional` over its other arms
-(`optionalContentOf`): `choice(x, blank())` builds `optional(x)` and
-`choice(a, b, blank())` builds `optional(choice(a, b))`. It is the same
-language, and the representation pair `optionalContentOf` and `rulesEqual`
-read as one shape. `eof()` is not blank: `choice(x, eof())` matches `x` or
-the end of the input, and stays a choice.
-
-### `packages/codegen/src/compiler/evaluate.ts::optional`
-
-Coerces `content` and delegates to `structuralBuilder.optional`, which wraps
-it as given; `optional(optional(x))`, `optional(repeat(x))` and
-`optional(repeat1(x))` collapse at the compile boundary (`canonicalRuleTree`).
-
-### `packages/codegen/src/compiler/evaluate.ts::repeat`
-
-Coerces `content` and delegates to `structuralBuilder.repeat`, which wraps it
-as given; nested repeat/optional wrappers collapse at the compile boundary
-(`canonicalRuleTree`).
-
-### `packages/codegen/src/compiler/evaluate.ts::repeat1`
-
-Coerces `content` and delegates to `structuralBuilder.repeat1`, which wraps it
-as given; `repeat1(repeat1(x))` collapses at the compile boundary
-(`canonicalRuleTree`).
-
-### `packages/codegen/src/compiler/evaluate.ts::field`
-
-```text
-/**
- * Field combinator — attaches a named field to a rule.
- *
- * @param name - The field name (snake_case, raw grammar name).
- * @param content - The rule occupying this field position. Omit to
- *   create a placeholder for `resolvePatch` in transform() patches.
- * @returns A FieldRule<'evaluate'> with the field name and resolved content.
- * @remarks
- * When `content` is omitted, a placeholder FieldRule<'evaluate'> is returned with
- * `_needsContent: true`, which `resolvePatch` swaps out with the
- * original member when applying transform() patches.
- * @remarks
- * Propagates the field name to every nested symbol ref. Stops at inner
- * field/alias boundaries — those own their own field name. Does not
- * overwrite a field name already set by an inner wrapper.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Named patterns
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::string`
-
-```text
-/**
- * `string(value)` — mirror of tree-sitter's baseline DSL `string()` helper.
- *
- * Tree-sitter's grammar.js API accepts plain JS strings wherever string
- * rules are needed (e.g. `seq('(', $._expr, ')')`) AND also provides an
- * explicit `string(value)` form. Sittir's `normalize()` already handles
- * both: bare strings normalize to `{ type: 'STRING', value }`.
- *
- * This explicit form is injected as a DSL global so that `renderAs`
- * bodies can use `string('x')` syntax (as specified) without relying on
- * bare string literals, and so that any author rule body that calls
- * `string(...)` explicitly continues to work.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::synthesizeFieldEnumRules`
-
-```text
-/**
- * Post-evaluation pass: detect `field(name, enum([...]))` patterns inside
- * every rule and synthesize a named hidden rule for each one. Replace the
- * field's inline enum content with a `SymbolRule<'evaluate'>` referencing the new rule.
- *
- * @remarks
- * A field whose content is a choice-of-literals (already collapsed to
- * `EnumRule<'evaluate'>` by `choice()`) represents a closed, compile-time-known set of
- * operator/punctuation tokens. Promoting these to named hidden rules enables
- * downstream emitters to generate a compact Rust enum with KindId-backed
- * discriminants rather than a heap-allocated `text: String` field.
- *
- * Also follows single-step symbol indirections: when a field's content is a
- * bare `SymbolRule<'evaluate'>` referencing a rule that resolves to a `StringRule<'evaluate'>` or
- * `EnumRule<'evaluate'>` (e.g. `field('mutability', $.mutable_specifier)` where
- * `mutable_specifier` = `'mut'`), the target rule's literals are collected
- * and a new enum kind is synthesized in the same way.
- *
- * Synthesized rules are recorded in `evaluateSynthesized` so emitters
- * recognize them as intentional codegen artifacts with no parser symbol.
- *
- * Deduplication: fields with identical member sets (across different parent
- * kinds) share a single synthesized enum kind. The canonical name is chosen
- * in priority order:
- *   1. An existing grammar rule with the same literal set → `_<ruleName>`.
- *   2. The field name, when shared across ≥2 parent kinds → `_<fieldName>`.
- *   3. Fall back: `_<firstParentKind>_<fieldName>` for the first occurrence.
- *
- * @param rules - Mutable rules map; synthesized rules are added in place.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::purgeSupersededEnumRules`
-
-```text
-/**
- * Remove pre-existing hidden enum rules that are superseded by the current
- * pass's canonical name for the same member set.
- *
- * For example: the base grammar synthesizes `_update_expression_operator` for
- * `["++","--"]`. The override pass assigns `_operator` as the canonical name
- * for the same member set (the wire-deposited `_operator` is already present).
- * The old `_update_expression_operator` is no longer needed and should be
- * removed so it doesn't pollute downstream emitters.
- *
- * Criteria for removal:
- * - Hidden rule (name starts with `_`).
- * - Is an EnumRule<'evaluate'>.
- * - Its sorted member set maps to a DIFFERENT canonical name in
- *   `memberKeyToCanonicalName` (i.e., this name is not the canonical one).
- *
- * We do NOT require the rule to be in the current pass's `evaluateSynthesized`
- * because it may have been synthesized in an earlier pass (base grammar) and
- * carried forward through the rules-merge path.
- *
- * @param rules - Mutable rules map; superseded entries are deleted in place.
- * @param memberKeyToCanonicalName - The current pass's canonical name map.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::collectFieldEnumOccurrences`
-
-```text
-/**
- * Scan all rules for `field(name, enumContent)` patterns and return every
- * qualifying (parentKind × fieldName × memberSet) triple.
- *
- * @param rules - The full grammar rules map after evaluate-time synthesis.
- * @returns Array of occurrence records, one per qualifying field position.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::walkFieldEnums`
-
-```text
-/**
- * Recursively walk a rule tree collecting qualifying field-enum positions.
- *
- * @param rule - Current rule node.
- * @param parentKind - Grammar kind that owns this subtree.
- * @param rules - Full rules map for symbol resolution.
- * @param out - Accumulator for discovered occurrences.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::buildCanonicalEnumNames`
-
-```text
-/**
- * Build a `Map<memberKey, canonicalKindName>` for all discovered field-enum
- * occurrences using the priority-order naming strategy:
- *
- *   1. The field name matches an existing grammar rule with the same members →
- *      `_<fieldName>`.
- *   2. Field name shared across ≥2 distinct parent kinds → `_<fieldName>`.
- *   3. First-occurrence fallback → `_<firstParentKind>_<fieldName>`.
- *
- * When two different member sets would produce the same candidate name, the
- * lower-priority group falls back to `_<firstParentKind>_<fieldName>` to
- * avoid silent name collisions.
- *
- * @param occurrences - All qualifying field-enum occurrences from the first pass.
- * @param rules - Full grammar rules map for checking existing rule names.
- * @returns Map from `memberKey` to the chosen canonical hidden kind name.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::fallbackName`
-
-```text
-/**
- * Compute the fallback canonical name for a field-enum occurrence when no
- * higher-priority name can be assigned: `_<firstParentKind>_<fieldName>`.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::collectConflictingFieldEnumSites`
-
-```text
-/**
- * Identify field sites that carry multiple distinct literal sets inside the
- * same parent rule.
- *
- * Those sites must stay inline through evaluate so simplify can merge the
- * enclosing choice into a single `field(name, choice(...))` surface before
- * any later enum-like storage classification runs.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::claimUniqueEnumName`
-
-```text
-/**
- * Claim a unique hidden enum kind name for a member set.
- *
- * Prefer the requested base name when it is still free. When that name has
- * already been claimed for a different member set, append a stable slug derived
- * from the literal set so different `parentKind + fieldName` collisions do not
- * all collapse onto the first synthesized rule.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::canReuseExistingEnumName`
-
-```text
-/**
- * Return `true` when an existing rule name can safely be reused for this member
- * set: either the name is currently unused, or the existing rule resolves to
- * the exact same literal members.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::buildEnumMemberKey`
-
-```text
-/**
- * Build the stable key used for enum-member deduplication.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::enumMemberKeySlug`
-
-```text
-/**
- * Encode a member key into an identifier-safe, deterministic suffix.
- *
- * Each literal contributes lowercase alphanumerics directly; every other code
- * point is encoded as `xNN`. Commas separating members become `__`.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::deriveCandidateName`
-
-```text
-/**
- * Derive a candidate canonical hidden kind name (with priority) for a group
- * of occurrences that share the same member set.
- *
- * Priority values (lower number = higher priority):
- *   1. Field name matches an existing grammar rule with the same literal set →
- *      `_<fieldName>`. Handles `mutable_specifier = 'mut'` cases.
- *   2. All occurrences share the same field name AND ≥2 distinct parents →
- *      `_<fieldName>`.
- *   3. Fallback → `_<firstParentKind>_<fieldName>`.
- *
- * @param group - All occurrences sharing this member set.
- * @param first - The first occurrence (used for naming).
- * @param rules - Grammar rules map for existing-rule lookup.
- * @returns The candidate name and its priority level (1 = highest).
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::fieldNameMatchesGrammarRule`
-
-```text
-/**
- * Check whether a grammar rule named `fieldName` exists and resolves to the
- * same literal set as `members`. Used by `deriveCanonicalName` for priority-1
- * matching: if `field('mutable_specifier', ...)` and `rules['mutable_specifier']
- * = 'mut'`, the field name is itself the canonical name.
- *
- * @param fieldName - The field name to look up in `rules`.
- * @param members - The expected literal members for comparison.
- * @param rules - Full grammar rules map.
- * @returns `true` when `rules[fieldName]` resolves to the same member set.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::rewriteFieldEnums`
-
-```text
-/**
- * Walk a rule tree and rewrite every `field(name, inlineEnum)` to
- * `field(name, symbol(<canonicalEnumKindName>))`, collecting the synthesized
- * enum rules into `sweep.newRules`.
- *
- * @param rule - The rule tree to walk and potentially rewrite.
- * @param ctx - Evaluate ctx (rules map for symbol-reference resolution).
- * @param parentKind - The grammar kind that owns this rule (for naming).
- * @param sweep - The pass-local sweep state.
- * @returns The rewritten rule (may be structurally identical if no change was needed).
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::tryExtractFieldEnum`
-
-```text
-/**
- * Try to extract an enum definition from a field's content.
- *
- * Returns `{ enumKindName, synthesizedRule, replacementContent }` when the content
- * resolves to a closed set of string literals, or `null` when it does not
- * qualify.
- *
- * Qualifying shapes:
- *
- * 1. `EnumRule<'evaluate'>` (inline `choice('+', '-', ...)` already collapsed) — use
- *    its members directly. `replacementContent` is `symbol(enumKindName)`.
- *
- * 2. `StringRule<'evaluate'>` (single literal inline in the field position) — wrap in
- *    a 1-member enum. `replacementContent` is `symbol(enumKindName)`.
- *
- * 3. `SymbolRule<'evaluate'>` whose referent in `rules` resolves to a `StringRule<'evaluate'>` or
- *    `EnumRule<'evaluate'>` — use that rule's literals. Follows exactly one level of
- *    indirection (symbol → literal | enum).
- *    `replacementContent` is `symbol(enumKindName)`.
- *
- * 4. `repeat(X)` or `repeat1(X)` where `X` resolves to one of the above —
- *    the repeat wrapper is preserved in `replacementContent`:
- *    `repeat(symbol(enumKindName))` or `repeat1(symbol(enumKindName))`.
- *
- * The canonical kind name is looked up from `memberKeyToCanonicalName` rather
- * than derived from the parent/field context — ensuring all identical member
- * sets share one synthesized rule regardless of where they appear.
- *
- * @param content - The field's current content rule.
- * @param rules - Full rules map for symbol resolution.
- * @param memberKeyToCanonicalName - Pre-computed dedup map (first pass).
- * @returns Synthesized kind name, normalized literal-set rule, and the replacement content rule,
- *   or `null` when the content does not qualify.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::peelRepeatWrapper`
-
-```text
-/**
- * Peel one level of `repeat` or `repeat1` wrapper from a rule, returning
- * the inner content. Returns the rule unchanged when it is not a repeat
- * wrapper. Used by occurrence-collection and field-extraction passes to
- * treat `field(name, repeat(enum))` the same as `field(name, enum)`.
- *
- * @param rule - The rule to inspect.
- * @returns The inner content when `rule` is a `repeat` or `repeat1`,
- *   otherwise `rule` itself.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::resolveToEnumMembers`
-
-```text
-/**
- * Resolve a rule to an ordered list of string members if it represents a
- * closed set of literals. Returns `null` when the rule cannot be reduced to
- * an all-literal set.
- *
- * @param rule - The rule to inspect.
- * @param rules - Full rules map for one-level symbol indirection.
- * @returns An array of `StringRule<'evaluate'>` members, or `null`.
- * @remarks
- * Only one level of symbol indirection is followed. Chains like
- * `symbol → symbol → enum` are intentionally NOT followed — deeper
- * resolution belongs in Link, and multi-level chains are uncommon for
- * operator fields.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::resolveToEnumMembersOneLevelDeep`
-
-```text
-/**
- * Resolve a target rule to enum members without further symbol indirection.
- *
- * @param target - The resolved rule (one hop from a symbol reference).
- * @returns An array of `StringRule<'evaluate'>` members, or `null` when the target is
- *   not a literal or all-literal choice/enum.
- * @remarks
- * Kept separate from {@link resolveToEnumMembers} to make the "one-level
- * indirection" constraint explicit and prevent accidental chain following.
- * A `ChoiceRule<'evaluate'>` reaching here is the raw evaluate-time form — all-string
- * choices should already have been collapsed to `EnumRule<'evaluate'>` by `choice()`,
- * but handle the raw form defensively.
- */
-```
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.patchSites`
 
@@ -2154,7 +1739,7 @@ The override census and the patch-site labels read it.
 
 ### `packages/codegen/src/compiler/compile.ts::CompileGrammarConfig`
 
-`compileGrammar`'s config: the package, the generated id tables to link against, the diagnostic codes allowed through the gate, `unbound` to compile layer 1, and `checkGeneratedLayers` to gate a generated top layer's fixpoint check.
+`compileGrammar`'s config: the package, the generated id tables to link against, the diagnostic codes allowed through the gate, and how the package is evaluated (`evaluation`, which `dsl/evaluate-package.ts::evaluatePackage` takes unchanged: `unbound` to compile layer 1, `checkGeneratedLayers` to gate a generated top layer's fixpoint check).
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.ruleCauses`
 
@@ -2165,262 +1750,6 @@ rule, which is what the hand-written rule ratchet counts.
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.undeclaredRules`
 
 The grammar's `rules:` entries with a bare body, sorted.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluate`
-
-```text
-/**
- * Run the grammar's DSL a second time, sittir-side, and return the
- * `RawGrammar`: `evaluateDsl`'s grammar, canonicalized at the compile
- * boundary (`canonicalGrammar`). The bundled grammar is written against tree-sitter's global
- * DSL, so for the duration of one call the DSL functions are installed on
- * `globalThis` and restored in `finally`. Calls are serialized behind a
- * module-level promise chain (`evaluateMutex`): the body awaits the module
- * import, and two interleaved calls would save and restore each other's
- * globals. Serializing `evaluate` is what makes the module-level
- * collectors downstream (link → normalize → assemble never await) safe
- * to reset at the start of a compile and drain at its end.
- */
-```
-
-It takes the grammar's file types and stamps them on the raw grammar it builds, and on the stages inside it; the argument is required. A grammar that is not a package (a synthetic one) passes `NO_FILE_TYPES`; a package goes through `evaluatePackage`.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateExternalsCallback`
-
-Calls the grammar's `externals` callback and fills the externals sink, before `grammarFn` reads anything of the base but its `name` and `externals`, the order tree-sitter's `grammar()` reads in. A layer's pass runs inside this call and completes the base, so the base's rules and lists exist only after it. Whatever an `externals` callback can observe of the rule callbacks is then the same in both runtimes (nothing has run yet). Every other list and `word` is evaluated after the rules in both (`evaluateMetadataCallbacks`).
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateRuleFunctions`
-
-```text
-/**
- * Evaluate each rule function in `opts.rules` and write the normalised
- * result into the shared `rules` map.
- *
- * @param opts - Grammar options containing the rule callbacks to evaluate.
- * @param baseRules - The base grammar's already-evaluated rules, passed as
- *   `previous` to each override callback.
- * @param refs - Mutable symbol-reference accumulator shared across all rule
- *   evaluations in this grammar invocation.
- * @param rules - Mutable output map where evaluated rules are stored.
- * @remarks
- * Each rule callback receives a fresh `$` proxy and, as its second
- * argument, the base grammar's version of that rule (if any).
- * wire()'s wrapped rule fns own their own context management
- * (currentRuleKind) per invocation — no try/finally needed here.
- */
-```
-
-It records nothing about who authored a rule: every base rule has a wire callback, so a callback says nothing
-about authorship. That question belongs to the stages (`RuleProvenanceStage`) and to wire's own records.
-
-### `packages/codegen/src/compiler/evaluate.ts::inheritBaseGrammarMetadata`
-
-```text
-/**
- * Inherit metadata lists from the base grammar when the override did not
- * explicitly re-declare them.
- *
- * @param opts - Grammar options for the current (override) grammar.
- * @param baseGrammar - The evaluated base grammar object, or `null` for a
- *   fresh grammar.
- * @param sinks - Mutable accumulators for each metadata list.
- * @param setWord - Callback to set the `word` rule name when inherited from
- *   the base.
- * @remarks
- * Tree-sitter CLI inherits externals, extras, supertypes, inline,
- * conflicts, precedences, and word implicitly when extending a base grammar. This
- * function models the same behaviour so downstream phases see the full
- * declaration set instead of an empty list.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::MetadataRuleListCtx`
-
-What `appendMetadataRules` needs for one list: its name for the error, the rule types the list accepts (extras: SYMBOL, STRING and PATTERN), and the sink it appends to.
-
-### `packages/codegen/src/compiler/evaluate.ts::appendMetadataRules`
-
-Appends the rules an `extras` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
-
-### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryOf`
-
-The grammar.json shape of a SYMBOL, STRING or PATTERN rule — its type and its name or value, without evaluate's ids — or `undefined` for any other rule type.
-
-### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryKey`
-
-The identity two rule-list entries share when they are the same entry: the type plus the name or value. A `$.name` reference is a fresh object on each proxy access, so entries dedupe by this key, never by reference.
-
-### `packages/codegen/src/compiler/evaluate.ts::appendDedup`
-
-```text
-/**
- * Append `value` to `sink` only when it is not already present.
- *
- * @remarks
- * When an override callback does `[...prev, $._foo]` and
- * the base grammar already has `$._foo`, we must collapse to a single
- * entry. Symbol refs from `$.foo` are fresh objects on every proxy access
- * (`createProxy` does not cache), so reference equality always fails —
- * deduplication must compare by string value instead.
- *
- * @param sink - The mutable accumulator array to append into.
- * @param value - The string value to append if not already in `sink`.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::MetadataRuleListCtx`
-
-What `appendMetadataRules` needs for one list: its name for the error, the rule types the list accepts (externals: SYMBOL and STRING; extras: SYMBOL, STRING and PATTERN), and the sink it appends to.
-
-### `packages/codegen/src/compiler/evaluate.ts::appendMetadataRules`
-
-Appends the rules an `extras` or `externals` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`dsl/rule-patterns.ts::ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
-
-### `packages/codegen/src/compiler/evaluate.ts::ruleListEntryKey`
-
-The identity two rule-list entries share when they are the same entry: the type plus the name or value. A `$.name` reference is a fresh object on each proxy access, so entries dedupe by this key, never by reference.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacks`
-
-An `extras` callback receives the base grammar's extras as the rule list evaluate stored for them, and its result is appended through `appendMetadataRules`. `extras` stays that rule list (`RuleListEntry`) to the node map; readers derive names, literals and patterns with `ruleListParts`.
-
-Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` and the base grammar's wordset of the same name, and records its members as rules in the order written (`ReservedWordsets`). An extension that declares no `reserved` inherits the base's wordsets (`inheritBaseGrammarMetadata`).
-
-```text
-/**
- * Run all the metadata callbacks (extras, externals, supertypes,
- * inline, conflicts, precedences, word) and write their results into the
- * supplied accumulators. A precedences group keeps each entry's name: a
- * named precedence as its string, a rule reference as the rule's name, so
- * wire's precedence-ranked check reads the same table on this side as the
- * tree-sitter CLI hands it.
- *
- * tree-sitter's pattern: each callback receives `($, baseValue)`
- * where `$` is a fresh proxy and `baseValue` is the base grammar's
- * version of that property. The base's extras and externals are handed back
- * as the rule lists evaluate stored for them.
- * The base `supertypes`, `inline` and `conflicts` (group-wise) arrive as
- * SYMBOL rules (`baseNameSymbols`), exactly as the tree-sitter CLI hands
- * them, so a wired callback's removals, renames and dedupe act the same in
- * both pipelines.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluate`
-
-```text
-/**
- * Evaluate a grammar.js (or grammar.sittir.ts) file and return a RawGrammar.
- *
- * Injects DSL functions as globals, then imports the module. Evaluate has
- * no parser catalog, so it stamps no `hidden` or `inline` fact; link stamps
- * both from the catalog (`stampParserVisibility`).
- * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
- */
-```
-
-Serialized behind a module-level `evaluateMutex`: `saveAndInjectDslGlobals` writes
-the DSL onto `globalThis` and `restoreSavedGlobals` restores it in `finally` —
-two concurrent calls (e.g. two grammars compiling at once) would interleave
-their save/inject/restore and could hand one call the other's globals. Each
-call installs its own pending promise as the new mutex value and awaits the
-previous one first, so calls run one at a time regardless of call order or
-which one fails; this is the only place `globalThis` is touched.
-
-### `packages/codegen/src/compiler/evaluate.ts::saveAndInjectDslGlobals`
-
-```text
-/**
- * Build the tree-sitter baseline DSL function map, save any pre-existing
- * globals under the same names, inject the DSL functions into `globalThis`,
- * and return the saved values for later restoration.
- *
- * @param g - `globalThis` cast to a mutable string-keyed record.
- * @returns A snapshot of the globals that were overwritten, keyed by name.
- * @remarks
- * Only tree-sitter baseline DSL shadows are injected as globals.
- * Sittir extensions (transform/insert/replace/role/enrich) are explicitly
- * imported from `@sittir/codegen/dsl` by override files and must not be
- * injected here.
- * @remarks
- * `globalThis` is typed as `typeof globalThis`, which doesn't include
- * our DSL props — `Record<string, unknown>` is the honest shape for the
- * bag we mutate inside this scope.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateDsl`
-
-Runs the grammar's DSL sittir-side and returns the `EvaluatedGrammar`: every
-rule exactly as the DSL built it, the shape tree-sitter builds from the same
-source (`dsl-shape-fidelity.test.ts` holds each grammar to its shipped
-`grammar.json` under `rulesEqual`). `evaluate` is this plus the compile
-boundary; a caller that wants the DSL's own shape calls it directly.
-
-### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
-
-The evaluated grammar of a layer's file: what it exports (`importedGrammar`) through `evaluatedGrammarOf`. A layer's file evaluates to the same grammar wherever it is imported from, so which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluatedGrammarOf`
-
-The evaluated grammar of a `grammar()` result: what the runtime built, with what the top layer's record carries
-(`dsl/layer-record.ts::layerRecordOf`). The records become the grammar's keys, and the render bodies join its rules
-(`withRecords`). The record's automatic-variant record becomes the grammar's, and the stages are evaluated from its
-stage bases (`evaluatedStages`). An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and
-`bindingEffects`) are spread onto it. The dead enrich mints become `orphanedSyntheticGroups`, the conflict-derivation
-records `derivationRecords`, the text-token names `textTokens`, and the diagnostics the layer passes recorded
-`layerDiagnostics`, which leave out a generated layer's fixpoint check (`generatedLayerDiagnostics`). A grammar no layer pass completed (an upstream `grammar.js`) carries none of them, and comes back
-as a copy of what its `grammar()` call produced. The result is a spread copy, so whatever a caller adds never reaches
-the imported module's grammar, which the module cache keeps. A test reads an in-process layer's evaluated grammar
-through it.
-
-### `packages/codegen/src/compiler/evaluate.ts::withRecords`
-
-A grammar with a layer's records: each record becomes the grammar key of the same name, and the render bodies
-(`renderAs`, then `visibleExternals`, which wins on a shared name) join the rules where the layers that declared
-them place them (`withSynthesizedRules`). A body enters under its storage name, which for a visible external is the
-hidden name: the visible name is parse identity only, carried by the alias each reference takes, and a rule under
-the visible name would be a second node on the same type name. A body replaces a rule of the same name in place.
-`evaluateSynthesized` names these rules. They are sittir's alone: the external scanner produces the symbols, so
-tree-sitter's grammar never holds them, and the runtime's `grammar()` never sees them.
-
-### `packages/codegen/src/compiler/evaluate.ts::withSynthesizedRules`
-
-The rules with each layer's render bodies inserted after the rules its runtime held (`SynthesizedRules.after`),
-counting the bodies the layers below inserted. Each layer's bodies so sit between its own rules and the rules of the
-layers above, and the emitted render module follows that order. A name already among the rules keeps its place and
-takes the body.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluatedStages`
-
-The two stages a departing layer is judged against (`dsl/layer-record.ts::StageBases`): `raw`, the layer's source
-before enrich, and `enriched`, the base the layer completed. Both are evaluated here, after the module's `grammar()`
-call and inside the same DSL-globals scope, so the upstream is never located by package path and the tree-sitter
-run never evaluates them.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluatedStage`
-
-Evaluates one base a second time through `wire` with no config but the layer's name (`wireWithoutConfig`), and
-records every rule name it declares: the base's rules plus the rules `wire` hands the stage. The stage's records are
-the ones that wire run makes (`dsl/layer.ts::ownRecordsOf`) over the ones its base's layer carried, and its render
-bodies sit where `withRecords` places them. Going through `wire` means the stage sees what enrich hands wire, such
-as the whitespace bodies it mints (`withEnrichedWhitespace`), so the enriched stage and the final evaluation agree
-that `_tight` and the other members are literal kinds rather than empty patterns. The evaluated rules alone are not
-that list, because the rule catalog omits hidden rules it finds unreachable (typescript's `_reserved_identifier`). A
-throw fails the evaluation: a base tree-sitter accepts always evaluates, and one it rejects is reported by its
-prediction records.
-
-### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
-
-```text
-/**
- * Restore previously saved global values, deleting entries that were
- * `undefined` before injection.
- *
- * @param g - `globalThis` cast to a mutable string-keyed record.
- * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
- */
-```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyIntrinsic`
 
@@ -2866,6 +2195,10 @@ When classification changed the shape, `withKindFacts` carries the original rule
  *  or one that already carries a `hidden` stamp, is left alone. */
 ```
 
+### `packages/codegen/src/compiler/link.ts::namedAliasFaceOf`
+
+The parser-visible face of a group-lift target: unwraps OPTIONAL/REPEAT wrappers and single-non-blank choices down to a named ALIAS and returns its value. When a lift target has such a face, `applyGroupOverrides` mints nothing — group overrides run only on the sittir side of the dual execution, so a hidden mint there is a phantom kind by construction, and it would bury an arm that already owns a parser-issued identity one level deeper. The variant discriminator then rides the existing alias.
+
 ### `packages/codegen/src/compiler/link.ts::pruneInlinedAliasBodies`
 
 Deletes hidden rules that nothing references after inlining, except alias bodies and dispatch unions: a rule already promoted to SUPERTYPE, or still shaped as a choice of kinds (`isKindChoice`), survives unreferenced — hidden dispatch unions like a grammar's `_statement` are namespaces the factory surface groups by, and inlining a union's references does not retire the union itself.
@@ -3279,6 +2612,22 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 /** Pick the position-carried modifier attrs a seq passes to a repeat that
  *  replaces it (id/fieldName/multiplicity/nonterminal/metadata) — NOT `members`. */
 ```
+
+### `packages/codegen/src/compiler/link.ts::validateGroupsConfig`
+
+Splits a `groups:` block into the lifts that can be applied and the issues that rule the others out: a kind missing from the rule map, or per lift a path that does not resolve, a discriminator that is empty or not an identifier, a lift nested in another, or a synthesized name already taken (`groupLiftIssue`). A lifted body with no structural member still applies and only warns. Nothing throws, so one bad entry never stops the rest.
+
+### `packages/codegen/src/compiler/link.ts::ValidGroupsConfig`
+
+The lifts of a `groups:` block that apply, keyed by kind then path, and the issues of the ones that do not.
+
+### `packages/codegen/src/compiler/link.ts::GroupLiftCtx`
+
+What `groupLiftIssue` reads for one kind's lifts: the lifts and their paths, the kind's rule, the rule map and the warning sink.
+
+### `packages/codegen/src/compiler/link.ts::groupLiftIssue`
+
+Why one group lift cannot apply, or `undefined` when it can. A path the resolver rejects (`ConfigError`) becomes the issue's message; any other error is not a config fault and propagates.
 
 ### `packages/codegen/src/compiler/link.ts::unwrapAliasForCheck`
 
@@ -4019,30 +3368,6 @@ The file types of a grammar built outside a grammar package (a test's synthetic 
 ### `packages/codegen/src/compiler/upstream-file-types.ts::upstreamFileTypes`
 
 The file types a grammar declares: the `file-types` of its upstream package's `tree-sitter.json`. The entry is the only one the file has, or, when it has several, the one named as our grammar (typescript's upstream lists typescript, tsx and flow; the union or the first entry would be wrong), and several entries with none named so is refused. An entry that declares no file types, or a null list, gives none (regex), and a list that is not strings, or a package with no `tree-sitter.json`, is refused with the path. It is the one source: `evaluatePackage` passes the result to `evaluate`, which stamps it on the raw grammar it builds (a grammar built outside a package, as a test's is, declares none through `NO_FILE_TYPES`); it is required on every later phase and on the node map, so a pass that fails to carry it is a type error. And the generated `tree-sitter.json` files read the same function, so extensions are never restated in a grammar file. The generated `tree-sitter.json` is written before the compile runs, so it cannot read the model; both call this function and therefore agree by construction, and a grammar package with no upstream package installed is refused by both.
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::packageGrammarJsPath`
-
-The absolute path of a grammar package's upstream `grammar.js`, resolving the upstream package (`upstreamPackage`) from the grammar package's own directory (`packageRequire`) — the grammar package is the one place its upstream dependency is declared.
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::packageSourceEntry`
-
-The file a grammar package evaluates: its top layer (`grammars.ts::topLayerPath`), or layer 1 with `unbound`, when that file exists, else the upstream `grammar.js`; `base` selects the upstream `grammar.js` outright, which is how a tool shows what the upstream grammar says before overrides. Every package evaluation resolves its entry here, so the compile and the analysis tools cannot disagree about which file a package means.
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::PackageSourceOptions`
-
-`base`: evaluate the upstream `grammar.js`. `unbound`: evaluate layer 1, `grammar.sittir.ts`, rather than the top layer.
-
-### `packages/codegen/src/compiler/evaluate-package.ts::evaluatePackage`
-
-The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` (the top layer, layer 1 with `unbound`, or the upstream grammar with `base`) with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`). `evaluatePackageLayer` evaluates the same entry without canonicalizing it, for paths that address a layer's own rules.
-
-### `packages/codegen/src/compiler/evaluate-package.ts::evaluatePackageLayer`
-
-The entry `evaluatePackage` reads, evaluated by `evaluateDsl` and not canonicalized: the rules as the layer builds them, with every blank member and precedence wrapper in place. A layer's `edits:` paths index these rules (the patch stage counts raw members), so a derivation that writes paths for a layer above reads the layer here, not in `evaluatePackage`'s canonical rules, where a blank sequence member is dropped and a lone member is peeled. `bindingsModule` reads layer 1 this way for the grammar bindings' patch positions (`GrammarBindingsInput.layerRules`).
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
-
-`packageGrammarJsPath` for the grammar's own package.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
 
@@ -5028,127 +4353,6 @@ collector parameter.
 /** Rule-construction strategy (structural vs attribute); falls back to structuralBuilder. */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::MetadataSinks`
-
-```text
-/** Metadata accumulator sinks filled by grammar() metadata callbacks. */
-```
-
-`extras` and `externals` are rule lists (`RuleListEntry`), kept as grammar.json holds them; the other sinks hold names.
-
-### `packages/codegen/src/compiler/evaluate.ts::EvaluateCtx`
-
-The context of one `grammarFn` call: the options, the base's rules and grammar, the list accumulators
-(`MetadataSinks`) and the setter for `word`. Every field is set when the call builds it.
-
-### `packages/codegen/src/compiler/evaluate.ts::rules`
-
-```text
-/** The rule record under evaluation (mutated by passes). */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::refs`
-
-```text
-/** Symbol-reference accumulator shared across all rule evaluations. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::opts`
-
-```text
-/** The grammar options under evaluation. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::baseRules`
-
-```text
-/** Base-grammar rules snapshot (empty for fresh grammars). */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::baseGrammar`
-
-```text
-/** The evaluated base grammar object, or null for fresh grammars. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::externals`
-
-```text
-/** The externals metadata sink (same live array as sinks.externals): the grammar's `externals` rule list. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::isExtension`
-
-```text
-/** True when extending a base grammar. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::sinks`
-
-```text
-/** Metadata accumulator sinks. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::setWord`
-
-```text
-/** Setter for the word-rule name. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::FieldEnumOccurrence`
-
-```text
-/** A field-enum candidate discovered during the first collection pass. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::parentKind`
-
-```text
-/** The grammar kind that owns the field. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::fieldName`
-
-```text
-/** The field name (e.g. `'mutable_specifier'`). */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::memberKey`
-
-```text
-/** The sorted, comma-joined literal values — used as the dedup key. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::members`
-
-```text
-/** The actual member list for constructing the EnumRule<'evaluate'>. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::FieldEnumSweepState`
-
-```text
-/** Pass-local state for one synthesizeFieldEnumRules sweep (an explicit param, not ctx). */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::newRules`
-
-```text
-/** Accumulator for synthesized literal-set rule entries. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::memberKeyToCanonicalName`
-
-```text
-/** Pre-computed dedup map from the first pass. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::conflictingSites`
-
-```text
-/** Field sites with conflicting member sets — left inline. */
-```
-
 ### `packages/codegen/src/compiler/rule-catalog.ts::collectReferences`
 
 The grammar's reference graph, derived in one walk over the final rules: one
@@ -5497,7 +4701,7 @@ It is a different fact from link's `synthesizedKinds` (`link.ts`), the kinds lin
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.layerDiagnostics`
 
-The blocking diagnostics the layer passes recorded on the top layer's record (`layer-not-enrich-fixpoint`, `edit-site-missing`). `evaluateRecords` hands them to the compile gate with evaluate's own records.
+Blocking diagnostics the DSL recorded while it evaluated the grammar. `diagnostics/grammar-diagnostics.ts::evaluateRecords` hands them to the compile gate beside evaluate's own records.
 
 ### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 
@@ -6236,16 +5440,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::MetadataSinks`
-
-```text
-/**
- * The `grammar()` function — mirrors tree-sitter's DSL entry point.
- * When called with one arg: fresh grammar.
- * When called with two args: grammar extension (base + overrides).
- */
-```
-
 ### `packages/codegen/src/compiler/inline-sets.ts::NON_INLINABLE_MODEL_TYPES`
 
 ```text
@@ -6291,10 +5485,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  *   Visible symbols that don't match either path are returned unchanged.
  */
 ```
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::GRAMMAR_JS_SUBPATHS`
-
-`grammar.js` locations inside the upstream package for grammars with a non-standard layout (typescript ships its dialects in subdirectories). Every other grammar keeps `grammar.js` at the package root.
 
 ### `packages/codegen/src/compiler/simplify.ts::attributeBuilder`
 
@@ -6973,161 +6163,6 @@ Inline and conflict bookkeeping deliberately does not root (an orphaned mint
 would keep itself alive through its own entries). A grammar evaluated without
 wire has no protected names and prunes nothing.
 
-### `packages/codegen/src/compiler/evaluate.ts::module`
-
-```text
-/**
- * compiler/evaluate.ts — Evaluate phase.
- *
- * Executes grammar.js DSL and produces a RawGrammar.
- * When grammar.sittir.ts exists, it uses tree-sitter's native grammar(base, { rules })
- * extension mechanism — each rule fn receives ($, original).
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::Input`
-
-```text
-// ---------------------------------------------------------------------------
-// Input type — anything the DSL functions accept
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::coerceToRule`
-
-Converts a callback's result to a `Rule<'evaluate'>`: a string is a `STRING`, a RegExp a `PATTERN`, an object with
-a `type` a rule as is; anything else throws. It takes `unknown` because rule callbacks return `unknown` under the
-shared `grammar()` contract, and it is the runtime check that contract relies on. An undefined-symbol `ReferenceError`,
-which `$` gives for a name the grammar lacks, is thrown, as tree-sitter's `normalize` throws it.
-
-### `packages/codegen/src/compiler/evaluate.ts::undefinedSymbolOf`
-
-The symbol an undefined-symbol `ReferenceError` carries as `.symbol`, which `alias()` takes as a new kind's name.
-
-### `packages/codegen/src/compiler/evaluate.ts::createProxy`
-
-```text
-// ---------------------------------------------------------------------------
-// $ proxy — each access is a fresh SYMBOL rule
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// `hidden` is a hint for downstream passes only — Link
-// recomputes the authoritative visibility decision via
-// `isHiddenKind()`, consulting both the leading-underscore
-// convention and tree-sitter's explicit `inline` list.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::TokenFn`
-
-```text
-// ---------------------------------------------------------------------------
-// Override primitives — transform/insert/replace/role have moved to
-// packages/codegen/src/dsl/. Override files import them explicitly
-// from '@sittir/codegen/dsl'. They are no longer injected as globals
-// here because they are sittir extensions, not tree-sitter baseline.
-// ---------------------------------------------------------------------------
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Token
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::token.immediate`
-
-```text
-/**
- * Coerces `content` and delegates to `structuralBuilder.token.immediate`
- * (dsl/builders.ts), which owns the real IMMEDIATE_TOKEN construction —
- * see that entry for the tree-sitter dsl.js shape rationale.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::PrecFn`
-
-The precedence family, built as tree-sitter's DSL builds it: `prec(n, x)`,
-`prec.dynamic(n, x)`, and `prec.left` / `prec.right` with an optional
-precedence that defaults to 0 when only the rule is given. Enrich and wire see
-the wrappers exactly as tree-sitter does; the compile boundary peels every one
-(`canonicalRuleTree`), so link onward never sees precedence.
-
-### `packages/codegen/src/compiler/evaluate.ts::alias`
-
-A target that is an undefined-symbol `ReferenceError` names a new kind: its symbol (`undefinedSymbolOf`) is the
-alias target, as in tree-sitter's `alias()`.
-
-```text
-// ---------------------------------------------------------------------------
-// Alias + blank (needed for grammar.js compatibility)
-// ---------------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Both evaluate's own runtime and wire's makeSimpleDollarProxy produce
-// uppercase SYMBOL $ references, so this is a plain equality check.
-```
-
-#### body
-
-```text
-// Grammar files are untyped JavaScript: the target may be `undefined` /
-// `null`, so guard before reading `.type` and report the invalid alias
-// value instead of a property-access TypeError.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::eof`
-
-tree-sitter's `eof()`: an `EOF` rule, which matches no text and only at the end of the input. A production ending in it reduces only there. `eofInTokenDiagnostics` refuses it inside a token, and normalize lowers it to blank (`normalize.ts::blanksDropped`).
-
-### `packages/codegen/src/compiler/evaluate.ts::GrammarOptions`
-
-The options `grammar()` receives: `WiredOpts`, the one contract the DSL and evaluate share for the global
-`grammar(base, options)`. Rule and metadata callbacks return `unknown`; evaluate coerces each result
-(`coerceToRule`), so no callback's return is trusted by type.
-
-### `packages/codegen/src/compiler/evaluate.ts::grammarFn`
-
-The global `grammar()` during evaluation, under the DSL's contract: `grammar(options)` for a grammar of its own,
-`grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
-property, and a call that mixes the two shapes throws. It reads the base's `name` and `externals`, calls the
-`externals` callback, and only then reads the base's rules and other lists, the order tree-sitter's `dsl.js` reads in
-(`dsl/layer.ts::VERIFIED_TREE_SITTER`): a layer's pass runs inside that call and completes the base.
-
-It is the counterpart of `dsl.js`'s `grammar()` over evaluate's rule types. It evaluates the rule callbacks over the
-base's rules (`evaluateRuleFunctions`) and the list callbacks (`evaluateMetadataCallbacks`), inherits the lists the
-options do not declare (`inheritBaseGrammarMetadata`), and records the result. It reads no wire context and merges no
-record of its base: what crosses layers rides on the layer record, which `evaluatedGrammarOf` reads. So a layer above
-receives the same base in both runtimes. Its `evaluateSynthesized` is empty: only a layer record names rules sittir
-adds.
-
-### `packages/codegen/src/compiler/evaluate.ts::appendCallbackMetadataNames`
-
-```text
-// Shared by the `supertypes`, `factoryInline` and `inline` callback results:
-// each accepts a mixed array of bare names and `$.foo` references (which
-// coerce to `{ type: 'SYMBOL', name: 'foo' }`). `factoryInline`'s `previous`
-// still carries bare STRING names from the base grammar; without the string
-// branch those names would silently drop (coerceToRule() turns a bare string
-// into a STRING rule, never SYMBOL).
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::baseNameSymbols`
-
-```text
-// The base grammar's name list as SYMBOL rules: the shape the tree-sitter CLI
-// passes as `previous` to `supertypes`, `inline` and each `conflicts` group.
-// Wired callbacks match SYMBOL entries only (inline removals, symbol renames,
-// existing-name dedupe); bare strings would leave those steps inert on the
-// sittir side and its inline and conflicts would diverge from grammar.json.
-```
-
 ### `packages/codegen/src/compiler/rule-catalog.ts::BuildResult`
 
 ```text
@@ -7297,8 +6332,8 @@ adds.
 // post-enrich-injection) makes it the single source and lets it reach the
 // enrich-injected group rules the constructors miss. Idempotent over
 // already-lifted shapes (see lift-separators.ts), so it is a no-op while
-// the constructors still lift. Runs before classification, which expects
-// the canonical separator shape.
+// the constructors still lift. Runs before group-lift / classification,
+// which expect the canonical separator shape.
 ```
 
 #### body
@@ -7338,7 +6373,8 @@ adds.
 // After this, downstream phases see bare string literals at those
 // positions and treat them as inline mandatory literals in seq
 // context — same as how `seq('mod', $.name)` renders `mod {{ name }}`
-// with `mod` stamped inline.
+// with `mod` stamped inline. Runs BEFORE applyGroupOverrides so any
+// group lifts operate on already-stamped rule bodies.
 // raw.renderAs is Rule<'evaluate'> (pre-link, override-authored literal
 // bodies); stampStaticRenderAs only reads STRING-shaped bodies, so the
 // phase view is a widen-only cast (RepeatRule's per-phase shapes genuinely
@@ -7768,7 +6804,7 @@ not a parser supertype) is a hoisted form of the kind that references it; the
 rule is left as it is. A hoisted rule the parser declares a supertype has no
 node to seat, so it is classified like any other hidden choice. The stamp is declared by the route that minted
 the rule — the variant lift, a `groups:` entry, enrich's clause-hoist and
-promoted-arm mints, a `group()` patch — never inferred
+promoted-arm mints, a `group()` patch, the group lift here — never inferred
 from the body's shape: a hidden sequence with a `field()` that no route
 stamped (an upstream rule, or an authored rule a parent merely aliases) is an
 ordinary hidden rule. The annotation is the one source of the hoisted fact: nothing collects it
@@ -7899,6 +6935,106 @@ lifted afterwards.
 // construction site, so skipping it here is correct, not lossy.
 // (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
 // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
+```
+
+### `packages/codegen/src/compiler/link.ts::resolveGroupPath`
+
+```text
+// ---------------------------------------------------------------------------
+// Group-lift synthesis (moved from group-synthesis.ts in that change
+// de-scatter). Implements the `groups:` override block per
+// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md.
+// Pure — no I/O, no side effects on inputs.
+// ---------------------------------------------------------------------------
+```
+
+```text
+/**
+ * Walk a path string ('1/1/0/1/3') into a rule tree, returning the
+ * sub-rule at that path. Path segments index into:
+ *   - seq.members[i]
+ *   - choice.members[i]
+ *   - wrapper.content (path '0' for optional/repeat/repeat1/field/token/
+ *     alias/variant/clause/group)
+ *
+ * Throws if any segment fails to address. Mirrors path semantics used
+ * by `patches:` in `grammar.sittir.ts`.
+ */
+```
+
+A path that does not resolve throws `ConfigError`, which only the validators catch (`groupLiftIssue`): by the time `applyGroupOverrides` walks a path, validation has already kept only the ones that resolve.
+
+### `packages/codegen/src/compiler/link.ts::deriveSynthesizedName`
+
+```text
+/**
+ * Compute the synthesized hidden kind name for a group lift:
+ * `_<parent>_<discriminator>` (a parent that is already hidden keeps its
+ * leading underscore).
+ */
+```
+
+#### body
+
+```text
+// When parentKind already starts with '_' (hidden rule), use it as-is
+// as the base; otherwise prepend '_' to canonicalize.
+```
+
+### `packages/codegen/src/compiler/link.ts::applyGroupOverrides`
+
+```text
+/**
+ * Apply all `groups:` lifts. Pure transform — input rules are not
+ * mutated; a new rules map is returned with lifted bodies registered
+ * under their synthesized kind names and parent bodies rewritten to
+ * reference them.
+ *
+ * Wrapper handling: when the lift target is wrapped (`optional` /
+ * `repeat` / `repeat1`), only the wrapper's content is moved into the
+ * synthesized kind. The wrapper stays at the parent's lift position
+ * with the synthesized symbol ref inside. This preserves cardinality
+ * semantics at the parent.
+ */
+```
+
+#### body
+
+```text
+// deep first
+```
+
+Each lifted body is registered with `annotations.hoisted` stamped, the same
+declaration every other minting route makes; `classifyHiddenRule` collects
+the set from that annotation alone.
+
+It applies only the lifts `validateGroupsConfig` keeps and returns the issues of the rest; link records each as `groups-config-invalid` (`recordConfigIssue`).
+
+### `packages/codegen/src/compiler/link.ts::liftRule`
+
+#### body
+
+```text
+// Mint the helper ref through evaluate's `symbol()` so it gets the SAME
+// construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
+// other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
+// the one constructor (then revised at wrapper push-down / link supertype pass)
+// keeps `inline` authoritative on the normalizedRules path, so normalize's fold
+// can read it instead of re-deriving hiddenness structurally.
+```
+
+#### body
+
+```text
+// (_discriminator kept for future use; the current implementation does not use it.
+// The discriminator participates only in the synthesized kind name component.)
+```
+
+#### body
+
+```text
+// target.separator already carries trailing/leading nested — rides
+// along for free (same pattern as flatten.ts's REPEAT case).
 ```
 
 ### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
@@ -8122,7 +7258,7 @@ A path that does not resolve throws `ConfigError`; link validates every form fir
 
 ### `packages/codegen/src/compiler/link.ts::ConfigError`
 
-A `refine()` declaration that does not fit the grammar. The path resolvers throw it and only the validator catches it (`refineFormIssue`), so the message is written once where the fault is found and the fault still becomes a record rather than a throw out of link.
+A `groups:` or `refine()` declaration that does not fit the grammar. The path resolvers throw it and only the validators catch it, so the message is written once where the fault is found and the fault still becomes a record rather than a throw out of link.
 
 ### `packages/codegen/src/compiler/link.ts::ConfigIssue`
 
@@ -8130,7 +7266,7 @@ One invalid config entry: the kind it is declared on and the message naming the 
 
 ### `packages/codegen/src/compiler/link.ts::recordConfigIssue`
 
-Records a `ConfigIssue` in link's sink as `refine-config-invalid`, fail severity. The grammar diagnostics surface it, and it cannot be expected (`diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`): the fix is the declaration.
+Records a `ConfigIssue` in link's sink as `groups-config-invalid` or `refine-config-invalid`, fail severity. The grammar diagnostics surface both, and neither can be expected (`diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`): the fix is the declaration.
 
 ### `packages/codegen/src/compiler/link.ts::narrowedFieldLiteralsForForm`
 
@@ -8276,6 +7412,18 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 	 * `WireConfig.factoryInline`. Carried by name through link and stamped
 	 * onto the assembled node as `factoryInline`.
 	 */
+```
+
+### `packages/codegen/src/compiler/types.ts::DesugarDivergenceEvent`
+
+```text
+/**
+ * A mint at an evaluate-only synthesis site (the body-pattern-group fallback
+ * in `evaluateRulesAndInjectSynthetics`)
+ * that fired without a matching wire-side deposit for the same name — the
+ * dual-execution divergence the kindid invariant depends on these sites
+ * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
+ */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar.terminalAliasWireIds`
@@ -8470,10 +7618,6 @@ A choice member that splices into its parent choice: a non-empty `CHOICE`. The e
  * self-edge (A → A).
  */
 ```
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::module`
-
-Maps a grammar package to the file it evaluates, one of its layers (`grammars.ts::layerPath`) or its upstream `grammar.js`. Grammar names and package locations come from the registry in `grammars.ts`.
 
 ### `packages/codegen/src/compiler/assemble.ts::module`
 
@@ -8734,28 +7878,7 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
 
 ### `packages/codegen/src/compiler/normalize.ts::module`
 
-```text
-/**
- * compiler/normalize.ts — Normalize phase.
- *
- * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
- * factoring, prefix/suffix extraction, wrapper collapsing,
- * single-use hidden-rule inlining). Does NOT change named content.
- * Non-lossy.
- *
- * Variant tagging lives in Link — that is classification, not simplification.
- * Pipeline order is fixed in
- * `normalizeGrammar()` below: drop blanks → collapse → fan-out → factor →
- * inline → re-collapse. A sequence keeps every member it names: two
- * equal adjacent members are two children (`seq("'", "'")` is `''`).
- */
-```
-
-```text
-// wrapVariants / deduplicateVariants / nameVariant / tokenToName all
-// moved to compiler/link.ts — they're classification, not simplification.
-// Re-export from there if test files or callers still need them.
-```
+The normalize phase. It restructures sequences, choices, optionals and repeats for simplification (fan-out, factoring, prefix and suffix extraction, wrapper collapsing, single-use hidden-rule inlining) without changing named content. `applyNormalizationPasses` fixes the order: drop blanks, collapse, fan out, factor, inline, collapse again. A sequence keeps every member it names: two equal adjacent members are two children (`seq("'", "'")` is `''`). Variant tagging is classification and lives in link.
 
 ### `packages/codegen/src/compiler/normalize.ts::NormalizeCtx.inlineKinds`
 
@@ -8921,6 +8044,10 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
 // Extract factored branches (the parts that differ)
 ```
 
+### `packages/codegen/src/compiler/normalize.ts::supertypeKindsOf`
+
+Every supertype the model has: the rules link stamps `SUPERTYPE`, declared or a hidden choice that is a supertype by shape. The stamp is the one fact, and it matches the parser. A declared supertype the parser shows as a node is no supertype in the parser either: tree-sitter drops its supertype flag (`dsl/symbol-table.ts::predictSymbolTable`), and link builds the kind as that node. Wire never lists a parent the parser shows as a node (`dsl/wire/wire.ts::wrapSupertypesCallback`). assemble reads its supertype arms from this set (`dsl/symbol-table.ts::supertypeArmsOf`).
+
 ### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
 
 The one iterate-to-a-fixed-point helper for the compiler passes (`simplify.simplifyToFixpoint`,
@@ -9057,6 +8184,11 @@ Tree-sitter can fold that default alias out of the rule reference, so the
 catalog supplies its identity beside the explicit aliases. This preserves both
 physical option sites instead of choosing one parser identity for the family.
 
+An optional content (`OPTIONAL`, which the compile boundary also makes of a
+choice with a blank arm) contributes its content, as a choice contributes its
+arms, so an alias over `optional(x)` or `choice(x, blank())` keeps `x` in
+its family.
+
 #### body
 
 ```text
@@ -9079,8 +8211,8 @@ the same display name would fight that member resolution.
 ### `packages/codegen/src/compiler/types.ts::DisplayUnionMember`
 
 One storage under a display: the storage's name or literal text, and whether
-it is a literal. Stamped by `collectDisplayUnions`, read by the minter and the
-`display-union-mixed` guard.
+it is a literal. Stamped by `collectDisplayUnions`, read by the minter, the
+`display-union-mixed` guard and the serialized node model (`emitters/node-model.ts::buildNodeModel`).
 
 ### `packages/codegen/src/compiler/types.ts::DisplayUnions`
 
@@ -9161,7 +8293,7 @@ The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::parserRulesOf`
 
-The evaluated rules tree-sitter also sees: every rule but those whose body evaluate supplied itself (`evaluateSynthesized`: render-only rules, visible externals, undeclared deposits and the body-pattern fallback). Kind prediction reads them, and so does the test that compares evaluate's grammar with the CLI's `grammar.json`.
+The evaluated rules tree-sitter also sees: every rule but those whose body evaluate supplied itself (`evaluateSynthesized`: render-only rules, visible externals, undeclared deposits and the body-pattern fallback). Kind prediction reads them.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::predictKinds`
 
@@ -9216,22 +8348,6 @@ A literal that is itself the slot (a STRING stamped `nonterminal: true` with `al
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 
 The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.
-
-### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
-
-Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar layer inside it.
-
-### `packages/codegen/src/compiler/evaluate.ts::blank`
-
-tree-sitter's `blank()`: the `BLANK` node, built as tree-sitter builds it (`dsl/builders.ts::structuralBuilder`), so enrich and wire read the same empty rule under both runtimes. The compile boundary lowers it (`canonical-rules.ts::canonicalRule`).
-
-### `packages/codegen/src/compiler/evaluate.ts::importedGrammar`
-
-A grammar layer's file imported: the module's default or named export, as its top-level `grammar()` call produced it. The module cache keeps it, so a second import of the same file in a process is the same result and the same layer record.
-
-### `packages/codegen/src/compiler/evaluate.ts::generatedLayerDiagnostics`
-
-The producer check of a generated top layer: the diagnostics of its fixpoint check (`dsl/layer-record.ts::LayerRecord`'s `fixpoint`), or none when the file's top layer is authored, since the compile already reports an authored layer's check. It imports the file (`importedGrammar`), so after an evaluation of the same file the check runs on the record that evaluation built, and it runs inside the DSL globals (`withDslGlobals`), which the check's enrich may call. `compile.ts::compileGrammar` (for `gen`) and the bindings inventory call it; no other evaluation runs it.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
 

@@ -1,4 +1,7 @@
-import type { QueryPlan, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
+import type { QueryPlan, QuerySlots, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
+
+/** A portable kind: one vocabulary path, the same object for every language. */
+export type PortableKind<Path extends string = string> = { readonly $path: Path };
 
 /** One step of a condition: a slot by its numbers, narrowed to its first or last node when `anchor` is set, or reaching its node only when it holds exactly one (`only`). */
 export interface PortableStep extends SlotSubject {
@@ -32,17 +35,28 @@ export interface PortableTable {
 	readonly fixedText: Readonly<Record<number, string>>;
 }
 
+/** What a bound grammar's engine reads portable classifications from: its {@link PortableTable} and the slots its conditions name. */
+export interface PortableRows {
+	readonly table: PortableTable;
+	readonly querySlots: QuerySlots;
+}
+
 /**
- * Whether `node` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
+ * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
  *
- * @param node - A node of the language, parsed or built.
- * @param context - The nodes enclosing `node`, outermost first. A way of reading that depends on where the node sits matches
- * only when the context places it there; without context the node is read the next way that matches.
+ * @typeParam Ids - The grammar kinds read at or under the path.
+ * @typeParam Node - The grammar's node union; a node of another language, or one whose language is unknown, is refused.
+ * @typeParam Kind - The grammar's kind-id enum: a bare kind id of the language is read by its kind and fixed text. A value typed as
+ * a plain `number` is still admitted by the type, since a numeric enum accepts one.
+ * @param value - A node of the language, parsed or built, read by the rows of the engine that stamped it, or a kind id of the
+ * language, read by the rows its engine loaded.
+ * @throws When given a kind id before an engine of the language has loaded.
  */
-export type PortableGuard<Ids extends number> = <T extends { readonly $type: number }>(
-	node: T,
-	context?: readonly { readonly $type: number }[]
-) => node is T & { readonly $type: Ids };
+export type PortableGuard<Ids extends number, Node extends { readonly $type: number } = { readonly $type: number }, Kind extends number = never> = <
+	T extends Node | Kind
+>(
+	value: T
+) => value is T extends number ? T & Ids : T & { readonly $type: Ids };
 
 /** What a bound grammar adds for the portable engine: its vocabulary namespaces of kind ids and of guards. */
 export interface PortableSurface {

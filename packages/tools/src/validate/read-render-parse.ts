@@ -13,7 +13,8 @@ import { writeSync } from 'node:fs';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
-	carrySource,
+	nodeText,
+	carryPlace,
 	isCoordinate,
 	isDataKey,
 	isStorageKey,
@@ -44,6 +45,7 @@ import {
 	readNodeOf,
 	walkWrappedTree,
 	materializeDetached,
+	loadSlotAccessorOf,
 	emitValidatorMetrics,
 	loadNodeModel,
 	loadIsLeafKind,
@@ -442,7 +444,7 @@ export function leadingTriviaRenderedWidth(
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
 		const copy = markEdited({ ...storageOf(data), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
-		carrySource(node, copy);
+		carryPlace(node, copy);
 		return copy;
 	};
 	const childSlots = (node: AnyUntypedNode): { key: string; index: number | undefined; child: AnyUntypedNode }[] =>
@@ -527,7 +529,8 @@ export function selfContainedRenderInput(
 ): unknown {
 	const slice = spanSlicer(source);
 	const textOf = (record: Record<string, unknown>): string | undefined => {
-		if (typeof record.$text === 'string') return record.$text;
+		const own = nodeText(record);
+		if (own !== undefined) return own;
 		const span = spanOf(record);
 		return span === undefined ? undefined : slice(span);
 	};
@@ -787,7 +790,7 @@ export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => 
 	const trivia = triviaOf(data);
 	if (trivia?.leading === undefined && trivia?.trailing === undefined) return data;
 	const candidate = markEdited({ ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [], trailing: [] } } } as AnyUntypedNode);
-	carrySource(data, candidate);
+	carryPlace(data, candidate);
 	return candidate;
 }
 
@@ -957,6 +960,7 @@ export async function validateReadRenderParse(
 	parser.setLanguage(lang);
 
 	const kindNameFromId = await loadKindNameFromId(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine);
@@ -1038,6 +1042,7 @@ export async function validateReadRenderParse(
 				const seen = new Set<string>();
 				walkWrappedTree(
 					wrappedRoot,
+					accessorOf,
 					(w: TypedNode) => {
 						if (w.$named === false) return;
 						const displayKind = kindNameFromId?.(w.$type);
@@ -1135,7 +1140,7 @@ export async function validateReadRenderParse(
 						data =
 							recursive !== true && at !== undefined && handle.read
 								? (readUntyped(handle, at) as AnyUntypedNode)
-								: (materializeDetached(cand.node, onAccessorThrow) as AnyUntypedNode);
+								: (materializeDetached(cand.node, accessorOf, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
 						reportThrown({
 							name: `${entry.name} [${kind}]`,

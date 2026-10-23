@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { projection, withoutIds } from './_parse-projection.ts';
 
 // Every layer that is not meant to fail must leave no layer diagnostic.

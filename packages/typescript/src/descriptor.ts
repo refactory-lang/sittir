@@ -5,7 +5,9 @@ import type { TypescriptAPI } from './api.js';
 import { languageGuards } from '@sittir/common/language';
 import * as typescript from './descriptor.js';
 import { TSKindId } from './kinds.js';
-import { is as guards } from './is.js';
+import { guardsWith } from './is.js';
+import { portable, portableGuardsOf } from '@sittir/common/portable';
+import type { PortableIs, PortableKinds } from './portable.js';
 
 export type * from './types.js';
 export type * from './options.js';
@@ -16,8 +18,13 @@ export type Engine<M extends ApiSurface = 'default'> = EngineOf<TypescriptAPI, M
 
 export const name = 'typescript';
 export const fileTypes: readonly string[] = Object.freeze(['ts']);
-export const kinds = TSKindId;
-export const is = languageGuards(guards, typescript);
+export const kinds: typeof TSKindId & { readonly portable: PortableKinds } = Object.freeze({
+	...TSKindId,
+	portable: portable.kinds as PortableKinds
+});
+export const is = languageGuards(guardsWith, typescript, (language) => ({
+	portable: portableGuardsOf(language) as PortableIs
+}));
 export const load: Language<TypescriptAPI>['load'] = () => import('./api.js').then((m) => m.hooks);
 export const createEngine: Language<TypescriptAPI>['createEngine'] = (options) =>
 	import('@sittir/common').then((m) => m.createEngine(typescript, options));

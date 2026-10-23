@@ -1,17 +1,19 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { register, registered, type Role } from './identity.ts';
-import { treeOf } from './tree-token.ts';
+import { treeOf, treeTokenOf } from './tree-token.ts';
+import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 
 export { Delimiter } from './delimiter.ts';
+export { nodeJSON } from './node-json.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -66,7 +68,8 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	if (!isNode(result)) return result;
 	markRebuilt(result);
 	carryRead(node, result);
-	carrySource(node, result);
+	carryPlace(node, result);
+	carryUnitSides(node, result);
 	const facts = handle?.current.trivia;
 	if (facts !== undefined) {
 		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
@@ -74,7 +77,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	}
 	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
 	if (inner.some((entry) => typeof entry !== 'number')) {
-		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
+		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
 	const trivia = triviaOf(node);
@@ -83,27 +86,20 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	return handle === undefined ? result : handle.settle(result);
 }
 
-/**
- * Whether the node has no child with width. Only such a node can hold inner trivia, since a
- * comment beside any child has that child to lead or trail.
- *
- * @param node - A built or parsed node.
- * @returns Whether no child holds sides: a child holds sides when it is named, not an extra or
- *   `ERROR`, and has width. A parsed node's width is read from its tree, so a zero-width child
- *   (typescript's automatic semicolon) holds none. A built node's child has the width of its
- *   rendered text, and every child a built node stores renders text (a stored automatic semicolon
- *   renders `"\n"`), so a built node is empty when every `_`-keyed storage entry is absent or an
- *   empty list.
- */
 export function isEmptyNode(node: AnyUntypedNode): boolean {
 	const tree = treeOf(node);
 	const handle = treeHandleOf(node);
 	if (tree?.isEmpty !== undefined && handle !== undefined) return tree.isEmpty(decodeIndex(handle));
+	const facts = engineOf(node)?.trivia;
+	return storesNothingIn(node, typeof node.$type === 'number' ? facts?.innerRegions.get(node.$type) : undefined, facts?.namedUnits);
+}
+
+export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] | undefined, namedUnits?: ReadonlySet<number>): boolean {
 	const record = node as unknown as Record<string, unknown>;
-	for (const key of Object.keys(record)) {
-		if (key.charCodeAt(0) !== 95) continue;
-		const value = record[key];
-		if (value != null && !(Array.isArray(value) && value.length === 0)) return false;
+	const owns = (value: unknown): boolean =>
+		Array.isArray(value) ? value.some(owns) : typeof value === 'number' ? (namedUnits?.has(value) ?? true) : value != null;
+	for (const key of region ?? Object.keys(record)) {
+		if (key.charCodeAt(0) === 95 && owns(record[key])) return false;
 	}
 	return true;
 }
@@ -124,7 +120,10 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const facts: TriviaFacts = handle.current.trivia;
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
-	const read = (side: TriviaSideName): readonly TriviaEntry[] => hydratedEntries(sideOf(node, side));
+	const read = (side: TriviaSideName): readonly TriviaEntry[] => {
+		const { entries, tree } = sideRead(node, side);
+		return hydratedEntries(entries, tree);
+	};
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
 		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 		const at = tableAt(node);
@@ -145,12 +144,15 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	};
 }
 
-function hydratedEntries(entries: readonly TriviaEntry[]): readonly TriviaEntry[] {
-	return entries.some(isCoordinate) ? entries.map(hydrateTriviaEntry) : entries;
+function hydratedEntries(entries: readonly TriviaEntry[], tree: TreeHandle | undefined): readonly TriviaEntry[] {
+	if (tree !== undefined || entries.some(isCoordinate)) return entries.map((entry) => hydrateTriviaEntry(entry, tree));
+	entries.forEach(asTextNode);
+	return entries;
 }
 
-export function hydrateTriviaEntry(entry: unknown): TriviaEntry {
-	return (isCoordinate(entry) ? hydrateStored(entry) : entry) as TriviaEntry;
+export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEntry {
+	if (isCoordinate(entry)) return hydrateStored(entry) as TriviaEntry;
+	return asTextNode(tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
 }
 
 /**
@@ -166,9 +168,15 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		const freshNode = fresh as Record<string, unknown>;
 		const heldNode = held as Record<string, unknown>;
 		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !stands(freshNode.$type)) continue;
-		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
+		if (placeOf(freshNode) !== undefined) continue;
+		if (placeOf(heldNode) === undefined) {
+			const trivia = triviaOf(heldNode);
+			if (trivia !== undefined && triviaOf(freshNode) === undefined) setTriviaData(freshNode as unknown as AnyUntypedNode, trivia);
+			carryUnitSides(heldNode, freshNode);
+			continue;
+		}
 		carryRead(heldNode, freshNode);
-		carrySource(heldNode, freshNode);
+		carryPlace(heldNode, freshNode);
 	}
 }
 
@@ -368,6 +376,25 @@ export function listOption(list: unknown, key: string, fallback: unknown): unkno
 
 const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
 
+const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
+
+/**
+ * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
+ * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
+ * An owner names the accessor that returns its list and answers that list's `separator`.
+ */
+export function defineListSeparator(node: object, accessor?: string): void {
+	let getter = SEPARATOR_GETTERS.get(accessor);
+	if (getter === undefined) {
+		getter = function (this: Record<string, unknown>) {
+			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
+			return this._separator ?? slotSeparatorOf(this);
+		};
+		SEPARATOR_GETTERS.set(accessor, getter);
+	}
+	Object.defineProperty(node, 'separator', { get: getter, enumerable: false, configurable: true });
+}
+
 /** One getter per index position, shared by every wrapped list: an index reads the item the list hydrates on first use. */
 export function defineListIndices(node: object, count: number): void {
 	for (let index = 0; index < count; index++) {
@@ -500,16 +527,8 @@ export function seatWith(
 
 export function isNode(v: unknown): v is AnyUntypedNode {
 	if (v === null || typeof v !== 'object') return false;
-	const o = v as Record<string, unknown>;
-	if (typeof o.$type !== 'number') return false;
-	return (
-		holdsSlots(o) ||
-		typeof o.$text === 'string' ||
-		o.$_layout !== undefined ||
-		o.$source === Source.Ts ||
-		o.$source === Source.Sg ||
-		o.$source === Source.Factory
-	);
+	if (typeof (v as { readonly $type?: unknown }).$type !== 'number') return false;
+	return sourceOf(v) !== undefined || treeTokenOf(v) !== undefined;
 }
 
 export function describeValue(v: unknown): string {
@@ -539,7 +558,7 @@ export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 }
 
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
-	return input !== null && typeof input === 'object' && !isNodeValue(input) && key in input
+	return input !== null && typeof input === 'object' && !Array.isArray(input) && !isNodeValue(input) && (key in input || Object.keys(input).length === 0)
 		? (input as Record<string, unknown>)[key]
 		: orElse();
 }
@@ -551,14 +570,6 @@ export function isParsedNode(v: unknown): v is AnyUntypedNode {
 
 export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && !isParsedNode(v);
-}
-
-/**
- * The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node surface, and the range belongs to the version of the tree the node was read from, so it says nothing about the node after an edit.
- */
-export function spanOf(node: object): ByteSpan | undefined {
-	const span = coordinateOf(node)?.$span;
-	return span === undefined ? undefined : { start: span.start, end: span.end };
 }
 
 export function isErrorNode(v: unknown): v is ErrorNode {
@@ -668,8 +679,9 @@ export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './eng
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, placeOf } from './node-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
 	interiorPattern,

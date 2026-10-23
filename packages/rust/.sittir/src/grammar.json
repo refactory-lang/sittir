@@ -3204,15 +3204,20 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "crate",
-          "annotations": {
-            "variant": "crate",
-            "variantOf": "visibility_modifier"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "crate",
+            "annotations": {
+              "variant": "crate",
+              "variantOf": "visibility_modifier"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
-          "metadata": {
-            "fieldSource": "override"
-          }
+          "named": true,
+          "value": "crate_visibility_modifier"
         },
         {
           "type": "SYMBOL",
@@ -6553,10 +6558,10 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "comma",
+              "name": "trailing_comma",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_comma"
+                "name": "_kw_trailing_comma"
               },
               "metadata": {
                 "fieldSource": "override"
@@ -8790,132 +8795,128 @@
       "value": "\\$(?<name>[a-zA-Z_]\\w*)"
     },
     "_primitive_type": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "u8",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i8",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u16",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i16",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u32",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i32",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u64",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i64",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "u128",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "i128",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "isize",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "usize",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "f32",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "f64",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "bool",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "str",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "char",
-            "annotations": {
-              "variantOf": "_primitive_type"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "u8",
+          "annotations": {
+            "variantOf": "_primitive_type"
           }
-        ]
-      }
+        },
+        {
+          "type": "STRING",
+          "value": "i8",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u16",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i16",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u32",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i32",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u64",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i64",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "u128",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "i128",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "isize",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "usize",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "f32",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "f64",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "bool",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "str",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "char",
+          "annotations": {
+            "variantOf": "_primitive_type"
+          }
+        }
+      ]
     },
     "_kw_unsafe": {
       "type": "STRING",
@@ -11782,7 +11783,7 @@
       "type": "STRING",
       "value": ".."
     },
-    "_kw_comma": {
+    "_kw_trailing_comma": {
       "type": "STRING",
       "value": ","
     },
@@ -15262,6 +15263,10 @@
       "_attributed_argument"
     ],
     [
+      "_pattern",
+      "_primitive_type"
+    ],
+    [
       "_type",
       "_attributed_type_parameter"
     ],
@@ -15398,7 +15403,7 @@
     "_kw_move",
     "_kw_default",
     "_kw_const",
-    "_kw_comma",
+    "_kw_trailing_comma",
     "_kw_in",
     "_kw_operator",
     "_kw_reference",

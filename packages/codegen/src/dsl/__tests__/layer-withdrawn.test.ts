@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluateDsl } from '../evaluate.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const chain = (name: string): string => resolve(here, 'fixtures/layer-chain', name);

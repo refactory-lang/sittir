@@ -129,3 +129,31 @@ describe('link builds one display union per alias target', () => {
 		]);
 	});
 });
+
+describe('a display family keeps a member that the compile boundary folds under OPTIONAL', () => {
+	const familyOf = (aliased: Rule<'evaluate'>) => {
+		const linked = link(
+			makeRaw({
+				source: {
+					type: 'SEQ',
+					members: [
+						{ type: 'ALIAS', named: true, value: 'shown', content: aliased },
+						{ type: 'ALIAS', named: true, value: 'shown', content: { type: 'SYMBOL', name: 'second' } },
+						{ type: 'SYMBOL', name: 'first' }
+					]
+				} as Rule<'evaluate'>,
+				first: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>,
+				second: { type: 'PATTERN', value: '[0-9]+' } as Rule<'evaluate'>
+			})
+		);
+		return [...(linked.displayUnions?.get('shown') ?? [])].map((member) => member.storage).sort();
+	};
+
+	it('keeps first in the shown family when the blank-armed choice(first, blank()) is folded to OPTIONAL', () => {
+		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual(['first', 'second']);
+	});
+
+	it('keeps first in the shown family when the member is optional($.first)', () => {
+		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual(['first', 'second']);
+	});
+});

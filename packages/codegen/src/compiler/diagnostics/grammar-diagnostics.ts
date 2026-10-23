@@ -12,25 +12,26 @@ import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
 import { boundNameOf } from '../../dsl/bind.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, ReservedWordsets, RuleCatalog } from '../types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
 	kindCatalogOf,
 	predictedEntriesOf,
 	renameAwareSymbolSource,
 	reservedWordset,
-	type EofNotLast,
 	type GeneratedIdTables,
 	type KindEntryLike
 } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
-import { ALIAS, EOF, SYMBOL } from '../../types/rule-types.ts';
-import { isLexedBoundary, RuleWalker } from '../../dsl/rule-walker.ts';
+import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
+import { eofPlacements } from '../../dsl/eof-placement.ts';
+import { rootRuleName } from '../../util/reachable-rules.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
+import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
 
 export type { GrammarDiagnostic };
 
@@ -127,7 +128,7 @@ export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): Gram
 		severity: 'error',
 		grammar,
 		ownerKind: dropped.kind,
-		message: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in edits so it becomes a slot`,
+		message: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in ${SITE_EDITS_KEY} so it becomes a slot`,
 		canProceed: false,
 		details: { tokens: dropped.tokens }
 	};
@@ -172,6 +173,23 @@ export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): G
 		ownerKind: hiddenName,
 		message: `groups: body-pattern '${hiddenName}' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.`,
 		proposal: `The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.`,
+		canProceed: true
+	};
+}
+
+const DESUGAR_DIVERGENCE_DESCRIPTIONS: Record<DesugarDivergenceEvent['site'], string> = {
+	'body-pattern-group': "evaluateRulesAndInjectSynthetics's body-pattern-group fallback fired with no wire-side deposit"
+};
+
+export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceEvent): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: `desugar-divergence-${event.site}`,
+		severity: 'warning',
+		grammar,
+		ownerKind: event.name,
+		message: `${DESUGAR_DIVERGENCE_DESCRIPTIONS[event.site]}: '${event.name}'. Tree-sitter's separate execution of this grammar never registers this rule, so it has no parser-issued kindId — a phantom kind by construction.`,
+		proposal: `Route this synthesis through the DSL layer (enrich/wire) pre-generate, so both executions mint the same rule, instead of leaving it to this evaluate-only fallback.`,
 		canProceed: true
 	};
 }
@@ -330,13 +348,13 @@ export function collectGrammarDiagnostics(input: {
 	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['refine-config-invalid', 'token-interior-unstructurable']);
+const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
-	...Object.keys(ENRICH_SHAPES),
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
 	'kind-key-collision',
+	'groups-config-invalid',
 	'refine-config-invalid',
 	'rule-cause-missing',
 	'rule-cause-mismatch',
@@ -347,7 +365,10 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'conflict-unresolvable',
 	'conflict-resolutions-stale',
 	'conflict-dynamic-precedence-lost',
-	'lead-refused'
+	'lead-refused',
+	'eof-not-last',
+	'eof-in-token',
+	...Object.keys(ENRICH_SHAPES)
 ]);
 
 export function unexpectableExpectEntries(
@@ -490,55 +511,33 @@ export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds
 	}));
 }
 
-export function eofInTokenDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules'>): GrammarDiagnostic[] {
-	const walker = new RuleWalker<Rule<'evaluate'>>();
-	const eofInside = (rule: Rule<'evaluate'>): boolean => walker.find(rule, (inner) => inner.type === EOF) !== undefined;
-	return Object.entries(grammar.rules)
-		.filter(([, rule]) => walker.find(rule, (inner) => isLexedBoundary(inner) && eofInside(inner)) !== undefined)
-		.map(([ownerKind]) => ({
-			scope: 'grammar' as const,
-			code: 'eof-in-token',
-			severity: 'fail' as const,
-			grammar: grammar.name,
-			ownerKind,
-			message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
-			proposal: `Move eof() out of the token, to the end of the production that holds it.`,
-			canProceed: false
-		}));
-}
-
-function eofNotLastMessage({ kind, ending, repetition }: EofNotLast): string {
-	if (ending !== undefined) return `'${ending}' always ends input, so nothing can follow it in '${kind}'; the parser can never produce what follows.`;
-	if (repetition) return `the repetition in '${kind}' ends at eof(), so it can never repeat; the parser can never produce a second item.`;
-	return `kind '${kind}' has a production that continues after eof(); the parser can never produce it.`;
-}
-
-export function eofNotLastDiagnostics(raw: Pick<RawGrammar, 'name' | 'predictedKinds'>): GrammarDiagnostic[] {
-	const kinds = raw.predictedKinds;
-	if (kinds === undefined || !('entries' in kinds)) return [];
-	return kinds.eofNotLast.map(({ kind, ending, repetition }) => ({
-		scope: 'grammar' as const,
-		code: 'eof-not-last',
-		severity: 'fail' as const,
-		grammar: raw.name,
-		ownerKind: kind,
-		message: eofNotLastMessage({ kind, ending, repetition }),
-		proposal:
-			ending === undefined
-				? `End the production at eof(), or move what follows eof() before it.`
-				: `Let '${ending}' end without eof() where something follows it, or make it the last thing '${kind}' matches.`,
-		canProceed: false,
-		details: { kind, ending, repetition }
-	}));
+export function eofDiagnostics(grammar: Pick<RawGrammar, 'name' | 'rules' | 'textTokens'>): GrammarDiagnostic[] {
+	const start = rootRuleName(grammar.rules);
+	return [...eofPlacements(grammar.rules, grammar.textTokens ?? [])].map(([ownerKind, placement]) => {
+		const shared = { scope: 'grammar' as const, severity: 'fail' as const, grammar: grammar.name, ownerKind, canProceed: false, details: { kind: ownerKind, start, ...placement } };
+		return placement.inToken
+			? {
+					...shared,
+					code: 'eof-in-token',
+					message: `kind '${ownerKind}' puts eof() inside a token; a lexical token cannot match the end of input.`,
+					proposal: `Move eof() out of the token, to the end of the start rule '${start}'.`
+				}
+			: {
+					...shared,
+					code: 'eof-not-last',
+					message: `eof() in '${ownerKind}' is not the last step of the start rule '${start}'; eof() is legal only there, outside any repetition.`,
+					proposal: `Move eof() to the end of '${start}', or take it out of '${ownerKind}'.`
+				};
+	});
 }
 
 export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 	return withoutOrphanedGroups(raw, [
 		...predictionRecords(raw),
-		...eofInTokenDiagnostics(raw),
-		...eofNotLastDiagnostics(raw),
+		...eofDiagnostics(raw),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
+		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event)),
 		...(raw.layerDiagnostics ?? [])
 	]);
 }

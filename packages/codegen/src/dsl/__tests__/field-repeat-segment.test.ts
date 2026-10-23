@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const RULES = "source: ($) => repeat($.k), k: ($) => seq(repeat($.item), $.x), item: () => 'i', x: () => 'x'";
 const OPTIONS = "options: { 'k/item:/separator': preference(',') }";

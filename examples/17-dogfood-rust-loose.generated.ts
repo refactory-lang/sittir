@@ -151,7 +151,8 @@ export function rebuildSpliceLoose() {
 										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
 									})),
 								}),
-								comma: true,
+							}, {
+								trailingComma: rs.kinds.Comma,
 							}),
 						}),
 					})],

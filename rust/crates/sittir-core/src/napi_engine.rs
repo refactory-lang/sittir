@@ -244,6 +244,16 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, index, |parsed, index| Ok(parsed.slot_layouts(index)))
             }
 
+            /// The separator the list at `index` of the live tree `treeId`
+            /// writes between its items, as a grammar id: the one its source
+            /// spells where the slot stores one, else the one the read-time
+            /// options render. Null for a node that is no list. Refuses as
+            /// `triviaSide` does.
+            #[::napi_derive::napi(ts_return_type = "import('../src/types.ts').TSKindId | null")]
+            pub fn slot_separator(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<Option<$crate::types::KindId>> {
+                with_live_node(tree_id, index, |parsed, index| Ok(parsed.slot_separator(index)))
+            }
+
             /// The separator before the node at `index` of the live tree
             /// `treeId` as an item of its parent's list slot, as a grammar id,
             /// where its source spells another than the one the slot renders.
@@ -379,7 +389,7 @@ macro_rules! napi_engine {
             /// `kinds` when given and to the `where` plan (JSON, see
             /// `query::PlanSpec`) when given, resuming after the path `resume`
             /// an earlier batch returned, `depth` levels down (every level
-            /// when absent). As JSON `{ stubs, resume }`. Refuses
+            /// when absent). As JSON `{ items, resume, origin }`. Refuses
             /// a tree that is not live and a plan whose pattern the native
             /// matcher cannot compile.
             #[::napi_derive::napi]

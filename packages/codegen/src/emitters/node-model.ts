@@ -4,7 +4,11 @@ import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { DisplayUnionMember, NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
+import type {
+	AssembledNode,
+	AssembledNonterminal,
+	NodeOrTerminal
+} from '../compiler/model/node-map.ts';
 import {
 	isNodeRef,
 	isUnresolvedRef,
@@ -178,7 +182,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		root: nodeMap.root ?? null,
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
-		displayUnions: Object.fromEntries(nodeMap.displayUnions ?? []),
+		displayUnions: Object.fromEntries([...(nodeMap.displayUnions ?? [])].sort(([a], [b]) => compareOrdinal(a, b))),
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
 		relaxes: kindEntries === undefined ? null : relaxationTable(nodeMap, kindEntries),
 		nodes

@@ -483,23 +483,6 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
-
-```text
-/**
-	 * Stamp expression for this kind in **child context** — used when a
-	 * parent stamps this kind into its `$children` slot. Defaults to
-	 * `stampExpression`, but terminal classes override to return the
-	 * full UntypedNode literal (`{ $type, $text, $source, $named }`)
-	 * because child interfaces expose the UntypedNode shape
-	 * (`$children: readonly [Crate]` where `Crate` is
-	 * `Terminal<"crate", "crate">`), not the plain string.
-	 *
-	 * Compounds' `stampExpression` is already a factory call that
-	 * returns UntypedNode, so they share the default.
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleMetadata`
 
 ```text
@@ -570,12 +553,6 @@ Distinct from `hidden`, which means "has no factory".
 
 ```text
 /** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::configKey`
-
-```text
-/** Config key — matches ConfigOf projection (camelCase of storageName). Always singular. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isUnnamed`
@@ -1108,18 +1085,6 @@ flatten and simplify joins use.
 /** Field-context stamp: JSON literal with `as const`. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
-
-```text
-/**
-	 * Child-context stamp: wrap the literal in an UntypedNode object so
-	 * the parent's `$children` slot matches the `Terminal<kind, text>`
-	 * interface shape. `$named: true` because keywords are named
-	 * (`_kw_async` / `async` etc. surface as named nodes in tree-
-	 * sitter's output).
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
 ```text
@@ -1177,17 +1142,6 @@ flatten and simplify joins use.
 	 * string tokens from lexer-hint tokens (e.g. rust's `TOKEN(prec(1,
 	 * '<'))` in `type_arguments`). See {@link immediate} for the
 	 * adjacency-specific flag.
-	 */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::stampChildExpression`
-
-```text
-/**
-	 * Child-context stamp: wrap the single-literal text in an UntypedNode
-	 * object. `$named: false` — tokens are anonymous in tree-sitter's
-	 * output (non-word literals like `..` / `=>` never have a named
-	 * entry in `node-types.json`).
 	 */
 ```
 
@@ -1456,7 +1410,7 @@ literals are lexeme fragments and take no kind.
 /**
  * A fully-resolved slot produced by the collect-slots / assemble pipeline.
  *
- * Naming properties (`storageName`, `name`, `configKey`, `propertyName`,
+ * Naming properties (`storageName`, `name`, `propertyName`,
  * `paramName`, `parseNames`) are computed getters derived from `values` +
  * `fieldName` via {@link projectSlotNaming}. They are never stored or spread
  * — use `.with(overrides)` to create a modified copy.
@@ -3831,6 +3785,15 @@ name no token. The one place that turns a punctuation kind into a token
 identity, read by the rule-side reader below and by the template emitter's
 slot lookup.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::slotPunctuationTokenOfNode`
+
+The token name a slot's value answers to when seams are gated into its presence
+branch: `punctuationTokenOfNode`, else the name of the text of any fixed-text
+leaf that is not word-shaped. The fallback covers a hidden keyword leaf whose
+text is punctuation (an optional comma held as a keyword-presence slot), which
+no visible-punctuation test accepts, so its `<token>_before` seam still finds
+the slot that owns it.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::punctuationReferenceTokenOf`
 
 The token name of a rule that is a reference to a visible punctuation kind,
@@ -3873,6 +3836,12 @@ emitter's collapse of modifier-ordering arms into one gate per marker.
 Such a member joins a seam like a punctuation literal, named by the slot
 instead of the token. A fielded string that renders as plain text is a
 token, not a slot, and keeps its token seam.
+
+A slot registered as a choice (`registeredOption === 'choice'`) is named by its
+one literal's token kind, not by its field: the arms it chooses between write
+the token's own `<token>_before` sites, so the member joins the token seam and
+the field name stays free of any collision with a token's. A registered slot
+that holds more than one literal spelling is not a literal slot.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalLeafText`
 
@@ -4700,7 +4669,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
-- When several slots share a span, only the first in render order keys it.
+- When several slots share a span, only the first in render order keys it, and the gap's `slots` lists all of them (by storage key, `storageKeyOf`). A slot outside the span, such as typescript's automatic-semicolon terminator after `}`, is not in it. The root gap's `slots` are every slot with no token before it, plus its repeat slot.
 - A kind with several gaps still has one inner side (`innerSite`).
 - A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
 - A compound with no slots and at least two tokens has the one gap `interior` after its first token.
@@ -4709,7 +4678,7 @@ Slotless leaves carry no gaps. A merged literal such as rust `unit_expression` `
 
 ### `packages/codegen/src/compiler/model/node-map.ts::InnerGap`
 
-One inner-comment position of a kind: the empty slot that keys it (or `interior`) and the number of the kind's unconditional literal tokens before it.
+One inner-comment position of a kind: the empty slot that keys it (or `interior`), the number of the kind's unconditional literal tokens before it, and `slots`, the storage keys of every slot that shares its span between the tokens that flank it. A built node of the kind is empty when nothing that owns sides is stored in those slots (`innerRegions`).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.lineEnds`
 
@@ -5436,6 +5405,10 @@ content and is never one.
 
 The trivia kinds that are a line continuation. A kind is one when its default arm is a pattern whose every text ends at a line break (`endsWithLineBreak`) and cannot be all space (`requiresNonSpace`), and then every arm of that kind is one: python's `line_continuation` is layout in both arms, `newline` (`\` then a line break) and `nul` (`\` then NUL). Both facts are read off the pattern's automaton, so no kind name or text is matched. Whitespace trivia is merged into its gap as a seam; a continuation is the same kind of fact (layout the source carried between two tokens) with a backslash in it, so the render module answers its text as a seam too; the writer then extends the held trivia seam with it (several continuations in a row, or one after a space entry, keep all of their text), and a root edge leaves a held continuation standing since it already ends the line. Without that, an own-line trailing entry was joined by a line break written before its backslash, which ended the statement.
 
+### `packages/codegen/src/compiler/model/trivia.ts::innerRegions`
+
+The slots inside each kind's inner gap, keyed by kind id: the `slots` of its `innerSite`, sorted by kind id. Emitted as `TriviaFacts.innerRegions` (`emitTriviaFacts`). A built node is empty when nothing that owns sides is stored there (`storesNothingIn`), the stored counterpart of the parsed rule that no child holds sides. So a slot outside the gap, such as a terminator after the closing brace, never makes a node non-empty. `inner-region-parity.test.ts` holds the two rules to the same answer over every corpus.
+
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::endsWithLineBreak`
 
 Whether every text the pattern accepts ends with a line terminator: the start state does not accept and every edge into an accepting state is a line terminator. An accepting state may have edges out (`(?:x\n)+`): it is only entered by a line terminator, so every accepted text still ends in one.
@@ -5483,11 +5456,15 @@ The stamped delimited fact: `open` and `close` (a literal `text` or the `slot` h
 
 ### `packages/codegen/src/compiler/model/node-map.ts::slotPropertyName`
 
-A slot's property name: its camel-cased storage name, pluralized when any value is an array. `projectSlotNaming` names every slot by it, and `slotModelOf` derives a written slot's property name by it, so `node-model.json5` stores no property or parameter name.
+A slot's property name: its camel-cased storage name, pluralized when any value is an array. `projectSlotNaming` names every slot by it, and the readers of `node-model.json5` derive a written slot's property name by it (`slotModelOf`, `factorySlotMetaOf`, the tools' `parseNodeModel`), so the record stores no property or parameter name. It is the slot's one name: the accessor reads by it and a config builds by it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isPatternLeaf`
 
 A leaf whose text the parse carries: a pattern node, stored as its text (`$text`) and never as a kind id, so its parsed node has no slots and no wrap through the slot-bearing compounds. It is the one text-leaf fact: the set `wrapLeaf` registers and the set the node-JSON census counts. It is not the set of kinds a bare string can build (`leafTextChecks`): that set also holds lexed compounds and aliases of a pattern leaf, which have wraps, and leaves out a pattern with no text pattern of its own (an external scanner token). A fixed-text keyword or punctuation (`isFixedTextLeaf`) is stored as its kind id and is not a text leaf.
+
+### `packages/codegen/src/compiler/model/node-map.ts::storageKeyOf`
+
+A slot's storage key: its storage name with a leading `_`. The slot's `storageKey` getter and the readers of `node-model.json5` (whose slot `name` is the storage name) both derive it here.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::leadingChars`
 
@@ -5583,28 +5560,9 @@ excluded whatever its annotation says — a group-lifted list carries
 `hoisted` but is bundled and bound on `ir` like any list, so its wiring
 const must be the export `ir` reaches (its elements seat lives there).
 
-### `packages/codegen/src/compiler/model/ir-surface.ts::AliasWire`
-
-A form wire with no seat: the child kind is a complete alternative of the parent's rule, so the wire is the child's own factory pair exposed under the parent, not a transformation method.
-
-### `packages/codegen/src/compiler/model/ir-surface.ts::variantAliasWires`
-
-Whole-rule alternative arms. A parent's `variantChildKinds` can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `derive`'s per-slot walk (`armValuesOf`) never sees those, because they are not in a slot at all — nothing to label. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
-
 ### `packages/codegen/src/compiler/model/sub-factories.ts::ValueArm`
 
-```text
-/** A sub-factory arm that seats a VALUE directly into the parent's choice
- *  slot instead of composing a child factory. Two shapes reach it: a
- *  literal branch of the slot (`op: choice('and', 'or')` yields one per
- *  string), and a reference to a factoryless value kind — an
- *  AssembledKeyword or AssembledPunctuation whose whole body is a fixed literal,
- *  which owns a kind identity but has no factory to call. The arm carries
- *  the value's stamped `storage` and nothing else: its text, and — for a
- *  value that resolved to a kind — that kind and its id. What the emitter
- *  seats is read from the stamp by `valueStorageExpr`; the arm never
- *  re-derives it and carries no second copy of the fact. */
-```
+A sub-factory arm that seats a value directly into the parent's choice slot instead of composing a child factory. Two shapes reach it: a literal branch of the slot (`op: choice('and', 'or')` yields one per string), and a reference to a factoryless value kind, an `AssembledKeyword` or `AssembledPunctuation` whose whole body is a fixed literal, which owns a kind identity but has no factory to call. The arm carries the value's stamped `storage`: its text and, for a value that resolved to a kind, that kind and its id. What the emitter seats is read from the stamp by `valueStorageExpr`; the arm never re-derives it. `variantOf` is the owner the labelled value names, as on `NodeArm`, so a value arm is a form of its host exactly when it names the host.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::NodeArm`
 
@@ -5618,7 +5576,7 @@ nested when the arm reaches more than one hop down.
 `child` is the leaf); outer levels name their nested entries from it, so
 `visibility_modifier` calls the in-path form `inPath` even though the arm's
 direct child is the pub hop.
-`variantOf` is the owner the labelled slot value names (a direct arm only), the stamp `ownerRoutesOf` reads to tell the arm's declaring host from a container that only carries it.
+`variantOf` is the owner the labelled slot value names (a direct arm only), the stamp `hostRoutesOf` reads to tell a form of the host from an arm a container only carries.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::SubFactory`
 
@@ -6087,7 +6045,7 @@ The flat node-factory members come from the same keyed nodes the bundle module a
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::IrSurface`
 
-What the model decided about `ir`: the keyed kinds (bundled and own-text), the flattened variant parents, the arm routes and the plan.
+What the model decided about `ir`: the keyed kinds (bundled and own-text), the flattened variant parents, the arm routes, the form routes and the plan.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::stampIrSurface`
 
@@ -6107,7 +6065,7 @@ A node's routes to its builders, each list in grammar declaration order (node-ma
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::ownerRoutesOf`
 
-Collects `OwnerRoutes`. A flattened parent declares each of its variant routes. A direct node arm (no path, not a namespace arm) declares its child when the arm's stamped `variantOf` names the arm's own host. An alias wire is a whole-rule alternative of its host, so it always declares. Only seated children are declared or contained through arms. An arm whose host is the child's sole containing referrer (`isSoleContainer`) is also the child's contained route; a child with more than one such route has none. An alias wire's value is the child's own builder whether or not the child is seated, so every alias wire is in `all`; an arm that is neither declared nor contained builds its host around the child and is not a route. Each member of a supertype group is routed through the group under its member key.
+Collects `OwnerRoutes`. A flattened parent declares each of its variant routes. Every host's arms and alias wires come from `hostRoutesOf`. A value arm builds its host around a stored value, not a child, so it routes nothing; each other form declares its child. Only seated children are declared or contained through arms. An arm whose host is the child's sole containing referrer (`isSoleContainer`) is also the child's contained route; a child with more than one such route has none. An alias wire's value is the child's own builder whether or not the child is seated, so every alias wire is in `all`; an arm that is neither declared nor contained builds its host around the child and is not a route. Each member of a supertype group is routed through the group under its member key.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::soleRoutes`
 
@@ -6125,5 +6083,58 @@ Whether a direct arm is a namespace with no call of its own: its child is a vari
 
 The stamped `ir` surface; a node map that was never stamped throws rather than deriving one on the spot, so every emitter reads the one surface the compilation decided.
 
+### `packages/codegen/src/compiler/model/ir-surface.ts::FormRoute`
 
-A config parent's tuple seats include hidden forwarded groups whose canonical target is a spread or separated list. The existing tuple adapter constructs the hidden group from its own builder arguments: omitting the optional seat leaves it absent, while `[undefined]` constructs a comma-only receiver rest group. The forwarding target walk remains canonical; its existing spread-only callers retain their policy, while tuple seating admits separated lists too.
+A form of a host: the member name `ir` and `is` both nest it under (`name`), the child kind it builds and tests (`child`), and, when the route seats the child in one of the host's arms instead of building the child's own node, that arm's property name (`seat`), which the host's form guard reads, and the forms nested under it (`forms`, `nestedFormsOf`). An alias wire builds its own node and has no seat.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::HostRoute`
+
+One entry of `hostRoutesOf`: a `FormRoute`, what reaches it (`via`: a direct node arm, an alias wire or a value arm), and whether it is a form of its host (`form`).
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::hostRoutesOf`
+
+A host's direct routes, in sub-factory order and then its alias wires: its direct node arms (no path, not a namespace arm) and the value arms that are forms of it. Whether an arm is a form is `armIsForm`. The child's own `variantOf` need not name the host: an unseated child keeps its own (python's `class_pattern` under `_simple_pattern`). A value arm that names another kind was inlined from that kind and is no form of where it sits (python `keyword_pattern.true`, which names `_simple_pattern`). A value form's child is the node of the kind its storage holds (`valueKindOf`). Node and value arms carry the property name of the slot they sit in (`seat`). An alias wire is a variant child of its host that no slot arm claims (`variantAliasWires`), so it is always a form; it builds its own node and has no seat. `ownerRoutesOf` declares the seated forms, and `deriveFormRoutes` keeps every form, so the routes `ir` declares and the guards `is` nests are read from one list.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::deriveFormRoutes`
+
+Each host's forms from `hostRoutesOf`, keyed by host kind, each with its `seat` when it has one and the forms nested under it (`formRouteOf`); a host with none is absent. The nesting is a tree per host, read from the host's own settled entries, so `is` builds a guard per route from it, not one shared guard per kind.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::formRoutesOf`
+
+The form routes, as stamped on the node map (`deriveFormRoutes`). The `is` emitter nests `is.<kind>.<form>` from them, beside `ir.<kind>.<form>`, and `seatedFormKinds` walks them.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::valueKindOf`
+
+The node of the kind a value form stores, which the form's guard expects in its seat. A value form's stored kind has a catalog row (`armIsForm`), so a form whose kind has no node is an inconsistent model, and it throws rather than leave the form without a guard.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::armIsForm`
+
+Whether a host's arm is one of its forms: its stamped `variantOf` names the host, and a value arm stores a named kind, read from the stored kind's catalog row (`findOwnKindEntry`). A value arm that stores an anonymous token (its row says `anon`) is an enum value of its host, not a form: its `ir` route stays a shortcut that builds the token, and it has no guard. A value arm with no row (a bare literal, or a node map stamped without id tables) is no form either, since a guard would have no kind id to test. `hostRoutesOf` asks it of every arm, and a census of the guards asks the same function.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::seatedFormKinds`
+
+The kinds whose builder path passes through a seat. Walking a kind's path from its root, each hop is a flattened parent's variant, an alias wire, or a form route that seats its child in one of the host's arms (`FormRoute.seat`). The first two build the child's own node; a seated hop builds the host. When some hop is seated, what the route at the kind's builder path builds is a host, and its guard tests that host, so the `is` emitter gives the kind its one self-test flat at its type key instead. A path no route reaches, or one that ends at another kind, throws.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::AliasWire`
+
+A form wire with no seat: the child is a variant of the parent that no slot arm claims (`variantAliasWires`), so the wire is the child's own factory pair exposed under the parent, not a transformation method. It builds the child's node, not the parent's.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::variantAliasWires`
+
+A parent's variant children that no slot arm claims. A parent's `variantChildKinds` can name a kind that `derive`'s per-slot walk (`armValuesOf`) never labels: regex `term_group` and scm `escape_sequence` are the elements `term` and `string_content` repeat, and a multiple slot carries no arms; typescript `ambient_declaration_module` is the content after `declare`. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair. The route builds the child's own node, not the parent, so it has no seat, and no route that seats the parent chains through it (`innerArmsOf` reads the child's own sub-factories only). Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::buildsHost`
+
+Whether a form route builds its host rather than the form's own node: a route with a seat builds the host with the form in that seat, and one without (an alias wire) builds the form's node. `seatedFormKinds` reads it to tell a seated hop on a builder path. What continues under a seat is read from the host's entries (`nestedFormsOf`), which are all seated.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::hostRouteOf`
+
+One sub-factory of a host as a route: a value arm whose value is a form (`armIsForm`), with the node of the kind its storage holds as its child (`valueKindOf`), or a direct node arm (no path, not a namespace arm). Both carry the property name of the slot they sit in (`seat`). Anything else is no route of the host.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::nestedFormsOf`
+
+The forms a seated route reaches inside its child, read from the host's own settled entries: a direct child sub-factory (a value arm, or a node arm with no path; read from the arm, never from the name, since a rule name may itself hold `$`) is a nested form when the host carries the entry `<prefix>$<name>` for it and the sub is a form of the child (`armIsForm`). These are the entries `ir` emits under the route, and they stop where `nestedArmsOf` stops at a kind already on the derivation path, so a recursive form (`group` inside `group`) nests once and `ir` and `is` reach the same paths. The child's alias wires are never entries, so nothing nests through an alias wire.
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::formRouteOf`
+
+A route as a `FormRoute`: its name, child and seat, and, for a direct node arm, the forms nested under it (`nestedFormsOf`, keyed by the route's entry name).

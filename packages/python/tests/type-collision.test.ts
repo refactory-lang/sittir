@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from 'vitest';
 import python from '../src/index.ts';
-import { createEngine } from '@sittir/common';
+import { createEngine, Source, sourceOf } from '@sittir/common';
 
 const py = await createEngine(python);
 
@@ -25,7 +25,7 @@ describe('python type_alias_statement collision', () => {
 		expect(node.$type).not.toBe(py.kinds.Type);
 		expect(keysOf(node)).not.toContain('_type');
 		expect(keysOf(node)).toEqual(expect.arrayContaining(['_left', '_right']));
-		expect(node.$source).toBe(2);
+		expect(sourceOf(node)).toBe(Source.Factory);
 	});
 
 	it('renders the keyword from the template, not from storage', () => {

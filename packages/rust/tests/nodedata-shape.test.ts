@@ -20,7 +20,7 @@
 
 import { describe, it, expect } from 'vitest';
 import rust from '../src/index.ts';
-import { createEngine } from '@sittir/common';
+import { createEngine, Source, sourceOf } from '@sittir/common';
 
 const rs = await createEngine(rust);
 const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
@@ -63,7 +63,7 @@ describe('Factory shape — branch node', () => {
 		const rec = node as unknown as Record<string, unknown>;
 		expect(rec['_name']).toBeDefined();
 		expect(typeof rec['_name']).toBe('object');
-		expect((rec['_name'] as { $text?: string }).$text).toBe('my_fn');
+		expect((rec['_name'] as { $text(): string }).$text()).toBe('my_fn');
 	});
 
 	it('FR-002: accessor function is an enumerable own member of the node', () => {
@@ -76,22 +76,48 @@ describe('Factory shape — branch node', () => {
 		const rec = node as unknown as Record<string, unknown>;
 		const accessor = rec['name'] as () => unknown;
 		expect(typeof accessor).toBe('function');
-		const value = accessor.call(node) as { $text?: string };
-		expect(value.$text).toBe('my_fn');
+		const value = accessor.call(node) as { $text(): string };
+		expect(value.$text()).toBe('my_fn');
 	});
 
 	it('SC-004: Object.keys() lists the $-metadata, the _-storage and the readers of the node', () => {
 		const keys = Object.keys(node);
 		// A reader is an enumerable member; every key is a member or data
 		expect(keys).toContain('name');
-		expect(keys).toEqual(expect.arrayContaining(['$render', '$trivia', '$with']));
-		// $type and $source are present
+		expect(keys).toEqual(expect.arrayContaining(['$render', 'toJSON', '$trivia', '$with']));
+		// $type is present; provenance is read by sourceOf, and a node has no $source member
 		expect(keys).toContain('$type');
-		expect(keys).toContain('$source');
+		expect('$source' in node).toBe(false);
 		// _name is present (de-hoisted storage)
 		expect(keys).toContain('_name');
 		// $fields is NOT present (FR-001)
 		expect(keys).not.toContain('$fields');
+	});
+
+	it('SC-004: sourceOf gives a read node, its $with rebuild and a spread copy Ts, and none has a $source member', () => {
+		const file = rs.parse('fn f() {}\n');
+		const rebuilt = file.$with.statements(...file.statements());
+		for (const read of [file, file.statements()[0], rebuilt, rebuilt.statements()[0], { ...file }]) {
+			if (typeof read !== 'object') throw new Error('`fn f() {}` reads a function item');
+			expect(sourceOf(read)).toBe(Source.Ts);
+			expect('$source' in read).toBe(false);
+		}
+	});
+
+	it('SC-004: sourceOf gives a built node, its $with rebuild and a spread copy Factory, and none has a $source member', () => {
+		const built = rs.build.block({ statements: [] });
+		const rebuilt = built.$with.statements(rs.build.expressionStatement('a'));
+		for (const node of [built, rebuilt, { ...built }]) {
+			expect(sourceOf(node)).toBe(Source.Factory);
+			expect('$source' in node).toBe(false);
+		}
+	});
+
+	it('SC-004: sourceOf gives no provenance for a config, a JSON copy or a string-key copy', () => {
+		const built = rs.build.block({ statements: [] });
+		expect(sourceOf({ $type: rs.kinds.Block, statements: [] })).toBeUndefined();
+		expect(sourceOf(JSON.parse(JSON.stringify(built)) as object)).toBeUndefined();
+		expect(sourceOf(Object.fromEntries(Object.entries(built)))).toBeUndefined();
 	});
 
 	// CONFIRMED DEFERRED (not a stale assertion or regression): the freeze
@@ -107,8 +133,8 @@ describe('Factory shape — branch node', () => {
 		expect(typeof node.$type).toBe('number');
 	});
 
-	it('$source is 2 (factory provenance)', () => {
-		expect(node.$source).toBe(2);
+	it('sourceOf is Factory (factory provenance)', () => {
+		expect(sourceOf(node)).toBe(Source.Factory);
 	});
 });
 
@@ -117,7 +143,7 @@ describe('Factory shape — leaf node', () => {
 	const leaf = rs.build.identifier('x42');
 
 	it('leaf: $text is present and equals the input', () => {
-		expect((leaf as unknown as Record<string, unknown>)['$text']).toBe('x42');
+		expect(leaf.$text()).toBe('x42');
 	});
 
 	it('leaf: no _<name> keys (no fields)', () => {
@@ -140,8 +166,8 @@ describe('Factory shape — leaf node', () => {
 
 // `$with` EXISTS on factory output — the factories emitter builds it inline
 // per kind (the passing plain-`it` case below pins that). Still unshipped,
-// pinned by the `it.fails` cases: $with non-enumerability (it currently
-// serializes), the frozen-result contract, and JSON/Object.keys exclusion.
+// pinned by the `it.fails` cases: $with non-enumerability, the frozen-result
+// contract, and Object.keys exclusion. A node's JSON never holds `$with`.
 describe('$with namespace', () => {
 	const original = rs.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 
@@ -174,7 +200,7 @@ describe('$with namespace', () => {
 		expect(Object.keys(original)).not.toContain('$with');
 	});
 
-	it.fails('$with is not included in JSON.stringify() output', () => {
+	it('$with is not included in JSON.stringify() output', () => {
 		const json = JSON.stringify(original);
 		expect(json).not.toContain('$with');
 	});
@@ -185,13 +211,12 @@ describe('$with namespace', () => {
 describe('JSON serialization', () => {
 	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
-	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
-		// _name holds the coerced leaf UntypedNode object, not the raw config
-		// string — see the FR-001 note above (same current, consistent shape).
+	it('SC-007: JSON.stringify writes the kind name and the slots by accessor name, with no storage or $source', () => {
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
-		expect(parsed['$type']).toBe(rs.kinds.FunctionItem);
-		expect(parsed['$source']).toBe(2);
-		expect(parsed['_name']).toMatchObject({ $text: 'serialize_me' });
+		expect(parsed['$type']).toBe('function_item');
+		expect(parsed['name']).toEqual({ $type: 'identifier', $text: 'serialize_me' });
+		expect(parsed['_name']).toBeUndefined();
+		expect(parsed['$source']).toBeUndefined();
 	});
 
 	it('SC-007: JSON.stringify does NOT include $fields', () => {
@@ -199,18 +224,10 @@ describe('JSON serialization', () => {
 		expect(json).not.toContain('"$fields"');
 	});
 
-	it('SC-007: JSON.stringify does NOT include accessor function names as keys', () => {
-		const json = JSON.stringify(node);
-		// The serialized JSON should not contain "name" as a top-level key (it's an accessor, non-enumerable)
-		// But _name IS expected (de-hoisted storage)
-		const parsed = JSON.parse(json) as Record<string, unknown>;
-		// The raw 'name' key (accessor) should NOT be present
-		expect(Object.prototype.hasOwnProperty.call(parsed, 'name')).toBe(false);
-	});
-
 	it('SC-007: JSON.stringify does NOT include render function artifacts', () => {
 		const json = JSON.stringify(node);
 		expect(json).not.toContain('"render"');
+		expect(json).not.toContain('"$render"');
 	});
 });
 

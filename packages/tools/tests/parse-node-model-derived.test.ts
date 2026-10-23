@@ -45,18 +45,18 @@ const MODEL = JSON.stringify({
 
 describe('parseNodeModel derives what the node model leaves out', () => {
 	it('reads a slot\'s kinds as its values\' names, where a name the record omits is the parse kind', () => {
-		expect(parseNodeModel(MODEL).slotKinds.call).toEqual({ function: ['identifier'], argument: ['_expression', 'spread'] });
+		expect(parseNodeModel(MODEL).slotKinds.call).toEqual({ function: ['identifier'], arguments: ['_expression', 'spread'] });
 	});
 
 	it('reads a default value\'s name the same way', () => {
-		expect(parseNodeModel(MODEL).slotDefaults.call).toEqual({ argument: 'spread' });
+		expect(parseNodeModel(MODEL).slotDefaults.call).toEqual({ arguments: 'spread' });
 	});
 
 	it('gives every kind with a factory its slots\' factory metadata, the option default included', () => {
 		expect(parseNodeModel(MODEL).factorySlots).toEqual({
 			call: {
-				function: { required: true, multiple: false, nonEmpty: false },
-				argument: { required: false, multiple: true, nonEmpty: false, registered: true, optionDefault: 'comma' }
+				function: { propertyName: 'function', required: true, multiple: false, nonEmpty: false },
+				argument: { propertyName: 'arguments', required: false, multiple: true, nonEmpty: false, registered: true, optionDefault: 'comma' }
 			}
 		});
 	});

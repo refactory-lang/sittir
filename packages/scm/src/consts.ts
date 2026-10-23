@@ -4,8 +4,8 @@ import type { TokenInterior } from '@sittir/common/utils';
 
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
-	comment: { regex: '^;(?<content>(?:.*))$', slots: [{ name: 'content', configKey: 'content' }] },
-	escape_sequence: { regex: '^\\\\(?<content>(?:.))$', slots: [{ name: 'content', configKey: 'content' }] }
+	comment: { regex: '^;(?<content>(?:.*))$', slots: [{ name: 'content', propertyName: 'content' }] },
+	escape_sequence: { regex: '^\\\\(?<content>(?:.))$', slots: [{ name: 'content', propertyName: 'content' }] }
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
 /** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */

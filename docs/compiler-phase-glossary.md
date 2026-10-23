@@ -12,7 +12,7 @@ JSDoc; the source files remain the ground truth).
 
 ```
 enrich (author wraps grammar(enrich(base), wire({ … })))   ← module-load, pre-tree-sitter
-  → evaluate (compiler/evaluate.ts: runs the DSL; dsl/wire/wire.ts folds overrides)
+  → evaluate (dsl/evaluate.ts: runs the DSL; dsl/wire/wire.ts folds overrides)
     → link (compiler/link.ts)
       → normalize (compiler/normalize.ts + compiler/wrapper-deletion.ts)
         → simplify (compiler/simplify.ts)
@@ -36,7 +36,7 @@ runtimes:
    `grammar()` / `seq()` / `choice()` / `optional()` DSL runtime to
    produce the parser artifacts (`.sittir/src/grammar.json`,
    `node-types.json`, `parser.c`, `parser.wasm`).
-2. **Sittir side.** `evaluate()` (compiler/evaluate.ts) imports the same
+2. **Sittir side.** `evaluate()` (dsl/evaluate.ts) imports the same
    module and executes it with **sittir's own** implementations of the
    same DSL surface, producing the `RawGrammar` the compiler phases
    consume.
@@ -175,7 +175,7 @@ polymorph annotations, with one default arm the parent's own factory builds
 
 Reference: [glossary/dsl.md](glossary/dsl.md).
 
-## Phase 1: Evaluate (`compiler/evaluate.ts`, `dsl/wire/wire.ts`, `types/runtime-shapes.ts`)
+## Phase 1: Evaluate (`dsl/evaluate.ts`, `dsl/wire/wire.ts`, `types/runtime-shapes.ts`)
 
 `evaluate(entryPath)` executes the grammar DSL (grammar.js or
 grammar.sittir.ts) with sittir extensions (`role()`, `variant()`,

@@ -7,8 +7,8 @@ import { isMember, membersOf, type is } from './is.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ScmNode, ScmTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { querySlots, structure, triviaFacts } from './utils.js';
-import { coerceToComment } from './factories/coerce.js';
+import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
+import { buildByKind, coerceToComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, hydrate, type ProgramTree } from './wrap.js';
@@ -22,6 +22,7 @@ export interface ScmAPI extends LanguageAPI {
 	readonly root: ProgramTree;
 	readonly node: ScmNode;
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: ScmTypeMap['empty'];
@@ -33,6 +34,8 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	build: ir,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
+	json: jsonFacts,
+	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),

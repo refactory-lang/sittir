@@ -5,7 +5,7 @@ import type { ScmAPI } from './api.js';
 import { languageGuards } from '@sittir/common/language';
 import * as scm from './descriptor.js';
 import { TSKindId } from './kinds.js';
-import { is as guards } from './is.js';
+import { guardsWith } from './is.js';
 
 export type * from './types.js';
 export type * from './options.js';
@@ -17,7 +17,7 @@ export type Engine<M extends ApiSurface = 'default'> = EngineOf<ScmAPI, M>;
 export const name = 'scm';
 export const fileTypes: readonly string[] = Object.freeze(['scm']);
 export const kinds = TSKindId;
-export const is = languageGuards(guards, scm);
+export const is = languageGuards(guardsWith, scm);
 export const load: Language<ScmAPI>['load'] = () => import('./api.js').then((m) => m.hooks);
 export const createEngine: Language<ScmAPI>['createEngine'] = (options) =>
 	import('@sittir/common').then((m) => m.createEngine(scm, options));

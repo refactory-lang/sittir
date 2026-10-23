@@ -13,7 +13,7 @@
 //! cursor on each access — no lifetime-erasure needed.
 
 use crate::options::ResolvedOptions;
-use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
+use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate, QueryItem};
 use crate::read::SideEntry;
 use crate::types::Span;
 use crate::render::SourceTable;
@@ -77,6 +77,14 @@ pub trait EngineGrammar: Copy {
     /// grammar with no nodes.
     fn router(self, grammar: KindId, display: KindId) -> Option<crate::read::Router> {
         let _ = (grammar, display);
+        None
+    }
+    /// The id the read stores for the node the cursor is on when it stores
+    /// the node as a unit (`ReadNode::unit_id`: an enum kind's member, a
+    /// choice's unit variant); none for a node it stores as a node, or a
+    /// grammar with no nodes. The cursor ends where it started.
+    fn unit_id(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<KindId> {
+        let _ = cursor;
         None
     }
 }
@@ -645,10 +653,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
     }
 
-    /// Walk the subtree under `from` in pre-order and return the coordinates
-    /// of up to `limit` named, non-extra descendants whose grammar symbol is
-    /// in `kinds` (every one when `kinds` is empty) and that satisfy `plan`,
-    /// each the coordinate a read hands out for it. `resume` is the path of
+    /// Walk the subtree under `from` in pre-order and return up to `limit`
+    /// named, non-extra descendants whose stored id is in `kinds` (every one
+    /// when `kinds` is empty) and that satisfy `plan`, each as the item a
+    /// read hands out for it (`QueryItem`). A node's stored id is the id its
+    /// read stores: its unit id when the read stores it as a unit
+    /// (`EngineGrammar::unit_id`), which the walk yields in place of a
+    /// coordinate, and otherwise its stamp. `resume` is the path of
     /// child indices, from the node at `handle`, of the last node an earlier
     /// batch visited; the walk continues after it. `depth` bounds the levels
     /// walked below `from` (every level when absent). An extra is trivia: the
@@ -673,7 +684,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         // `start`. path[k - 1]: that node's child index within its parent.
         let mut indexes: Vec<NodeIndex> = vec![index];
         let mut path: Vec<ChildPosition> = Vec::new();
-        let mut coordinates = Vec::new();
+        let mut items = Vec::new();
         let ctx = self.read_ctx();
         let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node);
         let router = |node: &tree_sitter::Node<'_>| self.grammar.router(crate::read::grammar_id(node), crate::read::display_id(node));
@@ -697,22 +708,23 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         while Self::advance(&mut cursor, index, &mut indexes, &mut path, depth) {
             let node = cursor.node();
-            if node.is_named()
-                && !node.is_extra()
-                && !depth_member(&node)
-                && (kinds.is_empty() || kinds.contains(&stamp(&node)))
+            if !node.is_named() || node.is_extra() || depth_member(&node) {
+                continue;
+            }
+            let unit = self.grammar.unit_id(&mut cursor);
+            if (kinds.is_empty() || kinds.contains(&unit.unwrap_or_else(|| stamp(&node))))
                 && plan.is_none_or(|plan| {
                     crate::read::goto(&mut at, indexes[indexes.len() - 1]);
                     plan.holds(&mut at, &query)
                 })
             {
-                coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
-                if crate::types::narrow(coordinates.len()) >= limit {
-                    return Ok(DescendantBatch { coordinates, resume: Some(path), origin });
+                items.push(unit.map_or_else(|| QueryItem::Node(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1]))), QueryItem::Unit));
+                if crate::types::narrow(items.len()) >= limit {
+                    return Ok(DescendantBatch { items, resume: Some(path), origin });
                 }
             }
         }
-        Ok(DescendantBatch { coordinates, resume: None, origin })
+        Ok(DescendantBatch { items, resume: None, origin })
     }
 
     /// Step `cursor` to the next node in pre-order below the walk's start, at
@@ -963,6 +975,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         let parent = crate::read::index_of(&cursor);
         self.node_slots(parent).separators.get(&index).copied()
+    }
+
+    /// The separator the list at `index` writes between its items: the one
+    /// its slot stores where its source's gaps differ from what the read-time
+    /// options render, else the one those options render, which is also the
+    /// answer for a list of no gap. None for a node that is no list.
+    pub fn slot_separator(&self, index: crate::types::NodeIndex) -> Option<KindId> {
+        let stored = self.node_slots(index).layouts.iter().find_map(|layout| layout.separator);
+        stored.or_else(|| self.read_options.separator_of(crate::read::grammar_id(&node_at_index(&self.tree, index)?)))
     }
 
     /// The stored layout of each list slot of the node at `index` that
@@ -1762,6 +1783,11 @@ mod tests {
             }
         }
 
+        fn unit_id(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<KindId> {
+            let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+            (cursor.node().kind() == "primitive_type").then(|| crate::read::kind_named(&language, "u8", false))
+        }
+
         fn shows(self) -> fn(KindId) -> bool {
             |_| false
         }
@@ -1893,20 +1919,28 @@ mod tests {
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
     }
 
-    fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryCoordinate]) -> Vec<String> {
+    fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryItem]) -> Vec<String> {
         found
             .iter()
-            .map(|coord| tree.source()[coord.span.range()].lines().next().unwrap_or("").to_string())
+            .map(|item| match item {
+                QueryItem::Node(coord) => tree.source()[coord.span.range()].lines().next().unwrap_or("").to_string(),
+                QueryItem::Unit(kind) => format!("#{kind:?}"),
+            })
             .collect()
     }
 
-    fn walk(tree: &ParsedTree<TestGrammar>, root: TreeHandle, kinds: &[KindId], plan: Option<&Plan>, limit: u32) -> Vec<QueryCoordinate> {
+    /// The coordinates among a walk's items, its units left out.
+    fn coordinates(found: &[QueryItem]) -> Vec<QueryCoordinate> {
+        found.iter().filter_map(|item| if let QueryItem::Node(coord) = item { Some(*coord) } else { None }).collect()
+    }
+
+    fn walk(tree: &ParsedTree<TestGrammar>, root: TreeHandle, kinds: &[KindId], plan: Option<&Plan>, limit: u32) -> Vec<QueryItem> {
         let mut found = Vec::new();
         let mut resume: Option<Vec<ChildPosition>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, kinds, plan, resume.as_deref(), limit, None).expect("walk");
-            assert!(crate::types::narrow(batch.coordinates.len()) <= limit);
-            found.extend(batch.coordinates);
+            assert!(crate::types::narrow(batch.items.len()) <= limit);
+            found.extend(batch.items);
             match batch.resume {
                 Some(path) => resume = Some(path),
                 None => return found,
@@ -1942,12 +1976,22 @@ mod tests {
     fn each_coordinate_names_its_own_node_by_its_descendant_index() {
         let (tree, root) = parsed(FNS);
         let expected = indexes(&tree.tree);
-        for coord in walk(&tree, root, &[], None, u32::MAX) {
+        for coord in coordinates(&walk(&tree, root, &[], None, u32::MAX)) {
             let index = decode_handle(coord.handle).1;
             let node = node_at_index(&tree.tree, index).expect("the coordinate names a node");
             assert_eq!(Some(&index), expected.get(&node.id()));
             assert_eq!((Span::of(&node), crate::read::grammar_id(&node)), (coord.span, coord.kind));
         }
+    }
+
+    #[test]
+    fn a_walk_selects_a_unit_node_by_the_id_its_read_stores() {
+        let (tree, root) = parsed(FNS);
+        let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+        let member = crate::read::kind_named(&language, "u8", false);
+        assert_eq!(walk(&tree, root, &[member], None, u32::MAX), [QueryItem::Unit(member)], "a unit is found as the id its read stores, as a slot read stores it");
+        assert!(walk(&tree, root, &[], None, u32::MAX).contains(&QueryItem::Unit(member)), "an unfiltered walk yields the unit as its id too");
+        assert!(walk(&tree, root, &[kind_id("primitive_type")], None, u32::MAX).is_empty(), "the read stores the member, not its enum kind");
     }
 
     #[test]
@@ -1967,10 +2011,10 @@ mod tests {
         let (tree, root) = parsed(FNS);
         let expected = indexes(&tree.tree);
         let module = tree.descendants(Address::Own { handle: root }, &[kind_id("mod_item")], None, None, 1, None).expect("walk");
-        let start = Address::Own { handle: module.coordinates[0].handle };
+        let start = Address::Own { handle: coordinates(&module.items)[0].handle };
         let inner = tree.descendants(start, &[kind_id("function_item")], None, None, 16, None).expect("walk");
-        assert_eq!(inner.coordinates.len(), 2, "fn b and fn _c");
-        for coord in &inner.coordinates {
+        assert_eq!(inner.items.len(), 2, "fn b and fn _c");
+        for coord in &coordinates(&inner.items) {
             let node = node_at_index(&tree.tree, decode_handle(coord.handle).1).expect("the coordinate names a node");
             assert_eq!(Some(&decode_handle(coord.handle).1), expected.get(&node.id()));
             assert_eq!((Span::of(&node), crate::read::grammar_id(&node)), (coord.span, coord.kind));
@@ -2026,21 +2070,21 @@ mod tests {
 
     fn walk_from(tree: &ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[KindId]) -> Vec<String> {
         let batch = tree.descendants(from, kinds, None, None, u32::MAX, None).expect("walk");
-        texts(tree, &batch.coordinates)
+        texts(tree, &batch.items)
     }
 
     #[test]
     fn a_walk_starts_from_a_coordinate_address() {
         let (tree, root) = parsed(FNS);
         let fns = [kind_id("function_item")];
-        let module = walk(&tree, root, &[kind_id("mod_item")], None, u32::MAX).remove(0);
+        let module = coordinates(&walk(&tree, root, &[kind_id("mod_item")], None, u32::MAX)).remove(0);
         assert_eq!(walk_from(&tree, crate::query::Address::Own { handle: module.handle }, &fns), ["fn b() -> u8 { 0 }", "fn _c() {}"]);
     }
 
     #[test]
     fn a_plan_holds_over_a_list_of_addresses_in_order() {
         let (tree, root) = parsed(FNS);
-        let found = walk(&tree, root, &[kind_id("function_item")], None, u32::MAX);
+        let found = coordinates(&walk(&tree, root, &[kind_id("function_item")], None, u32::MAX));
         let addresses: Vec<crate::query::Address> = found.iter().map(|coord| crate::query::Address::Own { handle: coord.handle }).collect();
         let private = plan(&format!(r#"{{ "op": "match", {}, "pattern": "^_" }}"#, slots(&[("function_item", 0)])));
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
@@ -2055,24 +2099,24 @@ mod tests {
     fn a_depth_limit_stops_the_walk_below_it() {
         let (tree, root) = parsed(FNS);
         let children = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, None, u32::MAX, Some(1)).expect("walk");
-        assert_eq!(texts(&tree, &children.coordinates), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
+        assert_eq!(texts(&tree, &children.items), ["fn a() {}", "mod m { fn b() -> u8 { 0 } fn _c() {} }", "fn _d() { fn e() {} }"]);
         let mut resumed = Vec::new();
         let mut resume: Option<Vec<ChildPosition>> = None;
         loop {
             let batch = tree.descendants(crate::query::Address::Own { handle: root }, &[], None, resume.as_deref(), 1, Some(1)).expect("walk");
-            resumed.extend(batch.coordinates);
+            resumed.extend(batch.items);
             match batch.resume {
                 Some(path) => resume = Some(path),
                 None => break,
             }
         }
-        assert_eq!(texts(&tree, &resumed), texts(&tree, &children.coordinates));
+        assert_eq!(texts(&tree, &resumed), texts(&tree, &children.items));
     }
 
     #[test]
     fn an_extra_and_its_interior_are_never_descendants() {
         let (tree, root) = parsed("/// doc\nfn a() {}\n");
-        let kinds: Vec<KindId> = walk(&tree, root, &[], None, u32::MAX).iter().map(|coord| coord.kind).collect();
+        let kinds: Vec<KindId> = coordinates(&walk(&tree, root, &[], None, u32::MAX)).iter().map(|coord| coord.kind).collect();
         for extra in ["line_comment", "doc_comment", "outer_doc_comment_marker"] {
             assert!(!kinds.contains(&kind_id(extra)), "{extra} walked");
         }

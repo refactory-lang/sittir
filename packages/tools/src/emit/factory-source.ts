@@ -29,6 +29,7 @@ export interface PrintContext {
 	readonly irPathOfKind: (kind: string) => string | undefined;
 	readonly delimiterArmOfId: (id: number) => string | undefined;
 	readonly seats?: SeatTable;
+	readonly slotNameOf: (kind: string, slot: string) => string;
 	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
 	readonly textLeafKinds?: ReadonlySet<string>;
 	readonly leafPatterns?: Record<string, RegExp>;
@@ -70,7 +71,7 @@ export class Printed {
 	readonly $named = true as const;
 	$_layout?: { trivia?: ReadTrivia };
 	constructor(
-		readonly $type: number | string,
+		readonly $type: number,
 		readonly source: string,
 		readonly kind?: string,
 		readonly argsSource?: string,
@@ -79,6 +80,12 @@ export class Printed {
 }
 
 const INDENT = '\t';
+
+function kindIdOf(kind: string, kindIdOfName: (kind: string) => number | undefined): number {
+	const id = kindIdOfName(kind);
+	if (id === undefined) throw new Error(`emit-factory-source: ${kind} has no parser id`);
+	return id;
+}
 
 function isLoose(ctx: PrintContext): boolean {
 	return ctx.surface === 'loose';
@@ -228,13 +235,13 @@ function printVerbatimText(
 	slotKinds: readonly string[] = [],
 	storage?: string
 ): unknown {
-	if (leaf !== undefined) return new Printed(leaf, `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
+	if (leaf !== undefined) return new Printed(kindIdOf(leaf, ctx.facts.kindIdOfName), `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
 	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
 	if (slotKinds.length === 0 && storage === 'verbatim') return text;
 	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
 	if (id !== undefined) return id;
 	if (ctx.textLeafKinds?.has('identifier')) {
-		return new Printed('identifier', `${builderOf('identifier', ctx)}(${JSON.stringify(text)})`, 'identifier');
+		return new Printed(kindIdOf('identifier', ctx.facts.kindIdOfName), `${builderOf('identifier', ctx)}(${JSON.stringify(text)})`, 'identifier');
 	}
 	return text;
 }
@@ -380,11 +387,9 @@ function wrapSeatElement(item: unknown, ctx: PrintContext): unknown {
 	const seatKind = seatKindOf(item);
 	if (seatKind === undefined || !isPlainObject(item) || '$type' in item) return item;
 	const wrapped = wrapTextLeaves(seatKind, item, ctx);
-	const id = ctx.facts.kindIdOfName(seatKind);
-	const tagged = id !== undefined && isLoose(ctx) && seatHoistedSlot(seatKind, ctx.facts) !== undefined;
-	return tagged && isPlainObject(wrapped)
-		? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped }
-		: wrapped;
+	if (!isLoose(ctx) || seatHoistedSlot(seatKind, ctx.facts) === undefined || !isPlainObject(wrapped)) return wrapped;
+	const id = kindIdOf(seatKind, ctx.facts.kindIdOfName);
+	return { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped };
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
@@ -505,7 +510,7 @@ function loosenValue(
 	const config = value.facts?.config;
 	if (config !== undefined && ctx.nested === 'configs' && isFlatKind(value.kind, ctx)) {
 		if (branch.length === 1 && branch[0] === value.kind) return new Printed(value.$type, config, value.kind);
-		if (typeof value.$type === 'number' && ctx.memberNameOfId(value.$type) !== undefined) {
+		if (ctx.memberNameOfId(value.$type) !== undefined) {
 			const tag = kindTagSource(value.$type, ctx);
 			const keyed = config === '{}' ? `{ $type: ${tag} }` : config.replace(/^\{\n/, `{\n\t$type: ${tag},\n`);
 			return new Printed(value.$type, keyed, value.kind);
@@ -520,7 +525,7 @@ function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unk
 	if (slots === undefined || !isPlainObject(out)) return out;
 	for (const [slotName, table] of Object.entries(slots)) {
 		for (const seat of Object.values(table)) {
-			const key = camelCase(slotName);
+			const key = ctx.slotNameOf(kind, slotName);
 			const value = (out as Record<string, unknown>)[key];
 			if (seat.shape === 'elements') {
 				if (!Array.isArray(value)) continue;
@@ -586,12 +591,14 @@ function ownedListArgs(owner: string, value: unknown, ctx: PrintContext): string
 	return value.argsSource;
 }
 
+export type PrintingEntry = ((...args: unknown[]) => Printed | string) & { readonly kindId: number };
+
 export function printingFactoryMap(
 	realShapes: Record<string, FactoryShape>,
 	kindIdOfName: (kind: string) => number | undefined,
 	ctx: PrintContext
-): Record<string, (...args: unknown[]) => Printed | string> {
-	const map: Record<string, (...args: unknown[]) => Printed | string> = {};
+): Record<string, PrintingEntry> {
+	const map: Record<string, PrintingEntry> = {};
 	const kinds = Object.keys(realShapes);
 	for (const kind of kinds) {
 		const shape: FactoryShape = realShapes[kind]!;
@@ -603,10 +610,16 @@ export function printingFactoryMap(
 			}
 			return spelling;
 		};
-		const id = kindIdOfName(kind) ?? kind;
+		const id = kindIdOf(kind, kindIdOfName);
 		const publicName = kind.replace(/^_+/, '');
 		const entry = (...args: unknown[]): Printed | string => {
-			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
+			if (ctx.aliasKinds?.has(kind)) {
+				const content = args[0];
+				if (content instanceof Printed) return content;
+				return typeof content === 'number'
+					? new Printed(content, printValue(content, ctx, 0), ctx.kindNameFromId(content))
+					: printValue(content, ctx, 0);
+			}
 			switch (shape) {
 				case 'constant':
 					return new Printed(id, spelled().path, kind);
@@ -617,7 +630,7 @@ export function printingFactoryMap(
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
 					if (kind.startsWith('_')) return text;
-					if (typeof id === 'number' && ctx.keywordKinds?.has(kind))
+					if (ctx.keywordKinds?.has(kind))
 						return new Printed(id, printValue(id, ctx, 0), kind);
 					return new Printed(id, `${spelled().path}(${JSON.stringify(text)})`, kind, undefined, { text });
 				}
@@ -674,14 +687,15 @@ export function printingFactoryMap(
 				}
 			}
 		};
-		map[kind] = entry;
-		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = entry;
+		const printing: PrintingEntry = Object.assign(entry, { kindId: id });
+		map[kind] = printing;
+		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = printing;
 	}
 	return map;
 }
 
 function constantsAsValues(
-	map: Record<string, (...args: unknown[]) => Printed | string>,
+	map: Record<string, PrintingEntry>,
 	shapes: Record<string, FactoryShape>,
 	ctx: PrintContext
 ): Record<string, FactoryEntry> {
@@ -694,8 +708,7 @@ function constantsAsValues(
 }
 
 export function printingIrSurface(
-	map: Record<string, (...args: unknown[]) => Printed | string>,
-	kindIdOfName: (kind: string) => number | undefined,
+	map: Record<string, PrintingEntry>,
 	modelTypes: Record<string, string>,
 	ctx: PrintContext
 ): IrSurface {
@@ -704,7 +717,7 @@ export function printingIrSurface(
 		const path = ctx.irPathOfKind(kind);
 		if (path === undefined) continue;
 		const entry: Record<string, unknown> = { strict };
-		mountArmPrinters(entry, path, kind, kind, kindIdOfName(kind) ?? kind, ctx, new Set([kind]));
+		mountArmPrinters(entry, path, kind, kind, strict.kindId, ctx, new Set([kind]));
 		entries[kind] = entry as IrEntry;
 	}
 	return { entries, seats: ctx.seats ?? {}, modelTypes };
@@ -715,7 +728,7 @@ function mountArmPrinters(
 	path: string,
 	hostKind: string,
 	builtKind: string,
-	id: number | string,
+	id: number,
 	ctx: PrintContext,
 	visiting: ReadonlySet<string>
 ): void {
@@ -744,7 +757,7 @@ function mountPrinter(
 	seat: Seat,
 	hostKind: string,
 	builtKind: string,
-	id: number | string,
+	id: number,
 	ctx: PrintContext
 ): (...args: unknown[]) => Printed | string {
 	return (...args: unknown[]): Printed => {
@@ -782,6 +795,8 @@ import {
 	readNodeOf,
 	hydrateOf,
 	materialize,
+	slotAccessorOf,
+	slotNameOf,
 	type ModelFullForm
 } from '../validate/common.ts';
 import { Delimiter } from '@sittir/common/utils';
@@ -823,6 +838,7 @@ interface TriviaTextContext {
 	readonly fullForms: Record<string, ModelFullForm>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly slotDefaults: Record<string, Record<string, string>>;
+	readonly slotNameOf: (kind: string, slot: string) => string;
 }
 
 function seatTableSides(node: unknown, layoutKinds: ReadonlySet<number>, depth = 0): void {
@@ -881,7 +897,7 @@ function spelledTriviaEntry(entry: unknown, ctx: TriviaTextContext): unknown {
 	if (kind === undefined || ctx.textLeafKinds.has(kind)) return entry;
 	const form = ctx.fullForms[kind];
 	const field = ctx.factoryFields[kind]?.[0];
-	const contentKind = field === undefined ? undefined : ctx.slotDefaults[kind]?.[camelCase(field)];
+	const contentKind = field === undefined ? undefined : ctx.slotDefaults[kind]?.[ctx.slotNameOf(kind, field)];
 	const contentId = contentKind === undefined ? undefined : ctx.kindIdOfName(contentKind);
 	const interior = form === undefined ? undefined : fullFormInterior(entry.$text, form);
 	if (interior === undefined || contentId === undefined) {
@@ -1009,7 +1025,7 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const root = materialize(readNode(handle)) as ReadNodeLike;
+	const root = materialize(readNode(handle), slotAccessorOf(model, (id) => types.KIND_NAMES.get(id))) as ReadNodeLike;
 	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
 	seatTableSides(root, triviaFacts?.layout ?? new Set());
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
@@ -1020,7 +1036,8 @@ export async function emitFactorySourceText(
 		textLeafKinds,
 		fullForms: model.fullForms,
 		factoryFields: model.factoryFields,
-		slotDefaults: model.slotDefaults
+		slotDefaults: model.slotDefaults,
+		slotNameOf: slotNameOf(model)
 	});
 	const leafFindings: string[] = [];
 	const binding = engineBinding(grammar, (await languageByName(grammar)).fileTypes);
@@ -1034,6 +1051,7 @@ export async function emitFactorySourceText(
 		blankKindId: (await load('sitePreferences')).BLANK_KIND_ID,
 		irPathOfKind: irPathResolver(model.builderPaths, binding.engine),
 		seats: model.seats,
+		slotNameOf: slotNameOf(model),
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,
 		leafPatterns: model.leafPatterns,
@@ -1072,14 +1090,14 @@ export async function emitFactorySourceText(
 	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);
 	const artifacts: FactoryDispatchArtifacts = {
 		factoryMap: constantsAsValues(factoryMap, model.factoryShapes, ctx),
-		surface: printingIrSurface(factoryMap, (kind) => idOfName.get(kind), model.modelTypes, ctx),
+		surface: printingIrSurface(factoryMap, model.modelTypes, ctx),
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
 		factoryFields: withPublicNames(model.factoryFields),
 		factorySlots: withPublicNames(model.factorySlots),
 		omitOptionDefaults: true
 	};
-	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
+	const rootKind = root.$type === undefined ? undefined : kindNameFromId(root.$type);
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
 	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle, hydrate }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);

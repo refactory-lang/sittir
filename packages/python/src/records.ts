@@ -33,7 +33,6 @@ export const records = {
 	ElifClauseNode: { words: 12, condition: { word: 2, width: 5 }, consequence: { word: 7, width: 5 } },
 	ElseClauseNode: { words: 7, body: { word: 2, width: 5 } },
 	MatchStatementNode: { words: 12, subjects: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
-	MatchBlockNode: { words: 7, content: { word: 2, width: 5 } },
 	CaseClauseNode: {
 		words: 17,
 		case_patterns: { word: 2, width: 5 },
@@ -186,11 +185,11 @@ export const records = {
 	ParenthesizedExpressionNode: { words: 7, expression: { word: 2, width: 5 } },
 	CollectionElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ForInClauseNode: {
-		words: 10,
+		words: 15,
 		async_: { word: 2, bit: 0 },
 		left: { word: 3, width: 5 },
 		right: { word: 8, width: 2, run: 5 },
-		comma: { word: 2, bit: 1 }
+		trailing_comma: { word: 10, width: 5 }
 	},
 	IfClauseNode: { words: 7, condition: { word: 2, width: 5 } },
 	ConditionalExpressionNode: {
@@ -253,27 +252,30 @@ export const records = {
 	IntegerDecimalImaginaryNode: { words: 2 },
 	IntegerDecimalPlainNode: { words: 2 },
 	FloatPointNode: {
-		words: 22,
+		words: 26,
 		integer: { word: 2, width: 4 },
 		fraction: { word: 6, width: 4 },
 		marker: { word: 10, width: 4 },
-		exponent: { word: 14, width: 4 },
-		imaginary: { word: 18, width: 4 }
+		sign: { word: 14, width: 4 },
+		exponent: { word: 18, width: 4 },
+		imaginary: { word: 22, width: 4 }
 	},
 	FloatLeadingPointNode: {
-		words: 22,
+		words: 26,
 		integer: { word: 2, width: 4 },
 		fraction: { word: 6, width: 4 },
 		marker: { word: 10, width: 4 },
-		exponent: { word: 14, width: 4 },
-		imaginary: { word: 18, width: 4 }
+		sign: { word: 14, width: 4 },
+		exponent: { word: 18, width: 4 },
+		imaginary: { word: 22, width: 4 }
 	},
 	FloatScientificNode: {
-		words: 18,
+		words: 22,
 		integer: { word: 2, width: 4 },
 		marker: { word: 6, width: 4 },
-		exponent: { word: 10, width: 4 },
-		imaginary: { word: 14, width: 4 }
+		sign: { word: 10, width: 4 },
+		exponent: { word: 14, width: 4 },
+		imaginary: { word: 18, width: 4 }
 	},
 	EscapeSequenceUnicodeFixedNode: { words: 6, content: { word: 2, width: 4 } },
 	EscapeSequenceUnicodeWideNode: { words: 6, content: { word: 2, width: 4 } },

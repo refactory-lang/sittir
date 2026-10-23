@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { getCurrentWireContext, withWireContext, wireCopy } from '../wire/wire.ts';
 
 // outer reaches list through a field; list holds fn and konst through the hidden _stmt.

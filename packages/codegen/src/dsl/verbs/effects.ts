@@ -86,6 +86,8 @@ export interface Provenance {
 	readonly bindingEffects: readonly BindingEffect[];
 }
 
+export type ProjectedGrammar<G> = G & Partial<Pick<Provenance, 'leadFrom' | 'bindingEffects'>>;
+
 const KIND_KEYS: ReadonlySet<string> = new Set(['variantOf']);
 
 function namesKind(record: GrammarRecord, key: string): boolean {

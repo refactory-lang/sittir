@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
-import { evaluateSittirGrammar } from './_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 import { blockedRecords, collectGrammarDiagnosticsForGrammar, undeclaredSeparatorDiagnostics } from '../diagnostics/grammar-diagnostics.ts';
 import { AssembledList, AssembledPattern, type AssembledNode, type SeparatedListElementRule } from '../model/node-map.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';

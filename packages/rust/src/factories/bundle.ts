@@ -224,7 +224,7 @@ export const matchExpression = bundle(F.buildMatchExpression, C.coerceToMatchExp
 	max: 1
 });
 export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock, { key: 'matchBlock', max: 1 });
-export const lastMatchArm = bundle(F.buildLastMatchArm, C.coerceToLastMatchArm, { key: 'lastMatchArm', max: 1 });
+export const lastMatchArm = bundle(F.buildLastMatchArm, C.coerceToLastMatchArm, { key: 'lastMatchArm', max: 2 });
 export const matchPattern = bundle(F.buildMatchPattern, C.coerceToMatchPattern, { key: 'matchPattern', max: 1 });
 export const whileExpression = bundle(F.buildWhileExpression, C.coerceToWhileExpression, {
 	key: 'whileExpression',

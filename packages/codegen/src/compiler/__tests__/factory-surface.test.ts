@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { REPARSE_HOSTS } from '../../../../rust/src/reparse-hosts.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -15,7 +14,7 @@ import {
 	soleSlotFacts
 } from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 let nodeMap: NodeMap;
@@ -41,7 +40,7 @@ beforeAll(async () => {
 	nodeMap = await assembleGrammar('rust');
 	typescriptNodeMap = await assembleGrammar('typescript');
 	pythonNodeMap = await assembleGrammar('python');
-}, FULL_PIPELINE_TIMEOUT);
+});
 
 function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
 	expect(fromForwardsToChildFactory(node, nodeMap)).toBe(true);

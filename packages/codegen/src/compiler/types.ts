@@ -1,4 +1,3 @@
-import type { BindingEffect } from '../dsl/verbs/effects.ts';
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { IrSurface } from './model/ir-surface.ts';
 import type { WhitespaceCollision } from '../dsl/whitespace.ts';
@@ -128,6 +127,7 @@ export interface RawGrammar {
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
+	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
@@ -145,12 +145,11 @@ export interface RawGrammar {
 	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];
+	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 	readonly layerDiagnostics?: readonly GrammarDiagnostic[];
 	readonly derivationRecords?: DerivationRecords;
 	readonly renamedFrom?: Readonly<Record<string, string>>;
 	readonly splitFrom?: Readonly<Record<string, string>>;
-	readonly bindingEffects?: readonly BindingEffect[];
-	readonly leadFrom?: Readonly<Record<string, string>>;
 }
 
 export interface StageEvaluation<G = RawGrammar> {
@@ -166,6 +165,11 @@ export interface EvaluationStages<G = RawGrammar> {
 export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages' | 'fileTypes'> {
 	readonly protectedRuleNames?: readonly string[];
 	readonly stages?: EvaluationStages<EvaluatedGrammar>;
+}
+
+export interface DesugarDivergenceEvent {
+	readonly site: 'body-pattern-group';
+	readonly name: string;
 }
 
 import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';
@@ -217,7 +221,6 @@ export interface NormalizedGrammar {
 	readonly name: string;
 	readonly root?: string;
 	readonly rules: Record<string, RenderRule>;
-	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
@@ -252,7 +255,6 @@ export interface SimplifiedGrammar {
 	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
-	readonly supertypes: Set<string>;
 	readonly factoryInline: ReadonlySet<string>;
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;

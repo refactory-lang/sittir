@@ -14,6 +14,7 @@ const ctx: PrintContext = {
 	grammar: 'test',
 	engine: 'rs',
 	surface: 'strict',
+	slotNameOf: (_kind, slot) => slot,
 	facts: {
 		modelTypes: {},
 		subtypes: {},
@@ -27,7 +28,7 @@ const ctx: PrintContext = {
 		listElementKinds: {},
 		hoistedKinds: new Set(),
 		oneSurfaceKinds: new Set<string>(),
-		kindIdOfName: () => undefined
+		kindIdOfName: (kind) => ({ source_file: 1, function_item: 2, identifier: 3, comma: 4, arguments: 5 })[kind]
 	},
 	kindNameFromId: (id) =>
 		({ 1: 'source_file', 2: 'function_item', 3: 'identifier', 4: 'comma', 5: 'arguments' })[id],
@@ -48,6 +49,11 @@ describe('printValue', () => {
 		expect(printValue(true, ctx, 0)).toBe('true');
 		expect(printValue([4, 'x'], ctx, 0)).toBe('[rs.kinds.Comma, "x"]');
 	});
+	it('refuses to print a kind with no parser id, naming the kind', () => {
+		expect(() => printingFactoryMap({ function_item: 'config' }, () => undefined, ctx)).toThrow(
+			'emit-factory-source: function_item has no parser id'
+		);
+	});
 	it('prints a printed marker as its source', () => {
 		expect(printValue(new Printed(3, 'ir.identifier("f")'), ctx, 0)).toBe('ir.identifier("f")');
 	});
@@ -59,6 +65,13 @@ describe('printValue', () => {
 		);
 		const printed = map.function_item!({ name: map.identifier!('main'), body: undefined });
 		expect(expectPrinted(printed).source).toBe('ir.functionItem.strict({\n\tname: ir.identifier("main"),\n})');
+	});
+	it('prints an alias envelope over a kind id as that kind id, not as text', () => {
+		const aliasCtx: PrintContext = { ...ctx, aliasKinds: new Set(['wrapper']) };
+		const map = printingFactoryMap({ wrapper: 'direct', bag: 'spread' }, (k) => ({ wrapper: 9, bag: 10 })[k], aliasCtx);
+		const content = map.wrapper!(4);
+		expect(expectPrinted(content).source).toBe('rs.kinds.Comma');
+		expect(expectPrinted(map.bag!(content)).source).toBe('ir.bag.strict(rs.kinds.Comma)');
 	});
 	it('prints direct, spread and elements shapes', () => {
 		const map = printingFactoryMap(
@@ -100,7 +113,6 @@ describe('printValue', () => {
 		);
 		const surface = printingIrSurface(
 			map,
-			(k) => ({ visibility_modifier: 6, visibility_modifier_pub: 7, identifier: 3 })[k],
 			{},
 			{
 				...ctx,

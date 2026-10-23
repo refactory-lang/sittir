@@ -15,8 +15,8 @@ describe('a leaf reached through a parent', () => {
 	});
 
 	it('builds from text', () => {
-		expect(ir.number.decimal('3').$text).toBe('3');
-		expect(ir.number.decimal(255).$text).toBe('255');
+		expect(ir.number.decimal('3').$text()).toBe('3');
+		expect(ir.number.decimal(255).$text()).toBe('255');
 	});
 
 	it('refuses a built node of its own kind', () => {

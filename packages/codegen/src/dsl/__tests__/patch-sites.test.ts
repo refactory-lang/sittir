@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { evaluate } from '../../compiler/evaluate.ts';
+import { evaluate } from '../evaluate.ts';
 import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));

@@ -24,6 +24,7 @@ export interface NodeMemberSpec {
 	readonly inner: InnerPositions;
 	readonly extra?: readonly string[];
 	readonly parsed?: true;
+	readonly text?: string;
 }
 
 export function innerPositionsOf(kind: string, nodeMap: NodeMap): InnerPositions {
@@ -50,10 +51,12 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		lines.push('    $with: {', ...spec.setters.map(withEntry), '    },');
 	}
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
+	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
+		'    toJSON: () => nodeJSON(node, jsonFacts),',
 		'    $trivia: {',
 		"      leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),",
 		"      trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),",
@@ -132,9 +135,10 @@ export interface ListViewParts {
 
 export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap'): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
-	const options = plan.options.map(
-		(option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`
-	);
+	const options = plan.options
+		.filter((option) => !(environment === 'wrap' && option.key === 'separator'))
+		.map((option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`);
+	const separator = environment === 'wrap' && plan.options.some((option) => option.key === 'separator');
 	const shared = [
 		'    ...LIST_METHODS,',
 		'    [Symbol.iterator]: listIterator,',
@@ -156,7 +160,10 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 			`    [LIST_READ]: () => listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}),`,
 			...shared
 		],
-		postlude: ['  defineListIndices(node, listView.stored?.length ?? 0);']
+		postlude: [
+			'  defineListIndices(node, listView.stored?.length ?? 0);',
+			...(separator ? [`  defineListSeparator(node, ${JSON.stringify(accessor)});`] : [])
+		]
 	};
 }
 
@@ -167,10 +174,13 @@ export function listSelfViewParts(
 	environment: 'factory' | 'wrap'
 ): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
-	const options = plan.options.map(
-		(option) =>
-			`    ${option.key}: ${environment === 'factory' ? `_${option.key}` : `(data as { readonly _${option.key}?: unknown })._${option.key}`} ?? ${option.default},`
-	);
+	const options = plan.options
+		.filter((option) => !(environment === 'wrap' && option.key === 'separator'))
+		.map(
+			(option) =>
+				`    ${option.key}: ${environment === 'factory' ? `_${option.key}` : `(data as { readonly _${option.key}?: unknown })._${option.key}`} ?? ${option.default},`
+		);
+	const separator = environment === 'wrap' && plan.options.some((option) => option.key === 'separator');
 	const shared = [
 		'    ...LIST_METHODS,',
 		'    [Symbol.iterator]: listIterator,',
@@ -186,6 +196,6 @@ export function listSelfViewParts(
 			`    [LIST_READ]: () => listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}),`,
 			...shared
 		],
-		postlude: ['  defineListIndices(node, listedStored.length);']
+		postlude: ['  defineListIndices(node, listedStored.length);', ...(separator ? ['  defineListSeparator(node);'] : [])]
 	};
 }

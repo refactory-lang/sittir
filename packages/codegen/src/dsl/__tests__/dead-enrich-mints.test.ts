@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
-import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
+import { evaluateDsl } from '../evaluate.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 import { grammarPackage, topLayerPath } from '../../grammars.ts';
 import { isBlank } from '../rule-patterns.ts';
 

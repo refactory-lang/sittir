@@ -1,6 +1,6 @@
 export interface InteriorSlot {
 	readonly name: string;
-	readonly configKey: string;
+	readonly propertyName: string;
 	readonly flag?: true;
 }
 
@@ -40,7 +40,7 @@ export function lexedConfig(text: string, interior: TokenInterior, kind: string)
 	const out: Record<string, string | true> = {};
 	for (const slot of interior.slots) {
 		const value = projected[slot.name];
-		if (value !== undefined && value !== false) out[slot.configKey] = value === true ? true : value;
+		if (value !== undefined && value !== false) out[slot.propertyName] = value === true ? true : value;
 	}
 	return out;
 }
@@ -84,19 +84,17 @@ export function spelledInterior(text: string, open: string, close: string, accep
  * {@link spelledInterior} nothing is detected: the text must carry both
  * delimiters, and the caller has said that it does.
  *
- * @param text - The token's full text. Anything but a string is refused, never coerced to one.
+ * @param text - The token's full text. The builder has refused a non-string before calling.
  * @param open - The fixed text the token starts with.
  * @param close - The fixed text the token ends with.
  * @param kind - The kind being built, named in the error.
  * @returns The text between the delimiters.
- * @throws When the text is not a string, or does not start with `open` and end with `close`.
+ * @throws When the text does not start with `open` and end with `close`.
  */
-export function unaffixed(text: unknown, open: string, close: string, kind: string): string {
-	const interior = typeof text === 'string' ? spelledForm(text, [open], [close])?.interior : undefined;
+export function unaffixed(text: string, open: string, close: string, kind: string): string {
+	const interior = spelledForm(text, [open], [close])?.interior;
 	if (interior === undefined) {
-		throw new Error(
-			`${kind}: text given with its affixes must be ${JSON.stringify(open)}…${JSON.stringify(close)}, got ${typeof text === 'string' ? JSON.stringify(text) : Object.prototype.toString.call(text)}`
-		);
+		throw new Error(`${kind}: text given with its affixes must be ${JSON.stringify(open)}…${JSON.stringify(close)}, got ${JSON.stringify(text)}`);
 	}
 	return interior;
 }

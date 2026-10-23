@@ -847,3 +847,7 @@ The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `Typescript
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
 The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.
+
+### `packages/codegen/src/grammars.ts::grammarNodeTypeName`
+
+The name of a grammar's node union, `<Prefix>Node` (`RustNode`, `TypescriptNode`). The types emitter declares it, the engine emitter types the language API's `node` with it, and the portable surface types each guard's node by it, all through this one name.

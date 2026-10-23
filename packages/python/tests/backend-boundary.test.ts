@@ -4,7 +4,7 @@ import { RENDER_MODULE_HASH } from '../src/hash.ts';
 // TSKindId.Identifier = 1, TSKindId.ArgumentList = 157 (see packages/python/src/types.ts)
 const identifier = {
 	$type: 1, // TSKindId.Identifier
-	$source: 2,
+	
 	$named: true,
 	$text: 'x'
 } as const;
@@ -70,11 +70,10 @@ describe('engine render boundary', () => {
 		const engine = await mockedEngine();
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		expect(render(identifier)).toBe('ok:1'); // $type is now numeric (TSKindId.Identifier = 1)
-		// $source is numeric: 2 = factory
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: 1, // TSKindId.Identifier
-				$source: 2,
+				
 				$named: true,
 				$text: 'x'
 			})
@@ -95,7 +94,7 @@ describe('engine render boundary', () => {
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			$type: 157, // TSKindId.ArgumentList
-			$source: 2,
+			
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;

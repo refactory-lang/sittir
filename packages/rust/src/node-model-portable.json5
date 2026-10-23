@@ -852,7 +852,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -3054,7 +3054,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -3225,15 +3225,6 @@
       "vocab": "identifier.crate",
       "read": [
         {
-          "vocab": "modifier.visibility.public.internal",
-          "toplevel": false,
-          "within": [
-            "visibility_modifier"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "identifier.crate",
           "toplevel": true,
           "within": [],
@@ -3242,6 +3233,26 @@
         }
       ],
       "members": []
+    },
+    "crate_visibility_modifier": {
+      "vocab": "modifier.visibility.public.internal",
+      "read": [
+        {
+          "vocab": "modifier.visibility.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
+      "container": {
+        "kinds": [
+          "crate"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "declaration_list": {
       "container": {
@@ -3776,7 +3787,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -4808,7 +4819,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -4914,7 +4925,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -5007,7 +5018,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -5755,7 +5766,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -6263,7 +6274,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -6947,65 +6958,6 @@
           ]
         },
         {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 4
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  437
-                ],
-                "slots": {
-                  "230": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 4
-                  }
-                },
-                {
-                  "slots": {
-                    "230": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "437": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  435
-                ],
-                "slots": {
-                  "436": 1
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.method.private",
           "toplevel": false,
           "within": [
@@ -7612,7 +7564,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -7698,7 +7650,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -8044,7 +7996,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -8235,41 +8187,6 @@
             {
               "owner": "function_modifiers",
               "slot": "modifier"
-            }
-          ]
-        },
-        {
-          "name": "receiver",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "parameters_elements_receiver",
-          "slot": "receiver",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "function_item",
-              "slot": "parameters"
-            },
-            {
-              "owner": "parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "parameters_elements_receiver",
-              "slot": "receiver"
             }
           ]
         },
@@ -8934,7 +8851,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -9280,7 +9197,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -10770,13 +10687,13 @@
           ]
         },
         {
-          "name": "comma",
+          "name": "trailingComma",
           "route": "slot",
-          "slot": "comma",
+          "slot": "trailing_comma",
           "path": [
             {
               "owner": "last_match_arm",
-              "slot": "comma"
+              "slot": "trailing_comma"
             }
           ]
         }
@@ -11966,7 +11883,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -12362,7 +12279,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -14622,7 +14539,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -15211,7 +15128,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -15640,7 +15557,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -16076,7 +15993,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -16961,7 +16878,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -17545,7 +17462,7 @@
               "via": [
                 {
                   "slots": {
-                    "472": 0
+                    "473": 0
                   }
                 }
               ],
@@ -17904,7 +17821,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -18632,7 +18549,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -19215,7 +19132,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  127
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -19418,7 +19335,7 @@
     "visibility_modifier": {
       "container": {
         "kinds": [
-          "crate",
+          "crate_visibility_modifier",
           "visibility_modifier_pub"
         ],
         "terminals": [],

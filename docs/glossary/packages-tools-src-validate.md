@@ -241,7 +241,7 @@ What `walkNativeForKind` records for a node it visits: an unread coordinate as t
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
 
-Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test (`loadIsLeafKind`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
+Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
 
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords.embeddedData`
@@ -281,18 +281,7 @@ Reads the whole tree once (`handle.read(0, Infinity)`) and visits every native n
 
 ### `packages/tools/src/validate/common.ts::findFirst`
 
-#### body
-
-```text
-// Cluster H (016): match only named nodes — the kind set comes from
-// `collectKinds` which is named-only, but tree-sitter exposes both
-// named and anonymous nodes that can share a `type` string (ts has a
-// named `string` kind for `'…'`/`"…"` literals AND an anonymous
-// `string` keyword inside `predefined_type` choice). Without the
-// named filter, `findFirst` resolves to the anonymous keyword node
-// when scanning a class with `: string` annotations and the rt
-// probe tries to round-trip the bare keyword.
-```
+The first named node under `node`, `node` included, whose kind is `kind`, depth first; `kindOf` names a node's kind as in `collectKinds`. Only named nodes match, because tree-sitter can give a named and an anonymous node the same `type` (typescript's named `string` literal and the anonymous `string` keyword in `predefined_type`), and the named kind is the one validated.
 
 ### `packages/tools/src/validate/common.ts::buildKindToSupertypes`
 
@@ -731,7 +720,7 @@ The shape of a parsed `node-model.json5`, only the fields the validators read. E
 
 ### `packages/tools/src/validate/common.ts::parseNodeModel`
 
-Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape.
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape. `displayUnions` comes through as stored.
 
 ### `packages/tools/src/validate/common.ts::loadBoundNameOf`
 
@@ -756,11 +745,12 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 ```text
 /**
  * Walk a wrapped tree via declared getters, calling `visit` on each
- * encountered wrapped node. Enumeration uses `Object.keys` + accessor
- * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's hydration ($type on every node is the grammar-symbol
- * wire identity stamped by the read).
+ * encountered wrapped node. A stored member is read through the accessor
+ * the model names for it (`slotAccessorOf`, by the node's stamped kind id);
+ * a stored member the model has no slot for (a list's `_delimiter`) is
+ * plain data. Each child materializes through the wrap layer's hydration
+ * ($type on every node is the grammar-symbol wire identity stamped by the
+ * read).
  *
  * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
@@ -890,13 +880,7 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 
 ### `packages/tools/src/validate/common.ts::loadIsLeafKind`
 
-```text
-/**
- * The model's own classification of a kind as a leaf — a `pattern`, `token`,
- * `keyword` or `enum` kind carries text, not storage — keyed by kind id.
- * Unknown ids (and a grammar with no node model) are not leaves.
- */
-```
+The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id. Unknown ids, and a grammar with no node model, are not leaves.
 
 ### `packages/tools/src/validate/common.ts::loadKindNameFromId`
 
@@ -1089,49 +1073,11 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ### `packages/tools/src/validate/common.ts::ReadNodeLike.$type`
 
-```text
-// $type is numeric (TSKindId) for parser.c-derived kinds; string for
-// hidden/synthetic kinds (e.g. "_suite") that have no parser.c entry.
-```
+The node's kind id (`TSKindId`); a reader resolves it to a kind name through the grammar's `kindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::isAnonTokenPassthrough`
 
-```text
-/**
- * Determine whether an anonymous UntypedNode token should pass through
- * `resolveChild` unchanged.
- *
- * @remarks
- * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * the reader) must stay as UntypedNode. Render's `$named !== false` filter drops
- * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
- * trailing separators. Converting them to bare strings bypasses those filters
- * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
- * rendered output).
- *
- * @param c - The candidate child UntypedNode.
- * @returns `true` if the child is an anonymous token and should be returned as-is.
- */
-```
-
-### `packages/tools/src/validate/common.ts::shouldHaltRecursion`
-
-```text
-/**
- * Guard the recursion depth and availability of tree/factory context before
- * hydrating a child node.
- *
- * @remarks
- * Depth cap: recursive construction shouldn't run away even on pathologically
- * nested corpus entries. 64 is well past real-world AST depth and stops before
- * Node's default call-stack limit.
- *
- * @param depth - Current recursion depth.
- * @param tree - Tree handle, if available.
- * @param factoryMap - Factory map, if available.
- * @returns `true` if recursion should be halted (cap exceeded or context absent).
- */
-```
+Whether a child is an anonymous token object (`$named === false`). `resolveChild` passes one through unchanged only when it is given no tree, where the child is the read node itself. Building from a tree, it refuses one: stored data holds a token as its kind id, so a token object reaching a builder input is a fault, never an input.
 
 ### `packages/tools/src/validate/common.ts::resolveAliasedKind`
 
@@ -1159,14 +1105,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ### `packages/tools/src/validate/common.ts::resolveChild`
 
-```text
-/**
- * Hydrate a shallow child UntypedNode via the tree handle, then convert
- * recursively and route through its kind's factory. Falls back to the
- * passed-in shallow UntypedNode when `tree` isn't available OR the child
- * lacks a $nodeId (factory-built children don't carry one).
- */
-```
+One child of a node as the config takes it. A scalar passes through. Given no tree or no factory map, a child object passes through unchanged: it is the read node itself, which a builder admits. Given both, the child is hydrated (`hydrateForConfig`) and built through its kind's factory (`buildWithFactory`); a kind with no factory of its own is resolved through its single wrapped child. A builder is never handed a node it could not build: an anonymous token object, a kind with no factory and no single wrapped child, and a node nested more than 64 deep each throw, naming the kind and its slot path (`pathOf`).
 
 #### body
 
@@ -1237,7 +1176,7 @@ A wrapped tree as plain data with no coordinates: `materialize` resolves every a
 
 Detaching removes the hold on the tree with the coordinates, and a leaf whose slots are projected from its text keeps a text-only coordinate that a render still slices. The result is therefore given the tree of the root it was made from (`holdingTreeOf`), so it renders for as long as it is held.
 
-Each copied node keeps the source identity of the node it copies (`carrySource`), as a live rebuild does. A copy is not sliced, but its sides and its list slots' stored layouts are still read from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
+Each copied node keeps the source identity of the node it copies (`carryPlace`), as a live rebuild does. A copy is not sliced, but its sides and its list slots' stored layouts are still read from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
 
 ### `packages/tools/src/validate/common.ts::holdingTreeOf`
 
@@ -1325,6 +1264,11 @@ The same rule serves the `elements`, `tuple` and `flatten` shapes; the container
 ```
 
 ### `packages/tools/src/validate/common.ts::splitRegisteredSlots`
+
+A config key is the camelCase of its slot name (a kind-origin slot keeps its
+name), while the factory slot metadata is keyed by the slot name. A key is
+registered when it equals a metadata name or the camelCase of one, so a
+multi-word registered slot keeps its option instead of falling into the config.
 
 ```text
 /**
@@ -1476,8 +1420,8 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
  * `nodeToConfig`'s output. `nodeToConfig` only writes the literal
  * `children` key for genuinely UNNAMED ($other-derived) slots — a
  * spread-shape kind whose sole field has a real grammar name (e.g.
- * python `module`'s `statement`) gets that key instead
- * (`slotConfigKey`'s field-origin branch: `snakeToCamel(slot.name)`).
+ * python `module`'s `statement`) gets that slot's model name instead
+ * (`slotKeyOf`).
  * Without `factoryFields`, such kinds always read `undefined` here and
  * the spread call silently invokes the factory with zero arguments.
  *
@@ -1666,13 +1610,23 @@ The render-and-reparse step every rendering row shares. It renders a node with t
 
 ### `packages/tools/src/validate/factory-storage.ts::validateFactoryStorage`
 
-Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
+Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other. Both builds are given the read tree, so every child is built through its own factory: the storage comparison reads nested content the factory built, never the read's own children, and a builder is never handed a `materialize` copy. Only a candidate whose kind has no factory is skipped. A factory that throws, the kind's own or a child's, fails the candidate: the error is recorded, the storage comparison has nothing to compare, and the render still runs.
 
-A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`sourceOf` on it or any node under it) is a render failure.
+Each candidate tested is one case of its kind, and `total` and `casesByKind` are read from that one count (`KindCases`). The render counts the built nodes it renders the same way, taking a case back out when the kind has no reparse host or the render is excluded.
+
+A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`placeOf` on it or any node under it) is a render failure.
 
 ### `packages/tools/src/validate/built-render.ts::combineBuiltRender`
 
-The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each failure's kind labeled with its surface (`factory: <kind>`, `ir: <kind>`).
+The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each kind's cases added across them (`casesByKind`), each failure's kind labeled with its surface (`surfaceLabel`: `factory: <kind>`, `ir: <kind>`).
+
+### `packages/tools/src/validate/built-render.ts::BuiltRenderRun`
+
+A storage run's render result while the run goes on: the counts and failures of `BuiltRenderResult`, with its cases in a `KindCases`, from which `finishBuiltRender` reads `total` and `casesByKind`.
+
+### `packages/tools/src/validate/built-render.ts::finishBuiltRender`
+
+The `BuiltRenderResult` of a run: its counts and failures, with `total` and `casesByKind` read from its cases.
 
 ### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
 
@@ -1700,9 +1654,11 @@ Shallow comparison of a `from()` result against the factory's: `$type`, the slot
 
 A read leaf whose stored kind differs from the kind the corpus shows (an in-place leaf alias reads as the shared anonymous token) is validated by its text: `from(node.$text)` is compared with `factory(nodeToConfig(node))`, and `from(node)` must return the same object. Either the read identity is kept or the row is an error. The scalarized text and constant leaves, which have no node, keep comparing `from(text)` with `factory(text)` through the same closure.
 
-An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). An extra is reported as trivia. Any other kind is retried in later entries, so it is tested directly wherever some entry reads it as a node. A kind no entry reads as a node did not leave the grammar, it is stored inside its parent, so after the walk it is tested through the nearest ancestor of its first occurrence that the read holds, and that ancestor's result is credited to it; it counts toward the total like any tested kind. An occurrence none of these explains stays an error.
+An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). An extra is reported as trivia. Any other kind is retried in later entries, so it is tested directly wherever some entry reads it as a node. A kind no entry reads as a node did not leave the grammar, it is stored inside its parent, so after the walk it is tested through the nearest ancestor of its first occurrence that the read holds, and that ancestor's result is credited to it; it counts toward the total like any tested kind. Each tested kind is one case, under its own name, and `total` and `casesByKind` are read from that one count (`KindCases`); a kind put back to be retried leaves it. An occurrence none of these explains stays an error.
 
 Each occurrence is compared by `validateAt`, which looks the node up by the kind it is read as and credits the pass or error to the kind being tested; the two differ only when an ancestor stands in.
+
+A display several storage kinds share is validated per storage kind (`occurrenceKind`, through `display-families.ts::physicalDisplayKind`): the corpus's kind set, the first occurrence and the ancestor walk name a node by its storage kind, and the native coordinate lookup names a native node the same way (`nativeKindName`). So each storage kind behind typescript's `string_fragment` or rust's `string_content` is checked against its own factory instead of the display's.
 
 ### `packages/tools/src/validate/common.ts::nodeToConfig`
 
@@ -1730,6 +1686,10 @@ Loads the generated raw factory map through the typed internal loader, scopes bu
 
 Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.
 
+### `packages/tools/src/validate/factory-storage.ts::storageValueOf`
+
+One stored value of a node as the storage comparison reads it: `$text` through `nodeText`, since a built leaf holds its text as a function and a materialized read holds it as a string; any other key as the node holds it.
+
 ### `packages/tools/src/grammar-internals.ts::Hydrate`
 
 The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as an accessor would return it, a coordinate read `depth` levels down through the given tree and wrapped.
@@ -1756,7 +1716,10 @@ Projects a seated slot's value into its parent's config by the seat's shape.
 A `flatten` seat splices the group's own config keys into the parent's and
 marks the config (`flattenedOf`): `true` for a config-shaped group, else the
 group's call arguments, so a direct parent can pass the group's positional
-value. An `elements` seat projects each element, and a `tuple` seat takes the
+value. A group present with none of its keys set (python's `c[::]` step
+group, rust's `use ::*;` wildcard group) has no flattened spelling: it is
+built through its own factory and passed under the seat's key, which the
+seated surface accepts beside the flattened keys. An `elements` seat projects each element, and a `tuple` seat takes the
 group's call arguments as the slot's value.
 
 ### `packages/tools/src/validate/reparse-derive.ts::deriveReparseHosts`
@@ -1789,6 +1752,34 @@ The id a parsed node reads as: its display id where the model's relaxation table
 ### `packages/tools/src/validate/common.ts::relaxesOf`
 
 The generated reader's relaxation predicate over the node model's `relaxes` table.
+
+### `packages/tools/src/validate/common.ts::collectKinds`
+
+Every named node's kind under `node`, `node` included, as `kindOf` names it (by default `nodeType`).
+
+### `packages/tools/src/validate/common.ts::nodeType`
+
+A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `collectKinds` use unless given another.
+
+### `packages/tools/src/validate/common.ts::isLeafModelType`
+
+Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
+
+### `packages/tools/src/validate/common.ts::slotKeyOf`
+
+The key a config holds a kind's slot under: the slot's model name, read from the factory slot metadata (`FactorySlotMeta.propertyName`), which the node-model reader derives once (`slotPropertyName`). The validators build every config through it and never camel-case or pluralize a slot name themselves. A slot with no metadata throws, naming the kind and slot, instead of falling back to a guessed key.
+
+### `packages/tools/src/validate/common.ts::slotAccessorOf`
+
+A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). It answers the kind's name with the map (`KindSlots`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind, and so does a slot whose model-named accessor the node does not have as a reader (`resolveWrappedStorageValue`): the model and the generated node disagree. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
+
+### `packages/tools/src/validate/common.ts::slotNameOf`
+
+A kind's slot, by its model slot name (the storage name a seat table or `factoryFields` lists), to the name a config builds it by and its accessor reads it by, from the loaded model (`LoadedNodeModel.slotAccessors`). The factory-source printer keys a seated slot (`wrapSeatedConfig`) and a trivia entry's content slot through it. A slot the model does not have throws, naming the kind and slot.
+
+### `packages/tools/src/validate/common.ts::pathOf`
+
+The slot path `resolveChild` names when it refuses a child: the steps `memberValueOpts` records in `NodeToConfigOpts._path`, or "the root" for the node `nodeToConfig` was called on.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
@@ -1830,10 +1821,34 @@ One phrase counting diagnostics by severity, most severe first (`SEVERITY_ORDER`
 
 Severities from most to least severe: `fail`, `error`, `warning`, `info`. The order `severitySummary` lists counts in.
 
+### `packages/tools/src/validate/display-families.ts::DisplayFamilies`
+
+The serialized node model's `displayUnions`: each display name with the storage rules tree-sitter shows under it (`DisplayUnionMember`).
+
 ### `packages/tools/src/validate/display-families.ts::sharedDisplayStorageKinds`
 
-Projects the serialized canonical `DisplayUnions` members for a shared parser display. Only families with multiple nonliteral storage members expand the validation universe; ordinary single-source aliases retain their display identity. Template coverage checks each physical member's own render body against the shared parser field declaration.
+The storage kinds that share `display`: the non-literal members of its family when there are two or more, else `display` alone. Rust's `string_content` is shared by `raw_string_literal_content` and `string_content`; a family with one storage rule, or whose other members are literal tokens, keeps its display identity.
 
 ### `packages/tools/src/validate/display-families.ts::physicalDisplayKind`
 
-Selects a shared display's exact physical storage member using the canonical kind name for its parser grammar id. Unknown ids keep the display identity rather than crediting every member. From validation uses the same projection for corpus selection and native-coordinate lookup, so Python's ordinary and for-in-clause lambda factories each receive their own read node.
+The kind a node counts as: `storage` when it is one of the storage kinds sharing `display` (`sharedDisplayStorageKinds`), else `display`. A storage name outside the family keeps the display rather than crediting a member.
+
+### `packages/tools/src/validate/display-families.ts::sharedDisplayEntries`
+
+Node-types entries with each shared display's entry repeated once per storage kind (`sharedDisplayStorageKinds`), named for that kind. Template coverage walks these, so each storage kind's own template is checked against the display's node-types entry.
+
+### `packages/tools/src/validate/kind-cases.ts::KindCases`
+
+A validator's case counter, per kind. `add` counts a case (or several) of a kind, `remove` takes one back and throws when none is counted, and `total` and `byKind` read the same counts, so a result's `total` and its `casesByKind` cannot disagree. `byKind` sorts by kind and leaves out a kind whose last case was taken back.
+
+### `packages/tools/src/validate/kind-cases.ts::CasesByKind`
+
+Cases counted per kind, as a validator result and the baseline record them.
+
+### `packages/tools/src/validate/surface-label.ts::surfaceLabel`
+
+A failure's kind labeled with the surface whose run produced it, `<surface>: <kind>` (`factory: block`, `ir: block`). `combineBuiltRender` labels every built-render failure this way, so the built-render-parse row's `failingKinds` and the validation report name the surface; `kindOfLabel` reads the kind back.
+
+### `packages/tools/src/validate/surface-label.ts::kindOfLabel`
+
+The kind a `surfaceLabel` names, or the entry itself when it carries no surface. A kind name holds no `': '`, so an unlabeled kind reads back unchanged. The baseline check reads the built-render-parse row's failing kinds through it, to compare them with the grammar's `kinds`.

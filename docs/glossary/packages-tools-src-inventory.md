@@ -81,7 +81,7 @@ Whether the committed flags module is the one the vocabulary's `Flag` declaratio
 
 ### `packages/tools/src/inventory/index.ts::generatedLayerFixpoint`
 
-The producer check of one grammar's generated layer: the diagnostics of its top layer's fixpoint check (`compiler/evaluate.ts::generatedLayerDiagnostics`). The compile leaves that check to this inventory and to `gen`, so a layer that enrich would still change fails where it is written or regenerated.
+The producer check of one grammar's generated layer: the diagnostics of its top layer's fixpoint check (`dsl/evaluate.ts::generatedLayerDiagnostics`). The compile leaves that check to this inventory and to `gen`, so a layer that enrich would still change fails where it is written or regenerated.
 
 ### `packages/tools/src/inventory/index.ts::GeneratedLayerReport`
 

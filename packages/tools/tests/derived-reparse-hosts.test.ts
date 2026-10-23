@@ -16,7 +16,7 @@ const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof c
 describe('a kind with no declared host is hosted through a parent that is', () => {
 	it('python: statements reach the declared statement hosts, a match block a derived one', async () => {
 		const ctx = await contextFor('python');
-		for (const kind of ['return_statement', 'match_statement', 'match_block', 'block', 'suite_block']) {
+		for (const kind of ['return_statement', 'match_statement', 'match_block_block', 'block', 'suite_block']) {
 			expect(hostFor('python', kind, ctx), kind).not.toBeNull();
 		}
 	}, 120_000);
@@ -105,11 +105,11 @@ describe('the reparsed node is found by grammar id', () => {
 		parser.setLanguage(lang);
 		const text = 'match x:\n    case 1:\n        pass\n';
 		const tree = parser.parse(text)!;
-		const block = tree.rootNode.descendantsOfType('match_block')[0]!;
+		const block = tree.rootNode.descendantsOfType('match_block_block')[0]!;
 		const offset = text.indexOf('case');
 		expect(block.startIndex).toBeLessThan(offset);
 		expect(findReparsedNodeAtOffset(tree, block.grammarId, { text, offset })).not.toBeNull();
-		expect(findReparsedNodeAtOffset(tree, 'match_block', { text, offset })?.type).toBe('match_block');
+		expect(findReparsedNodeAtOffset(tree, 'match_block_block', { text, offset })?.type).toBe('match_block_block');
 	}, 120_000);
 
 	it('python: a multi-line string keeps its inside when the render is indented into a block', async () => {

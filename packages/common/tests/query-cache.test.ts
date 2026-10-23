@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { Cond, QuerySlots, SlotRef } from '@sittir/types';
 import { queryFacet, type DescendantWalk, type QueryHooks } from '../src/query.ts';
 import { holdTreeOn, mintTreeToken, registerTree } from '../src/tree-token.ts';
+import { holdsKinds } from '../src/language.ts';
 
 interface NameRecorder {
 	readonly name: SlotRef;
@@ -22,7 +23,7 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 		query: {
 			descendants(walk) {
 				walks.push(walk);
-				return { coordinates: [], resume: null, origin: 0 };
+				return { items: [], resume: null, origin: 0 };
 			},
 			planHolds: () => []
 		}
@@ -33,6 +34,8 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 		queryFlags: {},
 		querySlotFlags: {},
 		membership,
+		kindTest: holdsKinds,
+		portable: undefined,
 		kindName: (kind) => `kind_${kind}`,
 		wrap: (data) => data
 	};
@@ -41,7 +44,7 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 }
 
 function nameSlots(slot: number, kind = 42): QuerySlots {
-	return Object.freeze({ [kind]: [['name', slot]] });
+	return Object.freeze({ [kind]: [['name', slot, undefined, '_name']] });
 }
 
 describe('compiled query cache', () => {
@@ -91,7 +94,7 @@ describe('compiled query cache', () => {
 			isMember: (kind, type) => kind === type || (kind === 40 && (type === 41 || type === 42)),
 			membersOf: (kind) => (kind === 40 ? [41, 42] : [kind])
 		};
-		const context = queryContext(Object.freeze({ 41: [['name', 0]], 42: [['other', 0], ['name', 1]] }), members);
+		const context = queryContext(Object.freeze({ 41: [['name', 0, undefined, '_name']], 42: [['other', 0, undefined, '_other'], ['name', 1, undefined, '_name']] }) as QuerySlots, members);
 		expect([...context.view.ofType(40).where((slots) => slots.name.eq('target'))]).toEqual([]);
 		expect(context.walks[0]).toMatchObject({ kinds: [41, 42], plan: { op: 'eq', text: 'target', slots: { 41: 0, 42: 1 } } });
 	});

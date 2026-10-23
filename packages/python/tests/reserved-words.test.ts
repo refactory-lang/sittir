@@ -39,11 +39,11 @@ describe('the grammar reserved wordset', () => {
 	});
 
 	it.each(['async', 'await'])('the identifier builder admits %j, which the grammar reserves and also relaxes into identifier', (word) => {
-		expect(py.build.identifier(word).$text).toBe(word);
+		expect(py.build.identifier(word).$text()).toBe(word);
 	});
 
 	it('the identifier builder admits a contextual keyword the grammar does not reserve', () => {
-		expect(py.build.identifier('print').$text).toBe('print');
+		expect(py.build.identifier('print').$text()).toBe('print');
 	});
 
 	it('refuses a reserved literal at compile time, and a wide string at run time', () => {
@@ -61,7 +61,8 @@ describe('a relaxed keyword at a slot the grammar relaxes it in', () => {
 		const built = py.build.namedExpression({ left: word, right: py.build.integer('1') });
 		const text = `(${built.$render().toString()})`;
 		expect(text).toBe(`(${word} := 1)`);
-		expect(built.left()).toMatchObject({ $type: py.kinds.Identifier, $text: word });
+		expect(built.left().$type).toBe(py.kinds.Identifier);
+		expect(built.left().$text()).toBe(word);
 		expect(readName(text).$type).toBe(py.kinds.Identifier);
 	});
 

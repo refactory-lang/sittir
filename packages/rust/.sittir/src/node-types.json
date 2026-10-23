@@ -3930,16 +3930,6 @@
           }
         ]
       },
-      "comma": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": ",",
-            "named": false
-          }
-        ]
-      },
       "pattern": {
         "multiple": false,
         "required": true,
@@ -3947,6 +3937,16 @@
           {
             "type": "match_pattern",
             "named": true
+          }
+        ]
+      },
+      "trailing_comma": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
           }
         ]
       },
@@ -7541,7 +7541,7 @@
       "required": true,
       "types": [
         {
-          "type": "crate",
+          "type": "crate_visibility_modifier",
           "named": true
         },
         {
@@ -8064,6 +8064,10 @@
   },
   {
     "type": "crate",
+    "named": true
+  },
+  {
+    "type": "crate_visibility_modifier",
     "named": true
   },
   {

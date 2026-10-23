@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { allGrammars, BINDINGS_MODULE, grammarPackage, grammarPackageDir, grammarRequire, topLayerPath } from '@sittir/codegen/grammars';
-import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
+import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
 import { ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';
@@ -23,6 +23,12 @@ describe('bootstrap templates reproduce an existing grammar package', () => {
 			);
 		});
 	}
+	it('package.json dependencies', () => {
+		const pick = ({ dependencies, devDependencies }: Record<string, unknown>) => ({ dependencies, devDependencies });
+		expect(pick(JSON.parse(python.find((f) => f.path === 'package.json')!.contents))).toEqual(
+			pick(JSON.parse(readFileSync(join(grammarPackageDir('python'), 'package.json'), 'utf8')))
+		);
+	});
 });
 
 const STOCK_SHAPE = /export default grammar\(enrich\(base\), wire\(\{[\s\S]*\}\)\);\s*$/;

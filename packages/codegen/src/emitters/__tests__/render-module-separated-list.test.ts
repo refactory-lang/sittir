@@ -10,6 +10,7 @@
  *   of the hardcoded `false`/literal every other list-shaped slot still uses.
  */
 
+import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import { emittedTemplates } from './support/emitted-templates.ts';
 import { slot } from '../render-body.ts';
 import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -42,6 +43,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 		'member_list',
 		new AssembledList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
+			kindEntries: collectGeneratedKindEntries(GENERATED_ID_TABLES),
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
 		})

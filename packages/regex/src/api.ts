@@ -7,7 +7,8 @@ import { isMember, membersOf, type is } from './is.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, RegexNode, RegexTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { querySlots, structure, triviaFacts } from './utils.js';
+import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
+import { buildByKind } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
 import { wrapNode, hydrate, type PatternTree } from './wrap.js';
@@ -21,6 +22,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly root: PatternTree;
 	readonly node: RegexNode;
 	readonly fixedTextKindId: FixedTextKindId;
+	readonly kindId: TSKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: RegexTypeMap['empty'];
@@ -32,6 +34,8 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	build: ir,
 	trivia: triviaFacts,
 	querySlots,
+	json: jsonFacts,
+	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),

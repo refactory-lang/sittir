@@ -2,8 +2,8 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const RULES = "src: ($) => seq('(', $.word, ')'), owner: ($) => seq('a', $.word), other: ($) => seq('b', $.word)";
 

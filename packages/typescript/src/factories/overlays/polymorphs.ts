@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import type * as T from '../../types.js';
 export * from './refines.js';
@@ -73,14 +73,28 @@ export const importStatement = Object.freeze({
 	})
 }) as unknown as typeof B.importStatement & {
 	clauseFrom: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> &
-				ArgsOf<typeof F.buildImportStatementClauseFrom>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> &
+				ArgsOf<typeof F.buildImportStatementClauseFrom>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> &
+						ArgsOf<typeof F.buildImportStatementClauseFrom>[0]
+				>,
 			options?: OptionsArg<typeof F.buildImportStatement>
 		) => ReturnType<typeof F.buildImportStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportStatement>[0], 'fromClause'> &
-				ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImportStatement>[0], 'fromClause'> &
+				ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImportStatement>[0], 'fromClause'> &
+						ArgsOf<typeof C.coerceToImportStatementClauseFrom>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToImportStatement>
 		) => ReturnType<typeof C.coerceToImportStatement>;
 	};
@@ -112,12 +126,20 @@ const importClauseGroup$namedImports$coerce = importClauseGroup$namedImports(
 );
 const importClauseGroup: {
 	namespaceImport: {
-		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
+		strict: <const A extends ArgsOf<typeof F.buildNamespaceImport>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamespaceImport>>
+		) => ReturnType<typeof F.buildImportClauseGroup>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamespaceImport>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamespaceImport>>
+		) => ReturnType<typeof F.buildImportClauseGroup>;
 	};
 	namedImports: {
-		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
+		strict: <const A extends ArgsOf<typeof F.buildNamedImports>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamedImports>>
+		) => ReturnType<typeof F.buildImportClauseGroup>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamedImports>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamedImports>>
+		) => ReturnType<typeof F.buildImportClauseGroup>;
 	};
 } = Object.freeze({
 	namespaceImport: bundle(importClauseGroup$namespaceImport$strict, importClauseGroup$namespaceImport$coerce, {
@@ -184,43 +206,91 @@ const importClauseDefaultImport$importClauseGroup$namedImports$coerce =
 	);
 const importClauseDefaultImport: {
 	importClauseGroup: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
 				importClauseGroup: ArgsOf<typeof F.buildImportClauseGroup>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+						importClauseGroup: ArgsOf<typeof F.buildImportClauseGroup>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImportClauseDefaultImport>
 		) => ReturnType<typeof F.buildImportClauseDefaultImport>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
 				importClauseGroup: ArgsOf<typeof C.coerceToImportClauseGroup>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+						importClauseGroup: ArgsOf<typeof C.coerceToImportClauseGroup>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImportClauseDefaultImport>
 		) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 		namespaceImport: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
 					importClauseGroup: ArgsOf<typeof importClauseGroup.namespaceImport.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+							importClauseGroup: ArgsOf<typeof importClauseGroup.namespaceImport.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildImportClauseDefaultImport>
 			) => ReturnType<typeof F.buildImportClauseDefaultImport>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
 					importClauseGroup: ArgsOf<typeof importClauseGroup.namespaceImport.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+							importClauseGroup: ArgsOf<typeof importClauseGroup.namespaceImport.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToImportClauseDefaultImport>
 			) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 		};
 		namedImports: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
 					importClauseGroup: ArgsOf<typeof importClauseGroup.namedImports.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+							importClauseGroup: ArgsOf<typeof importClauseGroup.namedImports.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildImportClauseDefaultImport>
 			) => ReturnType<typeof F.buildImportClauseDefaultImport>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
 					importClauseGroup: ArgsOf<typeof importClauseGroup.namedImports.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToImportClauseDefaultImport>[0], 'importClauseGroup'> & {
+							importClauseGroup: ArgsOf<typeof importClauseGroup.namedImports.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToImportClauseDefaultImport>
 			) => ReturnType<typeof C.coerceToImportClauseDefaultImport>;
 		};
@@ -343,37 +413,53 @@ export const importClause = Object.freeze({
 	}
 }) as unknown as typeof B.importClause & {
 	namespaceImport: {
-		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
+		strict: <const A extends ArgsOf<typeof F.buildNamespaceImport>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamespaceImport>>
+		) => ReturnType<typeof F.buildImportClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamespaceImport>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamespaceImport>>
+		) => ReturnType<typeof F.buildImportClause>;
 	};
 	namedImports: {
-		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClause>;
+		strict: <const A extends ArgsOf<typeof F.buildNamedImports>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamedImports>>
+		) => ReturnType<typeof F.buildImportClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamedImports>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamedImports>>
+		) => ReturnType<typeof F.buildImportClause>;
 	};
 	defaultImport: {
-		strict: (...args: ArgsOf<typeof F.buildImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
+		strict: <const A extends ArgsOf<typeof F.buildImportClauseDefaultImport>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildImportClauseDefaultImport>>
+		) => ReturnType<typeof F.buildImportClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToImportClauseDefaultImport>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToImportClauseDefaultImport>>
+		) => ReturnType<typeof F.buildImportClause>;
 		importClauseGroup: {
-			strict: (
-				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.strict>
+			strict: <const A extends ArgsOf<typeof importClauseDefaultImport.importClauseGroup.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof importClauseDefaultImport.importClauseGroup.strict>>
 			) => ReturnType<typeof F.buildImportClause>;
-			coerce: (
-				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.coerce>
+			coerce: <const A extends ArgsOf<typeof importClauseDefaultImport.importClauseGroup.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof importClauseDefaultImport.importClauseGroup.coerce>>
 			) => ReturnType<typeof F.buildImportClause>;
 			namespaceImport: {
-				strict: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.strict>
+				strict: <const A extends ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.strict>>(
+					...args: A &
+						RefuseUndeclared<A, ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.strict>>
 				) => ReturnType<typeof F.buildImportClause>;
-				coerce: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.coerce>
+				coerce: <const A extends ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.coerce>>(
+					...args: A &
+						RefuseUndeclared<A, ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.coerce>>
 				) => ReturnType<typeof F.buildImportClause>;
 			};
 			namedImports: {
-				strict: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.strict>
+				strict: <const A extends ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.strict>>(
+					...args: A &
+						RefuseUndeclared<A, ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.strict>>
 				) => ReturnType<typeof F.buildImportClause>;
-				coerce: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.coerce>
+				coerce: <const A extends ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.coerce>>(
+					...args: A &
+						RefuseUndeclared<A, ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.coerce>>
 				) => ReturnType<typeof F.buildImportClause>;
 			};
 		};
@@ -407,22 +493,22 @@ export const usingDeclaration = Object.freeze({
 	semi: bundle(usingDeclaration$semi$strict, usingDeclaration$semi$coerce, { key: 'usingDeclaration.semi', max: 2 })
 }) as unknown as typeof B.usingDeclaration & {
 	automaticSemicolon: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>>,
 			options?: OptionsArg<typeof F.buildUsingDeclaration>
 		) => ReturnType<typeof F.buildUsingDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>>,
 			options?: OptionsArg<typeof C.coerceToUsingDeclaration>
 		) => ReturnType<typeof C.coerceToUsingDeclaration>;
 	};
 	semi: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildUsingDeclaration>[0], 'automaticSemicolon'>>,
 			options?: OptionsArg<typeof F.buildUsingDeclaration>
 		) => ReturnType<typeof F.buildUsingDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToUsingDeclaration>[0], 'automaticSemicolon'>>,
 			options?: OptionsArg<typeof C.coerceToUsingDeclaration>
 		) => ReturnType<typeof C.coerceToUsingDeclaration>;
 	};
@@ -443,10 +529,18 @@ const catchClause$flatten$catchClauseGroup =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, catchClauseGroup: _c(child)(inner) } : rest, options);
 	};
-const catchClause$seated: (...args: T.CatchClause.BuildArgs) => ReturnType<typeof F.buildCatchClause> =
-	catchClause$flatten$catchClauseGroup(F.buildCatchClause, F.buildCatchClauseGroup);
-const catchClause$seatedCoerce: (...args: T.CatchClause.LooseArgs) => ReturnType<typeof C.coerceToCatchClause> =
-	catchClause$flatten$catchClauseGroup(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
+function catchClause$seated<A extends T.CatchClause.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildCatchClause>;
+function catchClause$seated(...args: T.CatchClause.BuildArgs): ReturnType<typeof F.buildCatchClause> {
+	return catchClause$flatten$catchClauseGroup(F.buildCatchClause, F.buildCatchClauseGroup)(...args);
+}
+function catchClause$seatedCoerce<const A extends T.CatchClause.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.CatchClause.LooseArgs>
+): ReturnType<typeof C.coerceToCatchClause>;
+function catchClause$seatedCoerce(...args: T.CatchClause.LooseArgs): ReturnType<typeof C.coerceToCatchClause> {
+	return catchClause$flatten$catchClauseGroup(C.coerceToCatchClause, C.coerceToCatchClauseGroup)(...args);
+}
 export const catchClause = Object.freeze({
 	...B.catchClause,
 	...bundle(catchClause$seated, catchClause$seatedCoerce, { key: 'catchClause', max: 1 })
@@ -471,16 +565,32 @@ export const binaryExpression = Object.freeze({
 	in: bundle(binaryExpression$in$strict, binaryExpression$in$coerce, { key: 'binaryExpression.in', max: 2 })
 }) as unknown as typeof B.binaryExpression & {
 	in: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
 				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
+						binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildBinaryExpression>
 		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
 				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
+						binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToBinaryExpression>
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
@@ -519,12 +629,20 @@ export const classHeritage = Object.freeze({
 	implementsClause: bundle(classHeritage$implementsClause$strict, classHeritage$implementsClause$coerce)
 }) as unknown as typeof B.classHeritage & {
 	extendsClause: {
-		strict: (...args: ArgsOf<typeof F.buildClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
-		coerce: (...args: ArgsOf<typeof C.coerceToClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
+		strict: <const A extends ArgsOf<typeof F.buildClassHeritageExtendsClause>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildClassHeritageExtendsClause>>
+		) => ReturnType<typeof F.buildClassHeritage>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToClassHeritageExtendsClause>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToClassHeritageExtendsClause>>
+		) => ReturnType<typeof F.buildClassHeritage>;
 	};
 	implementsClause: {
-		strict: (...args: ArgsOf<typeof F.buildImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
+		strict: <const A extends ArgsOf<typeof F.buildImplementsClause>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildImplementsClause>>
+		) => ReturnType<typeof F.buildClassHeritage>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToImplementsClause>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToImplementsClause>>
+		) => ReturnType<typeof F.buildClassHeritage>;
 	};
 };
 
@@ -570,27 +688,56 @@ export const arrowFunction = Object.freeze({
 	})
 }) as unknown as typeof B.arrowFunction & {
 	parameter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildArrowFunctionParameter>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildArrowFunctionParameter>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildArrowFunction>
 		) => ReturnType<typeof F.buildArrowFunction>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToArrowFunctionParameter>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToArrowFunctionParameter>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToArrowFunction>
 		) => ReturnType<typeof C.coerceToArrowFunction>;
 	};
 	callSignature: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & ArgsOf<typeof F.buildCallSignature>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> &
+				ArgsOf<typeof F.buildCallSignature>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & ArgsOf<typeof F.buildCallSignature>[0]
+				>,
 			options?: OptionsArg<typeof F.buildArrowFunction>
 		) => ReturnType<typeof F.buildArrowFunction>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> &
-				ArgsOf<typeof C.coerceToCallSignature>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> &
+				ArgsOf<typeof C.coerceToCallSignature>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & ArgsOf<typeof C.coerceToCallSignature>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToArrowFunction>
 		) => ReturnType<typeof C.coerceToArrowFunction>;
 	};
@@ -648,16 +795,28 @@ export const lhsExpression = Object.freeze({
 	})
 }) as unknown as typeof B.lhsExpression & {
 	memberExpression: {
-		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		strict: <const A extends ArgsOf<typeof F.buildMemberExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildMemberExpression>>
+		) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToMemberExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToMemberExpression>>
+		) => ReturnType<typeof F.buildLhsExpression>;
 	};
 	subscriptExpression: {
-		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		strict: <const A extends ArgsOf<typeof F.buildSubscriptExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSubscriptExpression>>
+		) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSubscriptExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSubscriptExpression>>
+		) => ReturnType<typeof F.buildLhsExpression>;
 	};
 	nonNullExpression: {
-		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		strict: <const A extends ArgsOf<typeof F.buildNonNullExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNonNullExpression>>
+		) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNonNullExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNonNullExpression>>
+		) => ReturnType<typeof F.buildLhsExpression>;
 	};
 };
 
@@ -710,16 +869,28 @@ export const restPattern = Object.freeze({
 	})
 }) as unknown as typeof B.restPattern & {
 	memberExpression: {
-		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
+		strict: <const A extends ArgsOf<typeof F.buildMemberExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildMemberExpression>>
+		) => ReturnType<typeof F.buildRestPattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToMemberExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToMemberExpression>>
+		) => ReturnType<typeof F.buildRestPattern>;
 	};
 	subscriptExpression: {
-		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
+		strict: <const A extends ArgsOf<typeof F.buildSubscriptExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSubscriptExpression>>
+		) => ReturnType<typeof F.buildRestPattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSubscriptExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSubscriptExpression>>
+		) => ReturnType<typeof F.buildRestPattern>;
 	};
 	nonNullExpression: {
-		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
+		strict: <const A extends ArgsOf<typeof F.buildNonNullExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNonNullExpression>>
+		) => ReturnType<typeof F.buildRestPattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNonNullExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNonNullExpression>>
+		) => ReturnType<typeof F.buildRestPattern>;
 	};
 };
 
@@ -979,83 +1150,139 @@ export const ambientDeclaration = Object.freeze({
 	module: B.ambientDeclarationModule
 }) as unknown as typeof B.ambientDeclaration & {
 	function: {
-		strict: (...args: ArgsOf<typeof F.buildFunctionDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFunctionDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildFunctionDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToFunctionDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	generatorFunction: {
-		strict: (
-			...args: ArgsOf<typeof F.buildGeneratorFunctionDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildGeneratorFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildGeneratorFunctionDeclaration>>
 		) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>>
 		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	class: {
-		strict: (...args: ArgsOf<typeof F.buildClassDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToClassDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildClassDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToClassDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	lexical: {
-		strict: (...args: ArgsOf<typeof F.buildLexicalDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLexicalDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildLexicalDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLexicalDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLexicalDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLexicalDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	variable: {
-		strict: (...args: ArgsOf<typeof F.buildVariableDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToVariableDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildVariableDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildVariableDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToVariableDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToVariableDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	using: {
-		strict: (...args: ArgsOf<typeof F.buildUsingDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUsingDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildUsingDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildUsingDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToUsingDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToUsingDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 		automaticSemicolon: {
-			strict: (
-				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>
+			strict: <const A extends ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>>
 			) => ReturnType<typeof F.buildAmbientDeclaration>;
-			coerce: (
-				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>
+			coerce: <const A extends ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>>
 			) => ReturnType<typeof F.buildAmbientDeclaration>;
 		};
 		semi: {
-			strict: (...args: ArgsOf<typeof usingDeclaration.semi.strict>) => ReturnType<typeof F.buildAmbientDeclaration>;
-			coerce: (...args: ArgsOf<typeof usingDeclaration.semi.coerce>) => ReturnType<typeof F.buildAmbientDeclaration>;
+			strict: <const A extends ArgsOf<typeof usingDeclaration.semi.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.semi.strict>>
+			) => ReturnType<typeof F.buildAmbientDeclaration>;
+			coerce: <const A extends ArgsOf<typeof usingDeclaration.semi.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.semi.coerce>>
+			) => ReturnType<typeof F.buildAmbientDeclaration>;
 		};
 	};
 	functionSignature: {
-		strict: (...args: ArgsOf<typeof F.buildFunctionSignature>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFunctionSignature>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildFunctionSignature>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildFunctionSignature>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToFunctionSignature>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToFunctionSignature>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	abstractClass: {
-		strict: (...args: ArgsOf<typeof F.buildAbstractClassDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToAbstractClassDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildAbstractClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAbstractClassDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAbstractClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAbstractClassDeclaration>>
 		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	internalModule: {
-		strict: (...args: ArgsOf<typeof F.buildInternalModule>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToInternalModule>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildInternalModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildInternalModule>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToInternalModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToInternalModule>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	typeAlias: {
-		strict: (...args: ArgsOf<typeof F.buildTypeAliasDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeAliasDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildTypeAliasDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildTypeAliasDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToTypeAliasDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToTypeAliasDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	enum: {
-		strict: (...args: ArgsOf<typeof F.buildEnumDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToEnumDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildEnumDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildEnumDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToEnumDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToEnumDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	interface: {
-		strict: (...args: ArgsOf<typeof F.buildInterfaceDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToInterfaceDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildInterfaceDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildInterfaceDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToInterfaceDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToInterfaceDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	importAlias: {
-		strict: (...args: ArgsOf<typeof F.buildImportAlias>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImportAlias>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildImportAlias>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildImportAlias>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToImportAlias>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToImportAlias>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	ambient: {
-		strict: (...args: ArgsOf<typeof F.buildAmbientDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAmbientDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
+		strict: <const A extends ArgsOf<typeof F.buildAmbientDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAmbientDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAmbientDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAmbientDeclaration>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	global: {
-		strict: (...args: ArgsOf<typeof F.buildAmbientDeclarationGlobal>) => ReturnType<typeof F.buildAmbientDeclaration>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToAmbientDeclarationGlobal>
+		strict: <const A extends ArgsOf<typeof F.buildAmbientDeclarationGlobal>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAmbientDeclarationGlobal>>
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAmbientDeclarationGlobal>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAmbientDeclarationGlobal>>
 		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	module: typeof B.ambientDeclarationModule;
@@ -1097,22 +1324,22 @@ export const typeQueryMemberExpression = Object.freeze({
 	})
 }) as unknown as typeof B.typeQueryMemberExpression & {
 	dot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTypeQueryMemberExpression>
 		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
 		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
 	};
 	qmarkDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildTypeQueryMemberExpression>
 		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
 		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
 	};
@@ -1136,22 +1363,22 @@ export const constraint = Object.freeze({
 	colon: bundle(constraint$colon$strict, constraint$colon$coerce, { key: 'constraint.colon', max: 2 })
 }) as unknown as typeof B.constraint & {
 	extends: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildConstraint>
 		) => ReturnType<typeof F.buildConstraint>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToConstraint>
 		) => ReturnType<typeof C.coerceToConstraint>;
 	};
 	colon: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildConstraint>
 		) => ReturnType<typeof F.buildConstraint>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToConstraint>
 		) => ReturnType<typeof C.coerceToConstraint>;
 	};
@@ -1260,38 +1487,80 @@ export const classBodyMemberMethod = Object.freeze({
 	})
 }) as unknown as typeof B.classBodyMemberMethod & {
 	plain: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
-				ArgsOf<typeof F.buildMethodDefinitionPlain>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof F.buildMethodDefinitionPlain>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+						ArgsOf<typeof F.buildMethodDefinitionPlain>[0]
+				>,
 			options?: OptionsArg<typeof F.buildClassBodyMemberMethod>
 		) => ReturnType<typeof F.buildClassBodyMemberMethod>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
-				ArgsOf<typeof C.coerceToMethodDefinitionPlain>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof C.coerceToMethodDefinitionPlain>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+						ArgsOf<typeof C.coerceToMethodDefinitionPlain>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethod>
 		) => ReturnType<typeof C.coerceToClassBodyMemberMethod>;
 	};
 	getter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
-				ArgsOf<typeof F.buildMethodDefinitionGetter>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof F.buildMethodDefinitionGetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+						ArgsOf<typeof F.buildMethodDefinitionGetter>[0]
+				>,
 			options?: OptionsArg<typeof F.buildClassBodyMemberMethod>
 		) => ReturnType<typeof F.buildClassBodyMemberMethod>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
-				ArgsOf<typeof C.coerceToMethodDefinitionGetter>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof C.coerceToMethodDefinitionGetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+						ArgsOf<typeof C.coerceToMethodDefinitionGetter>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethod>
 		) => ReturnType<typeof C.coerceToClassBodyMemberMethod>;
 	};
 	setter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
-				ArgsOf<typeof F.buildMethodDefinitionSetter>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof F.buildMethodDefinitionSetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethod>[0], 'methodDefinition'> &
+						ArgsOf<typeof F.buildMethodDefinitionSetter>[0]
+				>,
 			options?: OptionsArg<typeof F.buildClassBodyMemberMethod>
 		) => ReturnType<typeof F.buildClassBodyMemberMethod>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
-				ArgsOf<typeof C.coerceToMethodDefinitionSetter>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+				ArgsOf<typeof C.coerceToMethodDefinitionSetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethod>[0], 'methodDefinition'> &
+						ArgsOf<typeof C.coerceToMethodDefinitionSetter>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethod>
 		) => ReturnType<typeof C.coerceToClassBodyMemberMethod>;
 	};
@@ -1391,38 +1660,80 @@ export const classBodyMemberMethodSig = Object.freeze({
 	})
 }) as unknown as typeof B.classBodyMemberMethodSig & {
 	plain: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
-				ArgsOf<typeof F.buildMethodSignaturePlain>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof F.buildMethodSignaturePlain>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+						ArgsOf<typeof F.buildMethodSignaturePlain>[0]
+				>,
 			options?: OptionsArg<typeof F.buildClassBodyMemberMethodSig>
 		) => ReturnType<typeof F.buildClassBodyMemberMethodSig>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
-				ArgsOf<typeof C.coerceToMethodSignaturePlain>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof C.coerceToMethodSignaturePlain>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+						ArgsOf<typeof C.coerceToMethodSignaturePlain>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethodSig>
 		) => ReturnType<typeof C.coerceToClassBodyMemberMethodSig>;
 	};
 	getter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
-				ArgsOf<typeof F.buildMethodSignatureGetter>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof F.buildMethodSignatureGetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+						ArgsOf<typeof F.buildMethodSignatureGetter>[0]
+				>,
 			options?: OptionsArg<typeof F.buildClassBodyMemberMethodSig>
 		) => ReturnType<typeof F.buildClassBodyMemberMethodSig>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
-				ArgsOf<typeof C.coerceToMethodSignatureGetter>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof C.coerceToMethodSignatureGetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+						ArgsOf<typeof C.coerceToMethodSignatureGetter>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethodSig>
 		) => ReturnType<typeof C.coerceToClassBodyMemberMethodSig>;
 	};
 	setter: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
-				ArgsOf<typeof F.buildMethodSignatureSetter>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof F.buildMethodSignatureSetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildClassBodyMemberMethodSig>[0], 'methodSignature'> &
+						ArgsOf<typeof F.buildMethodSignatureSetter>[0]
+				>,
 			options?: OptionsArg<typeof F.buildClassBodyMemberMethodSig>
 		) => ReturnType<typeof F.buildClassBodyMemberMethodSig>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
-				ArgsOf<typeof C.coerceToMethodSignatureSetter>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+				ArgsOf<typeof C.coerceToMethodSignatureSetter>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToClassBodyMemberMethodSig>[0], 'methodSignature'> &
+						ArgsOf<typeof C.coerceToMethodSignatureSetter>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToClassBodyMemberMethodSig>
 		) => ReturnType<typeof C.coerceToClassBodyMemberMethodSig>;
 	};
@@ -1445,12 +1756,12 @@ export const importSpecifierAs = Object.freeze({
 	})
 }) as unknown as typeof B.importSpecifierAs & {
 	default: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportSpecifierAs>[0], 'name'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildImportSpecifierAs>[0], 'name'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildImportSpecifierAs>[0], 'name'>>,
 			options?: OptionsArg<typeof F.buildImportSpecifierAs>
 		) => ReturnType<typeof F.buildImportSpecifierAs>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportSpecifierAs>[0], 'name'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToImportSpecifierAs>[0], 'name'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToImportSpecifierAs>[0], 'name'>>,
 			options?: OptionsArg<typeof C.coerceToImportSpecifierAs>
 		) => ReturnType<typeof C.coerceToImportSpecifierAs>;
 	};
@@ -1476,11 +1787,11 @@ export const parenthesizedExpressionSequence = Object.freeze({
 	)
 }) as unknown as typeof B.parenthesizedExpressionSequence & {
 	sequenceExpression: {
-		strict: (
-			...args: ArgsOf<typeof F.buildSequenceExpression>
+		strict: <const A extends ArgsOf<typeof F.buildSequenceExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSequenceExpression>>
 		) => ReturnType<typeof F.buildParenthesizedExpressionSequence>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToSequenceExpression>
+		coerce: <const A extends ArgsOf<typeof C.coerceToSequenceExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSequenceExpression>>
 		) => ReturnType<typeof F.buildParenthesizedExpressionSequence>;
 	};
 };
@@ -1556,40 +1867,84 @@ export const exportStatementDefaultFrom = Object.freeze({
 	})
 }) as unknown as typeof B.exportStatementDefaultFrom & {
 	starFrom: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultFrom>
 		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToExportStatementDefaultFromStarFrom>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToExportStatementDefaultFromStarFrom>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
 	nsFrom: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
-				ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+						ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultFrom>
 		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
-				ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+						ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
 	clauseFrom: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
-				ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+						ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultFrom>
 		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
-				ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+						ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
@@ -1625,22 +1980,22 @@ const exportStatementDefaultDeclarationDefaultKwValue$semi$coerce =
 	);
 const exportStatementDefaultDeclarationDefaultKwValue: {
 	automaticSemicolon: {
-		strict: (
-			arg: ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0],
+		strict: <const V extends ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]>(
+			arg: V & RefuseUndeclared<V, ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>;
-		coerce: (
-			arg: ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>[0],
+		coerce: <const V extends ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>[0]>(
+			arg: V & RefuseUndeclared<V, ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>[0]>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>;
 	};
 	semi: {
-		strict: (
-			arg: ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0],
+		strict: <const V extends ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]>(
+			arg: V & RefuseUndeclared<V, ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>;
-		coerce: (
-			arg: ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>[0],
+		coerce: <const V extends ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>[0]>(
+			arg: V & RefuseUndeclared<V, ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>[0]>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>;
 	};
@@ -2159,298 +2514,304 @@ const exportStatementDefaultDeclarationDefaultKw$value$semi$coerce =
 	);
 const exportStatementDefaultDeclarationDefaultKw: {
 	function: {
-		strict: (
-			...args: ArgsOf<typeof F.buildFunctionDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildFunctionDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToFunctionDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToFunctionDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	generatorFunction: {
-		strict: (
-			...args: ArgsOf<typeof F.buildGeneratorFunctionDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildGeneratorFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildGeneratorFunctionDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	class: {
-		strict: (
-			...args: ArgsOf<typeof F.buildClassDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildClassDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToClassDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToClassDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	lexical: {
-		strict: (
-			...args: ArgsOf<typeof F.buildLexicalDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildLexicalDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLexicalDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToLexicalDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToLexicalDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLexicalDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	variable: {
-		strict: (
-			...args: ArgsOf<typeof F.buildVariableDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildVariableDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildVariableDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToVariableDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToVariableDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToVariableDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	using: {
-		strict: (
-			...args: ArgsOf<typeof F.buildUsingDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildUsingDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildUsingDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToUsingDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToUsingDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToUsingDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		automaticSemicolon: {
-			strict: (
-				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>
+			strict: <const A extends ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>
+			coerce: <const A extends ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		semi: {
-			strict: (
-				...args: ArgsOf<typeof usingDeclaration.semi.strict>
+			strict: <const A extends ArgsOf<typeof usingDeclaration.semi.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.semi.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof usingDeclaration.semi.coerce>
+			coerce: <const A extends ArgsOf<typeof usingDeclaration.semi.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof usingDeclaration.semi.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 	};
 	functionSignature: {
-		strict: (
-			...args: ArgsOf<typeof F.buildFunctionSignature>
+		strict: <const A extends ArgsOf<typeof F.buildFunctionSignature>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildFunctionSignature>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToFunctionSignature>
+		coerce: <const A extends ArgsOf<typeof C.coerceToFunctionSignature>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToFunctionSignature>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	abstractClass: {
-		strict: (
-			...args: ArgsOf<typeof F.buildAbstractClassDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildAbstractClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAbstractClassDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToAbstractClassDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToAbstractClassDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAbstractClassDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	module: {
-		strict: (
-			...args: ArgsOf<typeof F.buildModule>
+		strict: <const A extends ArgsOf<typeof F.buildModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildModule>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToModule>
+		coerce: <const A extends ArgsOf<typeof C.coerceToModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToModule>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	internalModule: {
-		strict: (
-			...args: ArgsOf<typeof F.buildInternalModule>
+		strict: <const A extends ArgsOf<typeof F.buildInternalModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildInternalModule>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToInternalModule>
+		coerce: <const A extends ArgsOf<typeof C.coerceToInternalModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToInternalModule>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	typeAlias: {
-		strict: (
-			...args: ArgsOf<typeof F.buildTypeAliasDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildTypeAliasDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildTypeAliasDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToTypeAliasDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToTypeAliasDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToTypeAliasDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	enum: {
-		strict: (
-			...args: ArgsOf<typeof F.buildEnumDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildEnumDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildEnumDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToEnumDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToEnumDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToEnumDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	interface: {
-		strict: (
-			...args: ArgsOf<typeof F.buildInterfaceDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildInterfaceDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildInterfaceDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToInterfaceDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToInterfaceDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToInterfaceDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	importAlias: {
-		strict: (
-			...args: ArgsOf<typeof F.buildImportAlias>
+		strict: <const A extends ArgsOf<typeof F.buildImportAlias>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildImportAlias>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToImportAlias>
+		coerce: <const A extends ArgsOf<typeof C.coerceToImportAlias>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToImportAlias>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 	};
 	ambient: {
-		strict: (
-			...args: ArgsOf<typeof F.buildAmbientDeclaration>
+		strict: <const A extends ArgsOf<typeof F.buildAmbientDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAmbientDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToAmbientDeclaration>
+		coerce: <const A extends ArgsOf<typeof C.coerceToAmbientDeclaration>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAmbientDeclaration>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		function: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.function.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.function.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.function.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.function.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.function.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.function.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		generatorFunction: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.generatorFunction.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.generatorFunction.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		class: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.class.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.class.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.class.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.class.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.class.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.class.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		lexical: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.lexical.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.lexical.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.lexical.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.lexical.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.lexical.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.lexical.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		variable: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.variable.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.variable.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.variable.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.variable.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.variable.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.variable.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		using: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.using.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.using.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.using.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.using.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.using.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.using.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 			automaticSemicolon: {
-				strict: (
-					...args: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>
+				strict: <const A extends ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-				coerce: (
-					...args: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>
+				coerce: <const A extends ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 			};
 			semi: {
-				strict: (
-					...args: ArgsOf<typeof ambientDeclaration.using.semi.strict>
+				strict: <const A extends ArgsOf<typeof ambientDeclaration.using.semi.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.using.semi.strict>>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-				coerce: (
-					...args: ArgsOf<typeof ambientDeclaration.using.semi.coerce>
+				coerce: <const A extends ArgsOf<typeof ambientDeclaration.using.semi.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.using.semi.coerce>>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 			};
 		};
 		functionSignature: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.functionSignature.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.functionSignature.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.functionSignature.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.functionSignature.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.functionSignature.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		abstractClass: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.abstractClass.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.abstractClass.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.abstractClass.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.abstractClass.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.abstractClass.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		internalModule: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.internalModule.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.internalModule.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.internalModule.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.internalModule.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.internalModule.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.internalModule.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		typeAlias: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.typeAlias.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.typeAlias.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.typeAlias.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.typeAlias.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.typeAlias.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		enum: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.enum.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.enum.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.enum.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.enum.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.enum.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.enum.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		interface: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.interface.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.interface.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.interface.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.interface.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.interface.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.interface.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		importAlias: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.importAlias.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.importAlias.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.importAlias.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.importAlias.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.importAlias.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.importAlias.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		ambient: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.ambient.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.ambient.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.ambient.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.ambient.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.ambient.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.ambient.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		global: {
-			strict: (
-				...args: ArgsOf<typeof ambientDeclaration.global.strict>
+			strict: <const A extends ArgsOf<typeof ambientDeclaration.global.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.global.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof ambientDeclaration.global.coerce>
+			coerce: <const A extends ArgsOf<typeof ambientDeclaration.global.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof ambientDeclaration.global.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 	};
 	value: {
-		strict: (
-			...args: ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>
+		strict: <const A extends ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>
+		coerce: <const A extends ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		automaticSemicolon: {
-			strict: (
-				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict>
+			strict: <
+				const A extends ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict>
+			>(
+				...args: A &
+					RefuseUndeclared<A, ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce>
+			coerce: <
+				const A extends ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce>
+			>(
+				...args: A &
+					RefuseUndeclared<A, ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		semi: {
-			strict: (
-				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.strict>
+			strict: <const A extends ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.strict>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-			coerce: (
-				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.coerce>
+			coerce: <const A extends ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.coerce>>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 	};
@@ -2759,7 +3120,7 @@ const exportStatementDefaultDeclaration$using =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'kind' || key === 'variableDeclarator' || key === 'automaticSemicolon') inner[key] = value;
+			if (key === 'kind' || key === 'variableDeclarators' || key === 'automaticSemicolon') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
@@ -4198,990 +4559,2124 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 	}
 }) as unknown as typeof B.exportStatementDefaultDeclaration & {
 	function: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildFunctionDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildFunctionDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildFunctionDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToFunctionDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFunctionDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToFunctionDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	generatorFunction: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildGeneratorFunctionDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToGeneratorFunctionDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	class: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildClassDeclaration>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildClassDeclaration>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToClassDeclaration>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToClassDeclaration>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	lexical: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildLexicalDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildLexicalDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildLexicalDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToLexicalDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToLexicalDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToLexicalDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	variable: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildVariableDeclaration>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildVariableDeclaration>;
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToVariableDeclaration>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToVariableDeclaration>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	using: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildUsingDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildUsingDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildUsingDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToUsingDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToUsingDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToUsingDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		automaticSemicolon: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof usingDeclaration.automaticSemicolon.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof usingDeclaration.automaticSemicolon.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		semi: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof usingDeclaration.semi.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof usingDeclaration.semi.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof usingDeclaration.semi.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof usingDeclaration.semi.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 	};
 	functionSignature: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildFunctionSignature>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildFunctionSignature>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildFunctionSignature>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToFunctionSignature>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFunctionSignature>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToFunctionSignature>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	abstractClass: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildAbstractClassDeclaration>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildAbstractClassDeclaration>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToAbstractClassDeclaration>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToAbstractClassDeclaration>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	module: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildModule>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildModule>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildModule>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToModule>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToModule>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToModule>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	internalModule: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildInternalModule>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildInternalModule>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildInternalModule>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInternalModule>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInternalModule>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToInternalModule>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	typeAlias: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildTypeAliasDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildTypeAliasDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildTypeAliasDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToTypeAliasDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	enum: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildEnumDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildEnumDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildEnumDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToEnumDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToEnumDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToEnumDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	interface: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildInterfaceDeclaration>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildInterfaceDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildInterfaceDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToInterfaceDeclaration>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToInterfaceDeclaration>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToInterfaceDeclaration>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	importAlias: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof F.buildImportAlias>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof F.buildImportAlias>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof F.buildImportAlias>[0]
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
-				ArgsOf<typeof C.coerceToImportAlias>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+				ArgsOf<typeof C.coerceToImportAlias>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> &
+						ArgsOf<typeof C.coerceToImportAlias>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 	};
 	ambient: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildAmbientDeclaration>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildAmbientDeclaration>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToAmbientDeclaration>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToAmbientDeclaration>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		function: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.function.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.function.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.function.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.function.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		generatorFunction: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.generatorFunction.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.generatorFunction.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		class: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.class.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.class.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.class.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.class.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		lexical: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.lexical.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.lexical.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.lexical.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.lexical.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		variable: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.variable.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.variable.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.variable.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.variable.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		using: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.using.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.using.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.using.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.using.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			automaticSemicolon: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof ambientDeclaration.using.automaticSemicolon.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			semi: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof ambientDeclaration.using.semi.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof ambientDeclaration.using.semi.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof ambientDeclaration.using.semi.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof ambientDeclaration.using.semi.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 		};
 		functionSignature: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.functionSignature.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.functionSignature.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.functionSignature.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		abstractClass: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.abstractClass.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.abstractClass.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.abstractClass.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		internalModule: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.internalModule.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.internalModule.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.internalModule.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.internalModule.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		typeAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.typeAlias.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.typeAlias.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.typeAlias.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		enum: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.enum.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.enum.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.enum.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.enum.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		interface: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.interface.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.interface.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.interface.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.interface.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		importAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.importAlias.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.importAlias.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.importAlias.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.importAlias.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		ambient: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.ambient.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.ambient.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.ambient.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.ambient.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		global: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.global.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.global.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof ambientDeclaration.global.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof ambientDeclaration.global.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 	};
 	defaultKw: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKw>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildExportStatementDefaultDeclarationDefaultKw>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKw>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKw>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		function: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.function.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.function.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.function.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.function.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		generatorFunction: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.generatorFunction.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.generatorFunction.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.generatorFunction.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.generatorFunction.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		class: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.class.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.class.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.class.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.class.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		lexical: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.lexical.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.lexical.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.lexical.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.lexical.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		variable: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.variable.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.variable.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.variable.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.variable.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		using: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			automaticSemicolon: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.automaticSemicolon.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			semi: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.semi.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.semi.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.semi.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.using.semi.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 		};
 		functionSignature: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.functionSignature.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.functionSignature.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.functionSignature.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.functionSignature.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		abstractClass: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.abstractClass.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.abstractClass.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.abstractClass.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.abstractClass.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		module: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.module.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.module.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.module.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.module.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		internalModule: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.internalModule.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.internalModule.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.internalModule.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.internalModule.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		typeAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.typeAlias.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.typeAlias.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.typeAlias.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.typeAlias.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		enum: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.enum.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.enum.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.enum.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.enum.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		interface: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.interface.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.interface.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.interface.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.interface.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		importAlias: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.importAlias.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.importAlias.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.importAlias.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.importAlias.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 		};
 		ambient: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			function: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.function.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.function.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.function.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.function.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			generatorFunction: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			class: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.class.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.class.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.class.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.class.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			lexical: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.lexical.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.lexical.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.lexical.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.lexical.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			variable: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.variable.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.variable.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.variable.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.variable.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			using: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 				automaticSemicolon: {
-					strict: (
-						config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					strict: <
+						const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 							content: ArgsOf<
 								typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.strict
 							>;
-						},
+						}
+					>(
+						config: V &
+							RefuseUndeclared<
+								V,
+								OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+									content: ArgsOf<
+										typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.strict
+									>;
+								}
+							>,
 						options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 					) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-					coerce: (
-						config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					coerce: <
+						const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 							content: ArgsOf<
 								typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.coerce
 							>;
-						},
+						}
+					>(
+						config: V &
+							RefuseUndeclared<
+								V,
+								OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+									content: ArgsOf<
+										typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.automaticSemicolon.coerce
+									>;
+								}
+							>,
 						options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 					) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 				};
 				semi: {
-					strict: (
-						config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+					strict: <
+						const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.strict>;
-						},
+						}
+					>(
+						config: V &
+							RefuseUndeclared<
+								V,
+								OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+									content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.strict>;
+								}
+							>,
 						options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 					) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-					coerce: (
-						config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+					coerce: <
+						const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.coerce>;
-						},
+						}
+					>(
+						config: V &
+							RefuseUndeclared<
+								V,
+								OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+									content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.using.semi.coerce>;
+								}
+							>,
 						options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 					) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 				};
 			};
 			functionSignature: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			abstractClass: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			internalModule: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			typeAlias: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			enum: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.enum.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.enum.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.enum.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.enum.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			interface: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.interface.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.interface.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.interface.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.interface.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			importAlias: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			ambient: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.ambient.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.ambient.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.ambient.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.ambient.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			global: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.global.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.global.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.global.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.ambient.global.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 		};
 		value: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 					content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+							content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			automaticSemicolon: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
 			semi: {
-				strict: (
-					config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+				strict: <
+					const V extends OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.semi.strict>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof F.buildExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.semi.strict>;
+							}
+						>,
 					options?: OptionsArg<typeof F.buildExportStatementDefaultDeclaration>
 				) => ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
-				coerce: (
-					config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+				coerce: <
+					const V extends OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
 						content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.semi.coerce>;
-					},
+					}
+				>(
+					config: V &
+						RefuseUndeclared<
+							V,
+							OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultDeclaration>[0], 'content'> & {
+								content: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKw.value.semi.coerce>;
+							}
+						>,
 					options?: OptionsArg<typeof C.coerceToExportStatementDefaultDeclaration>
 				) => ReturnType<typeof C.coerceToExportStatementDefaultDeclaration>;
 			};
@@ -5207,20 +6702,28 @@ const formalParametersElementsReceiver$formalParametersElementsReceiverGroup = <
 		);
 	};
 };
-const formalParametersElementsReceiver$seated: (
+function formalParametersElementsReceiver$seated<A extends T.FormalParametersElementsReceiver.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildFormalParametersElementsReceiver>;
+function formalParametersElementsReceiver$seated(
 	...args: T.FormalParametersElementsReceiver.BuildArgs
-) => ReturnType<typeof F.buildFormalParametersElementsReceiver> =
-	formalParametersElementsReceiver$formalParametersElementsReceiverGroup(
+): ReturnType<typeof F.buildFormalParametersElementsReceiver> {
+	return formalParametersElementsReceiver$formalParametersElementsReceiverGroup(
 		F.buildFormalParametersElementsReceiver,
 		F.buildFormalParametersElementsReceiverGroup
-	);
-const formalParametersElementsReceiver$seatedCoerce: (
+	)(...args);
+}
+function formalParametersElementsReceiver$seatedCoerce<const A extends T.FormalParametersElementsReceiver.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.FormalParametersElementsReceiver.LooseArgs>
+): ReturnType<typeof C.coerceToFormalParametersElementsReceiver>;
+function formalParametersElementsReceiver$seatedCoerce(
 	...args: T.FormalParametersElementsReceiver.LooseArgs
-) => ReturnType<typeof C.coerceToFormalParametersElementsReceiver> =
-	formalParametersElementsReceiver$formalParametersElementsReceiverGroup(
+): ReturnType<typeof C.coerceToFormalParametersElementsReceiver> {
+	return formalParametersElementsReceiver$formalParametersElementsReceiverGroup(
 		C.coerceToFormalParametersElementsReceiver,
 		C.coerceToFormalParametersElementsReceiverGroup
-	);
+	)(...args);
+}
 export const formalParametersElementsReceiver = Object.freeze({
 	...B.formalParametersElementsReceiver,
 	...bundle(formalParametersElementsReceiver$seated, formalParametersElementsReceiver$seatedCoerce, {
@@ -5529,92 +7032,140 @@ const yieldExpressionDelegate$update$prefix$coerce = yieldExpressionDelegate$upd
 );
 const yieldExpressionDelegate: {
 	as: {
-		strict: (...args: ArgsOf<typeof F.buildAsExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAsExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildAsExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAsExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAsExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAsExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	satisfies: {
-		strict: (...args: ArgsOf<typeof F.buildSatisfiesExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToSatisfiesExpression>
+		strict: <const A extends ArgsOf<typeof F.buildSatisfiesExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSatisfiesExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSatisfiesExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSatisfiesExpression>>
 		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	instantiation: {
-		strict: (
-			...args: ArgsOf<typeof F.buildInstantiationExpression>
+		strict: <const A extends ArgsOf<typeof F.buildInstantiationExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildInstantiationExpression>>
 		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToInstantiationExpression>
+		coerce: <const A extends ArgsOf<typeof C.coerceToInstantiationExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToInstantiationExpression>>
 		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	internalModule: {
-		strict: (...args: ArgsOf<typeof F.buildInternalModule>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToInternalModule>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildInternalModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildInternalModule>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToInternalModule>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToInternalModule>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	typeAssertion: {
-		strict: (...args: ArgsOf<typeof F.buildTypeAssertion>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeAssertion>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildTypeAssertion>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildTypeAssertion>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToTypeAssertion>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToTypeAssertion>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	assignment: {
-		strict: (...args: ArgsOf<typeof F.buildAssignmentExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToAssignmentExpression>
+		strict: <const A extends ArgsOf<typeof F.buildAssignmentExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAssignmentExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAssignmentExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAssignmentExpression>>
 		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	augmentedAssignment: {
-		strict: (
-			...args: ArgsOf<typeof F.buildAugmentedAssignmentExpression>
+		strict: <const A extends ArgsOf<typeof F.buildAugmentedAssignmentExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAugmentedAssignmentExpression>>
 		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>
+		coerce: <const A extends ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>>
 		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	await: {
-		strict: (...args: ArgsOf<typeof F.buildAwaitExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAwaitExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildAwaitExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAwaitExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAwaitExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAwaitExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	unary: {
-		strict: (...args: ArgsOf<typeof F.buildUnaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUnaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildUnaryExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildUnaryExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToUnaryExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToUnaryExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	binary: {
-		strict: (...args: ArgsOf<typeof F.buildBinaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBinaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildBinaryExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBinaryExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBinaryExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBinaryExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 		in: {
-			strict: (...args: ArgsOf<typeof binaryExpression.in.strict>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-			coerce: (...args: ArgsOf<typeof binaryExpression.in.coerce>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			strict: <const A extends ArgsOf<typeof binaryExpression.in.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof binaryExpression.in.strict>>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: <const A extends ArgsOf<typeof binaryExpression.in.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof binaryExpression.in.coerce>>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 		};
 	};
 	ternary: {
-		strict: (...args: ArgsOf<typeof F.buildTernaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTernaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildTernaryExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildTernaryExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToTernaryExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToTernaryExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	update: {
-		strict: (...args: ArgsOf<typeof updateExpression.strict>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof updateExpression.coerce>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof updateExpression.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof updateExpression.strict>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof updateExpression.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof updateExpression.coerce>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 		postfix: {
-			strict: (
-				...args: ArgsOf<typeof updateExpression.postfix.strict>
+			strict: <const A extends ArgsOf<typeof updateExpression.postfix.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof updateExpression.postfix.strict>>
 			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-			coerce: (
-				...args: ArgsOf<typeof updateExpression.postfix.coerce>
+			coerce: <const A extends ArgsOf<typeof updateExpression.postfix.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof updateExpression.postfix.coerce>>
 			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 		};
 		prefix: {
-			strict: (
-				...args: ArgsOf<typeof updateExpression.prefix.strict>
+			strict: <const A extends ArgsOf<typeof updateExpression.prefix.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof updateExpression.prefix.strict>>
 			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-			coerce: (
-				...args: ArgsOf<typeof updateExpression.prefix.coerce>
+			coerce: <const A extends ArgsOf<typeof updateExpression.prefix.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof updateExpression.prefix.coerce>>
 			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 		};
 	};
 	new: {
-		strict: (...args: ArgsOf<typeof F.buildNewExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNewExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildNewExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNewExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNewExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNewExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 	yield: {
-		strict: (...args: ArgsOf<typeof F.buildYieldExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-		coerce: (...args: ArgsOf<typeof C.coerceToYieldExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		strict: <const A extends ArgsOf<typeof F.buildYieldExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildYieldExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToYieldExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToYieldExpression>>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
 	};
 } = Object.freeze({
 	as: bundle(yieldExpressionDelegate$as$strict, yieldExpressionDelegate$as$coerce, {
@@ -5994,134 +7545,146 @@ export const yieldExpression = Object.freeze({
 	}
 }) as unknown as typeof B.yieldExpression & {
 	delegate: {
-		strict: (...args: ArgsOf<typeof F.buildYieldExpressionDelegate>) => ReturnType<typeof F.buildYieldExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToYieldExpressionDelegate>) => ReturnType<typeof F.buildYieldExpression>;
+		strict: <const A extends ArgsOf<typeof F.buildYieldExpressionDelegate>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildYieldExpressionDelegate>>
+		) => ReturnType<typeof F.buildYieldExpression>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToYieldExpressionDelegate>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToYieldExpressionDelegate>>
+		) => ReturnType<typeof F.buildYieldExpression>;
 		as: {
-			strict: (...args: ArgsOf<typeof yieldExpressionDelegate.as.strict>) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (...args: ArgsOf<typeof yieldExpressionDelegate.as.coerce>) => ReturnType<typeof F.buildYieldExpression>;
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.as.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.as.strict>>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.as.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.as.coerce>>
+			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		satisfies: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.satisfies.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.satisfies.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.satisfies.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.satisfies.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.satisfies.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.satisfies.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		instantiation: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.instantiation.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.instantiation.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.instantiation.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.instantiation.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.instantiation.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.instantiation.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		internalModule: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.internalModule.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.internalModule.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.internalModule.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.internalModule.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.internalModule.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.internalModule.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		typeAssertion: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.typeAssertion.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.typeAssertion.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.typeAssertion.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.typeAssertion.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.typeAssertion.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.typeAssertion.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		assignment: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.assignment.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.assignment.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.assignment.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.assignment.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.assignment.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.assignment.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		augmentedAssignment: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		await: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.await.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.await.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.await.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.await.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.await.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.await.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		unary: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.unary.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.unary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.unary.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.unary.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.unary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.unary.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		binary: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.binary.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.binary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.binary.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.binary.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.binary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.binary.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 			in: {
-				strict: (
-					...args: ArgsOf<typeof yieldExpressionDelegate.binary.in.strict>
+				strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.binary.in.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.binary.in.strict>>
 				) => ReturnType<typeof F.buildYieldExpression>;
-				coerce: (
-					...args: ArgsOf<typeof yieldExpressionDelegate.binary.in.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.binary.in.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.binary.in.coerce>>
 				) => ReturnType<typeof F.buildYieldExpression>;
 			};
 		};
 		ternary: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.ternary.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.ternary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.ternary.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.ternary.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.ternary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.ternary.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		update: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.update.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.update.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.update.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.update.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.update.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.update.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 			postfix: {
-				strict: (
-					...args: ArgsOf<typeof yieldExpressionDelegate.update.postfix.strict>
+				strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.update.postfix.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.update.postfix.strict>>
 				) => ReturnType<typeof F.buildYieldExpression>;
-				coerce: (
-					...args: ArgsOf<typeof yieldExpressionDelegate.update.postfix.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.update.postfix.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.update.postfix.coerce>>
 				) => ReturnType<typeof F.buildYieldExpression>;
 			};
 			prefix: {
-				strict: (
-					...args: ArgsOf<typeof yieldExpressionDelegate.update.prefix.strict>
+				strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.update.prefix.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.update.prefix.strict>>
 				) => ReturnType<typeof F.buildYieldExpression>;
-				coerce: (
-					...args: ArgsOf<typeof yieldExpressionDelegate.update.prefix.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.update.prefix.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.update.prefix.coerce>>
 				) => ReturnType<typeof F.buildYieldExpression>;
 			};
 		};
 		new: {
-			strict: (...args: ArgsOf<typeof yieldExpressionDelegate.new.strict>) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (...args: ArgsOf<typeof yieldExpressionDelegate.new.coerce>) => ReturnType<typeof F.buildYieldExpression>;
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.new.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.new.strict>>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.new.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.new.coerce>>
+			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 		yield: {
-			strict: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.yield.strict>
+			strict: <const A extends ArgsOf<typeof yieldExpressionDelegate.yield.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.yield.strict>>
 			) => ReturnType<typeof F.buildYieldExpression>;
-			coerce: (
-				...args: ArgsOf<typeof yieldExpressionDelegate.yield.coerce>
+			coerce: <const A extends ArgsOf<typeof yieldExpressionDelegate.yield.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldExpressionDelegate.yield.coerce>>
 			) => ReturnType<typeof F.buildYieldExpression>;
 		};
 	};
@@ -6435,64 +7998,124 @@ export const literalType = Object.freeze({
 	})
 }) as unknown as typeof B.literalType & {
 	negativeNumber: {
-		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildLiteralTypeNegativeNumber>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLiteralTypeNegativeNumber>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	hex: {
-		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberHex>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberHex>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberHex>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberHex>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	floatPoint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberFloatPoint>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberFloatPoint>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberFloatPoint>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberFloatPoint>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	floatLeadingPoint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberFloatLeadingPoint>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberFloatLeadingPoint>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	floatScientific: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberFloatScientific>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberFloatScientific>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberFloatScientific>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberFloatScientific>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	decimal: {
-		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberDecimal>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberDecimal>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberDecimal>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberDecimal>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	binary: {
-		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberBinary>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBinary>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberBinary>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberBinary>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	octal: {
-		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildNumberOctal>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberOctal>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNumberOctal>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNumberOctal>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	bigint: {
-		strict: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof numberBigint.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof numberBigint.strict>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof numberBigint.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof numberBigint.strict>>
+		) => ReturnType<typeof F.buildLiteralType>;
 		hex: {
-			strict: (...args: ArgsOf<typeof F.buildNumberBigintHex>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof F.buildNumberBigintHex>) => ReturnType<typeof F.buildLiteralType>;
+			strict: <const A extends ArgsOf<typeof F.buildNumberBigintHex>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintHex>>
+			) => ReturnType<typeof F.buildLiteralType>;
+			coerce: <const A extends ArgsOf<typeof F.buildNumberBigintHex>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintHex>>
+			) => ReturnType<typeof F.buildLiteralType>;
 		};
 		binary: {
-			strict: (...args: ArgsOf<typeof F.buildNumberBigintBinary>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof F.buildNumberBigintBinary>) => ReturnType<typeof F.buildLiteralType>;
+			strict: <const A extends ArgsOf<typeof F.buildNumberBigintBinary>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintBinary>>
+			) => ReturnType<typeof F.buildLiteralType>;
+			coerce: <const A extends ArgsOf<typeof F.buildNumberBigintBinary>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintBinary>>
+			) => ReturnType<typeof F.buildLiteralType>;
 		};
 		octal: {
-			strict: (...args: ArgsOf<typeof F.buildNumberBigintOctal>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof F.buildNumberBigintOctal>) => ReturnType<typeof F.buildLiteralType>;
+			strict: <const A extends ArgsOf<typeof F.buildNumberBigintOctal>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintOctal>>
+			) => ReturnType<typeof F.buildLiteralType>;
+			coerce: <const A extends ArgsOf<typeof F.buildNumberBigintOctal>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintOctal>>
+			) => ReturnType<typeof F.buildLiteralType>;
 		};
 		decimal: {
-			strict: (...args: ArgsOf<typeof F.buildNumberBigintDecimal>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof F.buildNumberBigintDecimal>) => ReturnType<typeof F.buildLiteralType>;
+			strict: <const A extends ArgsOf<typeof F.buildNumberBigintDecimal>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintDecimal>>
+			) => ReturnType<typeof F.buildLiteralType>;
+			coerce: <const A extends ArgsOf<typeof F.buildNumberBigintDecimal>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintDecimal>>
+			) => ReturnType<typeof F.buildLiteralType>;
 		};
 	};
 	double: {
-		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildStringDouble>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildStringDouble>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToStringDouble>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToStringDouble>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	single: {
-		strict: (...args: ArgsOf<typeof F.buildStringSingle>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildLiteralType>;
+		strict: <const A extends ArgsOf<typeof F.buildStringSingle>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildStringSingle>>
+		) => ReturnType<typeof F.buildLiteralType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToStringSingle>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToStringSingle>>
+		) => ReturnType<typeof F.buildLiteralType>;
 	};
 	true: {
 		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;

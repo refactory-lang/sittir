@@ -241,6 +241,10 @@ function applyNormalizationPasses(
 	return rules;
 }
 
+export function supertypeKindsOf(grammar: Pick<SimplifiedGrammar, 'rules'>): ReadonlySet<string> {
+	return new Set(Object.keys(grammar.rules).filter((kind) => grammar.rules[kind]?.type === SUPERTYPE));
+}
+
 export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): SimplifiedGrammar {
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
 
@@ -260,7 +264,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		name: linked.name,
 		root: linked.root,
 		rules: normalizedRules,
-		supertypes: linked.supertypes,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,
 		reserved: linked.reserved,
@@ -328,7 +331,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		root: linked.root,
 		normalizedRules,
 		rules: simplifiedRules,
-		supertypes: linked.supertypes,
 		factoryInline: linked.factoryInline,
 		word: linked.word,
 		wordMatcher: linked.wordMatcher,

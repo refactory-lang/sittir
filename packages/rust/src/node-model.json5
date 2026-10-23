@@ -13,7 +13,7 @@
 		"non_special_token": {"definedBy":"override","childKind":{"_literal":"literal","identifier":"identifier","mutable_specifier":"mutable_specifier","self":"self","super":"super","crate":"crate","primitive_type":"primitive_type","token_tree_punctuation":"tree_punctuation","_token_keywords":"keywords"}},
 		"range_pattern_with_left": {"definedBy":"override","childKind":{"range_pattern_with_left_with_right":"with_right","range_pattern_with_left_bare":"bare"}},
 		"type_argument": {"definedBy":"override","childKind":{"_type":"type","type_binding":"type_binding","lifetime":"lifetime","_literal":"literal","block":"block"}},
-		"visibility_modifier": {"definedBy":"override","childKind":{"crate":"crate","visibility_modifier_pub":"pub"}},
+		"visibility_modifier": {"definedBy":"override","childKind":{"crate_visibility_modifier":"crate","visibility_modifier_pub":"pub"}},
 		"visibility_modifier_pub": {"definedBy":"override","childKind":{"visibility_modifier_pub_scope":"scope"}},
 		"visibility_modifier_pub_scope": {"definedBy":"override","childKind":{"self":"self","super":"super","crate":"crate","visibility_modifier_pub_scope_in_path":"in_path"}}
 	},
@@ -59,8 +59,8 @@
 		"while_expression.condition": {"let_chain":"_let_chain"}
 	},
 	"displayUnions": {
-		"type_identifier": [
-			{"storage":"identifier","literal":false}
+		"crate_visibility_modifier": [
+			{"storage":"crate","literal":false}
 		],
 		"field_identifier": [
 			{"storage":"identifier","literal":false}
@@ -68,11 +68,14 @@
 		"let_chain": [
 			{"storage":"_let_chain","literal":false}
 		],
+		"shorthand_field_identifier": [
+			{"storage":"identifier","literal":false}
+		],
 		"string_content": [
 			{"storage":"raw_string_literal_content","literal":false},
 			{"storage":"string_content","literal":false}
 		],
-		"shorthand_field_identifier": [
+		"type_identifier": [
 			{"storage":"identifier","literal":false}
 		]
 	},
@@ -216,6 +219,7 @@
 		{"kind":"continue_expression","modelType":"envelope","typeName":"ContinueExpression","irKey":"continueExpression","builderPath":["continueExpression"],"builderPathAlternates":[["expression","continue"]],"variantOf":"_expression_except_range","slots":[{"name":"label","required":false,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"optional","parseKind":"label"}]}],"factoryShape":"forwarded","forwardsTo":"label","factoryFields":["label"],"bareAccepts":["identifier","label"]},
 		{"kind":"continue_keyword","modelType":"keyword","typeName":"ContinueKeyword","text":"continue","factoryShape":"text"},
 		{"kind":"crate","modelType":"keyword","typeName":"Crate","irKey":"crate","builderPath":["crate"],"text":"crate","oneSurface":true,"factoryShape":"constant"},
+		{"kind":"crate_visibility_modifier","modelType":"alias","typeName":"CrateVisibilityModifier","slots":[{"name":"content","required":true,"multiple":false,"nonEmpty":false,"storage":"kindEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"crate"}]}],"factoryShape":"direct","factoryFields":["content"],"bareAccepts":["crate"]},
 		{"kind":"dash","modelType":"punctuation","typeName":"Dash","text":"-"},
 		{"kind":"dash_eq","modelType":"punctuation","typeName":"DashEq","text":"-="},
 		{"kind":"dash_gt","modelType":"punctuation","typeName":"DashGt","text":"->"},
@@ -325,7 +329,7 @@
 		{"kind":"isize_keyword","modelType":"keyword","typeName":"IsizeKeyword","text":"isize","factoryShape":"text"},
 		{"kind":"item_keyword","modelType":"keyword","typeName":"ItemKeyword","text":"item","factoryShape":"text"},
 		{"kind":"label","modelType":"envelope","typeName":"Label","irKey":"label","builderPath":["label"],"slots":[{"name":"name","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"identifier"}]}],"fullForm":{"open":{"texts":["'"]},"close":{"texts":[""]}},"factoryShape":"forwarded","forwardsTo":"identifier","factoryFields":["name"],"bareAccepts":["identifier"]},
-		{"kind":"last_match_arm","modelType":"branch","typeName":"LastMatchArm","irKey":"lastMatchArm","builderPath":["lastMatchArm"],"slots":[{"name":"attributes","required":false,"multiple":true,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"array","parseKind":"attribute_item"},{"kind":"node-ref","multiplicity":"array","parseKind":"inner_attribute_item"}]},{"name":"pattern","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"match_pattern","seat":{"kind":"match_pattern","shape":"flatten"}}]},{"name":"value","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"_expression"}]},{"name":"comma","required":false,"multiple":false,"nonEmpty":false,"storage":"boolean","values":[{"kind":"terminal","multiplicity":"optional","value":",","parseKind":"comma"}]}],"factoryShape":"config","factoryFields":["attributes","pattern","value","comma"]},
+		{"kind":"last_match_arm","modelType":"branch","typeName":"LastMatchArm","irKey":"lastMatchArm","builderPath":["lastMatchArm"],"slots":[{"name":"attributes","required":false,"multiple":true,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"array","parseKind":"attribute_item"},{"kind":"node-ref","multiplicity":"array","parseKind":"inner_attribute_item"}]},{"name":"pattern","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"match_pattern","seat":{"kind":"match_pattern","shape":"flatten"}}]},{"name":"value","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"_expression"}]},{"name":"trailing_comma","required":false,"multiple":false,"nonEmpty":false,"storage":"kindEnum","registered":true,"optionDefault":0,"values":[{"kind":"terminal","multiplicity":"optional","value":",","parseKind":"comma"}]}],"factoryShape":"config","factoryFields":["attributes","pattern","value"]},
 		{"kind":"lbrace","modelType":"punctuation","typeName":"Lbrace","text":"{"},
 		{"kind":"lbrack","modelType":"punctuation","typeName":"Lbrack","text":"["},
 		{"kind":"let_condition","modelType":"branch","typeName":"LetCondition","irKey":"letCondition","builderPath":["letCondition"],"slots":[{"name":"pattern","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"_pattern"}]},{"name":"value","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"_expression"}]}],"factoryShape":"config","factoryFields":["pattern","value"]},
@@ -541,7 +545,7 @@
 		{"kind":"usize_keyword","modelType":"keyword","typeName":"UsizeKeyword","text":"usize","factoryShape":"text"},
 		{"kind":"variadic_parameter","modelType":"branch","typeName":"VariadicParameter","irKey":"variadicParameter","builderPath":["variadicParameter"],"variantOf":"attributed_parameter","slots":[{"name":"mutable","required":false,"multiple":false,"nonEmpty":false,"storage":"boolean","values":[{"kind":"node-ref","multiplicity":"optional","parseKind":"mutable_specifier"}]},{"name":"pattern","required":false,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"optional","parseKind":"_pattern"}]}],"factoryShape":"config","factoryFields":["mutable","pattern"]},
 		{"kind":"vis_keyword","modelType":"keyword","typeName":"VisKeyword","text":"vis","factoryShape":"text"},
-		{"kind":"visibility_modifier","modelType":"polymorph","typeName":"VisibilityModifier","irKey":"visibilityModifier","builderPath":["visibilityModifier"],"slots":[{"name":"content","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"crate"},{"kind":"node-ref","multiplicity":"single","parseKind":"visibility_modifier_pub","seat":{"kind":"visibility_modifier_pub","shape":"arm","mount":"pub","seated":true}}]}],"factoryShape":"direct","factoryFields":["content"],"bareAccepts":["crate","identifier","metavariable","scoped_identifier","self","super","visibility_modifier_pub","visibility_modifier_pub_scope","visibility_modifier_pub_scope_in_path"]},
+		{"kind":"visibility_modifier","modelType":"polymorph","typeName":"VisibilityModifier","irKey":"visibilityModifier","builderPath":["visibilityModifier"],"slots":[{"name":"content","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"crate_visibility_modifier"},{"kind":"node-ref","multiplicity":"single","parseKind":"visibility_modifier_pub","seat":{"kind":"visibility_modifier_pub","shape":"arm","mount":"pub","seated":true}}]}],"factoryShape":"direct","factoryFields":["content"],"bareAccepts":["crate","crate_visibility_modifier","identifier","metavariable","scoped_identifier","self","super","visibility_modifier_pub","visibility_modifier_pub_scope","visibility_modifier_pub_scope_in_path"]},
 		{"kind":"visibility_modifier_pub","modelType":"envelope","typeName":"VisibilityModifierPub","builderPath":["visibilityModifier","pub"],"seated":true,"variantOf":"visibility_modifier","slots":[{"name":"visibility_modifier_pub_scope","required":false,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"optional","parseKind":"visibility_modifier_pub_scope","seat":{"kind":"visibility_modifier_pub_scope","shape":"arm","mount":"scope","seated":true}}]}],"factoryShape":"forwarded","forwardsTo":"visibility_modifier_pub_scope","factoryFields":["visibility_modifier_pub_scope"],"bareAccepts":["crate","identifier","metavariable","scoped_identifier","self","super","visibility_modifier_pub_scope","visibility_modifier_pub_scope_in_path"]},
 		{"kind":"visibility_modifier_pub_scope","modelType":"polymorph","typeName":"VisibilityModifierPubScope","builderPath":["visibilityModifier","pub","scope"],"seated":true,"variantOf":"visibility_modifier_pub","slots":[{"name":"content","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"self"},{"kind":"node-ref","multiplicity":"single","parseKind":"super"},{"kind":"node-ref","multiplicity":"single","parseKind":"crate"},{"kind":"node-ref","multiplicity":"single","parseKind":"visibility_modifier_pub_scope_in_path","seat":{"kind":"visibility_modifier_pub_scope_in_path","shape":"arm","mount":"inPath","seated":true}}]}],"factoryShape":"direct","factoryFields":["content"],"bareAccepts":["crate","identifier","metavariable","scoped_identifier","self","super","visibility_modifier_pub_scope_in_path"]},
 		{"kind":"visibility_modifier_pub_scope_in_path","modelType":"polymorph","typeName":"VisibilityModifierPubScopeInPath","builderPath":["visibilityModifier","pub","scope","inPath"],"seated":true,"variantOf":"visibility_modifier_pub_scope","slots":[{"name":"path","required":true,"multiple":false,"nonEmpty":false,"storage":"mixedEnum","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"self"},{"kind":"node-ref","multiplicity":"single","parseKind":"metavariable"},{"kind":"node-ref","multiplicity":"single","parseKind":"super"},{"kind":"node-ref","multiplicity":"single","parseKind":"crate"},{"kind":"node-ref","multiplicity":"single","parseKind":"identifier"},{"kind":"node-ref","multiplicity":"single","parseKind":"scoped_identifier"}]}],"factoryShape":"direct","factoryFields":["path"],"bareAccepts":["crate","identifier","metavariable","scoped_identifier","self","super"]},

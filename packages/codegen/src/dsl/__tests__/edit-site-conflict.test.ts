@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const SEQ = "k: ($) => seq('x', $.y, 'z'), y: () => /y/";
 const TWO = "k: ($) => seq('x', $.y), y: () => /y/";

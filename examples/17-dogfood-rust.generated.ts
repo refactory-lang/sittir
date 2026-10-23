@@ -151,7 +151,8 @@ export function rebuildSpliceGenerated() {
 										elements: [rs.build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
 									}))),
 								}),
-								comma: true,
+							}, {
+								trailingComma: rs.kinds.Comma,
 							}),
 						}),
 					}))],

@@ -2,7 +2,7 @@
 
 ### `packages/common/src/create-engine.ts::loadLanguage`
 
-Loads a language's hooks once per descriptor object: later engines for the same descriptor reuse the same promise. A failed load is not cached, so a later call retries; it rejects with `failed to load language "<name>"`, carrying the original error as its `cause`.
+Loads a language's hooks once per descriptor object: later engines for the same descriptor reuse the same promise. A failed load is not cached, so a later call retries; it rejects with `failed to load language "<name>"`, carrying the original error as its `cause`. When the hooks carry portable rows, it records them against the descriptor's `load` (`registerPortableRows`) before resolving, so the language's portable guards read bare kind ids from then on.
 
 ### `packages/common/src/create-engine.ts::refuseUnimplemented`
 
@@ -18,13 +18,13 @@ The error a file verb (`read`, `create`, `write`) raises while file changes are 
 
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
-Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the language's guards (`guardsOf`: the descriptor's own `is` when it was composed for that descriptor) and kind ids (`language.kinds`), the same objects on every engine of the language, and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
+Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` (carrying the language's portable rows when its grammar has bindings, so a guard reaches them through the node's engine) and the handle that shares it with every node the engine stamps, and exposes the language's guards (`guardsOf`: the descriptor's own `is` when it was composed for that descriptor) and kind ids (`language.kinds`), the same objects on every engine of the language, and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
 
 The `intercept` option activates build, parse and render middleware. Parse hooks surround the existing read/bind/error/wrap operation, while raw `diagnostics.parseAndRead` remains a direct diagnostic path. Render checks language ownership before invoking its chain, including when a hook short-circuits. File verbs are still unimplemented, so the reserved file hook has no write pipeline to run around.
 
 The engine object and its `EngineIdentity` are frozen, so no member can be reassigned; the identity holds the caller's `options` as given, and that object stays the caller's.
 
-`is` on the engine is the language's table composed against the engine's own language (`guardsOf`), so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
+`is` on the engine is the language's table built with the language's kind test (`guardsOf`), so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone. The engine's query hooks carry the same kind test (`kindTestOf`), so `ofType` and the guards run one function.
 
 ### `packages/common/src/create-engine.ts::scopeBuilders`
 
@@ -56,7 +56,7 @@ Produces text from an already captured native handle and, when enabled, records 
 
 ### `packages/common/src/create-engine.ts::assemblePortableEngine`
 
-The portable engine: the language's identity, its portable `kinds` as the language's hooks carry them, and its portable `is` composed with the language check (`language.ts::languageGuards`), so a node of another language whose kind id a guard would read is rejected. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
+The portable engine: the language's identity, with its portable rows; the shared portable `kinds` (`portable/index.ts::portable`, the same object as the descriptor's `kinds.portable`); and the language's view of the portable guards (`portableGuardsOf(language)`, the same object as the descriptor's `is.portable`), which reads a node of the language or a bare kind id of it. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
 
 ### `packages/common/src/create-engine.ts::mergeRenderOptions`
 
@@ -156,7 +156,7 @@ The limits a walk's successive batches take: 1, 4, 16, 64, then 256 for every ba
 
 ### `packages/common/src/query.ts::splitPlan`
 
-Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofType`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
+Splits a view's steps into those the source runs before any node is hydrated (`early`) and those after (`late`). Declarative steps (`ofKinds`, `where`, `slice`) are early until the first opaque step (`filter`, `map`, `flatMap`); everything from there on is late, in order. Nothing moves past an opaque step: a callback receives each element's index, so filtering by kind or slot before it would renumber what it sees.
 
 ### `packages/common/src/query.ts::QueryView`
 
@@ -170,27 +170,25 @@ A lazy sequence: a source (a slot's items, or a walk under a node to a depth) an
 
 The `slice` step, with its bounds counted as an array counts them: truncated toward zero, `NaN` as zero, a negative counted from the end.
 
-### `packages/common/src/query.ts::ofTypeStep`
+### `packages/common/src/query.ts::ofTypeSteps`
 
-The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result. It keeps a node whose type is the kind or a member of it (a supertype's member, a polymorph's arm), by the language's `membership`, the test its `is.*` guards make; nothing restamps a node's type to pass it.
+The steps an `ofType` call adds. A kind id becomes one `ofKinds` step over every type a node of that kind can have (`membership.membersOf`: the kind, a supertype's members, a polymorph's arms, an enum kind's member ids), resolved once when the step is added, the test the language's `is.*` guards make; nothing restamps a node's type to pass it. A portable kind becomes an `ofKinds` step over the ids the language's portable rows give its path (`portablePathOf`), the same ids the portable guards admit. A path whose ids decide it (`exact`) needs nothing more; otherwise a `filter` step follows that reads each node, or bare kind id, through `readsAs`, the guards' own test, so `ofType` and the guards cannot disagree. The filter is opaque, so the steps after it run over hydrated nodes, and the kinds stay known for a later `where`. A path the rows do not hold, or a grammar without portable rows, gives an empty `ofKinds` step, which yields nothing without a native call. Anything else, a kind name passed by mistake among it, is refused at the call rather than read as an empty result.
+
+The step holds its kinds as a set, which each route reads. Pushed into a walk, or run over the tree's own entries, it reads membership alone: those elements are the tree's, so of its language. Run over elements after an opaque step, which may have put anything in their place, it is the language's kind test (`kindTest`, from `kindTestOf`), the test the language's guards are built with, so an element of another language never passes, as for the guards, and a bare kind id does.
 
 ### `packages/common/src/query.ts::narrowed`
 
-The types a node can have after one more `ofType` step: every member of its kind for the first step, then those of the earlier steps' types that are members of it. An empty result means no node passes every step.
-
-### `packages/common/src/query.ts::isOfType`
-
-Whether a hydrated node passes an `ofType` step: its `$type` is a member of the step's kind.
+The kinds a node can have after one more `ofKinds` step: the step's set for the first step, then those of the earlier steps' set the step also holds, in the earlier order. An empty set means no node passes every step.
 
 ### `packages/common/src/query.ts::whereStep`
 
-The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofType` steps allow when they are known, otherwise once against a recorder with no kind.
+The `where` step. Compiles the condition when the step is added, so a malformed condition fails at the call: for each kind the earlier `ofKinds` steps allow when they are known, otherwise once against a recorder with no kind.
 
 ### `packages/common/src/query.ts::run`
 
 Iterates a view. It splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) from the source, and hydrates only what survives them. It then runs the late steps over nodes. Being a generator, it stops pulling as soon as the consumer stops.
 
-### `packages/common/src/query.ts::slotItems`
+### `packages/common/src/query-holds.ts::slotItems`
 
 The items a node's slot holds, read through its accessor: the accessor's value, called when it is a method, as an array (a single item wrapped, an absent one empty). The query facet's slot views and the portable guards read slots through it.
 
@@ -204,11 +202,11 @@ The entries of a walk source. The steps `pushdown` takes go into the native walk
 
 ### `packages/common/src/query.ts::pushdown`
 
-The leading run of `ofType` and `where` steps that can go into the native walk. Each `ofType` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
+The leading run of `ofKinds` and `where` steps that can go into the native walk. Each `ofKinds` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
 
 ### `packages/common/src/query.ts::batches`
 
-Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls.
+Calls the native walk repeatedly, with batch sizes growing along `BATCH_LIMITS`, resuming from the cursor each call returns. One batch of entries is yielded per call, so a terminal that has its answer makes no further calls. Each item of a batch becomes an entry by its shape: a coordinate through `entryOfCoordinate`, and the bare id of a node its read stores as a unit through `entryOfItem`, as a slot's item does.
 
 ### `packages/common/src/query.ts::find`
 
@@ -306,25 +304,33 @@ An accessor's member in the check a `where` runs before its view's kinds are kno
 
 The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
 
-### `packages/common/src/query.ts::holds`
+### `packages/common/src/query-holds.ts::holds`
 
 The JavaScript evaluation of a plan over what its `PlanSubjects` read: the texts, the node types for an `is` leaf, and the child subjects for a `child` step. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. A `child` step keeps the nodes its slot holds, narrows them by its anchor (`anchored`), and holds when its condition holds on one of them, evaluated with that child as the node. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself.
 
-### `packages/common/src/query.ts::PlanSubjects`
+### `packages/common/src/query-holds.ts::PlanSubjects`
 
 What a caller of `holds` reads for a node: the texts a subject holds, the node types (`$type`) it holds, and the subjects of the nodes a slot holds. A caller that reads no types or no children leaves them out, and an `is` leaf or a `child` step is refused there (`NO_TYPES`, `NO_CHILDREN`).
 
-### `packages/common/src/query.ts::NO_TYPES`
+### `packages/common/src/query-holds.ts::NO_TYPES`
 
 The node-type reader of a caller that reads none: an `is` plan is refused there rather than read as holding nowhere.
 
-### `packages/common/src/query.ts::NO_CHILDREN`
+### `packages/common/src/query-holds.ts::NO_CHILDREN`
 
 The child reader of a caller that reads none: a `child` step is refused there rather than read as holding nowhere.
 
-### `packages/common/src/query.ts::anchored`
+### `packages/common/src/query-holds.ts::anchored`
 
 A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them. The portable read tests' `via` steps and `holds`'s `child` step both narrow by it, as the native child step does.
+
+### `packages/common/src/query-holds.ts::refuse`
+
+Throws a query refusal as a `TypeError` with the message given. The query facet and the evaluator refuse through it alike.
+
+### `packages/common/src/query-holds.ts::module`
+
+The query plan evaluator and the slot reader it shares with the portable classifier, kept apart from the query facet so that a module a language descriptor loads (the portable guards) reaches no engine runtime.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -337,6 +343,10 @@ The handle in scope, or `undefined` outside any engine call. A node built with n
 ### `packages/common/src/engine-scope.ts::isLive`
 
 Whether a handle's `current` is a live engine rather than an identity, told by the presence of a `render` member.
+
+### `packages/common/src/engine-scope.ts::hydrateOn`
+
+A value as an accessor of a node of a tree returns it, through the generated `hydrate` of the engine the tree is bound to (`hydrateWith` with the grammar's wrap): node data is wrapped as its kind's node, and anything else passes through. A tree bound to no engine returns the value as it is. `hydrateStored` reaches the same `hydrate` from a coordinate's own tree token; this takes the tree from the caller, for data that names no tree, such as a trivia entry written into a tree's table.
 
 ### `packages/common/src/engine.ts::createRenderHandle`
 
@@ -361,19 +371,19 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 ### `packages/common/src/source.ts::Source`
 
-Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
+Where a node came from, the value of its source stamp as `sourceOf` reports it: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. It is stamped once, where the node is created: by the reader (`holdReadTree`), by the builders (`stampBuilt`), and onto a validator's copy made by string keys (`carrySourceStamp`). An edit keeps it (`$with` and `detachCoordinate` drop only coordinates), and so does a spread copy, so it records the node's origin, not whether it still holds a live tree handle. A node carries no `$source` member; `sourceOf` is the one read path. Rust's `enum Source` in sittir-core mirrors the values. The object `satisfies` a record of `HoldsSource`'s member type, so the type-level `0 | 1 | 2` union there stays the one declaration of the values.
 
 ### `packages/common/src/utils.ts::isNode`
 
-Whether a value is a sittir node, built or read: an object with a numeric `$type` that carries storage (`_` keys), text (`$text`), a whitespace-kind `$other`, or a `$source` stamp. A bare `{ $type }` is a factory config, not a node.
+Whether a value is a sittir node, built or read: an object with a numeric `$type` that holds a source stamp (`sourceOf`) or a tree token (`treeTokenOf`). Nothing structural counts: storage (`_` keys), text, `$_layout` or a `$source` key make no node, so a factory config, a JSON copy or a string-key copy of a node is not one. It is the run-time side of the fact the types admit by (`NodeMarker`), so the two cannot disagree. A spread copy keeps the stamp, which is an enumerable symbol member. `isNodeValue` adds coordinates.
 
 ### `packages/common/src/utils.ts::isParsedNode`
 
-A node that originated from a parse: `$source` is `Source.Ts` or `Source.Sg`. It holds before the read root is wrapped and after the node is edited, since both keep the stamp.
+A node a read produced (`isRead`). It holds before the read root is wrapped and after the node is edited, since both carry the read; its provenance (`sourceOf`) is `Source.Ts` or `Source.Sg`.
 
 ### `packages/common/src/utils.ts::isFactoryNode`
 
-A node that did not originate from a parse. It is defined as the complement of `isParsedNode` among nodes, so the two never disagree; every generated builder stamps `Source.Factory`.
+A node that did not originate from a parse. It is defined as the complement of `isParsedNode` among nodes, so the two never disagree; every generated builder stamps `Source.Factory` (`stampBuilt`).
 
 ### `packages/common/src/runtime.ts::module`
 
@@ -399,7 +409,7 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
-`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those stamped `$source: Source.Factory`, and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
 
 ### `packages/common/src/runtime.ts::strictBooleanStorage`
 
@@ -451,7 +461,7 @@ Whether a value is a node of one kind id, a coordinate of that kind included (`i
 
 ### `packages/common/src/utils.ts::configFieldOr`
 
-The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union. A coordinate is a node value, never a config (`isNodeValue`).
+The value of the key `key` when the input is a config object (not a node, not an array) that carries it, else `orElse()`. An empty object is a config too, one that leaves the slot out (`undefined`), never the slot's content: `build.parameters({})` is `build.parameters()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union. A coordinate is a node value, never a config (`isNodeValue`).
 
 ### `packages/common/src/utils.ts::orDefault`
 
@@ -479,17 +489,17 @@ The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which pa
 
 ### `packages/common/src/node-data.ts::sourceHandleOf`
 
-The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
+The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`placeOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
 
 ### `packages/common/src/node-data.ts::unitSidesOf`
 
-The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
+The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`placeOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
 
 ### `packages/common/src/node-data.ts::slotsOf`
 
 The stored layout of a node's list slots (`NodeLayout.slots`): the ones
 it holds, else its live tree's for a parsed node, else those of the node it
-was rebuilt from (`sourceOf`), which apply to every gap of the slot, kept or
+was rebuilt from (`placeOf`), which apply to every gap of the slot, kept or
 inserted. A detached crossing and a snapshot of a built node carry them as
 data, since neither leaves the render a tree to measure them from.
 
@@ -504,15 +514,15 @@ new list's separator.
 
 ### `packages/common/src/node-data.ts::carriedUnitSides`
 
-A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
+A rebuilt node's unit sides, carried from the node at `index` of the tree it was rebuilt from: the tree's records for that node, realigned against what the tree reads there (`realignedUnits`).
 
 ### `packages/common/src/node-data.ts::itemIdentity`
 
-What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
+What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`), and a built node by itself, the object a rebuild that keeps it passes on. So a revived list's kept statements anchor its units' sides as a parsed list's do: a comment on a `;` stays with the `;` after the statement it followed, not with the first `;` of its kind.
 
 ### `packages/common/src/node-data.ts::alignedItems`
 
-The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
+The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The nodes both slots hold anchor it, each by its identity (`itemIdentity`: a read node by the handle it names, a built node by itself): a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
 
 Identical units align by order within a run: nothing tells two units of one kind apart, so removing or reordering identical units among themselves keeps their sides by position, not by the unit the caller meant. Removing the first of two commented `;` units keeps the first unit's comment on the `;` that remains.
 
@@ -556,7 +566,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carryPlace`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), a built source's stored trivia, and the unit sides it holds, realigned to the new slots (`carryUnitSides`). It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -564,7 +574,7 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 ### `packages/common/src/node-data.ts::holdReadTree`
 
-`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`). The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
+`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`), and is stamped `Source.Ts` (`stampSource`), so it stays a node after an edit drops its tree token. The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
 
 ### `packages/common/src/node-data.ts::carryRead`
 
@@ -584,7 +594,7 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
 
 ### `packages/common/src/node-data.ts::evidenceOf`
 
@@ -595,13 +605,13 @@ The node whose source identity stands for a list entry. A rebuild constructs som
 
 An entry with its own source identity is its own evidence. Adjacency is judged on these nodes on both sides of a gap.
 
-### `packages/common/src/node-data.ts::sourceOf`
+### `packages/common/src/node-data.ts::placeOf`
 
-Where a node sits in its source: a read node's own tree token, tree handle, end, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced (`carrySource`). It is evidence of layout only: an edited node never slices, but its missing sides are its source's (`sideOf`, `$_layout.sides`) and it can be judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
+Where a node sits in its source: a read node's own tree token, tree handle, end, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced (`carryPlace`). It is evidence of layout only: an edited node never slices, but its missing sides are its source's (`sideOf`, `$_layout.sides`) and it can be judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
 
 ### `packages/common/src/utils.ts::carryRebuiltSlots`
 
-For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carrySource`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). A node the caller built and passed in, of another kind or already carrying source, is left as it is.
+For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carryPlace`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), and the list kinds (`TriviaFacts.listKinds`), which a list slot's `$with` rebuilds from its items: the fresh list stands for the list it replaces, so it takes that list's sides and its slots' stored layout (`$_layout.sides`). Where the old wrapper was built (a revived node's, with no source identity), the fresh one takes what it held instead: its stored trivia, and its unit sides realigned to the fresh slots (`carryUnitSides`), so a setter that rebuilds a revived list in place keeps the list's comments and its units'. A node the caller built and passed in, of another kind or already carrying source, is left as it is.
 
 ### `packages/common/src/utils.ts::NodeAddress`
 
@@ -653,7 +663,7 @@ Whether a key carries node data across the native boundary: a storage key (`_<sl
 
 ### `packages/common/src/runtime.ts::listStorage`
 
-A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given), with the absent ones dropped; a value that is not an array is stored through `item` alone. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
+A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given); a value that is not an array is stored through `item` alone. An absent item (one `item` stores as `undefined`) is dropped, except in a list whose element admits a hole (`holes`, the model's `hasOptionalElements` stamp, passed by the emitter): there an `undefined` or `null` item is kept as a hole at its position, so `[a, , b]` builds three positions. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
 
 ### `packages/common/src/runtime.ts::kindIdStorage`
 
@@ -683,15 +693,23 @@ The elements a list reads through its own reader, none for an absent list. An ow
 
 A list option an owner reads from its list's stored `_<option>`, or the option's default. The value is read when the owner is built.
 
+### `packages/common/src/node-data.ts::slotSeparatorOf`
+
+The separator a list writes between its items, as a grammar id: its live tree's for a parsed list (its slot's stored separator where its source's gaps differ from what the read-time options render, else the one those options render, which also answers a list with no gap to measure), else that of the list it was rebuilt from. Rebuilding a list with this separator reproduces its source's separators, since the stored separator is the majority of its gaps.
+
+### `packages/common/src/utils.ts::defineListSeparator`
+
+Defines the `separator` of a wrapped list or list owner as a shared, non-enumerable getter, one function per owner accessor: the list's own stored `_separator` when it has one, else the separator its tree answers (`slotSeparatorOf`). It is a getter because the tree's answer measures the list's gaps and records its render, which a wrapped list pays on first read, not at wrap time. An owner names its list accessor and answers the `separator` of the list that accessor returns, whatever that list is (parsed, or built with or without its own separator), so an owner never disagrees with its list; a list defines it on itself.
+
 ### `packages/common/src/utils.ts::defineListIndices`
 
-Defines the index positions of a wrapped list or list owner: one getter per position, shared by every wrapped list and not enumerable. A wrapped owner's items are unread until first use, so an index must hydrate them on demand, and a per-node getter would force dictionary mode; one shared getter per position reads the item through `listItemsOf` from whichever list calls it. The getters are the only getters a wrapped node carries.
+Defines the index positions of a wrapped list or list owner: one getter per position, shared by every wrapped list and not enumerable. A wrapped owner's items are unread until first use, so an index must hydrate them on demand, and a per-node getter would force dictionary mode; one shared getter per position reads the item through `listItemsOf` from whichever list calls it. The getters are the only getters a wrapped node carries, together with the `separator` getter of a wrapped list or list owner (`defineListSeparator`), which is shared in the same way.
 
 ### `packages/common/src/utils.ts::refuseReadStub`
 
 The refusal of a raw factory given a list owner's storage that is a read stub, a parsed list that cannot be counted without its tree. A factory has no tree, and `engine.build` already refuses a bare stub, so the build throws naming the stub rather than carrying a node whose `length` or items cannot be read. A built owner's `length` is always plain data, so it keeps its fast shape.
 
-### `packages/common/src/utils.ts::spanOf`
+### `packages/common/src/node-data.ts::spanOf`
 
 The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. Tools that slice source or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
 
@@ -724,6 +742,14 @@ Refuses a delimited composite whose content would not read back inside its own d
 
 A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
+### `packages/common/src/query.ts::isPortableKind`
+
+Whether an `ofType` argument has a portable kind's shape: an object with a string `$path`. The path itself is not checked here; one the language's rows do not hold yields nothing (`ofTypeSteps`).
+
+### `packages/common/src/language.ts::kindOf`
+
+A value's kind, as the kind test and a query's slot entries read it: a node's numeric `$type`, or a bare kind id itself, since a keyword leaf reads as its kind id and the guards read it that way; anything else has none. A walk yields a node its read stores as a unit as that bare id, as a slot read stores it (`batches`), so its entry's kind is the id on every route; a coordinate's `$type` stays the shared stamp.
+
 ### `packages/common/src/runtime.ts::coerceBitflagStorage`
 
 A bitflag slot's loose input as the number the slot stores: a number as it is (0 as absent), an array as the union of its items' bits, and a node or text as the bit of its text's position in `texts`. Absent, `false`, an unknown text or no bits at all store as `undefined`. The factories call it.
@@ -734,27 +760,56 @@ A keyword-presence slot's loose input as what the slot stores: `true` for any pr
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry as it is.
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); a written entry, stored as detached data, wrapped as its kind's node through the engine bound to the tree whose table holds it (`hydrateOn`) when that tree is given; and any entry with its text as the method `$text()` (`asTextNode`).
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 
-A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the same array when none is a coordinate.
+A trivia side as its reader gets it, each entry through `hydrateTriviaEntry` on the tree whose table answered the side (`sideRead`). A written entry is stored as detached data, which the render reads; the reader gets it as its kind's node, the same surface a read entry has, so `toJSON` and every other reader meet one shape. A side a node holds as its own data, with no coordinate in it, is read back as the same array, its entries given the method `$text()` in place.
 
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
 
-### `packages/common/src/portable-path.ts::portablePathHasFacts`
+### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 
-Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and runtime guard matching, including stamped portable paths. An absent read path matches nothing.
+Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and the portable guards' matching of a node's reading. An absent read path matches nothing.
 
-### `packages/common/src/portable.ts::portableSurface`
+### `packages/common/src/portable/classify.ts::classifierOf`
 
-A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it. A path is reached only through its full path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when `portablePathHasFacts` finds every fact of its path in that reading, within the same namespace and in order. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword, the text the parser holds there, and `false` reads as no item, so a presence leaf holds exactly when the keyword is there. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
+The classifier of a bound grammar's `PortableRows`, built once per rows object (`classifiers`), so every guard reading nodes of a language shares one. It reads a node as the path of its kind's first read entry, in table order, whose conditions all hold. It reads a bare kind id the same way, the id selecting the entries and a text condition on the id itself reading its `fixedText`, but only through entries whose every condition reads the value itself (`decidesKindId`: no `via` step, and only `self` subjects, `readsItself`). An id shows no slot, so an entry that reads one is skipped for it, as a placed entry is; otherwise an empty slot would make a negated slot test hold (python's `comparison_operator` id would read as a comparison chain). Such an id reads by the first entry it can decide, `expression.binary` for that one: less specific, never wrong. Both filters run once, when the classifier is built (`entriesWhere`): per kind, it keeps the unplaced entries a node reads through (`nodeEntries`) and those a kind id can also decide (`kindIdEntries`), so a call scans only those. An entry that depends on where the node sits, a `within` placement or a condition on an enclosing node (`up > 0`), is skipped (`unplaced`): a node alone carries no context, so it reads as its next entry: the placed reading answers false and the next one true (an impl or class-body method reads as a function) until placed readings become kinds of their own. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the node, an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. Texts come from a slot's items through `query-holds.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword and `false` as no item. A value's text is a kind-id item's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a value's type is its `$type`, or a kind-id item's own number.
 
-### `packages/common/src/portable.ts::placed`
+### `packages/common/src/portable/classify.ts::hasKind`
 
-Whether a read entry's placement holds for the context: no placement always does; otherwise the context's nearest nodes, nearest first, must have the placement's kinds (`null` admits any). Without context a placed entry never matches, so the node falls to its next entry.
+Whether a value is an object with a numeric `$type`: the shape a classifier reads as a node, and the first test of a shared portable guard, which therefore refuses a bare kind id. A language's guards (`languageGuardOf`) test for a number first and read it through the language's rows.
+
+### `packages/common/src/portable/index.ts::guardOf`
+
+The shared portable guard of a vocabulary path. It refuses a value without a kind (`hasKind`), and so a bare kind id, which names no language. It then reads the node by the rows of the language whose engine stamped it (`engineOf(node)?.portable`) through `readsAs`; no engine, or a grammar without bindings, answers false. A node of any bound language reads by its own rows, so one tree serves every language.
+
+### `packages/common/src/portable/classify.ts::readsAs`
+
+Whether a node or a bare kind id reads as a vocabulary path by one language's rows. Its kind (a node's `$type`, or the id itself) must be among the ids the rows' table gives the path (`portablePathOf`); an exact path then holds by the kind alone, and otherwise the value's reading (`classifierOf`) must carry every fact of the path (`portablePathHasFacts`). The one test the shared guards (`guardOf`), a language's guards (`languageGuardOf`) and a query's `ofType` by a portable kind (`query.ts::ofTypeSteps`) run once they hold the rows.
+
+### `packages/common/src/portable/classify.ts::portablePathOf`
+
+The ids and exactness a bound grammar's rows give a vocabulary path, or `undefined` when the grammar reads nothing at or under it. It reads the table's own keys only, so a path a caller supplies (a query's portable kind) cannot reach a prototype member such as `constructor`.
+
+### `packages/common/src/portable/index.ts::registerPortableRows`
+
+Records a bound grammar's rows in `rowsByLoad`, keyed by the descriptor's `load` function; `loadLanguage` calls it once the hooks resolve. The key is `load` rather than the descriptor object because a copied descriptor (`{ ...rust }`) shares the original's `load`, so rows loaded through either serve both. The map is weak, so a descriptor that goes away takes its rows with it.
+
+### `packages/common/src/portable/index.ts::PortableLanguage`
+
+What a language's portable guards need from a descriptor: its `name`, for the error a guard raises before the language has loaded, and its `load` function, the key its rows are recorded under (`registerPortableRows`). It is structural, so `@sittir/common/portable` does not import the `Language` type and a descriptor satisfies it as it is.
+
+### `packages/common/src/portable/index.ts::portableGuardsOf`
+
+A language's view of the portable guards: `portableTrees` over the same `vocabularyPaths`, each guard built by `languageGuardOf`, so it has the shared tree's keys at every level but guard objects of its own. It is memoized per language object (`views`), so the descriptor's `is.portable`, the `is.portable` of every engine of that descriptor and its portable engine's `is` are one object. An engine of a copied descriptor gets the copy's own view (`guardsOf` rebuilds the shared members through the recorded builder), which finds the same rows. The shared tree, `portable.is`, stays node-only.
+
+### `packages/common/src/portable/index.ts::languageGuardOf`
+
+The guard of a vocabulary path in one language's view. A bare kind id reads through the rows recorded for the language's `load` (`rowsByLoad`) by `readsAs`. If no engine of the language, or of a copy sharing its `load`, has loaded them yet, it throws, naming the language and asking for an engine first: answering false there would read as a classification. A node must carry a kind and pass the language check (`ofLanguage`, the `inLanguage` check `portableGuardsOf` builds once per view, the same one the language's kind test makes), and its engine must carry portable rows; it then reads by those rows. A node of another language, or one no engine stamped, answers false.
+
 ### `packages/common/src/identity.ts::Role`
 
 How a route reaches a parsed node, the second half of its registry key. `aliasContent` is the content of an alias envelope that shares the envelope's parser node, and so its descendant index; every other route, an alias content that is its own parser node included, reaches a node as `node`. The role comes from the route, never from what the registry already holds.
@@ -783,9 +838,23 @@ The one seat that wraps and registers: the wrapper the registry holds at the val
 
 The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
 
+### `packages/common/src/utils.ts::isEmptyNode`
+
+Whether a node can hold inner trivia: nothing in it owns sides, since a comment beside any child has that child to lead or trail. Emptiness is about side ownership, not about what renders.
+
+- A parsed node answers from its tree (`TreeHandle.isEmpty`): no child is named, not an extra or `ERROR`, and with width.
+- A built node answers from what it stores (`storesNothingIn`), over its kind's inner region (`TriviaFacts.innerRegions`) with the named units (`TriviaFacts.namedUnits`), read through the node's engine (`engineOf`). A slot outside the gap does not count, so a typescript block whose only stored value is its automatic-semicolon terminator after `}` is empty, though the terminator still renders. A stored token of an anonymous kind (rust's `$` in `a!($)`) does not count either, while a named one (an empty statement's `;`) does.
+- A node with no engine, or of a kind with no inner region, is judged over every `_`-keyed slot, every unit counting.
+
+The two rules are held to one answer by `inner-region-parity.test.ts`. The one disagreement is scm `missing_node` in `(MISSING) @cap`, where the tree counts the capture after `)`; it is named there until the tree's rule reads the same gaps. `rebuilt` and `$trivia.inner` (`triviaWriter`) ask it, and so does `engine.isEmptyNode`, which also requires a kind with an inner side.
+
+### `packages/common/src/utils.ts::storesNothingIn`
+
+Whether a node stores nothing that owns sides in the slots `region` names, or in every `_`-keyed slot when it names none. A slot owns sides when it holds a node, a coordinate, text or a presence (any value other than `null`/`undefined`), or a unit whose kind id is in `namedUnits`. Every unit counts when no `namedUnits` is given. A list owns sides when any item does. It is the stored half of `isEmptyNode`, exported so the corpus parity test applies it to parsed nodes too.
+
 ### `packages/common/src/node-data.ts::sideOf`
 
-The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`sourceOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
+The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools: the entries of `sideRead`, which decides per side where it lives. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope and its content are one parser node, and the envelope holds that node's sides: the content (`envelopeKindOf`) reads none from the table, so every reader meets a comment there once.
 
 ### `packages/common/src/node-data.ts::sidesOf`
 
@@ -815,26 +884,110 @@ A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an ed
 
 The `KindView` of data with no wrapper or list kinds: no for every kind.
 
+### `packages/common/src/node-data.ts::nodeText`
+
+The text a leaf holds, from either form a value takes: a node's `$text()` method, which makes the string when called, or the `$text` string native node data carries across the boundary. `undefined` for a value with neither. Code that may hold either form, such as the crossing (`toNodeValue`), builder input checks (`rejectKeywordText`, `rejectReservedText`), the delimited check, the portable classifier and the validators, reads text here and nowhere else. Typed code holds nodes only and calls `$text()`.
+
+### `packages/common/src/node-data.ts::asTextNode`
+
+A read value given a node's text member: an object whose `$text` is a string gets the method `$text()` under that key, on the same object, so the tree it holds and its read identity stay with it, and every node a user reaches reads its text one way. Native returns the string, because what it returns is data, and data serializes (a `$snapshot()` result, a render input, a fixture). JavaScript turns it into a node here, at the two places a read value becomes one without a kind's wrap: a trivia entry (`hydrateTriviaEntry`), such as a detached comment or an ERROR region read as trivia, and a value of a kind with no wrap in the generated table (`wrapNode`), such as an ERROR region in a slot or at the root. Any other value, including a node that already has the method, is returned as it is.
+
+### `packages/common/src/node-data.ts::hasNodeText`
+
+Whether a value has a text member in either form, a node's `$text()` method or native data's `$text` string, decided by the member's type alone. It never calls the method: a node's text is made strictly on access, and a method backed by the tree's native `text(span)` would otherwise cost a native call and a string on every check. `isNode`, which every coercer runs, tests text presence here; code that needs the text itself reads it through `nodeText`.
+
+### `packages/common/src/node-data.ts::envelopeKindOf`
+
+The display id of the alias envelope whose content a node is, read from the same parser node, else `undefined`. The reader stamps a coordinate with the grammar id, except at an alias envelope, where it stamps the display id; the envelope and its content are wrapped from that one coordinate, so the content is the node whose stamp (its own coordinate's, or the one an edit carried forward, `placeOf`) differs from its own kind. Over the corpora this matches "shares its holder's tree handle" exactly. The contract: an alias content's comments belong to its envelope. `sideRead` reads the content nothing from a table, whose entries for that parser node are the envelope's (a content an edit rebuilt still reads the sides it holds as its own data), and a `$trivia` write through the content lands on the one parser node, which the envelope reads once and every writer (JSON, render) writes once. `isAliasContent` asks this of a holder's child.
+
+### `packages/common/src/node-data.ts::sideRead`
+
+One side of a node and the tree whose trivia table holds it, decided per side, the one source `sideOf` and the `$trivia` reader share: a parsed node's live table at its own index, else the side the node holds as its own data (no tree), else the table of the node it was rebuilt from (`placeOf`) while that tree lives. So a rebuilt node that wrote one side and inherits the other reads each from where it lives, and the reader hydrates each through its own tree. An alias envelope's content (`envelopeKindOf`) reads nothing from either table, since that parser node's entries are its envelope's; a side it holds as its own data, after an edit rebuilt it, is still read.
+
+### `packages/common/src/node-data.ts::setUnitSides`
+
+Gives a built node its unit children's sides as held layout (`$_layout.units`), the record `unitSidesOf` reads first. The node reviver uses it to put back a unit's comments, which a unit (a bare kind id) cannot hold itself.
+
+### `packages/common/src/node-data.ts::realignedUnits`
+
+Unit-side records moved from the node they were recorded on (`before`) to the node a rebuild made from it (`after`). A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned between the two (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed, or replaced with a node, go with it. The one core behind a parsed source's carried sides (`carriedUnitSides`) and a built source's held ones (`carryUnitSides`).
+
+### `packages/common/src/node-data.ts::carryUnitSides`
+
+Makes a rebuilt node keep the unit sides its source holds as its own layout (`$_layout.units`), realigned to the rebuilt node's slots (`realignedUnits`). A revived node holds its units' comments that way and has no source tree to read them from again, so without this an edit dropped them. `rebuilt` calls it next to `carryPlace`. A parsed source's units come through its place instead (`unitSidesOf` → `carriedUnitSides`).
+
 ### `packages/common/src/interior.ts::interiorPattern`
 
 The compiled whole-token regex of a token interior, built once per interior object (flags `su`) and cached. `projectInterior` splits text with it, and the coercer's leaf registry row for a lexed kind holds it as its pattern, so the interior's `regex` string is compiled in one place on the client.
 
 ### `packages/common/src/language.ts::inLanguage`
 
-The language check a language's guards use: a value whose stamped engine is of `language` (`engineOf`), compared by the language object itself, or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language asking. Keyed by the language rather than an engine, so a descriptor builds its guards before any engine exists, and `assembleEngine`'s node guards use the same check.
+The language check of a language's kind test (`kindTestOf`), which its guards and its engines' `ofType` read, and of `assembleEngine`'s node guards: a value whose stamped engine is of `language` (`engineOf`), compared by the language object itself, or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language asking. Keyed by the language rather than an engine, so a descriptor builds its guards before any engine exists.
 
 ### `packages/common/src/language.ts::languageGuards`
 
-Composes every function on a language's `is` table with the language check (`inLanguage`): the guard runs only for a value of `language`, and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The generated descriptor composes its guards with it at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes; the portable engine composes its portable table the same way. It records each composed table with the guards and the language it was composed from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
+A language's guard table: the grammar's `guardsWith` called with the language's kind test (`kindTestOf`), so every guard holds only for a value of `language`, with the extra arguments of a guard such as `kind` passed through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. The guards call the test themselves, so a supertype guard's variant guards (`is.suite.block`) check the language as the supertype guard does, with nothing wrapped around them. The generated descriptor builds its table at import, against the descriptor module itself, so `rust.is` needs no engine and is the object every engine of that descriptor exposes. `shared` builds members added beside the guards as they are. It is called with `language`, so a bound grammar's descriptor passes `(language) => ({ portable: portableGuardsOf(language) })`, the language's view of the portable guards, which checks nodes and kind ids itself. It records each table with the builder, the language and the `shared` builder it was built from, which `guardsOf` reads. The module imports only `engine-scope.ts`, which reaches no native addon, so the descriptor stays light.
 
 ### `packages/common/src/language.ts::guardsOf`
 
-The guards an engine of `language` exposes: `language.is` itself when it was composed against `language`, as a generated descriptor's is. Otherwise the same guards composed against `language`: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. A hand-built table that no composition recorded is composed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
+The guards an engine of `language` exposes: `language.is` itself when it was built for `language`, as a generated descriptor's is. Otherwise the same builder called with `language`'s kind test: a descriptor copied from another (`{ ...rust }`) carries guards checking the original, while its engine stamps nodes with the copy, so reusing them would reject the engine's own nodes and pass the original's, disagreeing with `isNode`. The shared members are rebuilt for the copy through the builder recorded with the original, so an engine of the copy exposes the copy's own view of the portable guards (`portableGuardsOf`), which reads the copy's nodes and finds the language's rows through the shared `load`. A hand-built table that no `languageGuards` call recorded has no builder to call, so it is exposed as it is. The result is kept per language, so every engine of one descriptor exposes one object.
 
-### `packages/common/src/language.ts::composed`
+### `packages/common/src/language.ts::KindTest`
 
-The composition over one table: each guard composed through `languageGuard`, the result frozen with the table's type. One composition shares a map from each guard to its composed guard (`wrapped`), so a guard reached under several names, as a portable path is under its aliases, is composed once and stays one object.
+The test a guard and a query's `ofType` make of a value: whether it is of one of `kinds`, the set the kind asked for holds for (its members, or itself). Taking the set rather than a kind lets one test serve a guard over a kind, a supertype with no kind id, and a portable path's ids.
 
-### `packages/common/src/language.ts::languageGuard`
+### `packages/common/src/language.ts::holdsKinds`
 
-One guard composed with the language check. A guard with members (a supertype guard carrying its variants' guards, `is.suite.block`) keeps them: each member is composed in turn and defined on the composed function, so `rust.is.suite.block` checks the language as `rust.is.suite` does. Members are defined rather than assigned, because a variant may be called `name` or `length`, which a function already owns.
+The kind test with no language check: whether the value's kind (`kindOf`) is in the set. A grammar's package-level `is` is built with it, so it answers for storage data and for a node of any language alike, and a hand-built query context with no language uses it.
+
+### `packages/common/src/language.ts::kindTestOf`
+
+A language's kind test: the language check (`inLanguage`), then membership (`holdsKinds`). It is the one test the language's guards are built with (`languageGuards`) and an engine's `ofType` runs over elements after an opaque step (the `kindTest` query hook), so a node of another language whose kind id matches passes neither, and a bare kind id passes both, since it carries no language. Kept per language object, so the guards and every engine of the language hold the same function.
+
+### `packages/common/src/portable/tree.ts::ChildrenOf`
+
+The child segments of a path among a union of vocabulary paths: each path one segment below it, by its last segment. `RootsOf` is the same for the top level (the paths with no dot). With `string` for the union, both read as `string`, so a tree typed over arbitrary paths is an index signature.
+
+### `packages/common/src/portable/tree.ts::KindAt`
+
+The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
+
+### `packages/common/src/source-stamp.ts::stampSource`
+
+Stamps `node` with where it came from (`Source`), which makes it a node (`isNode`). The stamp is a member under a module-private symbol, so no literal, JSON value or string-key copy can carry it, while a spread copy keeps it (the member is enumerable, as the tree token's is). The node gets no `$source` member: `sourceOf` is the one way to read the stamp. Stamping again replaces the stamp.
+
+### `packages/common/src/source-stamp.ts::stampBuilt`
+
+`stampSource` with `Source.Factory`: what every generated builder returns its node through, and what a test stamps a hand-written built node with. It is exported through `@sittir/common/utils`, so code can call it on purpose; what it rules out is a node by accident or by literal.
+
+### `packages/common/src/source-stamp.ts::sourceOf`
+
+The one read of a node's provenance, public through `@sittir/common`: the stamp the node holds, or `undefined` for anything that is no node. It answers for every node sittir hands out, read, built or rebuilt, and for a spread copy of one, because it reads the stamp member itself rather than a member set per object. `isNode`, `verifyStructure` and `carrySourceStamp` read the stamp through it. It is distinct from `placeOf`, which says where in its source text a node sits.
+
+### `packages/common/src/source-stamp.ts::carrySourceStamp`
+
+Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised copies, `materializeValue`) loses the stamp with every other symbol member, and this puts it back, so the copy is the node it stands for. A spread copy keeps the stamp and needs no carry. Beside `carryPlace`, which carries a different fact: where in its source a node sits.
+
+### `packages/common/src/node-json.ts::nodeJSON`
+
+A node's JSON, the body of every node's `toJSON`. What the node's kind is decides what is written, from the grammar's `jsonFacts`: `$type` is the kind's name; a text leaf (`leaves`) and an ERROR node add `$text`; each slot of the kind (`slots`) is written under its accessor's name, read through the accessor so a parsed node and a built node give the same JSON. A slot's value is written by what it holds: a node as its JSON, a kind id as a node of that kind (`{ $type }`), with the comments its parent holds for it (`unitSidesOf`, by the slot's storage key from its `querySlots` row and its item there) as its own `leadingComments` and `trailingComments`, so a comment on a unit crosses the way a node's does, a list (anything iterable that is not a node, since a list owner is itself iterable) as an array whose empty element is `null`, `true` and strings as they are, the blank arm of an optional slot that chose none (`blank`, the kind id no parser kind holds) as `null`, the spelling a builder takes it in (a `null` in a slot is a blank arm and a `null` inside a list is a hole: the position tells them apart); `undefined` and an absent keyword (`false`) are left out. Each trivia side's entries whose kind is not layout are the comments, written as `leadingComments`, `trailingComments` and `innerComments` when the side has any; an ERROR the parser left is one of them. Nothing else crosses: no storage keys, no layout, no provenance stamp or tree token, no `$with`, so the JSON names no tree and needs none to revive. The walk calls `nodeJSON` on the children itself rather than their `toJSON`, so an entry that is not a generated node (an ERROR) is written the same way.
+
+### `packages/common/src/node-json.ts::contentText`
+
+The text a text envelope's JSON carries in its one slot: the content leaf's `$text`, when the content is written as the kind the envelope holds (`jsonFacts.textEnvelopes`) with no member but `$type` and `$text`. Any other content (another kind, an `ERROR`, an unknown kind, comments) gives none, and the envelope revives through its slots, which refuse what it cannot hold at the content's path. The reviver builds an envelope with text through the envelope's own builder, never the content kind's, because the content kind's reserved words do not bind the envelope: `x.default` writes its property as `{ $type: 'property_identifier', content: { $type: 'identifier', $text: 'default' } }`, and `identifier` refuses `default` while `property_identifier` admits it.
+
+### `packages/common/src/node-json.ts::unitSidesBySlot`
+
+A node's unit-side records (`unitSidesOf`) grouped by slot storage key, then by item, so `nodeJSON` finds the comments of each unit it writes by its slot's `querySlots` storage key and its position in that slot.
+
+### `packages/common/src/node-json.ts::commentsJSON`
+
+The comments among a trivia side's entries as JSON. An entry whose kind is layout is left out. Each other entry is hydrated (`hydrateTriviaEntry`: a coordinate a tree's unit side holds becomes its comment node) and written as its node's JSON. A node's own sides and a unit's sides are written through it alike.
+
+### `packages/common/src/node-json.ts::unitJSON`
+
+A kind id's JSON: `{ $type }` naming its kind, with `leadingComments` and `trailingComments` from the unit's side record when it has comments there. A unit has no inner side.
+
+### `packages/common/src/node-json.ts::reviveItem`
+
+Revives one slot value, or one list item, of the node the reviver is building. When it revives to a kind id and its JSON carried comments, it records them as a unit-side record: the slot's storage key from its `querySlots` row, the item's position, and the revived comments. After building the node, the reviver gives it those records (`setUnitSides`), the record a parsed tree gives, so render, `$snapshot()` and `toJSON` read them with no path of their own.

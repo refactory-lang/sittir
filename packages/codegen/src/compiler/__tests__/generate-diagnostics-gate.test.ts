@@ -6,7 +6,10 @@ import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const evaluated = vi.hoisted(() => ({ current: undefined as unknown }));
 
-vi.mock('../evaluate.ts', () => ({ evaluate: vi.fn(async () => evaluated.current) }));
+vi.mock('../../dsl/evaluate.ts', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('../../dsl/evaluate.ts')>();
+	return { ...actual, evaluate: vi.fn(async () => evaluated.current) };
+});
 vi.mock('../link.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../link.ts')>();
 	return { ...actual, link: vi.fn(actual.link) };

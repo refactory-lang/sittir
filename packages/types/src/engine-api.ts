@@ -1,11 +1,12 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
+import type { IsExactly } from './type-utils.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
-import type { PortableSurface } from './portable.ts';
+import type { PortableRows, PortableSurface } from './portable.ts';
 
-export interface TriviaFacts {
-	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
+export interface TriviaFacts<Kind extends number = number> {
+	kindName(type: Kind): string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
 	readonly innerKinds: ReadonlySet<string>;
@@ -29,6 +30,20 @@ export interface TriviaFacts {
 	 * continuations. Comments are content and are not among them.
 	 */
 	readonly layout: ReadonlySet<number>;
+	/**
+	 * Engine plumbing, not for callers: for each kind with an inner side, the
+	 * storage keys of the slots inside its inner gap, between the tokens that
+	 * flank it. A built node of the kind is empty when none of them holds a
+	 * child that owns sides; a slot outside the gap (a terminator after the
+	 * closing brace) does not count.
+	 */
+	readonly innerRegions: ReadonlyMap<number, readonly string[]>;
+	/**
+	 * Engine plumbing, not for callers: the kind ids a node stores as a bare
+	 * kind id whose kind the parser names, such as an empty statement's `;`.
+	 * Inside an inner gap such a unit owns sides; an anonymous token does not.
+	 */
+	readonly namedUnits: ReadonlySet<number>;
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 	readonly spelled?: readonly SpelledTrivia[];
@@ -67,7 +82,9 @@ export interface EngineIdentity<API extends LanguageAPI = LanguageAPI> {
 	readonly language: LanguageIdentity<API>;
 	readonly renderModuleHash: string;
 	readonly options: API['options'] | undefined;
-	readonly trivia: TriviaFacts;
+	readonly trivia: TriviaFacts<API['kindId']>;
+	/** The rows the language's portable classifications are read from, when its grammar has bindings. */
+	readonly portable?: PortableRows;
 }
 
 export interface GrammarTypeMap {
@@ -86,7 +103,61 @@ export interface NodeMethods<Trivia = any> {
 	 * @throws As `$render()` does, when the node cannot render.
 	 */
 	toString(): string;
+	/**
+	 * The node's structure as JSON, which `JSON.stringify` writes: its kind name as `$type`, a leaf's text as
+	 * `$text`, each slot under its accessor's name, and its comments as `leadingComments`, `trailingComments`
+	 * and `innerComments`. An absent slot, an absent keyword and an empty comment side are left out; an empty
+	 * list is `[]`. Layout, provenance and the tree a parsed node reads are not written, so the engine's
+	 * `reviver` builds the JSON back into a node that renders with the engine's formatting.
+	 *
+	 * @returns The node's JSON.
+	 */
+	toJSON(): NodeJSON;
 	$trivia: TriviaSetter<this, Trivia>;
+}
+
+/**
+ * A node as JSON (`NodeMethods.toJSON`): its kind name, a leaf's text, its slots by accessor name, and the
+ * comments on each side of it.
+ */
+export interface NodeJSON {
+	readonly $type: string;
+	readonly $text?: string;
+	readonly leadingComments?: readonly NodeJSON[];
+	readonly trailingComments?: readonly NodeJSON[];
+	readonly innerComments?: readonly NodeJSON[];
+	readonly [slot: string]: NodeJSONValue | undefined;
+}
+
+/**
+ * What a slot holds in a node's JSON: a node (a kind id is written as a node of that kind), a list, whose
+ * empty element is `null`, a keyword's presence as `true`, a string, or `null` for an optional slot that
+ * chose none, as a builder takes it.
+ */
+export type NodeJSONValue = NodeJSON | readonly (NodeJSON | null)[] | true | string | null;
+
+/** Engine plumbing, not for callers: what a language's nodes are written to JSON and revived by. */
+export interface NodeJSONFacts {
+	/** Each kind's name, by kind id. */
+	readonly names: ReadonlyMap<number, string>;
+	/** The kind id of the model kind a name names; an alias's display id never answers. Throws for a name no kind has. */
+	kindId(name: string): number;
+	/** Each kind's slots, by kind id. */
+	readonly slots: QuerySlots;
+	/** The trivia kinds that spell layout; every other trivia entry is a comment. */
+	readonly layout: ReadonlySet<number>;
+	/** The kinds whose nodes hold their text. */
+	readonly leaves: ReadonlySet<number>;
+	/** The alias envelopes built from their content's text, which their builder checks by the envelope's own rule rather than the content kind's: each envelope's kind id to the kind id of the content it holds. */
+	readonly textEnvelopes: ReadonlyMap<number, number>;
+	/** The kinds a slot holds as a kind id. */
+	readonly units: ReadonlySet<number>;
+	/** The kind id an optional slot holds when it chose none. */
+	readonly blank: number;
+	/** The kinds whose builder takes their one repeated slot's items as its rest arguments, after its options: lists, and compounds with a sole repeated slot. */
+	readonly spread: ReadonlySet<number>;
+	/** Each kind's registered slots, by kind id: the slot names its builder takes in its options argument. */
+	readonly options: Readonly<Record<number, readonly string[]>>;
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {
@@ -112,6 +183,7 @@ export interface LanguageAPI {
 	readonly root: AnyUntypedNode & ParsedRoot;
 	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
+	readonly kindId: number;
 	readonly options: object & CommonRenderOptions;
 	readonly indentChar: string;
 	readonly empty: GrammarTypeMap['empty'];
@@ -133,10 +205,13 @@ export interface Language<API extends LanguageAPI> {
 	 * The language's guards, the same object as every engine's `is` (an engine of a descriptor copied from another binds the guards
 	 * to the copy instead). Each narrows a node of this language by its kind, and refuses
 	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
-	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine.
+	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine. On a grammar with bindings,
+	 * `is.portable` holds the language's portable guards: a view over the shared portable tree, with the same paths, whose guards
+	 * read a node of this language or a kind id of it (a keyword leaf such as `u8` classifies). A kind id is read through the rows an
+	 * engine of the language loaded, so a guard given one before any engine of the language exists throws.
 	 */
 	readonly is: API['is'];
-	/** The language's kind ids by name, the same object as every engine's `kinds`. */
+	/** The language's kind ids by name, the same object as every engine's `kinds`. On a grammar with bindings, `kinds.portable` holds the shared portable kinds. */
 	readonly kinds: API['kinds'];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
@@ -174,8 +249,15 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly renderModuleHash: string;
 	readonly build: API['build'];
-	readonly trivia: TriviaFacts;
+	readonly trivia: TriviaFacts<API['kindId']>;
 	readonly querySlots: QuerySlots;
+	/** What the language's nodes are written to JSON by and revived by. */
+	readonly json: NodeJSONFacts;
+	/**
+	 * Builds a node of the kind named `kind`: from one input as a kind tag does (its text as `{ text }`, or its
+	 * config), or from the builder's own arguments (a config and its options, or a list's options and items).
+	 */
+	buildByKind(kind: string, ...input: unknown[]): unknown;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;
 	readonly structure: StructureTable;
@@ -183,7 +265,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate(node: unknown, tree: unknown): unknown;
-	readonly portable?: API['portable'];
+	readonly portable?: PortableRows;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
@@ -261,11 +343,24 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
 	readonly isErrorNode: (value: unknown) => value is ErrorNode;
 	/**
-	 * Whether `node` is this engine's node of a kind with inner gaps and no child of it holds
-	 * sides, so it takes `$trivia.inner`. A child holds sides when it is named, not an extra or
-	 * `ERROR`, and has width: read from the tree for a parsed node, so its zero-width automatic
-	 * semicolon holds none, and from the rendered text for a built one. A child with text (a real
-	 * `;`) holds sides.
+	 * A `JSON.parse` reviver that builds a node's JSON (`NodeMethods.toJSON`) back into this engine's nodes:
+	 * `JSON.parse(text, engine.reviver)`. It is bound to the engine, so it can be passed on its own. Every
+	 * object with a `$type` is built as a node of that kind, children first, its comments put back on their
+	 * sides; other values, and a document's fields around a node, are left as they are. A revived node is
+	 * a built node: it renders with the engine's formatting, not the source's.
+	 *
+	 * @throws When the JSON names a kind this language lacks, a slot its kind lacks, an ERROR node or a leaf
+	 * without its text, naming where in the JSON (`$.body.statements[2]: unknown kind 'foo'`); and, when the
+	 * engine verifies structure, when a node misses a slot its kind requires.
+	 */
+	readonly reviver: (key: string, value: unknown) => unknown;
+	/**
+	 * Whether `node` is this engine's node of a kind with an inner gap and nothing in it holds
+	 * sides, so it takes `$trivia.inner`. A parsed node answers from its tree: no child is named,
+	 * not an extra or `ERROR`, and with width. A built node answers from what it stores inside the
+	 * gap: a stored node, text, or token of a named kind (a real `;`) holds sides; an anonymous
+	 * token does not, nor does a slot outside the gap, such as typescript's automatic-semicolon
+	 * terminator after `}`, which still renders.
 	 */
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
@@ -332,8 +427,6 @@ type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly
 type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
 	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }
 	: unknown;
-
-type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
 /** A language whose grammar has bindings, so it has a portable surface. */
 export type PortableLanguageAPI = LanguageAPI & { readonly portable: PortableSurface };

@@ -685,9 +685,23 @@ export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string
 	return out;
 }
 
+export function keywordAliasContent(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): { readonly ref: NodeBackedRef; readonly text: string } | undefined {
+	if (!(node instanceof AssembledAlias) || node.slots.length !== 1) return undefined;
+	const values = node.slots[0]!.values;
+	const only = values.length === 1 ? values[0]! : undefined;
+	if (only === undefined || !isNodeRef(only)) return undefined;
+	const resolved = nodeMap.nodes.get(storageKindOfRef(only.node));
+	return resolved !== undefined && resolved.modelType === 'keyword' && isFixedTextLeaf(resolved)
+		? { ref: only, text: resolved.text }
+		: undefined;
+}
+
 export function wordConstructibleText(node: AssembledNode, nodeMap: NodeMap): string | undefined {
 	if (!isAuthoredCompound(node)) return undefined;
-	const text = node.keywordConstructibleText;
+	const text = node.keywordConstructibleText ?? keywordAliasContent(node, nodeMap)?.text;
 	return text !== undefined && matchesWordShape(text, nodeMap.wordMatcher) ? text : undefined;
 }
 
@@ -901,7 +915,7 @@ function isKeywordKindIn(nodeMap: NodeMap, kind: string | undefined): boolean {
 	return kind !== undefined && nodeMap.nodes.get(kind)?.modelType === 'keyword';
 }
 
-function fixedTextEntryOf(
+export function fixedTextEntryOf(
 	value: NodeOrTerminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
@@ -1016,7 +1030,7 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	const registered = registeredSlots(node);
 	return registered.length === 0
 		? undefined
-		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey), storageKeys: registered.map((slot) => slot.storageKey) };
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName), storageKeys: registered.map((slot) => slot.storageKey) };
 }
 
 export function classifyFactoryShape(
@@ -1099,27 +1113,19 @@ export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonl
 }
 
 export function expandToConcreteParseKinds(names: readonly string[], nodeMap: NodeMap): string[] {
-	const expanded: string[] = [];
-	const seen = new Set<string>();
-	function add(name: string): void {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		if (seen.has(normalized)) return;
-		seen.add(normalized);
-		expanded.push(normalized);
-	}
+	const expanded = new Set<string>();
 	for (const name of names) {
-		const normalized = name.startsWith('_') ? name.slice(1) : name;
-		const node = nodeMap.nodes.get(name) ?? nodeMap.nodes.get(normalized);
+		const node = nodeMap.nodes.get(name);
 		if (!(node instanceof AssembledSupertype)) {
-			add(name);
+			expanded.add(name);
 			continue;
 		}
 		for (const v of node.transitiveParseKinds ?? []) {
 			const parseName = v.parseKind?.name;
-			if (parseName !== undefined) add(parseName);
+			if (parseName !== undefined) expanded.add(parseName);
 		}
 	}
-	return expanded;
+	return [...expanded];
 }
 
 export interface WireRoutes {
@@ -1324,6 +1330,76 @@ export function expandAndDedupeContentTypes(
 	};
 	for (const t of contentTypes) visit(t);
 	return expanded;
+}
+
+const IDENTIFIER_KEY = /^[A-Za-z_$][\w$]*$/;
+
+export function isIdentifierKey(key: string): boolean {
+	return IDENTIFIER_KEY.test(key);
+}
+
+export function quoteKey(key: string): string {
+	return isIdentifierKey(key) ? key : JSON.stringify(key);
+}
+
+export function refuseUndeclared(typeParam: string, declared?: string): string {
+	return declared === undefined ? `RefuseUndeclared<${typeParam}>` : `RefuseUndeclared<${typeParam}, ${declared}>`;
+}
+
+export interface RefusingParams {
+	readonly typeParams: string;
+	readonly params: string;
+}
+
+export function plainParams(params: string): RefusingParams {
+	return { typeParams: '', params };
+}
+
+export function refusingParam(
+	label: string,
+	type: string,
+	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: boolean } = {}
+): RefusingParams {
+	const typeParam = shape.rest ? 'A' : 'V';
+	const refusal = refuseUndeclared(typeParam, shape.loose ? type : undefined);
+	return {
+		typeParams: `<${shape.loose ? 'const ' : ''}${typeParam} extends ${type}>`,
+		params: shape.rest
+			? `...${label}: ${typeParam} & ${refusal}`
+			: shape.optional
+				? `...${label}: [${label}?: ${typeParam}] & ${refusal}`
+				: `${label}: ${typeParam} & ${refusal}`
+	};
+}
+
+const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUndeclared<\w+(?:, .+)?>)$/;
+const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+)?>)((?:, .*)?)$/;
+
+export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
+	const optional = OPTIONAL_REFUSING.exec(refusing.params);
+	return {
+		...refusing,
+		params: optional === null ? `${refusing.params}, ${trailing}` : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
+	};
+}
+
+export function optionalRefusing(refusing: RefusingParams): RefusingParams {
+	const required = REQUIRED_REFUSING.exec(refusing.params);
+	return {
+		...refusing,
+		params:
+			required === null
+				? refusing.params.replace(/^(\w+): /, '$1?: ')
+				: `...${required[1]}: [${required[1]}?: ${required[2]}${required[4]}] & ${required[3]}`
+	};
+}
+
+export function declaredOverload(head: string, refusing: RefusingParams, returnType: string): string {
+	return `${head}${refusing.typeParams}(${refusing.params}): ${returnType};`;
+}
+
+export function functionTypeOf(refusing: RefusingParams, returnType: string): string {
+	return `${refusing.typeParams}(${refusing.params}) => ${returnType}`;
 }
 
 export function withEmptyOverload(

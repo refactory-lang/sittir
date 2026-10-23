@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluateDsl } from '../evaluate.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { runTreeSitterCliCapturing } from '../../transpile/tree-sitter-cli.ts';
 import { verbCtxOf } from '../verbs/copy.ts';

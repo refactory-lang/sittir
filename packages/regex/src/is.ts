@@ -3,23 +3,83 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './kinds.js';
+import { holdsKinds, type KindTest } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
 
+// KindMembers — each supertype and enum kind, mapped to the kind ids it holds for.
+export interface KindMembers {
+	[TSKindId.InlineFlagsGroup]:
+		| TSKindId.InlineFlagsGroupEnable
+		| TSKindId.InlineFlagsGroupToggle
+		| TSKindId.InlineFlagsGroupDisable;
+}
+
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-	pattern<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Pattern };
+	readonly pattern: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Pattern };
+		alternation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
+		term<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pattern };
+	};
 	alternation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Alternation };
-	term<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Term };
-	lookaroundAssertion<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaroundAssertion };
+	readonly term: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Term };
+		readonly group: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
+			startAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			endAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			boundaryAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			nonBoundaryAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			readonly lookaroundAssertion: {
+				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+				lookaheadAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+				lookbehindAssertion<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.TermGroup };
+			};
+			patternCharacter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			characterClass<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			posixCharacterClass<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			anyCharacter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			decimalEscape<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			readonly characterClassEscape: {
+				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+				arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+				unicodeCharacterEscape<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.TermGroup };
+			};
+			backreferenceEscape<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			namedGroupBackreference<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.TermGroup };
+			anonymousCapturingGroup<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.TermGroup };
+			namedCapturingGroup<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+			nonCapturingGroup<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TermGroup };
+		};
+	};
+	readonly lookaroundAssertion: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaroundAssertion };
+		lookaheadAssertion<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.LookaroundAssertion };
+		lookbehindAssertion<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.LookaroundAssertion };
+	};
 	lookaheadAssertion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LookaheadAssertion };
@@ -53,24 +113,45 @@ export interface IsGuards {
 	optional<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Optional };
-	countQuantifier<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CountQuantifier };
+	readonly countQuantifier: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CountQuantifier };
+		arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CountQuantifier };
+	};
 	backreferenceEscape<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BackreferenceEscape };
 	namedGroupBackreference<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedGroupBackreference };
-	characterClassEscape<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscape };
+	readonly characterClassEscape: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscape };
+		arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CharacterClassEscape };
+		unicodeCharacterEscape<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.CharacterClassEscape };
+	};
 	unicodePropertyValueExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyValueExpression };
 	identityEscape<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IdentityEscape };
+	countQuantifierGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CountQuantifierGroup };
+	countQuantifierArm<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CountQuantifierArm };
+	characterClassEscapeArm<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeArm };
+	unicodePropertyValueExpressionGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyValueExpressionGroup };
 	inlineFlagsGroupEnable<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupEnable };
@@ -88,12 +169,7 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly inlineFlagsGroup: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			TSKindId.InlineFlagsGroupEnable | TSKindId.InlineFlagsGroupToggle | TSKindId.InlineFlagsGroupDisable
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.InlineFlagsGroup]>;
 		enable<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupEnable };
@@ -104,18 +180,14 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupDisable };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
-	anyCharacter<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.AnyCharacter>;
-	startAssertion<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.StartAssertion>;
-	endAssertion<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.EndAssertion>;
-	boundaryAssertion<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.BoundaryAssertion>;
-	nonBoundaryAssertion<T extends { readonly $type: string | number } | number>(
+	anyCharacter<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.AnyCharacter>;
+	startAssertion<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.StartAssertion>;
+	endAssertion<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EndAssertion>;
+	boundaryAssertion<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.BoundaryAssertion>;
+	nonBoundaryAssertion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.NonBoundaryAssertion>;
 	patternCharacter<T extends { readonly $type: number } | number>(
@@ -157,88 +229,213 @@ export interface IsGuards {
 	characterClassEscapeText2<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText2 };
-	negation<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
-}
-
-// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
-function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && isMember(id, v.$type);
-}
-function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
-}
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
-	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
-}
-function _vg<G extends object>(guard: G, variants: object): G {
-	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+	negation<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
 }
 
 const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
 const _supertype_layout_ids = new Set<number>([47, 48, 49, 50]);
 
-const _members = new Map<number, ReadonlySet<number>>([[65, _supertype_inlineFlagsGroup_ids]]);
+const _members = new Map<number, ReadonlySet<number>>([[TSKindId.InlineFlagsGroup, _supertype_inlineFlagsGroup_ids]]);
+const _single = new Map<number, ReadonlySet<number>>();
+function _kinds(kind: number): ReadonlySet<number> {
+	const members = _members.get(kind);
+	if (members !== undefined) return members;
+	let single = _single.get(kind);
+	if (single === undefined) _single.set(kind, (single = new Set([kind])));
+	return single;
+}
 export function isMember(kind: number, type: number): boolean {
-	return _members.get(kind)?.has(type) ?? type === kind;
+	return _kinds(kind).has(type);
 }
 export function membersOf(kind: number): readonly number[] {
-	const members = _members.get(kind);
-	return members === undefined ? [kind] : [...members];
+	return [..._kinds(kind)];
 }
 
-const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
-	enable: _g(TSKindId.InlineFlagsGroupEnable),
-	toggle: _g(TSKindId.InlineFlagsGroupToggle),
-	disable: _g(TSKindId.InlineFlagsGroupDisable)
-});
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+}
 
-export const is = Object.freeze({
-	pattern: _g(TSKindId.Pattern),
-	alternation: _g(TSKindId.Alternation),
-	term: _g(TSKindId.Term),
-	lookaroundAssertion: _g(TSKindId.LookaroundAssertion),
-	lookaheadAssertion: _g(TSKindId.LookaheadAssertion),
-	lookbehindAssertion: _g(TSKindId.LookbehindAssertion),
-	characterClass: _g(TSKindId.CharacterClass),
-	posixCharacterClass: _g(TSKindId.PosixCharacterClass),
-	classRange: _g(TSKindId.ClassRange),
-	anonymousCapturingGroup: _g(TSKindId.AnonymousCapturingGroup),
-	namedCapturingGroup: _g(TSKindId.NamedCapturingGroup),
-	nonCapturingGroup: _g(TSKindId.NonCapturingGroup),
-	zeroOrMore: _g(TSKindId.ZeroOrMore),
-	oneOrMore: _g(TSKindId.OneOrMore),
-	optional: _g(TSKindId.Optional),
-	countQuantifier: _g(TSKindId.CountQuantifier),
-	backreferenceEscape: _g(TSKindId.BackreferenceEscape),
-	namedGroupBackreference: _g(TSKindId.NamedGroupBackreference),
-	characterClassEscape: _g(TSKindId.CharacterClassEscape),
-	unicodePropertyValueExpression: _g(TSKindId.UnicodePropertyValueExpression),
-	identityEscape: _g(TSKindId.IdentityEscape),
-	inlineFlagsGroupEnable: _g(TSKindId.InlineFlagsGroupEnable),
-	inlineFlagsGroupToggle: _g(TSKindId.InlineFlagsGroupToggle),
-	inlineFlagsGroupDisable: _g(TSKindId.InlineFlagsGroupDisable),
-	lazy: _g(TSKindId.Lazy),
-	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
-	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
-	inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
-	layout: _sg(_supertype_layout_ids),
-	anyCharacter: _mg(TSKindId.AnyCharacter),
-	startAssertion: _mg(TSKindId.StartAssertion),
-	endAssertion: _mg(TSKindId.EndAssertion),
-	boundaryAssertion: _mg(TSKindId.BoundaryAssertion),
-	nonBoundaryAssertion: _mg(TSKindId.NonBoundaryAssertion),
-	patternCharacter: _g(TSKindId.PatternCharacter),
-	posixClassName: _g(TSKindId.PosixClassName),
-	classCharacter: _g(TSKindId.ClassCharacter),
-	flags: _g(TSKindId.Flags),
-	decimalEscape: _g(TSKindId.DecimalEscape),
-	unicodeCharacterEscape: _g(TSKindId.UnicodeCharacterEscape),
-	unicodePropertyValue: _g(TSKindId.UnicodePropertyValue),
-	controlEscape: _g(TSKindId.ControlEscape),
-	controlLetterEscape: _g(TSKindId.ControlLetterEscape),
-	groupName: _g(TSKindId.GroupName),
-	decimalDigits: _g(TSKindId.DecimalDigits),
-	characterClassEscapeText1: _g(TSKindId.CharacterClassEscapeText1),
-	characterClassEscapeText2: _g(TSKindId.CharacterClassEscapeText2),
-	negation: _mg(TSKindId.Negation)
-}) as unknown as IsGuards;
+function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+	const inner = guard as unknown as (v: unknown) => boolean;
+	const forms: Record<string, object> = {};
+	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	return _vg(
+		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		forms
+	) as unknown as G;
+}
+
+// Runtime: every guard holds through the one kind test it is built with; an engine's `ofType` reads the same test.
+export function guardsWith(test: KindTest): IsGuards {
+	const _g = (id: number) => {
+		const kinds = _kinds(id);
+		return (v: unknown): boolean => typeof v !== 'number' && test(v, kinds);
+	};
+	const _mg = (kind: number) => {
+		const kinds = _kinds(kind);
+		return (v: unknown): boolean => test(v, kinds);
+	};
+	const _sg =
+		(kinds: ReadonlySet<number>) =>
+		(v: unknown): boolean =>
+			test(v, kinds);
+	const _kind_InlineFlagsGroupEnable_guard = _g(TSKindId.InlineFlagsGroupEnable);
+	const _kind_InlineFlagsGroupToggle_guard = _g(TSKindId.InlineFlagsGroupToggle);
+	const _kind_InlineFlagsGroupDisable_guard = _g(TSKindId.InlineFlagsGroupDisable);
+	const _kind_Alternation_guard = _g(TSKindId.Alternation);
+	const _kind_Pattern_guard = _g(TSKindId.Pattern);
+	const _kind_Term_guard = _g(TSKindId.Term);
+	const _kind_StartAssertion_guard = _mg(TSKindId.StartAssertion);
+	const _kind_TermGroup_guard = _g(TSKindId.TermGroup);
+	const _kind_EndAssertion_guard = _mg(TSKindId.EndAssertion);
+	const _kind_BoundaryAssertion_guard = _mg(TSKindId.BoundaryAssertion);
+	const _kind_NonBoundaryAssertion_guard = _mg(TSKindId.NonBoundaryAssertion);
+	const _kind_LookaheadAssertion_guard = _g(TSKindId.LookaheadAssertion);
+	const _kind_LookaroundAssertion_guard = _g(TSKindId.LookaroundAssertion);
+	const _kind_LookbehindAssertion_guard = _g(TSKindId.LookbehindAssertion);
+	const _kind_PatternCharacter_guard = _g(TSKindId.PatternCharacter);
+	const _kind_CharacterClass_guard = _g(TSKindId.CharacterClass);
+	const _kind_PosixCharacterClass_guard = _g(TSKindId.PosixCharacterClass);
+	const _kind_AnyCharacter_guard = _mg(TSKindId.AnyCharacter);
+	const _kind_DecimalEscape_guard = _g(TSKindId.DecimalEscape);
+	const _kind_CharacterClassEscapeArm_guard = _g(TSKindId.CharacterClassEscapeArm);
+	const _kind_CharacterClassEscape_guard = _g(TSKindId.CharacterClassEscape);
+	const _kind_UnicodeCharacterEscape_guard = _g(TSKindId.UnicodeCharacterEscape);
+	const _kind_BackreferenceEscape_guard = _g(TSKindId.BackreferenceEscape);
+	const _kind_NamedGroupBackreference_guard = _g(TSKindId.NamedGroupBackreference);
+	const _kind_AnonymousCapturingGroup_guard = _g(TSKindId.AnonymousCapturingGroup);
+	const _kind_NamedCapturingGroup_guard = _g(TSKindId.NamedCapturingGroup);
+	const _kind_NonCapturingGroup_guard = _g(TSKindId.NonCapturingGroup);
+	const _kind_ClassRange_guard = _g(TSKindId.ClassRange);
+	const _kind_ZeroOrMore_guard = _g(TSKindId.ZeroOrMore);
+	const _kind_OneOrMore_guard = _g(TSKindId.OneOrMore);
+	const _kind_Optional_guard = _g(TSKindId.Optional);
+	const _kind_CountQuantifierArm_guard = _g(TSKindId.CountQuantifierArm);
+	const _kind_CountQuantifier_guard = _g(TSKindId.CountQuantifier);
+	const _kind_UnicodePropertyValueExpression_guard = _g(TSKindId.UnicodePropertyValueExpression);
+	const _kind_IdentityEscape_guard = _g(TSKindId.IdentityEscape);
+	const _kind_CountQuantifierGroup_guard = _g(TSKindId.CountQuantifierGroup);
+	const _kind_UnicodePropertyValueExpressionGroup_guard = _g(TSKindId.UnicodePropertyValueExpressionGroup);
+	const _kind_Lazy_guard = _g(TSKindId.Lazy);
+	const _kind_UnicodePropertyName_guard = _g(TSKindId.UnicodePropertyName);
+	const _kind_PosixClassName_guard = _g(TSKindId.PosixClassName);
+	const _kind_ClassCharacter_guard = _g(TSKindId.ClassCharacter);
+	const _kind_Flags_guard = _g(TSKindId.Flags);
+	const _kind_UnicodePropertyValue_guard = _g(TSKindId.UnicodePropertyValue);
+	const _kind_ControlEscape_guard = _g(TSKindId.ControlEscape);
+	const _kind_ControlLetterEscape_guard = _g(TSKindId.ControlLetterEscape);
+	const _kind_GroupName_guard = _g(TSKindId.GroupName);
+	const _kind_DecimalDigits_guard = _g(TSKindId.DecimalDigits);
+	const _kind_CharacterClassEscapeText1_guard = _g(TSKindId.CharacterClassEscapeText1);
+	const _kind_CharacterClassEscapeText2_guard = _g(TSKindId.CharacterClassEscapeText2);
+	const _kind_Negation_guard = _mg(TSKindId.Negation);
+	const _form_Pattern_guard = _vg(_g(TSKindId.Pattern), {
+		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
+		term: _at(_kind_Pattern_guard, 'content', _kind_Term_guard)
+	});
+	const _form_TermGroup_guard = _vg(_g(TSKindId.TermGroup), {
+		startAssertion: _at(_kind_TermGroup_guard, 'content', _kind_StartAssertion_guard),
+		endAssertion: _at(_kind_TermGroup_guard, 'content', _kind_EndAssertion_guard),
+		boundaryAssertion: _at(_kind_TermGroup_guard, 'content', _kind_BoundaryAssertion_guard),
+		nonBoundaryAssertion: _at(_kind_TermGroup_guard, 'content', _kind_NonBoundaryAssertion_guard),
+		lookaroundAssertion: _at(
+			_kind_TermGroup_guard,
+			'content',
+			_vg(_g(TSKindId.LookaroundAssertion), {
+				lookaheadAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookaheadAssertion_guard),
+				lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
+			})
+		),
+		patternCharacter: _at(_kind_TermGroup_guard, 'content', _kind_PatternCharacter_guard),
+		characterClass: _at(_kind_TermGroup_guard, 'content', _kind_CharacterClass_guard),
+		posixCharacterClass: _at(_kind_TermGroup_guard, 'content', _kind_PosixCharacterClass_guard),
+		anyCharacter: _at(_kind_TermGroup_guard, 'content', _kind_AnyCharacter_guard),
+		decimalEscape: _at(_kind_TermGroup_guard, 'content', _kind_DecimalEscape_guard),
+		characterClassEscape: _at(
+			_kind_TermGroup_guard,
+			'content',
+			_vg(_g(TSKindId.CharacterClassEscape), {
+				arm: _at(_kind_CharacterClassEscape_guard, 'content', _kind_CharacterClassEscapeArm_guard),
+				unicodeCharacterEscape: _at(_kind_CharacterClassEscape_guard, 'content', _kind_UnicodeCharacterEscape_guard)
+			})
+		),
+		backreferenceEscape: _at(_kind_TermGroup_guard, 'content', _kind_BackreferenceEscape_guard),
+		namedGroupBackreference: _at(_kind_TermGroup_guard, 'content', _kind_NamedGroupBackreference_guard),
+		anonymousCapturingGroup: _at(_kind_TermGroup_guard, 'content', _kind_AnonymousCapturingGroup_guard),
+		namedCapturingGroup: _at(_kind_TermGroup_guard, 'content', _kind_NamedCapturingGroup_guard),
+		nonCapturingGroup: _at(_kind_TermGroup_guard, 'content', _kind_NonCapturingGroup_guard)
+	});
+	const _form_Term_guard = _vg(_g(TSKindId.Term), { group: _form_TermGroup_guard });
+	const _form_LookaroundAssertion_guard = _vg(_g(TSKindId.LookaroundAssertion), {
+		lookaheadAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookaheadAssertion_guard),
+		lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
+	});
+	const _form_CountQuantifier_guard = _vg(_g(TSKindId.CountQuantifier), {
+		arm: _at(_kind_CountQuantifier_guard, 'content', _kind_CountQuantifierArm_guard)
+	});
+	const _form_CharacterClassEscape_guard = _vg(_g(TSKindId.CharacterClassEscape), {
+		arm: _at(_kind_CharacterClassEscape_guard, 'content', _kind_CharacterClassEscapeArm_guard),
+		unicodeCharacterEscape: _at(_kind_CharacterClassEscape_guard, 'content', _kind_UnicodeCharacterEscape_guard)
+	});
+	const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
+		enable: _kind_InlineFlagsGroupEnable_guard,
+		toggle: _kind_InlineFlagsGroupToggle_guard,
+		disable: _kind_InlineFlagsGroupDisable_guard
+	});
+	return Object.freeze({
+		pattern: _form_Pattern_guard,
+		alternation: _kind_Alternation_guard,
+		term: _form_Term_guard,
+		lookaroundAssertion: _form_LookaroundAssertion_guard,
+		lookaheadAssertion: _kind_LookaheadAssertion_guard,
+		lookbehindAssertion: _kind_LookbehindAssertion_guard,
+		characterClass: _kind_CharacterClass_guard,
+		posixCharacterClass: _kind_PosixCharacterClass_guard,
+		classRange: _kind_ClassRange_guard,
+		anonymousCapturingGroup: _kind_AnonymousCapturingGroup_guard,
+		namedCapturingGroup: _kind_NamedCapturingGroup_guard,
+		nonCapturingGroup: _kind_NonCapturingGroup_guard,
+		zeroOrMore: _kind_ZeroOrMore_guard,
+		oneOrMore: _kind_OneOrMore_guard,
+		optional: _kind_Optional_guard,
+		countQuantifier: _form_CountQuantifier_guard,
+		backreferenceEscape: _kind_BackreferenceEscape_guard,
+		namedGroupBackreference: _kind_NamedGroupBackreference_guard,
+		characterClassEscape: _form_CharacterClassEscape_guard,
+		unicodePropertyValueExpression: _kind_UnicodePropertyValueExpression_guard,
+		identityEscape: _kind_IdentityEscape_guard,
+		countQuantifierGroup: _kind_CountQuantifierGroup_guard,
+		countQuantifierArm: _kind_CountQuantifierArm_guard,
+		characterClassEscapeArm: _kind_CharacterClassEscapeArm_guard,
+		unicodePropertyValueExpressionGroup: _kind_UnicodePropertyValueExpressionGroup_guard,
+		inlineFlagsGroupEnable: _kind_InlineFlagsGroupEnable_guard,
+		inlineFlagsGroupToggle: _kind_InlineFlagsGroupToggle_guard,
+		inlineFlagsGroupDisable: _kind_InlineFlagsGroupDisable_guard,
+		lazy: _kind_Lazy_guard,
+		unicodePropertyName: _kind_UnicodePropertyName_guard,
+		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
+		inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
+		layout: _sg(_supertype_layout_ids),
+		anyCharacter: _kind_AnyCharacter_guard,
+		startAssertion: _kind_StartAssertion_guard,
+		endAssertion: _kind_EndAssertion_guard,
+		boundaryAssertion: _kind_BoundaryAssertion_guard,
+		nonBoundaryAssertion: _kind_NonBoundaryAssertion_guard,
+		patternCharacter: _kind_PatternCharacter_guard,
+		posixClassName: _kind_PosixClassName_guard,
+		classCharacter: _kind_ClassCharacter_guard,
+		flags: _kind_Flags_guard,
+		decimalEscape: _kind_DecimalEscape_guard,
+		unicodeCharacterEscape: _kind_UnicodeCharacterEscape_guard,
+		unicodePropertyValue: _kind_UnicodePropertyValue_guard,
+		controlEscape: _kind_ControlEscape_guard,
+		controlLetterEscape: _kind_ControlLetterEscape_guard,
+		groupName: _kind_GroupName_guard,
+		decimalDigits: _kind_DecimalDigits_guard,
+		characterClassEscapeText1: _kind_CharacterClassEscapeText1_guard,
+		characterClassEscapeText2: _kind_CharacterClassEscapeText2_guard,
+		negation: _kind_Negation_guard
+	}) as unknown as IsGuards;
+}
+
+export const is = guardsWith(holdsKinds);

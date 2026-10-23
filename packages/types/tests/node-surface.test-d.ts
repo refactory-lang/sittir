@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { BoundOf, ParsedOf, SlotHint, ListSlotHint, ListViewHint, NodeMethods, WithNode } from '../src/index.ts';
+import type { BoundOf, HoldsSource, HoldsTree, ParsedOf, SlotHint, ListSlotHint, ListViewHint, NodeMethods, WithNode } from '../src/index.ts';
 
 const enum K {
 	Fn = 1,
@@ -46,34 +46,34 @@ interface Fn {
 	};
 }
 declare namespace Param {
-	interface Bound extends BoundOf<Param, ByB>, Pick<NodeMethods, '$render'> {
+	interface Bound extends BoundOf<Param, ByB>, Pick<NodeMethods, '$render'>, HoldsSource {
 		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Param, ByP>, Pick<NodeMethods, '$render'> {
+	interface Parsed extends ParsedOf<Param, ByP>, Pick<NodeMethods, '$render'>, HoldsSource, HoldsTree {
 		readonly $with: WithNode<this, ByB>;
 	}
 }
 declare namespace Items {
-	interface Bound extends BoundOf<Items, ByB>, Pick<NodeMethods, '$render'> {
+	interface Bound extends BoundOf<Items, ByB>, Pick<NodeMethods, '$render'>, HoldsSource {
 		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Items, ByP>, Pick<NodeMethods, '$render'> {
+	interface Parsed extends ParsedOf<Items, ByP>, Pick<NodeMethods, '$render'>, HoldsSource, HoldsTree {
 		readonly $with: WithNode<this, ByB>;
 	}
 }
 declare namespace Params {
-	interface Bound extends BoundOf<Params, ByB>, Pick<NodeMethods, '$render'> {
+	interface Bound extends BoundOf<Params, ByB>, Pick<NodeMethods, '$render'>, HoldsSource {
 		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Params, ByP>, Pick<NodeMethods, '$render'> {
+	interface Parsed extends ParsedOf<Params, ByP>, Pick<NodeMethods, '$render'>, HoldsSource, HoldsTree {
 		readonly $with: WithNode<this, ByB>;
 	}
 }
 declare namespace Fn {
-	interface Bound extends BoundOf<Fn, ByB>, Pick<NodeMethods, '$render'> {
+	interface Bound extends BoundOf<Fn, ByB>, Pick<NodeMethods, '$render'>, HoldsSource {
 		readonly $with: WithNode<this, ByB>;
 	}
-	interface Parsed extends ParsedOf<Fn, ByP>, Pick<NodeMethods, '$render'> {
+	interface Parsed extends ParsedOf<Fn, ByP>, Pick<NodeMethods, '$render'>, HoldsSource, HoldsTree {
 		readonly $with: WithNode<this, ByB>;
 	}
 }

@@ -153,18 +153,19 @@ describe('the tree table across threads and processes', () => {
 		native.disposeTree(mine);
 	});
 
-	it('renders read data cloned in from another thread from its own data, never from a tree it names', async () => {
+	it('refuses read data cloned in from another thread as no node, never rendering from a tree it names', async () => {
 		const engine = await createEngine(rust);
 		const leaf = (engine.parse('fn f() {}\n').statements()[0] as unknown as { name(): object }).name();
 		const worker = new Worker(fixture('tree-clone-worker.mts'), {
-			workerData: { leaf: Object.fromEntries(Object.entries(leaf).filter(([key, member]) => typeof member !== 'function' && key !== '$trivia')) },
+			workerData: { leaf: { ...Object.fromEntries(Object.entries(leaf).filter(([key, member]) => typeof member !== 'function' && key !== '$trivia')), $text: (leaf as { $text(): string }).$text() } },
 			execArgv: ['--import', 'tsx']
 		});
 		const message = await reply<{ rendered?: string; error?: string }>(worker);
-		expect(message.rendered).toBe('f + y');
+		expect(message.rendered).toBeUndefined();
+		expect(message.error).toContain('the identifier tag takes its text');
 	}, 60_000);
 
-	it('renders read data copied in from another process from its own data, never from a tree of the receiver', () => {
+	it('refuses read data copied in from another process as no node, never rendering from a tree of the receiver', () => {
 		// Every process counts its tree ids from 0, so the copy's coordinate
 		// names a tree of the receiver: only the missing hold tells them apart.
 		const run = (name: string, ...args: string[]): string =>
@@ -178,6 +179,7 @@ describe('the tree table across threads and processes', () => {
 				.at(-1) ?? '';
 		const leaf = run('tree-leaf-process.mts');
 		const message = JSON.parse(run('tree-leaf-receiver.mts', leaf)) as { rendered?: string; error?: string };
-		expect(message.rendered).toBe('f + y');
+		expect(message.rendered).toBeUndefined();
+		expect(message.error).toContain('the identifier tag takes its text');
 	}, 60_000);
 });

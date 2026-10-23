@@ -37,7 +37,7 @@ The context names are vocabulary terms, declared once, beside the kinds, in `pac
 - an ordered tuple;
 - `BuilderContext`, its element type. The name keeps it apart from `GrammarContext<G>`.
 
-A term's position is its bit in every mask, in every grammar. A test holds the tuple at 31 terms or fewer, since bit 31 is `Unproven` (§6). A grammar's table names only these terms, and a grammar that needs a new one adds it to the vocabulary first, as a feature adds a kind.
+A term's position is its bit in every mask, in every grammar. A test holds the tuple at 30 terms or fewer, since bits 30 and 31 are `Excluded` and `Unproven` (§6). A grammar's table names only these terms, and a grammar that needs a new one adds it to the vocabulary first, as a feature adds a kind.
 
 | term | required by | permitted inside |
 | --- | --- | --- |
@@ -137,21 +137,29 @@ export type NeedsOf<X> = X extends { readonly $needs: Needs<infer N> } ? N : nev
 type Bounded<B, A extends BuilderContext> =
 	[Exclude<NeedsOf<B>, A | 'Unproven'>] extends [never] ? unknown : { readonly $needs: Needs<A | 'Unproven'> };
 
-declare function buildWhileStatement<P extends Admit<T.ParenthesizedExpression>, B extends Admit<T.Statement>>(
-	config: { condition: P; body: B }
-): T.WhileStatement.Bound<NeedsOf<P> | Exclude<NeedsOf<B>, 'Break' | 'Continue'>>;
+declare function buildWhileStatement<
+	ConditionSlot extends T.WhileStatement.Config['condition'],
+	BodySlot extends T.WhileStatement.Config['body']
+>(
+	config: RefusingConfig<T.WhileStatement.Config, { condition: ConditionSlot; body: BodySlot }>
+): T.WhileStatement.Bound<NeedsOf<ConditionSlot> | Exclude<NeedsOf<BodySlot>, 'Break' | 'Continue'>>;
 
-declare function buildFunctionDeclaration<B extends Admit<T.StatementBlock>>(
-	config: { name: …; body: B & Bounded<B, 'Return' | 'Await' | 'NewTarget'> }
+declare function buildFunctionDeclaration<BodySlot extends T.FunctionDeclaration.Config['body']>(
+	config: RefusingConfig<
+		T.FunctionDeclaration.Config,
+		{ body: BodySlot & Bounded<BodySlot, 'Return' | 'Await' | 'NewTarget'> }
+	>
 ): T.FunctionDeclaration.Bound<never>;
 ```
 
-- **`$needs` is a runtime member.** It is the mask (§6), so the type describes a member that exists. The phantom key refines the number's type, the way the generated `__booleanKeyword__` brands already refine keyword booleans. It is not an admission brand: admission still reads the tree token or `$render`.
+- **`$needs` is a runtime member.** It is the mask (§6), so the type describes a member that exists. The phantom key refines the number's type, the way the generated `__booleanKeyword__` brands already refine keyword booleans. It is not an admission brand: admission reads the node fact (below).
 - **`X.Bound<N extends BuilderContext = BuilderContext>`.** The default is every context, as ruled. A wide annotation (`const s: T.Statement = …`) holds any node, and placing it at a bound is refused, because its type no longer proves what it needs.
 - **Lists:** `C extends Admit<T.Statement>[]` with `NeedsOf<C[number]>`.
 - **A providing slot** returns `Exclude<NeedsOf<B>, Provided>`.
-- **A bounding slot** intersects its parameter with `Bounded<B, Provided>`. Each kind's provided set is fixed, because every entry is a kind. The refusal reads as the unmet context at the end of the message: `'"Break"' is not assignable to '"Unproven" | FunctionBody'`.
+- **A bounding slot** intersects its slot's type parameter with `Bounded<…, Provided>`. Each kind's provided set is fixed, because every entry is a kind. The refusal reads as the unmet context at the end of the message: `'"Break"' is not assignable to '"Unproven" | FunctionBody'`.
 - **`Unproven`** is the name for needs the types do not track: parsed nodes, loose-built nodes, and wide annotations of them. A bound's type admits it, and the runtime check decides (§7).
+- **Untyped nodes and undeclared keys.** An untyped node has no language, so no typed slot admits it. A `$type` of plain `number` is refused by a generic check, since TypeScript admits `number` into any numeric enum. The check, `RefuseUndeclared<V>` in `@sittir/types`, covers every node-valued slot, not only the slots a requiring kind is reachable from. Every node-valued builder parameter and every `$with` setter is generic over its value. A strict config builder takes one type parameter per node-valued slot, `<ConfigKey>Slot`, and refuses on the mapped config as a whole (`RefusingConfig`): through an optional field typed `B & RefuseUndeclared<B>`, TypeScript would infer `B` from one member of a union value per arm. Contexts layer `Bounded` onto the slot's own parameter inside it. A loose builder is generic over its whole input and passes its declared shape (`RefuseUndeclared<I, T.X.Loose>`), so the same walk also refuses a key that shape does not declare, at any depth, which TypeScript's own excess-property check does not do for a generic parameter. The walk opens at most a fixed number of lists and configs on a path and refuses what lies deeper as too deep to check, never admitting it unread. The per-language enums refuse a node of another language, and a node of the slot's language keeps its kind.
+- **The node fact.** An object is a node when it holds a source stamp or a tree token, and nothing else makes it one. Both are members under symbols private to `@sittir/common`, so no hand-written object carries either. The source stamp (`Ts`, `Sg` or `Factory`) is set where the node is created: by a read, a builder, a list product, or the JSON reviver. The tree token is set where a read holds its tree. The types admit by this fact (`Admit`, whose node marker is the two symbol members), and the runtime's `isNode` tests the same fact; neither infers that an object is a node from its structure. A node carries no `$source` member: its provenance is read by one exported function, `sourceOf(node)`, which reads the stamp and answers for every node, a spread copy included. A copy that leaves this thread's objects (JSON, `structuredClone`, a copy by string keys) holds no stamp and is no node. A config that names `$source` or `$render` is a config, and the refusal walk refuses those keys as undeclared. Built leaves keep `$render()` and `toString()` for rendering, which is not admission.
 
 **Cost** (tsc 7.0.2, from the probe's workloads over the real TypeScript node types):
 - Loading the types is unchanged, at about 1.4 s.
@@ -162,7 +170,8 @@ This is reported, not gated. The declarations' growth, a type parameter per reac
 
 ## 6. The runtime mask
 
-- `$needs` is a 32-bit mask: bits 0–30 are the vocabulary's terms in tuple order, and bit 31 is `Unproven`.
+- `$needs` is a 32-bit mask: bits 0–29 are the vocabulary's terms in tuple order, bit 30 is `Excluded`, and bit 31 is `Unproven`.
+- `Excluded` marks a parsed node that holds atoms its kind excludes. It is a need no slot provides and every bounding slot bounds ([builder exclusions](2026-10-19-builder-exclusions-design.md) §7).
 - A built node holds it as an own data property. A parsed node reads it from its arena row.
 
 Every builder computes it at construction, in both modes. For each slot, `contribution` is the OR of the child masks with the slot's provided bits cleared. The node's own mask is:

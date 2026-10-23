@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -7,7 +7,6 @@ import { assemble, AssembleCtx } from '../assemble.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { AbstractAssembledCompound, AssembledSupertype } from '../model/node-map.ts';
 import type { NodeMap } from '../types.ts';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 function labelledRefsOf(nodeMap: NodeMap, owner: string): readonly { readonly variant?: string; readonly definedBy?: string }[] {
 	const out: { readonly variant?: string; readonly definedBy?: string }[] = [];
@@ -28,10 +27,10 @@ describe('label provenance', () => {
 		const raw = await evaluatePackage(grammarPackage('python'));
 		const ids = await loadGeneratedIdTables('python');
 		nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw, { generatedIdTables: ids })), ids));
-	}, FULL_PIPELINE_TIMEOUT);
+	});
 
 	it('carries an authored variant label to the assembled refs as authored', () => {
-		const refs = labelledRefsOf(nodeMap, 'match_block');
+		const refs = labelledRefsOf(nodeMap, '_match_block');
 		expect(refs.map((ref) => ref.variant).sort()).toEqual(['block', 'empty']);
 		expect(new Set(refs.map((ref) => ref.definedBy))).toEqual(new Set(['override']));
 	});

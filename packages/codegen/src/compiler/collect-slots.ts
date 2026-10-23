@@ -28,6 +28,7 @@ import {
 	stampListFactsOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
+import { SITE_EDITS_KEY } from '../dsl/wire/wire.ts';
 import {
 	carriesNamedField,
 	degenerateArmFieldName,
@@ -352,7 +353,7 @@ function recordUnclassifiableShape(
 		ownerKind: kindForName,
 		message:
 			`[collect-slots] kind '${kindForName ?? '(unknown)'}': member ${member.id ?? '(no id)'} is not a leaf or a ` +
-			`choice of leaves (${bucket}: ${describeArmShape(member)}). Resolve with rule(name, body) in edits: ` +
+			`choice of leaves (${bucket}: ${describeArmShape(member)}). Resolve with rule(name, body) in ${SITE_EDITS_KEY}: ` +
 			`naming the structured arm as its own rule`,
 		details: { bucket, shape: describeArmShape(member), ruleId: member.id }
 	});
@@ -403,7 +404,7 @@ function resolveMember(
 								(partition.degenerateNamedArms.length > 0
 									? ` and degenerate arm(s) [${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]`
 									: '') +
-								`. Resolve with variant(name) in edits: splitting the row, until the structured-arm ` +
+								`. Resolve with variant(name) in ${SITE_EDITS_KEY}: splitting the row, until the structured-arm ` +
 								`enrich mint gives each structured arm a kind of its own in the union slot.`
 						});
 					} else if (unionRoutingGateB(partition) && ruleId === undefined) {
@@ -429,7 +430,7 @@ function resolveMember(
 										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]` +
 										(repeated
 											? `. The list mixes slot topologies, so its elements cannot be read in order: give each ` +
-												`label-routed arm a kind of its own (variant(name) in edits:)`
+												`label-routed arm a kind of its own (variant(name) in ${SITE_EDITS_KEY}:)`
 											: '')
 									: ' (pure union)'),
 							details: {

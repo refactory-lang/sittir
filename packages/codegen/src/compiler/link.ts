@@ -2,6 +2,7 @@ import {
 	ALIAS,
 	CHOICE,
 	DEDENT,
+	EOF,
 	FIELD,
 	INDENT,
 	NEWLINE,
@@ -31,10 +32,13 @@ import type {
 } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { aliasTargetOf, storageNameOf } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import {
 	isSeq,
 	isChoice,
 	literalTextOf,
+	sym,
+	replaceAtPath,
 	isSymbol,
 	isRepeat1,
 	isRepeat,
@@ -200,6 +204,23 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	structureTokenInterior(rules, linkCtx.diagnostics);
 
+	const groupsConfig = raw.groups ?? {};
+	if (Object.keys(groupsConfig).length > 0) {
+		const lifted = applyGroupOverrides({
+			rules,
+			groups: groupsConfig
+		});
+		for (const issue of lifted.issues) recordConfigIssue('groups-config-invalid', issue, linkCtx);
+		for (const key of Object.keys(rules)) {
+			if (!(key in lifted.rules)) delete rules[key];
+		}
+		Object.assign(rules, lifted.rules);
+		for (const synthKind of lifted.synthesizedKinds) {
+			const body = rules[synthKind];
+			if (body) rules[synthKind] = liftSeparators(body, linkCtx);
+		}
+	}
+
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(rawRules, linkCtx);
 
 	classifyHiddenRules(rules, linkCtx);
@@ -241,6 +262,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		const rule = rules[kind];
 		if (!rule) {
 			recordConfigIssue(
+				'refine-config-invalid',
 				{
 					ownerKind: kind,
 					message: `refine(${kind}): no rule named '${kind}' found at link time — refine() target must be a top-level rule`
@@ -251,7 +273,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		}
 		const validForms = forms.filter((form) => {
 			const issue = refineFormIssue(kind, rule, form, rules);
-			if (issue !== undefined) recordConfigIssue({ ownerKind: kind, message: issue }, linkCtx);
+			if (issue !== undefined) recordConfigIssue('refine-config-invalid', { ownerKind: kind, message: issue }, linkCtx);
 			return issue === undefined;
 		});
 		if (validForms.length === 0) continue;
@@ -783,6 +805,10 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		record === undefined
 			? undefined
 			: Object.fromEntries(Object.entries(record).map(([key, rule]) => [rename(key), renameRule(rule)]));
+	const renameGroupArms = (arms: Readonly<Record<string, string>> | undefined): Record<string, string> | undefined =>
+		arms === undefined
+			? undefined
+			: Object.fromEntries(Object.entries(arms).map(([key, arm]) => [rename(key), rename(arm)]));
 	const renameMap = <T>(map: ReadonlyMap<string, T> | undefined): Map<string, T> | undefined =>
 		map === undefined ? undefined : new Map([...map].map(([key, v]) => [rename(key), v]));
 
@@ -826,6 +852,10 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 				: Object.fromEntries(Object.entries(raw.reserved).map(([wordset, members]) => [wordset, members.map(renameRule)])),
 		externalRoles: renameMap(raw.externalRoles),
 		refineForms: renameMap(raw.refineForms),
+		groups:
+			raw.groups === undefined
+				? undefined
+				: Object.fromEntries(Object.entries(raw.groups).map(([key, arms]) => [rename(key), renameGroupArms(arms)])),
 		renderAs: renameRuleRecord(raw.renderAs),
 		visibleExternals: renameRuleRecord(raw.visibleExternals),
 		options: renameRecord(raw.options),
@@ -834,6 +864,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		orphanedSyntheticGroups: raw.orphanedSyntheticGroups?.map(rename),
 		textTokens: raw.textTokens?.map(rename),
 		bodyPatternZeroMatches: raw.bodyPatternZeroMatches?.map(rename),
+		desugarDivergences: raw.desugarDivergences?.map((event) => ({ ...event, name: rename(event.name) })),
 		automaticVariants:
 			raw.automaticVariants === undefined
 				? undefined
@@ -1093,6 +1124,10 @@ function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKin
 		}
 		if (content.type === CHOICE) {
 			for (const arm of content.members) addStorage({ display, content: arm });
+			return;
+		}
+		if (content.type === OPTIONAL) {
+			addStorage({ display, content: content.content });
 			return;
 		}
 		if (content.type === SYMBOL) {
@@ -2008,6 +2043,53 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 	}
 }
 
+export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'> {
+	const segments = path.split('/').filter((s) => s.length > 0);
+	let cur: Rule<'link'> = rule;
+	for (let i = 0; i < segments.length; i++) {
+		const seg = segments[i]!;
+		const idx = parseInt(seg, 10);
+		if (Number.isNaN(idx)) {
+			throw new ConfigError(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
+		}
+		cur = stepInto(cur, idx, path);
+	}
+	return cur;
+}
+function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link'> {
+	switch (rule.type) {
+		case SEQ:
+		case CHOICE: {
+			const m = rule.members[idx];
+			if (!m) {
+				throw new ConfigError(
+					`group path '${fullPath}' does not resolve: index ${idx} out of range in ${rule.type} of ${rule.members.length} members`
+				);
+			}
+			return m;
+		}
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case TOKEN:
+		case ALIAS:
+			if (idx !== 0) {
+				throw new ConfigError(
+					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
+				);
+			}
+			return (rule as { content: Rule<'link'> }).content;
+		default:
+			throw new ConfigError(`group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`);
+	}
+}
+
+export interface DeriveSynthesizedNameArgs {
+	parentKind: string;
+	discriminator: string;
+}
+
 export class ConfigError extends Error {}
 
 export interface ConfigIssue {
@@ -2015,14 +2097,232 @@ export interface ConfigIssue {
 	readonly message: string;
 }
 
-function recordConfigIssue(issue: ConfigIssue, ctx: LinkCtx): void {
+function recordConfigIssue(
+	code: 'groups-config-invalid' | 'refine-config-invalid',
+	issue: ConfigIssue,
+	ctx: LinkCtx
+): void {
 	ctx.diagnostics.fail({
-		code: 'refine-config-invalid',
+		code,
 		scope: 'compiler',
 		phase: 'link',
 		message: issue.message,
 		details: { grammar: ctx.grammar.name, kind: issue.ownerKind }
 	});
+}
+
+export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
+	const { parentKind, discriminator } = args;
+	const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
+	return [base, discriminator].join('_');
+}
+
+export interface ValidateGroupsArgs {
+	groups: Record<string, Record<string, string> | undefined>;
+	rules: Record<string, Rule<'link'>>;
+	warn?: (msg: string) => void;
+}
+
+export interface ValidGroupsConfig {
+	readonly groups: Record<string, Record<string, string>>;
+	readonly issues: readonly ConfigIssue[];
+}
+
+export function validateGroupsConfig(args: ValidateGroupsArgs): ValidGroupsConfig {
+	const { groups, rules, warn } = args;
+	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
+	const valid: Record<string, Record<string, string>> = {};
+	const issues: ConfigIssue[] = [];
+
+	for (const [kind, lifts] of Object.entries(groups)) {
+		if (!lifts) continue;
+		const root = rules[kind];
+		if (!root) {
+			issues.push({ ownerKind: kind, message: `groups['${kind}']: kind not in rule map` });
+			continue;
+		}
+		const liftPaths = Object.keys(lifts);
+
+		for (const path of liftPaths) {
+			const issue = groupLiftIssue(kind, path, { lifts, liftPaths, root, rules, emitWarn });
+			if (issue !== undefined) {
+				issues.push({ ownerKind: kind, message: issue });
+				continue;
+			}
+			valid[kind] = { ...valid[kind], [path]: lifts[path]! };
+		}
+	}
+	return { groups: valid, issues };
+}
+
+interface GroupLiftCtx {
+	readonly lifts: Record<string, string>;
+	readonly liftPaths: readonly string[];
+	readonly root: Rule<'link'>;
+	readonly rules: Record<string, Rule<'link'>>;
+	readonly emitWarn: (msg: string) => void;
+}
+
+function groupLiftIssue(kind: string, path: string, ctx: GroupLiftCtx): string | undefined {
+	const discriminator = ctx.lifts[path]!;
+	let target: Rule<'link'>;
+	try {
+		target = resolveGroupPath(ctx.root, path);
+	} catch (e) {
+		if (!(e instanceof ConfigError)) throw e;
+		return `groups['${kind}']['${path}']: ${e.message}`;
+	}
+	if (discriminator.length === 0) return `groups['${kind}']['${path}']: discriminator must be a non-empty identifier`;
+	if (!isAsciiIdentifier(discriminator)) {
+		return `groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`;
+	}
+	for (const otherPath of ctx.liftPaths) {
+		if (otherPath !== path && isAncestorPath(path, otherPath)) {
+			return `groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`;
+		}
+	}
+	const synthName = deriveSynthesizedName({ parentKind: kind, discriminator });
+	if (synthName in ctx.rules) {
+		return `groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`;
+	}
+	if (!hasStructuralMember(target)) {
+		ctx.emitWarn(`groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`);
+	}
+	return undefined;
+}
+function isAncestorPath(ancestor: string, descendant: string): boolean {
+	if (ancestor === descendant) return false;
+	const a = ancestor.split('/');
+	const d = descendant.split('/');
+	if (a.length >= d.length) return false;
+	for (let i = 0; i < a.length; i++) {
+		if (a[i] !== d[i]) return false;
+	}
+	return true;
+}
+function hasStructuralMember(rule: Rule<'link'>): boolean {
+	switch (rule.type) {
+		case FIELD:
+		case SYMBOL:
+		case SUPERTYPE:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(hasStructuralMember);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case TOKEN:
+		case ALIAS:
+			return hasStructuralMember((rule as { content: Rule<'link'> }).content);
+		default:
+			return false;
+	}
+}
+
+export interface ApplyGroupOverridesArgs {
+	rules: Record<string, Rule<'link'>>;
+	groups: Record<string, Record<string, string> | undefined>;
+	warn?: (msg: string) => void;
+}
+
+export interface ApplyGroupOverridesResult {
+	rules: Record<string, Rule<'link'>>;
+	synthesizedKinds: readonly string[];
+	issues: readonly ConfigIssue[];
+}
+
+export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
+	const { groups, issues } = validateGroupsConfig(args);
+
+	const newRules: Record<string, Rule<'link'>> = { ...args.rules };
+	const synthesizedKinds: string[] = [];
+
+	for (const [kind, lifts] of Object.entries(groups)) {
+		if (!lifts || Object.keys(lifts).length === 0) continue;
+		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length);
+		let parentBody = clone(newRules[kind]!);
+
+		for (const path of sortedPaths) {
+			const discriminator = lifts[path]!;
+			const synName = deriveSynthesizedName({ parentKind: kind, discriminator });
+			const target = resolveGroupPath(parentBody, path);
+			const aliasFace = namedAliasFaceOf(target);
+			if (aliasFace !== undefined) {
+				console.warn(
+					`[codegen] group-lift ${kind}/${path} (${discriminator}) rides the visible alias '${aliasFace}' — no hidden kind minted`
+				);
+				continue;
+			}
+			const { liftedBody, replacement } = liftRule(target, synName, discriminator);
+
+			parentBody = replaceAtPath(parentBody, path, replacement);
+			newRules[synName] = { ...liftedBody, annotations: { ...liftedBody.annotations, hoisted: true } };
+			synthesizedKinds.push(synName);
+		}
+
+		newRules[kind] = parentBody;
+	}
+
+	return { rules: newRules, synthesizedKinds, issues };
+}
+function namedAliasFaceOf(target: Rule<'link'>): string | undefined {
+	switch (target.type) {
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return namedAliasFaceOf(target.content);
+		case CHOICE: {
+			const arms = target.members.filter((m) => !isBlank(m));
+			return arms.length === 1 ? namedAliasFaceOf(arms[0]!) : undefined;
+		}
+		case ALIAS:
+			return target.named === true ? target.value : undefined;
+		case SEQ:
+		case FIELD:
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+		case EOF:
+		case SYMBOL:
+		case TOKEN:
+			return undefined;
+		default:
+			return assertNever(target);
+	}
+}
+
+function liftRule(
+	target: Rule<'link'>,
+	synName: string,
+	_discriminator: string
+): { liftedBody: Rule<'link'>; replacement: Rule<'link'> } {
+	const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
+	switch (target.type) {
+		case OPTIONAL:
+			return {
+				liftedBody: target.content,
+				replacement: { type: OPTIONAL, content: synSym } as Rule<'link'>
+			};
+		case REPEAT:
+			return {
+				liftedBody: target.content,
+				replacement: { type: REPEAT, content: synSym, separator: target.separator } as Rule<'link'>
+			};
+		case REPEAT1:
+			return {
+				liftedBody: target.content,
+				replacement: { type: REPEAT1, content: synSym, separator: target.separator } as Rule<'link'>
+			};
+		default:
+			return { liftedBody: target, replacement: synSym };
+	}
+}
+function clone<T>(value: T): T {
+	return JSON.parse(JSON.stringify(value)) as T;
 }
 
 interface RenderAsLiteralStamp {

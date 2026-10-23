@@ -4,10 +4,10 @@ import { TSKindId } from '../../packages/rust/src/types.ts';
 
 type Expect<T extends true> = T;
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
-type Identifier = Terminal<'identifier', string>;
+type Identifier = Terminal<TSKindId.Identifier, string>;
 
 interface MixedSlots {
-	readonly $type: 'mixed_slots';
+	readonly $type: 999_999;
 	readonly _true_or_identifier: TSKindId.TrueKeyword | Identifier;
 	readonly _false_or_identifier: TSKindId.FalseKeyword | Identifier;
 	readonly _boolean_or_identifier: TSKindId.TrueKeyword | TSKindId.FalseKeyword | Identifier;
@@ -15,6 +15,15 @@ interface MixedSlots {
 	readonly _true_list: readonly (TSKindId.TrueKeyword | Identifier)[];
 	readonly _boolean_list: readonly (TSKindId.TrueKeyword | TSKindId.FalseKeyword | Identifier)[];
 	readonly _numeric: TSKindId.IntegerLiteralDecimal;
+	readonly __slotNames__?: {
+		readonly _true_or_identifier: 'trueOrIdentifier';
+		readonly _false_or_identifier: 'falseOrIdentifier';
+		readonly _boolean_or_identifier: 'booleanOrIdentifier';
+		readonly _optional_true: 'optionalTrue';
+		readonly _true_list: 'trueList';
+		readonly _boolean_list: 'booleanList';
+		readonly _numeric: 'numeric';
+	};
 }
 
 type Loose = LooseConfigOf<MixedSlots, LeafScalarMap>;

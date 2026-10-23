@@ -3,7 +3,7 @@
  * language engine. Pure type-level module — zero runtime code.
  */
 
-import type { CamelCase } from 'type-fest';
+import type { KeysOfUnion } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
 export type {
 	Cond,
@@ -30,13 +30,15 @@ export type {
 export type {
 	PortableCondition,
 	PortableGuard,
+	PortableKind,
 	PortablePath,
 	PortableReadEntry,
+	PortableRows,
 	PortableStep,
 	PortableSurface,
 	PortableTable
 } from './portable.ts';
-import type { Admit } from './node-surface.ts';
+import type { Admit, HoldsSource } from './node-surface.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
 export type { BooleanKeyword } from './keyword-presence.ts';
 
@@ -172,14 +174,14 @@ type AdmitSlotInput<S> = S extends readonly unknown[]
 
 /**
  * Terminal node shape — shared by every leaf, keyword, and enum.
- * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
- * derived kinds, string literal for evaluate-synthesized enum kinds
- * that have no parser symbol. `V` narrows `$text` to a specific
- * literal or literal union (defaulting to `string` for open-valued leaves).
+ * `ID` pins the `$type` discriminant, the kind's id. `V` narrows `$text`
+ * to a specific literal or literal union (defaulting to `string` for
+ * open-valued leaves).
  */
-export interface Terminal<ID extends number | string = number, V extends string = string> {
+export interface Terminal<ID extends number = number, V extends string = string> {
 	readonly $type: ID;
-	readonly $text: V;
+	/** The leaf's text: one string of its characters, made by this call. */
+	$text(): V;
 }
 
 /**
@@ -215,6 +217,22 @@ export type MaxArity<F> = number extends ArgsOf<F>['length'] ? number : MaxOf<Ar
 type MaxOf<U, Seen extends unknown[] = []> = [Exclude<U, Seen['length']>] extends [never]
 	? Seen['length']
 	: MaxOf<Exclude<U, Seen['length']>, [...Seen, unknown]>;
+
+/**
+ * A module of builders as their internal callers see them, with every type parameter at its constraint: each builder
+ * takes the arguments of any overload it declares ({@link ArgsOf}), then, as its last signature, its own last
+ * overload's, so `Parameters` reads what it reads on the builder. A coercer has refused an untyped node at its own
+ * signature before it calls a strict builder, so it calls through this view, where a builder's parameters type its
+ * arguments contextually.
+ *
+ * @typeParam M - the builder module's type (`typeof import('./raw.js')`).
+ * @returns the module with every function member replaced by its plain signatures.
+ */
+export type PlainBuilders<M> = {
+	readonly [K in keyof M]: M[K] extends AnyFlavorFn
+		? ((...args: ArgsOf<M[K]>) => ReturnType<M[K]>) & ((...args: Parameters<M[K]>) => ReturnType<M[K]>)
+		: M[K];
+};
 
 /** A bare `readonly E[]` rest array as `E[]`; a tuple, however it ends, as it is. */
 type MutableRest<A extends readonly unknown[]> = A extends readonly (infer E)[]
@@ -255,7 +273,7 @@ export type NoneOf<T> = { [K in keyof T]?: never };
  * whole or absent as a whole. A built node is not a config and passes as it
  * is; its accessors may share the group's key names.
  */
-export type WithoutGroup<P, G> = P extends undefined | { readonly $type: string | number } ? P : P & NoneOf<G>;
+export type WithoutGroup<P, G> = P extends undefined | { readonly $type: number } ? P : P & NoneOf<G>;
 export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
 	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
 	: never;
@@ -305,10 +323,10 @@ type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & {
 // Cycle-detected recursion (visited-set pattern)
 // ---------------------------------------------------------------------------
 
-/** Check if literal T (a kind name or a kind id) is already in the Visited tuple. */
-export type Contains<Visited extends (string | number)[], T extends string | number> = Visited extends [
-	infer Head extends string | number,
-	...infer Rest extends (string | number)[]
+/** Check if the kind id T is already in the Visited tuple. */
+export type Contains<Visited extends number[], T extends number> = Visited extends [
+	infer Head extends number,
+	...infer Rest extends number[]
 ]
 	? Head extends T
 		? true
@@ -334,70 +352,24 @@ import type { StringIndexRange } from './core-types.ts';
 // KindOf<T> — extract type string from a typed node
 // ---------------------------------------------------------------------------
 
-/** Extract the kind string(s) from a node type's `$type` property.
- * For leaf/terminal types (Terminal<K>), returns K. For structural types
- * with numeric TSKindId discriminants, returns the numeric discriminant type.
- * Phase A: both string and number discriminants are accepted.
- */
-export type KindOf<T> = T extends { readonly $type: infer K extends string }
-	? K
-	: T extends { readonly $type: infer N extends number }
-		? N
-		: never;
+/** Extract the kind id(s) from a node type's `$type` property; `never` for a type without one. */
+export type KindOf<T> = T extends { readonly $type: infer N extends number } ? N : never;
 
 // ---------------------------------------------------------------------------
 // Field keys — a grammar field's camelCase key, as the runtime spells it
 // ---------------------------------------------------------------------------
 
+/** @internal — the generator-emitted map from a slot's storage key to the model's slot name. */
+type SlotNamesOf<T> = T extends { readonly __slotNames__?: infer M } ? M : {};
+
 /**
- * Mirrors `RESERVED_ACCESSOR_NAMES` in the codegen's `node-map.ts` — the
- * runtime's `snakeToCamel()` appends a trailing `_` to a camelCased field
- * name that would otherwise shadow an `Object.prototype` member (e.g. a
- * grammar field named `constructor`). `CamelCase<K>` from `type-fest` has
- * no knowledge of that escaping, so any generic projection that recomputes
- * a field's camelCase key must route it through this lookup to match the
- * real generated code. A plain table, not a chain of per-name conditionals —
- * extend this map (and its runtime twin) together, never branch on the name.
+ * The name a slot is configured and read by: the model's slot name, as the
+ * generator writes it in `__slotNames__`, keyed by the storage key `_K`.
+ * A slot with no written name has no key (`never`).
  */
-type ReservedAccessorEscapes = {
-	constructor: 'constructor_';
-	toString: 'toString_';
-	valueOf: 'valueOf_';
-	hasOwnProperty: 'hasOwnProperty_';
-	isPrototypeOf: 'isPrototypeOf_';
-	propertyIsEnumerable: 'propertyIsEnumerable_';
-	toLocaleString: 'toLocaleString_';
-	__proto__: '__proto___';
-};
-
-/** Escapes a camelCased field key that collides with an `Object.prototype` member. */
-type EscapeReservedAccessor<S extends string> = S extends keyof ReservedAccessorEscapes
-	? ReservedAccessorEscapes[S]
-	: S;
-
-export type SetterKey<K extends string> = EscapeReservedAccessor<CamelCase<K>>;
-
-type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
-type Pluralize<S extends string> = S extends `${string}s`
-	? S
-	: S extends `${string}List`
-		? S
-		: S extends `${string}children`
-			? S
-			: S extends `${string}Children`
-				? S
-				: S extends `${infer Pre}Child`
-					? `${Pre}Children`
-					: S extends `${infer Pre}child`
-						? `${Pre}children`
-						: S extends `${string}${Vowel}y`
-							? `${S}s`
-							: S extends `${infer Pre}y`
-								? `${Pre}ies`
-								: `${S}s`;
-
-type FieldKey<K extends string, V> =
-	NonNullable<V> extends readonly any[] ? Pluralize<CamelCase<K>> : EscapeReservedAccessor<CamelCase<K>>;
+export type SlotKey<T, K extends string> = `_${K}` extends keyof SlotNamesOf<T>
+	? SlotNamesOf<T>[`_${K}`] & string
+	: never;
 
 // ---------------------------------------------------------------------------
 // Concrete interface transformations
@@ -454,7 +426,7 @@ type WidenLooseFieldValue<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = K extends keyof LooseHintsOf<T>
 	?
 			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
@@ -478,7 +450,7 @@ type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly chil
  */
 export type WrappedNode<T> = Simplify<
 	T & {
-		readonly [K in keyof FieldsOf<T> & string as FieldKey<K, FieldsOf<T>[K]>]: FieldsOf<T>[K];
+		readonly [K in keyof FieldsOf<T> & string as SlotKey<T, K>]: FieldsOf<T>[K];
 	} & (T extends {
 			readonly $other?: infer C;
 		}
@@ -520,8 +492,7 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
 export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSlot<V, Scalars, Strings, [], NsMap>;
 
 /**
- * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
- * field values are the raw interface types (already snake_case internally).
+ * ConfigOf<T> — factory input shape, keyed by each slot's model name ({@link SlotKey}).
  *
  * A keyword-presence slot (boolean keyword, bitflag, kind enum) admits an
  * explicit `undefined` only on a key the node declares optional; a required
@@ -547,12 +518,12 @@ export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
-					? EscapeReservedAccessor<CamelCase<K & string>>
+					? SlotKey<T, K & string>
 					: never]: ConfigFieldValue<T, K>;
 			} & {
 				[K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
 					? never
-					: EscapeReservedAccessor<CamelCase<K & string>>]?: ConfigFieldValue<T, K>;
+					: SlotKey<T, K & string>]?: ConfigFieldValue<T, K>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -729,18 +700,11 @@ export type NumericLiteral<N extends string | number | bigint, Integer extends b
 		: never;
 
 /**
- * @param Visited - Set of `$type` discriminants already seen on the
- *   current expansion path. Combined with `Depth`, gives belt-and-
- *   suspenders cycle protection: `Depth` caps non-cyclic chains at
- *   `MaxDepth`; `Visited` short-circuits as soon as a kind reappears,
- *   even within depth budget. Necessary because TypeScript's
- *   recursive-mapped-type checker computes both branches of a
- *   conditional eagerly when a generic parameter could distribute, so
- *   a structural cycle (e.g. rust `Statement → ConstItem → type:
- *   _Type → PointerType → type: _Type → …`) trips TS2615 before the
- *   `Depth` arm fires. `Contains<Visited, K>` makes the cycle visible
- *   as a literal-tuple membership check that TS resolves
- *   non-recursively.
+ * @param Depth - The config bags already opened on the current expansion
+ *   path; at `MaxDepth` a slot takes the node alone.
+ * @param Visited - The kind ids bare hops have descended into on the
+ *   current expansion path ({@link BareArm}), so a chain of elided
+ *   wrappers ends on a revisit.
  */
 export type LooseConfigOf<
 	T,
@@ -748,39 +712,33 @@ export type LooseConfigOf<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = Simplify<
 	Depth['length'] extends MaxDepth
 		? Admit<T>
-		: T extends { readonly $type: infer K extends string }
-			? Contains<Visited, K> extends true
-				? Admit<T>
-				: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
-			: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, Visited>
+		: LooseConfigBody<T, Scalars, Strings, Depth, NsMap, Visited>
 >;
 
-/** @internal — body of `LooseConfigOf`, factored out so the cycle-check
- *  conditional in the parent type stays scannable. The discriminant
- *  branch happens in `LooseConfigOf` itself; here we just emit the
- *  field/children projections with the (possibly extended) `Visited`. */
+/** @internal — body of `LooseConfigOf`: the field and children
+ *  projections, each one config level deeper. */
 type LooseConfigBody<
 	T,
 	Scalars,
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = (T extends {
 	readonly $type: infer K;
 }
 	? { readonly $type?: K }
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
-		? EscapeReservedAccessor<CamelCase<K & string>>
+		? SlotKey<T, K & string>
 		: never]: Exclude<WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>, undefined>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalKeys<FieldsOf<T>>
-		? EscapeReservedAccessor<CamelCase<K & string>>
+		? SlotKey<T, K & string>
 		: never]?: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }
 		? {
@@ -790,9 +748,9 @@ type LooseConfigBody<
 
 /** @internal — slot-level widen that projects boolean-keyword / bitflag
  * brands to their Config surface BEFORE delegating to WidenValue for
- * the recursive structural case. Threads `Visited` so the structural
- * branch can detect $type cycles. */
-type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[] = []> =
+ * the recursive structural case. Threads `Visited`, the bare hops taken
+ * on this path. */
+type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[] = []> =
 	IsBooleanKeywordSlot<T> extends true
 		? boolean | BooleanKeywordSlotText<T> | T
 		: IsBitflagSlot<T> extends true
@@ -851,7 +809,7 @@ type TagEachArm<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = T extends infer U
 	? U extends { readonly $type: infer K extends keyof NsMap }
 		? NsMap[K] extends { readonly Kind: infer Name extends number }
@@ -863,7 +821,7 @@ type TagEachArm<
 								: LooseProjection<U, NsMap>))
 						| Admit<U>
 			: Admit<U>
-		: U extends { readonly $type: infer K extends string | number }
+		: U extends { readonly $type: infer K extends number }
 			? ({ $type: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | Admit<U>
 			: never
 	: never;
@@ -914,18 +872,10 @@ type LooseOrConfigBag<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[] = []
-> = T extends {
-	readonly $type: infer K extends string;
-}
-	? Contains<Visited, K> extends true
-		? Admit<T>
-		: [LooseProjection<T, NsMap>] extends [never]
-			? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
-			: LooseProjection<T, NsMap> | Admit<T>
-	: [LooseProjection<T, NsMap>] extends [never]
-		? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
-		: LooseProjection<T, NsMap> | Admit<T>;
+	Visited extends number[] = []
+> = [LooseProjection<T, NsMap>] extends [never]
+	? LooseConfigOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | Admit<T>
+	: LooseProjection<T, NsMap> | Admit<T>;
 
 type WidenValue<
 	T,
@@ -933,7 +883,7 @@ type WidenValue<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = Depth['length'] extends MaxDepth
 	? Admit<T>
 	:
@@ -969,7 +919,7 @@ type WidenArrayMembers<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = T extends readonly (infer E)[]
 	? [readonly []] extends [T]
 		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
@@ -981,8 +931,8 @@ type WidenArrayMembers<
 /** @internal — the leaf members (a node type carrying `$text`), each widened
  *  to itself, its narrowed string and its scalar. */
 type WidenLeafMembers<T, Scalars, Strings> = T extends {
-	readonly $type: infer K extends string | number;
-	readonly $text: string;
+	readonly $type: infer K extends number;
+	$text(): string;
 }
 	? Admit<T> | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
 	: never;
@@ -991,20 +941,19 @@ type WidenLeafMembers<T, Scalars, Strings> = T extends {
  *  objects that are not leaves. Kind ids stored bare are numbers, not
  *  objects, and are widened by `WidenKindId`. */
 type BranchMembers<T> = T extends { readonly $type: number }
-	? T extends { readonly $text: string }
+	? T extends { $text(): string }
 		? never
 		: T
 	: never;
 
 /** @internal — members that are neither arrays, brands, leaves, ids nor
- *  structural nodes (string literal unions, plain booleans,
- *  string-discriminated node data): passed through unchanged. */
+ *  structural nodes (string literal unions, plain booleans): passed
+ *  through unchanged. */
 type OtherMembers<T> = T extends
 	| readonly unknown[]
 	| number
 	| { readonly __booleanKeyword__?: unknown }
 	| { readonly $type: number }
-	| { readonly $type: string | number; readonly $text: string }
 	? never
 	: T;
 
@@ -1015,7 +964,7 @@ type OtherMembers<T> = T extends
  *  several do. A lone kind additionally takes its bag untagged, because with
  *  one candidate no tag is needed, while with several the resolver cannot
  *  tell untagged bags of different kinds apart. */
-type WidenBranches<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[]> = [
+type WidenBranches<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[]> = [
 	T
 ] extends [never]
 	? never
@@ -1031,7 +980,7 @@ type BareArms<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[]
+	Visited extends number[]
 > = T extends unknown ? BareArm<T, Scalars, Strings, Depth, NsMap, Visited> : never;
 
 /** @internal — the members of `T` that are a kind id stored bare: numeric
@@ -1061,7 +1010,7 @@ type WidenChildSlot<
 	Strings = {},
 	Depth extends number[] = [],
 	NsMap = {},
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = T extends readonly unknown[]
 	? WidenArrayMembers<T, Scalars, Strings, Depth, NsMap, Visited>
 	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
@@ -1098,7 +1047,7 @@ type BareLoose<
 	Strings,
 	Depth extends number[],
 	NsMap,
-	Visited extends (string | number)[] = []
+	Visited extends number[] = []
 > = Key extends keyof FieldsOf<T> ? WidenLooseFieldValue<T, Key, Scalars, Strings, Depth, NsMap, Visited> : never;
 
 /**
@@ -1110,8 +1059,8 @@ type BareLoose<
  * value belongs to. Rows without a bare slot (`Bare` is `never`) contribute
  * nothing.
  */
-type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends (string | number)[] = []> = T extends {
-	readonly $type: infer K extends keyof NsMap & (string | number);
+type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends number[] = []> = T extends {
+	readonly $type: infer K extends keyof NsMap & number;
 }
 	? Visited['length'] extends MaxBareHops
 		? never
@@ -1163,11 +1112,11 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  *   built from a bag, so its row carries no id and its arm offers no bag.
  */
 export interface NodeNs<
-	T extends { readonly $type: string | number },
+	T extends { readonly $type: number },
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Bound = T & NodeMethods,
+	Bound = T & NodeMethods & HoldsSource,
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
@@ -1277,7 +1226,7 @@ export interface KeywordNs<Id extends number, Text extends string, Kind extends 
  * namespace lookup index all three uniformly.
  */
 export interface LeafNs<
-	Node extends { readonly $type: string | number; readonly $text: string },
+	Node extends { readonly $type: number; $text(): string },
 	Text extends string | number | bigint,
 	Bound = Node,
 	Kind extends number = number
@@ -1320,6 +1269,9 @@ export type {
 	FileChange,
 	GrammarInnerTrivia,
 	NodeMethods,
+	NodeJSON,
+	NodeJSONFacts,
+	NodeJSONValue,
 	GrammarTypeMap,
 	Interceptor,
 	KindTypes,
@@ -1350,29 +1302,24 @@ export type {
 
 type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? NumericLiteral<V, Integer> : V;
 
-type KeysOfAll<K> = K extends unknown ? keyof K : never;
-
 type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
 	? K extends keyof C
 		? RefusedValue<C[K], Integer>
 		: never
 	: never;
 
-type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
-
 /**
- * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W, Known>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses, or `C` names a key `Known` (the config type the builder accepts) does not. A union `C` is judged slot by slot across all its members, and a key one member lacks is not refused for that member.
+ * The refusal an object-form builder applies to its config: `C & NumericConfig<C, W>` is `C` unless a numeric slot of `W` (each mapped to whether it is an integer) holds a literal `NumericLiteral` refuses. A union `C` is judged slot by slot across all its members. A key the builder does not declare is refused by `RefuseUndeclared`.
  */
-export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known = C> = {
-	readonly [K in KeysOfAll<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
-} & NoExtraKeys<C, Known>;
+export type NumericConfig<C, W extends Readonly<Record<string, boolean>>> = {
+	readonly [K in KeysOfUnion<C> & keyof W]?: SlotRefusal<C, K, W[K]>;
+};
 
 /**
- * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
+ * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does.
  */
 export type NumericInput<
 	I,
 	Bare extends boolean | undefined,
-	W extends Readonly<Record<string, boolean>> = {},
-	Known = I
-> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W, Known>;
+	W extends Readonly<Record<string, boolean>> = {}
+> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W>;

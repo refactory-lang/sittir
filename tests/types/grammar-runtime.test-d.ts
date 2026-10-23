@@ -3,7 +3,6 @@ import { bindRuntime } from '../../packages/common/src/utils.ts';
 
 interface List {
 	readonly $type: 1;
-	readonly $source: 2;
 	readonly _items?: readonly Leaf[];
 }
 interface EmptyList extends List {
@@ -11,12 +10,10 @@ interface EmptyList extends List {
 }
 interface Leaf {
 	readonly $type: 2;
-	readonly $source: 2;
 	readonly $text: string;
 }
 interface Comment {
 	readonly $type: 3;
-	readonly $source: 2;
 	readonly $text: string;
 }
 interface FakeTypeMap extends GrammarTypeMap {

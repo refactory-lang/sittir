@@ -462,7 +462,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a `refine()` declaration that does not fit the grammar (`refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), and a receiver claim the lead derivation refuses (`lead-refused`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), a receiver claim the lead derivation refuses (`lead-refused`), an `eof()` anywhere but last in the start rule or inside a token (`eof-not-last`, `eof-in-token`), and a shape enrich rewrites that reaches the model as written (every code in `dsl/enrich-shapes.ts::ENRICH_SHAPES`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -504,7 +504,8 @@ throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
 
 The records answerable from the evaluated grammar alone, before link: the prediction records, `eof-in-token` and `eof-not-last`, the
-`expect-diagnostics-invalid` entries, the `groups:` entries the layer pass found matching nothing (`body-pattern-zero-match`) and the diagnostics the layer passes recorded (`RawGrammar.layerDiagnostics`).
+`expect-diagnostics-invalid` entries, evaluate's own events (`body-pattern-zero-match`,
+`desugar-divergence-*`), and the diagnostics recorded while the grammar was evaluated (`RawGrammar.layerDiagnostics`).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`
 
@@ -625,7 +626,7 @@ Judges the witnesses of a narrowing cause, `'accepts-invalid-syntax'` or
 productions exclude, or the maintainer ruled out, and the authored rule does
 not. For each witness:
 - it must state its cause's justification (`NARROWING_JUSTIFICATIONS`): the
-  excluding `production`, or the `ruling`;
+  excluding `production`, or the `ruling`, which must state its constraint in words (`statesInWords`);
 - the upstream rule named by its `kind` must derive its `form`;
 - the grammar must author a rule of that name, and that rule must not derive
   the `form`.
@@ -642,38 +643,30 @@ parse clean, so a recovery that swallows a neighbour fails.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 
-Whether the gate verifies every cause of a rule's declaration by witness, each one in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'`, `'accepts-invalid-syntax'` and `'ruled-narrowing'`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
-reads it to tell a verified correction from debt.
+Whether the gate verifies every cause of a rule's declaration by witness, each one in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'`, `'accepts-invalid-syntax'` and `'ruled-narrowing'`. A declaration with no cause is never verified, though "every cause" would hold of it vacuously. `'semantic-gap'` additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. `unverifiedRuleNames` reads it to tell a verified correction from debt, for a declaration and for the rules that reach a vocabulary helper.
 
 ### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
 
 The hand-written rule ratchet: per grammar, the most `rules:` entries that
-stand for something sittir cannot yet derive. Every `vocabulary` rule counts,
-and so does every `reauthored` rule whose cause is asserted but not verified:
-`'ambiguity'`, which has no detector, and `'alias-shape'`, verified or on its
-grammar's floor. Each is a shape the pipeline should one day produce from the
-upstream grammar by itself, at which point the entry is deleted and the ceiling
-drops. A ceiling rises only by the maintainer's decision for one named rule,
-recorded here with its reason; a change that merely needs room does not raise
-it.
-
-One such rule stands: python `_tuple_elements`. `tuple` has to stop sharing
-`_collection_elements`, and the derivable alternative, `tuple` itself as the
-list, makes the list kind a member of its own element union, which the
-widening types cannot express without a cycle. The hidden list rule is the
-hand-written entry that avoids it, and it goes when that cycle is solved.
-
-The Python-only correction that a one-element tuple needs its comma adds the named vocabulary
-rule `_tuple_pattern_elements`. It keeps parentheses on the container and commas
-on an independent list, avoiding recursive self-kind coercion and incorrect
-separator capture. This follows the existing Python `_tuple_elements` case.
-The corresponding hand-rule ceiling is Python 15 (was 14); Rust stays at 8.
-No diagnostic or corpus-failure ceiling changes. This helper can retire
-when authored rule bodies participate in the same list lifting as enriched
-upstream rules without collapsing the container into its own element union.
+stand for something sittir cannot yet derive (`unverifiedRuleNames`). Every
+undeclared rule counts, and so does every `reauthored` rule with a cause that is
+asserted but not verified: `'ambiguity'`, which has no detector, and
+`'alias-shape'`, verified or on its grammar's floor. A `vocabulary` rule counts
+unless only witness-verified declarations reach it. Each counted rule is a shape
+the pipeline should one day produce from the upstream grammar by itself, at
+which point the entry is deleted and the ceiling drops. A ceiling rises only by
+the maintainer's decision for one named rule, recorded here with its reason; a
+change that merely needs room does not raise it.
 
 A rule reauthored under a witness-verified cause (`isWitnessVerified`) is not
 counted. It corrects an upstream rule that is wrong, the gate checks the grammar form and the upstream parser checks the accepted kind. A semantic-gap claim additionally needs construction regressions to establish its language meaning, and no derivation can retire it: it is not debt.
+Neither is a vocabulary helper that only such corrections reach: it spells part
+of the correction and goes with it. Python's `_tuple_elements` and
+`_tuple_pattern_elements` are reached only by the witness-verified `tuple` and
+`tuple_pattern`: each keeps the parentheses on the container and the commas on
+an independent list, because the container itself as the list would make the
+list kind a member of its own element union, which the widening types cannot
+express without a cycle.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::authoredRuleNames`
 
@@ -699,8 +692,8 @@ the declaration or deletion that resolves it:
   whose definition differs from the minted one. The minted definition wins in
   both, so the tree-sitter build still completes; this record stops the
   compile. Judged without the enriched stage.
-- `rule-cause-missing`: a `rules:` entry with a bare body. Judged without the
-  enriched stage.
+- `rule-cause-missing`: a `rules:` entry with a bare body, judged without the
+  enriched stage, or a `reauthored` entry that declares no cause.
 - `render-only-not-external`: a `renderAs:` key that is not an upstream
   external, as the evaluated externals list spells it.
 - `vocabulary-replaces-upstream`: a `vocabulary` entry named like an upstream
@@ -731,11 +724,19 @@ instead: `judgeOtherKindWitnesses`, `judgeRejectedWitnesses` or
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::NARROWING_JUSTIFICATIONS`
 
-The justification each narrowing cause's witness must state, and the reason a witness without it fails: `production` for `'accepts-invalid-syntax'`, `ruling` for `'ruled-narrowing'`.
+The justification each narrowing cause's witness must state, the reason a witness without it fails, and whether it must state its constraint in words (`inWords`, judged by `statesInWords`): `production` for `'accepts-invalid-syntax'`, the excluding production's name; `ruling` for `'ruled-narrowing'`, the ruling's constraint in words.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::NarrowingCause`
 
 The causes `judgeNarrowingWitnesses` judges: the keys of `NARROWING_JUSTIFICATIONS`.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::unverifiedRuleNames`
+
+The `rules:` entries the hand-written rule ratchet counts, sorted: every undeclared rule, every `reauthored` rule with a cause the gate does not verify (`isWitnessVerified`), and every `vocabulary` rule the rules reaching it do not verify. Those rules are found by walking up the evaluated references (`RawGrammar.references`) from the helper to its referrers. The walk passes through the rules sittir minted (any rule upstream does not declare and the grammar does not author: a variant, a copy, a lifted helper) and stops at the first authored or upstream rule on each path. The helper is verified when there is at least one such rule and every one is a declaration `isWitnessVerified` accepts. A helper an upstream rule or an unverified declaration reaches stays counted, and so does one no rule reaches.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::statesInWords`
+
+Whether a ruling states its constraint in words: it cites no numbered planning reference anywhere, and outside its backtick code spans (`CODE_SPAN`) it holds a word (`WORD`, two or more letters) and no requirement id. A code span is syntax the constraint quotes, so a ruling can name an identifier such as `R11` in backticks; backticks never hide a planning reference, and a ruling that is only code holds no word. A numbered language concept is written without `#` (capture group 1, or its syntax quoted as `\1`, never group #1), since nothing in the text tells `#1` from a citation; for the same reason a verb shaped like a plural artifact name before a number reads as a citation (the parser plans 3 passes), and the ruling rewords it (the parser makes 3 passes). A planning reference is a `#` and a number, or a planning artifact named and numbered, in any case: PR or pull request (or pull-request), ADR, spec or specification, plan or task, each also plural, then optionally `no.` or `number`, then the number after any spaces, `#`, `:` or `-` (`PLANNING_REFERENCE`: `PR-137`, `PR #45`, `ADR-0009`, `spec 026`, `plan 3`, `task 8`, `#45`), or a requirement id, a capital `R` and digits (`REQUIREMENT_ID`: `R11`). A reference rots once its artifact is archived or renamed, and a bare number states nothing, so the witness has to say the constraint itself. `judgeNarrowingWitnesses` asks it of a `ruled-narrowing` witness's `ruling` (`NARROWING_JUSTIFICATIONS`); an `accepts-invalid-syntax` witness names a production, so it is not asked.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
 
@@ -864,3 +865,7 @@ The grammar's `expectDiagnostics` with each kind listed under both its base name
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::writeDiagnostics`
 
 Prints diagnostics by severity: info goes to stdout, and warning, error and fail go to stderr, each side formatted once with the given formatter. A side with nothing to print writes nothing. A quiet regen keeps a successful child's stdout to itself, so this is the line between what it hides and what it shows.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics`
+
+One blocking record per rule `dsl/eof-placement.ts::eofPlacements` refuses, naming the rule as `ownerKind`, with `details` holding the rule (`kind`), the start rule (`start`) and both placements. A rule with an `eof()` in a token gets `eof-in-token`, the more specific mistake: a lexical token cannot match the end of input, and tree-sitter's DSL forbids the shape, so the record refuses it at evaluate (`evaluateRecords`) rather than leaving it to the parser generator. Any other refused rule gets `eof-not-last`: an `eof()` is legal only last in the start rule, where it changes nothing because the start rule always runs to the end of the input. Neither code can be expected (`UNEXPECTABLE_CODES`).

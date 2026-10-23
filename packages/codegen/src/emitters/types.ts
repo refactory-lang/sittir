@@ -20,7 +20,7 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
-import { grammarTypePrefix } from '../grammars.ts';
+import { grammarNodeTypeName } from '../grammars.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { buildTriviaNodeType, resolveTriviaTypeNames } from './client-utils.ts';
 export {
@@ -89,7 +89,8 @@ import {
 	pruneUnusedImports,
 	importLocalName,
 	isDeclaredSupertype,
-	needsNonEmptyHoist
+	needsNonEmptyHoist,
+	quoteKey
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -145,7 +146,6 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	const { generatedIdTables } = config;
 	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
-	const grammarPrefix = grammarTypePrefix(grammar);
 
 	const nodeKinds = structNodes.map((n) => n.kind);
 	const allKinds = [...nodeKinds, ...leafKinds];
@@ -261,7 +261,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 
 	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, kindEntries);
 
-	lines.push(`export type ${grammarPrefix}Node = NodeOfNamespaces<NamespaceMap>;`);
+	lines.push(`export type ${grammarNodeTypeName(grammar)} = NodeOfNamespaces<NamespaceMap>;`);
 	lines.push('');
 
 	emitOptionsHints(lines, internalLines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints, nodeMap);
@@ -335,6 +335,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.push('}');
 		lines.push('');
 	}
+	lines.push('export interface PortableReads {}', '');
 
 	const fixedTextKindIds = new Set(fixedTextKinds(nodeMap, kindEntries).map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries)));
 	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
@@ -416,6 +417,12 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
 	}
+	if (/\bPortableQueryIds\b/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { PortableQueryIds } from '@sittir/common/portable';`);
+	}
+	if (/\bKindMembers\b/.test(body)) {
+		lines.splice(sittirImportIndex + 1, 0, `import type { KindMembers } from './is.js';`);
+	}
 	if (/\bERROR_KIND_ID\b/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type { ERROR_KIND_ID } from '@sittir/common/error-kind';`);
 	}
@@ -485,6 +492,7 @@ const VOCABULARY_IMPORTS = [
 	'GrammarTypeMap',
 	'NodeMethods',
 	'HoldsTree',
+	'HoldsSource',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
 	'SlotHint',
@@ -954,20 +962,20 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
 		if (withNode && name.startsWith('Parsed')) {
-			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId, PortableQueryIds<PortableReads>, KindMembers, FixedTextKindId>;`);
 			lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
 		}
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
 	if (surface.mainType === undefined) {
-		emit('Bound', 'NodeMethodsOf', false);
-		emit('Parsed', 'NodeMethodsOf, HoldsTree', false);
+		emit('Bound', 'NodeMethodsOf, HoldsSource', false);
+		emit('Parsed', 'NodeMethodsOf, HoldsSource, HoldsTree', false);
 		return;
 	}
 	for (const [name, of, byKindId, held] of [
-		['Bound', 'BoundOf', 'BoundByKindId', ''],
-		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsTree']
+		['Bound', 'BoundOf', 'BoundByKindId', ', HoldsSource'],
+		['Parsed', 'ParsedOf', 'ParsedByKindId', ', HoldsSource, HoldsTree']
 	] as const) {
 		if (!seated) {
 			emit(name, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf${held}`, true);
@@ -1016,6 +1024,9 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
+		lines.push('  readonly __slotNames__?: {');
+		for (const f of slots) lines.push(`    readonly ${f.storageKey}: ${JSON.stringify(f.propertyName)};`);
+		lines.push('  };');
 		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
 		emitSlotHints(lines, node, nodeMap, kindEntries);
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
@@ -1327,10 +1338,6 @@ function emitFieldInputHints(
 	}
 }
 
-function quoteKey(key: string): string {
-	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
-}
-
 function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
@@ -1389,7 +1396,7 @@ function nonEmptyProofLines(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const checks = node.slots
 		.filter((slot) => slot.registeredOption === undefined && needsNonEmptyHoist(slot, nodeMap))
 		.flatMap((slot) => {
-			const key = JSON.stringify(slot.configKey);
+			const key = JSON.stringify(slot.propertyName);
 			return [`KeyRefusesEmpty<Config, ${key}>`, `KeyRefusesEmpty<LooseConfig, ${key}>`, `SetterRefusesEmpty<Bound, ${JSON.stringify(slot.propertyName)}>`];
 		});
 	return checks.length === 0 ? [] : [`  type NonEmptySlots = Proven<[${checks.join(', ')}]>;`];
@@ -1411,7 +1418,7 @@ function emitRefineFormSubNamespaces(
 		const narrowed = form.narrowedFields;
 		const base =
 			narrowed.length > 0
-				? `Omit<ConfigFor<${nsKey}>, ${narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ')}>`
+				? `Omit<ConfigFor<${nsKey}>, ${narrowed.map((n) => JSON.stringify(node.slots.find((slot) => slot.name === n.fieldName)!.propertyName)).join(' | ')}>`
 				: `ConfigFor<${nsKey}>`;
 		lines.push(`    export type Config = ${omitRegistered(base, node)};`);
 		const formSpelling = spellingTypeOf(node, nodeMap, kindEntries);

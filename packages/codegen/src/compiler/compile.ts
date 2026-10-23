@@ -1,9 +1,5 @@
-import { generatedLayerDiagnostics } from './evaluate.ts';
-import { evaluatePackage } from './evaluate-package.ts';
-import { packageSourceEntry } from './resolve-grammar.ts';
-import { bindingsPathIn } from '../bindings/facts.ts';
-import { assertBindingsFresh } from '../bindings/hash.ts';
-import { loadBindingsHash } from '../bindings/module.ts';
+import { evaluatePackage, readsGrammarBindings, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
+import { assertPackageBindingsFresh } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
@@ -38,16 +34,13 @@ export interface CompileGrammarConfig {
 	readonly package: GrammarPackage;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
-	readonly unbound?: boolean;
-	readonly checkGeneratedLayers?: boolean;
+	readonly evaluation?: PackageEvaluationOptions;
 }
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
-	if (cfg.unbound !== true) assertBindingsFresh(grammar, await loadBindingsHash(cfg.package.dir), bindingsPathIn(cfg.package.dir));
-	const produced = await evaluatePackage(cfg.package, { unbound: cfg.unbound });
-	const generated = cfg.checkGeneratedLayers === true ? await generatedLayerDiagnostics(packageSourceEntry(cfg.package, { unbound: cfg.unbound })) : [];
-	const evaluated = generated.length === 0 ? produced : { ...produced, layerDiagnostics: [...(produced.layerDiagnostics ?? []), ...generated] };
+	if (readsGrammarBindings(cfg.package, cfg.evaluation)) await assertPackageBindingsFresh(cfg.package);
+	const evaluated = await evaluatePackage(cfg.package, cfg.evaluation);
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,

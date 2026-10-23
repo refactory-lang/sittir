@@ -14,6 +14,7 @@ import type { RawGrammar } from '../types.ts';
 import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { AssembledEnum } from '../model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts';
+import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], supertypes: string[] = []): RawGrammar {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
@@ -84,23 +85,30 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
-	it('records refine-config-invalid for a refine form whose path does not resolve', () => {
+	it('records groups-config-invalid for a lift that does not resolve and applies the others', () => {
 		const rawGrammar = withPredictedKinds({
 			...buildRawGrammar({
-				program: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }] },
+				program: {
+					type: 'SEQ',
+					members: [
+						{ type: 'SYMBOL', name: 'a' },
+						{ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'SYMBOL', name: 'b' }] }
+					]
+				},
 				a: { type: 'PATTERN', value: 'a' },
 				b: { type: 'PATTERN', value: 'b' }
 			}),
-			refineForms: new Map([['program', [{ name: 'curly', selections: { 'missing:': '{' } }]]])
+			groups: { program: { '1': 'inner', '7': 'missing' } }
 		});
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
 		expect(result.diagnostics).toContainEqual(
 			expect.objectContaining({
-				code: 'refine-config-invalid',
+				code: 'groups-config-invalid',
 				canProceed: false,
-				message: expect.stringMatching(/refine\(program\) form 'curly'/)
+				message: expect.stringMatching(/groups\['program'\]\['7'\]/)
 			})
 		);
+		expect(result.linked.rules._program_inner).toBeDefined();
 	});
 
 	it('rejects an expectDiagnostics entry that names a code no entry can expect', () => {
@@ -338,6 +346,30 @@ describe('grammar diagnostics preflight', () => {
 		expect(result.diagnostics.filter((d) => d.code.startsWith('kindid-'))).toEqual([]);
 	});
 
+	it('evaluateRecords surfaces desugarDivergences (evaluate-only mints with no wire-side deposit)', () => {
+		const rawGrammar: RawGrammar = {
+			...buildRawGrammar({
+				host: { type: 'SYMBOL', name: 'known' },
+				known: { type: 'PATTERN', value: 'x' }
+			}),
+			desugarDivergences: [
+				{ site: 'body-pattern-group', name: '_orphan_group' }
+			]
+		};
+		expect(evaluateRecords(rawGrammar)).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					scope: 'grammar',
+					code: 'desugar-divergence-body-pattern-group',
+					grammar: 'synth',
+					ownerKind: '_orphan_group',
+					severity: 'warning',
+					canProceed: true
+				})
+			])
+		);
+	});
+
 	it('nonterminal-separator-unstamped blocks (canProceed: false) — zero-instance guard', () => {
 		// No grammar fixture can fire this today (no kind in any of the 3 grammars
 		// routes a nonterminal separator through the slot-value stamp path's
@@ -527,5 +559,27 @@ describe('the grammar root must be a non-terminal', () => {
 				word: { type: 'PATTERN', value: '[a-z]+' }
 			})
 		).toEqual([]);
+	});
+});
+
+describe('evaluateRecords carries the layer diagnostics and refuses enrich codes as expectations', () => {
+	it('passes raw.layerDiagnostics through unchanged', () => {
+		const layer = {
+			scope: 'grammar' as const,
+			code: 'layer-test-diagnostic',
+			severity: 'error' as const,
+			grammar: 'synth',
+			message: 'a layer diagnostic handed in by the layer',
+			canProceed: false
+		};
+		expect(evaluateRecords({ ...collisionGrammar(), layerDiagnostics: [layer] })).toContainEqual(layer);
+	});
+
+	it('refuses an expectDiagnostics entry that names an ENRICH_SHAPES code as unexpectable', () => {
+		const [code] = Object.keys(ENRICH_SHAPES);
+		const rawGrammar = { ...collisionGrammar(), expectDiagnostics: { [code!]: ['host'] } };
+		expect(evaluateRecords(rawGrammar)).toContainEqual(
+			expect.objectContaining({ code: 'expect-diagnostics-invalid', canProceed: false, details: { code } })
+		);
 	});
 });

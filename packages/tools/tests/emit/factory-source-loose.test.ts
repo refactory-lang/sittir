@@ -101,6 +101,7 @@ const ctx: PrintContext = {
 	engine: 'rs',
 	surface: 'loose',
 	nested: 'calls',
+	slotNameOf: (_kind, slot) => slot,
 	kindNameFromId: (id) => names[id],
 	memberNameOfId: (id) => (names[id] === undefined ? undefined : pascal(names[id]!)),
 	irPathOfKind: (kind) => `ir.${camel(kind)}`,

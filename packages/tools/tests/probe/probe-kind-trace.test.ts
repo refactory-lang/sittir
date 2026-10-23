@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { materializeDetached, type TypedNode } from '../../src/validate/common.ts';
+import { materializeDetached, slotAccessorOf, type LoadedNodeModel, type TypedNode } from '../../src/validate/common.ts';
 import { probeTrace, resolveNativeTraceUntypedNode } from '../../src/probe/kind.ts';
+
+const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} } } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(kind: number, text: string): TypedNode {
 	return { $type: kind, $text: text };
@@ -23,7 +25,7 @@ describe('probe-kind native trace helpers', () => {
 			}
 		} satisfies TypedNode;
 
-		const materialized = asRecord(materializeDetached(wrapped));
+		const materialized = asRecord(materializeDetached(wrapped, accessorOf));
 
 		expect(materialized._statements).toEqual([
 			expect.objectContaining({ $type: 11, $text: 'let a = 1;' }),
@@ -45,7 +47,7 @@ describe('probe-kind native trace helpers', () => {
 			_statements: { $type: 10, $text: 'collapsed' }
 		};
 
-		const resolved = asRecord(resolveNativeTraceUntypedNode(wrapped, legacy));
+		const resolved = asRecord(resolveNativeTraceUntypedNode(wrapped, legacy, accessorOf));
 
 		expect(resolved._statements).toEqual([
 			expect.objectContaining({ $type: 11, $text: 'let a = 1;' }),
@@ -60,7 +62,7 @@ describe('probe-kind native trace helpers', () => {
 			_statements: { $type: 10, $text: 'collapsed' }
 		};
 
-		expect(resolveNativeTraceUntypedNode(undefined, legacy)).toBe(legacy);
+		expect(resolveNativeTraceUntypedNode(undefined, legacy, accessorOf)).toBe(legacy);
 	});
 
 	it('defaults omitted trace engine selection to the full js/native matrix', async () => {

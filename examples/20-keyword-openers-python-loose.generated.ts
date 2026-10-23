@@ -61,7 +61,7 @@ export function rebuildKeywordOpenersPythonLoose() {
 				body: "i",
 				clauses: [py.build.forInClause({
 					left: "i",
-					right: [py.build.parenthesizedExpression("a")],
+					rights: [py.build.parenthesizedExpression("a")],
 				}), py.build.parenthesizedExpression("i")],
 			}),
 		})), py.build.simpleStatements(py.build.assignmentEq({
@@ -75,14 +75,14 @@ export function rebuildKeywordOpenersPythonLoose() {
 			value: py.build.dictionary(py.build.pair({
 				key: py.build.string({
 					stringStart: "\"",
-					content: [py.build.stringContent("k")],
+					contents: [py.build.stringContent("k")],
 					stringEnd: "\"",
 				}),
 				value: py.build.parenthesizedExpression("1"),
 			}), py.build.pair({
 				key: py.build.string({
 					stringStart: "\"",
-					content: [py.build.stringContent("j")],
+					contents: [py.build.stringContent("j")],
 					stringEnd: "\"",
 				}),
 				value: py.build.list("2"),
@@ -91,7 +91,7 @@ export function rebuildKeywordOpenersPythonLoose() {
 			name: "s",
 			value: py.build.string({
 				stringStart: "f\"",
-				content: [py.build.stringContent("a"), py.build.interpolation({
+				contents: [py.build.stringContent("a"), py.build.interpolation({
 					expression: py.build.parenthesizedExpression("x"),
 				})],
 				stringEnd: "\"",

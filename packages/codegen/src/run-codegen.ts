@@ -146,7 +146,7 @@ async function gatedCompilation(pkg: GrammarPackage, allowDiagnostics: ReadonlyS
 		package: pkg,
 		generatedIdTables: await loadPackageIdTables(pkg),
 		allowDiagnostics,
-		checkGeneratedLayers: true
+		evaluation: { checkGeneratedLayers: true }
 	}).then(
 		(compilation): GatedCompilation => ({ records: compilation.grammarDiagnostics, blocked: [], compilation }),
 		(error: unknown): GatedCompilation => {

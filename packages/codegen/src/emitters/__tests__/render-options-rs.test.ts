@@ -3,7 +3,8 @@ import { SEAM_DECLARED, edgeSitesOf, planRenderOptions, renderOptionsRs, seatTab
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
-import { makeSiteKindsNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeSiteKindsNodeMap, displayFamilyNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 const kindEntries = [
@@ -90,7 +91,7 @@ describe('planRenderOptions', () => {
 	});
 
 	it('a separator site rides the spacing table under its kind and fills separator_kind', () => {
-		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }];
+		const entries = [...kindEntries, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }, { kind: 'object_type_content', member: 'ObjectTypeContent', id: 400 }];
 		const site: SitePreference = {
 			kind: 'object_type_content',
 			slot: 'content',
@@ -103,7 +104,7 @@ describe('planRenderOptions', () => {
 			defaultArm: 'semi',
 			source: 'separator'
 		};
-		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust');
+		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site], entries as never), whitespaceText, undefined, 'rust');
 		const row = plan.spacingSites.find((s) => s.role === 'separator')!;
 		expect([row.constName, row.fieldIdent, row.wireKey, row.defaultId, row.allowedIds, row.spacing?.side, row.defaultText]).toEqual([
 			'SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR',
@@ -114,8 +115,11 @@ describe('planRenderOptions', () => {
 			undefined,
 			';'
 		]);
-		const addresses = deriveAddressTables([...sites, site], entries, makeSiteKindsNodeMap([...sites, site]), kindIdArmType(entries as never), (() => []) as never);
-		expect(renderOptionsRs(plan, addresses, entries)).toContain('("object_type_content", "content_separator", "separator", &[KindId(14), KindId(20)]),');
+		const addresses = deriveAddressTables([...sites, site], entries, makeSiteKindsNodeMap([...sites, site], entries as never), kindIdArmType(entries as never), (() => []) as never);
+		const emitted = renderOptionsRs(plan, addresses, entries);
+		expect(emitted).toContain('("object_type_content", "content_separator", "separator", &[KindId(14), KindId(20)]),');
+		expect(emitted).toMatch(/pub static SEPARATOR_SITES: &\[Option<SiteId>\] = &\[[^\]]*Some\(SiteId\(\d+\)\)/);
+		expect(emitted).toContain('separator_sites: SEPARATOR_SITES,');
 	});
 
 	it('an arm without a kind id fails loudly', () => {
@@ -314,5 +318,39 @@ describe('a kind edge over a choice of tokens', () => {
 		const lost = [armSites[0]!, { ...armSites[1]!, spacing: { at: 'seam', token: 'unknown_token', side: 'before' } as const, edgeArm: {} }];
 		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost, entries), whitespaceText, undefined, 'rust');
 		expect(() => edgeSitesOf(lostPlan)).toThrow(/unknown_token/);
+	});
+});
+
+describe('an address shared by an alias-site family', () => {
+	function aliasFamily(declared: boolean) {
+		const sites: SitePreference[] = ['first_block', 'second_block'].map((kind) => ({
+			kind,
+			slot: 'statements',
+			address: 'statements_separator_space',
+			label: 'empty_separator_space',
+			arms: SPACING,
+			defaultArm: 'newline',
+			source: 'spacing'
+		}));
+		const { nodeMap, generatedIdTables } = displayFamilyNodeMap(
+			[...sites, ...SPACING.map((arm) => ({ kind: arm.kind }))],
+			['first_block', 'second_block'],
+			'block',
+			declared
+		);
+		const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+		const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), new Map());
+		return { plan, addresses, kindEntries };
+	}
+
+	it('is accepted when its sites are members of one display union', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(true);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).not.toThrow();
+	});
+
+	it('is still refused for a coincidental duplicate, when no display union names the sites', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(false);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
 	});
 });

@@ -231,7 +231,7 @@ jobs:
         uses: ./.github/actions/rust-toolchain
       - name: Build the packages
         run: pnpm run build
-      - name: Pack, install outside the workspace, createEngine + parse + render
+      - name: Pack, install outside the workspace, type-check @sittir/types, createEngine + parse + render
         run: pnpm run check:published
 
   perf-regression-checker:

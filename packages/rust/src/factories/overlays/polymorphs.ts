@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -48,11 +48,11 @@ export const expressionStatement = Object.freeze({
 	})
 }) as unknown as typeof B.expressionStatement & {
 	withSemi: {
-		strict: (
-			...args: ArgsOf<typeof F.buildExpressionStatementWithSemi>
+		strict: <const A extends ArgsOf<typeof F.buildExpressionStatementWithSemi>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildExpressionStatementWithSemi>>
 		) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExpressionStatementWithSemi>
+		coerce: <const A extends ArgsOf<typeof C.coerceToExpressionStatementWithSemi>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToExpressionStatementWithSemi>>
 		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 };
@@ -75,40 +75,57 @@ export const attribute = Object.freeze({
 	input: bundle(attribute$input$strict, attribute$input$coerce, { key: 'attribute.input', max: 2 })
 }) as unknown as typeof B.attribute & {
 	input: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildAttribute>[0], 'input'> & ArgsOf<typeof F.buildAttributeInput>[0]
+				>,
 			options?: OptionsArg<typeof F.buildAttribute>
 		) => ReturnType<typeof F.buildAttribute>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'input'> & ArgsOf<typeof C.coerceToAttributeInput>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'input'> &
+				ArgsOf<typeof C.coerceToAttributeInput>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToAttribute>[0], 'input'> & ArgsOf<typeof C.coerceToAttributeInput>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToAttribute>
 		) => ReturnType<typeof C.coerceToAttribute>;
 	};
 };
 
-const enumVariantListElements$item = <
+const enumVariantListElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'enumVariant']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const enumVariantListElements$seated: (
+function enumVariantListElements$seated<A extends T.EnumVariantListElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildEnumVariantListElements>;
+function enumVariantListElements$seated(
 	...args: T.EnumVariantListElements.BuildArgs
-) => ReturnType<typeof F.buildEnumVariantListElements> = enumVariantListElements$item(
-	F.buildEnumVariantListElements,
-	F.buildAttributedEnumVariant
-);
-const enumVariantListElements$seatedCoerce: (
+): ReturnType<typeof F.buildEnumVariantListElements> {
+	return enumVariantListElements$items(F.buildEnumVariantListElements, F.buildAttributedEnumVariant)(...args);
+}
+function enumVariantListElements$seatedCoerce<const A extends T.EnumVariantListElements.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
+): ReturnType<typeof C.coerceToEnumVariantListElements>;
+function enumVariantListElements$seatedCoerce(
 	...args: T.EnumVariantListElements.LooseArgs
-) => ReturnType<typeof C.coerceToEnumVariantListElements> = enumVariantListElements$item(
-	C.coerceToEnumVariantListElements,
-	C.coerceToAttributedEnumVariant
-);
+): ReturnType<typeof C.coerceToEnumVariantListElements> {
+	return enumVariantListElements$items(C.coerceToEnumVariantListElements, C.coerceToAttributedEnumVariant)(...args);
+}
 export const enumVariantListElements = Object.freeze({
 	...B.enumVariantListElements,
 	...bundle(enumVariantListElements$seated, enumVariantListElements$seatedCoerce)
@@ -117,27 +134,29 @@ export const enumVariantListElements = Object.freeze({
 	coerce: typeof enumVariantListElements$seatedCoerce;
 };
 
-const enumVariantList$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const enumVariantList$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'enumVariant']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function enumVariantList$seated(): T.EmptyEnumVariantList;
-function enumVariantList$seated(...args: T.EnumVariantList.BuildArgs): ReturnType<typeof F.buildEnumVariantList>;
+function enumVariantList$seated<A extends T.EnumVariantList.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildEnumVariantList>;
 function enumVariantList$seated(...args: T.EnumVariantList.BuildArgs): ReturnType<typeof F.buildEnumVariantList> {
-	return enumVariantList$item(F.buildEnumVariantList, F.buildAttributedEnumVariant)(...args);
+	return enumVariantList$items(F.buildEnumVariantList, F.buildAttributedEnumVariant)(...args);
 }
 function enumVariantList$seatedCoerce(): T.EmptyEnumVariantList;
-function enumVariantList$seatedCoerce(
-	...args: T.EnumVariantList.LooseArgs
+function enumVariantList$seatedCoerce<const A extends T.EnumVariantList.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.EnumVariantList.LooseArgs>
 ): ReturnType<typeof C.coerceToEnumVariantList>;
 function enumVariantList$seatedCoerce(
 	...args: T.EnumVariantList.LooseArgs
 ): ReturnType<typeof C.coerceToEnumVariantList> {
-	return enumVariantList$item(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant)(...args);
+	return enumVariantList$items(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant)(...args);
 }
 export const enumVariantList = Object.freeze({
 	...B.enumVariantList,
@@ -147,29 +166,39 @@ export const enumVariantList = Object.freeze({
 	coerce: typeof enumVariantList$seatedCoerce;
 };
 
-const fieldDeclarationListElements$item = <
+const fieldDeclarationListElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'fieldDeclaration']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const fieldDeclarationListElements$seated: (
+function fieldDeclarationListElements$seated<A extends T.FieldDeclarationListElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildFieldDeclarationListElements>;
+function fieldDeclarationListElements$seated(
 	...args: T.FieldDeclarationListElements.BuildArgs
-) => ReturnType<typeof F.buildFieldDeclarationListElements> = fieldDeclarationListElements$item(
-	F.buildFieldDeclarationListElements,
-	F.buildAttributedFieldDeclaration
-);
-const fieldDeclarationListElements$seatedCoerce: (
+): ReturnType<typeof F.buildFieldDeclarationListElements> {
+	return fieldDeclarationListElements$items(
+		F.buildFieldDeclarationListElements,
+		F.buildAttributedFieldDeclaration
+	)(...args);
+}
+function fieldDeclarationListElements$seatedCoerce<const A extends T.FieldDeclarationListElements.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.FieldDeclarationListElements.LooseArgs>
+): ReturnType<typeof C.coerceToFieldDeclarationListElements>;
+function fieldDeclarationListElements$seatedCoerce(
 	...args: T.FieldDeclarationListElements.LooseArgs
-) => ReturnType<typeof C.coerceToFieldDeclarationListElements> = fieldDeclarationListElements$item(
-	C.coerceToFieldDeclarationListElements,
-	C.coerceToAttributedFieldDeclaration
-);
+): ReturnType<typeof C.coerceToFieldDeclarationListElements> {
+	return fieldDeclarationListElements$items(
+		C.coerceToFieldDeclarationListElements,
+		C.coerceToAttributedFieldDeclaration
+	)(...args);
+}
 export const fieldDeclarationListElements = Object.freeze({
 	...B.fieldDeclarationListElements,
 	...bundle(fieldDeclarationListElements$seated, fieldDeclarationListElements$seatedCoerce)
@@ -178,31 +207,31 @@ export const fieldDeclarationListElements = Object.freeze({
 	coerce: typeof fieldDeclarationListElements$seatedCoerce;
 };
 
-const fieldDeclarationList$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const fieldDeclarationList$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'fieldDeclaration']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function fieldDeclarationList$seated(): T.EmptyFieldDeclarationList;
-function fieldDeclarationList$seated(
-	...args: T.FieldDeclarationList.BuildArgs
+function fieldDeclarationList$seated<A extends T.FieldDeclarationList.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildFieldDeclarationList>;
 function fieldDeclarationList$seated(
 	...args: T.FieldDeclarationList.BuildArgs
 ): ReturnType<typeof F.buildFieldDeclarationList> {
-	return fieldDeclarationList$item(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration)(...args);
+	return fieldDeclarationList$items(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration)(...args);
 }
 function fieldDeclarationList$seatedCoerce(): T.EmptyFieldDeclarationList;
-function fieldDeclarationList$seatedCoerce(
-	...args: T.FieldDeclarationList.LooseArgs
+function fieldDeclarationList$seatedCoerce<const A extends T.FieldDeclarationList.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.FieldDeclarationList.LooseArgs>
 ): ReturnType<typeof C.coerceToFieldDeclarationList>;
 function fieldDeclarationList$seatedCoerce(
 	...args: T.FieldDeclarationList.LooseArgs
 ): ReturnType<typeof C.coerceToFieldDeclarationList> {
-	return fieldDeclarationList$item(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration)(...args);
+	return fieldDeclarationList$items(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration)(...args);
 }
 export const fieldDeclarationList = Object.freeze({
 	...B.fieldDeclarationList,
@@ -212,29 +241,41 @@ export const fieldDeclarationList = Object.freeze({
 	coerce: typeof fieldDeclarationList$seatedCoerce;
 };
 
-const orderedFieldDeclarationListElements$item = <
+const orderedFieldDeclarationListElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'visibilityModifier', 'type']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const orderedFieldDeclarationListElements$seated: (
+function orderedFieldDeclarationListElements$seated<A extends T.OrderedFieldDeclarationListElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
+function orderedFieldDeclarationListElements$seated(
 	...args: T.OrderedFieldDeclarationListElements.BuildArgs
-) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$item(
-	F.buildOrderedFieldDeclarationListElements,
-	F.buildAttributedOrderedField
-);
-const orderedFieldDeclarationListElements$seatedCoerce: (
+): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> {
+	return orderedFieldDeclarationListElements$items(
+		F.buildOrderedFieldDeclarationListElements,
+		F.buildAttributedOrderedField
+	)(...args);
+}
+function orderedFieldDeclarationListElements$seatedCoerce<
+	const A extends T.OrderedFieldDeclarationListElements.LooseArgs
+>(
+	...args: A & RefuseUndeclared<A, T.OrderedFieldDeclarationListElements.LooseArgs>
+): ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements>;
+function orderedFieldDeclarationListElements$seatedCoerce(
 	...args: T.OrderedFieldDeclarationListElements.LooseArgs
-) => ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$item(
-	C.coerceToOrderedFieldDeclarationListElements,
-	C.coerceToAttributedOrderedField
-);
+): ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> {
+	return orderedFieldDeclarationListElements$items(
+		C.coerceToOrderedFieldDeclarationListElements,
+		C.coerceToAttributedOrderedField
+	)(...args);
+}
 export const orderedFieldDeclarationListElements = Object.freeze({
 	...B.orderedFieldDeclarationListElements,
 	...bundle(orderedFieldDeclarationListElements$seated, orderedFieldDeclarationListElements$seatedCoerce)
@@ -243,34 +284,34 @@ export const orderedFieldDeclarationListElements = Object.freeze({
 	coerce: typeof orderedFieldDeclarationListElements$seatedCoerce;
 };
 
-const orderedFieldDeclarationList$item = <
+const orderedFieldDeclarationList$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'visibilityModifier', 'type']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function orderedFieldDeclarationList$seated(): T.EmptyOrderedFieldDeclarationList;
-function orderedFieldDeclarationList$seated(
-	...args: T.OrderedFieldDeclarationList.BuildArgs
+function orderedFieldDeclarationList$seated<A extends T.OrderedFieldDeclarationList.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 function orderedFieldDeclarationList$seated(
 	...args: T.OrderedFieldDeclarationList.BuildArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList> {
-	return orderedFieldDeclarationList$item(F.buildOrderedFieldDeclarationList, F.buildAttributedOrderedField)(...args);
+	return orderedFieldDeclarationList$items(F.buildOrderedFieldDeclarationList, F.buildAttributedOrderedField)(...args);
 }
 function orderedFieldDeclarationList$seatedCoerce(): T.EmptyOrderedFieldDeclarationList;
-function orderedFieldDeclarationList$seatedCoerce(
-	...args: T.OrderedFieldDeclarationList.LooseArgs
+function orderedFieldDeclarationList$seatedCoerce<const A extends T.OrderedFieldDeclarationList.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.OrderedFieldDeclarationList.LooseArgs>
 ): ReturnType<typeof C.coerceToOrderedFieldDeclarationList>;
 function orderedFieldDeclarationList$seatedCoerce(
 	...args: T.OrderedFieldDeclarationList.LooseArgs
 ): ReturnType<typeof C.coerceToOrderedFieldDeclarationList> {
-	return orderedFieldDeclarationList$item(
+	return orderedFieldDeclarationList$items(
 		C.coerceToOrderedFieldDeclarationList,
 		C.coerceToAttributedOrderedField
 	)(...args);
@@ -283,29 +324,33 @@ export const orderedFieldDeclarationList = Object.freeze({
 	coerce: typeof orderedFieldDeclarationList$seatedCoerce;
 };
 
-const typeParametersElements$item = <
+const typeParametersElements$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const typeParametersElements$seated: (
+function typeParametersElements$seated<A extends T.TypeParametersElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildTypeParametersElements>;
+function typeParametersElements$seated(
 	...args: T.TypeParametersElements.BuildArgs
-) => ReturnType<typeof F.buildTypeParametersElements> = typeParametersElements$item(
-	F.buildTypeParametersElements,
-	F.buildAttributedTypeParameter
-);
-const typeParametersElements$seatedCoerce: (
+): ReturnType<typeof F.buildTypeParametersElements> {
+	return typeParametersElements$items(F.buildTypeParametersElements, F.buildAttributedTypeParameter)(...args);
+}
+function typeParametersElements$seatedCoerce<const A extends T.TypeParametersElements.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
+): ReturnType<typeof C.coerceToTypeParametersElements>;
+function typeParametersElements$seatedCoerce(
 	...args: T.TypeParametersElements.LooseArgs
-) => ReturnType<typeof C.coerceToTypeParametersElements> = typeParametersElements$item(
-	C.coerceToTypeParametersElements,
-	C.coerceToAttributedTypeParameter
-);
+): ReturnType<typeof C.coerceToTypeParametersElements> {
+	return typeParametersElements$items(C.coerceToTypeParametersElements, C.coerceToAttributedTypeParameter)(...args);
+}
 export const typeParametersElements = Object.freeze({
 	...B.typeParametersElements,
 	...bundle(typeParametersElements$seated, typeParametersElements$seatedCoerce)
@@ -314,22 +359,26 @@ export const typeParametersElements = Object.freeze({
 	coerce: typeof typeParametersElements$seatedCoerce;
 };
 
-const typeParameters$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const typeParameters$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'content']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const typeParameters$seated: (...args: T.TypeParameters.BuildArgs) => ReturnType<typeof F.buildTypeParameters> =
-	typeParameters$item(F.buildTypeParameters, F.buildAttributedTypeParameter);
-const typeParameters$seatedCoerce: (
-	...args: T.TypeParameters.LooseArgs
-) => ReturnType<typeof C.coerceToTypeParameters> = typeParameters$item(
-	C.coerceToTypeParameters,
-	C.coerceToAttributedTypeParameter
-);
+function typeParameters$seated<A extends T.TypeParameters.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildTypeParameters>;
+function typeParameters$seated(...args: T.TypeParameters.BuildArgs): ReturnType<typeof F.buildTypeParameters> {
+	return typeParameters$items(F.buildTypeParameters, F.buildAttributedTypeParameter)(...args);
+}
+function typeParameters$seatedCoerce<const A extends T.TypeParameters.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.TypeParameters.LooseArgs>
+): ReturnType<typeof C.coerceToTypeParameters>;
+function typeParameters$seatedCoerce(...args: T.TypeParameters.LooseArgs): ReturnType<typeof C.coerceToTypeParameters> {
+	return typeParameters$items(C.coerceToTypeParameters, C.coerceToAttributedTypeParameter)(...args);
+}
 export const typeParameters = Object.freeze({
 	...B.typeParameters,
 	...bundle(typeParameters$seated, typeParameters$seatedCoerce)
@@ -344,10 +393,18 @@ const useWildcard$flatten$useWildcardGroup =
 		config === undefined || _built(config)
 			? _fwd<ReturnType<PF>>(parent, config, options)
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
-const useWildcard$seated: (...args: T.UseWildcard.BuildArgs) => ReturnType<typeof F.buildUseWildcard> =
-	useWildcard$flatten$useWildcardGroup(F.buildUseWildcard, F.buildUseWildcardGroup);
-const useWildcard$seatedCoerce: (...args: T.UseWildcard.LooseArgs) => ReturnType<typeof C.coerceToUseWildcard> =
-	useWildcard$flatten$useWildcardGroup(C.coerceToUseWildcard, C.coerceToUseWildcardGroup);
+function useWildcard$seated<A extends T.UseWildcard.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildUseWildcard>;
+function useWildcard$seated(...args: T.UseWildcard.BuildArgs): ReturnType<typeof F.buildUseWildcard> {
+	return useWildcard$flatten$useWildcardGroup(F.buildUseWildcard, F.buildUseWildcardGroup)(...args);
+}
+function useWildcard$seatedCoerce<const A extends T.UseWildcard.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.UseWildcard.LooseArgs>
+): ReturnType<typeof C.coerceToUseWildcard>;
+function useWildcard$seatedCoerce(...args: T.UseWildcard.LooseArgs): ReturnType<typeof C.coerceToUseWildcard> {
+	return useWildcard$flatten$useWildcardGroup(C.coerceToUseWildcard, C.coerceToUseWildcardGroup)(...args);
+}
 export const useWildcard = Object.freeze({
 	...B.useWildcard,
 	...bundle(useWildcard$seated, useWildcard$seatedCoerce, { key: 'useWildcard', max: 1 })
@@ -430,11 +487,11 @@ const visibilityModifierPubScope: {
 		) => ReturnType<typeof C.coerceToVisibilityModifierPubScope>;
 	};
 	inPath: {
-		strict: (
-			...args: ArgsOf<typeof F.buildVisibilityModifierPubScopeInPath>
+		strict: <const A extends ArgsOf<typeof F.buildVisibilityModifierPubScopeInPath>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildVisibilityModifierPubScopeInPath>>
 		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubScopeInPath>
+		coerce: <const A extends ArgsOf<typeof C.coerceToVisibilityModifierPubScopeInPath>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToVisibilityModifierPubScopeInPath>>
 		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	};
 } = Object.freeze({
@@ -518,42 +575,42 @@ const visibilityModifierPub$scope$inPath$coerce = visibilityModifierPub$scope$in
 );
 const visibilityModifierPub: {
 	scope: {
-		strict: (
-			...args: ArgsOf<typeof F.buildVisibilityModifierPubScope>
+		strict: <const A extends ArgsOf<typeof F.buildVisibilityModifierPubScope>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildVisibilityModifierPubScope>>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubScope>
+		coerce: <const A extends ArgsOf<typeof C.coerceToVisibilityModifierPubScope>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToVisibilityModifierPubScope>>
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		self: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.self.strict>
+			strict: <const A extends ArgsOf<typeof visibilityModifierPubScope.self.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.self.strict>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.self.coerce>
+			coerce: <const A extends ArgsOf<typeof visibilityModifierPubScope.self.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.self.coerce>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		};
 		super: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.super.strict>
+			strict: <const A extends ArgsOf<typeof visibilityModifierPubScope.super.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.super.strict>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.super.coerce>
+			coerce: <const A extends ArgsOf<typeof visibilityModifierPubScope.super.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.super.coerce>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		};
 		crate: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.crate.strict>
+			strict: <const A extends ArgsOf<typeof visibilityModifierPubScope.crate.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.crate.strict>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.crate.coerce>
+			coerce: <const A extends ArgsOf<typeof visibilityModifierPubScope.crate.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.crate.coerce>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		};
 		inPath: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.inPath.strict>
+			strict: <const A extends ArgsOf<typeof visibilityModifierPubScope.inPath.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.inPath.strict>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPubScope.inPath.coerce>
+			coerce: <const A extends ArgsOf<typeof visibilityModifierPubScope.inPath.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPubScope.inPath.coerce>>
 			) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		};
 	};
@@ -583,11 +640,17 @@ const visibilityModifierPub: {
 });
 
 const visibilityModifier$crate =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const visibilityModifier$crate$strict = visibilityModifier$crate(F.buildVisibilityModifier, TSKindId.Crate);
-const visibilityModifier$crate$coerce = visibilityModifier$crate(C.coerceToVisibilityModifier, TSKindId.Crate);
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$crate$strict = visibilityModifier$crate(
+	F.buildVisibilityModifier,
+	F.buildCrateVisibilityModifier
+);
+const visibilityModifier$crate$coerce = visibilityModifier$crate(
+	F.buildVisibilityModifier,
+	C.coerceToCrateVisibilityModifier
+);
 const visibilityModifier$pub =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -690,51 +753,57 @@ export const visibilityModifier = Object.freeze({
 	}
 }) as unknown as typeof B.visibilityModifier & {
 	crate: {
-		strict: (options?: OptionsArg<typeof F.buildVisibilityModifier>) => ReturnType<typeof F.buildVisibilityModifier>;
-		coerce: (
-			options?: OptionsArg<typeof C.coerceToVisibilityModifier>
-		) => ReturnType<typeof C.coerceToVisibilityModifier>;
+		strict: <const A extends ArgsOf<typeof F.buildCrateVisibilityModifier>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCrateVisibilityModifier>>
+		) => ReturnType<typeof F.buildVisibilityModifier>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToCrateVisibilityModifier>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCrateVisibilityModifier>>
+		) => ReturnType<typeof F.buildVisibilityModifier>;
 	};
 	pub: {
-		strict: (...args: ArgsOf<typeof F.buildVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
-		coerce: (...args: ArgsOf<typeof C.coerceToVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
+		strict: <const A extends ArgsOf<typeof F.buildVisibilityModifierPub>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildVisibilityModifierPub>>
+		) => ReturnType<typeof F.buildVisibilityModifier>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToVisibilityModifierPub>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToVisibilityModifierPub>>
+		) => ReturnType<typeof F.buildVisibilityModifier>;
 		scope: {
-			strict: (
-				...args: ArgsOf<typeof visibilityModifierPub.scope.strict>
+			strict: <const A extends ArgsOf<typeof visibilityModifierPub.scope.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.strict>>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
-			coerce: (
-				...args: ArgsOf<typeof visibilityModifierPub.scope.coerce>
+			coerce: <const A extends ArgsOf<typeof visibilityModifierPub.scope.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.coerce>>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			self: {
-				strict: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.self.strict>
+				strict: <const A extends ArgsOf<typeof visibilityModifierPub.scope.self.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.self.strict>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
-				coerce: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.self.coerce>
+				coerce: <const A extends ArgsOf<typeof visibilityModifierPub.scope.self.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.self.coerce>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
 			};
 			super: {
-				strict: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.super.strict>
+				strict: <const A extends ArgsOf<typeof visibilityModifierPub.scope.super.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.super.strict>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
-				coerce: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.super.coerce>
+				coerce: <const A extends ArgsOf<typeof visibilityModifierPub.scope.super.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.super.coerce>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
 			};
 			crate: {
-				strict: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.crate.strict>
+				strict: <const A extends ArgsOf<typeof visibilityModifierPub.scope.crate.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.crate.strict>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
-				coerce: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.crate.coerce>
+				coerce: <const A extends ArgsOf<typeof visibilityModifierPub.scope.crate.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.crate.coerce>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
 			};
 			inPath: {
-				strict: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.inPath.strict>
+				strict: <const A extends ArgsOf<typeof visibilityModifierPub.scope.inPath.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.inPath.strict>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
-				coerce: (
-					...args: ArgsOf<typeof visibilityModifierPub.scope.inPath.coerce>
+				coerce: <const A extends ArgsOf<typeof visibilityModifierPub.scope.inPath.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof visibilityModifierPub.scope.inPath.coerce>>
 				) => ReturnType<typeof F.buildVisibilityModifier>;
 			};
 		};
@@ -769,36 +838,71 @@ export const functionType = Object.freeze({
 	fnForm: bundle(functionType$fnForm$strict, functionType$fnForm$coerce, { key: 'functionType.fnForm', max: 2 })
 }) as unknown as typeof B.functionType & {
 	traitForm: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildFunctionTypeTraitForm>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildFunctionTypeTraitForm>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildFunctionType>
 		) => ReturnType<typeof F.buildFunctionType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToFunctionTypeTraitForm>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToFunctionTypeTraitForm>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToFunctionType>
 		) => ReturnType<typeof C.coerceToFunctionType>;
 	};
 	fnForm: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildFunctionTypeFnForm>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildFunctionTypeFnForm>;
+					}
+				>,
 			options?: OptionsArg<typeof F.buildFunctionType>
 		) => ReturnType<typeof F.buildFunctionType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToFunctionTypeFnForm>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToFunctionTypeFnForm>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToFunctionType>
 		) => ReturnType<typeof C.coerceToFunctionType>;
 	};
 };
 
-const typeArgumentsElements$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const typeArgumentsElements$items = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
 	parent: PF,
 	child: CF
 ) => {
@@ -806,18 +910,22 @@ const typeArgumentsElements$item = <PF extends (...args: never[]) => unknown, CF
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const typeArgumentsElements$seated: (
+function typeArgumentsElements$seated<A extends T.TypeArgumentsElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildTypeArgumentsElements>;
+function typeArgumentsElements$seated(
 	...args: T.TypeArgumentsElements.BuildArgs
-) => ReturnType<typeof F.buildTypeArgumentsElements> = typeArgumentsElements$item(
-	F.buildTypeArgumentsElements,
-	F.buildTypeArgument
-);
-const typeArgumentsElements$seatedCoerce: (
+): ReturnType<typeof F.buildTypeArgumentsElements> {
+	return typeArgumentsElements$items(F.buildTypeArgumentsElements, F.buildTypeArgument)(...args);
+}
+function typeArgumentsElements$seatedCoerce<const A extends T.TypeArgumentsElements.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
+): ReturnType<typeof C.coerceToTypeArgumentsElements>;
+function typeArgumentsElements$seatedCoerce(
 	...args: T.TypeArgumentsElements.LooseArgs
-) => ReturnType<typeof C.coerceToTypeArgumentsElements> = typeArgumentsElements$item(
-	C.coerceToTypeArgumentsElements,
-	C.coerceToTypeArgument
-);
+): ReturnType<typeof C.coerceToTypeArgumentsElements> {
+	return typeArgumentsElements$items(C.coerceToTypeArgumentsElements, C.coerceToTypeArgument)(...args);
+}
 export const typeArgumentsElements = Object.freeze({
 	...B.typeArgumentsElements,
 	...bundle(typeArgumentsElements$seated, typeArgumentsElements$seatedCoerce)
@@ -826,7 +934,7 @@ export const typeArgumentsElements = Object.freeze({
 	coerce: typeof typeArgumentsElements$seatedCoerce;
 };
 
-const typeArguments$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const typeArguments$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -834,10 +942,18 @@ const typeArguments$item = <PF extends (...args: never[]) => unknown, CF extends
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const typeArguments$seated: (...args: T.TypeArguments.BuildArgs) => ReturnType<typeof F.buildTypeArguments> =
-	typeArguments$item(F.buildTypeArguments, F.buildTypeArgument);
-const typeArguments$seatedCoerce: (...args: T.TypeArguments.LooseArgs) => ReturnType<typeof C.coerceToTypeArguments> =
-	typeArguments$item(C.coerceToTypeArguments, C.coerceToTypeArgument);
+function typeArguments$seated<A extends T.TypeArguments.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildTypeArguments>;
+function typeArguments$seated(...args: T.TypeArguments.BuildArgs): ReturnType<typeof F.buildTypeArguments> {
+	return typeArguments$items(F.buildTypeArguments, F.buildTypeArgument)(...args);
+}
+function typeArguments$seatedCoerce<const A extends T.TypeArguments.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.TypeArguments.LooseArgs>
+): ReturnType<typeof C.coerceToTypeArguments>;
+function typeArguments$seatedCoerce(...args: T.TypeArguments.LooseArgs): ReturnType<typeof C.coerceToTypeArguments> {
+	return typeArguments$items(C.coerceToTypeArguments, C.coerceToTypeArgument)(...args);
+}
 export const typeArguments = Object.freeze({
 	...B.typeArguments,
 	...bundle(typeArguments$seated, typeArguments$seatedCoerce)
@@ -846,26 +962,28 @@ export const typeArguments = Object.freeze({
 	coerce: typeof typeArguments$seatedCoerce;
 };
 
-const argumentsElements$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const argumentsElements$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'expression']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const argumentsElements$seated: (
-	...args: T.ArgumentsElements.BuildArgs
-) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$item(
-	F.buildArgumentsElements,
-	F.buildAttributedArgument
-);
-const argumentsElements$seatedCoerce: (
+function argumentsElements$seated<A extends T.ArgumentsElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildArgumentsElements>;
+function argumentsElements$seated(...args: T.ArgumentsElements.BuildArgs): ReturnType<typeof F.buildArgumentsElements> {
+	return argumentsElements$items(F.buildArgumentsElements, F.buildAttributedArgument)(...args);
+}
+function argumentsElements$seatedCoerce<const A extends T.ArgumentsElements.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
+): ReturnType<typeof C.coerceToArgumentsElements>;
+function argumentsElements$seatedCoerce(
 	...args: T.ArgumentsElements.LooseArgs
-) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$item(
-	C.coerceToArgumentsElements,
-	C.coerceToAttributedArgument
-);
+): ReturnType<typeof C.coerceToArgumentsElements> {
+	return argumentsElements$items(C.coerceToArgumentsElements, C.coerceToAttributedArgument)(...args);
+}
 export const argumentsElements = Object.freeze({
 	...B.argumentsElements,
 	...bundle(argumentsElements$seated, argumentsElements$seatedCoerce)
@@ -874,23 +992,27 @@ export const argumentsElements = Object.freeze({
 	coerce: typeof argumentsElements$seatedCoerce;
 };
 
-const arguments_$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const arguments_$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItems', 'expression']);
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 function arguments_$seated(): T.EmptyArguments;
-function arguments_$seated(...args: T.Arguments.BuildArgs): ReturnType<typeof F.buildArguments>;
+function arguments_$seated<A extends T.Arguments.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildArguments>;
 function arguments_$seated(...args: T.Arguments.BuildArgs): ReturnType<typeof F.buildArguments> {
-	return arguments_$item(F.buildArguments, F.buildAttributedArgument)(...args);
+	return arguments_$items(F.buildArguments, F.buildAttributedArgument)(...args);
 }
 function arguments_$seatedCoerce(): T.EmptyArguments;
-function arguments_$seatedCoerce(...args: T.Arguments.LooseArgs): ReturnType<typeof C.coerceToArguments>;
+function arguments_$seatedCoerce<const A extends T.Arguments.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.Arguments.LooseArgs>
+): ReturnType<typeof C.coerceToArguments>;
 function arguments_$seatedCoerce(...args: T.Arguments.LooseArgs): ReturnType<typeof C.coerceToArguments> {
-	return arguments_$item(C.coerceToArguments, C.coerceToAttributedArgument)(...args);
+	return arguments_$items(C.coerceToArguments, C.coerceToAttributedArgument)(...args);
 }
 export const arguments_ = Object.freeze({
 	...B.arguments_,
@@ -911,14 +1033,20 @@ const tupleExpression$elements = <PF extends (config: never) => unknown, CF exte
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), elements: _c(child)(...seat) }, options);
 	};
 };
-const tupleExpression$seated: (...args: T.TupleExpression.BuildArgs) => ReturnType<typeof F.buildTupleExpression> =
-	tupleExpression$elements(F.buildTupleExpression, F.buildExpressions);
-const tupleExpression$seatedCoerce: (
+function tupleExpression$seated<A extends T.TupleExpression.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildTupleExpression>;
+function tupleExpression$seated(...args: T.TupleExpression.BuildArgs): ReturnType<typeof F.buildTupleExpression> {
+	return tupleExpression$elements(F.buildTupleExpression, F.buildExpressions)(...args);
+}
+function tupleExpression$seatedCoerce<const A extends T.TupleExpression.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.TupleExpression.LooseArgs>
+): ReturnType<typeof C.coerceToTupleExpression>;
+function tupleExpression$seatedCoerce(
 	...args: T.TupleExpression.LooseArgs
-) => ReturnType<typeof C.coerceToTupleExpression> = tupleExpression$elements(
-	C.coerceToTupleExpression,
-	C.coerceToExpressions
-);
+): ReturnType<typeof C.coerceToTupleExpression> {
+	return tupleExpression$elements(C.coerceToTupleExpression, C.coerceToExpressions)(...args);
+}
 export const tupleExpression = Object.freeze({
 	...B.tupleExpression,
 	...bundle(tupleExpression$seated, tupleExpression$seatedCoerce, { key: 'tupleExpression', max: 1 })
@@ -934,12 +1062,16 @@ const matchBlock$flatten$matchBlockArms =
 			? _fwd<ReturnType<PF>>(parent, config, options)
 			: _fwd<ReturnType<PF>>(parent, _c(child)(config), options);
 function matchBlock$seated(): T.EmptyMatchBlock;
-function matchBlock$seated(...args: T.MatchBlock.BuildArgs): ReturnType<typeof F.buildMatchBlock>;
+function matchBlock$seated<A extends T.MatchBlock.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMatchBlock>;
 function matchBlock$seated(...args: T.MatchBlock.BuildArgs): ReturnType<typeof F.buildMatchBlock> {
 	return matchBlock$flatten$matchBlockArms(F.buildMatchBlock, F.buildMatchBlockArms)(...args);
 }
 function matchBlock$seatedCoerce(): T.EmptyMatchBlock;
-function matchBlock$seatedCoerce(...args: T.MatchBlock.LooseArgs): ReturnType<typeof C.coerceToMatchBlock>;
+function matchBlock$seatedCoerce<const A extends T.MatchBlock.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MatchBlock.LooseArgs>
+): ReturnType<typeof C.coerceToMatchBlock>;
 function matchBlock$seatedCoerce(...args: T.MatchBlock.LooseArgs): ReturnType<typeof C.coerceToMatchBlock> {
 	return matchBlock$flatten$matchBlockArms(C.coerceToMatchBlock, C.coerceToMatchBlockArms)(...args);
 }
@@ -978,13 +1110,21 @@ const lastMatchArm$flatten$pattern =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
 	};
-const lastMatchArm$seated: (...args: T.LastMatchArm.BuildArgs) => ReturnType<typeof F.buildLastMatchArm> =
-	lastMatchArm$flatten$pattern(F.buildLastMatchArm, F.buildMatchPattern, TSKindId.MatchPattern);
-const lastMatchArm$seatedCoerce: (...args: T.LastMatchArm.LooseArgs) => ReturnType<typeof C.coerceToLastMatchArm> =
-	lastMatchArm$flatten$pattern(C.coerceToLastMatchArm, C.coerceToMatchPattern, TSKindId.MatchPattern);
+function lastMatchArm$seated<A extends T.LastMatchArm.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildLastMatchArm>;
+function lastMatchArm$seated(...args: T.LastMatchArm.BuildArgs): ReturnType<typeof F.buildLastMatchArm> {
+	return lastMatchArm$flatten$pattern(F.buildLastMatchArm, F.buildMatchPattern, TSKindId.MatchPattern)(...args);
+}
+function lastMatchArm$seatedCoerce<const A extends T.LastMatchArm.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.LastMatchArm.LooseArgs>
+): ReturnType<typeof C.coerceToLastMatchArm>;
+function lastMatchArm$seatedCoerce(...args: T.LastMatchArm.LooseArgs): ReturnType<typeof C.coerceToLastMatchArm> {
+	return lastMatchArm$flatten$pattern(C.coerceToLastMatchArm, C.coerceToMatchPattern, TSKindId.MatchPattern)(...args);
+}
 export const lastMatchArm = Object.freeze({
 	...B.lastMatchArm,
-	...bundle(lastMatchArm$seated, lastMatchArm$seatedCoerce, { key: 'lastMatchArm', max: 1 })
+	...bundle(lastMatchArm$seated, lastMatchArm$seatedCoerce, { key: 'lastMatchArm', max: 2 })
 }) as unknown as Omit<typeof B.lastMatchArm, 'strict' | 'coerce'> & {
 	strict: typeof lastMatchArm$seated;
 	coerce: typeof lastMatchArm$seatedCoerce;
@@ -1001,18 +1141,22 @@ const tupleStructPattern$patterns = <PF extends (config: never) => unknown, CF e
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), patterns: _c(child)(...seat) }, options);
 	};
 };
-const tupleStructPattern$seated: (
+function tupleStructPattern$seated<A extends T.TupleStructPattern.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildTupleStructPattern>;
+function tupleStructPattern$seated(
 	...args: T.TupleStructPattern.BuildArgs
-) => ReturnType<typeof F.buildTupleStructPattern> = tupleStructPattern$patterns(
-	F.buildTupleStructPattern,
-	F.buildPatterns
-);
-const tupleStructPattern$seatedCoerce: (
+): ReturnType<typeof F.buildTupleStructPattern> {
+	return tupleStructPattern$patterns(F.buildTupleStructPattern, F.buildPatterns)(...args);
+}
+function tupleStructPattern$seatedCoerce<const A extends T.TupleStructPattern.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.TupleStructPattern.LooseArgs>
+): ReturnType<typeof C.coerceToTupleStructPattern>;
+function tupleStructPattern$seatedCoerce(
 	...args: T.TupleStructPattern.LooseArgs
-) => ReturnType<typeof C.coerceToTupleStructPattern> = tupleStructPattern$patterns(
-	C.coerceToTupleStructPattern,
-	C.coerceToPatterns
-);
+): ReturnType<typeof C.coerceToTupleStructPattern> {
+	return tupleStructPattern$patterns(C.coerceToTupleStructPattern, C.coerceToPatterns)(...args);
+}
 export const tupleStructPattern = Object.freeze({
 	...B.tupleStructPattern,
 	...bundle(tupleStructPattern$seated, tupleStructPattern$seatedCoerce, { key: 'tupleStructPattern', max: 1 })
@@ -1032,10 +1176,18 @@ const structPattern$fields = <PF extends (config: never) => unknown, CF extends 
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), fields: _c(child)(...seat) }, options);
 	};
 };
-const structPattern$seated: (...args: T.StructPattern.BuildArgs) => ReturnType<typeof F.buildStructPattern> =
-	structPattern$fields(F.buildStructPattern, F.buildStructPatternElements);
-const structPattern$seatedCoerce: (...args: T.StructPattern.LooseArgs) => ReturnType<typeof C.coerceToStructPattern> =
-	structPattern$fields(C.coerceToStructPattern, C.coerceToStructPatternElements);
+function structPattern$seated<A extends T.StructPattern.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildStructPattern>;
+function structPattern$seated(...args: T.StructPattern.BuildArgs): ReturnType<typeof F.buildStructPattern> {
+	return structPattern$fields(F.buildStructPattern, F.buildStructPatternElements)(...args);
+}
+function structPattern$seatedCoerce<const A extends T.StructPattern.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.StructPattern.LooseArgs>
+): ReturnType<typeof C.coerceToStructPattern>;
+function structPattern$seatedCoerce(...args: T.StructPattern.LooseArgs): ReturnType<typeof C.coerceToStructPattern> {
+	return structPattern$fields(C.coerceToStructPattern, C.coerceToStructPatternElements)(...args);
+}
 export const structPattern = Object.freeze({
 	...B.structPattern,
 	...bundle(structPattern$seated, structPattern$seatedCoerce, { key: 'structPattern', max: 1 })
@@ -1079,20 +1231,36 @@ export const lineComment = Object.freeze({
 	regular: bundle(lineComment$regular$strict, lineComment$regular$coerce, { key: 'lineComment.regular', max: 1 })
 }) as unknown as typeof B.lineComment & {
 	extraSlashes: {
-		strict: (...args: ArgsOf<typeof F.buildLineCommentExtraSlashes>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentExtraSlashes>) => ReturnType<typeof F.buildLineComment>;
+		strict: <const A extends ArgsOf<typeof F.buildLineCommentExtraSlashes>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLineCommentExtraSlashes>>
+		) => ReturnType<typeof F.buildLineComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLineCommentExtraSlashes>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLineCommentExtraSlashes>>
+		) => ReturnType<typeof F.buildLineComment>;
 	};
 	docOuter: {
-		strict: (...args: ArgsOf<typeof F.buildLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
+		strict: <const A extends ArgsOf<typeof F.buildLineCommentDocOuter>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLineCommentDocOuter>>
+		) => ReturnType<typeof F.buildLineComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLineCommentDocOuter>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLineCommentDocOuter>>
+		) => ReturnType<typeof F.buildLineComment>;
 	};
 	docInner: {
-		strict: (...args: ArgsOf<typeof F.buildLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
+		strict: <const A extends ArgsOf<typeof F.buildLineCommentDocInner>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLineCommentDocInner>>
+		) => ReturnType<typeof F.buildLineComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLineCommentDocInner>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLineCommentDocInner>>
+		) => ReturnType<typeof F.buildLineComment>;
 	};
 	regular: {
-		strict: (...args: ArgsOf<typeof F.buildLineCommentRegular>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentRegular>) => ReturnType<typeof F.buildLineComment>;
+		strict: <const A extends ArgsOf<typeof F.buildLineCommentRegular>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLineCommentRegular>>
+		) => ReturnType<typeof F.buildLineComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLineCommentRegular>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLineCommentRegular>>
+		) => ReturnType<typeof F.buildLineComment>;
 	};
 };
 
@@ -1127,20 +1295,32 @@ export const blockComment = Object.freeze({
 	regular: bundle(blockComment$regular$strict, blockComment$regular$coerce, { key: 'blockComment.regular', max: 1 })
 }) as unknown as typeof B.blockComment & {
 	docOuter: {
-		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
+		strict: <const A extends ArgsOf<typeof F.buildBlockCommentDocOuter>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBlockCommentDocOuter>>
+		) => ReturnType<typeof F.buildBlockComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBlockCommentDocOuter>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBlockCommentDocOuter>>
+		) => ReturnType<typeof F.buildBlockComment>;
 	};
 	docInner: {
-		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
+		strict: <const A extends ArgsOf<typeof F.buildBlockCommentDocInner>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBlockCommentDocInner>>
+		) => ReturnType<typeof F.buildBlockComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBlockCommentDocInner>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBlockCommentDocInner>>
+		) => ReturnType<typeof F.buildBlockComment>;
 	};
 	regular: {
-		strict: (...args: ArgsOf<typeof F.buildBlockCommentRegular>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentRegular>) => ReturnType<typeof F.buildBlockComment>;
+		strict: <const A extends ArgsOf<typeof F.buildBlockCommentRegular>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBlockCommentRegular>>
+		) => ReturnType<typeof F.buildBlockComment>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBlockCommentRegular>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBlockCommentRegular>>
+		) => ReturnType<typeof F.buildBlockComment>;
 	};
 };
 
-const parametersElements$item = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const parametersElements$items = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -1148,18 +1328,22 @@ const parametersElements$item = <PF extends (...args: never[]) => unknown, CF ex
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const parametersElements$seated: (
+function parametersElements$seated<A extends T.ParametersElements.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildParametersElements>;
+function parametersElements$seated(
 	...args: T.ParametersElements.BuildArgs
-) => ReturnType<typeof F.buildParametersElements> = parametersElements$item(
-	F.buildParametersElements,
-	F.buildAttributedParameter
-);
-const parametersElements$seatedCoerce: (
+): ReturnType<typeof F.buildParametersElements> {
+	return parametersElements$items(F.buildParametersElements, F.buildAttributedParameter)(...args);
+}
+function parametersElements$seatedCoerce<const A extends T.ParametersElements.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
+): ReturnType<typeof C.coerceToParametersElements>;
+function parametersElements$seatedCoerce(
 	...args: T.ParametersElements.LooseArgs
-) => ReturnType<typeof C.coerceToParametersElements> = parametersElements$item(
-	C.coerceToParametersElements,
-	C.coerceToAttributedParameter
-);
+): ReturnType<typeof C.coerceToParametersElements> {
+	return parametersElements$items(C.coerceToParametersElements, C.coerceToAttributedParameter)(...args);
+}
 export const parametersElements = Object.freeze({
 	...B.parametersElements,
 	...bundle(parametersElements$seated, parametersElements$seatedCoerce)
@@ -1180,8 +1364,8 @@ const arrayExpressionList$elements = <PF extends (config: never) => unknown, CF 
 	};
 };
 function arrayExpressionList$seated(): T.EmptyArrayExpressionList;
-function arrayExpressionList$seated(
-	...args: T.ArrayExpressionList.BuildArgs
+function arrayExpressionList$seated<A extends T.ArrayExpressionList.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildArrayExpressionList>;
 function arrayExpressionList$seated(
 	...args: T.ArrayExpressionList.BuildArgs
@@ -1189,8 +1373,8 @@ function arrayExpressionList$seated(
 	return arrayExpressionList$elements(F.buildArrayExpressionList, argumentsElements.strict)(...args);
 }
 function arrayExpressionList$seatedCoerce(): T.EmptyArrayExpressionList;
-function arrayExpressionList$seatedCoerce(
-	...args: T.ArrayExpressionList.LooseArgs
+function arrayExpressionList$seatedCoerce<const A extends T.ArrayExpressionList.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ArrayExpressionList.LooseArgs>
 ): ReturnType<typeof C.coerceToArrayExpressionList>;
 function arrayExpressionList$seatedCoerce(
 	...args: T.ArrayExpressionList.LooseArgs
@@ -1251,30 +1435,62 @@ export const implItemBody = Object.freeze({
 	})
 }) as unknown as typeof B.implItemBody & {
 	positiveClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof F.buildImplItemPositiveClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof F.buildImplItemPositiveClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImplItemBody>
 		) => ReturnType<typeof F.buildImplItemBody>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof C.coerceToImplItemPositiveClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof C.coerceToImplItemPositiveClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImplItemBody>
 		) => ReturnType<typeof C.coerceToImplItemBody>;
 	};
 	negativeClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof F.buildImplItemNegativeClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImplItemBody>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof F.buildImplItemNegativeClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImplItemBody>
 		) => ReturnType<typeof F.buildImplItemBody>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof C.coerceToImplItemNegativeClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImplItemBody>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof C.coerceToImplItemNegativeClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImplItemBody>
 		) => ReturnType<typeof C.coerceToImplItemBody>;
 	};
@@ -1326,30 +1542,62 @@ export const implItemSemi = Object.freeze({
 	})
 }) as unknown as typeof B.implItemSemi & {
 	positiveClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof F.buildImplItemPositiveClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof F.buildImplItemPositiveClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImplItemSemi>
 		) => ReturnType<typeof F.buildImplItemSemi>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof C.coerceToImplItemPositiveClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof C.coerceToImplItemPositiveClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImplItemSemi>
 		) => ReturnType<typeof C.coerceToImplItemSemi>;
 	};
 	negativeClause: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof F.buildImplItemNegativeClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImplItemSemi>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof F.buildImplItemNegativeClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImplItemSemi>
 		) => ReturnType<typeof F.buildImplItemSemi>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
 				traitClause: ArgsOf<typeof C.coerceToImplItemNegativeClause>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImplItemSemi>[0], 'traitClause'> & {
+						traitClause: ArgsOf<typeof C.coerceToImplItemNegativeClause>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImplItemSemi>
 		) => ReturnType<typeof C.coerceToImplItemSemi>;
 	};
@@ -1382,20 +1630,28 @@ const matchArmWithComma$flatten$pattern =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
 	};
-const matchArmWithComma$seated: (
-	...args: T.MatchArmWithComma.BuildArgs
-) => ReturnType<typeof F.buildMatchArmWithComma> = matchArmWithComma$flatten$pattern(
-	F.buildMatchArmWithComma,
-	F.buildMatchPattern,
-	TSKindId.MatchPattern
-);
-const matchArmWithComma$seatedCoerce: (
+function matchArmWithComma$seated<A extends T.MatchArmWithComma.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMatchArmWithComma>;
+function matchArmWithComma$seated(...args: T.MatchArmWithComma.BuildArgs): ReturnType<typeof F.buildMatchArmWithComma> {
+	return matchArmWithComma$flatten$pattern(
+		F.buildMatchArmWithComma,
+		F.buildMatchPattern,
+		TSKindId.MatchPattern
+	)(...args);
+}
+function matchArmWithComma$seatedCoerce<const A extends T.MatchArmWithComma.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MatchArmWithComma.LooseArgs>
+): ReturnType<typeof C.coerceToMatchArmWithComma>;
+function matchArmWithComma$seatedCoerce(
 	...args: T.MatchArmWithComma.LooseArgs
-) => ReturnType<typeof C.coerceToMatchArmWithComma> = matchArmWithComma$flatten$pattern(
-	C.coerceToMatchArmWithComma,
-	C.coerceToMatchPattern,
-	TSKindId.MatchPattern
-);
+): ReturnType<typeof C.coerceToMatchArmWithComma> {
+	return matchArmWithComma$flatten$pattern(
+		C.coerceToMatchArmWithComma,
+		C.coerceToMatchPattern,
+		TSKindId.MatchPattern
+	)(...args);
+}
 export const matchArmWithComma = Object.freeze({
 	...B.matchArmWithComma,
 	...bundle(matchArmWithComma$seated, matchArmWithComma$seatedCoerce, { key: 'matchArmWithComma', max: 1 })
@@ -1431,20 +1687,30 @@ const matchArmBlockEnding$flatten$pattern =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
 	};
-const matchArmBlockEnding$seated: (
+function matchArmBlockEnding$seated<A extends T.MatchArmBlockEnding.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMatchArmBlockEnding>;
+function matchArmBlockEnding$seated(
 	...args: T.MatchArmBlockEnding.BuildArgs
-) => ReturnType<typeof F.buildMatchArmBlockEnding> = matchArmBlockEnding$flatten$pattern(
-	F.buildMatchArmBlockEnding,
-	F.buildMatchPattern,
-	TSKindId.MatchPattern
-);
-const matchArmBlockEnding$seatedCoerce: (
+): ReturnType<typeof F.buildMatchArmBlockEnding> {
+	return matchArmBlockEnding$flatten$pattern(
+		F.buildMatchArmBlockEnding,
+		F.buildMatchPattern,
+		TSKindId.MatchPattern
+	)(...args);
+}
+function matchArmBlockEnding$seatedCoerce<const A extends T.MatchArmBlockEnding.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MatchArmBlockEnding.LooseArgs>
+): ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+function matchArmBlockEnding$seatedCoerce(
 	...args: T.MatchArmBlockEnding.LooseArgs
-) => ReturnType<typeof C.coerceToMatchArmBlockEnding> = matchArmBlockEnding$flatten$pattern(
-	C.coerceToMatchArmBlockEnding,
-	C.coerceToMatchPattern,
-	TSKindId.MatchPattern
-);
+): ReturnType<typeof C.coerceToMatchArmBlockEnding> {
+	return matchArmBlockEnding$flatten$pattern(
+		C.coerceToMatchArmBlockEnding,
+		C.coerceToMatchPattern,
+		TSKindId.MatchPattern
+	)(...args);
+}
 export const matchArmBlockEnding = Object.freeze({
 	...B.matchArmBlockEnding,
 	...bundle(matchArmBlockEnding$seated, matchArmBlockEnding$seatedCoerce, { key: 'matchArmBlockEnding', max: 1 })
@@ -1467,18 +1733,22 @@ const macroDefinitionParen$macroRules = <
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), macroRules: _c(child)(...seat) }, options);
 	};
 };
-const macroDefinitionParen$seated: (
+function macroDefinitionParen$seated<A extends T.MacroDefinitionParen.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMacroDefinitionParen>;
+function macroDefinitionParen$seated(
 	...args: T.MacroDefinitionParen.BuildArgs
-) => ReturnType<typeof F.buildMacroDefinitionParen> = macroDefinitionParen$macroRules(
-	F.buildMacroDefinitionParen,
-	F.buildMacroRules
-);
-const macroDefinitionParen$seatedCoerce: (
+): ReturnType<typeof F.buildMacroDefinitionParen> {
+	return macroDefinitionParen$macroRules(F.buildMacroDefinitionParen, F.buildMacroRules)(...args);
+}
+function macroDefinitionParen$seatedCoerce<const A extends T.MacroDefinitionParen.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MacroDefinitionParen.LooseArgs>
+): ReturnType<typeof C.coerceToMacroDefinitionParen>;
+function macroDefinitionParen$seatedCoerce(
 	...args: T.MacroDefinitionParen.LooseArgs
-) => ReturnType<typeof C.coerceToMacroDefinitionParen> = macroDefinitionParen$macroRules(
-	C.coerceToMacroDefinitionParen,
-	C.coerceToMacroRules
-);
+): ReturnType<typeof C.coerceToMacroDefinitionParen> {
+	return macroDefinitionParen$macroRules(C.coerceToMacroDefinitionParen, C.coerceToMacroRules)(...args);
+}
 export const macroDefinitionParen = Object.freeze({
 	...B.macroDefinitionParen,
 	...bundle(macroDefinitionParen$seated, macroDefinitionParen$seatedCoerce, { key: 'macroDefinitionParen', max: 1 })
@@ -1501,18 +1771,22 @@ const macroDefinitionBracket$macroRules = <
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), macroRules: _c(child)(...seat) }, options);
 	};
 };
-const macroDefinitionBracket$seated: (
+function macroDefinitionBracket$seated<A extends T.MacroDefinitionBracket.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMacroDefinitionBracket>;
+function macroDefinitionBracket$seated(
 	...args: T.MacroDefinitionBracket.BuildArgs
-) => ReturnType<typeof F.buildMacroDefinitionBracket> = macroDefinitionBracket$macroRules(
-	F.buildMacroDefinitionBracket,
-	F.buildMacroRules
-);
-const macroDefinitionBracket$seatedCoerce: (
+): ReturnType<typeof F.buildMacroDefinitionBracket> {
+	return macroDefinitionBracket$macroRules(F.buildMacroDefinitionBracket, F.buildMacroRules)(...args);
+}
+function macroDefinitionBracket$seatedCoerce<const A extends T.MacroDefinitionBracket.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MacroDefinitionBracket.LooseArgs>
+): ReturnType<typeof C.coerceToMacroDefinitionBracket>;
+function macroDefinitionBracket$seatedCoerce(
 	...args: T.MacroDefinitionBracket.LooseArgs
-) => ReturnType<typeof C.coerceToMacroDefinitionBracket> = macroDefinitionBracket$macroRules(
-	C.coerceToMacroDefinitionBracket,
-	C.coerceToMacroRules
-);
+): ReturnType<typeof C.coerceToMacroDefinitionBracket> {
+	return macroDefinitionBracket$macroRules(C.coerceToMacroDefinitionBracket, C.coerceToMacroRules)(...args);
+}
 export const macroDefinitionBracket = Object.freeze({
 	...B.macroDefinitionBracket,
 	...bundle(macroDefinitionBracket$seated, macroDefinitionBracket$seatedCoerce, {
@@ -1538,18 +1812,22 @@ const macroDefinitionBrace$macroRules = <
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), macroRules: _c(child)(...seat) }, options);
 	};
 };
-const macroDefinitionBrace$seated: (
+function macroDefinitionBrace$seated<A extends T.MacroDefinitionBrace.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMacroDefinitionBrace>;
+function macroDefinitionBrace$seated(
 	...args: T.MacroDefinitionBrace.BuildArgs
-) => ReturnType<typeof F.buildMacroDefinitionBrace> = macroDefinitionBrace$macroRules(
-	F.buildMacroDefinitionBrace,
-	F.buildMacroRules
-);
-const macroDefinitionBrace$seatedCoerce: (
+): ReturnType<typeof F.buildMacroDefinitionBrace> {
+	return macroDefinitionBrace$macroRules(F.buildMacroDefinitionBrace, F.buildMacroRules)(...args);
+}
+function macroDefinitionBrace$seatedCoerce<const A extends T.MacroDefinitionBrace.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MacroDefinitionBrace.LooseArgs>
+): ReturnType<typeof C.coerceToMacroDefinitionBrace>;
+function macroDefinitionBrace$seatedCoerce(
 	...args: T.MacroDefinitionBrace.LooseArgs
-) => ReturnType<typeof C.coerceToMacroDefinitionBrace> = macroDefinitionBrace$macroRules(
-	C.coerceToMacroDefinitionBrace,
-	C.coerceToMacroRules
-);
+): ReturnType<typeof C.coerceToMacroDefinitionBrace> {
+	return macroDefinitionBrace$macroRules(C.coerceToMacroDefinitionBrace, C.coerceToMacroRules)(...args);
+}
 export const macroDefinitionBrace = Object.freeze({
 	...B.macroDefinitionBrace,
 	...bundle(macroDefinitionBrace$seated, macroDefinitionBrace$seatedCoerce, { key: 'macroDefinitionBrace', max: 1 })
@@ -1582,22 +1860,22 @@ export const rangePatternPrefix = Object.freeze({
 	})
 }) as unknown as typeof B.rangePatternPrefix & {
 	dotDotEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternPrefix>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildRangePatternPrefix>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildRangePatternPrefix>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildRangePatternPrefix>
 		) => ReturnType<typeof F.buildRangePatternPrefix>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternPrefix>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternPrefix>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToRangePatternPrefix>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToRangePatternPrefix>
 		) => ReturnType<typeof C.coerceToRangePatternPrefix>;
 	};
 	dotDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternPrefix>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildRangePatternPrefix>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildRangePatternPrefix>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildRangePatternPrefix>
 		) => ReturnType<typeof F.buildRangePatternPrefix>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternPrefix>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternPrefix>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToRangePatternPrefix>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToRangePatternPrefix>
 		) => ReturnType<typeof C.coerceToRangePatternPrefix>;
 	};
@@ -1641,32 +1919,32 @@ const rangePatternWithLeftWithRight$dotDot$coerce = rangePatternWithLeftWithRigh
 );
 const rangePatternWithLeftWithRight: {
 	dotDotDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildRangePatternWithLeftWithRight>
 		) => ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToRangePatternWithLeftWithRight>
 		) => ReturnType<typeof C.coerceToRangePatternWithLeftWithRight>;
 	};
 	dotDotEq: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildRangePatternWithLeftWithRight>
 		) => ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToRangePatternWithLeftWithRight>
 		) => ReturnType<typeof C.coerceToRangePatternWithLeftWithRight>;
 	};
 	dotDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildRangePatternWithLeftWithRight>
 		) => ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToRangePatternWithLeftWithRight>
 		) => ReturnType<typeof C.coerceToRangePatternWithLeftWithRight>;
 	};
@@ -1785,72 +2063,134 @@ export const rangePatternWithLeft = Object.freeze({
 	})
 }) as unknown as typeof B.rangePatternWithLeft & {
 	withRight: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> &
-				ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> &
+				ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> &
+						ArgsOf<typeof F.buildRangePatternWithLeftWithRight>[0]
+				>,
 			options?: OptionsArg<typeof F.buildRangePatternWithLeft>
 		) => ReturnType<typeof F.buildRangePatternWithLeft>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> &
-				ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> &
+				ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> &
+						ArgsOf<typeof C.coerceToRangePatternWithLeftWithRight>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToRangePatternWithLeft>
 		) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
 		dotDotDot: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
 					content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotDot.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
+							content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotDot.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildRangePatternWithLeft>
 			) => ReturnType<typeof F.buildRangePatternWithLeft>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
 					content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotDot.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
+							content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotDot.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToRangePatternWithLeft>
 			) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
 		};
 		dotDotEq: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
 					content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotEq.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
+							content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotEq.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildRangePatternWithLeft>
 			) => ReturnType<typeof F.buildRangePatternWithLeft>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
 					content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotEq.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
+							content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDotEq.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToRangePatternWithLeft>
 			) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
 		};
 		dotDot: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
 					content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDot.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'> & {
+							content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDot.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildRangePatternWithLeft>
 			) => ReturnType<typeof F.buildRangePatternWithLeft>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
 					content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDot.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'> & {
+							content: ArgsOf<typeof rangePatternWithLeftWithRight.dotDot.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToRangePatternWithLeft>
 			) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
 		};
 	};
 	bare: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildRangePatternWithLeft>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildRangePatternWithLeft>
 		) => ReturnType<typeof F.buildRangePatternWithLeft>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToRangePatternWithLeft>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToRangePatternWithLeft>
 		) => ReturnType<typeof C.coerceToRangePatternWithLeft>;
 	};
 };
 
-const parametersElementsReceiverGroup$item = <
+const parametersElementsReceiverGroup$items = <
 	PF extends (...args: never[]) => unknown,
 	CF extends (...args: never[]) => unknown
 >(
@@ -1861,18 +2201,28 @@ const parametersElementsReceiverGroup$item = <
 	return (...args: readonly unknown[]): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const parametersElementsReceiverGroup$seated: (
+function parametersElementsReceiverGroup$seated<A extends T.ParametersElementsReceiverGroup.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildParametersElementsReceiverGroup>;
+function parametersElementsReceiverGroup$seated(
 	...args: T.ParametersElementsReceiverGroup.BuildArgs
-) => ReturnType<typeof F.buildParametersElementsReceiverGroup> = parametersElementsReceiverGroup$item(
-	F.buildParametersElementsReceiverGroup,
-	F.buildAttributedParameter
-);
-const parametersElementsReceiverGroup$seatedCoerce: (
+): ReturnType<typeof F.buildParametersElementsReceiverGroup> {
+	return parametersElementsReceiverGroup$items(
+		F.buildParametersElementsReceiverGroup,
+		F.buildAttributedParameter
+	)(...args);
+}
+function parametersElementsReceiverGroup$seatedCoerce<const A extends T.ParametersElementsReceiverGroup.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ParametersElementsReceiverGroup.LooseArgs>
+): ReturnType<typeof C.coerceToParametersElementsReceiverGroup>;
+function parametersElementsReceiverGroup$seatedCoerce(
 	...args: T.ParametersElementsReceiverGroup.LooseArgs
-) => ReturnType<typeof C.coerceToParametersElementsReceiverGroup> = parametersElementsReceiverGroup$item(
-	C.coerceToParametersElementsReceiverGroup,
-	C.coerceToAttributedParameter
-);
+): ReturnType<typeof C.coerceToParametersElementsReceiverGroup> {
+	return parametersElementsReceiverGroup$items(
+		C.coerceToParametersElementsReceiverGroup,
+		C.coerceToAttributedParameter
+	)(...args);
+}
 const parametersElementsReceiverGroup: {
 	strict: typeof parametersElementsReceiverGroup$seated;
 	coerce: typeof parametersElementsReceiverGroup$seatedCoerce;
@@ -1913,22 +2263,31 @@ const parametersElementsReceiver$parametersElementsReceiverGroup = <
 		);
 	};
 };
-const parametersElementsReceiver$seated: (
+function parametersElementsReceiver$seated<A extends T.ParametersElementsReceiver.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildParametersElementsReceiver>;
+function parametersElementsReceiver$seated(
 	...args: T.ParametersElementsReceiver.BuildArgs
-) => ReturnType<typeof F.buildParametersElementsReceiver> = parametersElementsReceiver$parametersElementsReceiverGroup(
-	parametersElementsReceiver$flatten$receiver(F.buildParametersElementsReceiver, F.buildAttributedParameterReceiver),
-	parametersElementsReceiverGroup.strict
-);
-const parametersElementsReceiver$seatedCoerce: (
+): ReturnType<typeof F.buildParametersElementsReceiver> {
+	return parametersElementsReceiver$parametersElementsReceiverGroup(
+		parametersElementsReceiver$flatten$receiver(F.buildParametersElementsReceiver, F.buildAttributedParameterReceiver),
+		parametersElementsReceiverGroup.strict
+	)(...args);
+}
+function parametersElementsReceiver$seatedCoerce<const A extends T.ParametersElementsReceiver.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ParametersElementsReceiver.LooseArgs>
+): ReturnType<typeof C.coerceToParametersElementsReceiver>;
+function parametersElementsReceiver$seatedCoerce(
 	...args: T.ParametersElementsReceiver.LooseArgs
-) => ReturnType<typeof C.coerceToParametersElementsReceiver> =
-	parametersElementsReceiver$parametersElementsReceiverGroup(
+): ReturnType<typeof C.coerceToParametersElementsReceiver> {
+	return parametersElementsReceiver$parametersElementsReceiverGroup(
 		parametersElementsReceiver$flatten$receiver(
 			C.coerceToParametersElementsReceiver,
 			C.coerceToAttributedParameterReceiver
 		),
 		parametersElementsReceiverGroup.coerce
-	);
+	)(...args);
+}
 export const parametersElementsReceiver = Object.freeze({
 	...B.parametersElementsReceiver,
 	...bundle(parametersElementsReceiver$seated, parametersElementsReceiver$seatedCoerce, {
@@ -2416,56 +2775,108 @@ export const nonSpecialToken = Object.freeze({
 	crate: bundle(nonSpecialToken$crate$strict, nonSpecialToken$crate$coerce, { key: 'nonSpecialToken.crate', max: 1 })
 }) as unknown as typeof B.nonSpecialToken & {
 	string: {
-		strict: (...args: ArgsOf<typeof F.buildStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		strict: <const A extends ArgsOf<typeof F.buildStringLiteral>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildStringLiteral>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToStringLiteral>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToStringLiteral>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
 	};
 	rawString: {
-		strict: (...args: ArgsOf<typeof F.buildRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRawStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		strict: <const A extends ArgsOf<typeof F.buildRawStringLiteral>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildRawStringLiteral>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToRawStringLiteral>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToRawStringLiteral>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
 	};
 	char: {
-		strict: (...args: ArgsOf<typeof charLiteral.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof charLiteral.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		strict: <const A extends ArgsOf<typeof charLiteral.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof charLiteral.strict>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: <const A extends ArgsOf<typeof charLiteral.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof charLiteral.coerce>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
 		escaped: {
-			strict: (...args: ArgsOf<typeof charLiteral.escaped.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof charLiteral.escaped.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof charLiteral.escaped.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof charLiteral.escaped.strict>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof charLiteral.escaped.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof charLiteral.escaped.coerce>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 		plain: {
-			strict: (...args: ArgsOf<typeof charLiteral.plain.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof charLiteral.plain.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof charLiteral.plain.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof charLiteral.plain.strict>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof charLiteral.plain.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof charLiteral.plain.coerce>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 		empty: {
-			strict: (...args: ArgsOf<typeof F.buildCharLiteralEmpty>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof C.coerceToCharLiteralEmpty>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof F.buildCharLiteralEmpty>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCharLiteralEmpty>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof C.coerceToCharLiteralEmpty>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCharLiteralEmpty>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 	};
 	integer: {
-		strict: (...args: ArgsOf<typeof integerLiteral.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof integerLiteral.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+		strict: <const A extends ArgsOf<typeof integerLiteral.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.strict>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: <const A extends ArgsOf<typeof integerLiteral.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.coerce>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
 		decimal: {
-			strict: (...args: ArgsOf<typeof integerLiteral.decimal.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.decimal.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof integerLiteral.decimal.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.decimal.strict>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof integerLiteral.decimal.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.decimal.coerce>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 		hex: {
-			strict: (...args: ArgsOf<typeof integerLiteral.hex.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.hex.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof integerLiteral.hex.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.hex.strict>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof integerLiteral.hex.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.hex.coerce>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 		binary: {
-			strict: (...args: ArgsOf<typeof integerLiteral.binary.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.binary.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof integerLiteral.binary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.binary.strict>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof integerLiteral.binary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.binary.coerce>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 		octal: {
-			strict: (...args: ArgsOf<typeof integerLiteral.octal.strict>) => ReturnType<typeof F.buildNonSpecialToken>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.octal.coerce>) => ReturnType<typeof F.buildNonSpecialToken>;
+			strict: <const A extends ArgsOf<typeof integerLiteral.octal.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.octal.strict>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
+			coerce: <const A extends ArgsOf<typeof integerLiteral.octal.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof integerLiteral.octal.coerce>>
+			) => ReturnType<typeof F.buildNonSpecialToken>;
 		};
 	};
 	float: {
-		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;
+		strict: <const A extends ArgsOf<typeof F.buildFloatLiteral>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildFloatLiteral>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToFloatLiteral>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToFloatLiteral>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
 	};
 	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildNonSpecialToken>;
+		strict: <const A extends ArgsOf<typeof F.buildIdentifier>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildIdentifier>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToIdentifier>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToIdentifier>>
+		) => ReturnType<typeof F.buildNonSpecialToken>;
 	};
 	mutableSpecifier: {
 		strict: (options?: OptionsArg<typeof F.buildNonSpecialToken>) => ReturnType<typeof F.buildNonSpecialToken>;

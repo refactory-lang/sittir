@@ -1,8 +1,9 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import { bareInteriorText, interiorOf, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
+import { builtFromText } from './built-from-text.ts';
+import { hasOptionalElements, isBuilderTextLeaf } from '../compiler/model/node-map.ts';
+import { bareInteriorText, interiorSlotGuards, numberInputTest, numberInputType, numberTextArgs, numericInputRefusal, numericLeafKinds, numericLeafShape, numericSlotShape, type NumberShape } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
@@ -21,13 +22,16 @@ import type {
 
 type BranchLikeForFrom = AuthoredCompound;
 type FormChildForFrom = AuthoredCompound;
-import { anchoredLeafRegex } from '../compiler/model/leaf-pattern.ts';
 import { siblingLeads, type TriviaSibling } from '../compiler/model/trivia.ts';
 import {
 	DELIMITER_IMPORT,
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	withEmptyOverload,
+	isIdentifierKey,
+	declaredOverload,
+	refuseUndeclared,
+	refusingParam,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -53,18 +57,16 @@ import {
 	wordConstructibleText,
 	isAuthoredCompound,
 	transparentContentKindNames,
-	isAffixedLeaf,
 	transparentWrapperContentSlot,
-	referencedKinds,
-	classifyFactoryEmission,
 	registeredSlots,
 	pruneUnusedImports,
 	classifyKindsForResolver,
 	resolvesLooseInput,
 	looseElementType,
 	leadingOptionsOf,
-	aliasPatternLeaf,
 	placedAlias,
+	keywordAliasContent,
+	fixedTextEntryOf,
 	type LeadingOptions
 } from './shared.ts';
 import {
@@ -79,13 +81,11 @@ import {
 	listOptionKeys,
 	listSpreadTarget,
 	leadingOptionsSplit,
-	leafReDeclaration,
 	slotStorageCoercion,
 	storageCallExpr
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
-	AssembledAlias,
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
@@ -100,8 +100,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
-
-const SAFE_IDENT_KEY = /^[A-Za-z_$][\w$]*$/;
 
 export interface EmitFromConfig {
 	grammar: string;
@@ -150,8 +148,10 @@ function buildKindInterner(
 	};
 }
 
+const RAW_IMPORT = `import * as RawBuilders from './raw.js';`;
+
 function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
-	lines.push(`import * as F from './raw.js';`);
+	lines.push(RAW_IMPORT);
 	lines.push(`import type * as T from '../types-internal.js';`);
 	if (kindEntries) {
 		lines.push(`import { TSKindId } from '../kinds.js';`);
@@ -160,6 +160,8 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
+	lines.push('');
+	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
 }
 
@@ -174,7 +176,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -315,9 +317,9 @@ function spelledReturnType(
 	spelled: readonly (readonly ['open' | 'close', AssembledNonterminal])[]
 ): string {
 	return spelled.reduce((type, [side, slot]) => {
-		if (side === 'close') throw new Error(`from: a spelled closing delimiter ('${slot.configKey}') has no typed form`);
+		if (side === 'close') throw new Error(`from: a spelled closing delimiter ('${slot.propertyName}') has no typed form`);
 		const typed = `SpelledAffix<I, ${literalUnion(fullForm.open.texts)}, ${JSON.stringify(slot.optionDefaultArm)}>`;
-		const key = slot.configKey;
+		const key = slot.propertyName;
 		return `WithSpelling<${type}, ${JSON.stringify(key)}, O extends { ${key}: infer P } ? P : ${typed}>`;
 	}, returnType);
 }
@@ -377,7 +379,7 @@ function emitBranchFrom(
 	const resolverSlots = slots;
 	for (const f of resolverSlots) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
-		const key = JSON.stringify(f.configKey);
+		const key = JSON.stringify(f.propertyName);
 		// `input` being optional (argumentOptional) only ever leaves ONE
 		// required field forwarding to an empty-constructible target — the
 		// call site passes it as `input?.<key>`, so its own resolver has to
@@ -408,7 +410,7 @@ function emitBranchFrom(
 	}
 	const spelledType = fullForm === undefined || spelled.length === 0 ? undefined : spelledReturnType(returnType, fullForm, spelled);
 	const bareShape = bareInteriorText(node.kind, node)?.number ?? (soleField === undefined ? undefined : numericSlotShape(soleField));
-	const numericRefusal = numericInputRefusal(node, bareShape, inputType);
+	const numericRefusal = numericInputRefusal(node, bareShape);
 	const refused = (...parts: readonly (string | undefined)[]): string => ['I', ...parts.filter((part) => part !== undefined)].join(' & ');
 	const signature =
 		spelledType !== undefined
@@ -416,20 +418,16 @@ function emitBranchFrom(
 			: refusal !== undefined
 				? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(refusal, numericRefusal)}${optionsParam}): ${returnType} {`
 				: `export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`;
-	const numericOverload =
-		spelledType === undefined && refusal === undefined && numericRefusal !== undefined
-			? `export function ${fn}<const I extends ${inputType}>(input${opt}: ${refused(numericRefusal)}${optionsParam}): ${returnType};`
-			: undefined;
+	const inputParams = (input: string, options: string): string =>
+		opt === '?' ? `...input: [input?: ${input}${options}] & ${refuseUndeclared('I', inputType)}` : `input: ${input} & ${refuseUndeclared('I', inputType)}${options}`;
+	const publicOverloads =
+		spelledType !== undefined
+			? [`export function ${fn}<const I extends ${inputType}, const O extends T.${typeName}.Options = {}>(${inputParams(refused(numericRefusal), ', options?: O')}): ${spelledType};`]
+			: [`export function ${fn}<const I extends ${inputType}>(${inputParams(refused(refusal, numericRefusal), optionsParam)}): ${returnType};`];
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
 	if (spreadTarget === null) {
 		lines.push(
-			...withEmptyOverload(
-				nodeMap,
-				node.kind,
-				`export function ${fn}`,
-				numericOverload === undefined ? [signature] : [numericOverload, signature],
-				numericOverload === undefined ? signature.replace(/ \{$/, ";") : undefined
-			)
+			...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [...publicOverloads, signature])
 		);
 	} else {
 		if (spelledType !== undefined || refusal !== undefined) {
@@ -438,8 +436,8 @@ function emitBranchFrom(
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
 		lines.push(
 			...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [
-				`export function ${fn}(...input: T.${spreadNode.typeName}.LooseArgs): ${returnType};`,
-				signature.replace(/ \{$/, ';'),
+				declaredOverload(`export function ${fn}`, refusingParam('input', `T.${spreadNode.typeName}.LooseArgs`, { rest: true, loose: true }), returnType),
+				...publicOverloads,
 				`export function ${fn}(...args: unknown[]): ${returnType} {`,
 				`  if (args.length > 1) return ${factory}(${spreadNode.fromFunctionName!}(...(args as Parameters<typeof ${spreadNode.fromFunctionName!}>)));`,
 				`  const input = args[0] as ${inputType}${inputOptional ? ' | undefined' : ''};`
@@ -477,7 +475,7 @@ function emitBranchFrom(
 		if (bareContent !== undefined) {
 			const bareShape = numericSlotShape(bareContent);
 			lines.push(
-				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.propertyName}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		if (canDirectFactoryCall) {
@@ -498,8 +496,8 @@ function emitBranchFrom(
 			const callOptions =
 				spelled.length === 0
 					? optionsArg
-					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.configKey}: _spelled.${side}`).join(', ')}, ...options }`;
-			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.configKey)}, () => ${bare})`;
+					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.propertyName}: _spelled.${side}`).join(', ')}, ...options }`;
+			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
@@ -520,9 +518,9 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of slots) {
-				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
+				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.propertyName}`);
 				const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
-				lines.push(`    ${f.configKey}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call},`);
+				lines.push(`    ${f.propertyName}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call},`);
 			}
 			lines.push(`  }${optionsArg});`);
 		}
@@ -589,7 +587,7 @@ function emitRestParamFromResolver(
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
 	const signature = `export function ${fn}(...input: ${inputType}): ${returnType} {`;
-	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [signature], signature.replace(/ \{$/, ';'));
+	const head = withEmptyOverload(nodeMap, kind, `export function ${fn}`, [declaredOverload(`export function ${fn}`, refusingParam('input', inputType, { rest: true, loose: true }), returnType), signature]);
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return [
 			...head,
@@ -599,7 +597,7 @@ function emitRestParamFromResolver(
 			'}'
 		].join('\n');
 	}
-	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+	const storageAccess = isIdentifierKey(storageKey)
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
@@ -645,7 +643,7 @@ function emitRepeatedChildrenFrom(
 		kindEntries,
 		nodeMap,
 		storageKey,
-		slot.configKey,
+		slot.propertyName,
 		(varExpr, isSelfUnwrap) =>
 			call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr, isSelfUnwrap),
 		'',
@@ -670,16 +668,19 @@ function emitSingularChildrenFrom(
 	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
 	if (!hasNumericDiscriminant) {
 		return [
+			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
 			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 			'}'
 		].join('\n');
 	}
-	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+	const storageAccess = isIdentifierKey(storageKey)
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
+	const inputType = `${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}`;
 	return [
-		`export function ${fn}(input?: ${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
+		declaredOverload(`export function ${fn}`, refusingParam('input', inputType, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
+		`export function ${fn}(input?: ${inputType}): ${factoryReturnTypeExpr(factory)} {`,
 		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
 			? []
 			: [
@@ -722,6 +723,7 @@ function emitChildrenFrom(
 	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts === null) {
 		return [
+			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
 			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 			'}'
@@ -844,6 +846,7 @@ function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined):
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
+		declaredOverload(`export function ${fn}`, refusingParam('input', `T.${node.typeName}.Loose`, { loose: true }), factoryReturnTypeExpr(factory)),
 		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (typeof input !== 'string'${shape === undefined ? '' : ` && !${numberInputTest(shape, 'input')}`}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
@@ -1023,36 +1026,33 @@ function storedFieldCall(
 	const elementType =
 		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap) : undefined);
 
-	const fastPath = buildSingleKindFastPath(
-		prop,
-		leafKinds,
-		branchKinds,
-		[
-			...altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
-			...(storageInfo?.kind === 'kindEnum' || storageInfo?.kind === 'mixedEnum'
-				? kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries)
-				: [])
-		],
-		fieldMultiple,
-		elementType,
-		'name' in field && !isRequired(field as AssembledNonterminal)
-	);
-	const baseCall =
-		fastPath !== undefined
-			? fastPath
-			: buildInternedArrayResolverCall(
-					prop,
-					leafKinds,
-					branchKinds,
-					fieldMultiple,
-					intern,
-					elementType,
-					defaultArmKindOf(field, nodeMap)
-				);
+	const callFor = (value: string): string =>
+		buildSingleKindFastPath(
+			value,
+			leafKinds,
+			branchKinds,
+			[
+				...altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
+				...(storageInfo?.kind === 'kindEnum' || storageInfo?.kind === 'mixedEnum'
+					? kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries)
+					: [])
+			],
+			fieldMultiple,
+			elementType,
+			'name' in field && !isRequired(field as AssembledNonterminal)
+		) ??
+		buildInternedArrayResolverCall(value, leafKinds, branchKinds, fieldMultiple, intern, elementType, defaultArmKindOf(field, nodeMap));
+	const baseCall = callFor(prop);
 	if (storageInfo?.kind !== 'kindEnum' && storageInfo?.kind !== 'mixedEnum') return baseCall;
 	const coercion = slotStorageCoercion(field as AssembledNonterminal, nodeMap, kindEntries, true, storageInfo);
-	const resolved = storageInfo.kind === 'kindEnum' ? `_resolveKindEnumScalar(${prop}, () => ${baseCall})` : `_resolveKindEnum(${prop}, () => ${baseCall})`;
-	return storageCallExpr(resolved, coercion, fieldMultiple);
+	const stored = `[${kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries).join(', ')}]`;
+	const resolved =
+		storageInfo.kind === 'kindEnum'
+			? `_resolveKindEnumScalar(${prop}, () => ${baseCall})`
+			: fieldMultiple
+				? `_resolveKindEnumItems(${prop}, ${stored}, (_v) => ${callFor('_v')})`
+				: `_resolveKindEnum(${prop}, ${stored}, () => ${baseCall})`;
+	return storageCallExpr(resolved, coercion, fieldMultiple, undefined, fieldMultiple && hasOptionalElements(field));
 }
 
 function keywordPresenceResolverCall(
@@ -1088,54 +1088,42 @@ export function textCheckAccepts(check: TextKindCheck, text: string): boolean {
 function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): LeafRegistry {
 	const registryEntries: string[] = [];
 	const textChecks: TextKindCheck[] = [];
-	const referenced = referencedKinds(nodeMap);
-	for (const [kind, node] of nodeMap.nodes) {
-		if (classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) !== 'emit') continue;
+	for (const entry of builtFromText(nodeMap, kindEntries)) {
+		const { kind, node } = entry;
 		const factory = `F.${node.rawFactoryName}`;
-		if (isBuilderTextLeaf(node)) {
-			textChecks.push({ kind, values: [node.text] });
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory} },`
-			);
-		} else if (isAffixedLeaf(node)) {
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { factory: (content: string) => _resolveByKind(${JSON.stringify(kind)}, content) },`
-			);
-		} else if (interiorOf(node) !== undefined) {
-			const interior = interiorOf(node)!;
-			const shape = classifyFactoryShape(node, nodeMap);
-			const config = `lexedConfig(text, TOKEN_INTERIORS[${JSON.stringify(kind)}], ${JSON.stringify(kind)})`;
-			const registered = registeredSlots(node);
-			const spelling = registered.length === 0 ? '' : `, { ${registered.map((slot) => `${slot.configKey}: cfg[${JSON.stringify(slot.configKey)}]`).join(', ')} } as never`;
-			const configSlot = interior.slots.find((slot) => !slot.flag && !registered.some((r) => r.configKey === slot.configKey));
-			const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.configKey)}] as never` : 'cfg as never';
-			textChecks.push({ kind, pattern: new RegExp(interior.regex, 'su') });
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { pattern: interiorPattern(TOKEN_INTERIORS[${JSON.stringify(kind)}]), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`
-			);
-		} else if (node instanceof AssembledPattern) {
-			const pattern = anchoredLeafRegex(kind, node.textPattern);
-			const guard = leafReDeclaration(kind, node);
-			if (pattern === undefined || guard === undefined) {
-				if (!referenced.has(kind)) continue;
-				throw new Error(
-					`leaf registry: '${kind}' has a factory but no text pattern; an external scanner token authors its shape in renderAs`
+		switch (entry.form) {
+			case 'fixed':
+				textChecks.push({ kind, values: [entry.node.text] });
+				registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(entry.node.text)}], factory: () => ${factory} },`);
+				break;
+			case 'affixed':
+				registryEntries.push(`  ${JSON.stringify(kind)}: { factory: (content: string) => _resolveByKind(${JSON.stringify(kind)}, content) },`);
+				break;
+			case 'interior': {
+				const shape = classifyFactoryShape(node, nodeMap);
+				const config = `lexedConfig(text, TOKEN_INTERIORS[${JSON.stringify(kind)}], ${JSON.stringify(kind)})`;
+				const registered = registeredSlots(node);
+				const spelling = registered.length === 0 ? '' : `, { ${registered.map((slot) => `${slot.propertyName}: cfg[${JSON.stringify(slot.propertyName)}]`).join(', ')} } as never`;
+				const configSlot = entry.interior.slots.find((slot) => !slot.flag && !registered.some((r) => r.propertyName === slot.propertyName));
+				const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.propertyName)}] as never` : 'cfg as never';
+				textChecks.push({ kind, pattern: new RegExp(entry.interior.regex, 'su') });
+				registryEntries.push(
+					`  ${JSON.stringify(kind)}: { pattern: interiorPattern(TOKEN_INTERIORS[${JSON.stringify(kind)}]), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`
 				);
+				break;
 			}
-			textChecks.push({ kind, pattern });
-			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: ${factory} },`);
-		} else if (node instanceof AssembledAlias) {
-			const leaf = aliasPatternLeaf(node, nodeMap);
-			if (leaf === undefined) continue;
-			const pattern = anchoredLeafRegex(leaf.kind, leaf.textPattern);
-			const guard = leafReDeclaration(leaf.kind, leaf);
-			if (pattern === undefined || guard === undefined) continue;
-			textChecks.push({ kind, pattern });
-			registryEntries.push(
-				placedAlias(node, nodeMap)
-					? `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: F.${node.rawFactoryName} },`
-					: `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
-			);
+			case 'stored':
+				textChecks.push({ kind, pattern: entry.pattern });
+				registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: F.${entry.guard.constName}, factory: ${factory} },`);
+				break;
+			case 'alias':
+				textChecks.push({ kind, pattern: entry.pattern });
+				registryEntries.push(
+					placedAlias(entry.node, nodeMap)
+						? `  ${JSON.stringify(kind)}: { pattern: F.${entry.guard.constName}, factory: F.${entry.node.rawFactoryName} },`
+						: `  ${JSON.stringify(kind)}: { pattern: F.${entry.guard.constName}, factory: (text: string) => ${factory}(F.${entry.leaf.rawFactoryName}(text) as never) },`
+				);
+				break;
 		}
 	}
 	return { entries: registryEntries, textChecks: rankTextKinds(textChecks, kindEntries) };
@@ -1175,8 +1163,15 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
 	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNodeValue(rest)) return fn(rest);');
 	lines.push('  const text = (rest as { text?: unknown }).text;');
-	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);');
-	lines.push('  return fn(text);');
+	lines.push('  if (typeof text === "string") return _buildGuardedText(text, kind) as ReturnType<_FromMap[K]>;');
+	lines.push('  if (_SLOTLESS_TEXT_KINDS.has(kind) || "text" in rest) throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);');
+	lines.push('  return fn(rest);');
+	lines.push('}');
+	lines.push('');
+	lines.push('export function buildByKind(kind: string, ...input: unknown[]): unknown {');
+	lines.push('  if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);');
+	lines.push('  if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);');
+	lines.push('  return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);');
 	lines.push('}');
 	lines.push('');
 }
@@ -1329,7 +1324,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 		'    if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName) || (_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e)))) return v as Admit<T>;'
 	);
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
-	lines.push('    const arm = arms.length <= 1 ? arms[0] : undefined;');
+	lines.push('    const arm = arms.length <= 1 ? arms[0] : arms.find((b) => _KEYWORD_BRANCH_BY_KIND_ID[kindId] === b);');
 	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;');
 	lines.push('    if (isNodeValue(v)) return v as Admit<T>;');
 	lines.push('    if (arms.length > 1) {');
@@ -1565,8 +1560,11 @@ function emitResolverHelpers(
 	lines.push('const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {');
 	for (const entry of registryEntries) lines.push(entry);
 	lines.push('};');
-	const affixed = [...nodeMap.nodes].filter(([, node]) => isAffixedLeaf(node)).map(([kind]) => kind);
+	const textKinds = builtFromText(nodeMap, kindEntries);
+	const affixed = textKinds.filter((entry) => entry.form === 'affixed').map(({ kind }) => kind);
+	const slotless = textKinds.filter((entry) => entry.form === 'fixed' || entry.form === 'stored').map(({ kind }) => kind);
 	lines.push(`const _AFFIXED_KINDS: ReadonlySet<string> = new Set(${JSON.stringify(affixed)});`);
+	lines.push(`const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set(${JSON.stringify(slotless)});`);
 	lines.push('');
 
 	lines.push('function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {');
@@ -1617,8 +1615,13 @@ function emitResolverHelpers(
 	lines.push("/** A kind-enum slot's loose input. A stored kind id is already the slot's");
 	lines.push(' *  own discriminant; any other number is a numeric value and resolves as a');
 	lines.push(' *  leaf like every other shape. */');
-	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {');
-	lines.push('  return typeof v === "number" && _KIND_ID_STORED.has(v) ? (v as T) : resolve();');
+	lines.push('function _resolveKindEnum<T>(v: _LooseFieldInput, stored: readonly number[], resolve: () => T): T {');
+	lines.push('  return typeof v === "number" && stored.includes(v) ? (v as T) : resolve();');
+	lines.push('}');
+	lines.push('');
+	lines.push('function _resolveKindEnumItems<T>(v: _LooseFieldInput, stored: readonly number[], resolve: (v: _LooseFieldInput) => readonly T[]): readonly T[] {');
+	lines.push('  if (!Array.isArray(v)) return _resolveKindEnum(v, stored, () => resolve(v));');
+	lines.push('  return v.flatMap((item: _LooseFieldInput) => (typeof item === "number" && stored.includes(item) ? [item as T] : resolve([item])));');
 	lines.push('}');
 	lines.push('');
 	lines.push('function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {');
@@ -1648,13 +1651,20 @@ function emitResolverHelpers(
 
 	const byText: [string, string][] = [];
 	const buildByKind: [string, string][] = [];
+	const byKeywordKindId: [string, string][] = [];
 	const stringCapable: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isAuthoredCompound(node)) continue;
 		const own = wordConstructibleText(node, nodeMap);
 		if (own !== undefined && node.rawFactoryName !== undefined) {
 			byText.push([own, kind]);
-			buildByKind.push([kind, node.rawFactoryName]);
+			const aliased = keywordAliasContent(node, nodeMap);
+			const content = aliased === undefined || kindEntries === undefined ? undefined : fixedTextEntryOf(aliased.ref, nodeMap, kindEntries)?.discriminant;
+			if (aliased !== undefined && content === undefined) {
+				throw new Error(`from: alias '${kind}' over keyword '${aliased.text}' has no kind catalog row to build it from`);
+			}
+			buildByKind.push([kind, `${node.rawFactoryName}(${content ?? ''})`]);
+			if (content !== undefined) byKeywordKindId.push([content, kind]);
 		} else if (node.fromFunctionName !== undefined && stringConstructibleTexts(kind, nodeMap).length > 0) {
 			stringCapable.push(kind);
 		}
@@ -1672,7 +1682,10 @@ function emitResolverHelpers(
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
 	lines.push('};');
 	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | undefined> = {');
-	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
+	for (const [k, call] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${call},`);
+	lines.push('};');
+	lines.push('const _KEYWORD_BRANCH_BY_KIND_ID: Record<number, string | undefined> = {');
+	for (const [id, k] of byKeywordKindId) lines.push(`  [${id}]: ${JSON.stringify(k)},`);
 	lines.push('};');
 	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);
 	emitBareRoutingTables(lines, nodeMap, kindEntries);
@@ -1904,7 +1917,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
 			if (!usesArgs && l === ARGS_HELPER) return [];
-			if (l === `import * as F from './raw.js';`) {
+			if (l === RAW_IMPORT) {
 				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
 				const usesInteriorPattern = /\binteriorPattern\(/.test(body);
 				const usesLexedConfig = /\blexedConfig\(/.test(body);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateDsl } from '../evaluate.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { grammarPackage, topLayerPath } from '../../grammars.ts';
 import { layerRecordOf } from '../layer-record.ts';
 

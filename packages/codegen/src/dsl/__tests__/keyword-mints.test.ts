@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { wire } from '../wire/wire.ts';
 import { field } from '../primitives/field.ts';
 import { evaluateWired, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';

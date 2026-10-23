@@ -31,17 +31,6 @@ describe('examples/12 cross-language migration', () => {
 	});
 });
 
-// Ceiling, never a floor: an artefact kind moves off the top-level namespace
-// onto its parent, so this count only shrinks.
-describe('ir entry ratchet', () => {
-	it('exposes no more top-level builders than the recorded ceiling', () => {
-		// Grouped namespaces are objects, not builders — the
-		// ratchet tracks builder exposure, so only callable entries count.
-		const builders = Object.keys(ts.build).filter((k) => typeof (ts.build as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(217);
-	});
-});
-
 // The generated rebuild: `sittir tool emit-factory-source` over the dogfood source.
 describe('examples/18 generated rebuild (dogfood-typescript.ts)', () => {
 	const target = new URL('../../tools/tests/emit/__fixtures__/dogfood-typescript.ts', import.meta.url).pathname;

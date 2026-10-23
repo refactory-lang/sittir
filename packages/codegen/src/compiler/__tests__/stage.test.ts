@@ -1,12 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { evaluate } from '../evaluate.ts';
+import { evaluate } from '../../dsl/evaluate.ts';
 import { diagnoseEvaluationStage } from '../stage.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const fixture = (name: string) => resolve(__dirname, '../../__tests__/fixtures', name);
@@ -30,7 +29,7 @@ describe('evaluation stages', () => {
 
 		beforeAll(async () => {
 			typescript = await evaluatePackage(grammarPackage('typescript'));
-		}, FULL_PIPELINE_TIMEOUT);
+		});
 
 		it('the raw stage is the base before enrich, the enriched stage the base after it', () => {
 			const { raw: before, enriched: after } = typescript.stages!;

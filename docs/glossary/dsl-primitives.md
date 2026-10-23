@@ -246,8 +246,8 @@ enforce one is out of scope.
 
 `reauthored('ruled-narrowing', witnesses, body)` is the sixth: the upstream
 parser accepts a form the maintainer ruled out, where no production excludes it.
-It is judged as the fifth is, with the ruling in words in place of a production
-(`RuledNarrowingWitness`).
+It is judged as the fifth is, with the ruling's constraint stated in words in
+place of a production (`RuledNarrowingWitness`).
 
 A rule with more than one cause declares them together:
 `reauthored([[cause, witnesses], [cause, witnesses], ...], body)` takes two or
@@ -768,7 +768,7 @@ Evidence for `reauthored('semantic-gap', witnesses, body)`: the upstream parser'
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::RuledNarrowingWitness`
 
-The evidence for `'ruled-narrowing'`: the `InvalidSyntaxWitness` shape with `ruling`, the maintainer's ruling stated in words, in place of `production`. The gate checks that upstream's `kind` derives the form and the authored `kind` does not, and the witness test checks that upstream's parser accepts the text and sittir's rejects it within the text.
+The evidence for `'ruled-narrowing'`: the `InvalidSyntaxWitness` shape with `ruling` in place of `production`. The ruling's constraint is stated in words, never as a PR, spec or task number, so the witness cannot rot into a dangling pointer. The gate checks that upstream's `kind` derives the form and the authored `kind` does not, and the witness test checks that upstream's parser accepts the text and sittir's rejects it within the text.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::CauseWitnesses`
 
@@ -788,7 +788,7 @@ One cause of a `reauthored` declaration as recorded: the cause, and its witnesse
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::RuleCauseDeclaration`
 
-What `reauthored` or `vocabulary` tags a rule function with (`ruleCauseOf`): a re-authoring with one or more causes (`DeclaredCause`), or a vocabulary rule.
+What `reauthored` or `vocabulary` tags a rule function with (`ruleCauseOf`): a re-authoring with its causes (`DeclaredCause`), or a vocabulary rule. The cause list is typed as it can arrive: a grammar file's types do not gate it, so the list may be empty, and the rule-cause gate refuses an empty one (`rule-cause-missing`). `reauthored` records the list dense: a hole in the declared list declares nothing and is skipped, so a list of holes records as empty.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::declaredCause`
 

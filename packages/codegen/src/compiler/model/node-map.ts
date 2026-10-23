@@ -384,6 +384,10 @@ export function snakeToCamel(name: string): string {
 	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
+export function storageKeyOf(storageName: string): string {
+	return `_${storageName}`;
+}
+
 export function slotPropertyName(slot: {
 	readonly name: string;
 	readonly values?: readonly { readonly multiplicity?: string }[];
@@ -1070,9 +1074,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return undefined;
 	}
 
-	get stampChildExpression(): string | undefined {
-		return this.stampExpression;
-	}
 	protected readonly rule: R;
 
 	get ruleMetadata(): RuleMetadata | undefined {
@@ -1122,7 +1123,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		({ renamedFrom: this.renamedFrom, splitFrom: this.splitFrom, variantOf: this.variantOf } = provenanceOf(kind, opts));
 		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
-
 
 	get surfaceHidden(): boolean {
 		return surfaceHiddenOf(this.kindEntry, this.kind);
@@ -1200,9 +1200,6 @@ export class AssembledNonterminal {
 	get name(): string {
 		return projectSlotNaming(this).name;
 	}
-	get configKey(): string {
-		return projectSlotNaming(this).configKey;
-	}
 	get propertyName(): string {
 		return projectSlotNaming(this).propertyName;
 	}
@@ -1222,7 +1219,7 @@ export class AssembledNonterminal {
 		return isMultiple(this) ? 'many' : 'one';
 	}
 	get storageKey(): string {
-		return `_${this.storageName}`;
+		return storageKeyOf(this.storageName);
 	}
 
 	constructor(init: AssembledNonterminalInit) {
@@ -1420,7 +1417,6 @@ export interface SlotNamingInputs {
 export function projectSlotNaming(slot: SlotNamingInputs): {
 	storageName: string;
 	name: string;
-	configKey: string;
 	propertyName: string;
 	paramName: string;
 	parseNames: readonly string[];
@@ -1442,12 +1438,10 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
 			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
 			: slot.inlinedFrom?.replace(/^_+/, '') || 'content');
-	const configKey = snakeToCamel(storageName);
 	const propertyName = slotPropertyName({ name: storageName, values: slot.values });
 	return {
 		storageName,
 		name: storageName,
-		configKey,
 		propertyName,
 		paramName: safeParamName(propertyName),
 		parseNames
@@ -1648,6 +1642,7 @@ function slotEmptiness(root: RenderRule, { slotById }: SlotEmptinessCtx): Emptin
 export interface InnerGap {
 	readonly key: string;
 	readonly precedingTokens: number;
+	readonly slots: readonly string[];
 }
 
 export interface FullFormAffix {
@@ -1820,8 +1815,11 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		};
 		walk(root, { conditional: false });
 		const tokens = immediateTokens.length;
+		const slotsAt = (precedingTokens: number): string[] => [
+			...new Set(occurrences.filter((occurrence) => occurrence.precedingTokens === precedingTokens).map((occurrence) => storageKeyOf(occurrence.slot.storageName)))
+		];
 		if (this._slots.length === 0) {
-			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1 }] : [];
+			return tokens >= 2 && !immediateTokens[1] ? [{ key: 'interior', precedingTokens: 1, slots: [] }] : [];
 		}
 		if (tokens === 0) {
 			if (!this.grammarRoot) return [];
@@ -1829,7 +1827,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 			const repeat =
 				occurrences.find((occurrence) => isMultiple(occurrence.slot))?.slot ??
 				(rootSlot !== undefined && isMultiple(rootSlot) ? rootSlot : undefined);
-			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0 }];
+			return repeat === undefined ? [] : [{ key: repeat.name, precedingTokens: 0, slots: [...new Set([...slotsAt(0), storageKeyOf(repeat.storageName)])] }];
 		}
 		return occurrences
 			.filter(
@@ -1841,7 +1839,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 					occurrence.precedingTokens < tokens &&
 					!immediateTokens[occurrence.precedingTokens]
 			)
-			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens }));
+			.map((occurrence) => ({ key: occurrence.slot.name, precedingTokens: occurrence.precedingTokens, slots: slotsAt(occurrence.precedingTokens) }));
 	}
 
 	#computing = false;
@@ -2109,11 +2107,6 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
 
-	override get stampChildExpression(): string {
-		const kind = JSON.stringify(this.kind);
-		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: true as const }`;
-	}
 }
 
 export class AssembledPunctuation extends AssembledLeaf<StringRule> {
@@ -2153,11 +2146,6 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 		return this.rule.value;
 	}
 
-	override get stampChildExpression(): string {
-		const kind = JSON.stringify(this.kind);
-		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: ${!this.hidden} as const }`;
-	}
 }
 
 export function enumLiteralMembersOf(rule: ChoiceRule): readonly RenderRule[] {

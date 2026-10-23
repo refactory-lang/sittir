@@ -30,7 +30,7 @@ import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { keywordRuleName, resolveKeywordNames, spelledKeywordRuleName } from './keyword-names.ts';
-import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, type SymbolSource } from '../rule-patterns.ts';
+import { aliasOf, isBlank, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, unwrapPrec, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -61,6 +61,8 @@ export type PatchForm =
 	| 'narrow'
 	| 'rename'
 	| 'literal';
+
+export const SITE_EDITS_KEY = 'edits';
 
 export interface PatchSite {
 	readonly ownerKind: string;
@@ -1600,6 +1602,29 @@ function wrapSupertypesCallback(userSupertypes: DollarFn<unknown[]> | undefined,
 			.map((name) => symbolizeRef($, name));
 		return [...base, ...flattened];
 	} as unknown as DollarFn<unknown[]>;
+}
+
+export function dropFlattenedParentAliases(grammar: { rules: Record<string, AnyRule>; supertypes?: unknown }, opts: Pick<WiredOpts, '__wireContext__'>): ReadonlySet<string> {
+	const context = opts.__wireContext__;
+	const changed = new Set<string>();
+	if (context === undefined) return changed;
+	const listed = symbolNamesOf(grammar.supertypes);
+	const parents = new Set([...context.flattenedParents].filter((name) => listed.has(name)));
+	if (parents.size === 0) return changed;
+	const walker = new RuleWalker<AnyRule>();
+	const unaliased = (node: AnyRule): AnyRule => {
+		const alias = node as { type?: string; content?: AnyRule };
+		if (alias.type !== 'ALIAS' || alias.content === undefined) return node;
+		const target = unwrapPrec(alias.content) as { type?: string; name?: unknown } | undefined;
+		return target?.type === 'SYMBOL' && typeof target.name === 'string' && parents.has(target.name) ? alias.content : node;
+	};
+	for (const [name, rule] of Object.entries(grammar.rules)) {
+		const next = unaliased(walker.map(rule, unaliased));
+		if (next === rule) continue;
+		grammar.rules[name] = next;
+		changed.add(name);
+	}
+	return changed;
 }
 
 function recordAliasTargets(rules: Record<string, RuleFn>, context: WireContext): void {

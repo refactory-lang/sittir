@@ -3,8 +3,27 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './kinds.js';
+import { holdsKinds, type KindTest } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
+
+// KindMembers — each supertype and enum kind, mapped to the kind ids it holds for.
+export interface KindMembers {
+	[TSKindId.Definition]:
+		| TSKindId.NamedNodePlain
+		| TSKindId.NamedNodeSupertyped
+		| TSKindId.AnonymousNode
+		| TSKindId.MissingNode
+		| TSKindId.Grouping
+		| TSKindId.Predicate
+		| TSKindId.List
+		| TSKindId.FieldDefinition;
+	[TSKindId.NamedNode]: TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped;
+	[TSKindId.ListElement]: TSKindId.Capture | TSKindId.ListElementQuantifier;
+	[TSKindId.NamedNodeGroup]: TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast;
+	[TSKindId.Quantifier]: TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
+	[TSKindId.PredicateType]: TSKindId.Qmark | TSKindId.Bang;
+}
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -23,9 +42,14 @@ export interface IsGuards {
 	immediateString<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateString };
-	stringContent<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
+	readonly stringContent: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
+		escapeSequence<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
+	};
 	parameters<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Parameters };
@@ -62,6 +86,9 @@ export interface IsGuards {
 	namedNodeExpressionArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
+	groupingGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupingGroup };
 	namedNodePlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodePlain };
@@ -76,19 +103,7 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly definition: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.NamedNodePlain
-			| TSKindId.NamedNodeSupertyped
-			| TSKindId.AnonymousNode
-			| TSKindId.MissingNode
-			| TSKindId.Grouping
-			| TSKindId.Predicate
-			| TSKindId.List
-			| TSKindId.FieldDefinition
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Definition]>;
 		namedNode: IsGuards['namedNode'];
 		anonymousNode<T extends { readonly $type: number } | number>(
 			v: T
@@ -110,9 +125,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldDefinition };
 	};
 	readonly namedNode: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.NamedNode]>;
 		plain<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodePlain };
@@ -121,9 +134,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeSupertyped };
 	};
 	readonly listElement: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<T, TSKindId.Capture | TSKindId.ListElementQuantifier>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.ListElement]>;
 		capture<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Capture };
@@ -132,9 +143,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListElementQuantifier };
 	};
 	readonly namedNodeGroup: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.NamedNodeGroup]>;
 		children<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupChildren };
@@ -142,7 +151,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeGroupAnchoredLast };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -155,36 +164,20 @@ export interface IsGuards {
 		| TSKindId.Indent
 		| TSKindId.Dedent
 	>;
-	quantifier<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>;
+	quantifier<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Quantifier]>;
 	identifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
 	immediateIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateIdentifier };
-	predicateType<T extends { readonly $type: string | number } | number>(
+	predicateType<T extends { readonly $type: number } | number>(
 		v: T
-	): v is NarrowTo<T, TSKindId.Qmark | TSKindId.Bang>;
+	): v is NarrowTo<T, KindMembers[TSKindId.PredicateType]>;
 	stringContentText<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContentText };
-	anchor<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Anchor>;
-}
-
-// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
-function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && isMember(id, v.$type);
-}
-function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
-}
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
-	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
-}
-function _vg<G extends object>(guard: G, variants: object): G {
-	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+	anchor<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Anchor>;
 }
 
 const _supertype_definition_ids = new Set<number>([61, 62, 47, 46, 45, 52, 44, 50]);
@@ -193,78 +186,134 @@ const _supertype_listElement_ids = new Set<number>([39, 54]);
 const _supertype_namedNodeGroup_ids = new Set<number>([63, 64]);
 const _supertype_layout_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
 
-const _enum_quantifier_ids = new Set<number>([2, 3, 4]);
-const _enum_predicateType_ids = new Set<number>([4, 18]);
-
 const _members = new Map<number, ReadonlySet<number>>([
-	[34, _supertype_definition_ids],
-	[48, _supertype_namedNode_ids],
-	[55, _supertype_listElement_ids],
-	[59, _supertype_namedNodeGroup_ids]
+	[TSKindId.Definition, _supertype_definition_ids],
+	[TSKindId.NamedNode, _supertype_namedNode_ids],
+	[TSKindId.ListElement, _supertype_listElement_ids],
+	[TSKindId.NamedNodeGroup, _supertype_namedNodeGroup_ids],
+	[TSKindId.Quantifier, new Set<number>([2, 3, 4])],
+	[TSKindId.PredicateType, new Set<number>([4, 18])]
 ]);
+const _single = new Map<number, ReadonlySet<number>>();
+function _kinds(kind: number): ReadonlySet<number> {
+	const members = _members.get(kind);
+	if (members !== undefined) return members;
+	let single = _single.get(kind);
+	if (single === undefined) _single.set(kind, (single = new Set([kind])));
+	return single;
+}
 export function isMember(kind: number, type: number): boolean {
-	return _members.get(kind)?.has(type) ?? type === kind;
+	return _kinds(kind).has(type);
 }
 export function membersOf(kind: number): readonly number[] {
-	const members = _members.get(kind);
-	return members === undefined ? [kind] : [...members];
+	return [..._kinds(kind)];
 }
 
-const _supertype_namedNode_guard = _vg(_mg(48), {
-	plain: _g(TSKindId.NamedNodePlain),
-	supertyped: _g(TSKindId.NamedNodeSupertyped)
-});
-const _supertype_listElement_guard = _vg(_mg(55), {
-	capture: _g(TSKindId.Capture),
-	quantifier: _g(TSKindId.ListElementQuantifier)
-});
-const _supertype_namedNodeGroup_guard = _vg(_mg(59), {
-	children: _g(TSKindId.NamedNodeGroupChildren),
-	anchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast)
-});
-const _supertype_definition_guard = _vg(_mg(34), {
-	namedNode: _supertype_namedNode_guard,
-	anonymousNode: _g(TSKindId.AnonymousNode),
-	missingNode: _g(TSKindId.MissingNode),
-	grouping: _g(TSKindId.Grouping),
-	predicate: _g(TSKindId.Predicate),
-	list: _g(TSKindId.List),
-	field: _g(TSKindId.FieldDefinition)
-});
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+}
 
-export const is = Object.freeze({
-	program: _g(TSKindId.Program),
-	escapeSequence: _g(TSKindId.EscapeSequence),
-	capture: _g(TSKindId.Capture),
-	string: _g(TSKindId.String),
-	immediateString: _g(TSKindId.ImmediateString),
-	stringContent: _g(TSKindId.StringContent),
-	parameters: _g(TSKindId.Parameters),
-	comment: _g(TSKindId.Comment),
-	list: _g(TSKindId.List),
-	grouping: _g(TSKindId.Grouping),
-	missingNode: _g(TSKindId.MissingNode),
-	anonymousNode: _g(TSKindId.AnonymousNode),
-	fieldDefinition: _g(TSKindId.FieldDefinition),
-	negatedField: _g(TSKindId.NegatedField),
-	predicate: _g(TSKindId.Predicate),
-	listElementQuantifier: _g(TSKindId.ListElementQuantifier),
-	groupExpressionArm: _g(TSKindId.GroupExpressionArm),
-	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
-	namedNodePlain: _g(TSKindId.NamedNodePlain),
-	namedNodeSupertyped: _g(TSKindId.NamedNodeSupertyped),
-	namedNodeGroupChildren: _g(TSKindId.NamedNodeGroupChildren),
-	namedNodeGroupAnchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast),
-	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
-	definition: _supertype_definition_guard,
-	namedNode: _supertype_namedNode_guard,
-	listElement: _supertype_listElement_guard,
-	namedNodeGroup: _supertype_namedNodeGroup_guard,
-	layout: _sg(_supertype_layout_ids),
-	quantifier: _sg(_enum_quantifier_ids),
-	identifier: _g(TSKindId.Identifier),
-	immediateIdentifier: _g(TSKindId.ImmediateIdentifier),
-	predicateType: _sg(_enum_predicateType_ids),
-	stringContentText: _g(TSKindId.StringContentText),
-	anchor: _mg(TSKindId.Anchor)
-}) as unknown as IsGuards;
+// Runtime: every guard holds through the one kind test it is built with; an engine's `ofType` reads the same test.
+export function guardsWith(test: KindTest): IsGuards {
+	const _g = (id: number) => {
+		const kinds = _kinds(id);
+		return (v: unknown): boolean => typeof v !== 'number' && test(v, kinds);
+	};
+	const _mg = (kind: number) => {
+		const kinds = _kinds(kind);
+		return (v: unknown): boolean => test(v, kinds);
+	};
+	const _sg =
+		(kinds: ReadonlySet<number>) =>
+		(v: unknown): boolean =>
+			test(v, kinds);
+	const _kind_AnonymousNode_guard = _g(TSKindId.AnonymousNode);
+	const _kind_MissingNode_guard = _g(TSKindId.MissingNode);
+	const _kind_Grouping_guard = _g(TSKindId.Grouping);
+	const _kind_Predicate_guard = _g(TSKindId.Predicate);
+	const _kind_List_guard = _g(TSKindId.List);
+	const _kind_FieldDefinition_guard = _g(TSKindId.FieldDefinition);
+	const _kind_NamedNodePlain_guard = _g(TSKindId.NamedNodePlain);
+	const _kind_NamedNodeSupertyped_guard = _g(TSKindId.NamedNodeSupertyped);
+	const _kind_Capture_guard = _g(TSKindId.Capture);
+	const _kind_ListElementQuantifier_guard = _g(TSKindId.ListElementQuantifier);
+	const _kind_NamedNodeGroupChildren_guard = _g(TSKindId.NamedNodeGroupChildren);
+	const _kind_NamedNodeGroupAnchoredLast_guard = _g(TSKindId.NamedNodeGroupAnchoredLast);
+	const _kind_Program_guard = _g(TSKindId.Program);
+	const _kind_EscapeSequence_guard = _g(TSKindId.EscapeSequence);
+	const _kind_String_guard = _g(TSKindId.String);
+	const _kind_ImmediateString_guard = _g(TSKindId.ImmediateString);
+	const _kind_Parameters_guard = _g(TSKindId.Parameters);
+	const _kind_Comment_guard = _g(TSKindId.Comment);
+	const _kind_NegatedField_guard = _g(TSKindId.NegatedField);
+	const _kind_GroupExpressionArm_guard = _g(TSKindId.GroupExpressionArm);
+	const _kind_NamedNodeExpressionArm_guard = _g(TSKindId.NamedNodeExpressionArm);
+	const _kind_GroupingGroup_guard = _g(TSKindId.GroupingGroup);
+	const _kind_Quantifier_guard = _mg(TSKindId.Quantifier);
+	const _kind_Identifier_guard = _g(TSKindId.Identifier);
+	const _kind_ImmediateIdentifier_guard = _g(TSKindId.ImmediateIdentifier);
+	const _kind_PredicateType_guard = _mg(TSKindId.PredicateType);
+	const _kind_StringContentText_guard = _g(TSKindId.StringContentText);
+	const _kind_Anchor_guard = _mg(TSKindId.Anchor);
+	const _form_StringContent_guard = _vg(_g(TSKindId.StringContent), { escapeSequence: _kind_EscapeSequence_guard });
+	const _supertype_namedNode_guard = _vg(_mg(48), {
+		plain: _kind_NamedNodePlain_guard,
+		supertyped: _kind_NamedNodeSupertyped_guard
+	});
+	const _supertype_listElement_guard = _vg(_mg(55), {
+		capture: _kind_Capture_guard,
+		quantifier: _kind_ListElementQuantifier_guard
+	});
+	const _supertype_namedNodeGroup_guard = _vg(_mg(59), {
+		children: _kind_NamedNodeGroupChildren_guard,
+		anchoredLast: _kind_NamedNodeGroupAnchoredLast_guard
+	});
+	const _supertype_definition_guard = _vg(_mg(34), {
+		namedNode: _supertype_namedNode_guard,
+		anonymousNode: _kind_AnonymousNode_guard,
+		missingNode: _kind_MissingNode_guard,
+		grouping: _kind_Grouping_guard,
+		predicate: _kind_Predicate_guard,
+		list: _kind_List_guard,
+		field: _kind_FieldDefinition_guard
+	});
+	return Object.freeze({
+		program: _kind_Program_guard,
+		escapeSequence: _kind_EscapeSequence_guard,
+		capture: _kind_Capture_guard,
+		string: _kind_String_guard,
+		immediateString: _kind_ImmediateString_guard,
+		stringContent: _form_StringContent_guard,
+		parameters: _kind_Parameters_guard,
+		comment: _kind_Comment_guard,
+		list: _kind_List_guard,
+		grouping: _kind_Grouping_guard,
+		missingNode: _kind_MissingNode_guard,
+		anonymousNode: _kind_AnonymousNode_guard,
+		fieldDefinition: _kind_FieldDefinition_guard,
+		negatedField: _kind_NegatedField_guard,
+		predicate: _kind_Predicate_guard,
+		listElementQuantifier: _kind_ListElementQuantifier_guard,
+		groupExpressionArm: _kind_GroupExpressionArm_guard,
+		namedNodeExpressionArm: _kind_NamedNodeExpressionArm_guard,
+		groupingGroup: _kind_GroupingGroup_guard,
+		namedNodePlain: _kind_NamedNodePlain_guard,
+		namedNodeSupertyped: _kind_NamedNodeSupertyped_guard,
+		namedNodeGroupChildren: _kind_NamedNodeGroupChildren_guard,
+		namedNodeGroupAnchoredLast: _kind_NamedNodeGroupAnchoredLast_guard,
+		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
+		definition: _supertype_definition_guard,
+		namedNode: _supertype_namedNode_guard,
+		listElement: _supertype_listElement_guard,
+		namedNodeGroup: _supertype_namedNodeGroup_guard,
+		layout: _sg(_supertype_layout_ids),
+		quantifier: _kind_Quantifier_guard,
+		identifier: _kind_Identifier_guard,
+		immediateIdentifier: _kind_ImmediateIdentifier_guard,
+		predicateType: _kind_PredicateType_guard,
+		stringContentText: _kind_StringContentText_guard,
+		anchor: _kind_Anchor_guard
+	}) as unknown as IsGuards;
+}
+
+export const is = guardsWith(holdsKinds);

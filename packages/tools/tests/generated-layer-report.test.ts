@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { writeSittirGrammarPackage } from '../../codegen/src/compiler/__tests__/_sittir-grammar.ts';
+import { writeSittirGrammarPackage } from '../../codegen/src/__tests__/helpers/sittir-grammar.ts';
 import { generatedLayerReport } from '../src/inventory/index.ts';
 import { REGENERATE_BINDINGS_COMMAND } from '../../codegen/src/bindings/hash.ts';
 

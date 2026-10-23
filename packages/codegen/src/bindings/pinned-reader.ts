@@ -41,6 +41,13 @@ import {
 } from './facts.ts';
 
 type Kinds = LanguageEngine<ScmAPI>['kinds'];
+
+function leafText(leaf: object): string {
+	const text: unknown = (leaf as { readonly $text?: unknown }).$text;
+	const read = typeof text === 'function' ? (text as (this: object) => unknown).call(leaf) : text;
+	if (typeof read !== 'string') throw new Error('a bindings leaf has no text');
+	return read;
+}
 type Engine = LanguageEngine<ScmAPI>;
 
 let K: Kinds;
@@ -104,7 +111,7 @@ interface Facts {
 
 function stringValue(node: QueryString.Parsed | ImmediateString.Parsed): string {
 	return (node.stringContent()?.contents() ?? [])
-		.map((piece) => (piece.$type === K.EscapeSequence ? piece.content() : piece.$text))
+		.map((piece) => (piece.$type === K.EscapeSequence ? piece.content() : leafText(piece)))
 		.join('');
 }
 
@@ -135,7 +142,7 @@ async function parsedPatterns(text: string): Promise<ParsedPattern[]> {
 }
 
 function captures(v: Visit): string[] {
-	return [...v.node.elements(), ...v.inherited].flatMap((e) => (e.$type === K.Capture ? [e.name().$text] : []));
+	return [...v.node.elements(), ...v.inherited].flatMap((e) => (e.$type === K.Capture ? [leafText(e.name())] : []));
 }
 
 function mayBeAbsent(v: Visit): boolean {
@@ -154,11 +161,11 @@ function kindOf(v: Visit): string | null {
 	switch (node.$type) {
 		case K.NamedNodePlain: {
 			const name = node.name();
-			return typeof name === 'number' ? WILDCARD : name.$text;
+			return typeof name === 'number' ? WILDCARD : leafText(name);
 		}
 		case K.NamedNodeSupertyped: {
 			const name = node.name();
-			return name.$type === K.ImmediateIdentifier ? name.$text : stringValue(name);
+			return name.$type === K.ImmediateIdentifier ? leafText(name) : stringValue(name);
 		}
 		case K.AnonymousNode:
 			return typeof node.name() === 'number' ? WILDCARD : null;
@@ -300,7 +307,7 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 				parent.children.push(visit(expression, field, anchor, adjacent, parent, alternation, inherited));
 				return;
 			case K.FieldDefinition:
-				place(expression.definition(), expression.name().$text, anchor, adjacent, parent, alternation, inherited);
+				place(expression.definition(), leafText(expression.name()), anchor, adjacent, parent, alternation, inherited);
 				return;
 			case K.List:
 				for (const option of expression.definitions())
@@ -322,31 +329,31 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 }
 
 function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> | null {
-	if (predicate.prefix() !== K.Pound || predicate.type() !== K.Qmark || predicate.name().$text !== 'match') return null;
+	if (predicate.prefix() !== K.Pound || predicate.type() !== K.Qmark || leafText(predicate.name()) !== 'match') return null;
 	const [target, regex] = predicate.parameters()?.elements() ?? [];
 	if (target?.$type !== K.Capture || regex?.$type !== K.String) return null;
 	const rx = stringValue(regex);
 	const holes = [...rx.matchAll(/\(\?<(\w+)>/g)].map((m) => m[1] ?? '');
 	if (holes.length === 0 || !rx.startsWith('^') || !rx.endsWith('$')) return null;
-	return { target: target.name().$text, template: rx.slice(1, -1).replace(/\(\?<\w+>[^)]*\)/g, '${string}'), holes };
+	return { target: leafText(target.name()), template: rx.slice(1, -1).replace(/\(\?<\w+>[^)]*\)/g, '${string}'), holes };
 }
 
 function predicateFact(predicate: Predicate.Parsed): Omit<PredicateFact, 'subject'> | null {
 	if (predicate.prefix() !== K.Pound || predicate.type() !== K.Qmark) return null;
 	const parameters = predicate.parameters()?.elements() ?? [];
 	const [subject] = parameters;
-	const tested = subject?.$type === K.Capture ? subject.name().$text : null;
+	const tested = subject?.$type === K.Capture ? leafText(subject.name()) : null;
 	return {
-		operator: predicate.name().$text,
+		operator: leafText(predicate.name()),
 		capture: tested,
 		arguments: parameters.slice(tested === null ? 0 : 1).flatMap((a): PredicateArgument[] => {
 			switch (a.$type) {
 				case K.Capture:
-					return [{ capture: a.name().$text }];
+					return [{ capture: leafText(a.name()) }];
 				case K.String:
 					return [{ text: stringValue(a) }];
 				case K.Identifier:
-					return [{ text: a.$text }];
+					return [{ text: leafText(a) }];
 				default:
 					return [];
 			}
@@ -568,9 +575,9 @@ function containerFact(
 
 function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
 	for (const predicate of predicates) {
-		if (predicate.name().$text !== 'set' || predicate.type() !== K.Bang) continue;
+		if (leafText(predicate.name()) !== 'set' || predicate.type() !== K.Bang) continue;
 		const [key, value] = predicate.parameters()?.elements() ?? [];
-		if (key?.$type === K.Identifier && key.$text === 'reason' && value?.$type === K.String) return stringValue(value);
+		if (key?.$type === K.Identifier && leafText(key) === 'reason' && value?.$type === K.String) return stringValue(value);
 	}
 	return null;
 }
@@ -684,15 +691,15 @@ function* referencesIn(expression: Expression): Generator<PatternReference> {
 	switch (expression.$type) {
 		case K.NamedNodePlain: {
 			const name = expression.name();
-			if (typeof name !== 'number' && name.$text !== 'ERROR') yield { kind: 'node', name: name.$text };
+			if (typeof name !== 'number' && leafText(name) !== 'ERROR') yield { kind: 'node', name: leafText(name) };
 			yield* groupReferences(expression);
 			return;
 		}
 		case K.NamedNodeSupertyped: {
 			const name = expression.name();
-			yield { kind: 'node', name: expression.supertype().$text };
+			yield { kind: 'node', name: leafText(expression.supertype()) };
 			yield name.$type === K.ImmediateIdentifier
-				? { kind: 'node', name: name.$text }
+				? { kind: 'node', name: leafText(name) }
 				: { kind: 'token', name: stringValue(name) };
 			yield* groupReferences(expression);
 			return;
@@ -706,16 +713,16 @@ function* referencesIn(expression: Expression): Generator<PatternReference> {
 			const name = expression.name();
 			if (name === undefined) return;
 			yield name.$type === K.Identifier
-				? { kind: 'node', name: name.$text }
+				? { kind: 'node', name: leafText(name) }
 				: { kind: 'token', name: stringValue(name) };
 			return;
 		}
 		case K.FieldDefinition:
-			yield { kind: 'field', name: expression.name().$text };
+			yield { kind: 'field', name: leafText(expression.name()) };
 			yield* referencesIn(expression.definition());
 			return;
 		case K.NegatedField:
-			yield { kind: 'field', name: expression.identifier().$text };
+			yield { kind: 'field', name: leafText(expression.identifier()) };
 			return;
 		case K.List:
 			for (const option of expression.definitions()) yield* referencesIn(option);

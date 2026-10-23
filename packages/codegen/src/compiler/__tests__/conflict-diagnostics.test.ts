@@ -7,9 +7,8 @@ import { diagnoseGrammar } from '../compile.ts';
 import { conflictRecords, conflictStaleRecord, conflictUnresolvableRecord } from '../diagnostics/conflicts.ts';
 import { blockedRecords, unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
-import { evaluateSittirGrammar } from './_sittir-grammar.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -28,7 +27,7 @@ describe('python conflict records', () => {
 	let python: RawGrammar;
 	beforeAll(async () => {
 		python = await evaluatePackage(grammarPackage('python'));
-	}, FULL_PIPELINE_TIMEOUT);
+	});
 
 	it('records one informational conflict-resolution per derived resolution, with its step and conflict', () => {
 		const resolutions = conflictRecords(python).filter((record) => record.code === 'conflict-resolution');

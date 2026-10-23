@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
+import { stampBuilt } from '../src/source-stamp.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import {
 	LIST_ITEMS,
@@ -16,13 +17,13 @@ import {
 	triviaSide
 } from '../src/utils.ts';
 
-const comment = (text: string): AnyUntypedNode => ({ $type: 9, $source: 2, $text: text });
+const comment = (text: string): AnyUntypedNode => stampBuilt({ $type: 9, $text: text });
 const facts = (inner: readonly string[] = []) => ({
 	kindName: (type: unknown) => (type === 9 ? 'comment' : type === 1 ? 'block' : undefined),
 	kinds: new Set(['comment']),
 	innerKinds: new Set(inner),
 	rebuildWrappers: new Set<number>(),
-	listKinds: new Set<number>(), layout: new Set<number>()
+	listKinds: new Set<number>(), layout: new Set<number>(), innerRegions: new Map<number, readonly string[]>(), namedUnits: new Set<number>()
 });
 const handleOf = (inner?: readonly string[]) => liveHandle({ render: () => 'rendered', trivia: facts(inner) });
 
@@ -30,7 +31,7 @@ describe('renderText', () => {
 	it('renders through the handle it is given, and refuses with none', () => {
 		const render = vi.fn(() => 'rendered');
 		const handle = liveHandle({ render, trivia: facts() });
-		const node = { $type: 1, $source: 2, _name: 'x' } as AnyUntypedNode;
+		const node = stampBuilt({ $type: 1, _name: 'x' }) as AnyUntypedNode;
 		expect(renderText(handle, node)).toBe('rendered');
 		expect(render).toHaveBeenCalledWith(node);
 		expect(() => renderText(undefined, node)).toThrow('node has no engine');
@@ -40,54 +41,54 @@ describe('renderText', () => {
 describe('rebuilt', () => {
 	it('hands the source node trivia to the node it returns', () => {
 		const handle = handleOf();
-		const source = { $type: 1, $source: 2, _a: undefined, $_layout: { trivia: { leading: [comment('// c')] } } } as unknown as AnyUntypedNode;
-		const result = rebuilt(source, handle, () => ({ $type: 1, $source: 2, _a: 'v' }) as unknown as AnyUntypedNode);
+		const source = stampBuilt({ $type: 1, _a: undefined, $_layout: { trivia: { leading: [comment('// c')] } } }) as unknown as AnyUntypedNode;
+		const result = rebuilt(source, handle, () => stampBuilt({ $type: 1, _a: 'v' }) as unknown as AnyUntypedNode);
 		expect(result.$_layout?.trivia).toBe(source.$_layout?.trivia);
 	});
 
 	it('runs the rebuild inside the engine of the node, and with no engine just runs it', () => {
 		const handle = handleOf();
 		const seen: unknown[] = [];
-		const node = { $type: 1, $source: 2 } as AnyUntypedNode;
+		const node = stampBuilt({ $type: 1 }) as AnyUntypedNode;
 		rebuilt(node, handle, () => seen.push(inEngine(handle, () => 1)));
 		expect(rebuilt(node, undefined, () => 5)).toBe(5);
 	});
 
 	it('refuses inner comments on a node that is no longer empty', () => {
 		const handle = handleOf();
-		const source = { $type: 1, $source: 2, $_layout: { trivia: { inner: [comment('// c')] } } } as unknown as AnyUntypedNode;
-		expect(() => rebuilt(source, handle, () => ({ $type: 1, $source: 2, _a: 'v' }) as unknown as AnyUntypedNode)).toThrow(
+		const source = stampBuilt({ $type: 1, $_layout: { trivia: { inner: [comment('// c')] } } }) as unknown as AnyUntypedNode;
+		expect(() => rebuilt(source, handle, () => stampBuilt({ $type: 1, _a: 'v' }) as unknown as AnyUntypedNode)).toThrow(
 			'holds inner comments'
 		);
-		expect(rebuilt(source, handle, () => ({ $type: 1, $source: 2 }) as AnyUntypedNode).$_layout?.trivia).toBe(source.$_layout?.trivia);
+		expect(rebuilt(source, handle, () => stampBuilt({ $type: 1 }) as AnyUntypedNode).$_layout?.trivia).toBe(source.$_layout?.trivia);
 	});
 });
 
 describe('trivia positions', () => {
 	it('set a position and keep the other, return the node, and read back with no items', () => {
 		const handle = handleOf();
-		const node = { $type: 1, $source: 2 } as AnyUntypedNode;
+		const node = stampBuilt({ $type: 1 }) as AnyUntypedNode;
 		expect(triviaSide(node, handle, 'leading', [comment('// a')])).toBe(node);
 		expect(triviaSide(node, handle, 'trailing', [comment('// b')])).toBe(node);
 		expect(node.$_layout?.trivia?.leading).toHaveLength(1);
 		expect(triviaSide(node, handle, 'trailing', [])).toBe(node.$_layout?.trivia?.trailing);
-		expect(triviaSide({ $type: 1, $source: 2 } as AnyUntypedNode, handle, 'leading', [])).toEqual([]);
+		expect(triviaSide(stampBuilt({ $type: 1 }) as AnyUntypedNode, handle, 'leading', [])).toEqual([]);
 	});
 
 	it('refuse with no engine', () => {
-		const node = { $type: 1, $source: 2 } as AnyUntypedNode;
+		const node = stampBuilt({ $type: 1 }) as AnyUntypedNode;
 		expect(() => triviaSide(node, undefined, 'leading', [])).toThrow('node has no engine');
 	});
 
 	it('write inner entries only to an empty node of a kind with an inner site', () => {
 		const handle = handleOf(['block']);
-		const empty = { $type: 1, $source: 2, _statements: [] } as unknown as AnyUntypedNode;
+		const empty = stampBuilt({ $type: 1, _statements: [] }) as unknown as AnyUntypedNode;
 		expect(triviaInner(empty, handle, [comment('// x')])).toBe(empty);
 		expect(empty.$_layout?.trivia?.inner).toHaveLength(1);
 		expect(triviaInner(empty, handle, [])).toHaveLength(1);
-		const full = { $type: 1, $source: 2, _statements: [1] } as unknown as AnyUntypedNode;
+		const full = stampBuilt({ $type: 1, _statements: [1] }) as unknown as AnyUntypedNode;
 		expect(() => triviaInner(full, handle, [comment('// x')])).toThrow('not empty');
-		expect(() => triviaInner({ $type: 2, $source: 2 } as AnyUntypedNode, handle, [comment('// x')])).toThrow('no inner site');
+		expect(() => triviaInner(stampBuilt({ $type: 2 }) as AnyUntypedNode, handle, [comment('// x')])).toThrow('no inner site');
 	});
 });
 

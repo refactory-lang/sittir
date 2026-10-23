@@ -19,6 +19,7 @@ import type { VariantChild } from '../compiler/variant-structural.ts';
 export type { FactoryShape } from './shared.ts';
 
 export interface FactorySlotMeta {
+	readonly propertyName: string;
 	readonly required: boolean;
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
@@ -70,6 +71,7 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries?: readonly KindEnu
 		const registered = new Set(registeredSlots(node));
 		for (const field of node.slots) {
 			slots[field.name] = createFactorySlotMeta(
+				field.propertyName,
 				deriveSlotCardinality(field),
 				registered.has(field) ? { registered: true, ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
 			);
@@ -111,10 +113,11 @@ function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
 }
 
 function createFactorySlotMeta(
+	propertyName: string,
 	cardinality: ReturnType<typeof deriveSlotCardinality>,
 	registration: Pick<FactorySlotMeta, 'registered' | 'optionDefault'> = {}
 ): FactorySlotMeta {
-	return { ...cardinality, ...registration };
+	return { propertyName, ...cardinality, ...registration };
 }
 
 function optionDefaultOf(

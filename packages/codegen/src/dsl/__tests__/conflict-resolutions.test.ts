@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../conflict-resolutions.ts';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
 
 const require = createRequire(import.meta.url);
 

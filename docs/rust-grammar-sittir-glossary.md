@@ -964,8 +964,6 @@ generation; the floor only shrinks.
   it). missing detector: 'alias-shape' ← an alias spanning part of a seq, or a restructure that changes the parse.
 - `impl_item` (declared `'ambiguity'`, unverified: no detector): kept: a patch is coupled to the re-authored
   shape (`impl_item` path `3/0/0/1` does not exist upstream). missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
-- `_primitive_type` (declared `'ambiguity'`, unverified: no detector): without it tree-sitter generate reports an
-  unresolved `_pattern` / `_primitive_type` conflict. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
 - `reference_expression` (declared `'ambiguity'`, unverified: no detector): without it tree-sitter generate
   fails. missing detector: 'ambiguity' ← a tree-sitter generate conflict on the upstream.
 

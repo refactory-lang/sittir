@@ -33,7 +33,7 @@ import { getNodeProjection } from './node-projection-cache.ts';
 import {
 	flanksOf,
 	isSeamChoice,
-	punctuationTokenOfNode,
+	slotPunctuationTokenOfNode,
 	keywordKindOfLiteral,
 	seamChoiceDefault,
 	seamPartOf,
@@ -64,6 +64,7 @@ import {
 	mentions,
 	opensAsTag,
 	refersTo,
+	dropSlotSeams,
 	duplicateSlots,
 	literalBody,
 	seam,
@@ -231,13 +232,20 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		};
 	}
 
+	#armWrittenSeams(node: AssembledNode, slotName: string): ReadonlySet<string> {
+		const slot = node instanceof AbstractAssembledCompound ? node.slots.find((candidate) => candidate.name === slotName) : undefined;
+		if (slot?.registeredOption !== 'choice') return new Set();
+		return new Set(this.#slotSeamNames(node, slotName).filter((name) => name !== slotName).flatMap((name) => [`${name}_before`, `${name}_after`]));
+	}
+
 	#slotSeamNames(node: AssembledNode, slotName: string): readonly string[] {
 		if (!(node instanceof AbstractAssembledCompound)) return [slotName];
 		const slot = node.slots.find((candidate) => candidate.name === slotName);
 		const tokens = (slot?.values ?? []).flatMap((value) => {
-			const token = punctuationTokenOfNode(
+			const token = slotPunctuationTokenOfNode(
 				this.#ctx.nodeMap.nodes.get(storageKindOfValue(value) ?? ''),
-				this.#kindEntries
+				this.#kindEntries,
+				this.#ctx.nodeMap.wordMatcher
 			);
 			return token === undefined ? [] : [token];
 		});
@@ -265,9 +273,12 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		const body =
 			emitted === undefined
 				? undefined
-				: gateKeywordSlotSeams(
-						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot), (field) => this.#paddingFields.get(node.kind)?.has(field) === true),
-						(slot) => this.#mixedSlotKeywordKinds(node, slot)
+				: dropSlotSeams(
+						gateKeywordSlotSeams(
+							gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot), (field) => this.#paddingFields.get(node.kind)?.has(field) === true),
+							(slot) => this.#mixedSlotKeywordKinds(node, slot)
+						),
+						(slot) => this.#armWrittenSeams(node, slot)
 					);
 
 		if (body === undefined) {

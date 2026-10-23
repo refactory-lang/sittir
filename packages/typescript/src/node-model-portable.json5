@@ -1248,14 +1248,26 @@
           "via": [
             {
               "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
               "kind": "call_signature",
               "after": null,
               "anchor": null
             }
           ],
-          "parent": "call_signature",
-          "slot": "parameters",
-          "multiple": false,
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
           "path": [
             {
               "owner": "arrow_function",
@@ -1264,6 +1276,79 @@
             {
               "owner": "call_signature",
               "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "call_signature",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "arrow_function",
+              "slot": "content"
+            },
+            {
+              "owner": "call_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
             }
           ]
         }

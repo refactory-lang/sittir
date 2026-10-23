@@ -7,13 +7,13 @@ import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { assertGrammar, grammarPackage, stableGrammars, type GrammarName } from '../grammars.ts';
-import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { evaluatePackage } from '../dsl/evaluate-package.ts';
 
 
 export interface Divergence {
 	kind: string;
 	slot: string;
-	projection: 'storageName' | 'name' | 'configKey' | 'propertyName' | 'paramName';
+	projection: 'storageName' | 'name' | 'propertyName' | 'paramName';
 	legacy: string;
 	recomputed: string;
 }
@@ -30,13 +30,6 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	{
 		kind: 'format_specifier',
 		slot: 'content',
-		projection: 'configKey',
-		legacy: 'content',
-		recomputed: 'formatExpression'
-	},
-	{
-		kind: 'format_specifier',
-		slot: 'content',
 		projection: 'propertyName',
 		legacy: 'contents',
 		recomputed: 'formatExpressions'
@@ -50,12 +43,10 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	},
 	{ kind: '_suite', slot: 'block', projection: 'storageName', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'name', legacy: 'block', recomputed: 'content' },
-	{ kind: '_suite', slot: 'block', projection: 'configKey', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'propertyName', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'paramName', legacy: 'block', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'storageName', legacy: 'match_arm', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'name', legacy: 'match_arm', recomputed: 'content' },
-	{ kind: 'match_block', slot: 'match_arm', projection: 'configKey', legacy: 'matchArm', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'propertyName', legacy: 'matchArms', recomputed: 'contents' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'paramName', legacy: 'matchArms', recomputed: 'contents' }
 ];
@@ -79,7 +70,6 @@ export function diffSlotNames(slot: AssembledNonterminal, kind: string): Diverge
 	};
 	push('storageName', slot.storageName, proj.storageName);
 	push('name', slot.name, proj.name);
-	push('configKey', slot.configKey, proj.configKey);
 	push('propertyName', slot.propertyName, proj.propertyName);
 	push('paramName', slot.paramName, proj.paramName);
 	return out;

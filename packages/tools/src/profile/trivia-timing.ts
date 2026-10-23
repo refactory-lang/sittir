@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../languages.ts';
+import { loadSlotAccessorOf, walkWrappedTree, type SlotAccessorOf } from '../validate/common.ts';
 
 export interface TriviaTimingOptions {
 	readonly grammar: string;
@@ -26,29 +27,9 @@ interface ReadNode {
 	readonly [key: string]: unknown;
 }
 
-function slotReaderName(storageKey: string): string {
-	return storageKey.replace(/^_/, '').replace(/_([a-z0-9])/g, (_, letter: string) => letter.toUpperCase());
-}
-
-function typedNodesOf(root: unknown): ReadNode[] {
-	const seen = new Set<object>();
+export function timedNodesOf(root: unknown, accessorOf: SlotAccessorOf): ReadNode[] {
 	const nodes: ReadNode[] = [];
-	const walk = (value: unknown): void => {
-		if (value === null || typeof value !== 'object' || seen.has(value)) return;
-		if (Array.isArray(value)) {
-			for (const entry of value) walk(entry);
-			return;
-		}
-		seen.add(value);
-		const node = value as ReadNode;
-		if (typeof node.$type === 'number') nodes.push(node);
-		for (const key of Object.keys(node)) {
-			if (!key.startsWith('_') || node[key] == null) continue;
-			const reader = node[slotReaderName(key)];
-			walk(typeof reader === 'function' ? (reader as () => unknown).call(node) : node[key]);
-		}
-	};
-	walk(root);
+	walkWrappedTree(root, accessorOf, (node) => nodes.push(node as ReadNode));
 	return nodes;
 }
 
@@ -57,11 +38,12 @@ export async function measureTriviaTiming(options: Omit<TriviaTimingOptions, 'js
 		throw new Error(`trivia-timing: rounds must be a positive integer, not ${String(options.rounds)}`);
 	}
 	const engine = await createEngine(await languageByName(options.grammar));
+	const accessorOf = await loadSlotAccessorOf(options.grammar);
 	const source = readFileSync(resolve(options.file), 'utf8');
 	let bestMs = Infinity;
 	let nodes = 0;
 	for (let round = 0; round < options.rounds; round++) {
-		const read = typedNodesOf(engine.parse(source, { depth: Infinity }));
+		const read = timedNodesOf(engine.parse(source, { depth: Infinity }), accessorOf);
 		const start = performance.now();
 		for (const node of read) node.$trivia?.leading?.();
 		bestMs = Math.min(bestMs, performance.now() - start);

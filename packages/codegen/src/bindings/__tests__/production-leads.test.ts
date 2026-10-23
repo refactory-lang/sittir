@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluateDsl } from '../../dsl/evaluate.ts';
 import { grammarPackage, topLayerPath } from '../../grammars.ts';
 
 const recorded = JSON.parse(readFileSync(join(__dirname, '../../dsl/__tests__/fixtures/bindings-layer-effects.json'), 'utf8')) as Readonly<

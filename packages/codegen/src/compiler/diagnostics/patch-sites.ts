@@ -1,5 +1,5 @@
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
-import type { PatchForm, PatchSite } from '../../dsl/wire/wire.ts';
+import { SITE_EDITS_KEY, type PatchForm, type PatchSite } from '../../dsl/wire/wire.ts';
 import type { DiagnosticRecord } from './diagnostic-records.ts';
 
 export type PatchSiteLabel = 'authoring' | 'resolving';
@@ -37,7 +37,7 @@ export function diagnosePatchSites(input: {
 			code: 'patch-without-cause',
 			severity: 'error' as const,
 			ownerKind: site.ownerKind,
-			message: `edits: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands`,
+			message: `${SITE_EDITS_KEY}: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands`,
 			canProceed: false,
 			details: { path: site.path, form: site.form, name: site.name }
 		}));

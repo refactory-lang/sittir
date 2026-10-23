@@ -30,12 +30,13 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load } from '../codegen-surface.ts';
-import { sharedDisplayStorageKinds, type DisplayFamilies } from './display-families.ts';
+import { sharedDisplayEntries, type DisplayFamilies } from './display-families.ts';
 import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
-import { parseNodeModel, type ValidatorSkip } from './common.ts';
+import { isLeafModelType, parseNodeModel, type ValidatorSkip } from './common.ts';
+import { KindCases, type CasesByKind } from './kind-cases.ts';
 
 /**
  * Every emitted kind's body in the checker's placeholder shape
@@ -64,6 +65,7 @@ import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 export interface TemplateCoverageResult {
 	grammar: string;
 	total: number;
+	casesByKind: CasesByKind;
 	/** Kinds where every declared field is reachable in the template. */
 	pass: number;
 	/** Kinds with at least one unreferenced field. */
@@ -118,12 +120,10 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 
 	const issues: CoverageIssue[] = [];
 	const excluded: ValidatorSkip[] = [];
-	let total = 0;
+	const cases = new KindCases();
 	let pass = 0;
 
-	for (const entry of entries.flatMap((entry) =>
-		sharedDisplayStorageKinds(entry.type, nodeModelFacts.displayUnions).map((type) => ({ ...entry, type }))
-	)) {
+	for (const entry of sharedDisplayEntries(entries, nodeModelFacts.displayUnions)) {
 		if (!entry.named) continue;
 		// Supertypes have no direct rule — skipped by render dispatch.
 		if (entry.subtypes && entry.subtypes.length > 0) continue;
@@ -131,6 +131,8 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
 		const hasChildren = entry.children !== undefined;
 		if (!hasFields && !hasChildren) continue;
+		// A kind the model holds as a leaf renders its text, whatever structure node-types gives it.
+		if (isLeafModelType(nodeModelFacts.modelTypes[entry.type])) continue;
 
 		// Canonical-hidden architecture (Option Y): tree-sitter
 		// node-types.json reports the visible alias-target name (`x`),
@@ -147,7 +149,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		const rawTemplate = rawByKind[resolvedKind];
 		const templatePath = `${renderBodiesPath(grammar)}#${resolvedKind}`;
 
-		total++;
+		cases.add(resolvedKind);
 		const kindIssues = checkRule(
 			entry,
 			rule,
@@ -166,7 +168,8 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		}
 	}
 
-	return { grammar, total, pass, fail: total - pass, issues, excluded };
+	const total = cases.total;
+	return { grammar, total, casesByKind: cases.byKind(), pass, fail: total - pass, issues, excluded };
 }
 
 // ---------------------------------------------------------------------------
@@ -854,6 +857,7 @@ interface NodeModelFacts {
 	readonly factorySlots: Record<string, Record<string, unknown>>;
 	readonly polymorphVariants: PolymorphVariantMap;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
+	readonly modelTypes: Record<string, string>;
 	/** Visible kind → the model's slot names for it. */
 	readonly modelFieldsByKind: Map<string, Set<string>>;
 }
@@ -863,29 +867,27 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 	factorySlots: {},
 	polymorphVariants: {},
 	fieldAliasMap: {},
+	modelTypes: {},
 	modelFieldsByKind: new Map()
 };
 
 /**
- * The node-model facts this validator reads from a grammar's
- * `node-model.json5` (`packages/<grammar>/src/`): the maps
- * `validate/common.ts`'s `parseNodeModel` reads or derives (the file does not
- * store `factorySlots`; it is derived from the nodes' slots), and each
- * visible kind's slot names. Returns empty maps when the file is unavailable
- * — mirrors `loadGrammarJson`'s fail-soft behavior for fresh checkouts.
+ * Load the facts this validator reads from a grammar's `node-model.json5`
+ * (`packages/<grammar>/src/`): display families, factory slots, polymorph
+ * variants, field aliases, model types, and the model's slot names per kind.
+ * They come through `validate/common.ts`'s `parseNodeModel`, the reader
+ * `loadNodeModel` uses for the live NodeMap-backed validators, called
+ * synchronously because this validator is a lightweight file reader (no live
+ * `NodeMap`, see the module doc). Returns empty maps when the file is
+ * unavailable — mirrors `loadGrammarJson`'s fail-soft behavior for fresh
+ * checkouts.
  */
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
-	const text = readFileSync(path, 'utf8');
-	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap } = parseNodeModel(text);
-	const { nodes } = JSON.parse(text) as { nodes?: ReadonlyArray<{ kind: string; slots?: ReadonlyArray<{ name: string }> }> };
-	const modelFieldsByKind = new Map<string, Set<string>>();
-	for (const node of nodes ?? []) {
-		if (node.slots === undefined) continue;
-		modelFieldsByKind.set(node.kind.replace(/^_+/, ''), new Set(node.slots.map((f) => f.name)));
-	}
-	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelFieldsByKind };
+	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, slotNames } = parseNodeModel(readFileSync(path, 'utf8'));
+	const modelFieldsByKind = new Map(Object.entries(slotNames).map(([kind, names]) => [kind.replace(/^_+/, ''), new Set(names)]));
+	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, modelFieldsByKind };
 }
 
 interface UnionSlotRoutedDiagnostic {

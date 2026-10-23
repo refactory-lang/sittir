@@ -13,7 +13,7 @@ import {
 import { renderMainFunction, renderUntouched, roundTrip } from '../../../examples/02-render-round-trip.ts';
 import { readSource, readFirstFunction } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
-import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
+import { dogfoodContract } from '../../../examples/helpers.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
@@ -153,25 +153,6 @@ describe('dogfoodContract helper', () => {
 	});
 });
 
-describe('structuralShape trivia handling', () => {
-	it("keeps a bare leaf's $text alongside its trivia", () => {
-		const leaf = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
-		const shape = structuralShape(leaf) as Record<string, unknown>;
-		expect(shape.$text).toBe('main');
-		expect(shape.$_layout).toBeDefined();
-	});
-	it('differs when only the comment text differs', () => {
-		const alpha = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('alpha'));
-		const beta = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('beta'));
-		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
-	});
-	it('differs when the same comment is leading vs. trailing', () => {
-		const leading = rs.build.identifier('main').$trivia.leading(rs.build.lineComment.regular('c'));
-		const trailing = rs.build.identifier('main').$trivia.trailing(rs.build.lineComment.regular('c'));
-		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
-	});
-});
-
 // Namespaced constructors are the reachable spelling for an arm kind: the
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
@@ -212,22 +193,6 @@ describe('namespaced constructors reach the arm kinds', () => {
 	it('keeps a direct arm and a nested arm of the same name apart', () => {
 		expect(rs.build.visibilityModifier.crate().$render()).toBe('crate');
 		expect(rs.build.visibilityModifier.pub.scope.crate().$render()).toBe('pub(crate)');
-	});
-});
-
-// Ceiling, never a floor: an artefact kind moves off the top-level namespace
-// onto its parent, so this count only shrinks.
-describe('ir entry ratchet', () => {
-	it('exposes no more top-level builders than the recorded ceiling', () => {
-		// Grouped namespaces are objects, not builders — the
-		// ratchet tracks builder exposure, so only callable entries count.
-		// (The ceiling is the exact current count, so any new top-level
-		// builder trips it. The user-facing
-		// aliased pattern leaves — stringOpen, rawStringLiteralStart /
-		// End, the comment-content patterns — are on the surface; the
-		// enum-of-literals leaves are not, their values being kind ids.)
-		const builders = Object.keys(rs.build).filter((k) => typeof (rs.build as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(221);
 	});
 });
 

@@ -3,15 +3,144 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './kinds.js';
+import { holdsKinds, type KindTest } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
+
+// KindMembers — each supertype and enum kind, mapped to the kind ids it holds for.
+export interface KindMembers {
+	[TSKindId.Statement]:
+		| TSKindId.SimpleStatements
+		| TSKindId.IfStatement
+		| TSKindId.ForStatement
+		| TSKindId.WhileStatement
+		| TSKindId.TryStatement
+		| TSKindId.WithStatement
+		| TSKindId.FunctionDefinition
+		| TSKindId.ClassDefinition
+		| TSKindId.DecoratedDefinition
+		| TSKindId.MatchStatement;
+	[TSKindId.MatchBlock]: TSKindId.MatchBlockBlock | TSKindId.MatchBlockEmpty;
+	[TSKindId.WithClause]: TSKindId.WithClauseBare | TSKindId.WithClauseParen;
+	[TSKindId.Parameter]:
+		| TSKindId.Identifier
+		| TSKindId.TypedParameter
+		| TSKindId.DefaultParameter
+		| TSKindId.TypedDefaultParameter
+		| TSKindId.ListSplatPattern
+		| TSKindId.TuplePattern
+		| TSKindId.KeywordSeparator
+		| TSKindId.PositionalSeparator
+		| TSKindId.DictionarySplatPattern;
+	[TSKindId.Pattern]:
+		| TSKindId.Identifier
+		| TSKindId.Subscript
+		| TSKindId.Attribute
+		| TSKindId.ListSplatPattern
+		| TSKindId.TuplePattern
+		| TSKindId.ListPattern;
+	[TSKindId.Expression]:
+		| TSKindId.Lambda
+		| TSKindId.ComparisonOperator
+		| TSKindId.NotOperator
+		| TSKindId.BooleanOperator
+		| TSKindId.Await
+		| TSKindId.BinaryOperator
+		| TSKindId.Identifier
+		| TSKindId.String
+		| TSKindId.ConcatenatedString
+		| TSKindId.IntegerHex
+		| TSKindId.IntegerOctal
+		| TSKindId.IntegerBinary
+		| TSKindId.IntegerDecimalLong
+		| TSKindId.IntegerDecimalImaginary
+		| TSKindId.IntegerDecimalPlain
+		| TSKindId.FloatPoint
+		| TSKindId.FloatLeadingPoint
+		| TSKindId.FloatScientific
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| TSKindId.UnaryOperator
+		| TSKindId.Attribute
+		| TSKindId.Subscript
+		| TSKindId.Call
+		| TSKindId.List
+		| TSKindId.ListComprehension
+		| TSKindId.Dictionary
+		| TSKindId.DictionaryComprehension
+		| TSKindId.Set
+		| TSKindId.SetComprehension
+		| TSKindId.Tuple
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.GeneratorExpression
+		| TSKindId.Ellipsis
+		| TSKindId.ListSplatPattern
+		| TSKindId.ConditionalExpression
+		| TSKindId.NamedExpression
+		| TSKindId.AsPattern;
+	[TSKindId.PrimaryExpression]:
+		| TSKindId.Await
+		| TSKindId.BinaryOperator
+		| TSKindId.Identifier
+		| TSKindId.String
+		| TSKindId.ConcatenatedString
+		| TSKindId.IntegerHex
+		| TSKindId.IntegerOctal
+		| TSKindId.IntegerBinary
+		| TSKindId.IntegerDecimalLong
+		| TSKindId.IntegerDecimalImaginary
+		| TSKindId.IntegerDecimalPlain
+		| TSKindId.FloatPoint
+		| TSKindId.FloatLeadingPoint
+		| TSKindId.FloatScientific
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| TSKindId.UnaryOperator
+		| TSKindId.Attribute
+		| TSKindId.Subscript
+		| TSKindId.Call
+		| TSKindId.List
+		| TSKindId.ListComprehension
+		| TSKindId.Dictionary
+		| TSKindId.DictionaryComprehension
+		| TSKindId.Set
+		| TSKindId.SetComprehension
+		| TSKindId.Tuple
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.GeneratorExpression
+		| TSKindId.Ellipsis
+		| TSKindId.ListSplatPattern;
+	[TSKindId.Assignment]: TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
+	[TSKindId.EscapeSequence]:
+		| TSKindId.EscapeSequenceUnicodeFixed
+		| TSKindId.EscapeSequenceUnicodeWide
+		| TSKindId.EscapeSequenceHex
+		| TSKindId.EscapeSequenceOctal
+		| TSKindId.EscapeSequenceLineBreak
+		| TSKindId.EscapeSequenceSimple
+		| TSKindId.EscapeSequenceNamed;
+	[TSKindId.Integer]:
+		| TSKindId.IntegerHex
+		| TSKindId.IntegerOctal
+		| TSKindId.IntegerBinary
+		| TSKindId.IntegerDecimalLong
+		| TSKindId.IntegerDecimalImaginary
+		| TSKindId.IntegerDecimalPlain;
+	[TSKindId.Float]: TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific;
+	[TSKindId.IntegerDecimal]:
+		| TSKindId.IntegerDecimalLong
+		| TSKindId.IntegerDecimalImaginary
+		| TSKindId.IntegerDecimalPlain;
+}
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
 	module<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Module };
-	SimpleStatements<T extends { readonly $type: number } | number>(
+	simpleStatements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimpleStatements };
 	importStatement<T extends { readonly $type: number } | number>(
@@ -20,34 +149,68 @@ export interface IsGuards {
 	relativeImport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RelativeImport };
-	futureImportStatement<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FutureImportStatement };
-	importFromStatement<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportFromStatement };
+	readonly futureImportStatement: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FutureImportStatement };
+		importList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FutureImportStatement };
+		parenthesizedImportList<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.FutureImportStatement };
+	};
+	readonly importFromStatement: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportFromStatement };
+		wildcardImport<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ImportFromStatement };
+		importList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportFromStatement };
+		parenthesizedImportList<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ImportFromStatement };
+	};
 	importList<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportList };
 	aliasedImport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AliasedImport };
-	printStatement<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
+	readonly printStatement: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
+		readonly chevron: {
+			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
+			printChevronArguments<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.PrintStatement };
+		};
+		plain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
+	};
 	chevron<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Chevron };
 	assertStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssertStatement };
-	expressionStatement<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+	readonly expressionStatement: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+		tuple<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+		augmentedAssignment<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.ExpressionStatement };
+		readonly yield: {
+			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+			fromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+		};
+	};
 	namedExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedExpression };
-	NamedExpressionLhs<T extends { readonly $type: number } | number>(
+	namedExpressionLhs<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedExpressionLhs };
 	returnStatement<T extends { readonly $type: number } | number>(
@@ -71,9 +234,6 @@ export interface IsGuards {
 	matchStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
-	matchBlock<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlock };
 	caseClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseClause };
@@ -86,9 +246,16 @@ export interface IsGuards {
 	tryStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TryStatement };
-	exceptClause<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClause };
+	readonly exceptClause: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClause };
+		readonly exception: {
+			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClause };
+			as<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClause };
+			list<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClause };
+		};
+	};
 	finallyClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FinallyClause };
@@ -152,12 +319,51 @@ export interface IsGuards {
 	dottedName<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DottedName };
-	casePattern<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePattern };
-	SimplePattern<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimplePattern };
+	readonly casePattern: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePattern };
+		caseAsPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+		keywordPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+		readonly simplePattern: {
+			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			classPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			splatPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			unionPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			dictPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			string<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			concatenatedString<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			true<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			false<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			none<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			negative<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			complexPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			dottedName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+			wildcardPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
+		};
+	};
+	readonly simplePattern: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimplePattern };
+		classPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		splatPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		unionPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		dictPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		string<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		concatenatedString<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		true<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		false<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		none<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		negative<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		complexPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		dottedName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+		wildcardPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
+	};
 	caseAsPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CaseAsPattern };
@@ -236,9 +442,12 @@ export interface IsGuards {
 	patternList<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PatternList };
-	yield_<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Yield };
+	readonly yield: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Yield };
+		fromClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Yield };
+	};
 	attribute<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Attribute };
@@ -254,9 +463,16 @@ export interface IsGuards {
 	typedParameter<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypedParameter };
-	type<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Type };
+	readonly type: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Type };
+		splatType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
+		genericType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
+		unionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
+		constrainedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
+		memberType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Type };
+	};
 	splatType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatType };
@@ -368,6 +584,9 @@ export interface IsGuards {
 	dictionaryElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionaryElements };
+	sliceGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SliceGroup };
 	tuplePatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePatternElements };
@@ -389,12 +608,20 @@ export interface IsGuards {
 	printChevronArguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintChevronArguments };
-	printStatementChevron<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
+	readonly printStatementChevron: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementChevron };
+		printChevronArguments<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.PrintStatementChevron };
+	};
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
+	parenthesizedImportList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
@@ -437,6 +664,15 @@ export interface IsGuards {
 	escapeSequenceNamed<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceNamed };
+	simplePatternNegative<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimplePatternNegative };
+	exceptClauseExceptionList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseExceptionList };
+	exceptClauseException<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseException };
 	assignmentEq<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentEq };
@@ -470,6 +706,12 @@ export interface IsGuards {
 	suiteEmpty<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteEmpty };
+	comparisonOperatorComparator<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComparisonOperatorComparator };
+	yieldFromClause<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
 	names<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Names };
@@ -480,23 +722,9 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatExpression };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.SimpleStatements
-		| TSKindId.IfStatement
-		| TSKindId.ForStatement
-		| TSKindId.WhileStatement
-		| TSKindId.TryStatement
-		| TSKindId.WithStatement
-		| TSKindId.FunctionDefinition
-		| TSKindId.ClassDefinition
-		| TSKindId.DecoratedDefinition
-		| TSKindId.MatchStatement
-	>;
+	statement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Statement]>;
 	readonly simpleStatement: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -517,24 +745,62 @@ export interface IsGuards {
 			| TSKindId.ExecStatement
 			| TSKindId.TypeAliasStatement
 		>;
-		futureImport<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FutureImportStatement };
+		readonly futureImport: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FutureImportStatement };
+			importList<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.FutureImportStatement };
+			parenthesizedImportList<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.FutureImportStatement };
+		};
 		import<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportStatement };
-		importFrom<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportFromStatement };
-		print<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
+		readonly importFrom: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportFromStatement };
+			wildcardImport<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.ImportFromStatement };
+			importList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportFromStatement };
+			parenthesizedImportList<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.ImportFromStatement };
+		};
+		readonly print: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatement };
+			readonly chevron: {
+				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
+				printChevronArguments<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.PrintStatement };
+			};
+			plain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
+		};
 		assert<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssertStatement };
-		expression<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+		readonly expression: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+			tuple<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+			augmentedAssignment<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.ExpressionStatement };
+			readonly yield: {
+				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
+				fromClause<T extends { readonly $type: number }>(
+					v: T
+				): v is T & { readonly $type: TSKindId.ExpressionStatement };
+			};
+		};
 		return<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReturnStatement };
@@ -544,15 +810,9 @@ export interface IsGuards {
 		raise<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RaiseStatement };
-		pass<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PassStatement };
-		break<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BreakStatement };
-		continue<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ContinueStatement };
+		pass<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.PassStatement>;
+		break<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.BreakStatement>;
+		continue<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ContinueStatement>;
 		global<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GlobalStatement };
@@ -567,7 +827,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeAliasStatement };
 	};
 	readonly compoundStatement: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<
 			T,
@@ -609,10 +869,17 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchStatement };
 	};
-	readonly withClause: {
-		<T extends { readonly $type: string | number } | number>(
+	readonly matchBlock: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.MatchBlock]>;
+		block<T extends { readonly $type: number } | number>(
 			v: T
-		): v is NarrowTo<T, TSKindId.WithClauseBare | TSKindId.WithClauseParen>;
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockBlock };
+		empty<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockEmpty };
+	};
+	readonly withClause: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.WithClause]>;
 		bare<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
@@ -621,7 +888,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseParen };
 	};
 	readonly suite: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty>;
 		inline<T extends { readonly $type: number } | number>(
@@ -635,20 +902,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteEmpty };
 	};
 	readonly parameter: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.Identifier
-			| TSKindId.TypedParameter
-			| TSKindId.DefaultParameter
-			| TSKindId.TypedDefaultParameter
-			| TSKindId.ListSplatPattern
-			| TSKindId.TuplePattern
-			| TSKindId.KeywordSeparator
-			| TSKindId.PositionalSeparator
-			| TSKindId.DictionarySplatPattern
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Parameter]>;
 		identifier<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
@@ -667,28 +921,16 @@ export interface IsGuards {
 		tuple<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePattern };
-		keywordSeparator<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeywordSeparator };
+		keywordSeparator<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.KeywordSeparator>;
 		positionalSeparator<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PositionalSeparator };
+		): v is NarrowTo<T, TSKindId.PositionalSeparator>;
 		dictionarySplat<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionarySplatPattern };
 	};
 	readonly pattern: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.Identifier
-			| TSKindId.Subscript
-			| TSKindId.Attribute
-			| TSKindId.ListSplatPattern
-			| TSKindId.TuplePattern
-			| TSKindId.ListPattern
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Pattern]>;
 		identifier<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
@@ -709,50 +951,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListPattern };
 	};
 	readonly expression: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.Lambda
-			| TSKindId.ComparisonOperator
-			| TSKindId.NotOperator
-			| TSKindId.BooleanOperator
-			| TSKindId.Await
-			| TSKindId.BinaryOperator
-			| TSKindId.Identifier
-			| TSKindId.String
-			| TSKindId.ConcatenatedString
-			| TSKindId.IntegerHex
-			| TSKindId.IntegerOctal
-			| TSKindId.IntegerBinary
-			| TSKindId.IntegerDecimalLong
-			| TSKindId.IntegerDecimalImaginary
-			| TSKindId.IntegerDecimalPlain
-			| TSKindId.FloatPoint
-			| TSKindId.FloatLeadingPoint
-			| TSKindId.FloatScientific
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| TSKindId.UnaryOperator
-			| TSKindId.Attribute
-			| TSKindId.Subscript
-			| TSKindId.Call
-			| TSKindId.List
-			| TSKindId.ListComprehension
-			| TSKindId.Dictionary
-			| TSKindId.DictionaryComprehension
-			| TSKindId.Set
-			| TSKindId.SetComprehension
-			| TSKindId.Tuple
-			| TSKindId.ParenthesizedExpression
-			| TSKindId.GeneratorExpression
-			| TSKindId.Ellipsis
-			| TSKindId.ListSplatPattern
-			| TSKindId.ConditionalExpression
-			| TSKindId.NamedExpression
-			| TSKindId.AsPattern
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Expression]>;
 		comparison<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComparisonOperator };
@@ -777,43 +976,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AsPattern };
 	};
 	readonly primaryExpression: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.Await
-			| TSKindId.BinaryOperator
-			| TSKindId.Identifier
-			| TSKindId.String
-			| TSKindId.ConcatenatedString
-			| TSKindId.IntegerHex
-			| TSKindId.IntegerOctal
-			| TSKindId.IntegerBinary
-			| TSKindId.IntegerDecimalLong
-			| TSKindId.IntegerDecimalImaginary
-			| TSKindId.IntegerDecimalPlain
-			| TSKindId.FloatPoint
-			| TSKindId.FloatLeadingPoint
-			| TSKindId.FloatScientific
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| TSKindId.UnaryOperator
-			| TSKindId.Attribute
-			| TSKindId.Subscript
-			| TSKindId.Call
-			| TSKindId.List
-			| TSKindId.ListComprehension
-			| TSKindId.Dictionary
-			| TSKindId.DictionaryComprehension
-			| TSKindId.Set
-			| TSKindId.SetComprehension
-			| TSKindId.Tuple
-			| TSKindId.ParenthesizedExpression
-			| TSKindId.GeneratorExpression
-			| TSKindId.Ellipsis
-			| TSKindId.ListSplatPattern
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.PrimaryExpression]>;
 		await<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Await };
@@ -831,15 +994,9 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConcatenatedString };
 		integer: IsGuards['integer'];
 		float: IsGuards['float'];
-		true<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.True };
-		false<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.False };
-		none<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.None };
+		true<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.True>;
+		false<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.False>;
+		none<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.None>;
 		unary<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnaryOperator };
@@ -879,17 +1036,13 @@ export interface IsGuards {
 		generator<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GeneratorExpression };
-		ellipsis<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Ellipsis };
+		ellipsis<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Ellipsis>;
 		listSplat<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListSplatPattern };
 	};
 	readonly assignment: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<T, TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Assignment]>;
 		eq<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentEq };
@@ -901,18 +1054,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentTyped };
 	};
 	readonly escapeSequence: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.EscapeSequenceUnicodeFixed
-			| TSKindId.EscapeSequenceUnicodeWide
-			| TSKindId.EscapeSequenceHex
-			| TSKindId.EscapeSequenceOctal
-			| TSKindId.EscapeSequenceLineBreak
-			| TSKindId.EscapeSequenceSimple
-			| TSKindId.EscapeSequenceNamed
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.EscapeSequence]>;
 		unicodeFixed<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceUnicodeFixed };
@@ -936,17 +1078,7 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceNamed };
 	};
 	readonly integer: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<
-			T,
-			| TSKindId.IntegerHex
-			| TSKindId.IntegerOctal
-			| TSKindId.IntegerBinary
-			| TSKindId.IntegerDecimalLong
-			| TSKindId.IntegerDecimalImaginary
-			| TSKindId.IntegerDecimalPlain
-		>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Integer]>;
 		hex<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerHex };
@@ -959,9 +1091,7 @@ export interface IsGuards {
 		decimal: IsGuards['integerDecimal'];
 	};
 	readonly float: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<T, TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Float]>;
 		point<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatPoint };
@@ -973,20 +1103,16 @@ export interface IsGuards {
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatScientific };
 	};
 	readonly lineContinuation: {
-		<T extends { readonly $type: string | number } | number>(
+		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is NarrowTo<T, TSKindId.LineContinuationNewline | TSKindId.LineContinuationNul>;
 		newline<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNewline };
-		nul<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNul };
+		nul<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.LineContinuationNul>;
 	};
 	readonly integerDecimal: {
-		<T extends { readonly $type: string | number } | number>(
-			v: T
-		): v is NarrowTo<T, TSKindId.IntegerDecimalLong | TSKindId.IntegerDecimalImaginary | TSKindId.IntegerDecimalPlain>;
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.IntegerDecimal]>;
 		long<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalLong };
@@ -997,7 +1123,7 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalPlain };
 	};
-	layout<T extends { readonly $type: string | number } | number>(
+	layout<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<
 		T,
@@ -1006,56 +1132,29 @@ export interface IsGuards {
 	importPrefix<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportPrefix };
-	wildcardImport<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.WildcardImport>;
-	passStatement<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.PassStatement>;
-	breakStatement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.BreakStatement>;
-	continueStatement<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.ContinueStatement>;
-	ellipsis<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Ellipsis>;
-	notEscapeSequence<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.NotEscapeSequence>;
+	wildcardImport<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardImport>;
+	passStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.PassStatement>;
+	breakStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.BreakStatement>;
+	continueStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ContinueStatement>;
+	ellipsis<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Ellipsis>;
+	notEscapeSequence<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.NotEscapeSequence>;
 	typeConversion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeConversion };
 	identifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
-	true_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.True>;
-	false_<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.False>;
-	none<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.None>;
-	positionalSeparator<T extends { readonly $type: string | number } | number>(
+	true<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.True>;
+	false<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.False>;
+	none<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.None>;
+	positionalSeparator<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.PositionalSeparator>;
-	keywordSeparator<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.KeywordSeparator>;
+	keywordSeparator<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.KeywordSeparator>;
 	formatSpecifierText<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
-	wildcardPattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.WildcardPattern>;
-	integerDecimalLong<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalLong };
-	integerDecimalImaginary<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalImaginary };
-	integerDecimalPlain<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerDecimalPlain };
-	lineContinuationNewline<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineContinuationNewline };
-	lineContinuationNul<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.LineContinuationNul>;
+	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
 	stringStart<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringStart };
@@ -1068,23 +1167,9 @@ export interface IsGuards {
 	stringEnd<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringEnd };
-	indent<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Indent>;
-	dedent<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Dedent>;
-	newline<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, TSKindId.Newline>;
-}
-
-// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
-function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && isMember(id, v.$type);
-}
-function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
-}
-function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
-	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
-}
-function _vg<G extends object>(guard: G, variants: object): G {
-	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+	indent<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Indent>;
+	dedent<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Dedent>;
+	newline<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Newline>;
 }
 
 const _supertype_statement_ids = new Set<number>([129, 150, 156, 157, 158, 161, 164, 173, 177, 153]);
@@ -1092,6 +1177,7 @@ const _supertype_simpleStatement_ids = new Set<number>([
 	133, 130, 134, 138, 140, 141, 144, 145, 146, 147, 148, 149, 169, 170, 171, 172
 ]);
 const _supertype_compoundStatement_ids = new Set<number>([150, 156, 157, 158, 161, 164, 173, 177, 153]);
+const _supertype_matchBlock_ids = new Set<number>([292, 293]);
 const _supertype_withClause_ids = new Set<number>([290, 291]);
 const _supertype_suite_ids = new Set<number>([294, 295, 296]);
 const _supertype_parameter_ids = new Set<number>([1, 224, 198, 199, 200, 196, 258, 257, 201]);
@@ -1113,356 +1199,692 @@ const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 
 const _members = new Map<number, ReadonlySet<number>>([
-	[128, _supertype_statement_ids],
-	[162, _supertype_withClause_ids],
-	[194, _supertype_parameter_ids],
-	[195, _supertype_pattern_ids],
-	[204, _supertype_expression_ids],
-	[205, _supertype_primaryExpression_ids],
-	[215, _supertype_assignment_ids],
-	[251, _supertype_escapeSequence_ids],
-	[254, _supertype_integer_ids],
-	[255, _supertype_float_ids],
-	[282, _supertype_integerDecimal_ids]
+	[TSKindId.Statement, _supertype_statement_ids],
+	[TSKindId.MatchBlock, _supertype_matchBlock_ids],
+	[TSKindId.WithClause, _supertype_withClause_ids],
+	[TSKindId.Parameter, _supertype_parameter_ids],
+	[TSKindId.Pattern, _supertype_pattern_ids],
+	[TSKindId.Expression, _supertype_expression_ids],
+	[TSKindId.PrimaryExpression, _supertype_primaryExpression_ids],
+	[TSKindId.Assignment, _supertype_assignment_ids],
+	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
+	[TSKindId.Integer, _supertype_integer_ids],
+	[TSKindId.Float, _supertype_float_ids],
+	[TSKindId.IntegerDecimal, _supertype_integerDecimal_ids]
 ]);
+const _single = new Map<number, ReadonlySet<number>>();
+function _kinds(kind: number): ReadonlySet<number> {
+	const members = _members.get(kind);
+	if (members !== undefined) return members;
+	let single = _single.get(kind);
+	if (single === undefined) _single.set(kind, (single = new Set([kind])));
+	return single;
+}
 export function isMember(kind: number, type: number): boolean {
-	return _members.get(kind)?.has(type) ?? type === kind;
+	return _kinds(kind).has(type);
 }
 export function membersOf(kind: number): readonly number[] {
-	const members = _members.get(kind);
-	return members === undefined ? [kind] : [...members];
+	return [..._kinds(kind)];
 }
 
-const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
-	futureImport: _g(TSKindId.FutureImportStatement),
-	import: _g(TSKindId.ImportStatement),
-	importFrom: _g(TSKindId.ImportFromStatement),
-	print: _g(TSKindId.PrintStatement),
-	assert: _g(TSKindId.AssertStatement),
-	expression: _g(TSKindId.ExpressionStatement),
-	return: _g(TSKindId.ReturnStatement),
-	delete: _g(TSKindId.DeleteStatement),
-	raise: _g(TSKindId.RaiseStatement),
-	pass: _g(TSKindId.PassStatement),
-	break: _g(TSKindId.BreakStatement),
-	continue: _g(TSKindId.ContinueStatement),
-	global: _g(TSKindId.GlobalStatement),
-	nonlocal: _g(TSKindId.NonlocalStatement),
-	exec: _g(TSKindId.ExecStatement),
-	typeAlias: _g(TSKindId.TypeAliasStatement)
-});
-const _supertype_compoundStatement_guard = _vg(_sg(_supertype_compoundStatement_ids), {
-	if: _g(TSKindId.IfStatement),
-	for: _g(TSKindId.ForStatement),
-	while: _g(TSKindId.WhileStatement),
-	try: _g(TSKindId.TryStatement),
-	with: _g(TSKindId.WithStatement),
-	function: _g(TSKindId.FunctionDefinition),
-	class: _g(TSKindId.ClassDefinition),
-	decorated: _g(TSKindId.DecoratedDefinition),
-	match: _g(TSKindId.MatchStatement)
-});
-const _supertype_withClause_guard = _vg(_mg(162), {
-	bare: _g(TSKindId.WithClauseBare),
-	paren: _g(TSKindId.WithClauseParen)
-});
-const _supertype_suite_guard = _vg(_sg(_supertype_suite_ids), {
-	inline: _g(TSKindId.SuiteInline),
-	block: _g(TSKindId.SuiteBlock),
-	empty: _g(TSKindId.SuiteEmpty)
-});
-const _supertype_parameter_guard = _vg(_mg(194), {
-	identifier: _g(TSKindId.Identifier),
-	typed: _g(TSKindId.TypedParameter),
-	default: _g(TSKindId.DefaultParameter),
-	typedDefault: _g(TSKindId.TypedDefaultParameter),
-	listSplat: _g(TSKindId.ListSplatPattern),
-	tuple: _g(TSKindId.TuplePattern),
-	keywordSeparator: _g(TSKindId.KeywordSeparator),
-	positionalSeparator: _g(TSKindId.PositionalSeparator),
-	dictionarySplat: _g(TSKindId.DictionarySplatPattern)
-});
-const _supertype_pattern_guard = _vg(_mg(195), {
-	identifier: _g(TSKindId.Identifier),
-	subscript: _g(TSKindId.Subscript),
-	attribute: _g(TSKindId.Attribute),
-	listSplat: _g(TSKindId.ListSplatPattern),
-	tuple: _g(TSKindId.TuplePattern),
-	list: _g(TSKindId.ListPattern)
-});
-const _supertype_assignment_guard = _vg(_mg(215), {
-	eq: _g(TSKindId.AssignmentEq),
-	type: _g(TSKindId.AssignmentType),
-	typed: _g(TSKindId.AssignmentTyped)
-});
-const _supertype_escapeSequence_guard = _vg(_mg(251), {
-	unicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
-	unicodeWide: _g(TSKindId.EscapeSequenceUnicodeWide),
-	hex: _g(TSKindId.EscapeSequenceHex),
-	octal: _g(TSKindId.EscapeSequenceOctal),
-	lineBreak: _g(TSKindId.EscapeSequenceLineBreak),
-	simple: _g(TSKindId.EscapeSequenceSimple),
-	named: _g(TSKindId.EscapeSequenceNamed)
-});
-const _supertype_float_guard = _vg(_mg(255), {
-	point: _g(TSKindId.FloatPoint),
-	leadingPoint: _g(TSKindId.FloatLeadingPoint),
-	scientific: _g(TSKindId.FloatScientific)
-});
-const _supertype_lineContinuation_guard = _vg(_sg(_supertype_lineContinuation_ids), {
-	newline: _g(TSKindId.LineContinuationNewline),
-	nul: _g(TSKindId.LineContinuationNul)
-});
-const _supertype_integerDecimal_guard = _vg(_mg(282), {
-	long: _g(TSKindId.IntegerDecimalLong),
-	imaginary: _g(TSKindId.IntegerDecimalImaginary),
-	plain: _g(TSKindId.IntegerDecimalPlain)
-});
-const _supertype_integer_guard = _vg(_mg(254), {
-	hex: _g(TSKindId.IntegerHex),
-	octal: _g(TSKindId.IntegerOctal),
-	binary: _g(TSKindId.IntegerBinary),
-	decimal: _supertype_integerDecimal_guard
-});
-const _supertype_primaryExpression_guard = _vg(_mg(205), {
-	await: _g(TSKindId.Await),
-	binary: _g(TSKindId.BinaryOperator),
-	identifier: _g(TSKindId.Identifier),
-	string: _g(TSKindId.String),
-	concatenatedString: _g(TSKindId.ConcatenatedString),
-	integer: _supertype_integer_guard,
-	float: _supertype_float_guard,
-	true: _g(TSKindId.True),
-	false: _g(TSKindId.False),
-	none: _g(TSKindId.None),
-	unary: _g(TSKindId.UnaryOperator),
-	attribute: _g(TSKindId.Attribute),
-	subscript: _g(TSKindId.Subscript),
-	call: _g(TSKindId.Call),
-	list: _g(TSKindId.List),
-	listComprehension: _g(TSKindId.ListComprehension),
-	dictionary: _g(TSKindId.Dictionary),
-	dictionaryComprehension: _g(TSKindId.DictionaryComprehension),
-	set: _g(TSKindId.Set),
-	setComprehension: _g(TSKindId.SetComprehension),
-	tuple: _g(TSKindId.Tuple),
-	parenthesized: _g(TSKindId.ParenthesizedExpression),
-	generator: _g(TSKindId.GeneratorExpression),
-	ellipsis: _g(TSKindId.Ellipsis),
-	listSplat: _g(TSKindId.ListSplatPattern)
-});
-const _supertype_expression_guard = _vg(_mg(204), {
-	comparison: _g(TSKindId.ComparisonOperator),
-	not: _g(TSKindId.NotOperator),
-	boolean: _g(TSKindId.BooleanOperator),
-	lambda: _g(TSKindId.Lambda),
-	primary: _supertype_primaryExpression_guard,
-	conditional: _g(TSKindId.ConditionalExpression),
-	named: _g(TSKindId.NamedExpression),
-	as: _g(TSKindId.AsPattern)
-});
+function _vg<G extends object>(guard: G, variants: object): G {
+	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
+}
 
-export const is = Object.freeze({
-	module: _g(TSKindId.Module),
-	SimpleStatements: _g(TSKindId.SimpleStatements),
-	importStatement: _g(TSKindId.ImportStatement),
-	relativeImport: _g(TSKindId.RelativeImport),
-	futureImportStatement: _g(TSKindId.FutureImportStatement),
-	importFromStatement: _g(TSKindId.ImportFromStatement),
-	importList: _g(TSKindId.ImportList),
-	aliasedImport: _g(TSKindId.AliasedImport),
-	printStatement: _g(TSKindId.PrintStatement),
-	chevron: _g(TSKindId.Chevron),
-	assertStatement: _g(TSKindId.AssertStatement),
-	expressionStatement: _g(TSKindId.ExpressionStatement),
-	namedExpression: _g(TSKindId.NamedExpression),
-	NamedExpressionLhs: _g(TSKindId.NamedExpressionLhs),
-	returnStatement: _g(TSKindId.ReturnStatement),
-	deleteStatement: _g(TSKindId.DeleteStatement),
-	raiseStatement: _g(TSKindId.RaiseStatement),
-	ifStatement: _g(TSKindId.IfStatement),
-	elifClause: _g(TSKindId.ElifClause),
-	elseClause: _g(TSKindId.ElseClause),
-	matchStatement: _g(TSKindId.MatchStatement),
-	matchBlock: _g(TSKindId.MatchBlock),
-	caseClause: _g(TSKindId.CaseClause),
-	forStatement: _g(TSKindId.ForStatement),
-	whileStatement: _g(TSKindId.WhileStatement),
-	tryStatement: _g(TSKindId.TryStatement),
-	exceptClause: _g(TSKindId.ExceptClause),
-	finallyClause: _g(TSKindId.FinallyClause),
-	withStatement: _g(TSKindId.WithStatement),
-	withItem: _g(TSKindId.WithItem),
-	functionDefinition: _g(TSKindId.FunctionDefinition),
-	parameters: _g(TSKindId.Parameters),
-	lambdaParameters: _g(TSKindId.LambdaParameters),
-	listSplat: _g(TSKindId.ListSplat),
-	dictionarySplat: _g(TSKindId.DictionarySplat),
-	globalStatement: _g(TSKindId.GlobalStatement),
-	nonlocalStatement: _g(TSKindId.NonlocalStatement),
-	execStatement: _g(TSKindId.ExecStatement),
-	typeAliasStatement: _g(TSKindId.TypeAliasStatement),
-	classDefinition: _g(TSKindId.ClassDefinition),
-	typeParameter: _g(TSKindId.TypeParameter),
-	parenthesizedListSplat: _g(TSKindId.ParenthesizedListSplat),
-	argumentList: _g(TSKindId.ArgumentList),
-	decoratedDefinition: _g(TSKindId.DecoratedDefinition),
-	decorator: _g(TSKindId.Decorator),
-	block: _g(TSKindId.Block),
-	expressionList: _g(TSKindId.ExpressionList),
-	dottedName: _g(TSKindId.DottedName),
-	casePattern: _g(TSKindId.CasePattern),
-	SimplePattern: _g(TSKindId.SimplePattern),
-	caseAsPattern: _g(TSKindId.CaseAsPattern),
-	unionPattern: _g(TSKindId.UnionPattern),
-	dictPattern: _g(TSKindId.DictPattern),
-	keyValuePattern: _g(TSKindId.KeyValuePattern),
-	keywordPattern: _g(TSKindId.KeywordPattern),
-	splatPattern: _g(TSKindId.SplatPattern),
-	classPattern: _g(TSKindId.ClassPattern),
-	complexPattern: _g(TSKindId.ComplexPattern),
-	parametersElements: _g(TSKindId.ParametersElements),
-	patterns: _g(TSKindId.Patterns),
-	tuplePattern: _g(TSKindId.TuplePattern),
-	listPattern: _g(TSKindId.ListPattern),
-	defaultParameter: _g(TSKindId.DefaultParameter),
-	typedDefaultParameter: _g(TSKindId.TypedDefaultParameter),
-	listSplatPattern: _g(TSKindId.ListSplatPattern),
-	dictionarySplatPattern: _g(TSKindId.DictionarySplatPattern),
-	asPattern: _g(TSKindId.AsPattern),
-	notOperator: _g(TSKindId.NotOperator),
-	booleanOperator: _g(TSKindId.BooleanOperator),
-	binaryOperator: _g(TSKindId.BinaryOperator),
-	unaryOperator: _g(TSKindId.UnaryOperator),
-	comparisonOperator: _g(TSKindId.ComparisonOperator),
-	lambda: _g(TSKindId.Lambda),
-	lambdaWithinForInClause: _g(TSKindId.LambdaWithinForInClause),
-	augmentedAssignment: _g(TSKindId.AugmentedAssignment),
-	patternList: _g(TSKindId.PatternList),
-	yield_: _g(TSKindId.Yield),
-	attribute: _g(TSKindId.Attribute),
-	subscript: _g(TSKindId.Subscript),
-	slice: _g(TSKindId.Slice),
-	call: _g(TSKindId.Call),
-	typedParameter: _g(TSKindId.TypedParameter),
-	type: _g(TSKindId.Type),
-	splatType: _g(TSKindId.SplatType),
-	genericType: _g(TSKindId.GenericType),
-	unionType: _g(TSKindId.UnionType),
-	constrainedType: _g(TSKindId.ConstrainedType),
-	memberType: _g(TSKindId.MemberType),
-	keywordArgument: _g(TSKindId.KeywordArgument),
-	list: _g(TSKindId.List),
-	set: _g(TSKindId.Set),
-	tuple: _g(TSKindId.Tuple),
-	dictionary: _g(TSKindId.Dictionary),
-	pair: _g(TSKindId.Pair),
-	listComprehension: _g(TSKindId.ListComprehension),
-	dictionaryComprehension: _g(TSKindId.DictionaryComprehension),
-	setComprehension: _g(TSKindId.SetComprehension),
-	generatorExpression: _g(TSKindId.GeneratorExpression),
-	parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
-	collectionElements: _g(TSKindId.CollectionElements),
-	forInClause: _g(TSKindId.ForInClause),
-	ifClause: _g(TSKindId.IfClause),
-	conditionalExpression: _g(TSKindId.ConditionalExpression),
-	concatenatedString: _g(TSKindId.ConcatenatedString),
-	string: _g(TSKindId.String),
-	stringContent: _g(TSKindId.StringContent),
-	interpolation: _g(TSKindId.Interpolation),
-	formatSpecifier: _g(TSKindId.FormatSpecifier),
-	await: _g(TSKindId.Await),
-	comment: _g(TSKindId.Comment),
-	simpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
-	subjects: _g(TSKindId.Subjects),
-	casePatterns: _g(TSKindId.CasePatterns),
-	withClauseWithItems: _g(TSKindId.WithClauseWithItems),
-	types: _g(TSKindId.Types),
-	argumentListElements: _g(TSKindId.ArgumentListElements),
-	listPatternCasePatterns: _g(TSKindId.ListPatternCasePatterns),
-	dictPatternElements: _g(TSKindId.DictPatternElements),
-	subscripts: _g(TSKindId.Subscripts),
-	dictionaryElements: _g(TSKindId.DictionaryElements),
-	tuplePatternElements: _g(TSKindId.TuplePatternElements),
-	tupleElements: _g(TSKindId.TupleElements),
-	exceptClauseExceptionAs: _g(TSKindId.ExceptClauseExceptionAs),
-	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
-	caseListPattern: _g(TSKindId.CaseListPattern),
-	printArguments: _g(TSKindId.PrintArguments),
-	printChevronArguments: _g(TSKindId.PrintChevronArguments),
-	printStatementChevron: _g(TSKindId.PrintStatementChevron),
-	printStatementPlain: _g(TSKindId.PrintStatementPlain),
-	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
-	integerHex: _g(TSKindId.IntegerHex),
-	integerOctal: _g(TSKindId.IntegerOctal),
-	integerBinary: _g(TSKindId.IntegerBinary),
-	floatPoint: _g(TSKindId.FloatPoint),
-	floatLeadingPoint: _g(TSKindId.FloatLeadingPoint),
-	floatScientific: _g(TSKindId.FloatScientific),
-	escapeSequenceUnicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
-	escapeSequenceUnicodeWide: _g(TSKindId.EscapeSequenceUnicodeWide),
-	escapeSequenceHex: _g(TSKindId.EscapeSequenceHex),
-	escapeSequenceOctal: _g(TSKindId.EscapeSequenceOctal),
-	escapeSequenceLineBreak: _g(TSKindId.EscapeSequenceLineBreak),
-	escapeSequenceSimple: _g(TSKindId.EscapeSequenceSimple),
-	escapeSequenceNamed: _g(TSKindId.EscapeSequenceNamed),
-	assignmentEq: _g(TSKindId.AssignmentEq),
-	assignmentType: _g(TSKindId.AssignmentType),
-	assignmentTyped: _g(TSKindId.AssignmentTyped),
-	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
-	withClauseBare: _g(TSKindId.WithClauseBare),
-	withClauseParen: _g(TSKindId.WithClauseParen),
-	matchBlockBlock: _g(TSKindId.MatchBlockBlock),
-	matchBlockEmpty: _g(TSKindId.MatchBlockEmpty),
-	suiteInline: _g(TSKindId.SuiteInline),
-	suiteBlock: _g(TSKindId.SuiteBlock),
-	suiteEmpty: _g(TSKindId.SuiteEmpty),
-	names: _g(TSKindId.Names),
-	asPatternTarget: _g(TSKindId.AsPatternTarget),
-	formatExpression: _g(TSKindId.FormatExpression),
-	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
-	statement: _mg(128),
-	simpleStatement: _supertype_simpleStatement_guard,
-	compoundStatement: _supertype_compoundStatement_guard,
-	withClause: _supertype_withClause_guard,
-	suite: _supertype_suite_guard,
-	parameter: _supertype_parameter_guard,
-	pattern: _supertype_pattern_guard,
-	expression: _supertype_expression_guard,
-	primaryExpression: _supertype_primaryExpression_guard,
-	assignment: _supertype_assignment_guard,
-	escapeSequence: _supertype_escapeSequence_guard,
-	integer: _supertype_integer_guard,
-	float: _supertype_float_guard,
-	lineContinuation: _supertype_lineContinuation_guard,
-	integerDecimal: _supertype_integerDecimal_guard,
-	layout: _sg(_supertype_layout_ids),
-	importPrefix: _g(TSKindId.ImportPrefix),
-	wildcardImport: _mg(TSKindId.WildcardImport),
-	passStatement: _mg(TSKindId.PassStatement),
-	breakStatement: _mg(TSKindId.BreakStatement),
-	continueStatement: _mg(TSKindId.ContinueStatement),
-	ellipsis: _mg(TSKindId.Ellipsis),
-	notEscapeSequence: _mg(TSKindId.NotEscapeSequence),
-	typeConversion: _g(TSKindId.TypeConversion),
-	identifier: _g(TSKindId.Identifier),
-	true_: _mg(TSKindId.True),
-	false_: _mg(TSKindId.False),
-	none: _mg(TSKindId.None),
-	positionalSeparator: _mg(TSKindId.PositionalSeparator),
-	keywordSeparator: _mg(TSKindId.KeywordSeparator),
-	formatSpecifierText: _g(TSKindId.FormatSpecifierText),
-	wildcardPattern: _mg(TSKindId.WildcardPattern),
-	integerDecimalLong: _g(TSKindId.IntegerDecimalLong),
-	integerDecimalImaginary: _g(TSKindId.IntegerDecimalImaginary),
-	integerDecimalPlain: _g(TSKindId.IntegerDecimalPlain),
-	lineContinuationNewline: _g(TSKindId.LineContinuationNewline),
-	lineContinuationNul: _mg(TSKindId.LineContinuationNul),
-	stringStart: _g(TSKindId.StringStart),
-	stringFragment: _g(TSKindId.StringFragment),
-	escapeInterpolation: _g(TSKindId.EscapeInterpolation),
-	stringEnd: _g(TSKindId.StringEnd),
-	indent: _mg(TSKindId.Indent),
-	dedent: _mg(TSKindId.Dedent),
-	newline: _mg(TSKindId.Newline)
-}) as unknown as IsGuards;
+function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+	const inner = guard as unknown as (v: unknown) => boolean;
+	const forms: Record<string, object> = {};
+	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	return _vg(
+		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		forms
+	) as unknown as G;
+}
+
+// Runtime: every guard holds through the one kind test it is built with; an engine's `ofType` reads the same test.
+export function guardsWith(test: KindTest): IsGuards {
+	const _g = (id: number) => {
+		const kinds = _kinds(id);
+		return (v: unknown): boolean => typeof v !== 'number' && test(v, kinds);
+	};
+	const _mg = (kind: number) => {
+		const kinds = _kinds(kind);
+		return (v: unknown): boolean => test(v, kinds);
+	};
+	const _sg =
+		(kinds: ReadonlySet<number>) =>
+		(v: unknown): boolean =>
+			test(v, kinds);
+	const _kind_ImportList_guard = _g(TSKindId.ImportList);
+	const _kind_FutureImportStatement_guard = _g(TSKindId.FutureImportStatement);
+	const _kind_ParenthesizedImportList_guard = _g(TSKindId.ParenthesizedImportList);
+	const _kind_ImportStatement_guard = _g(TSKindId.ImportStatement);
+	const _kind_WildcardImport_guard = _mg(TSKindId.WildcardImport);
+	const _kind_ImportFromStatement_guard = _g(TSKindId.ImportFromStatement);
+	const _kind_PrintChevronArguments_guard = _g(TSKindId.PrintChevronArguments);
+	const _kind_PrintStatementChevron_guard = _g(TSKindId.PrintStatementChevron);
+	const _kind_PrintStatement_guard = _g(TSKindId.PrintStatement);
+	const _kind_PrintStatementPlain_guard = _g(TSKindId.PrintStatementPlain);
+	const _kind_AssertStatement_guard = _g(TSKindId.AssertStatement);
+	const _kind_ExpressionStatementTuple_guard = _g(TSKindId.ExpressionStatementTuple);
+	const _kind_ExpressionStatement_guard = _g(TSKindId.ExpressionStatement);
+	const _kind_AugmentedAssignment_guard = _g(TSKindId.AugmentedAssignment);
+	const _kind_YieldFromClause_guard = _g(TSKindId.YieldFromClause);
+	const _kind_Yield_guard = _g(TSKindId.Yield);
+	const _kind_ReturnStatement_guard = _g(TSKindId.ReturnStatement);
+	const _kind_DeleteStatement_guard = _g(TSKindId.DeleteStatement);
+	const _kind_RaiseStatement_guard = _g(TSKindId.RaiseStatement);
+	const _kind_PassStatement_guard = _mg(TSKindId.PassStatement);
+	const _kind_BreakStatement_guard = _mg(TSKindId.BreakStatement);
+	const _kind_ContinueStatement_guard = _mg(TSKindId.ContinueStatement);
+	const _kind_GlobalStatement_guard = _g(TSKindId.GlobalStatement);
+	const _kind_NonlocalStatement_guard = _g(TSKindId.NonlocalStatement);
+	const _kind_ExecStatement_guard = _g(TSKindId.ExecStatement);
+	const _kind_TypeAliasStatement_guard = _g(TSKindId.TypeAliasStatement);
+	const _kind_IfStatement_guard = _g(TSKindId.IfStatement);
+	const _kind_ForStatement_guard = _g(TSKindId.ForStatement);
+	const _kind_WhileStatement_guard = _g(TSKindId.WhileStatement);
+	const _kind_TryStatement_guard = _g(TSKindId.TryStatement);
+	const _kind_WithStatement_guard = _g(TSKindId.WithStatement);
+	const _kind_FunctionDefinition_guard = _g(TSKindId.FunctionDefinition);
+	const _kind_ClassDefinition_guard = _g(TSKindId.ClassDefinition);
+	const _kind_DecoratedDefinition_guard = _g(TSKindId.DecoratedDefinition);
+	const _kind_MatchStatement_guard = _g(TSKindId.MatchStatement);
+	const _kind_MatchBlockBlock_guard = _g(TSKindId.MatchBlockBlock);
+	const _kind_MatchBlockEmpty_guard = _g(TSKindId.MatchBlockEmpty);
+	const _kind_WithClauseBare_guard = _g(TSKindId.WithClauseBare);
+	const _kind_WithClauseParen_guard = _g(TSKindId.WithClauseParen);
+	const _kind_SuiteInline_guard = _g(TSKindId.SuiteInline);
+	const _kind_SuiteBlock_guard = _g(TSKindId.SuiteBlock);
+	const _kind_SuiteEmpty_guard = _g(TSKindId.SuiteEmpty);
+	const _kind_Identifier_guard = _g(TSKindId.Identifier);
+	const _kind_TypedParameter_guard = _g(TSKindId.TypedParameter);
+	const _kind_DefaultParameter_guard = _g(TSKindId.DefaultParameter);
+	const _kind_TypedDefaultParameter_guard = _g(TSKindId.TypedDefaultParameter);
+	const _kind_ListSplatPattern_guard = _g(TSKindId.ListSplatPattern);
+	const _kind_TuplePattern_guard = _g(TSKindId.TuplePattern);
+	const _kind_KeywordSeparator_guard = _mg(TSKindId.KeywordSeparator);
+	const _kind_PositionalSeparator_guard = _mg(TSKindId.PositionalSeparator);
+	const _kind_DictionarySplatPattern_guard = _g(TSKindId.DictionarySplatPattern);
+	const _kind_Subscript_guard = _g(TSKindId.Subscript);
+	const _kind_Attribute_guard = _g(TSKindId.Attribute);
+	const _kind_ListPattern_guard = _g(TSKindId.ListPattern);
+	const _kind_ComparisonOperator_guard = _g(TSKindId.ComparisonOperator);
+	const _kind_NotOperator_guard = _g(TSKindId.NotOperator);
+	const _kind_BooleanOperator_guard = _g(TSKindId.BooleanOperator);
+	const _kind_Lambda_guard = _g(TSKindId.Lambda);
+	const _kind_ConditionalExpression_guard = _g(TSKindId.ConditionalExpression);
+	const _kind_NamedExpression_guard = _g(TSKindId.NamedExpression);
+	const _kind_AsPattern_guard = _g(TSKindId.AsPattern);
+	const _kind_Await_guard = _g(TSKindId.Await);
+	const _kind_BinaryOperator_guard = _g(TSKindId.BinaryOperator);
+	const _kind_String_guard = _g(TSKindId.String);
+	const _kind_ConcatenatedString_guard = _g(TSKindId.ConcatenatedString);
+	const _kind_True_guard = _mg(TSKindId.True);
+	const _kind_False_guard = _mg(TSKindId.False);
+	const _kind_None_guard = _mg(TSKindId.None);
+	const _kind_UnaryOperator_guard = _g(TSKindId.UnaryOperator);
+	const _kind_Call_guard = _g(TSKindId.Call);
+	const _kind_List_guard = _g(TSKindId.List);
+	const _kind_ListComprehension_guard = _g(TSKindId.ListComprehension);
+	const _kind_Dictionary_guard = _g(TSKindId.Dictionary);
+	const _kind_DictionaryComprehension_guard = _g(TSKindId.DictionaryComprehension);
+	const _kind_Set_guard = _g(TSKindId.Set);
+	const _kind_SetComprehension_guard = _g(TSKindId.SetComprehension);
+	const _kind_Tuple_guard = _g(TSKindId.Tuple);
+	const _kind_ParenthesizedExpression_guard = _g(TSKindId.ParenthesizedExpression);
+	const _kind_GeneratorExpression_guard = _g(TSKindId.GeneratorExpression);
+	const _kind_Ellipsis_guard = _mg(TSKindId.Ellipsis);
+	const _kind_AssignmentEq_guard = _g(TSKindId.AssignmentEq);
+	const _kind_AssignmentType_guard = _g(TSKindId.AssignmentType);
+	const _kind_AssignmentTyped_guard = _g(TSKindId.AssignmentTyped);
+	const _kind_EscapeSequenceUnicodeFixed_guard = _g(TSKindId.EscapeSequenceUnicodeFixed);
+	const _kind_EscapeSequenceUnicodeWide_guard = _g(TSKindId.EscapeSequenceUnicodeWide);
+	const _kind_EscapeSequenceHex_guard = _g(TSKindId.EscapeSequenceHex);
+	const _kind_EscapeSequenceOctal_guard = _g(TSKindId.EscapeSequenceOctal);
+	const _kind_EscapeSequenceLineBreak_guard = _g(TSKindId.EscapeSequenceLineBreak);
+	const _kind_EscapeSequenceSimple_guard = _g(TSKindId.EscapeSequenceSimple);
+	const _kind_EscapeSequenceNamed_guard = _g(TSKindId.EscapeSequenceNamed);
+	const _kind_IntegerHex_guard = _g(TSKindId.IntegerHex);
+	const _kind_IntegerOctal_guard = _g(TSKindId.IntegerOctal);
+	const _kind_IntegerBinary_guard = _g(TSKindId.IntegerBinary);
+	const _kind_FloatPoint_guard = _g(TSKindId.FloatPoint);
+	const _kind_FloatLeadingPoint_guard = _g(TSKindId.FloatLeadingPoint);
+	const _kind_FloatScientific_guard = _g(TSKindId.FloatScientific);
+	const _kind_LineContinuationNewline_guard = _g(TSKindId.LineContinuationNewline);
+	const _kind_LineContinuationNul_guard = _mg(TSKindId.LineContinuationNul);
+	const _kind_IntegerDecimalLong_guard = _g(TSKindId.IntegerDecimalLong);
+	const _kind_IntegerDecimalImaginary_guard = _g(TSKindId.IntegerDecimalImaginary);
+	const _kind_IntegerDecimalPlain_guard = _g(TSKindId.IntegerDecimalPlain);
+	const _kind_Module_guard = _g(TSKindId.Module);
+	const _kind_SimpleStatements_guard = _g(TSKindId.SimpleStatements);
+	const _kind_RelativeImport_guard = _g(TSKindId.RelativeImport);
+	const _kind_AliasedImport_guard = _g(TSKindId.AliasedImport);
+	const _kind_Chevron_guard = _g(TSKindId.Chevron);
+	const _kind_NamedExpressionLhs_guard = _g(TSKindId.NamedExpressionLhs);
+	const _kind_ElifClause_guard = _g(TSKindId.ElifClause);
+	const _kind_ElseClause_guard = _g(TSKindId.ElseClause);
+	const _kind_CaseClause_guard = _g(TSKindId.CaseClause);
+	const _kind_ExceptClauseExceptionAs_guard = _g(TSKindId.ExceptClauseExceptionAs);
+	const _kind_ExceptClauseException_guard = _g(TSKindId.ExceptClauseException);
+	const _kind_ExceptClauseExceptionList_guard = _g(TSKindId.ExceptClauseExceptionList);
+	const _kind_ExceptClause_guard = _g(TSKindId.ExceptClause);
+	const _kind_FinallyClause_guard = _g(TSKindId.FinallyClause);
+	const _kind_WithItem_guard = _g(TSKindId.WithItem);
+	const _kind_Parameters_guard = _g(TSKindId.Parameters);
+	const _kind_LambdaParameters_guard = _g(TSKindId.LambdaParameters);
+	const _kind_ListSplat_guard = _g(TSKindId.ListSplat);
+	const _kind_DictionarySplat_guard = _g(TSKindId.DictionarySplat);
+	const _kind_TypeParameter_guard = _g(TSKindId.TypeParameter);
+	const _kind_ParenthesizedListSplat_guard = _g(TSKindId.ParenthesizedListSplat);
+	const _kind_ArgumentList_guard = _g(TSKindId.ArgumentList);
+	const _kind_Decorator_guard = _g(TSKindId.Decorator);
+	const _kind_Block_guard = _g(TSKindId.Block);
+	const _kind_ExpressionList_guard = _g(TSKindId.ExpressionList);
+	const _kind_DottedName_guard = _g(TSKindId.DottedName);
+	const _kind_CaseAsPattern_guard = _g(TSKindId.CaseAsPattern);
+	const _kind_CasePattern_guard = _g(TSKindId.CasePattern);
+	const _kind_KeywordPattern_guard = _g(TSKindId.KeywordPattern);
+	const _kind_ClassPattern_guard = _g(TSKindId.ClassPattern);
+	const _kind_SimplePattern_guard = _g(TSKindId.SimplePattern);
+	const _kind_SplatPattern_guard = _g(TSKindId.SplatPattern);
+	const _kind_UnionPattern_guard = _g(TSKindId.UnionPattern);
+	const _kind_CaseListPattern_guard = _g(TSKindId.CaseListPattern);
+	const _kind_CaseTuplePattern_guard = _g(TSKindId.CaseTuplePattern);
+	const _kind_DictPattern_guard = _g(TSKindId.DictPattern);
+	const _kind_SimplePatternNegative_guard = _g(TSKindId.SimplePatternNegative);
+	const _kind_ComplexPattern_guard = _g(TSKindId.ComplexPattern);
+	const _kind_WildcardPattern_guard = _mg(TSKindId.WildcardPattern);
+	const _kind_KeyValuePattern_guard = _g(TSKindId.KeyValuePattern);
+	const _kind_ParametersElements_guard = _g(TSKindId.ParametersElements);
+	const _kind_Patterns_guard = _g(TSKindId.Patterns);
+	const _kind_LambdaWithinForInClause_guard = _g(TSKindId.LambdaWithinForInClause);
+	const _kind_PatternList_guard = _g(TSKindId.PatternList);
+	const _kind_Slice_guard = _g(TSKindId.Slice);
+	const _kind_SplatType_guard = _g(TSKindId.SplatType);
+	const _kind_Type_guard = _g(TSKindId.Type);
+	const _kind_GenericType_guard = _g(TSKindId.GenericType);
+	const _kind_UnionType_guard = _g(TSKindId.UnionType);
+	const _kind_ConstrainedType_guard = _g(TSKindId.ConstrainedType);
+	const _kind_MemberType_guard = _g(TSKindId.MemberType);
+	const _kind_KeywordArgument_guard = _g(TSKindId.KeywordArgument);
+	const _kind_Pair_guard = _g(TSKindId.Pair);
+	const _kind_CollectionElements_guard = _g(TSKindId.CollectionElements);
+	const _kind_ForInClause_guard = _g(TSKindId.ForInClause);
+	const _kind_IfClause_guard = _g(TSKindId.IfClause);
+	const _kind_StringContent_guard = _g(TSKindId.StringContent);
+	const _kind_Interpolation_guard = _g(TSKindId.Interpolation);
+	const _kind_FormatSpecifier_guard = _g(TSKindId.FormatSpecifier);
+	const _kind_Comment_guard = _g(TSKindId.Comment);
+	const _kind_SimpleStatementsElements_guard = _g(TSKindId.SimpleStatementsElements);
+	const _kind_Subjects_guard = _g(TSKindId.Subjects);
+	const _kind_CasePatterns_guard = _g(TSKindId.CasePatterns);
+	const _kind_WithClauseWithItems_guard = _g(TSKindId.WithClauseWithItems);
+	const _kind_Types_guard = _g(TSKindId.Types);
+	const _kind_ArgumentListElements_guard = _g(TSKindId.ArgumentListElements);
+	const _kind_ListPatternCasePatterns_guard = _g(TSKindId.ListPatternCasePatterns);
+	const _kind_DictPatternElements_guard = _g(TSKindId.DictPatternElements);
+	const _kind_Subscripts_guard = _g(TSKindId.Subscripts);
+	const _kind_DictionaryElements_guard = _g(TSKindId.DictionaryElements);
+	const _kind_SliceGroup_guard = _g(TSKindId.SliceGroup);
+	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
+	const _kind_TupleElements_guard = _g(TSKindId.TupleElements);
+	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
+	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
+	const _kind_ComparisonOperatorComparator_guard = _g(TSKindId.ComparisonOperatorComparator);
+	const _kind_Names_guard = _g(TSKindId.Names);
+	const _kind_AsPatternTarget_guard = _g(TSKindId.AsPatternTarget);
+	const _kind_FormatExpression_guard = _g(TSKindId.FormatExpression);
+	const _kind_ImportPrefix_guard = _g(TSKindId.ImportPrefix);
+	const _kind_NotEscapeSequence_guard = _mg(TSKindId.NotEscapeSequence);
+	const _kind_TypeConversion_guard = _g(TSKindId.TypeConversion);
+	const _kind_FormatSpecifierText_guard = _g(TSKindId.FormatSpecifierText);
+	const _kind_StringStart_guard = _g(TSKindId.StringStart);
+	const _kind_StringFragment_guard = _g(TSKindId.StringFragment);
+	const _kind_EscapeInterpolation_guard = _g(TSKindId.EscapeInterpolation);
+	const _kind_StringEnd_guard = _g(TSKindId.StringEnd);
+	const _kind_Indent_guard = _mg(TSKindId.Indent);
+	const _kind_Dedent_guard = _mg(TSKindId.Dedent);
+	const _kind_Newline_guard = _mg(TSKindId.Newline);
+	const _form_FutureImportStatement_guard = _vg(_g(TSKindId.FutureImportStatement), {
+		importList: _at(_kind_FutureImportStatement_guard, 'content', _kind_ImportList_guard),
+		parenthesizedImportList: _at(_kind_FutureImportStatement_guard, 'content', _kind_ParenthesizedImportList_guard)
+	});
+	const _form_ImportFromStatement_guard = _vg(_g(TSKindId.ImportFromStatement), {
+		wildcardImport: _at(_kind_ImportFromStatement_guard, 'content', _kind_WildcardImport_guard),
+		importList: _at(_kind_ImportFromStatement_guard, 'content', _kind_ImportList_guard),
+		parenthesizedImportList: _at(_kind_ImportFromStatement_guard, 'content', _kind_ParenthesizedImportList_guard)
+	});
+	const _form_PrintStatement_guard = _vg(_g(TSKindId.PrintStatement), {
+		chevron: _at(
+			_kind_PrintStatement_guard,
+			'content',
+			_vg(_g(TSKindId.PrintStatementChevron), {
+				printChevronArguments: _at(
+					_kind_PrintStatementChevron_guard,
+					'printChevronArguments',
+					_kind_PrintChevronArguments_guard
+				)
+			})
+		),
+		plain: _at(_kind_PrintStatement_guard, 'content', _kind_PrintStatementPlain_guard)
+	});
+	const _form_ExpressionStatement_guard = _vg(_g(TSKindId.ExpressionStatement), {
+		tuple: _at(_kind_ExpressionStatement_guard, 'content', _kind_ExpressionStatementTuple_guard),
+		augmentedAssignment: _at(_kind_ExpressionStatement_guard, 'content', _kind_AugmentedAssignment_guard),
+		yield: _at(
+			_kind_ExpressionStatement_guard,
+			'content',
+			_vg(_g(TSKindId.Yield), { fromClause: _at(_kind_Yield_guard, 'content', _kind_YieldFromClause_guard) })
+		)
+	});
+	const _form_ExceptClause_guard = _vg(_g(TSKindId.ExceptClause), {
+		exception: _at(
+			_kind_ExceptClause_guard,
+			'exception',
+			_vg(_g(TSKindId.ExceptClauseException), {
+				as: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionAs_guard),
+				list: _at(_kind_ExceptClauseException_guard, 'content', _kind_ExceptClauseExceptionList_guard)
+			})
+		)
+	});
+	const _form_CasePattern_guard = _vg(_g(TSKindId.CasePattern), {
+		caseAsPattern: _at(_kind_CasePattern_guard, 'content', _kind_CaseAsPattern_guard),
+		keywordPattern: _at(_kind_CasePattern_guard, 'content', _kind_KeywordPattern_guard),
+		simplePattern: _at(
+			_kind_CasePattern_guard,
+			'content',
+			_vg(_g(TSKindId.SimplePattern), {
+				classPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ClassPattern_guard),
+				splatPattern: _at(_kind_SimplePattern_guard, 'content', _kind_SplatPattern_guard),
+				unionPattern: _at(_kind_SimplePattern_guard, 'content', _kind_UnionPattern_guard),
+				caseListPattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseListPattern_guard),
+				caseTuplePattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseTuplePattern_guard),
+				dictPattern: _at(_kind_SimplePattern_guard, 'content', _kind_DictPattern_guard),
+				string: _at(_kind_SimplePattern_guard, 'content', _kind_String_guard),
+				concatenatedString: _at(_kind_SimplePattern_guard, 'content', _kind_ConcatenatedString_guard),
+				true: _at(_kind_SimplePattern_guard, 'content', _kind_True_guard),
+				false: _at(_kind_SimplePattern_guard, 'content', _kind_False_guard),
+				none: _at(_kind_SimplePattern_guard, 'content', _kind_None_guard),
+				negative: _at(_kind_SimplePattern_guard, 'content', _kind_SimplePatternNegative_guard),
+				complexPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ComplexPattern_guard),
+				dottedName: _at(_kind_SimplePattern_guard, 'content', _kind_DottedName_guard),
+				wildcardPattern: _at(_kind_SimplePattern_guard, 'content', _kind_WildcardPattern_guard)
+			})
+		)
+	});
+	const _form_SimplePattern_guard = _vg(_g(TSKindId.SimplePattern), {
+		classPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ClassPattern_guard),
+		splatPattern: _at(_kind_SimplePattern_guard, 'content', _kind_SplatPattern_guard),
+		unionPattern: _at(_kind_SimplePattern_guard, 'content', _kind_UnionPattern_guard),
+		caseListPattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseListPattern_guard),
+		caseTuplePattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseTuplePattern_guard),
+		dictPattern: _at(_kind_SimplePattern_guard, 'content', _kind_DictPattern_guard),
+		string: _at(_kind_SimplePattern_guard, 'content', _kind_String_guard),
+		concatenatedString: _at(_kind_SimplePattern_guard, 'content', _kind_ConcatenatedString_guard),
+		true: _at(_kind_SimplePattern_guard, 'content', _kind_True_guard),
+		false: _at(_kind_SimplePattern_guard, 'content', _kind_False_guard),
+		none: _at(_kind_SimplePattern_guard, 'content', _kind_None_guard),
+		negative: _at(_kind_SimplePattern_guard, 'content', _kind_SimplePatternNegative_guard),
+		complexPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ComplexPattern_guard),
+		dottedName: _at(_kind_SimplePattern_guard, 'content', _kind_DottedName_guard),
+		wildcardPattern: _at(_kind_SimplePattern_guard, 'content', _kind_WildcardPattern_guard)
+	});
+	const _form_Yield_guard = _vg(_g(TSKindId.Yield), {
+		fromClause: _at(_kind_Yield_guard, 'content', _kind_YieldFromClause_guard)
+	});
+	const _form_Type_guard = _vg(_g(TSKindId.Type), {
+		splatType: _at(_kind_Type_guard, 'content', _kind_SplatType_guard),
+		genericType: _at(_kind_Type_guard, 'content', _kind_GenericType_guard),
+		unionType: _at(_kind_Type_guard, 'content', _kind_UnionType_guard),
+		constrainedType: _at(_kind_Type_guard, 'content', _kind_ConstrainedType_guard),
+		memberType: _at(_kind_Type_guard, 'content', _kind_MemberType_guard)
+	});
+	const _form_PrintStatementChevron_guard = _vg(_g(TSKindId.PrintStatementChevron), {
+		printChevronArguments: _at(
+			_kind_PrintStatementChevron_guard,
+			'printChevronArguments',
+			_kind_PrintChevronArguments_guard
+		)
+	});
+	const _supertype_simpleStatement_guard = _vg(_sg(_supertype_simpleStatement_ids), {
+		futureImport: _form_FutureImportStatement_guard,
+		import: _kind_ImportStatement_guard,
+		importFrom: _form_ImportFromStatement_guard,
+		print: _form_PrintStatement_guard,
+		assert: _kind_AssertStatement_guard,
+		expression: _form_ExpressionStatement_guard,
+		return: _kind_ReturnStatement_guard,
+		delete: _kind_DeleteStatement_guard,
+		raise: _kind_RaiseStatement_guard,
+		pass: _kind_PassStatement_guard,
+		break: _kind_BreakStatement_guard,
+		continue: _kind_ContinueStatement_guard,
+		global: _kind_GlobalStatement_guard,
+		nonlocal: _kind_NonlocalStatement_guard,
+		exec: _kind_ExecStatement_guard,
+		typeAlias: _kind_TypeAliasStatement_guard
+	});
+	const _supertype_compoundStatement_guard = _vg(_sg(_supertype_compoundStatement_ids), {
+		if: _kind_IfStatement_guard,
+		for: _kind_ForStatement_guard,
+		while: _kind_WhileStatement_guard,
+		try: _kind_TryStatement_guard,
+		with: _kind_WithStatement_guard,
+		function: _kind_FunctionDefinition_guard,
+		class: _kind_ClassDefinition_guard,
+		decorated: _kind_DecoratedDefinition_guard,
+		match: _kind_MatchStatement_guard
+	});
+	const _supertype_matchBlock_guard = _vg(_mg(154), {
+		block: _kind_MatchBlockBlock_guard,
+		empty: _kind_MatchBlockEmpty_guard
+	});
+	const _supertype_withClause_guard = _vg(_mg(162), {
+		bare: _kind_WithClauseBare_guard,
+		paren: _kind_WithClauseParen_guard
+	});
+	const _supertype_suite_guard = _vg(_sg(_supertype_suite_ids), {
+		inline: _kind_SuiteInline_guard,
+		block: _kind_SuiteBlock_guard,
+		empty: _kind_SuiteEmpty_guard
+	});
+	const _supertype_parameter_guard = _vg(_mg(194), {
+		identifier: _kind_Identifier_guard,
+		typed: _kind_TypedParameter_guard,
+		default: _kind_DefaultParameter_guard,
+		typedDefault: _kind_TypedDefaultParameter_guard,
+		listSplat: _kind_ListSplatPattern_guard,
+		tuple: _kind_TuplePattern_guard,
+		keywordSeparator: _kind_KeywordSeparator_guard,
+		positionalSeparator: _kind_PositionalSeparator_guard,
+		dictionarySplat: _kind_DictionarySplatPattern_guard
+	});
+	const _supertype_pattern_guard = _vg(_mg(195), {
+		identifier: _kind_Identifier_guard,
+		subscript: _kind_Subscript_guard,
+		attribute: _kind_Attribute_guard,
+		listSplat: _kind_ListSplatPattern_guard,
+		tuple: _kind_TuplePattern_guard,
+		list: _kind_ListPattern_guard
+	});
+	const _supertype_assignment_guard = _vg(_mg(215), {
+		eq: _kind_AssignmentEq_guard,
+		type: _kind_AssignmentType_guard,
+		typed: _kind_AssignmentTyped_guard
+	});
+	const _supertype_escapeSequence_guard = _vg(_mg(251), {
+		unicodeFixed: _kind_EscapeSequenceUnicodeFixed_guard,
+		unicodeWide: _kind_EscapeSequenceUnicodeWide_guard,
+		hex: _kind_EscapeSequenceHex_guard,
+		octal: _kind_EscapeSequenceOctal_guard,
+		lineBreak: _kind_EscapeSequenceLineBreak_guard,
+		simple: _kind_EscapeSequenceSimple_guard,
+		named: _kind_EscapeSequenceNamed_guard
+	});
+	const _supertype_float_guard = _vg(_mg(255), {
+		point: _kind_FloatPoint_guard,
+		leadingPoint: _kind_FloatLeadingPoint_guard,
+		scientific: _kind_FloatScientific_guard
+	});
+	const _supertype_lineContinuation_guard = _vg(_sg(_supertype_lineContinuation_ids), {
+		newline: _kind_LineContinuationNewline_guard,
+		nul: _kind_LineContinuationNul_guard
+	});
+	const _supertype_integerDecimal_guard = _vg(_mg(282), {
+		long: _kind_IntegerDecimalLong_guard,
+		imaginary: _kind_IntegerDecimalImaginary_guard,
+		plain: _kind_IntegerDecimalPlain_guard
+	});
+	const _supertype_integer_guard = _vg(_mg(254), {
+		hex: _kind_IntegerHex_guard,
+		octal: _kind_IntegerOctal_guard,
+		binary: _kind_IntegerBinary_guard,
+		decimal: _supertype_integerDecimal_guard
+	});
+	const _supertype_primaryExpression_guard = _vg(_mg(205), {
+		await: _kind_Await_guard,
+		binary: _kind_BinaryOperator_guard,
+		identifier: _kind_Identifier_guard,
+		string: _kind_String_guard,
+		concatenatedString: _kind_ConcatenatedString_guard,
+		integer: _supertype_integer_guard,
+		float: _supertype_float_guard,
+		true: _kind_True_guard,
+		false: _kind_False_guard,
+		none: _kind_None_guard,
+		unary: _kind_UnaryOperator_guard,
+		attribute: _kind_Attribute_guard,
+		subscript: _kind_Subscript_guard,
+		call: _kind_Call_guard,
+		list: _kind_List_guard,
+		listComprehension: _kind_ListComprehension_guard,
+		dictionary: _kind_Dictionary_guard,
+		dictionaryComprehension: _kind_DictionaryComprehension_guard,
+		set: _kind_Set_guard,
+		setComprehension: _kind_SetComprehension_guard,
+		tuple: _kind_Tuple_guard,
+		parenthesized: _kind_ParenthesizedExpression_guard,
+		generator: _kind_GeneratorExpression_guard,
+		ellipsis: _kind_Ellipsis_guard,
+		listSplat: _kind_ListSplatPattern_guard
+	});
+	const _supertype_expression_guard = _vg(_mg(204), {
+		comparison: _kind_ComparisonOperator_guard,
+		not: _kind_NotOperator_guard,
+		boolean: _kind_BooleanOperator_guard,
+		lambda: _kind_Lambda_guard,
+		primary: _supertype_primaryExpression_guard,
+		conditional: _kind_ConditionalExpression_guard,
+		named: _kind_NamedExpression_guard,
+		as: _kind_AsPattern_guard
+	});
+	return Object.freeze({
+		module: _kind_Module_guard,
+		simpleStatements: _kind_SimpleStatements_guard,
+		importStatement: _kind_ImportStatement_guard,
+		relativeImport: _kind_RelativeImport_guard,
+		futureImportStatement: _form_FutureImportStatement_guard,
+		importFromStatement: _form_ImportFromStatement_guard,
+		importList: _kind_ImportList_guard,
+		aliasedImport: _kind_AliasedImport_guard,
+		printStatement: _form_PrintStatement_guard,
+		chevron: _kind_Chevron_guard,
+		assertStatement: _kind_AssertStatement_guard,
+		expressionStatement: _form_ExpressionStatement_guard,
+		namedExpression: _kind_NamedExpression_guard,
+		namedExpressionLhs: _kind_NamedExpressionLhs_guard,
+		returnStatement: _kind_ReturnStatement_guard,
+		deleteStatement: _kind_DeleteStatement_guard,
+		raiseStatement: _kind_RaiseStatement_guard,
+		ifStatement: _kind_IfStatement_guard,
+		elifClause: _kind_ElifClause_guard,
+		elseClause: _kind_ElseClause_guard,
+		matchStatement: _kind_MatchStatement_guard,
+		caseClause: _kind_CaseClause_guard,
+		forStatement: _kind_ForStatement_guard,
+		whileStatement: _kind_WhileStatement_guard,
+		tryStatement: _kind_TryStatement_guard,
+		exceptClause: _form_ExceptClause_guard,
+		finallyClause: _kind_FinallyClause_guard,
+		withStatement: _kind_WithStatement_guard,
+		withItem: _kind_WithItem_guard,
+		functionDefinition: _kind_FunctionDefinition_guard,
+		parameters: _kind_Parameters_guard,
+		lambdaParameters: _kind_LambdaParameters_guard,
+		listSplat: _kind_ListSplat_guard,
+		dictionarySplat: _kind_DictionarySplat_guard,
+		globalStatement: _kind_GlobalStatement_guard,
+		nonlocalStatement: _kind_NonlocalStatement_guard,
+		execStatement: _kind_ExecStatement_guard,
+		typeAliasStatement: _kind_TypeAliasStatement_guard,
+		classDefinition: _kind_ClassDefinition_guard,
+		typeParameter: _kind_TypeParameter_guard,
+		parenthesizedListSplat: _kind_ParenthesizedListSplat_guard,
+		argumentList: _kind_ArgumentList_guard,
+		decoratedDefinition: _kind_DecoratedDefinition_guard,
+		decorator: _kind_Decorator_guard,
+		block: _kind_Block_guard,
+		expressionList: _kind_ExpressionList_guard,
+		dottedName: _kind_DottedName_guard,
+		casePattern: _form_CasePattern_guard,
+		simplePattern: _form_SimplePattern_guard,
+		caseAsPattern: _kind_CaseAsPattern_guard,
+		unionPattern: _kind_UnionPattern_guard,
+		dictPattern: _kind_DictPattern_guard,
+		keyValuePattern: _kind_KeyValuePattern_guard,
+		keywordPattern: _kind_KeywordPattern_guard,
+		splatPattern: _kind_SplatPattern_guard,
+		classPattern: _kind_ClassPattern_guard,
+		complexPattern: _kind_ComplexPattern_guard,
+		parametersElements: _kind_ParametersElements_guard,
+		patterns: _kind_Patterns_guard,
+		tuplePattern: _kind_TuplePattern_guard,
+		listPattern: _kind_ListPattern_guard,
+		defaultParameter: _kind_DefaultParameter_guard,
+		typedDefaultParameter: _kind_TypedDefaultParameter_guard,
+		listSplatPattern: _kind_ListSplatPattern_guard,
+		dictionarySplatPattern: _kind_DictionarySplatPattern_guard,
+		asPattern: _kind_AsPattern_guard,
+		notOperator: _kind_NotOperator_guard,
+		booleanOperator: _kind_BooleanOperator_guard,
+		binaryOperator: _kind_BinaryOperator_guard,
+		unaryOperator: _kind_UnaryOperator_guard,
+		comparisonOperator: _kind_ComparisonOperator_guard,
+		lambda: _kind_Lambda_guard,
+		lambdaWithinForInClause: _kind_LambdaWithinForInClause_guard,
+		augmentedAssignment: _kind_AugmentedAssignment_guard,
+		patternList: _kind_PatternList_guard,
+		yield: _form_Yield_guard,
+		attribute: _kind_Attribute_guard,
+		subscript: _kind_Subscript_guard,
+		slice: _kind_Slice_guard,
+		call: _kind_Call_guard,
+		typedParameter: _kind_TypedParameter_guard,
+		type: _form_Type_guard,
+		splatType: _kind_SplatType_guard,
+		genericType: _kind_GenericType_guard,
+		unionType: _kind_UnionType_guard,
+		constrainedType: _kind_ConstrainedType_guard,
+		memberType: _kind_MemberType_guard,
+		keywordArgument: _kind_KeywordArgument_guard,
+		list: _kind_List_guard,
+		set: _kind_Set_guard,
+		tuple: _kind_Tuple_guard,
+		dictionary: _kind_Dictionary_guard,
+		pair: _kind_Pair_guard,
+		listComprehension: _kind_ListComprehension_guard,
+		dictionaryComprehension: _kind_DictionaryComprehension_guard,
+		setComprehension: _kind_SetComprehension_guard,
+		generatorExpression: _kind_GeneratorExpression_guard,
+		parenthesizedExpression: _kind_ParenthesizedExpression_guard,
+		collectionElements: _kind_CollectionElements_guard,
+		forInClause: _kind_ForInClause_guard,
+		ifClause: _kind_IfClause_guard,
+		conditionalExpression: _kind_ConditionalExpression_guard,
+		concatenatedString: _kind_ConcatenatedString_guard,
+		string: _kind_String_guard,
+		stringContent: _kind_StringContent_guard,
+		interpolation: _kind_Interpolation_guard,
+		formatSpecifier: _kind_FormatSpecifier_guard,
+		await: _kind_Await_guard,
+		comment: _kind_Comment_guard,
+		simpleStatementsElements: _kind_SimpleStatementsElements_guard,
+		subjects: _kind_Subjects_guard,
+		casePatterns: _kind_CasePatterns_guard,
+		withClauseWithItems: _kind_WithClauseWithItems_guard,
+		types: _kind_Types_guard,
+		argumentListElements: _kind_ArgumentListElements_guard,
+		listPatternCasePatterns: _kind_ListPatternCasePatterns_guard,
+		dictPatternElements: _kind_DictPatternElements_guard,
+		subscripts: _kind_Subscripts_guard,
+		dictionaryElements: _kind_DictionaryElements_guard,
+		sliceGroup: _kind_SliceGroup_guard,
+		tuplePatternElements: _kind_TuplePatternElements_guard,
+		tupleElements: _kind_TupleElements_guard,
+		exceptClauseExceptionAs: _kind_ExceptClauseExceptionAs_guard,
+		caseTuplePattern: _kind_CaseTuplePattern_guard,
+		caseListPattern: _kind_CaseListPattern_guard,
+		printArguments: _kind_PrintArguments_guard,
+		printChevronArguments: _kind_PrintChevronArguments_guard,
+		printStatementChevron: _form_PrintStatementChevron_guard,
+		printStatementPlain: _kind_PrintStatementPlain_guard,
+		parenthesizedImportList: _kind_ParenthesizedImportList_guard,
+		comprehensionClauses: _kind_ComprehensionClauses_guard,
+		integerHex: _kind_IntegerHex_guard,
+		integerOctal: _kind_IntegerOctal_guard,
+		integerBinary: _kind_IntegerBinary_guard,
+		floatPoint: _kind_FloatPoint_guard,
+		floatLeadingPoint: _kind_FloatLeadingPoint_guard,
+		floatScientific: _kind_FloatScientific_guard,
+		escapeSequenceUnicodeFixed: _kind_EscapeSequenceUnicodeFixed_guard,
+		escapeSequenceUnicodeWide: _kind_EscapeSequenceUnicodeWide_guard,
+		escapeSequenceHex: _kind_EscapeSequenceHex_guard,
+		escapeSequenceOctal: _kind_EscapeSequenceOctal_guard,
+		escapeSequenceLineBreak: _kind_EscapeSequenceLineBreak_guard,
+		escapeSequenceSimple: _kind_EscapeSequenceSimple_guard,
+		escapeSequenceNamed: _kind_EscapeSequenceNamed_guard,
+		simplePatternNegative: _kind_SimplePatternNegative_guard,
+		exceptClauseExceptionList: _kind_ExceptClauseExceptionList_guard,
+		exceptClauseException: _kind_ExceptClauseException_guard,
+		assignmentEq: _kind_AssignmentEq_guard,
+		assignmentType: _kind_AssignmentType_guard,
+		assignmentTyped: _kind_AssignmentTyped_guard,
+		expressionStatementTuple: _kind_ExpressionStatementTuple_guard,
+		withClauseBare: _kind_WithClauseBare_guard,
+		withClauseParen: _kind_WithClauseParen_guard,
+		matchBlockBlock: _kind_MatchBlockBlock_guard,
+		matchBlockEmpty: _kind_MatchBlockEmpty_guard,
+		suiteInline: _kind_SuiteInline_guard,
+		suiteBlock: _kind_SuiteBlock_guard,
+		suiteEmpty: _kind_SuiteEmpty_guard,
+		comparisonOperatorComparator: _kind_ComparisonOperatorComparator_guard,
+		yieldFromClause: _kind_YieldFromClause_guard,
+		names: _kind_Names_guard,
+		asPatternTarget: _kind_AsPatternTarget_guard,
+		formatExpression: _kind_FormatExpression_guard,
+		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
+		statement: _mg(128),
+		simpleStatement: _supertype_simpleStatement_guard,
+		compoundStatement: _supertype_compoundStatement_guard,
+		matchBlock: _supertype_matchBlock_guard,
+		withClause: _supertype_withClause_guard,
+		suite: _supertype_suite_guard,
+		parameter: _supertype_parameter_guard,
+		pattern: _supertype_pattern_guard,
+		expression: _supertype_expression_guard,
+		primaryExpression: _supertype_primaryExpression_guard,
+		assignment: _supertype_assignment_guard,
+		escapeSequence: _supertype_escapeSequence_guard,
+		integer: _supertype_integer_guard,
+		float: _supertype_float_guard,
+		lineContinuation: _supertype_lineContinuation_guard,
+		integerDecimal: _supertype_integerDecimal_guard,
+		layout: _sg(_supertype_layout_ids),
+		importPrefix: _kind_ImportPrefix_guard,
+		wildcardImport: _kind_WildcardImport_guard,
+		passStatement: _kind_PassStatement_guard,
+		breakStatement: _kind_BreakStatement_guard,
+		continueStatement: _kind_ContinueStatement_guard,
+		ellipsis: _kind_Ellipsis_guard,
+		notEscapeSequence: _kind_NotEscapeSequence_guard,
+		typeConversion: _kind_TypeConversion_guard,
+		identifier: _kind_Identifier_guard,
+		true: _kind_True_guard,
+		false: _kind_False_guard,
+		none: _kind_None_guard,
+		positionalSeparator: _kind_PositionalSeparator_guard,
+		keywordSeparator: _kind_KeywordSeparator_guard,
+		formatSpecifierText: _kind_FormatSpecifierText_guard,
+		wildcardPattern: _kind_WildcardPattern_guard,
+		stringStart: _kind_StringStart_guard,
+		stringFragment: _kind_StringFragment_guard,
+		escapeInterpolation: _kind_EscapeInterpolation_guard,
+		stringEnd: _kind_StringEnd_guard,
+		indent: _kind_Indent_guard,
+		dedent: _kind_Dedent_guard,
+		newline: _kind_Newline_guard
+	}) as unknown as IsGuards;
+}
+
+export const is = guardsWith(holdsKinds);

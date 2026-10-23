@@ -46,13 +46,15 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 			value: { $type: py.kinds.IntegerDecimalPlain, text: '42' }
 		});
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
-		expect(result.value()).toMatchObject({ $type: py.kinds.IntegerDecimalPlain, $text: '42' });
+		expect(result.value()).toMatchObject({ $type: py.kinds.IntegerDecimalPlain });
+		expect(String(py.render(result.value()))).toBe('42');
 	});
 
 	it('a leaf tag builds that leaf from its text', () => {
 		// @ts-expect-error tagged text exercises the runtime loose-input boundary
 		const result = py.build.assignment.eq({ name: 'x', value: { $type: py.kinds.Identifier, text: 'y' } });
-		expect(result.value()).toMatchObject({ $type: py.kinds.Identifier, $text: 'y' });
+		expect(result.value()).toMatchObject({ $type: py.kinds.Identifier });
+		expect(String(py.render(result.value()))).toBe('y');
 	});
 
 	it('a leaf tag without its text throws naming the shape', () => {

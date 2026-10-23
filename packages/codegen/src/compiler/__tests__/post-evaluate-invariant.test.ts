@@ -24,9 +24,8 @@
 import { beforeAll, describe, it, expect } from 'vitest';
 import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
-import { evaluatePackage } from '../evaluate-package.ts';
+import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
-import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
@@ -62,7 +61,7 @@ describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
 		beforeAll(async () => {
 			evaluated[grammar] = await evaluatePackage(grammarPackage(grammar));
-		}, FULL_PIPELINE_TIMEOUT);
+		});
 
 		it(`${grammar}: rule tree contains only known rule types`, () => {
 			const raw = evaluated[grammar]!;
@@ -102,6 +101,18 @@ describe('post-evaluate invariant', () => {
 				});
 			}
 			expect(violations, violations.join('\n')).toEqual([]);
+		});
+
+		it(`${grammar}: no desugar divergences`, () => {
+			// enrich() runs on the base grammar BEFORE this evaluate() call
+			// (grammar.sittir.ts: `enrich(base)`), so it already pre-generate
+			// hoists shapes like upstream tree-sitter-rust's
+			// `alias(choice(...), $.primitive_type)` into a real named rule —
+			// this stays 0 on the actual shipped pipeline even though the
+			// SAME check against the raw, un-enriched base grammar (see
+			// real-grammar.test.ts) is not representative of it.
+			const raw = evaluated[grammar]!;
+			expect(raw.desugarDivergences ?? []).toEqual([]);
 		});
 
 		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, () => {
@@ -166,7 +177,7 @@ describe('post-evaluate invariant', () => {
 				'ruleCauses',
 				'undeclaredRules',
 				'whitespaceCollisions',
-				// Every edits: entry by owner, path and placeholder form — read by the
+				// Every site edit by owner, path and placeholder form — read by the
 				// patch-site labelling and the override census.
 				'patchSites',
 				// The base evaluated with no wire config, before and after enrich — read
@@ -186,6 +197,9 @@ describe('post-evaluate invariant', () => {
 				// replacement (silently-dead elevation) — read by
 				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.
 				'bodyPatternZeroMatches',
+				// Evaluate-only mints with no wire-side deposit — read by
+				// collectGrammarDiagnosticsForGrammar for `desugar-divergence-*`.
+				'desugarDivergences',
 				'derivationRecords'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
@@ -203,7 +217,7 @@ describe('post-evaluate invariant', () => {
 			const second = await evaluatePackage(grammarPackage(grammar));
 
 			expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
-		}, FULL_PIPELINE_TIMEOUT);
+		});
 	}
 });
 

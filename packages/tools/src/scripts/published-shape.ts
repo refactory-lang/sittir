@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import {
 	NATIVE_LOADER,
 	NATIVE_TARGETS,
@@ -31,6 +32,24 @@ const rendered = engine.parse(source).$render();
 if (rendered !== source) throw new Error(name + ': rendered ' + JSON.stringify(rendered) + ', expected ' + JSON.stringify(source));
 console.log('@sittir/' + name + ': createEngine, parse and render from the installed package');
 `;
+
+const TYPES_CHECK = `import type { SlotKey } from '@sittir/types';
+interface Node { readonly _argument: readonly string[]; readonly __slotNames__?: { readonly _argument: 'arguments' } }
+export const plural: SlotKey<Node, 'argument'> = 'arguments';
+// @ts-expect-error a slot key is the model's slot name, not the storage name
+export const storage: SlotKey<Node, 'argument'> = 'argument';
+`;
+
+const TYPES_CHECK_CONFIG = {
+	compilerOptions: { target: 'esnext', module: 'nodenext', strict: true, noEmit: true, skipLibCheck: false, types: [] },
+	files: ['types.ts']
+};
+
+function tscBin(): string {
+	const manifest = createRequire(import.meta.url).resolve('typescript/package.json');
+	const { bin } = JSON.parse(readFileSync(manifest, 'utf-8')) as { bin: { tsc: string } };
+	return join(dirname(manifest), bin.tsc);
+}
 
 function run(command: string, args: readonly string[], cwd: string): string {
 	const child = spawnSync(command, args, { cwd, encoding: 'utf-8', shell: process.platform === 'win32' });
@@ -83,6 +102,10 @@ try {
 	writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'consumer', private: true, type: 'module', dependencies }));
 	writeFileSync(join(consumer, 'smoke.mjs'), SMOKE);
 	run('npm', ['install', '--no-audit', '--no-fund'], consumer);
+	writeFileSync(join(consumer, 'types.ts'), TYPES_CHECK);
+	writeFileSync(join(consumer, 'tsconfig.json'), JSON.stringify(TYPES_CHECK_CONFIG));
+	run(process.execPath, [tscBin(), '-p', consumer], consumer);
+	console.log('@sittir/types: type-checks from the installed package, without its devDependencies');
 	for (const grammar of grammars) {
 		const source = SAMPLE_SOURCE[grammar];
 		if (source === undefined) throw new Error(`no sample source for grammar '${grammar}'`);

@@ -16,14 +16,10 @@ The grammar, the file, the number of rounds, and whether to print JSON.
 
 One measurement: grammar, file, bytes, nodes, the best round in milliseconds, and microseconds per node.
 
-### `packages/tools/src/profile/trivia-timing.ts::typedNodesOf`
+### `packages/tools/src/profile/trivia-timing.ts::timedNodesOf`
 
-Every read node under `root`, reached through each storage slot's reader (`slotReaderName`), so a deep read's nodes are the wrapped nodes a caller holds.
-
-### `packages/tools/src/profile/trivia-timing.ts::slotReaderName`
-
-The reader method of a storage key: `_parameters` is read by `parameters()`.
+Every read node under `root`, reached by `walkWrappedTree` through the accessor the model names for each stored slot (`slotAccessorOf`), so a deep read's nodes are the wrapped nodes a caller holds.
 
 ### `packages/tools/src/profile/trivia-timing.ts::ReadNode`
 
-The shape `typedNodesOf` walks: a `$type`, the `$trivia` reader, and slot storage.
+The shape `timedNodesOf` collects: a `$type`, the `$trivia` reader, and slot storage.

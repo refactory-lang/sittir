@@ -109,6 +109,10 @@ export default grammar(enrich(base), wire({
 		integer_hex: { 'prefix:': preference('0x') },
 		integer_octal: { 'prefix:': preference('0o') },
 		integer_binary: { 'prefix:': preference('0b') },
+		float_point: { 'marker:': preference('e') },
+		float_leading_point: { 'marker:': preference('e') },
+		float_scientific: { 'marker:': preference('e') },
+		for_in_clause: { 'trailing_comma:': preference('blank') },
 		module: {
 			'statements:/separator': preference('tight'),
 			'statements:/(function_definition)/after': preference('double_blankline'),
@@ -193,16 +197,16 @@ export default grammar(enrich(base), wire({
 		float: {
 			'0/0/0/0': field('integer'),
 			'0/0/0/2': field('fraction'),
-			'0/0/0/3/0/0': field('marker'),
+			'0/0/0/3/0/0': seq(field('marker', choice('e', 'E')), field('sign', optional(choice('-', '+')))),
 			'0/0/0/3/0/1': field('exponent'),
 			'0/0/1': field('imaginary'),
 			'1/0/0/0': field('integer'),
 			'1/0/0/2': field('fraction'),
-			'1/0/0/3/0/0': field('marker'),
+			'1/0/0/3/0/0': seq(field('marker', choice('e', 'E')), field('sign', optional(choice('-', '+')))),
 			'1/0/0/3/0/1': field('exponent'),
 			'1/0/1': field('imaginary'),
 			'2/0/0/0': field('integer'),
-			'2/0/0/1/0': field('marker'),
+			'2/0/0/1/0': seq(field('marker', choice('e', 'E')), field('sign', optional(choice('-', '+')))),
 			'2/0/0/1/1': field('exponent'),
 			'2/0/1': field('imaginary'),
 			0: variant('point', { default: true }),
@@ -286,7 +290,7 @@ export default grammar(enrich(base), wire({
 		},
 
 		for_in_clause: {
-			'5/0': field('comma')
+			'5/0': field('trailing_comma')
 		},
 
 		finally_clause: {

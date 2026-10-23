@@ -46,7 +46,7 @@ export interface DeclaredCause {
 }
 
 export type RuleCauseDeclaration =
-	| { readonly kind: 'reauthored'; readonly causes: readonly [DeclaredCause, ...DeclaredCause[]] }
+	| { readonly kind: 'reauthored'; readonly causes: readonly DeclaredCause[] }
 	| { readonly kind: 'vocabulary' };
 
 const RULE_CAUSE = Symbol.for('sittir.ruleCause');
@@ -69,7 +69,7 @@ export function reauthored<F extends (...args: never[]) => unknown>(
 ): F {
 	const pairs = (typeof first === 'string' ? [rest.length === 1 ? [first] : [first, rest[0]]] : first) as readonly [CausePair, ...CausePair[]];
 	const body = rest[rest.length - 1] as F;
-	return tag(body, { kind: 'reauthored', causes: pairs.map(declaredCause) as [DeclaredCause, ...DeclaredCause[]] });
+	return tag(body, { kind: 'reauthored', causes: pairs.flatMap((pair) => [declaredCause(pair)]) });
 }
 
 export function vocabulary<F extends (...args: never[]) => unknown>(body: F): F {

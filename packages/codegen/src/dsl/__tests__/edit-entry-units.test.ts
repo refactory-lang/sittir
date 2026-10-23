@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { beforeAll, afterAll } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { transform as transformRule } from '../transform/transform.ts';
 import { ApplyPathSkip } from '../transform/transform-path.ts';

@@ -53,8 +53,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				},
 				devDependencies: {
 					'@types/node': '^25.6.0',
-					[v.upstreamDependency]: v.upstreamRange,
-					'type-fest': '^5.6.0'
+					[v.upstreamDependency]: v.upstreamRange
 				},
 				'//native': `Native artifacts are grammar-local implementation details for @sittir/${v.name}, shipped in native/ and built from rust/crates/sittir-${v.name}.`
 			})

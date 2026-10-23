@@ -73,7 +73,7 @@ describe('the sides of a parsed node come from its tree', () => {
 	it('reads and writes each side through its node', () => {
 		const root = engine.parse('def f():\n    a()  # t\n');
 		const statement = statementOf(bodyAt(root, 0), 0);
-		if (!engine.is.SimpleStatements(statement)) throw new Error('expected simple statements');
+		if (!engine.is.simpleStatements(statement)) throw new Error('expected simple statements');
 		const [element] = statement;
 		if (element === undefined || typeof element === 'number') throw new Error('expected a statement element');
 		expect(texts(element.$trivia.trailing())).toEqual(['# t']);
@@ -106,7 +106,7 @@ describe('the sides of a parsed node come from its tree', () => {
 	it('renders an ERROR entry verbatim when its owner renders from its template', () => {
 		const root = engine.parse('a = 1\n$\nb = 2\n');
 		const [first, second] = root.statements();
-		if (first === undefined || second === undefined || !engine.is.SimpleStatements(second)) throw new Error('expected two statements');
+		if (first === undefined || second === undefined || !engine.is.simpleStatements(second)) throw new Error('expected two statements');
 		const element = second[0];
 		if (element === undefined || !engine.is.expressionStatement(element)) throw new Error('expected an expression statement');
 		const assignment = element.content();

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const rules = "k: ($) => seq(field('opening', choice('{', '{|')), field('members', optional($.item)), field('closing', choice('}', '|}'))), item: () => /[a-z]+/";
 const FORMS = "{ curly: { 'opening:': '{', 'closing:': '}' }, flow: { 'opening:': '{|', 'closing:': '|}' } }";

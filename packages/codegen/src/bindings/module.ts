@@ -1,8 +1,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Lead, LeadMatch } from '../dsl/verbs/effects.ts';
-import { BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackageDir, type GrammarName } from '../grammars.ts';
-import { REGENERATE_BINDINGS_COMMAND } from './hash.ts';
+import { BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackageDir, type GrammarName, type GrammarPackage } from '../grammars.ts';
+import { bindingsPathIn } from './facts.ts';
+import { assertBindingsFresh, REGENERATE_BINDINGS_COMMAND } from './hash.ts';
 import type { GrammarBindings, GrammarBindingsEdit, GrammarBindingsPatch } from './grammar-bindings.ts';
 import { runPinned } from './read.ts';
 
@@ -12,6 +13,10 @@ export async function loadBindingsHash(dir: string): Promise<string | undefined>
 	const path = join(dir, BINDINGS_MODULE);
 	if (!existsSync(path)) return undefined;
 	return (await runPinned('exportedStrings', readFileSync(path, 'utf8'))).hash;
+}
+
+export async function assertPackageBindingsFresh(pkg: GrammarPackage): Promise<void> {
+	assertBindingsFresh(pkg.name, await loadBindingsHash(pkg.dir), bindingsPathIn(pkg.dir));
 }
 
 const q = (v: string): string => JSON.stringify(v);

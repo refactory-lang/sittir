@@ -1240,15 +1240,22 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		it('seats a hoisted arm of a parser supertype and gives it its own surface too', () => {
 			const normalized = makeNormalized(
 				{
-					_arms: { type: CHOICE, members: [{ type: SYMBOL, name: 'arm_eq' }, { type: SYMBOL, name: 'parameters' }] },
+					_arms: {
+						type: SUPERTYPE,
+						name: '_arms',
+						subtypes: [
+							{ type: SYMBOL, name: 'arm_eq' },
+							{ type: SYMBOL, name: 'parameters' }
+						],
+						declared: true
+					},
 					arm_eq: {
 						type: SEQ,
 						members: [{ type: STRING, value: '=' }, { type: FIELD, name: 'params', content: { type: SYMBOL, name: 'parameters' } }],
 						annotations: { hoisted: true }
 					},
 					parameters: { type: PATTERN, value: '[a-z]+' }
-				},
-				{ supertypes: new Set(['_arms']) }
+				}
 			);
 			const nodeMap = assemble(AssembleCtx.from(normalized, makeIdTables({})));
 			expect(nodeMap.nodes.get('arm_eq')?.seated).toBe(true);

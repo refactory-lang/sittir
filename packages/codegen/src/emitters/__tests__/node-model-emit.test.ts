@@ -14,23 +14,18 @@ import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
-it('serializes the canonical display family without deriving aliases again', () => {
-	const nodeMap = makeNodeMapWith(new Map());
-	const family = [
-		{ storage: 'lambda', literal: false },
-		{ storage: 'lambda_within_for_in_clause', literal: false }
-	];
-	const withFamily = { ...nodeMap, displayUnions: new Map([['lambda_expression', family]]) };
-	expect(buildNodeModel(withFamily)).toHaveProperty('displayUnions', { lambda_expression: family });
-});
 describe('node-model emitter', () => {
-	it("serializes a list's item slot beside its element kinds", () => {
-		const rule: SeparatedListElementRule = {
-			type: SYMBOL,
-			name: 'member',
-			multiplicity: 'array',
-			separator: { value: { type: STRING, value: ',' } }
-		};
+	it('serializes the canonical display family without deriving aliases again', () => {
+		const nodeMap = makeNodeMapWith(new Map());
+		const family = [
+			{ storage: 'string_content', literal: false },
+			{ storage: 'raw_string_literal_content', literal: false }
+		];
+		const withFamily = { ...nodeMap, displayUnions: new Map([['string_content', family]]) };
+		expect(buildNodeModel(withFamily)).toHaveProperty('displayUnions', { string_content: family });
+	});
+	it('serializes a list\'s item slot beside its element kinds', () => {
+		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
 		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const nodes = new Map<string, AssembledNode>([

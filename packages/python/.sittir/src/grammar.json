@@ -1004,13 +1004,8 @@
           "type": "FIELD",
           "name": "body",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_match_block"
-            },
-            "named": true,
-            "value": "match_block"
+            "type": "SYMBOL",
+            "name": "_match_block"
           }
         }
       ]
@@ -5543,10 +5538,10 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "comma",
+                "name": "trailing_comma",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_kw_comma"
+                  "name": "_kw_trailing_comma"
                 },
                 "metadata": {
                   "fieldSource": "override"
@@ -7911,15 +7906,57 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "FIELD",
-                        "name": "marker",
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "[eE][\\+-]?"
-                        },
-                        "metadata": {
-                          "fieldSource": "override"
-                        }
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "FIELD",
+                            "name": "marker",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "e"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "E"
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "fieldSource": "override"
+                            }
+                          },
+                          {
+                            "type": "FIELD",
+                            "name": "sign",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "CHOICE",
+                                  "members": [
+                                    {
+                                      "type": "STRING",
+                                      "value": "-"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "+"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "BLANK"
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "fieldSource": "override"
+                            }
+                          }
+                        ]
                       },
                       {
                         "type": "FIELD",
@@ -8025,15 +8062,57 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "FIELD",
-                        "name": "marker",
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "[eE][\\+-]?"
-                        },
-                        "metadata": {
-                          "fieldSource": "override"
-                        }
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "FIELD",
+                            "name": "marker",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "e"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "E"
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "fieldSource": "override"
+                            }
+                          },
+                          {
+                            "type": "FIELD",
+                            "name": "sign",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "CHOICE",
+                                  "members": [
+                                    {
+                                      "type": "STRING",
+                                      "value": "-"
+                                    },
+                                    {
+                                      "type": "STRING",
+                                      "value": "+"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "BLANK"
+                                }
+                              ]
+                            },
+                            "metadata": {
+                              "fieldSource": "override"
+                            }
+                          }
+                        ]
                       },
                       {
                         "type": "FIELD",
@@ -8110,15 +8189,57 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "FIELD",
-                    "name": "marker",
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "[eE][\\+-]?"
-                    },
-                    "metadata": {
-                      "fieldSource": "override"
-                    }
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "marker",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "e"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "E"
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "sign",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "-"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "+"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
+                        }
+                      }
+                    ]
                   },
                   {
                     "type": "FIELD",
@@ -8504,7 +8625,7 @@
         "hoisted": true
       }
     },
-    "_kw_comma": {
+    "_kw_trailing_comma": {
       "type": "STRING",
       "value": ","
     },
@@ -9177,7 +9298,7 @@
     "_kw_async",
     "_augmented_assignment_operator",
     "_kw_sign",
-    "_kw_comma",
+    "_kw_trailing_comma",
     "_kw_debug"
   ],
   "supertypes": [

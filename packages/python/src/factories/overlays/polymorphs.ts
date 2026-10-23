@@ -3,7 +3,7 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
@@ -61,13 +61,19 @@ export const futureImportStatement = Object.freeze({
 	)
 }) as unknown as typeof B.futureImportStatement & {
 	importList: {
-		strict: (...args: ArgsOf<typeof F.buildImportList>) => ReturnType<typeof F.buildFutureImportStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImportList>) => ReturnType<typeof F.buildFutureImportStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildImportList>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildImportList>>
+		) => ReturnType<typeof F.buildFutureImportStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToImportList>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToImportList>>
+		) => ReturnType<typeof F.buildFutureImportStatement>;
 	};
 	parenthesizedImportList: {
-		strict: (...args: ArgsOf<typeof F.buildParenthesizedImportList>) => ReturnType<typeof F.buildFutureImportStatement>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToParenthesizedImportList>
+		strict: <const A extends ArgsOf<typeof F.buildParenthesizedImportList>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildParenthesizedImportList>>
+		) => ReturnType<typeof F.buildFutureImportStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToParenthesizedImportList>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToParenthesizedImportList>>
 		) => ReturnType<typeof F.buildFutureImportStatement>;
 	};
 };
@@ -132,40 +138,72 @@ export const importFromStatement = Object.freeze({
 	)
 }) as unknown as typeof B.importFromStatement & {
 	wildcardImport: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'>>,
 			options?: OptionsArg<typeof F.buildImportFromStatement>
 		) => ReturnType<typeof F.buildImportFromStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'>>,
 			options?: OptionsArg<typeof C.coerceToImportFromStatement>
 		) => ReturnType<typeof C.coerceToImportFromStatement>;
 	};
 	importList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildImportList>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildImportList>;
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImportFromStatement>
 		) => ReturnType<typeof F.buildImportFromStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToImportList>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToImportList>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImportFromStatement>
 		) => ReturnType<typeof C.coerceToImportFromStatement>;
 	};
 	parenthesizedImportList: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {
 				content: ArgsOf<typeof F.buildParenthesizedImportList>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildImportFromStatement>[0], 'content'> & {
+						content: ArgsOf<typeof F.buildParenthesizedImportList>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildImportFromStatement>
 		) => ReturnType<typeof F.buildImportFromStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToParenthesizedImportList>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToImportFromStatement>[0], 'content'> & {
+						content: ArgsOf<typeof C.coerceToParenthesizedImportList>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToImportFromStatement>
 		) => ReturnType<typeof C.coerceToImportFromStatement>;
 	};
@@ -210,26 +248,44 @@ export const printStatementChevron = Object.freeze({
 	})
 }) as unknown as typeof B.printStatementChevron & {
 	printChevronArguments: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'> & {
 				printChevronArguments: ArgsOf<typeof F.buildPrintChevronArguments>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'> & {
+						printChevronArguments: ArgsOf<typeof F.buildPrintChevronArguments>;
+					}
+				>,
 			options?: OptionsArg<typeof F.buildPrintStatementChevron>
 		) => ReturnType<typeof F.buildPrintStatementChevron>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'> & {
 				printChevronArguments: ArgsOf<typeof C.coerceToPrintChevronArguments>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'> & {
+						printChevronArguments: ArgsOf<typeof C.coerceToPrintChevronArguments>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToPrintStatementChevron>
 		) => ReturnType<typeof C.coerceToPrintStatementChevron>;
 	};
 	comma: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'>>(
+			config: V &
+				RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'>>,
 			options?: OptionsArg<typeof F.buildPrintStatementChevron>
 		) => ReturnType<typeof F.buildPrintStatementChevron>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'>>(
+			config: V &
+				RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'>>,
 			options?: OptionsArg<typeof C.coerceToPrintStatementChevron>
 		) => ReturnType<typeof C.coerceToPrintStatementChevron>;
 	};
@@ -288,24 +344,36 @@ export const printStatement = Object.freeze({
 	plain: bundle(printStatement$plain$strict, printStatement$plain$coerce)
 }) as unknown as typeof B.printStatement & {
 	chevron: {
-		strict: (...args: ArgsOf<typeof F.buildPrintStatementChevron>) => ReturnType<typeof F.buildPrintStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToPrintStatementChevron>) => ReturnType<typeof F.buildPrintStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildPrintStatementChevron>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildPrintStatementChevron>>
+		) => ReturnType<typeof F.buildPrintStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToPrintStatementChevron>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToPrintStatementChevron>>
+		) => ReturnType<typeof F.buildPrintStatement>;
 		printChevronArguments: {
-			strict: (
-				...args: ArgsOf<typeof printStatementChevron.printChevronArguments.strict>
+			strict: <const A extends ArgsOf<typeof printStatementChevron.printChevronArguments.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof printStatementChevron.printChevronArguments.strict>>
 			) => ReturnType<typeof F.buildPrintStatement>;
-			coerce: (
-				...args: ArgsOf<typeof printStatementChevron.printChevronArguments.coerce>
+			coerce: <const A extends ArgsOf<typeof printStatementChevron.printChevronArguments.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof printStatementChevron.printChevronArguments.coerce>>
 			) => ReturnType<typeof F.buildPrintStatement>;
 		};
 		comma: {
-			strict: (...args: ArgsOf<typeof printStatementChevron.comma.strict>) => ReturnType<typeof F.buildPrintStatement>;
-			coerce: (...args: ArgsOf<typeof printStatementChevron.comma.coerce>) => ReturnType<typeof F.buildPrintStatement>;
+			strict: <const A extends ArgsOf<typeof printStatementChevron.comma.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof printStatementChevron.comma.strict>>
+			) => ReturnType<typeof F.buildPrintStatement>;
+			coerce: <const A extends ArgsOf<typeof printStatementChevron.comma.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof printStatementChevron.comma.coerce>>
+			) => ReturnType<typeof F.buildPrintStatement>;
 		};
 	};
 	plain: {
-		strict: (...args: ArgsOf<typeof F.buildPrintStatementPlain>) => ReturnType<typeof F.buildPrintStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToPrintStatementPlain>) => ReturnType<typeof F.buildPrintStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildPrintStatementPlain>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildPrintStatementPlain>>
+		) => ReturnType<typeof F.buildPrintStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToPrintStatementPlain>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToPrintStatementPlain>>
+		) => ReturnType<typeof F.buildPrintStatement>;
 	};
 };
 
@@ -320,12 +388,18 @@ const subscript$subscripts = <PF extends (config: never) => unknown, CF extends 
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subscripts: _c(child)(...seat) }, options);
 	};
 };
-const subscript$seated: (...args: T.Subscript.BuildArgs) => ReturnType<typeof F.buildSubscript> = subscript$subscripts(
-	F.buildSubscript,
-	F.buildSubscripts
-);
-const subscript$seatedCoerce: (...args: T.Subscript.LooseArgs) => ReturnType<typeof C.coerceToSubscript> =
-	subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts);
+function subscript$seated<A extends T.Subscript.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildSubscript>;
+function subscript$seated(...args: T.Subscript.BuildArgs): ReturnType<typeof F.buildSubscript> {
+	return subscript$subscripts(F.buildSubscript, F.buildSubscripts)(...args);
+}
+function subscript$seatedCoerce<const A extends T.Subscript.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.Subscript.LooseArgs>
+): ReturnType<typeof C.coerceToSubscript>;
+function subscript$seatedCoerce(...args: T.Subscript.LooseArgs): ReturnType<typeof C.coerceToSubscript> {
+	return subscript$subscripts(C.coerceToSubscript, C.coerceToSubscripts)(...args);
+}
 export const subscript = Object.freeze({
 	...B.subscript,
 	...bundle(subscript$seated, subscript$seatedCoerce, { key: 'subscript', max: 1 })
@@ -353,18 +427,22 @@ const comparisonOperator$comparators = <
 		);
 	};
 };
-const comparisonOperator$seated: (
+function comparisonOperator$seated<A extends T.ComparisonOperator.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildComparisonOperator>;
+function comparisonOperator$seated(
 	...args: T.ComparisonOperator.BuildArgs
-) => ReturnType<typeof F.buildComparisonOperator> = comparisonOperator$comparators(
-	F.buildComparisonOperator,
-	F.buildComparisonOperatorComparator
-);
-const comparisonOperator$seatedCoerce: (
+): ReturnType<typeof F.buildComparisonOperator> {
+	return comparisonOperator$comparators(F.buildComparisonOperator, F.buildComparisonOperatorComparator)(...args);
+}
+function comparisonOperator$seatedCoerce<const A extends T.ComparisonOperator.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ComparisonOperator.LooseArgs>
+): ReturnType<typeof C.coerceToComparisonOperator>;
+function comparisonOperator$seatedCoerce(
 	...args: T.ComparisonOperator.LooseArgs
-) => ReturnType<typeof C.coerceToComparisonOperator> = comparisonOperator$comparators(
-	C.coerceToComparisonOperator,
-	C.coerceToComparisonOperatorComparator
-);
+): ReturnType<typeof C.coerceToComparisonOperator> {
+	return comparisonOperator$comparators(C.coerceToComparisonOperator, C.coerceToComparisonOperatorComparator)(...args);
+}
 export const comparisonOperator = Object.freeze({
 	...B.comparisonOperator,
 	...bundle(comparisonOperator$seated, comparisonOperator$seatedCoerce, { key: 'comparisonOperator', max: 1 })
@@ -389,14 +467,28 @@ export const namedExpression = Object.freeze({
 	})
 }) as unknown as typeof B.namedExpression & {
 	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'left'> & { left: ArgsOf<typeof F.buildIdentifier> },
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildIdentifier>;
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'left'> & { left: ArgsOf<typeof F.buildIdentifier> }
+				>,
 			options?: OptionsArg<typeof F.buildNamedExpression>
 		) => ReturnType<typeof F.buildNamedExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'left'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'left'> & {
 				left: ArgsOf<typeof C.coerceToIdentifier>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'left'> & { left: ArgsOf<typeof C.coerceToIdentifier> }
+				>,
 			options?: OptionsArg<typeof C.coerceToNamedExpression>
 		) => ReturnType<typeof C.coerceToNamedExpression>;
 	};
@@ -413,47 +505,24 @@ const matchStatement$subjects = <PF extends (config: never) => unknown, CF exten
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subjects: _c(child)(...seat) }, options);
 	};
 };
-const matchStatement$seated: (...args: T.MatchStatement.BuildArgs) => ReturnType<typeof F.buildMatchStatement> =
-	matchStatement$subjects(F.buildMatchStatement, F.buildSubjects);
-const matchStatement$seatedCoerce: (
-	...args: T.MatchStatement.LooseArgs
-) => ReturnType<typeof C.coerceToMatchStatement> = matchStatement$subjects(
-	C.coerceToMatchStatement,
-	C.coerceToSubjects
-);
+function matchStatement$seated<A extends T.MatchStatement.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildMatchStatement>;
+function matchStatement$seated(...args: T.MatchStatement.BuildArgs): ReturnType<typeof F.buildMatchStatement> {
+	return matchStatement$subjects(F.buildMatchStatement, F.buildSubjects)(...args);
+}
+function matchStatement$seatedCoerce<const A extends T.MatchStatement.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.MatchStatement.LooseArgs>
+): ReturnType<typeof C.coerceToMatchStatement>;
+function matchStatement$seatedCoerce(...args: T.MatchStatement.LooseArgs): ReturnType<typeof C.coerceToMatchStatement> {
+	return matchStatement$subjects(C.coerceToMatchStatement, C.coerceToSubjects)(...args);
+}
 export const matchStatement = Object.freeze({
 	...B.matchStatement,
 	...bundle(matchStatement$seated, matchStatement$seatedCoerce, { key: 'matchStatement', max: 1 })
 }) as unknown as Omit<typeof B.matchStatement, 'strict' | 'coerce'> & {
 	strict: typeof matchStatement$seated;
 	coerce: typeof matchStatement$seatedCoerce;
-};
-
-const matchBlock$block =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const matchBlock$block$strict = matchBlock$block(F.buildMatchBlock, F.buildMatchBlockBlock);
-const matchBlock$block$coerce = matchBlock$block(F.buildMatchBlock, C.coerceToMatchBlockBlock);
-const matchBlock$empty =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const matchBlock$empty$strict = matchBlock$empty(F.buildMatchBlock, F.buildMatchBlockEmpty);
-const matchBlock$empty$coerce = matchBlock$empty(F.buildMatchBlock, C.coerceToMatchBlockEmpty);
-export const matchBlock = Object.freeze({
-	...B.matchBlock,
-	block: bundle(matchBlock$block$strict, matchBlock$block$coerce),
-	empty: bundle(matchBlock$empty$strict, matchBlock$empty$coerce, { key: 'matchBlock.empty', max: 1 })
-}) as unknown as typeof B.matchBlock & {
-	block: {
-		strict: (...args: ArgsOf<typeof F.buildMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
-	};
-	empty: {
-		strict: (...args: ArgsOf<typeof F.buildMatchBlockEmpty>) => ReturnType<typeof F.buildMatchBlock>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMatchBlockEmpty>) => ReturnType<typeof F.buildMatchBlock>;
-	};
 };
 
 const caseClause$casePatterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
@@ -467,10 +536,18 @@ const caseClause$casePatterns = <PF extends (config: never) => unknown, CF exten
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), casePatterns: _c(child)(...seat) }, options);
 	};
 };
-const caseClause$seated: (...args: T.CaseClause.BuildArgs) => ReturnType<typeof F.buildCaseClause> =
-	caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns);
-const caseClause$seatedCoerce: (...args: T.CaseClause.LooseArgs) => ReturnType<typeof C.coerceToCaseClause> =
-	caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns);
+function caseClause$seated<A extends T.CaseClause.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildCaseClause>;
+function caseClause$seated(...args: T.CaseClause.BuildArgs): ReturnType<typeof F.buildCaseClause> {
+	return caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns)(...args);
+}
+function caseClause$seatedCoerce<const A extends T.CaseClause.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.CaseClause.LooseArgs>
+): ReturnType<typeof C.coerceToCaseClause>;
+function caseClause$seatedCoerce(...args: T.CaseClause.LooseArgs): ReturnType<typeof C.coerceToCaseClause> {
+	return caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns)(...args);
+}
 export const caseClause = Object.freeze({
 	...B.caseClause,
 	...bundle(caseClause$seated, caseClause$seatedCoerce, { key: 'caseClause', max: 1 })
@@ -505,17 +582,19 @@ const exceptClauseException$list$coerce = exceptClauseException$list(
 );
 const exceptClauseException: {
 	as: {
-		strict: (...args: ArgsOf<typeof F.buildExceptClauseExceptionAs>) => ReturnType<typeof F.buildExceptClauseException>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionAs>
+		strict: <const A extends ArgsOf<typeof F.buildExceptClauseExceptionAs>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildExceptClauseExceptionAs>>
+		) => ReturnType<typeof F.buildExceptClauseException>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToExceptClauseExceptionAs>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToExceptClauseExceptionAs>>
 		) => ReturnType<typeof F.buildExceptClauseException>;
 	};
 	list: {
-		strict: (
-			...args: ArgsOf<typeof F.buildExceptClauseExceptionList>
+		strict: <const A extends ArgsOf<typeof F.buildExceptClauseExceptionList>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildExceptClauseExceptionList>>
 		) => ReturnType<typeof F.buildExceptClauseException>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExceptClauseExceptionList>
+		coerce: <const A extends ArgsOf<typeof C.coerceToExceptClauseExceptionList>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToExceptClauseExceptionList>>
 		) => ReturnType<typeof F.buildExceptClauseException>;
 	};
 } = Object.freeze({
@@ -586,43 +665,91 @@ export const exceptClause = Object.freeze({
 	}
 }) as unknown as typeof B.exceptClause & {
 	exception: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
 				exception: ArgsOf<typeof F.buildExceptClauseException>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+						exception: ArgsOf<typeof F.buildExceptClauseException>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildExceptClause>
 		) => ReturnType<typeof F.buildExceptClause>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
 				exception: ArgsOf<typeof C.coerceToExceptClauseException>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+						exception: ArgsOf<typeof C.coerceToExceptClauseException>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToExceptClause>
 		) => ReturnType<typeof C.coerceToExceptClause>;
 		as: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
 					exception: ArgsOf<typeof exceptClauseException.as.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+							exception: ArgsOf<typeof exceptClauseException.as.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExceptClause>
 			) => ReturnType<typeof F.buildExceptClause>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
 					exception: ArgsOf<typeof exceptClauseException.as.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+							exception: ArgsOf<typeof exceptClauseException.as.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExceptClause>
 			) => ReturnType<typeof C.coerceToExceptClause>;
 		};
 		list: {
-			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
 					exception: ArgsOf<typeof exceptClauseException.list.strict>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
+							exception: ArgsOf<typeof exceptClauseException.list.strict>;
+						}
+					>,
 				options?: OptionsArg<typeof F.buildExceptClause>
 			) => ReturnType<typeof F.buildExceptClause>;
-			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
 					exception: ArgsOf<typeof exceptClauseException.list.coerce>;
-				},
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
+							exception: ArgsOf<typeof exceptClauseException.list.coerce>;
+						}
+					>,
 				options?: OptionsArg<typeof C.coerceToExceptClause>
 			) => ReturnType<typeof C.coerceToExceptClause>;
 		};
@@ -640,10 +767,18 @@ const classPattern$arguments = <PF extends (config: never) => unknown, CF extend
 		return _fwd<ReturnType<PF>>(parent, { ..._o(config), arguments: _c(child)(...seat) }, options);
 	};
 };
-const classPattern$seated: (...args: T.ClassPattern.BuildArgs) => ReturnType<typeof F.buildClassPattern> =
-	classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns);
-const classPattern$seatedCoerce: (...args: T.ClassPattern.LooseArgs) => ReturnType<typeof C.coerceToClassPattern> =
-	classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns);
+function classPattern$seated<A extends T.ClassPattern.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildClassPattern>;
+function classPattern$seated(...args: T.ClassPattern.BuildArgs): ReturnType<typeof F.buildClassPattern> {
+	return classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns)(...args);
+}
+function classPattern$seatedCoerce<const A extends T.ClassPattern.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.ClassPattern.LooseArgs>
+): ReturnType<typeof C.coerceToClassPattern>;
+function classPattern$seatedCoerce(...args: T.ClassPattern.LooseArgs): ReturnType<typeof C.coerceToClassPattern> {
+	return classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns)(...args);
+}
 export const classPattern = Object.freeze({
 	...B.classPattern,
 	...bundle(classPattern$seated, classPattern$seatedCoerce, { key: 'classPattern', max: 1 })
@@ -660,10 +795,18 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
-const unionPattern$seated: (...args: T.UnionPattern.BuildArgs) => ReturnType<typeof F.buildUnionPattern> =
-	unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative);
-const unionPattern$seatedCoerce: (...args: T.UnionPattern.LooseArgs) => ReturnType<typeof C.coerceToUnionPattern> =
-	unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative);
+function unionPattern$seated<A extends T.UnionPattern.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildUnionPattern>;
+function unionPattern$seated(...args: T.UnionPattern.BuildArgs): ReturnType<typeof F.buildUnionPattern> {
+	return unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative)(...args);
+}
+function unionPattern$seatedCoerce<const A extends T.UnionPattern.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.UnionPattern.LooseArgs>
+): ReturnType<typeof C.coerceToUnionPattern>;
+function unionPattern$seatedCoerce(...args: T.UnionPattern.LooseArgs): ReturnType<typeof C.coerceToUnionPattern> {
+	return unionPattern$patterns(C.coerceToUnionPattern, C.coerceToSimplePatternNegative)(...args);
+}
 export const unionPattern = Object.freeze({
 	...B.unionPattern,
 	...bundle(unionPattern$seated, unionPattern$seatedCoerce)
@@ -741,7 +884,7 @@ const keywordPattern$string =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
+			if (key === 'stringStart' || key === 'contents' || key === 'stringEnd') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
@@ -887,185 +1030,339 @@ export const keywordPattern = Object.freeze({
 	})
 }) as unknown as typeof B.keywordPattern & {
 	classPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof classPattern.strict>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof classPattern.strict>[0] }
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof classPattern.coerce>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof classPattern.coerce>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	splatPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildSplatPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildSplatPattern>[0] }
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToSplatPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof C.coerceToSplatPattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	unionPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof unionPattern.strict>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof unionPattern.strict> }
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof unionPattern.coerce>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof unionPattern.coerce> }
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	caseListPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildCaseListPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof F.buildCaseListPattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToCaseListPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof C.coerceToCaseListPattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	caseTuplePattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildCaseTuplePattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof F.buildCaseTuplePattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	dictPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildDictPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildDictPattern>[0] }
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToDictPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof C.coerceToDictPattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	string: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildString>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildString>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildString>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & ArgsOf<typeof C.coerceToString>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & ArgsOf<typeof C.coerceToString>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & ArgsOf<typeof C.coerceToString>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	concatenatedString: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildConcatenatedString>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof F.buildConcatenatedString>;
+					}
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToConcatenatedString>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+						value: ArgsOf<typeof C.coerceToConcatenatedString>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	true: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	false: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	none: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	negative: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> &
-				ArgsOf<typeof F.buildSimplePatternNegative>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof F.buildSimplePatternNegative>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildSimplePatternNegative>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
-				ArgsOf<typeof C.coerceToSimplePatternNegative>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
+						ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	complexPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildComplexPattern>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof F.buildComplexPattern>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildComplexPattern>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
-				ArgsOf<typeof C.coerceToComplexPattern>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof C.coerceToComplexPattern>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & ArgsOf<typeof C.coerceToComplexPattern>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	dottedName: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildDottedName> },
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildDottedName>;
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildDottedName> }
+				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToDottedName>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof C.coerceToDottedName> }
+				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	wildcardPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
@@ -1222,36 +1519,68 @@ export const simplePattern = Object.freeze({
 	})
 }) as unknown as typeof B.simplePattern & {
 	classPattern: {
-		strict: (...args: ArgsOf<typeof classPattern.strict>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof classPattern.coerce>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof classPattern.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof classPattern.strict>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof classPattern.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof classPattern.coerce>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	splatPattern: {
-		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildSplatPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSplatPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSplatPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSplatPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	unionPattern: {
-		strict: (...args: ArgsOf<typeof unionPattern.strict>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof unionPattern.coerce>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof unionPattern.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof unionPattern.strict>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof unionPattern.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof unionPattern.coerce>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	caseListPattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseListPattern>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseListPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildCaseListPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCaseListPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToCaseListPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCaseListPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	caseTuplePattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseTuplePattern>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseTuplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildCaseTuplePattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCaseTuplePattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToCaseTuplePattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCaseTuplePattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	dictPattern: {
-		strict: (...args: ArgsOf<typeof F.buildDictPattern>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToDictPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildDictPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildDictPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToDictPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToDictPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	string: {
-		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildString>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildString>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToString>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToString>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	concatenatedString: {
-		strict: (...args: ArgsOf<typeof F.buildConcatenatedString>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConcatenatedString>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildConcatenatedString>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildConcatenatedString>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToConcatenatedString>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToConcatenatedString>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	true: {
 		strict: (options?: OptionsArg<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildSimplePattern>;
@@ -1266,16 +1595,28 @@ export const simplePattern = Object.freeze({
 		coerce: (options?: OptionsArg<typeof C.coerceToSimplePattern>) => ReturnType<typeof C.coerceToSimplePattern>;
 	};
 	negative: {
-		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildSimplePatternNegative>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSimplePatternNegative>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSimplePatternNegative>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSimplePatternNegative>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	complexPattern: {
-		strict: (...args: ArgsOf<typeof F.buildComplexPattern>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToComplexPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildComplexPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildComplexPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToComplexPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToComplexPattern>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	dottedName: {
-		strict: (...args: ArgsOf<typeof F.buildDottedName>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToDottedName>) => ReturnType<typeof F.buildSimplePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildDottedName>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildDottedName>>
+		) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToDottedName>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToDottedName>>
+		) => ReturnType<typeof F.buildSimplePattern>;
 	};
 	wildcardPattern: {
 		strict: (options?: OptionsArg<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildSimplePattern>;
@@ -1802,143 +2143,267 @@ export const casePattern = Object.freeze({
 	}
 }) as unknown as typeof B.casePattern & {
 	caseAsPattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildCaseAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCaseAsPattern>>
+		) => ReturnType<typeof F.buildCasePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToCaseAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCaseAsPattern>>
+		) => ReturnType<typeof F.buildCasePattern>;
 	};
 	keywordPattern: {
-		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildKeywordPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildKeywordPattern>>
+		) => ReturnType<typeof F.buildCasePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToKeywordPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToKeywordPattern>>
+		) => ReturnType<typeof F.buildCasePattern>;
 		classPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.classPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.classPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.classPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.classPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.classPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		splatPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.splatPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.splatPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.splatPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.splatPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.splatPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.splatPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		unionPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.unionPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.unionPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.unionPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.unionPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.unionPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		caseListPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.caseListPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.caseListPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.caseListPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.caseListPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.caseListPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.caseListPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		caseTuplePattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.caseTuplePattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.caseTuplePattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.caseTuplePattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.caseTuplePattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.caseTuplePattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.caseTuplePattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		dictPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.dictPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.dictPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.dictPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.dictPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.dictPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.dictPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		string: {
-			strict: (...args: ArgsOf<typeof keywordPattern.string.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.string.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.string.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.string.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.string.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.string.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		concatenatedString: {
-			strict: (
-				...args: ArgsOf<typeof keywordPattern.concatenatedString.strict>
+			strict: <const A extends ArgsOf<typeof keywordPattern.concatenatedString.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.concatenatedString.strict>>
 			) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (
-				...args: ArgsOf<typeof keywordPattern.concatenatedString.coerce>
+			coerce: <const A extends ArgsOf<typeof keywordPattern.concatenatedString.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.concatenatedString.coerce>>
 			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		true: {
-			strict: (...args: ArgsOf<typeof keywordPattern.true.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.true.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.true.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.true.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.true.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.true.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		false: {
-			strict: (...args: ArgsOf<typeof keywordPattern.false.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.false.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.false.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.false.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.false.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.false.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		none: {
-			strict: (...args: ArgsOf<typeof keywordPattern.none.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.none.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.none.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.none.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.none.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.none.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		negative: {
-			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.negative.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.negative.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.negative.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.negative.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		complexPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.complexPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.complexPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.complexPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.complexPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.complexPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.complexPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		dottedName: {
-			strict: (...args: ArgsOf<typeof keywordPattern.dottedName.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.dottedName.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.dottedName.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.dottedName.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.dottedName.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.dottedName.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		wildcardPattern: {
-			strict: (...args: ArgsOf<typeof keywordPattern.wildcardPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.wildcardPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof keywordPattern.wildcardPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.wildcardPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof keywordPattern.wildcardPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof keywordPattern.wildcardPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 	};
 	simplePattern: {
-		strict: (...args: ArgsOf<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
+		strict: <const A extends ArgsOf<typeof F.buildSimplePattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSimplePattern>>
+		) => ReturnType<typeof F.buildCasePattern>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSimplePattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSimplePattern>>
+		) => ReturnType<typeof F.buildCasePattern>;
 		classPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.classPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.classPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.classPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.classPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.classPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		splatPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.splatPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.splatPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.splatPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.splatPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.splatPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.splatPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		unionPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.unionPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.unionPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.unionPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.unionPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.unionPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		caseListPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.caseListPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.caseListPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.caseListPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.caseListPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.caseListPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.caseListPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		caseTuplePattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.caseTuplePattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.caseTuplePattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.caseTuplePattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.caseTuplePattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.caseTuplePattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.caseTuplePattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		dictPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.dictPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.dictPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.dictPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.dictPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.dictPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.dictPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		string: {
-			strict: (...args: ArgsOf<typeof simplePattern.string.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.string.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.string.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.string.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.string.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.string.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		concatenatedString: {
-			strict: (
-				...args: ArgsOf<typeof simplePattern.concatenatedString.strict>
+			strict: <const A extends ArgsOf<typeof simplePattern.concatenatedString.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.concatenatedString.strict>>
 			) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (
-				...args: ArgsOf<typeof simplePattern.concatenatedString.coerce>
+			coerce: <const A extends ArgsOf<typeof simplePattern.concatenatedString.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.concatenatedString.coerce>>
 			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		true: {
-			strict: (...args: ArgsOf<typeof simplePattern.true.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.true.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.true.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.true.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.true.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.true.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		false: {
-			strict: (...args: ArgsOf<typeof simplePattern.false.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.false.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.false.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.false.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.false.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.false.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		none: {
-			strict: (...args: ArgsOf<typeof simplePattern.none.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.none.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.none.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.none.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.none.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.none.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		negative: {
-			strict: (...args: ArgsOf<typeof simplePattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.negative.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.negative.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.negative.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.negative.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		complexPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.complexPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.complexPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.complexPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.complexPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.complexPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.complexPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		dottedName: {
-			strict: (...args: ArgsOf<typeof simplePattern.dottedName.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.dottedName.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.dottedName.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.dottedName.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.dottedName.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.dottedName.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 		wildcardPattern: {
-			strict: (...args: ArgsOf<typeof simplePattern.wildcardPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.wildcardPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+			strict: <const A extends ArgsOf<typeof simplePattern.wildcardPattern.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.wildcardPattern.strict>>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: <const A extends ArgsOf<typeof simplePattern.wildcardPattern.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof simplePattern.wildcardPattern.coerce>>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 	};
 };
@@ -2031,7 +2496,7 @@ const keyValuePattern$string =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
+			if (key === 'stringStart' || key === 'contents' || key === 'stringEnd') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);
@@ -2175,174 +2640,328 @@ export const keyValuePattern = Object.freeze({
 	})
 }) as unknown as typeof B.keyValuePattern & {
 	classPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.strict>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.strict>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.strict>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.coerce>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> &
+				ArgsOf<typeof classPattern.coerce>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.coerce>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	splatPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildSplatPattern>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildSplatPattern>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildSplatPattern>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToSplatPattern>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToSplatPattern>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToSplatPattern>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	unionPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof unionPattern.strict> },
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof unionPattern.strict>;
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof unionPattern.strict> }
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof unionPattern.coerce>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof unionPattern.coerce> }
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	caseListPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof F.buildCaseListPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildCaseListPattern>[0] }
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof C.coerceToCaseListPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+						key: ArgsOf<typeof C.coerceToCaseListPattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	caseTuplePattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof F.buildCaseTuplePattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildCaseTuplePattern>[0] }
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+						key: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	dictPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDictPattern>[0] },
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildDictPattern>[0];
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDictPattern>[0] }
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof C.coerceToDictPattern>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+						key: ArgsOf<typeof C.coerceToDictPattern>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	string: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildString>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildString>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildString>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToString>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToString>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToString>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	concatenatedString: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof F.buildConcatenatedString>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildConcatenatedString> }
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof C.coerceToConcatenatedString>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+						key: ArgsOf<typeof C.coerceToConcatenatedString>;
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	true: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	false: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	none: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	negative: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof F.buildSimplePatternNegative>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+						key: ArgsOf<typeof F.buildSimplePatternNegative>[0];
+					}
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof C.coerceToSimplePatternNegative>[0];
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+						key: ArgsOf<typeof C.coerceToSimplePatternNegative>[0];
+					}
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	complexPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildComplexPattern>[0],
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> &
+				ArgsOf<typeof F.buildComplexPattern>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildComplexPattern>[0]
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToComplexPattern>[0],
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToComplexPattern>[0]
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToComplexPattern>[0]
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	dottedName: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDottedName> },
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildDottedName>;
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDottedName> }
+				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
 				key: ArgsOf<typeof C.coerceToDottedName>;
-			},
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToDottedName> }
+				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	wildcardPattern: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+		strict: <const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+		coerce: <const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>(
+			config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
@@ -2363,14 +2982,16 @@ const slice$flatten$step =
 		}
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, step: _c(child)(inner['expression']) } : rest, options);
 	};
-const slice$seated: (...args: T.Slice.BuildArgs) => ReturnType<typeof F.buildSlice> = slice$flatten$step(
-	F.buildSlice,
-	F.buildSliceGroup
-);
-const slice$seatedCoerce: (...args: T.Slice.LooseArgs) => ReturnType<typeof C.coerceToSlice> = slice$flatten$step(
-	C.coerceToSlice,
-	C.coerceToSliceGroup
-);
+function slice$seated<A extends T.Slice.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildSlice>;
+function slice$seated(...args: T.Slice.BuildArgs): ReturnType<typeof F.buildSlice> {
+	return slice$flatten$step(F.buildSlice, F.buildSliceGroup)(...args);
+}
+function slice$seatedCoerce<const A extends T.Slice.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.Slice.LooseArgs>
+): ReturnType<typeof C.coerceToSlice>;
+function slice$seatedCoerce(...args: T.Slice.LooseArgs): ReturnType<typeof C.coerceToSlice> {
+	return slice$flatten$step(C.coerceToSlice, C.coerceToSliceGroup)(...args);
+}
 export const slice = Object.freeze({
 	...B.slice,
 	...bundle(slice$seated, slice$seatedCoerce, { key: 'slice', max: 1 })
@@ -2399,6 +3020,17 @@ export const compoundStatement: {
 	class: B.classDefinition,
 	decorated: B.decoratedDefinition,
 	match: matchStatement
+});
+
+export const matchBlock: {
+	readonly strict: typeof B.matchBlockBlock.strict;
+	readonly coerce: typeof B.matchBlockBlock.coerce;
+	readonly block: typeof B.matchBlockBlock;
+	readonly empty: typeof B.matchBlockEmpty;
+} = Object.freeze({
+	...bundle(B.matchBlockBlock.strict, B.matchBlockBlock.coerce),
+	block: B.matchBlockBlock,
+	empty: B.matchBlockEmpty
 });
 
 export const withClause: {
@@ -2494,7 +3126,7 @@ export const float: {
 	readonly leadingPoint: typeof B.floatLeadingPoint;
 	readonly scientific: typeof B.floatScientific;
 } = Object.freeze({
-	...bundle(B.floatPoint.strict, B.floatPoint.coerce, { key: 'float', max: 1 }),
+	...bundle(B.floatPoint.strict, B.floatPoint.coerce, { key: 'float', max: 2 }),
 	point: B.floatPoint,
 	leadingPoint: B.floatLeadingPoint,
 	scientific: B.floatScientific
@@ -2904,146 +3536,238 @@ const yieldFromClause$named$identifier$coerce = yieldFromClause$named$identifier
 );
 const yieldFromClause: {
 	comparison: {
-		strict: (...args: ArgsOf<typeof comparisonOperator.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof comparisonOperator.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof comparisonOperator.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof comparisonOperator.strict>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof comparisonOperator.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof comparisonOperator.coerce>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 	};
 	not: {
-		strict: (...args: ArgsOf<typeof F.buildNotOperator>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNotOperator>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof F.buildNotOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNotOperator>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNotOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNotOperator>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 	};
 	boolean: {
-		strict: (...args: ArgsOf<typeof F.buildBooleanOperator>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBooleanOperator>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof F.buildBooleanOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBooleanOperator>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBooleanOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBooleanOperator>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 	};
 	lambda: {
-		strict: (...args: ArgsOf<typeof F.buildLambda>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLambda>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof F.buildLambda>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLambda>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLambda>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLambda>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 	};
 	primary: {
 		await: {
-			strict: (...args: ArgsOf<typeof primaryExpression.await.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.await.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.await.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.await.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.await.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.await.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		binary: {
-			strict: (...args: ArgsOf<typeof primaryExpression.binary.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.binary.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.binary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.binary.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.binary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.binary.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		identifier: {
-			strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof F.buildIdentifier>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildIdentifier>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof C.coerceToIdentifier>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToIdentifier>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		string: {
-			strict: (...args: ArgsOf<typeof primaryExpression.string.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.string.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.string.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.string.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.string.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.string.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		concatenatedString: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.concatenatedString.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.concatenatedString.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.concatenatedString.strict>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.concatenatedString.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.concatenatedString.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.concatenatedString.coerce>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		integer: {
-			strict: (...args: ArgsOf<typeof primaryExpression.integer.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.integer.strict>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.integer.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.integer.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.integer.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.integer.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		float: {
-			strict: (...args: ArgsOf<typeof primaryExpression.float.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.float.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.float.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.float.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.float.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.float.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		unary: {
-			strict: (...args: ArgsOf<typeof primaryExpression.unary.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.unary.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.unary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.unary.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.unary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.unary.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		attribute: {
-			strict: (...args: ArgsOf<typeof primaryExpression.attribute.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.attribute.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.attribute.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.attribute.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.attribute.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.attribute.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		subscript: {
-			strict: (...args: ArgsOf<typeof primaryExpression.subscript.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.subscript.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.subscript.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.subscript.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.subscript.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.subscript.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		call: {
-			strict: (...args: ArgsOf<typeof primaryExpression.call.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.call.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.call.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.call.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.call.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.call.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		list: {
-			strict: (...args: ArgsOf<typeof primaryExpression.list.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.list.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.list.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.list.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.list.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.list.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		listComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.listComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.listComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listComprehension.strict>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.listComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.listComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listComprehension.coerce>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		dictionary: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.dictionary.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.dictionary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionary.strict>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.dictionary.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.dictionary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionary.coerce>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		dictionaryComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		set: {
-			strict: (...args: ArgsOf<typeof primaryExpression.set.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.set.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.set.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.set.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.set.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.set.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		setComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.setComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.setComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.setComprehension.strict>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.setComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.setComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.setComprehension.coerce>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		tuple: {
-			strict: (...args: ArgsOf<typeof primaryExpression.tuple.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.tuple.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.tuple.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.tuple.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.tuple.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.tuple.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		parenthesized: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.parenthesized.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.parenthesized.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.parenthesized.strict>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.parenthesized.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.parenthesized.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.parenthesized.coerce>>
 			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		generator: {
-			strict: (...args: ArgsOf<typeof primaryExpression.generator.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.generator.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.generator.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.generator.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.generator.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.generator.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 		listSplat: {
-			strict: (...args: ArgsOf<typeof primaryExpression.listSplat.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.listSplat.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.listSplat.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listSplat.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.listSplat.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listSplat.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 	};
 	conditional: {
-		strict: (...args: ArgsOf<typeof F.buildConditionalExpression>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConditionalExpression>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof F.buildConditionalExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildConditionalExpression>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToConditionalExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToConditionalExpression>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 	};
 	named: {
-		strict: (...args: ArgsOf<typeof F.buildNamedExpression>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedExpression>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof F.buildNamedExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamedExpression>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamedExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamedExpression>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 		identifier: {
-			strict: (...args: ArgsOf<typeof namedExpression.identifier.strict>) => ReturnType<typeof F.buildYieldFromClause>;
-			coerce: (...args: ArgsOf<typeof namedExpression.identifier.coerce>) => ReturnType<typeof F.buildYieldFromClause>;
+			strict: <const A extends ArgsOf<typeof namedExpression.identifier.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof namedExpression.identifier.strict>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
+			coerce: <const A extends ArgsOf<typeof namedExpression.identifier.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof namedExpression.identifier.coerce>>
+			) => ReturnType<typeof F.buildYieldFromClause>;
 		};
 	};
 	as: {
-		strict: (...args: ArgsOf<typeof F.buildAsPattern>) => ReturnType<typeof F.buildYieldFromClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAsPattern>) => ReturnType<typeof F.buildYieldFromClause>;
+		strict: <const A extends ArgsOf<typeof F.buildAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAsPattern>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAsPattern>>
+		) => ReturnType<typeof F.buildYieldFromClause>;
 	};
 } = Object.freeze({
 	comparison: bundle(yieldFromClause$comparison$strict, yieldFromClause$comparison$coerce, {
@@ -3086,7 +3810,7 @@ const yieldFromClause: {
 		}),
 		float: bundle(yieldFromClause$primary$float$strict, yieldFromClause$primary$float$coerce, {
 			key: 'yieldFromClause.primary.float',
-			max: 1
+			max: 2
 		}),
 		unary: bundle(yieldFromClause$primary$unary$strict, yieldFromClause$primary$unary$coerce, {
 			key: 'yieldFromClause.primary.unary',
@@ -3518,7 +4242,7 @@ export const yield_ = Object.freeze({
 			}),
 			float: bundle(yield_$fromClause$primary$float$strict, yield_$fromClause$primary$float$coerce, {
 				key: 'yield_.fromClause.primary.float',
-				max: 1
+				max: 2
 			}),
 			unary: bundle(yield_$fromClause$primary$unary$strict, yield_$fromClause$primary$unary$coerce, {
 				key: 'yield_.fromClause.primary.unary',
@@ -3587,145 +4311,245 @@ export const yield_ = Object.freeze({
 	}
 }) as unknown as typeof B.yield_ & {
 	fromClause: {
-		strict: (...args: ArgsOf<typeof F.buildYieldFromClause>) => ReturnType<typeof F.buildYield>;
-		coerce: (...args: ArgsOf<typeof C.coerceToYieldFromClause>) => ReturnType<typeof F.buildYield>;
+		strict: <const A extends ArgsOf<typeof F.buildYieldFromClause>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildYieldFromClause>>
+		) => ReturnType<typeof F.buildYield>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToYieldFromClause>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToYieldFromClause>>
+		) => ReturnType<typeof F.buildYield>;
 		comparison: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.comparison.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.comparison.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.comparison.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.comparison.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.comparison.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.comparison.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 		};
 		not: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.not.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.not.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.not.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.not.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.not.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.not.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 		};
 		boolean: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.boolean.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.boolean.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.boolean.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.boolean.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.boolean.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.boolean.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 		};
 		lambda: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.lambda.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.lambda.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.lambda.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.lambda.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.lambda.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.lambda.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 		};
 		primary: {
 			await: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.await.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.await.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.await.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.await.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.await.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.await.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			binary: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.binary.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.binary.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.binary.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.binary.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.binary.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.binary.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			identifier: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.identifier.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.identifier.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.identifier.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.identifier.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.identifier.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.identifier.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			string: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.string.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.string.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.string.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.string.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.string.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.string.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			concatenatedString: {
-				strict: (
-					...args: ArgsOf<typeof yieldFromClause.primary.concatenatedString.strict>
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.concatenatedString.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.concatenatedString.strict>>
 				) => ReturnType<typeof F.buildYield>;
-				coerce: (
-					...args: ArgsOf<typeof yieldFromClause.primary.concatenatedString.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.concatenatedString.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.concatenatedString.coerce>>
 				) => ReturnType<typeof F.buildYield>;
 			};
 			integer: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.integer.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.integer.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.integer.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.integer.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.integer.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.integer.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			float: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.float.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.float.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.float.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.float.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.float.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.float.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			unary: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.unary.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.unary.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.unary.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.unary.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.unary.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.unary.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			attribute: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.attribute.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.attribute.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.attribute.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.attribute.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.attribute.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.attribute.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			subscript: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.subscript.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.subscript.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.subscript.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.subscript.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.subscript.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.subscript.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			call: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.call.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.call.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.call.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.call.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.call.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.call.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			list: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.list.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.list.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.list.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.list.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.list.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.list.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			listComprehension: {
-				strict: (
-					...args: ArgsOf<typeof yieldFromClause.primary.listComprehension.strict>
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.listComprehension.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.listComprehension.strict>>
 				) => ReturnType<typeof F.buildYield>;
-				coerce: (
-					...args: ArgsOf<typeof yieldFromClause.primary.listComprehension.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.listComprehension.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.listComprehension.coerce>>
 				) => ReturnType<typeof F.buildYield>;
 			};
 			dictionary: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.dictionary.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.dictionary.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.dictionary.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.dictionary.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.dictionary.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.dictionary.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			dictionaryComprehension: {
-				strict: (
-					...args: ArgsOf<typeof yieldFromClause.primary.dictionaryComprehension.strict>
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.dictionaryComprehension.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.dictionaryComprehension.strict>>
 				) => ReturnType<typeof F.buildYield>;
-				coerce: (
-					...args: ArgsOf<typeof yieldFromClause.primary.dictionaryComprehension.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.dictionaryComprehension.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.dictionaryComprehension.coerce>>
 				) => ReturnType<typeof F.buildYield>;
 			};
 			set: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.set.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.set.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.set.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.set.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.set.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.set.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			setComprehension: {
-				strict: (
-					...args: ArgsOf<typeof yieldFromClause.primary.setComprehension.strict>
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.setComprehension.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.setComprehension.strict>>
 				) => ReturnType<typeof F.buildYield>;
-				coerce: (
-					...args: ArgsOf<typeof yieldFromClause.primary.setComprehension.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.setComprehension.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.setComprehension.coerce>>
 				) => ReturnType<typeof F.buildYield>;
 			};
 			tuple: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.tuple.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.tuple.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.tuple.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.tuple.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.tuple.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.tuple.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			parenthesized: {
-				strict: (
-					...args: ArgsOf<typeof yieldFromClause.primary.parenthesized.strict>
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.parenthesized.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.parenthesized.strict>>
 				) => ReturnType<typeof F.buildYield>;
-				coerce: (
-					...args: ArgsOf<typeof yieldFromClause.primary.parenthesized.coerce>
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.parenthesized.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.parenthesized.coerce>>
 				) => ReturnType<typeof F.buildYield>;
 			};
 			generator: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.generator.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.generator.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.generator.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.generator.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.generator.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.generator.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 			listSplat: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.primary.listSplat.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.primary.listSplat.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.primary.listSplat.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.listSplat.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.primary.listSplat.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.primary.listSplat.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 		};
 		conditional: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.conditional.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.conditional.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.conditional.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.conditional.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.conditional.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.conditional.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 		};
 		named: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.named.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.named.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.named.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.named.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.named.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.named.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 			identifier: {
-				strict: (...args: ArgsOf<typeof yieldFromClause.named.identifier.strict>) => ReturnType<typeof F.buildYield>;
-				coerce: (...args: ArgsOf<typeof yieldFromClause.named.identifier.coerce>) => ReturnType<typeof F.buildYield>;
+				strict: <const A extends ArgsOf<typeof yieldFromClause.named.identifier.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.named.identifier.strict>>
+				) => ReturnType<typeof F.buildYield>;
+				coerce: <const A extends ArgsOf<typeof yieldFromClause.named.identifier.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.named.identifier.coerce>>
+				) => ReturnType<typeof F.buildYield>;
 			};
 		};
 		as: {
-			strict: (...args: ArgsOf<typeof yieldFromClause.as.strict>) => ReturnType<typeof F.buildYield>;
-			coerce: (...args: ArgsOf<typeof yieldFromClause.as.coerce>) => ReturnType<typeof F.buildYield>;
+			strict: <const A extends ArgsOf<typeof yieldFromClause.as.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.as.strict>>
+			) => ReturnType<typeof F.buildYield>;
+			coerce: <const A extends ArgsOf<typeof yieldFromClause.as.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yieldFromClause.as.coerce>>
+			) => ReturnType<typeof F.buildYield>;
 		};
 	};
 };
@@ -4539,7 +5363,7 @@ export const expressionStatement = Object.freeze({
 		}),
 		float: bundle(expressionStatement$primary$float$strict, expressionStatement$primary$float$coerce, {
 			key: 'expressionStatement.primary.float',
-			max: 1
+			max: 2
 		}),
 		unary: bundle(expressionStatement$primary$unary$strict, expressionStatement$primary$unary$coerce, {
 			key: 'expressionStatement.primary.unary',
@@ -4682,7 +5506,7 @@ export const expressionStatement = Object.freeze({
 				float: bundle(
 					expressionStatement$yield$fromClause$primary$float$strict,
 					expressionStatement$yield$fromClause$primary$float$coerce,
-					{ key: 'expressionStatement.yield.fromClause.primary.float', max: 1 }
+					{ key: 'expressionStatement.yield.fromClause.primary.float', max: 2 }
 				),
 				unary: bundle(
 					expressionStatement$yield$fromClause$primary$unary$strict,
@@ -4776,432 +5600,526 @@ export const expressionStatement = Object.freeze({
 	}
 }) as unknown as typeof B.expressionStatement & {
 	comparison: {
-		strict: (...args: ArgsOf<typeof comparisonOperator.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof comparisonOperator.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof comparisonOperator.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof comparisonOperator.strict>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof comparisonOperator.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof comparisonOperator.coerce>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	not: {
-		strict: (...args: ArgsOf<typeof F.buildNotOperator>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNotOperator>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildNotOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNotOperator>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNotOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNotOperator>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	boolean: {
-		strict: (...args: ArgsOf<typeof F.buildBooleanOperator>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBooleanOperator>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildBooleanOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBooleanOperator>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBooleanOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBooleanOperator>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	lambda: {
-		strict: (...args: ArgsOf<typeof F.buildLambda>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLambda>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildLambda>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLambda>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLambda>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLambda>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	primary: {
 		await: {
-			strict: (...args: ArgsOf<typeof primaryExpression.await.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.await.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.await.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.await.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.await.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.await.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		binary: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.binary.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.binary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.binary.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.binary.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.binary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.binary.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		identifier: {
-			strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof F.buildIdentifier>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildIdentifier>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof C.coerceToIdentifier>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToIdentifier>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		string: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.string.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.string.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.string.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.string.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.string.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.string.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		concatenatedString: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.concatenatedString.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.concatenatedString.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.concatenatedString.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.concatenatedString.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.concatenatedString.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.concatenatedString.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		integer: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.integer.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.integer.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.integer.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.integer.strict>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.integer.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.integer.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		float: {
-			strict: (...args: ArgsOf<typeof primaryExpression.float.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.float.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.float.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.float.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.float.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.float.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		unary: {
-			strict: (...args: ArgsOf<typeof primaryExpression.unary.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.unary.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.unary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.unary.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.unary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.unary.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		attribute: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.attribute.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.attribute.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.attribute.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.attribute.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.attribute.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.attribute.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		subscript: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.subscript.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.subscript.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.subscript.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.subscript.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.subscript.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.subscript.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		call: {
-			strict: (...args: ArgsOf<typeof primaryExpression.call.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.call.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.call.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.call.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.call.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.call.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		list: {
-			strict: (...args: ArgsOf<typeof primaryExpression.list.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.list.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.list.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.list.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.list.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.list.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		listComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.listComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.listComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listComprehension.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.listComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.listComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listComprehension.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		dictionary: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.dictionary.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.dictionary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionary.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.dictionary.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.dictionary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionary.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		dictionaryComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		set: {
-			strict: (...args: ArgsOf<typeof primaryExpression.set.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.set.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.set.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.set.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.set.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.set.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		setComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.setComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.setComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.setComprehension.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.setComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.setComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.setComprehension.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		tuple: {
-			strict: (...args: ArgsOf<typeof primaryExpression.tuple.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.tuple.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.tuple.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.tuple.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.tuple.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.tuple.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		parenthesized: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.parenthesized.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.parenthesized.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.parenthesized.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.parenthesized.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.parenthesized.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.parenthesized.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		generator: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.generator.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.generator.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.generator.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.generator.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.generator.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.generator.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		listSplat: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.listSplat.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.listSplat.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listSplat.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.listSplat.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.listSplat.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listSplat.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 	};
 	conditional: {
-		strict: (...args: ArgsOf<typeof F.buildConditionalExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConditionalExpression>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildConditionalExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildConditionalExpression>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToConditionalExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToConditionalExpression>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	named: {
-		strict: (...args: ArgsOf<typeof F.buildNamedExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedExpression>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildNamedExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamedExpression>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamedExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamedExpression>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 		identifier: {
-			strict: (
-				...args: ArgsOf<typeof namedExpression.identifier.strict>
+			strict: <const A extends ArgsOf<typeof namedExpression.identifier.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof namedExpression.identifier.strict>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof namedExpression.identifier.coerce>
+			coerce: <const A extends ArgsOf<typeof namedExpression.identifier.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof namedExpression.identifier.coerce>>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 	};
 	as: {
-		strict: (...args: ArgsOf<typeof F.buildAsPattern>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAsPattern>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAsPattern>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAsPattern>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	tuple: {
-		strict: (...args: ArgsOf<typeof F.buildExpressionStatementTuple>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExpressionStatementTuple>
+		strict: <const A extends ArgsOf<typeof F.buildExpressionStatementTuple>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildExpressionStatementTuple>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToExpressionStatementTuple>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToExpressionStatementTuple>>
 		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	eq: {
-		strict: (...args: ArgsOf<typeof F.buildAssignmentEq>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAssignmentEq>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildAssignmentEq>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAssignmentEq>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAssignmentEq>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAssignmentEq>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	type: {
-		strict: (...args: ArgsOf<typeof F.buildAssignmentType>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAssignmentType>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildAssignmentType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAssignmentType>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAssignmentType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAssignmentType>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	typed: {
-		strict: (...args: ArgsOf<typeof F.buildAssignmentTyped>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAssignmentTyped>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildAssignmentTyped>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAssignmentTyped>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAssignmentTyped>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAssignmentTyped>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	augmentedAssignment: {
-		strict: (...args: ArgsOf<typeof F.buildAugmentedAssignment>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAugmentedAssignment>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildAugmentedAssignment>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAugmentedAssignment>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAugmentedAssignment>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAugmentedAssignment>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	yield: {
-		strict: (...args: ArgsOf<typeof F.buildYield>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToYield>) => ReturnType<typeof F.buildExpressionStatement>;
+		strict: <const A extends ArgsOf<typeof F.buildYield>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildYield>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToYield>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToYield>>
+		) => ReturnType<typeof F.buildExpressionStatement>;
 		fromClause: {
-			strict: (...args: ArgsOf<typeof yield_.fromClause.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (...args: ArgsOf<typeof yield_.fromClause.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+			strict: <const A extends ArgsOf<typeof yield_.fromClause.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.strict>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
+			coerce: <const A extends ArgsOf<typeof yield_.fromClause.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.coerce>>
+			) => ReturnType<typeof F.buildExpressionStatement>;
 			comparison: {
-				strict: (
-					...args: ArgsOf<typeof yield_.fromClause.comparison.strict>
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.comparison.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.comparison.strict>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (
-					...args: ArgsOf<typeof yield_.fromClause.comparison.coerce>
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.comparison.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.comparison.coerce>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
 			};
 			not: {
-				strict: (...args: ArgsOf<typeof yield_.fromClause.not.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (...args: ArgsOf<typeof yield_.fromClause.not.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.not.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.not.strict>>
+				) => ReturnType<typeof F.buildExpressionStatement>;
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.not.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.not.coerce>>
+				) => ReturnType<typeof F.buildExpressionStatement>;
 			};
 			boolean: {
-				strict: (
-					...args: ArgsOf<typeof yield_.fromClause.boolean.strict>
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.boolean.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.boolean.strict>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (
-					...args: ArgsOf<typeof yield_.fromClause.boolean.coerce>
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.boolean.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.boolean.coerce>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
 			};
 			lambda: {
-				strict: (
-					...args: ArgsOf<typeof yield_.fromClause.lambda.strict>
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.lambda.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.lambda.strict>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (
-					...args: ArgsOf<typeof yield_.fromClause.lambda.coerce>
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.lambda.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.lambda.coerce>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
 			};
 			primary: {
 				await: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.await.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.await.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.await.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.await.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.await.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.await.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				binary: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.binary.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.binary.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.binary.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.binary.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.binary.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.binary.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				identifier: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.identifier.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.identifier.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.identifier.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.identifier.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.identifier.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.identifier.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				string: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.string.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.string.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.string.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.string.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.string.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.string.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				concatenatedString: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.concatenatedString.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.concatenatedString.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.concatenatedString.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.concatenatedString.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.concatenatedString.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.concatenatedString.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				integer: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.integer.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.integer.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.integer.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.integer.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.integer.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.integer.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				float: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.float.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.float.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.float.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.float.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.float.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.float.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				unary: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.unary.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.unary.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.unary.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.unary.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.unary.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.unary.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				attribute: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.attribute.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.attribute.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.attribute.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.attribute.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.attribute.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.attribute.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				subscript: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.subscript.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.subscript.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.subscript.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.subscript.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.subscript.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.subscript.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				call: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.call.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.call.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.call.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.call.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.call.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.call.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				list: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.list.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.list.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.list.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.list.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.list.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.list.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				listComprehension: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.listComprehension.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.listComprehension.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.listComprehension.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.listComprehension.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.listComprehension.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.listComprehension.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				dictionary: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.dictionary.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.dictionary.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.dictionary.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.dictionary.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.dictionary.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.dictionary.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				dictionaryComprehension: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.dictionaryComprehension.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.dictionaryComprehension.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.dictionaryComprehension.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.dictionaryComprehension.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.dictionaryComprehension.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.dictionaryComprehension.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				set: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.set.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.set.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.set.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.set.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.set.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.set.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				setComprehension: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.setComprehension.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.setComprehension.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.setComprehension.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.setComprehension.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.setComprehension.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.setComprehension.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				tuple: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.tuple.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.tuple.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.tuple.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.tuple.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.tuple.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.tuple.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				parenthesized: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.parenthesized.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.parenthesized.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.parenthesized.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.parenthesized.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.parenthesized.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.parenthesized.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				generator: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.generator.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.generator.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.generator.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.generator.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.generator.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.generator.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 				listSplat: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.listSplat.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.primary.listSplat.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.listSplat.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.primary.listSplat.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.primary.listSplat.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.primary.listSplat.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 			};
 			conditional: {
-				strict: (
-					...args: ArgsOf<typeof yield_.fromClause.conditional.strict>
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.conditional.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.conditional.strict>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (
-					...args: ArgsOf<typeof yield_.fromClause.conditional.coerce>
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.conditional.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.conditional.coerce>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
 			};
 			named: {
-				strict: (
-					...args: ArgsOf<typeof yield_.fromClause.named.strict>
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.named.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.named.strict>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (
-					...args: ArgsOf<typeof yield_.fromClause.named.coerce>
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.named.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.named.coerce>>
 				) => ReturnType<typeof F.buildExpressionStatement>;
 				identifier: {
-					strict: (
-						...args: ArgsOf<typeof yield_.fromClause.named.identifier.strict>
+					strict: <const A extends ArgsOf<typeof yield_.fromClause.named.identifier.strict>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.named.identifier.strict>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
-					coerce: (
-						...args: ArgsOf<typeof yield_.fromClause.named.identifier.coerce>
+					coerce: <const A extends ArgsOf<typeof yield_.fromClause.named.identifier.coerce>>(
+						...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.named.identifier.coerce>>
 					) => ReturnType<typeof F.buildExpressionStatement>;
 				};
 			};
 			as: {
-				strict: (...args: ArgsOf<typeof yield_.fromClause.as.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-				coerce: (...args: ArgsOf<typeof yield_.fromClause.as.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
+				strict: <const A extends ArgsOf<typeof yield_.fromClause.as.strict>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.as.strict>>
+				) => ReturnType<typeof F.buildExpressionStatement>;
+				coerce: <const A extends ArgsOf<typeof yield_.fromClause.as.coerce>>(
+					...args: A & RefuseUndeclared<A, ArgsOf<typeof yield_.fromClause.as.coerce>>
+				) => ReturnType<typeof F.buildExpressionStatement>;
 			};
 		};
 	};
@@ -5457,7 +6375,7 @@ export const type = Object.freeze({
 		string: bundle(type$primary$string$strict, type$primary$string$coerce, { key: 'type.primary.string', max: 1 }),
 		concatenatedString: bundle(type$primary$concatenatedString$strict, type$primary$concatenatedString$coerce),
 		integer: bundle(type$primary$integer$strict, type$primary$integer$coerce, { key: 'type.primary.integer', max: 1 }),
-		float: bundle(type$primary$float$strict, type$primary$float$coerce, { key: 'type.primary.float', max: 1 }),
+		float: bundle(type$primary$float$strict, type$primary$float$coerce, { key: 'type.primary.float', max: 2 }),
 		unary: bundle(type$primary$unary$strict, type$primary$unary$coerce, { key: 'type.primary.unary', max: 1 }),
 		attribute: bundle(type$primary$attribute$strict, type$primary$attribute$coerce, {
 			key: 'type.primary.attribute',
@@ -5517,146 +6435,278 @@ export const type = Object.freeze({
 	memberType: bundle(type$memberType$strict, type$memberType$coerce, { key: 'type.memberType', max: 1 })
 }) as unknown as typeof B.type & {
 	comparison: {
-		strict: (...args: ArgsOf<typeof comparisonOperator.strict>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof comparisonOperator.coerce>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof comparisonOperator.strict>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof comparisonOperator.strict>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof comparisonOperator.coerce>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof comparisonOperator.coerce>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	not: {
-		strict: (...args: ArgsOf<typeof F.buildNotOperator>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNotOperator>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildNotOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNotOperator>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNotOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNotOperator>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	boolean: {
-		strict: (...args: ArgsOf<typeof F.buildBooleanOperator>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBooleanOperator>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildBooleanOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildBooleanOperator>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToBooleanOperator>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToBooleanOperator>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	lambda: {
-		strict: (...args: ArgsOf<typeof F.buildLambda>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLambda>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildLambda>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildLambda>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToLambda>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToLambda>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	primary: {
 		await: {
-			strict: (...args: ArgsOf<typeof primaryExpression.await.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.await.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.await.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.await.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.await.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.await.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		binary: {
-			strict: (...args: ArgsOf<typeof primaryExpression.binary.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.binary.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.binary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.binary.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.binary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.binary.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		identifier: {
-			strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof F.buildIdentifier>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildIdentifier>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof C.coerceToIdentifier>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToIdentifier>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		string: {
-			strict: (...args: ArgsOf<typeof primaryExpression.string.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.string.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.string.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.string.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.string.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.string.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		concatenatedString: {
-			strict: (...args: ArgsOf<typeof primaryExpression.concatenatedString.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.concatenatedString.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.concatenatedString.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.concatenatedString.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.concatenatedString.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.concatenatedString.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		integer: {
-			strict: (...args: ArgsOf<typeof primaryExpression.integer.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.integer.strict>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.integer.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.integer.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.integer.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.integer.strict>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		float: {
-			strict: (...args: ArgsOf<typeof primaryExpression.float.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.float.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.float.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.float.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.float.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.float.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		unary: {
-			strict: (...args: ArgsOf<typeof primaryExpression.unary.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.unary.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.unary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.unary.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.unary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.unary.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		attribute: {
-			strict: (...args: ArgsOf<typeof primaryExpression.attribute.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.attribute.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.attribute.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.attribute.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.attribute.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.attribute.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		subscript: {
-			strict: (...args: ArgsOf<typeof primaryExpression.subscript.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.subscript.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.subscript.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.subscript.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.subscript.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.subscript.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		call: {
-			strict: (...args: ArgsOf<typeof primaryExpression.call.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.call.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.call.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.call.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.call.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.call.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		list: {
-			strict: (...args: ArgsOf<typeof primaryExpression.list.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.list.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.list.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.list.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.list.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.list.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		listComprehension: {
-			strict: (...args: ArgsOf<typeof primaryExpression.listComprehension.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.listComprehension.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.listComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listComprehension.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.listComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listComprehension.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		dictionary: {
-			strict: (...args: ArgsOf<typeof primaryExpression.dictionary.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.dictionary.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.dictionary.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionary.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.dictionary.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionary.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		dictionaryComprehension: {
-			strict: (
-				...args: ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>
+			strict: <const A extends ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionaryComprehension.strict>>
 			) => ReturnType<typeof F.buildType>;
-			coerce: (
-				...args: ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>
+			coerce: <const A extends ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.dictionaryComprehension.coerce>>
 			) => ReturnType<typeof F.buildType>;
 		};
 		set: {
-			strict: (...args: ArgsOf<typeof primaryExpression.set.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.set.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.set.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.set.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.set.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.set.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		setComprehension: {
-			strict: (...args: ArgsOf<typeof primaryExpression.setComprehension.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.setComprehension.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.setComprehension.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.setComprehension.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.setComprehension.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.setComprehension.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		tuple: {
-			strict: (...args: ArgsOf<typeof primaryExpression.tuple.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.tuple.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.tuple.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.tuple.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.tuple.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.tuple.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		parenthesized: {
-			strict: (...args: ArgsOf<typeof primaryExpression.parenthesized.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.parenthesized.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.parenthesized.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.parenthesized.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.parenthesized.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.parenthesized.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		generator: {
-			strict: (...args: ArgsOf<typeof primaryExpression.generator.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.generator.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.generator.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.generator.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.generator.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.generator.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 		listSplat: {
-			strict: (...args: ArgsOf<typeof primaryExpression.listSplat.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof primaryExpression.listSplat.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof primaryExpression.listSplat.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listSplat.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof primaryExpression.listSplat.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof primaryExpression.listSplat.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 	};
 	conditional: {
-		strict: (...args: ArgsOf<typeof F.buildConditionalExpression>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConditionalExpression>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildConditionalExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildConditionalExpression>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToConditionalExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToConditionalExpression>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	named: {
-		strict: (...args: ArgsOf<typeof F.buildNamedExpression>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedExpression>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildNamedExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNamedExpression>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToNamedExpression>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToNamedExpression>>
+		) => ReturnType<typeof F.buildType>;
 		identifier: {
-			strict: (...args: ArgsOf<typeof namedExpression.identifier.strict>) => ReturnType<typeof F.buildType>;
-			coerce: (...args: ArgsOf<typeof namedExpression.identifier.coerce>) => ReturnType<typeof F.buildType>;
+			strict: <const A extends ArgsOf<typeof namedExpression.identifier.strict>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof namedExpression.identifier.strict>>
+			) => ReturnType<typeof F.buildType>;
+			coerce: <const A extends ArgsOf<typeof namedExpression.identifier.coerce>>(
+				...args: A & RefuseUndeclared<A, ArgsOf<typeof namedExpression.identifier.coerce>>
+			) => ReturnType<typeof F.buildType>;
 		};
 	};
 	as: {
-		strict: (...args: ArgsOf<typeof F.buildAsPattern>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAsPattern>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildAsPattern>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToAsPattern>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToAsPattern>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	splatType: {
-		strict: (...args: ArgsOf<typeof F.buildSplatType>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSplatType>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildSplatType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildSplatType>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToSplatType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToSplatType>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	genericType: {
-		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildGenericType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildGenericType>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToGenericType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToGenericType>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	unionType: {
-		strict: (...args: ArgsOf<typeof F.buildUnionType>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUnionType>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildUnionType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildUnionType>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToUnionType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToUnionType>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	constrainedType: {
-		strict: (...args: ArgsOf<typeof F.buildConstrainedType>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConstrainedType>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildConstrainedType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildConstrainedType>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToConstrainedType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToConstrainedType>>
+		) => ReturnType<typeof F.buildType>;
 	};
 	memberType: {
-		strict: (...args: ArgsOf<typeof F.buildMemberType>) => ReturnType<typeof F.buildType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMemberType>) => ReturnType<typeof F.buildType>;
+		strict: <const A extends ArgsOf<typeof F.buildMemberType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildMemberType>>
+		) => ReturnType<typeof F.buildType>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToMemberType>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToMemberType>>
+		) => ReturnType<typeof F.buildType>;
 	};
 };
 

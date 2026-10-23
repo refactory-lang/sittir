@@ -1,7 +1,8 @@
 {
-	"grammarHash": "74894a3bcf64ff504c811b1d4161e3abedb0805e35543049544a2248691520ff",
+	"grammarHash": "e8194320896b9ca0f354bcfddddaf6b14d68e2216dcf7b9f66ea2269bbcfaae0",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_attributed_argument"]},"step":"default","sourceChains":[["_attributed_argument"]],"conflict":{"symbolSequence":["'['","tuple_expression_repeat1","_expression"],"lookahead":"']'","interpretations":["_attributed_argument","_attributed_argument"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["_pattern","_primitive_type"]},"step":"upstream-declared","sourceChains":[["_pattern"],["_primitive_type","_type"]],"conflict":{"symbolSequence":["'fn'","identifier","'('","'('","'u8'"],"lookahead":"')'","interpretations":["_pattern","_primitive_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_type","_attributed_type_parameter"]},"step":"default","sourceChains":[["_type"],["_attributed_type_parameter"]],"conflict":{"symbolSequence":["'impl'","'<'","metavariable"],"lookahead":"'>'","interpretations":["_type","_attributed_type_parameter"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_type","_pattern"]},"step":"upstream-declared","sourceChains":[["_type"],["_pattern"]],"conflict":{"symbolSequence":["'fn'","identifier","'('","'('","identifier"],"lookahead":"')'","interpretations":["_type","_pattern"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["function_modifiers","foreign_mod_item_semi","foreign_mod_item_body"]},"step":"upstream-declared","sourceChains":[["function_modifiers"],["foreign_mod_item_semi","foreign_mod_item"],["foreign_mod_item_body","foreign_mod_item"]],"conflict":{"symbolSequence":["'unsafe'"],"lookahead":"'extern'","interpretations":["foreign_mod_item_semi","foreign_mod_item_body","function_modifiers_repeat1"]}},
@@ -11,7 +12,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["visibility_modifier_pub"]},"step":"upstream-declared","sourceChains":[["visibility_modifier_pub","visibility_modifier"]],"conflict":{"symbolSequence":["'struct'","identifier","'('","'pub'"],"lookahead":"'('","interpretations":["visibility_modifier_pub","visibility_modifier_pub"]}}
 	],
 	"bound": {
-		"grammarHash": "ee7b1f996ac23219ac92d86dd685e3a9ec24c8ef1bf4c329ad5eafd8681f38a1",
+		"grammarHash": "d2e6126f5c8d537b4a3770832caf9cc7de544f11ddeabe9a7bbc0c2eacc316b2",
 		"resolutions": []
 	}
 }

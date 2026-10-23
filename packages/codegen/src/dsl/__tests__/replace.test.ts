@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const rules = "k: ($) => seq($.word, ',', $.word)";
 const bare = 'k: ($) => $.word';

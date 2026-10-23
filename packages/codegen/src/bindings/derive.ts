@@ -240,18 +240,18 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		const subtypes = modelNode(input.model, sk)?.subtypes ?? [];
 		if (subtypes.length === 0 || seen.includes(sk)) return null;
 		const vs: (readonly string[])[] = [];
+		let voters = 0;
 		for (const m of subtypes) {
 			const direct = directVocab(input, m, context);
-			const v =
-				direct !== undefined
-					? [direct]
-					: (modelNode(input.model, m)?.subtypes.length ?? 0) > 0
-						? supertypeKind(input, m, [...seen, sk], context)
-						: resolveKind(input, m, context).tokens.filter(isVocabularyKind);
+			const nested = direct === undefined && (modelNode(input.model, m)?.subtypes.length ?? 0) > 0;
+			const tokens = direct === undefined && !nested ? resolveKind(input, m, context).tokens : [];
+			if (tokens.length > 0 && tokens.every((token) => token.startsWith('literal:'))) continue;
+			voters += 1;
+			const v = direct !== undefined ? [direct] : nested ? supertypeKind(input, m, [...seen, sk], context) : tokens.filter(isVocabularyKind);
 			if (v && v.length > 0) vs.push(v);
 		}
 		const flat = vs.flat();
-		if (flat.length === 0 || vs.length < Math.max(2, Math.floor(subtypes.length / 2))) {
+		if (flat.length === 0 || vs.length < Math.max(Math.min(2, voters), Math.floor(voters / 2))) {
 			derivedSuper.set(memoKey, null);
 			return null;
 		}

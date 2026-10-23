@@ -34,13 +34,13 @@
 import { fileURLToPath } from 'node:url';
 
 const MODULES = {
-	evaluate: '../../codegen/src/compiler/evaluate.ts',
-	evaluatePackage: '../../codegen/src/compiler/evaluate-package.ts',
+	evaluate: '../../codegen/src/dsl/evaluate.ts',
+	evaluatePackage: '../../codegen/src/dsl/evaluate-package.ts',
 	grammars: '../../codegen/src/grammars.ts',
 	link: '../../codegen/src/compiler/link.ts',
 	normalize: '../../codegen/src/compiler/normalize.ts',
 	assemble: '../../codegen/src/compiler/assemble.ts',
-	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
+	resolveGrammar: '../../codegen/src/dsl/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts',
 	stage: '../../codegen/src/compiler/stage.ts',
 	ruleCatalog: '../../codegen/src/compiler/rule-catalog.ts',
@@ -80,7 +80,8 @@ const MODULES = {
 	recordLines: '../../codegen/src/emitters/record-lines.ts',
 	wrap: '../../codegen/src/emitters/wrap.ts',
 	contentHash: '../../codegen/src/util/content-hash.ts',
-	writeFileAtomic: '../../codegen/src/util/write-file-atomic.ts'
+	writeFileAtomic: '../../codegen/src/util/write-file-atomic.ts',
+	vocabularyPaths: '../../codegen/src/bindings/vocabulary-paths.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -88,13 +89,13 @@ const MODULES = {
 // signatures. Runtime-erased. The import() path literals MUST match `MODULES`.
 // ---------------------------------------------------------------------------
 export interface CodegenSurface {
-	evaluate: typeof import('../../codegen/src/compiler/evaluate.ts');
-	evaluatePackage: typeof import('../../codegen/src/compiler/evaluate-package.ts');
+	evaluate: typeof import('../../codegen/src/dsl/evaluate.ts');
+	evaluatePackage: typeof import('../../codegen/src/dsl/evaluate-package.ts');
 	grammars: typeof import('../../codegen/src/grammars.ts');
 	link: typeof import('../../codegen/src/compiler/link.ts');
 	normalize: typeof import('../../codegen/src/compiler/normalize.ts');
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
-	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
+	resolveGrammar: typeof import('../../codegen/src/dsl/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts');
 	stage: typeof import('../../codegen/src/compiler/stage.ts');
 	ruleCatalog: typeof import('../../codegen/src/compiler/rule-catalog.ts');
@@ -135,6 +136,7 @@ export interface CodegenSurface {
 	wrap: typeof import('../../codegen/src/emitters/wrap.ts');
 	contentHash: typeof import('../../codegen/src/util/content-hash.ts');
 	writeFileAtomic: typeof import('../../codegen/src/util/write-file-atomic.ts');
+	vocabularyPaths: typeof import('../../codegen/src/bindings/vocabulary-paths.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -194,7 +196,6 @@ export async function load<M extends keyof CodegenSurface>(module: M): Promise<C
 // from the phase signatures so they can never drift from the real pipeline.
 // ---------------------------------------------------------------------------
 export type NodeMap = import('../../codegen/src/compiler/types.ts').NodeMap;
-export type SerializedNodeModel = import('../../codegen/src/emitters/node-model.ts').SerializedNodeModel;
 export type AssembledNode = import('../../codegen/src/compiler/model/node-map.ts').AssembledNode;
 export type RenderBody = import('../../codegen/src/emitters/render-body.ts').Body;
 export type GeneratedIdTables = import('../../codegen/src/dsl/symbol-table.ts').GeneratedIdTables;
@@ -209,6 +210,7 @@ export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-var
 export type PolymorphVariantMap = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantMap;
 export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').FactoryShape;
 export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
+export type SerializedNodeModel = import('../../codegen/src/emitters/node-model.ts').SerializedNodeModel;
 export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
 export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
 export type SpelledTriviaForm = import('../../codegen/src/compiler/model/trivia.ts').SpelledTriviaForm;
@@ -240,7 +242,7 @@ export async function compileNodeMap(grammar: string, options: { readonly unboun
 	const { nodeMap } = await compileGrammar({
 		package: await invoke('grammars', 'grammarPackage', grammar),
 		generatedIdTables: options.unbound === true ? undefined : await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar),
-		unbound: options.unbound
+		evaluation: { unbound: options.unbound }
 	});
 	return nodeMap;
 }

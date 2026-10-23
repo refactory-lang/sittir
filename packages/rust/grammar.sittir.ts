@@ -161,7 +161,7 @@ export default grammar(enrich(base), wire({
 			'"{"/after': preference('space'),
 			'"}"/before': preference('space')
 		},
-		last_match_arm: { before: preference('newline') },
+		last_match_arm: { before: preference('newline'), 'trailing_comma:': preference('blank') },
 
 		range_expression_binary: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
 		range_expression_prefix: { 'operator:/after': preference('tight') },
@@ -288,7 +288,7 @@ export default grammar(enrich(base), wire({
 		last_match_arm: {
 			'0': field('attributes'),
 			'1': flatten(),
-			'4/0': field('comma')
+			'4/0': field('trailing_comma')
 		},
 
 		match_block: {
@@ -358,7 +358,11 @@ export default grammar(enrich(base), wire({
 			{ '1/1/0/1/3/0': field('in') },
 			{ '1/1/0/1/3': variant('in_path') },
 			{ '1/1/0': variant('scope') },
-			{ '0': variant('crate'), '1': variant('pub') }
+			{ '0': variant('crate'), '1': variant('pub') },
+			// A bare `crate` is a visibility modifier only at this arm; the
+			// alias names that form, so a read decides it without its
+			// parent. `pub(crate)`'s `crate` is another site and stays.
+			{ '0': alias('crate_visibility_modifier') }
 		],
 
 		function_type: { '1/0/0': variant('trait_form'), '1/0/1': variant('fn_form') },
@@ -560,7 +564,6 @@ export default grammar(enrich(base), wire({
 		'unclassifiable-shape': ['_let_chain'],
 		'rule-reauthored-without-cause': [
 			'_non_special_token',
-			'_primitive_type',
 			'impl_item',
 			'reference_expression'
 		]
@@ -626,13 +629,6 @@ export default grammar(enrich(base), wire({
 				$._token_keywords
 			)
 		),
-
-		// Enrich mints `_primitive_type` as the storage of upstream's inline
-		// `alias(choice(...primitive types), $.primitive_type)`. As a rule of
-		// its own it is a reduction point, so a bare primitive-type keyword
-		// in a pattern (`fn f((u8))`) reaches it and `_pattern` alike;
-		// `_pattern` is the correct read, so this rule yields.
-		_primitive_type: reauthored('ambiguity', ($, original) => prec(-1, original)),
 
 		_token_keywords: vocabulary(($) =>
 			choice(

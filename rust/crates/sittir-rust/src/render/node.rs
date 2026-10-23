@@ -522,6 +522,8 @@ pub enum AnyNode {
     TypeIdentifier(TypeIdentifierNode),
     #[kind(kind::_FIELD_IDENTIFIER, display)]
     FieldIdentifier(FieldIdentifierNode),
+    #[kind(kind::_CRATE_VISIBILITY_MODIFIER, display)]
+    CrateVisibilityModifier(CrateVisibilityModifierNode),
     #[kind(kind::_SHORTHAND_FIELD_IDENTIFIER, display)]
     ShorthandFieldIdentifier(ShorthandFieldIdentifierNode),
     #[kind(kind::EMPTY_STATEMENT)]
@@ -1094,6 +1096,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.prepare(ctx),
             AnyNode::TypeIdentifier(t) => t.prepare(ctx),
             AnyNode::FieldIdentifier(t) => t.prepare(ctx),
+            AnyNode::CrateVisibilityModifier(t) => t.prepare(ctx),
             AnyNode::ShorthandFieldIdentifier(t) => t.prepare(ctx),
             AnyNode::EmptyStatement(_) => Ok(()),
             AnyNode::UnitType(_) => Ok(()),
@@ -1502,6 +1505,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.gap_edges(),
             AnyNode::TypeIdentifier(t) => t.gap_edges(),
             AnyNode::FieldIdentifier(t) => t.gap_edges(),
+            AnyNode::CrateVisibilityModifier(t) => t.gap_edges(),
             AnyNode::ShorthandFieldIdentifier(t) => t.gap_edges(),
             AnyNode::EmptyStatement(edges) => Some(edges),
             AnyNode::UnitType(edges) => Some(edges),
@@ -1910,6 +1914,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.snapshot_edge(),
             AnyNode::TypeIdentifier(t) => t.snapshot_edge(),
             AnyNode::FieldIdentifier(t) => t.snapshot_edge(),
+            AnyNode::CrateVisibilityModifier(t) => t.snapshot_edge(),
             AnyNode::ShorthandFieldIdentifier(t) => t.snapshot_edge(),
             AnyNode::EmptyStatement(_) => None,
             AnyNode::UnitType(_) => None,
@@ -2318,6 +2323,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.source_separator(ctx),
             AnyNode::TypeIdentifier(t) => t.source_separator(ctx),
             AnyNode::FieldIdentifier(t) => t.source_separator(ctx),
+            AnyNode::CrateVisibilityModifier(t) => t.source_separator(ctx),
             AnyNode::ShorthandFieldIdentifier(t) => t.source_separator(ctx),
             AnyNode::EmptyStatement(_) => None,
             AnyNode::UnitType(_) => None,
@@ -6782,36 +6788,35 @@ impl ::sittir_core::render::Render for ParametersElementsNodeSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum VisibilityModifierContentNodeSlot {
+    #[kind(kind::_CRATE_VISIBILITY_MODIFIER, display)]
+    CrateVisibilityModifier(CrateVisibilityModifierNode),
     #[kind(kind::VISIBILITY_MODIFIER_PUB)]
     VisibilityModifierPub(VisibilityModifierPubNode),
-    #[kind(kind::CRATE)]
-    #[node(edged)]
-    Crate(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for VisibilityModifierContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.prepare(ctx),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.prepare(ctx),
-            VisibilityModifierContentNodeSlot::Crate(_) => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.gap_edges(),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.gap_edges(),
-            VisibilityModifierContentNodeSlot::Crate(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.snapshot_edge(),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.snapshot_edge(),
-            VisibilityModifierContentNodeSlot::Crate(_) => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.source_separator(ctx),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.source_separator(ctx),
-            VisibilityModifierContentNodeSlot::Crate(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6822,8 +6827,8 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierContentNodeSlot {
 impl ::sittir_core::view::KindOf for VisibilityModifierContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
+            Self::CrateVisibilityModifier(inner) => inner.kind_in(kinds),
             Self::VisibilityModifierPub(inner) => inner.kind_in(kinds),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6831,8 +6836,8 @@ impl ::sittir_core::view::KindOf for VisibilityModifierContentNodeSlot {
 impl ::sittir_core::render::Render for VisibilityModifierContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(inner) => inner.render(w),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(inner) => inner.render(w),
-            VisibilityModifierContentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
         }
     }
 }
@@ -10837,6 +10842,50 @@ impl ::sittir_core::render::Render for LastMatchArmAttributesNodeSlot {
         match self {
             LastMatchArmAttributesNodeSlot::AttributeItem(inner) => inner.render(w),
             LastMatchArmAttributesNodeSlot::InnerAttributeItem(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice)]
+pub enum LastMatchArmTrailingCommaNodeSlot {
+    #[kind(kind::COMMA)]
+    Comma,
+    #[node(blank)]
+    Blank,
+}
+
+impl ::sittir_core::prepare::Prepare for LastMatchArmTrailingCommaNodeSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            LastMatchArmTrailingCommaNodeSlot::Comma => Ok(()),
+            LastMatchArmTrailingCommaNodeSlot::Blank => Ok(()),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for LastMatchArmTrailingCommaNodeSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
+            Self::Blank => false,
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for LastMatchArmTrailingCommaNodeSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            LastMatchArmTrailingCommaNodeSlot::Comma => {
+                w.site_at(options::SITE_LAST_MATCH_ARM_COMMA_BEFORE);
+                let written = render_comma(w);
+                written?;
+                Ok(())
+            }
+            LastMatchArmTrailingCommaNodeSlot::Blank => Ok(()),
         }
     }
 }
@@ -17096,7 +17145,7 @@ impl ::sittir_core::prepare::Prepare for ExternModifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER, words = 7)]
+#[node(kind = kind::VISIBILITY_MODIFIER, layout = [kind::CRATE], words = 7)]
 pub struct VisibilityModifierNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -19642,22 +19691,22 @@ impl ::sittir_core::prepare::Prepare for MatchBlockNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 15)]
+#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 19)]
 pub struct LastMatchArmNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_attributes")]
-    #[slot(field = field::ATTRIBUTES, word = 3, width = 2, run = 5)]
+    #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 5, width = 5)]
+    #[slot(field = field::PATTERN, word = 4, width = 5)]
     pub pattern: ::sittir_core::SlotValue<Box<MatchPatternNode>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 10, width = 5)]
+    #[slot(field = field::VALUE, word = 9, width = 5)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
-    #[wire(key = "_comma")]
-    #[slot(field = field::COMMA, presence = kind::COMMA, word = 2, bit = 0)]
-    pub comma: bool,
+    #[wire(key = "_trailing_comma")]
+    #[slot(field = field::TRAILING_COMMA, word = 14, width = 5)]
+    pub trailing_comma: Option<::sittir_core::SlotValue<LastMatchArmTrailingCommaNodeSlot>>,
     #[wire(key = "_attributes_separator_space")]
     pub attributes_separator_space: Option<KindId>,
 }
@@ -19687,10 +19736,11 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmNode {
         ::sittir_core::prepare::fill_slot_gaps(self.attributes.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_attributes"));
         self.attributes_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx);
+        if self.trailing_comma.is_none() { self.trailing_comma = LastMatchArmTrailingCommaNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_LAST_MATCH_ARM_TRAILING_COMMA).arm).map(::sittir_core::SlotValue::Node); }
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
-        self.comma.prepare(ctx)?;
+        self.trailing_comma.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28868,19 +28918,19 @@ pub struct TypeIdentifierNode {
 
 impl ::sittir_core::view::KindOf for TypeIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(472)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(472) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(473) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(472)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -28916,23 +28966,71 @@ pub struct FieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for FieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(469)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(470)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(469) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(470) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(469)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(470)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FieldIdentifierNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_CRATE_VISIBILITY_MODIFIER, display, content = content, words = 7)]
+pub struct CrateVisibilityModifierNode {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "_content")]
+    #[slot(word = 2, width = 5)]
+    pub content: ::sittir_core::SlotValue<CrateNode>,
+}
+
+impl ::sittir_core::view::KindOf for CrateVisibilityModifierNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(469)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for CrateVisibilityModifierNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(469) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for CrateVisibilityModifierNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(469)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_crate_visibility_modifier(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for CrateVisibilityModifierNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.content.prepare(ctx)?;
@@ -28964,19 +29062,19 @@ pub struct ShorthandFieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for ShorthandFieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(471)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(472)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandFieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(471) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(472) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandFieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(471)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(472)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
 }
 
@@ -32837,21 +32935,6 @@ impl ::sittir_core::prepare::SeatTarget for ExternModifierNode {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for VisibilityModifierNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match Some(&mut self.content) {
-            Some(::sittir_core::SlotValue::Node(inner)) => return inner.seat_target(table, ctx),
-            Some(::sittir_core::SlotValue::Coord(coord)) => {
-                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
-                    return Some((self.layout.edges_mut(), site));
-                }
-            }
-            None => {}
-        }
-        None
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for LifetimeNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(239)) {
@@ -34390,15 +34473,6 @@ impl ::sittir_core::prepare::SeatTarget for UseDeclarationArgumentNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for VisibilityModifierContentNodeSlot {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
-            Self::VisibilityModifierPub { .. } => None,
-        }
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for BracketedTypeTypeNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -35111,7 +35185,6 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::UseWildcard(t) => t.seat_target(table, ctx),
             Self::Parameter(t) => t.seat_target(table, ctx),
             Self::ExternModifier(t) => t.seat_target(table, ctx),
-            Self::VisibilityModifier(t) => t.seat_target(table, ctx),
             Self::Lifetime(t) => t.seat_target(table, ctx),
             Self::ArrayType(t) => t.seat_target(table, ctx),
             Self::FunctionType(t) => t.seat_target(table, ctx),
@@ -35230,7 +35303,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AttributedArgument(t) => t.seat_target(table, ctx),
             Self::AttributedOrderedField(t) => t.seat_target(table, ctx),
             Self::TypeArgument(t) => t.seat_target(table, ctx),
-            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
+            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::CrateVisibilityModifier { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -36736,8 +36809,8 @@ fn render_last_match_arm(node: &LastMatchArmNode, w: &mut dyn ::sittir_core::ren
         tail: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
-    let comma = View::new(&node.comma, ",");
     let pattern = &node.pattern;
+    let trailing_comma = View::new(&node.trailing_comma, "{}");
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
@@ -36746,10 +36819,7 @@ fn render_last_match_arm(node: &LastMatchArmNode, w: &mut dyn ::sittir_core::ren
     w.text("=>")?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
-    if comma.is_present() {
-        w.site_at(options::SITE_LAST_MATCH_ARM_COMMA_BEFORE);
-        comma.render(w)?;
-    }
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| trailing_comma.render(w))?;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -39010,6 +39080,12 @@ fn render_field_identifier(node: &FieldIdentifierNode, w: &mut dyn ::sittir_core
     Ok(())
 }
 
+fn render_crate_visibility_modifier(node: &CrateVisibilityModifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = &node.content;
+    w.text("crate")?;
+    Ok(())
+}
+
 fn render_shorthand_field_identifier(node: &ShorthandFieldIdentifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
@@ -40211,6 +40287,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
+            Self::CrateVisibilityModifier(inner) => inner.kind_in(kinds),
             Self::ShorthandFieldIdentifier(inner) => inner.kind_in(kinds),
             Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
             Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
@@ -40622,6 +40699,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ErrorSentinel(t) => t.render(w),
             AnyNode::TypeIdentifier(t) => t.render(w),
             AnyNode::FieldIdentifier(t) => t.render(w),
+            AnyNode::CrateVisibilityModifier(t) => t.render(w),
             AnyNode::ShorthandFieldIdentifier(t) => t.render(w),
             AnyNode::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
             AnyNode::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
@@ -40797,273 +40875,274 @@ pub fn render_node_parts(
     Ok((NodeSource::Factory, rendered))
 }
 
-const _: () = assert!(::core::mem::size_of::<AbstractTypeNode>() <= 256, "AbstractTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArgumentsElementsNode>() <= 256, "ArgumentsElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArgumentsNode>() <= 256, "ArgumentsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayExpressionListNode>() <= 256, "ArrayExpressionListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayExpressionNode>() <= 256, "ArrayExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayExpressionSemiNode>() <= 256, "ArrayExpressionSemiNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ArrayTypeNode>() <= 256, "ArrayTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AssignmentExpressionNode>() <= 256, "AssignmentExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AssociatedTypeNode>() <= 256, "AssociatedTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AsyncBlockNode>() <= 256, "AsyncBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeInputNode>() <= 256, "AttributeInputNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeItemNode>() <= 256, "AttributeItemNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeNode>() <= 256, "AttributeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedArgumentNode>() <= 256, "AttributedArgumentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantNode>() > 256, "AttributedEnumVariantNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationNode>() > 256, "AttributedFieldDeclarationNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldNode>() > 256, "AttributedOrderedFieldNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedParameterNode>() <= 256, "AttributedParameterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedParameterReceiverNode>() <= 256, "AttributedParameterReceiverNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedTypeParameterNode>() <= 256, "AttributedTypeParameterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AwaitExpressionNode>() <= 256, "AwaitExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BaseFieldInitializerNode>() <= 256, "BaseFieldInitializerNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BinaryExpressionNode>() <= 256, "BinaryExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentContentNode>() <= 256, "BlockCommentContentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentDocInnerNode>() <= 256, "BlockCommentDocInnerNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentDocOuterNode>() <= 256, "BlockCommentDocOuterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentNode>() <= 256, "BlockCommentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockCommentRegularNode>() <= 256, "BlockCommentRegularNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BlockNode>() <= 256, "BlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BooleanLiteralEnum>() <= 256, "BooleanLiteralEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BoundedTypeNode>() <= 256, "BoundedTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BracketedTypeNode>() <= 256, "BracketedTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<BreakExpressionNode>() <= 256, "BreakExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CallExpressionNode>() <= 256, "CallExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CapturedPatternNode>() <= 256, "CapturedPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralEmptyNode>() <= 256, "CharLiteralEmptyNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedHexNode>() <= 256, "CharLiteralEscapedHexNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedNode>() <= 256, "CharLiteralEscapedNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedSimpleNode>() <= 256, "CharLiteralEscapedSimpleNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedUnicodeBracedNode>() <= 256, "CharLiteralEscapedUnicodeBracedNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedUnicodeFixedNode>() <= 256, "CharLiteralEscapedUnicodeFixedNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralNode>() <= 256, "CharLiteralNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CharLiteralPlainNode>() <= 256, "CharLiteralPlainNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClosureExpressionBlockNode>() <= 256, "ClosureExpressionBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClosureExpressionExprNode>() <= 256, "ClosureExpressionExprNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClosureExpressionNode>() <= 256, "ClosureExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClosureParametersNode>() <= 256, "ClosureParametersNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<CompoundAssignmentExprNode>() <= 256, "CompoundAssignmentExprNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ConstBlockNode>() <= 256, "ConstBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ConstItemNode>() > 256, "ConstItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ConstParameterNode>() > 256, "ConstParameterNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ContinueExpressionNode>() <= 256, "ContinueExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DeclarationListNode>() <= 256, "DeclarationListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DeclarationStatementNode>() <= 256, "DeclarationStatementNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceNode>() <= 256, "DelimTokenTreeBraceNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBracketNode>() <= 256, "DelimTokenTreeBracketNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DelimTokenTreeParenNode>() <= 256, "DelimTokenTreeParenNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DocCommentNode>() <= 256, "DocCommentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DynamicTypeNode>() <= 256, "DynamicTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ElseClauseNode>() <= 256, "ElseClauseNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EnumItemNode>() > 256, "EnumItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EnumVariantListElementsNode>() <= 256, "EnumVariantListElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EnumVariantListNode>() <= 256, "EnumVariantListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EnumVariantNode>() > 256, "EnumVariantNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ErrorSentinelNode>() <= 256, "ErrorSentinelNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexNode>() <= 256, "EscapeSequenceHexNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceSimpleNode>() <= 256, "EscapeSequenceSimpleNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeBracedNode>() <= 256, "EscapeSequenceUnicodeBracedNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedNode>() <= 256, "EscapeSequenceUnicodeFixedNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() <= 256, "ExpressionStatementNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiNode>() <= 256, "ExpressionStatementWithSemiNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionsNode>() <= 256, "ExpressionsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationNode>() <= 256, "ExternCrateDeclarationNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExternModifierNode>() <= 256, "ExternModifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsNode>() <= 256, "FieldDeclarationListElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldDeclarationListNode>() <= 256, "FieldDeclarationListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldDeclarationNode>() > 256, "FieldDeclarationNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldExpressionNode>() <= 256, "FieldExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldIdentifierNode>() <= 256, "FieldIdentifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldInitializerListElementsNode>() <= 256, "FieldInitializerListElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldInitializerListNode>() <= 256, "FieldInitializerListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldInitializerNode>() > 256, "FieldInitializerNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldPatternNamedNode>() <= 256, "FieldPatternNamedNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandNode>() <= 256, "FieldPatternShorthandNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FloatLiteralNode>() <= 256, "FloatLiteralNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForExpressionNode>() <= 256, "ForExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForLifetimesNode>() <= 256, "ForLifetimesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyNode>() <= 256, "ForeignModItemBodyNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemNode>() <= 256, "ForeignModItemNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiNode>() <= 256, "ForeignModItemSemiNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FragmentSpecifierEnum>() <= 256, "FragmentSpecifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionItemNode>() > 256, "FunctionItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionModifiersNode>() <= 256, "FunctionModifiersNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionSignatureItemNode>() > 256, "FunctionSignatureItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionTypeFnFormNode>() <= 256, "FunctionTypeFnFormNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionTypeNode>() <= 256, "FunctionTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<FunctionTypeTraitFormNode>() <= 256, "FunctionTypeTraitFormNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenBlockNode>() <= 256, "GenBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericFunctionNode>() <= 256, "GenericFunctionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericPatternNode>() <= 256, "GenericPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericTypeNode>() <= 256, "GenericTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericTypeWithTurbofishNode>() <= 256, "GenericTypeWithTurbofishNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<HigherRankedTraitBoundNode>() <= 256, "HigherRankedTraitBoundNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IdentifierNode>() <= 256, "IdentifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IfExpressionNode>() <= 256, "IfExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ImplItemBodyNode>() > 256, "ImplItemBodyNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ImplItemNegativeClauseNode>() <= 256, "ImplItemNegativeClauseNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ImplItemNode>() <= 256, "ImplItemNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ImplItemPositiveClauseNode>() <= 256, "ImplItemPositiveClauseNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ImplItemSemiNode>() > 256, "ImplItemSemiNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IndexExpressionNode>() <= 256, "IndexExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<InnerAttributeItemNode>() <= 256, "InnerAttributeItemNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IntegerLiteralBinaryNode>() <= 256, "IntegerLiteralBinaryNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IntegerLiteralDecimalNode>() <= 256, "IntegerLiteralDecimalNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IntegerLiteralHexNode>() <= 256, "IntegerLiteralHexNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IntegerLiteralNode>() <= 256, "IntegerLiteralNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<IntegerLiteralOctalNode>() <= 256, "IntegerLiteralOctalNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LabelNode>() <= 256, "LabelNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LastMatchArmNode>() <= 256, "LastMatchArmNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LetChainNode>() <= 256, "LetChainNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LetConditionNode>() <= 256, "LetConditionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LetDeclarationNode>() > 256, "LetDeclarationNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LifetimeNode>() <= 256, "LifetimeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LifetimeParameterNode>() <= 256, "LifetimeParameterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LifetimesNode>() <= 256, "LifetimesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentDocInnerNode>() <= 256, "LineCommentDocInnerNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentDocOuterNode>() <= 256, "LineCommentDocOuterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentExtraSlashesNode>() <= 256, "LineCommentExtraSlashesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentNode>() <= 256, "LineCommentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LineCommentRegularNode>() <= 256, "LineCommentRegularNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LiteralPatternNode>() <= 256, "LiteralPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<LoopExpressionNode>() <= 256, "LoopExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionBraceNode>() <= 256, "MacroDefinitionBraceNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionBracketNode>() <= 256, "MacroDefinitionBracketNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionNode>() <= 256, "MacroDefinitionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroDefinitionParenNode>() <= 256, "MacroDefinitionParenNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroInvocationNode>() <= 256, "MacroInvocationNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroRuleNode>() <= 256, "MacroRuleNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MacroRulesNode>() <= 256, "MacroRulesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchArmBlockEndingNode>() > 256, "MatchArmBlockEndingNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchArmWithCommaNode>() > 256, "MatchArmWithCommaNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchBlockArmsNode>() <= 256, "MatchBlockArmsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() <= 256, "MatchBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchExpressionNode>() <= 256, "MatchExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MatchPatternNode>() <= 256, "MatchPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MetavariableNode>() <= 256, "MetavariableNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemExternalNode>() <= 256, "ModItemExternalNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemInlineNode>() <= 256, "ModItemInlineNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemNode>() <= 256, "ModItemNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<MutPatternNode>() <= 256, "MutPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NegativeLiteralNode>() <= 256, "NegativeLiteralNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<NonSpecialTokenNode>() <= 256, "NonSpecialTokenNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrPatternBinaryNode>() <= 256, "OrPatternBinaryNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrPatternNode>() <= 256, "OrPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrPatternPrefixNode>() <= 256, "OrPatternPrefixNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListElementsNode>() <= 256, "OrderedFieldDeclarationListElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListNode>() <= 256, "OrderedFieldDeclarationListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParameterNode>() > 256, "ParameterNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParametersElementsNode>() <= 256, "ParametersElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParametersElementsReceiverGroupNode>() <= 256, "ParametersElementsReceiverGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParametersElementsReceiverNode>() <= 256, "ParametersElementsReceiverNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParametersNode>() <= 256, "ParametersNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionNode>() <= 256, "ParenthesizedExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PatternsNode>() <= 256, "PatternsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PointerTypeConstNode>() <= 256, "PointerTypeConstNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PointerTypeMutNode>() <= 256, "PointerTypeMutNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PointerTypeNode>() <= 256, "PointerTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PrimitiveTypeEnum>() <= 256, "PrimitiveTypeEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<QualifiedTypeNode>() <= 256, "QualifiedTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangeExpressionBareNode>() <= 256, "RangeExpressionBareNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangeExpressionBinaryNode>() <= 256, "RangeExpressionBinaryNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangeExpressionNode>() <= 256, "RangeExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangeExpressionPostfixNode>() <= 256, "RangeExpressionPostfixNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangeExpressionPrefixNode>() <= 256, "RangeExpressionPrefixNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternNode>() <= 256, "RangePatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternPrefixNode>() <= 256, "RangePatternPrefixNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftNode>() <= 256, "RangePatternWithLeftNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftWithRightNode>() <= 256, "RangePatternWithLeftWithRightNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RawStringLiteralContentNode>() <= 256, "RawStringLiteralContentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RawStringLiteralEndNode>() <= 256, "RawStringLiteralEndNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RawStringLiteralNode>() <= 256, "RawStringLiteralNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RawStringLiteralStartNode>() <= 256, "RawStringLiteralStartNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReceiverParameterDeclarationNode>() <= 256, "ReceiverParameterDeclarationNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RefPatternNode>() <= 256, "RefPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionBareNode>() <= 256, "ReferenceExpressionBareNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionMutNode>() <= 256, "ReferenceExpressionMutNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionNode>() <= 256, "ReferenceExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawConstNode>() <= 256, "ReferenceExpressionRawConstNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawMutNode>() <= 256, "ReferenceExpressionRawMutNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferencePatternNode>() <= 256, "ReferencePatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReferenceTypeNode>() <= 256, "ReferenceTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<RemovedTraitBoundNode>() <= 256, "RemovedTraitBoundNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ReturnExpressionNode>() <= 256, "ReturnExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedIdentifierNode>() <= 256, "ScopedIdentifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierInExpressionPositionNode>() <= 256, "ScopedTypeIdentifierInExpressionPositionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierNode>() <= 256, "ScopedTypeIdentifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ScopedUseListNode>() <= 256, "ScopedUseListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SelfParameterNode>() <= 256, "SelfParameterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ShebangNode>() <= 256, "ShebangNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ShorthandFieldIdentifierNode>() <= 256, "ShorthandFieldIdentifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ShorthandFieldInitializerNode>() <= 256, "ShorthandFieldInitializerNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SlicePatternNode>() <= 256, "SlicePatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SourceFileNode>() <= 256, "SourceFileNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StaticItemNode>() > 256, "StaticItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StringCloseNode>() <= 256, "StringCloseNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StringContentNode>() <= 256, "StringContentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StringLiteralNode>() <= 256, "StringLiteralNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StringOpenNode>() <= 256, "StringOpenNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructExpressionNode>() <= 256, "StructExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemBraceNode>() > 256, "StructItemBraceNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemNode>() <= 256, "StructItemNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemTupleNode>() > 256, "StructItemTupleNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemUnitNode>() <= 256, "StructItemUnitNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructPatternElementsNode>() <= 256, "StructPatternElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructPatternNode>() <= 256, "StructPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenBindingPatternNode>() <= 256, "TokenBindingPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenKeywordsEnum>() <= 256, "TokenKeywordsEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenRepetitionNode>() <= 256, "TokenRepetitionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternNode>() <= 256, "TokenRepetitionPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternTextNode>() <= 256, "TokenRepetitionPatternTextNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreeBraceNode>() <= 256, "TokenTreeBraceNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreeBracketNode>() <= 256, "TokenTreeBracketNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreeParenNode>() <= 256, "TokenTreeParenNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreePatternBraceNode>() <= 256, "TokenTreePatternBraceNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreePatternBracketNode>() <= 256, "TokenTreePatternBracketNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreePatternParenNode>() <= 256, "TokenTreePatternParenNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TokenTreePunctuationEnum>() <= 256, "TokenTreePunctuationEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TraitBoundsNode>() <= 256, "TraitBoundsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TraitItemNode>() > 256, "TraitItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TryBlockNode>() <= 256, "TryBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TryExpressionNode>() <= 256, "TryExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleExpressionNode>() <= 256, "TupleExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TuplePatternElementsNode>() <= 256, "TuplePatternElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TuplePatternNode>() <= 256, "TuplePatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleStructPatternNode>() <= 256, "TupleStructPatternNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TupleTypeNode>() <= 256, "TupleTypeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentNode>() <= 256, "TypeArgumentNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentsElementsNode>() <= 256, "TypeArgumentsElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentsNode>() <= 256, "TypeArgumentsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeBindingNode>() > 256, "TypeBindingNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeCastExpressionNode>() <= 256, "TypeCastExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeIdentifierNode>() <= 256, "TypeIdentifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeItemNode>() > 256, "TypeItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeParameterNode>() > 256, "TypeParameterNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeParametersElementsNode>() <= 256, "TypeParametersElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeParametersNode>() <= 256, "TypeParametersNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypesNode>() <= 256, "TypesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnaryExpressionNode>() <= 256, "UnaryExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnionItemNode>() > 256, "UnionItemNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UnsafeBlockNode>() <= 256, "UnsafeBlockNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseAsClauseNode>() <= 256, "UseAsClauseNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseBoundsElementsNode>() <= 256, "UseBoundsElementsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseBoundsNode>() <= 256, "UseBoundsNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseClausesNode>() <= 256, "UseClausesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseDeclarationNode>() > 256, "UseDeclarationNode is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseListNode>() <= 256, "UseListNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseWildcardGroupNode>() <= 256, "UseWildcardGroupNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<UseWildcardNode>() <= 256, "UseWildcardNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VariadicParameterNode>() <= 256, "VariadicParameterNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VisibilityModifierNode>() <= 256, "VisibilityModifierNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubNode>() <= 256, "VisibilityModifierPubNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeInPathNode>() <= 256, "VisibilityModifierPubScopeInPathNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeNode>() <= 256, "VisibilityModifierPubScopeNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WhereClauseNode>() <= 256, "WhereClauseNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WherePredicateNode>() <= 256, "WherePredicateNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "WherePredicatesNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AbstractTypeNode>() <= 256, "AbstractTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ArgumentsElementsNode>() <= 256, "ArgumentsElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ArgumentsNode>() <= 256, "ArgumentsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ArrayExpressionListNode>() <= 256, "ArrayExpressionListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ArrayExpressionNode>() <= 256, "ArrayExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ArrayExpressionSemiNode>() <= 256, "ArrayExpressionSemiNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ArrayTypeNode>() <= 256, "ArrayTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AssignmentExpressionNode>() <= 256, "AssignmentExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AssociatedTypeNode>() <= 256, "AssociatedTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AsyncBlockNode>() <= 256, "AsyncBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributeInputNode>() <= 256, "AttributeInputNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributeItemNode>() <= 256, "AttributeItemNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributeNode>() <= 256, "AttributeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributedArgumentNode>() <= 256, "AttributedArgumentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantNode>() > 256, "AttributedEnumVariantNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationNode>() > 256, "AttributedFieldDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldNode>() > 256, "AttributedOrderedFieldNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<AttributedParameterNode>() <= 256, "AttributedParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributedParameterReceiverNode>() <= 256, "AttributedParameterReceiverNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AttributedTypeParameterNode>() <= 256, "AttributedTypeParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AwaitExpressionNode>() <= 256, "AwaitExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BaseFieldInitializerNode>() <= 256, "BaseFieldInitializerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BinaryExpressionNode>() <= 256, "BinaryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BlockCommentContentNode>() <= 256, "BlockCommentContentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BlockCommentDocInnerNode>() <= 256, "BlockCommentDocInnerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BlockCommentDocOuterNode>() <= 256, "BlockCommentDocOuterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BlockCommentNode>() <= 256, "BlockCommentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BlockCommentRegularNode>() <= 256, "BlockCommentRegularNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BlockNode>() <= 256, "BlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BooleanLiteralEnum>() <= 256, "BooleanLiteralEnum is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BoundedTypeNode>() <= 256, "BoundedTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BracketedTypeNode>() <= 256, "BracketedTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<BreakExpressionNode>() <= 256, "BreakExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CallExpressionNode>() <= 256, "CallExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CapturedPatternNode>() <= 256, "CapturedPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralEmptyNode>() <= 256, "CharLiteralEmptyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedHexNode>() <= 256, "CharLiteralEscapedHexNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedNode>() <= 256, "CharLiteralEscapedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedSimpleNode>() <= 256, "CharLiteralEscapedSimpleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedUnicodeBracedNode>() <= 256, "CharLiteralEscapedUnicodeBracedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralEscapedUnicodeFixedNode>() <= 256, "CharLiteralEscapedUnicodeFixedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralNode>() <= 256, "CharLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CharLiteralPlainNode>() <= 256, "CharLiteralPlainNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ClosureExpressionBlockNode>() <= 256, "ClosureExpressionBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ClosureExpressionExprNode>() <= 256, "ClosureExpressionExprNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ClosureExpressionNode>() <= 256, "ClosureExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ClosureParametersNode>() <= 256, "ClosureParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CompoundAssignmentExprNode>() <= 256, "CompoundAssignmentExprNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ConstBlockNode>() <= 256, "ConstBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ConstItemNode>() > 256, "ConstItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ConstParameterNode>() > 256, "ConstParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ContinueExpressionNode>() <= 256, "ContinueExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CrateVisibilityModifierNode>() <= 256, "CrateVisibilityModifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DeclarationListNode>() <= 256, "DeclarationListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DeclarationStatementNode>() <= 256, "DeclarationStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceNode>() <= 256, "DelimTokenTreeBraceNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBracketNode>() <= 256, "DelimTokenTreeBracketNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DelimTokenTreeParenNode>() <= 256, "DelimTokenTreeParenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DocCommentNode>() <= 256, "DocCommentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<DynamicTypeNode>() <= 256, "DynamicTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ElseClauseNode>() <= 256, "ElseClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EnumItemNode>() > 256, "EnumItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<EnumVariantListElementsNode>() <= 256, "EnumVariantListElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EnumVariantListNode>() <= 256, "EnumVariantListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EnumVariantNode>() > 256, "EnumVariantNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ErrorSentinelNode>() <= 256, "ErrorSentinelNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexNode>() <= 256, "EscapeSequenceHexNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceSimpleNode>() <= 256, "EscapeSequenceSimpleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeBracedNode>() <= 256, "EscapeSequenceUnicodeBracedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedNode>() <= 256, "EscapeSequenceUnicodeFixedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() <= 256, "ExpressionStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiNode>() <= 256, "ExpressionStatementWithSemiNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ExpressionsNode>() <= 256, "ExpressionsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationNode>() <= 256, "ExternCrateDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ExternModifierNode>() <= 256, "ExternModifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsNode>() <= 256, "FieldDeclarationListElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldDeclarationListNode>() <= 256, "FieldDeclarationListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldDeclarationNode>() > 256, "FieldDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<FieldExpressionNode>() <= 256, "FieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldIdentifierNode>() <= 256, "FieldIdentifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldInitializerListElementsNode>() <= 256, "FieldInitializerListElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldInitializerListNode>() <= 256, "FieldInitializerListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldInitializerNode>() > 256, "FieldInitializerNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<FieldPatternNamedNode>() <= 256, "FieldPatternNamedNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandNode>() <= 256, "FieldPatternShorthandNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FloatLiteralNode>() <= 256, "FloatLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ForExpressionNode>() <= 256, "ForExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ForLifetimesNode>() <= 256, "ForLifetimesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyNode>() <= 256, "ForeignModItemBodyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemNode>() <= 256, "ForeignModItemNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiNode>() <= 256, "ForeignModItemSemiNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FragmentSpecifierEnum>() <= 256, "FragmentSpecifierEnum is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FunctionItemNode>() > 256, "FunctionItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<FunctionModifiersNode>() <= 256, "FunctionModifiersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FunctionSignatureItemNode>() > 256, "FunctionSignatureItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<FunctionTypeFnFormNode>() <= 256, "FunctionTypeFnFormNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FunctionTypeNode>() <= 256, "FunctionTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FunctionTypeTraitFormNode>() <= 256, "FunctionTypeTraitFormNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<GenBlockNode>() <= 256, "GenBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<GenericFunctionNode>() <= 256, "GenericFunctionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<GenericPatternNode>() <= 256, "GenericPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<GenericTypeNode>() <= 256, "GenericTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<GenericTypeWithTurbofishNode>() <= 256, "GenericTypeWithTurbofishNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<HigherRankedTraitBoundNode>() <= 256, "HigherRankedTraitBoundNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IdentifierNode>() <= 256, "IdentifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IfExpressionNode>() <= 256, "IfExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ImplItemBodyNode>() > 256, "ImplItemBodyNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ImplItemNegativeClauseNode>() <= 256, "ImplItemNegativeClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ImplItemNode>() <= 256, "ImplItemNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ImplItemPositiveClauseNode>() <= 256, "ImplItemPositiveClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ImplItemSemiNode>() > 256, "ImplItemSemiNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<IndexExpressionNode>() <= 256, "IndexExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<InnerAttributeItemNode>() <= 256, "InnerAttributeItemNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IntegerLiteralBinaryNode>() <= 256, "IntegerLiteralBinaryNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IntegerLiteralDecimalNode>() <= 256, "IntegerLiteralDecimalNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IntegerLiteralHexNode>() <= 256, "IntegerLiteralHexNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IntegerLiteralNode>() <= 256, "IntegerLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<IntegerLiteralOctalNode>() <= 256, "IntegerLiteralOctalNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LabelNode>() <= 256, "LabelNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LastMatchArmNode>() <= 256, "LastMatchArmNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LetChainNode>() <= 256, "LetChainNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LetConditionNode>() <= 256, "LetConditionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LetDeclarationNode>() > 256, "LetDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<LifetimeNode>() <= 256, "LifetimeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LifetimeParameterNode>() <= 256, "LifetimeParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LifetimesNode>() <= 256, "LifetimesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LineCommentDocInnerNode>() <= 256, "LineCommentDocInnerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LineCommentDocOuterNode>() <= 256, "LineCommentDocOuterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LineCommentExtraSlashesNode>() <= 256, "LineCommentExtraSlashesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LineCommentNode>() <= 256, "LineCommentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LineCommentRegularNode>() <= 256, "LineCommentRegularNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LiteralPatternNode>() <= 256, "LiteralPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<LoopExpressionNode>() <= 256, "LoopExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionBraceNode>() <= 256, "MacroDefinitionBraceNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionBracketNode>() <= 256, "MacroDefinitionBracketNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionNode>() <= 256, "MacroDefinitionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroDefinitionParenNode>() <= 256, "MacroDefinitionParenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroInvocationNode>() <= 256, "MacroInvocationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroRuleNode>() <= 256, "MacroRuleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MacroRulesNode>() <= 256, "MacroRulesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MatchArmBlockEndingNode>() > 256, "MatchArmBlockEndingNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<MatchArmWithCommaNode>() > 256, "MatchArmWithCommaNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<MatchBlockArmsNode>() <= 256, "MatchBlockArmsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MatchBlockNode>() <= 256, "MatchBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MatchExpressionNode>() <= 256, "MatchExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MatchPatternNode>() <= 256, "MatchPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MetavariableNode>() <= 256, "MetavariableNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ModItemExternalNode>() <= 256, "ModItemExternalNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ModItemInlineNode>() <= 256, "ModItemInlineNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ModItemNode>() <= 256, "ModItemNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<MutPatternNode>() <= 256, "MutPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<NegativeLiteralNode>() <= 256, "NegativeLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<NonSpecialTokenNode>() <= 256, "NonSpecialTokenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<OrPatternBinaryNode>() <= 256, "OrPatternBinaryNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<OrPatternNode>() <= 256, "OrPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<OrPatternPrefixNode>() <= 256, "OrPatternPrefixNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListElementsNode>() <= 256, "OrderedFieldDeclarationListElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<OrderedFieldDeclarationListNode>() <= 256, "OrderedFieldDeclarationListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ParameterNode>() > 256, "ParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<ParametersElementsNode>() <= 256, "ParametersElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ParametersElementsReceiverGroupNode>() <= 256, "ParametersElementsReceiverGroupNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ParametersElementsReceiverNode>() <= 256, "ParametersElementsReceiverNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ParametersNode>() <= 256, "ParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ParenthesizedExpressionNode>() <= 256, "ParenthesizedExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<PatternsNode>() <= 256, "PatternsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<PointerTypeConstNode>() <= 256, "PointerTypeConstNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<PointerTypeMutNode>() <= 256, "PointerTypeMutNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<PointerTypeNode>() <= 256, "PointerTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<PrimitiveTypeEnum>() <= 256, "PrimitiveTypeEnum is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<QualifiedTypeNode>() <= 256, "QualifiedTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangeExpressionBareNode>() <= 256, "RangeExpressionBareNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangeExpressionBinaryNode>() <= 256, "RangeExpressionBinaryNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangeExpressionNode>() <= 256, "RangeExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangeExpressionPostfixNode>() <= 256, "RangeExpressionPostfixNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangeExpressionPrefixNode>() <= 256, "RangeExpressionPrefixNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangePatternNode>() <= 256, "RangePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangePatternPrefixNode>() <= 256, "RangePatternPrefixNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftNode>() <= 256, "RangePatternWithLeftNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftWithRightNode>() <= 256, "RangePatternWithLeftWithRightNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RawStringLiteralContentNode>() <= 256, "RawStringLiteralContentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RawStringLiteralEndNode>() <= 256, "RawStringLiteralEndNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RawStringLiteralNode>() <= 256, "RawStringLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RawStringLiteralStartNode>() <= 256, "RawStringLiteralStartNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReceiverParameterDeclarationNode>() <= 256, "ReceiverParameterDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RefPatternNode>() <= 256, "RefPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionBareNode>() <= 256, "ReferenceExpressionBareNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionMutNode>() <= 256, "ReferenceExpressionMutNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionNode>() <= 256, "ReferenceExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawConstNode>() <= 256, "ReferenceExpressionRawConstNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferenceExpressionRawMutNode>() <= 256, "ReferenceExpressionRawMutNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferencePatternNode>() <= 256, "ReferencePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReferenceTypeNode>() <= 256, "ReferenceTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<RemovedTraitBoundNode>() <= 256, "RemovedTraitBoundNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ReturnExpressionNode>() <= 256, "ReturnExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ScopedIdentifierNode>() <= 256, "ScopedIdentifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierInExpressionPositionNode>() <= 256, "ScopedTypeIdentifierInExpressionPositionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ScopedTypeIdentifierNode>() <= 256, "ScopedTypeIdentifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ScopedUseListNode>() <= 256, "ScopedUseListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<SelfParameterNode>() <= 256, "SelfParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ShebangNode>() <= 256, "ShebangNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ShorthandFieldIdentifierNode>() <= 256, "ShorthandFieldIdentifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ShorthandFieldInitializerNode>() <= 256, "ShorthandFieldInitializerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<SlicePatternNode>() <= 256, "SlicePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<SourceFileNode>() <= 256, "SourceFileNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StaticItemNode>() > 256, "StaticItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<StringCloseNode>() <= 256, "StringCloseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StringContentNode>() <= 256, "StringContentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StringLiteralNode>() <= 256, "StringLiteralNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StringOpenNode>() <= 256, "StringOpenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StructExpressionNode>() <= 256, "StructExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StructItemBraceNode>() > 256, "StructItemBraceNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<StructItemNode>() <= 256, "StructItemNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StructItemTupleNode>() > 256, "StructItemTupleNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<StructItemUnitNode>() <= 256, "StructItemUnitNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StructPatternElementsNode>() <= 256, "StructPatternElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<StructPatternNode>() <= 256, "StructPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenBindingPatternNode>() <= 256, "TokenBindingPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenKeywordsEnum>() <= 256, "TokenKeywordsEnum is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenRepetitionNode>() <= 256, "TokenRepetitionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternNode>() <= 256, "TokenRepetitionPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenRepetitionPatternTextNode>() <= 256, "TokenRepetitionPatternTextNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreeBraceNode>() <= 256, "TokenTreeBraceNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreeBracketNode>() <= 256, "TokenTreeBracketNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreeParenNode>() <= 256, "TokenTreeParenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreePatternBraceNode>() <= 256, "TokenTreePatternBraceNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreePatternBracketNode>() <= 256, "TokenTreePatternBracketNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreePatternParenNode>() <= 256, "TokenTreePatternParenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TokenTreePunctuationEnum>() <= 256, "TokenTreePunctuationEnum is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TraitBoundsNode>() <= 256, "TraitBoundsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TraitItemNode>() > 256, "TraitItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<TryBlockNode>() <= 256, "TryBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TryExpressionNode>() <= 256, "TryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TupleExpressionNode>() <= 256, "TupleExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TuplePatternElementsNode>() <= 256, "TuplePatternElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TuplePatternNode>() <= 256, "TuplePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TupleStructPatternNode>() <= 256, "TupleStructPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TupleTypeNode>() <= 256, "TupleTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentNode>() <= 256, "TypeArgumentNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentsElementsNode>() <= 256, "TypeArgumentsElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentsNode>() <= 256, "TypeArgumentsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeBindingNode>() > 256, "TypeBindingNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<TypeCastExpressionNode>() <= 256, "TypeCastExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeIdentifierNode>() <= 256, "TypeIdentifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeItemNode>() > 256, "TypeItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<TypeParameterNode>() > 256, "TypeParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<TypeParametersElementsNode>() <= 256, "TypeParametersElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypeParametersNode>() <= 256, "TypeParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TypesNode>() <= 256, "TypesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UnaryExpressionNode>() <= 256, "UnaryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UnionItemNode>() > 256, "UnionItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<UnsafeBlockNode>() <= 256, "UnsafeBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseAsClauseNode>() <= 256, "UseAsClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseBoundsElementsNode>() <= 256, "UseBoundsElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseBoundsNode>() <= 256, "UseBoundsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseClausesNode>() <= 256, "UseClausesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseDeclarationNode>() > 256, "UseDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
+const _: () = assert!(::core::mem::size_of::<UseListNode>() <= 256, "UseListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseWildcardGroupNode>() <= 256, "UseWildcardGroupNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<UseWildcardNode>() <= 256, "UseWildcardNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<VariadicParameterNode>() <= 256, "VariadicParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<VisibilityModifierNode>() <= 256, "VisibilityModifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubNode>() <= 256, "VisibilityModifierPubNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeInPathNode>() <= 256, "VisibilityModifierPubScopeInPathNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<VisibilityModifierPubScopeNode>() <= 256, "VisibilityModifierPubScopeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<WhereClauseNode>() <= 256, "WhereClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<WherePredicateNode>() <= 256, "WherePredicateNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "WherePredicatesNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierPathNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionPathNodeSlot, ScopedTypeIdentifierPathNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierPathNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionPathNodeSlot, ScopedTypeIdentifierPathNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
