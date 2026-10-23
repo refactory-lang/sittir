@@ -8822,6 +8822,10 @@ The single way to evaluate a real grammar package: `evaluate` of `packageSourceE
 
 The options of a package evaluation: the entry it reads (`resolve-grammar.ts::PackageSourceOptions`) and how it evaluates that entry (`evaluate.ts::EvaluateOptions`). `compileGrammar` takes them as its config's `evaluation` and passes them through unchanged.
 
+### `packages/codegen/src/dsl/evaluate-package.ts::readsGrammarBindings`
+
+Whether a package evaluation with these options reads the package's grammar bindings: it does unless it is `unbound` (the grammar without its grammar bindings) or `base` (the upstream grammar alone). `compileGrammar` checks the grammar bindings for freshness exactly when it does.
+
 ### `packages/codegen/src/dsl/resolve-grammar.ts::resolveGrammarJsPath`
 
 `packageGrammarJsPath` for the grammar's own package.

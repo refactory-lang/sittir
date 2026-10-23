@@ -6,6 +6,8 @@ import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
 
 export type PackageEvaluationOptions = PackageSourceOptions & EvaluateOptions;
 
+export const readsGrammarBindings = (options: PackageEvaluationOptions = {}): boolean => options.unbound !== true && options.base !== true;
+
 export function evaluatePackage(pkg: GrammarPackage, options?: PackageEvaluationOptions): Promise<RawGrammar> {
 	return evaluate(packageSourceEntry(pkg, options), upstreamFileTypes(pkg), options);
 }

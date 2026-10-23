@@ -1548,4 +1548,4 @@ A `LeadMatch` as the `match(…)` call that builds it: an unfielded restriction 
 
 ### `packages/codegen/src/bindings/module.ts::assertPackageBindingsFresh`
 
-`assertBindingsFresh` for a grammar package: the hash its committed `grammar.bindings.ts` carries (`loadBindingsModule`) against its `bindings.scm` (`facts.ts::bindingsPathIn`). `compileGrammar` runs it before it evaluates the package; `evaluatePackage` does not, so the tools that read a package while its grammar bindings are stale still evaluate it.
+`assertBindingsFresh` for a grammar package: the hash its committed `grammar.bindings.ts` carries (`loadBindingsModule`) against its `bindings.scm` (`facts.ts::bindingsPathIn`). `compileGrammar` runs it before it evaluates a package with its grammar bindings; `evaluatePackage` does not, so the tools that read a package while its grammar bindings are stale still evaluate it.

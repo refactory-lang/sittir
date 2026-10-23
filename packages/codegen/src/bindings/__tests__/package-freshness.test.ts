@@ -38,8 +38,8 @@ describe('a package whose grammar bindings are stale', () => {
 		expect(evaluate).not.toHaveBeenCalled();
 	});
 
-	it('is evaluated by an unbound compile, which does not check', async () => {
-		await expect(compileGrammar({ package: rust, evaluation: { unbound: true } })).rejects.toBe(reached);
+	it.each([{ unbound: true }, { base: true }])('is evaluated by a compile that reads no grammar bindings (%o)', async (evaluation) => {
+		await expect(compileGrammar({ package: rust, evaluation })).rejects.toBe(reached);
 		expect(assertBindingsFresh).not.toHaveBeenCalled();
 	});
 

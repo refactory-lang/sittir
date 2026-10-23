@@ -1,4 +1,4 @@
-import { evaluatePackage, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
+import { evaluatePackage, readsGrammarBindings, type PackageEvaluationOptions } from '../dsl/evaluate-package.ts';
 import { assertPackageBindingsFresh } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { stampIrSurface } from './model/ir-surface.ts';
@@ -39,7 +39,7 @@ export interface CompileGrammarConfig {
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
-	if (cfg.evaluation?.unbound !== true) await assertPackageBindingsFresh(cfg.package);
+	if (readsGrammarBindings(cfg.evaluation)) await assertPackageBindingsFresh(cfg.package);
 	const evaluated = await evaluatePackage(cfg.package, cfg.evaluation);
 	const diagnosis = diagnoseGrammar({
 		grammar,
