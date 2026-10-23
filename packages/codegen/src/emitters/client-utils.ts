@@ -7,7 +7,7 @@ import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
 import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
 import { layoutTriviaKindIds, listKindIds, rebuildWrapperKindIds, unitKindIds } from './wrap.ts';
-import { storedTextKinds } from './built-from-text.ts';
+import { builtFromText, storedTextKinds } from './built-from-text.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 
 export interface EmitClientUtilsConfig {
@@ -41,6 +41,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		'',
 		...emitJsonFacts(
 			storedTextKinds(config.nodeMap, config.kindEntries).flatMap(({ node }) => (node.kindId === undefined ? [] : [node.kindId])).sort((a, b) => a - b),
+			textEnvelopeKindIds(config.nodeMap, config.kindEntries),
 			unitKindIds(config.nodeMap),
 			spreadKindIds(config.nodeMap),
 			registeredOptionRows(config.nodeMap)
@@ -134,8 +135,15 @@ export function buildTriviaNodeType(triviaTypeNames: readonly string[]): string 
 	return triviaTypeNames.length > 0 ? triviaTypeNames.join(' | ') : 'AnyUntypedNode';
 }
 
+function textEnvelopeKindIds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): number[] {
+	return builtFromText(nodeMap, kindEntries)
+		.flatMap((entry) => (entry.form === 'alias' && entry.node.kindId !== undefined ? [entry.node.kindId] : []))
+		.sort((a, b) => a - b);
+}
+
 function emitJsonFacts(
 	leaves: readonly number[],
+	textEnvelopes: readonly number[],
 	units: readonly number[],
 	spread: readonly number[],
 	options: ReadonlyMap<number, readonly string[]>
@@ -148,6 +156,7 @@ function emitJsonFacts(
 		'\tlayout: triviaFacts.layout,',
 		`\tspread: new Set<number>(${JSON.stringify(spread)}),`,
 		`\tleaves: new Set<number>(${JSON.stringify(leaves)}),`,
+		`\ttextEnvelopes: new Set<number>(${JSON.stringify(textEnvelopes)}),`,
 		`\tunits: new Set<number>(${JSON.stringify(units)}),`,
 		`\tblank: ${BLANK_KIND_ID},`,
 		`\toptions: Object.freeze<NodeJSONFacts['options']>({${[...options].map(([kindId, names]) => ` ${kindId}: ${JSON.stringify(names)}`).join(',')}${options.size > 0 ? ' ' : ''}})`,

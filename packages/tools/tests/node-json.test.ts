@@ -170,6 +170,14 @@ describe('engine.reviver builds JSON back into nodes', () => {
 		expect(escape?.content).toBe('n');
 	});
 
+	it('revives a word reserved only for identifiers through its envelope', () => {
+		for (const [source, word] of [['x.default;\n', 'default'], ['({ class: 1 });\n', 'class'], ['class A { delete() {} }\n', 'delete']] as const) {
+			const parsed = ts.parse(source);
+			expect(JSON.stringify(roundTrip(ts, parsed))).toBe(JSON.stringify(parsed));
+			expect(String(roundTrip(ts, parsed))).toContain(word);
+		}
+	});
+
 	it('revives a list hole as a hole', () => {
 		const array = ts.parse('[a, , b];\n');
 		expect(JSON.stringify(roundTrip(ts, array))).toBe(JSON.stringify(array));

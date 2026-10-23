@@ -99,7 +99,10 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 	}
 	if (facts.units.has(kindId)) return kindId;
 	let node: unknown;
-	if (facts.leaves.has(kindId)) {
+	const envelopeText = facts.textEnvelopes.has(kindId) ? contentText(object, accessors) : undefined;
+	if (envelopeText !== undefined) {
+		node = buildAt(path, hooks, name, [{ text: envelopeText }]);
+	} else if (facts.leaves.has(kindId)) {
 		if (typeof object.$text !== 'string') throw new Error(`${path}: ${name} is a leaf and needs its $text`);
 		node = buildAt(path, hooks, name, [{ text: object.$text }]);
 	} else {
@@ -128,6 +131,15 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		node = (node as Revived).$trivia[side]!(...entries);
 	}
 	return hooks.settle(node);
+}
+
+function contentText(envelope: Record<string, unknown>, accessors: ReadonlySet<string>): string | undefined {
+	const [accessor] = accessors;
+	const content = accessor === undefined ? undefined : envelope[accessor];
+	if (accessors.size !== 1 || content === null || typeof content !== 'object') return undefined;
+	const members = content as Record<string, unknown>;
+	if (COMMENT_SIDES.some(([, key]) => key in members)) return undefined;
+	return typeof members.$text === 'string' ? members.$text : undefined;
 }
 
 function buildAt(path: string, hooks: ReviveHooks, kind: string, args: readonly unknown[]): unknown {
