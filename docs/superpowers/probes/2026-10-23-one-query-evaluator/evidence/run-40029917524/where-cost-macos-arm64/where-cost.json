@@ -1,0 +1,1718 @@
+{
+  "base": "5bc3c68cf",
+  "python": "3.14.7",
+  "runs": 7,
+  "rows": [
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name eq format_help",
+      "matches": 144,
+      "result": {
+        "native": {
+          "ms": 2.254791999999952,
+          "count": 3
+        },
+        "native-id": {
+          "ms": 2.117208000000005,
+          "count": 3
+        },
+        "native-es": {
+          "ms": 2.157958000000008,
+          "count": 3
+        },
+        "spans": {
+          "ms": 2.439583999999968,
+          "count": 3
+        },
+        "scm": {
+          "ms": 4.23599999999999,
+          "count": 3
+        },
+        "scm-es": {
+          "ms": 4.37458300000003,
+          "count": 3
+        },
+        "js": {
+          "ms": 2.5677500000000464,
+          "count": 3
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.261792000000014,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.708584000000087,
+          "count": 3
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#eq? @c1 \"format_help\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name match ^_",
+      "matches": 144,
+      "result": {
+        "native": {
+          "ms": 2.408833999999956,
+          "count": 107
+        },
+        "native-id": {
+          "ms": 2.5689590000000635,
+          "count": 107
+        },
+        "native-es": {
+          "ms": 2.6440830000000233,
+          "count": 107
+        },
+        "spans": {
+          "ms": 2.8547080000000733,
+          "count": 107
+        },
+        "scm": {
+          "ms": 4.720874999999978,
+          "count": 107
+        },
+        "scm-es": {
+          "ms": 4.746416000000181,
+          "count": 107
+        },
+        "js": {
+          "ms": 2.6002500000001874,
+          "count": 107
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.712792000000036,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.719666999999845,
+          "count": 107
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#match? @c1 \"^_\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name match ^_ and not ^__",
+      "matches": 144,
+      "result": {
+        "native": {
+          "ms": 2.6089170000000195,
+          "count": 68
+        },
+        "native-id": {
+          "ms": 2.808917000000065,
+          "count": 68
+        },
+        "native-es": {
+          "ms": 2.7637090000000626,
+          "count": 68
+        },
+        "spans": {
+          "ms": 2.878500000000031,
+          "count": 68
+        },
+        "scm": {
+          "ms": 4.669416000000183,
+          "count": 68
+        },
+        "scm-es": {
+          "ms": 4.700749999999971,
+          "count": 68
+        },
+        "js": {
+          "ms": 2.3954579999999623,
+          "count": 68
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.623790999999983,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.6755000000000564,
+          "count": 68
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#match? @c1 \"^_\") (#not-match? @c1 \"^__\"))",
+      "notes": [
+        "function_definition slot 1: 2 literals on one slot share its capture, so they test one value together; the native plan tests each against any value (exact where the slot holds one value)"
+      ]
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name eq add_argument or returnType .",
+      "matches": 144,
+      "result": {
+        "native": {
+          "ms": 2.436625000000049,
+          "count": 2
+        },
+        "native-id": {
+          "ms": 2.6759589999999207,
+          "count": 2
+        },
+        "native-es": {
+          "ms": 2.696916000000101,
+          "count": 2
+        },
+        "spans": {
+          "ms": 2.8506250000000364,
+          "count": 2
+        },
+        "scm": {
+          "ms": 4.373041999999941,
+          "count": 2
+        },
+        "scm-es": {
+          "ms": 4.339999999999918,
+          "count": 2
+        },
+        "js": {
+          "ms": 2.5892080000000988,
+          "count": 2
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.6994580000000497,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.7837090000000444,
+          "count": 2
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#eq? @c1 \"add_argument\"))\n((function_definition return_type: (_) @c2) @node (#match? @c2 \".\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "call: function eq isinstance",
+      "matches": 657,
+      "result": {
+        "native": {
+          "ms": 2.5806669999999485,
+          "count": 9
+        },
+        "native-id": {
+          "ms": 2.9692909999998847,
+          "count": 9
+        },
+        "native-es": {
+          "ms": 2.9842499999999745,
+          "count": 9
+        },
+        "spans": {
+          "ms": 3.574041999999963,
+          "count": 9
+        },
+        "scm": {
+          "ms": 6.4455420000001595,
+          "count": 9
+        },
+        "scm-es": {
+          "ms": 6.307957999999871,
+          "count": 9
+        },
+        "js": {
+          "ms": 3.0931250000003274,
+          "count": 9
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.8775829999999587,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 4.569582999999966,
+          "count": 9
+        }
+      },
+      "scm": "((call function: [(float) (integer_decimal) (identifier) (ellipsis) (true) (false) (none) (integer_hex) (integer_octal) (integer_binary) (list_splat_pattern) (binary_operator) (unary_operator) (attribute) (subscript) (call) (list) (set) (tuple) (dictionary) (list_comprehension) (dictionary_comprehension) (set_comprehension) (generator_expression) (parenthesized_expression) (concatenated_string) (string) (await)] @c1) @node (#eq? @c1 \"isinstance\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "call: function match ^self\\.",
+      "matches": 657,
+      "result": {
+        "native": {
+          "ms": 3.001792000000023,
+          "count": 155
+        },
+        "native-id": {
+          "ms": 3.12691599999971,
+          "count": 155
+        },
+        "native-es": {
+          "ms": 3.0952909999996336,
+          "count": 155
+        },
+        "spans": {
+          "ms": 3.690875000000233,
+          "count": 155
+        },
+        "scm": {
+          "ms": 6.931666999999834,
+          "count": 155
+        },
+        "scm-es": {
+          "ms": 6.977334000000155,
+          "count": 155
+        },
+        "js": {
+          "ms": 3.406417000000147,
+          "count": 155
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 3.0894579999999223,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 4.752540999999837,
+          "count": 155
+        }
+      },
+      "scm": "((call function: [(float) (integer_decimal) (identifier) (ellipsis) (true) (false) (none) (integer_hex) (integer_octal) (integer_binary) (list_splat_pattern) (binary_operator) (unary_operator) (attribute) (subscript) (call) (list) (set) (tuple) (dictionary) (list_comprehension) (dictionary_comprehension) (set_comprehension) (generator_expression) (parenthesized_expression) (concatenated_string) (string) (await)] @c1) @node (#match? @c1 \"^self\\\\.\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name eq format_help",
+      "matches": 9,
+      "result": {
+        "native": {
+          "ms": 0.31787500000018554,
+          "count": 0
+        },
+        "native-id": {
+          "ms": 0.2849159999996118,
+          "count": 0
+        },
+        "native-es": {
+          "ms": 0.28508400000009715,
+          "count": 0
+        },
+        "spans": {
+          "ms": 0.3077920000000631,
+          "count": 0
+        },
+        "scm": {
+          "ms": 0.35908299999982773,
+          "count": 0
+        },
+        "scm-es": {
+          "ms": 0.36200000000008004,
+          "count": 0
+        },
+        "js": {
+          "ms": 0.32366700000011406,
+          "count": 0
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.2869590000000244,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.36162500000000364,
+          "count": 0
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#eq? @c1 \"format_help\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name match ^_",
+      "matches": 9,
+      "result": {
+        "native": {
+          "ms": 0.3541250000002947,
+          "count": 4
+        },
+        "native-id": {
+          "ms": 0.29874999999992724,
+          "count": 4
+        },
+        "native-es": {
+          "ms": 0.3111669999998412,
+          "count": 4
+        },
+        "spans": {
+          "ms": 0.3105420000001686,
+          "count": 4
+        },
+        "scm": {
+          "ms": 0.6016669999999067,
+          "count": 4
+        },
+        "scm-es": {
+          "ms": 0.572624999999789,
+          "count": 4
+        },
+        "js": {
+          "ms": 0.31899999999996,
+          "count": 4
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.2939579999997477,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.3583749999997963,
+          "count": 4
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#match? @c1 \"^_\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name match ^_ and not ^__",
+      "matches": 9,
+      "result": {
+        "native": {
+          "ms": 0.38504199999988487,
+          "count": 1
+        },
+        "native-id": {
+          "ms": 0.30695799999966766,
+          "count": 1
+        },
+        "native-es": {
+          "ms": 0.3045839999999771,
+          "count": 1
+        },
+        "spans": {
+          "ms": 0.31891700000005585,
+          "count": 1
+        },
+        "scm": {
+          "ms": 0.6030000000000655,
+          "count": 1
+        },
+        "scm-es": {
+          "ms": 0.5903330000001006,
+          "count": 1
+        },
+        "js": {
+          "ms": 0.3372079999999187,
+          "count": 1
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.29137500000024374,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.36799999999993815,
+          "count": 1
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#match? @c1 \"^_\") (#not-match? @c1 \"^__\"))",
+      "notes": [
+        "function_definition slot 1: 2 literals on one slot share its capture, so they test one value together; the native plan tests each against any value (exact where the slot holds one value)"
+      ]
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name eq add_argument or returnType .",
+      "matches": 9,
+      "result": {
+        "native": {
+          "ms": 0.36341700000002675,
+          "count": 0
+        },
+        "native-id": {
+          "ms": 0.29349999999976717,
+          "count": 0
+        },
+        "native-es": {
+          "ms": 0.29758300000003146,
+          "count": 0
+        },
+        "spans": {
+          "ms": 0.3197910000003503,
+          "count": 0
+        },
+        "scm": {
+          "ms": 0.3650830000001406,
+          "count": 0
+        },
+        "scm-es": {
+          "ms": 0.36724999999978536,
+          "count": 0
+        },
+        "js": {
+          "ms": 0.3249590000000353,
+          "count": 0
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.2881250000000364,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.361250000000382,
+          "count": 0
+        }
+      },
+      "scm": "((function_definition name: (_) @c1) @node (#eq? @c1 \"add_argument\"))\n((function_definition return_type: (_) @c2) @node (#match? @c2 \".\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "call: function eq isinstance",
+      "matches": 75,
+      "result": {
+        "native": {
+          "ms": 0.35499999999956344,
+          "count": 0
+        },
+        "native-id": {
+          "ms": 0.32587499999999636,
+          "count": 0
+        },
+        "native-es": {
+          "ms": 0.32704100000000835,
+          "count": 0
+        },
+        "spans": {
+          "ms": 0.4317080000000715,
+          "count": 0
+        },
+        "scm": {
+          "ms": 0.5954169999999976,
+          "count": 0
+        },
+        "scm-es": {
+          "ms": 0.6085829999997259,
+          "count": 0
+        },
+        "js": {
+          "ms": 0.45270799999980227,
+          "count": 0
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.3242089999998825,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.5895840000002863,
+          "count": 0
+        }
+      },
+      "scm": "((call function: [(float) (integer_decimal) (identifier) (ellipsis) (true) (false) (none) (integer_hex) (integer_octal) (integer_binary) (list_splat_pattern) (binary_operator) (unary_operator) (attribute) (subscript) (call) (list) (set) (tuple) (dictionary) (list_comprehension) (dictionary_comprehension) (set_comprehension) (generator_expression) (parenthesized_expression) (concatenated_string) (string) (await)] @c1) @node (#eq? @c1 \"isinstance\"))",
+      "notes": []
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "call: function match ^self\\.",
+      "matches": 75,
+      "result": {
+        "native": {
+          "ms": 0.3999589999998534,
+          "count": 2
+        },
+        "native-id": {
+          "ms": 0.333625000000211,
+          "count": 2
+        },
+        "native-es": {
+          "ms": 0.33591599999999744,
+          "count": 2
+        },
+        "spans": {
+          "ms": 0.4167080000001988,
+          "count": 2
+        },
+        "scm": {
+          "ms": 0.8065419999998085,
+          "count": 2
+        },
+        "scm-es": {
+          "ms": 0.8325830000003407,
+          "count": 2
+        },
+        "js": {
+          "ms": 0.42470800000000963,
+          "count": 2
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.3356250000001637,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.5943750000001273,
+          "count": 2
+        }
+      },
+      "scm": "((call function: [(float) (integer_decimal) (identifier) (ellipsis) (true) (false) (none) (integer_hex) (integer_octal) (integer_binary) (list_splat_pattern) (binary_operator) (unary_operator) (attribute) (subscript) (call) (list) (set) (tuple) (dictionary) (list_comprehension) (dictionary_comprehension) (set_comprehension) (generator_expression) (parenthesized_expression) (concatenated_string) (string) (await)] @c1) @node (#match? @c1 \"^self\\\\.\"))",
+      "notes": []
+    },
+    {
+      "grammar": "typescript",
+      "file": "emitters/wrap.ts",
+      "label": "member: property eq length",
+      "matches": 224,
+      "result": {
+        "native": {
+          "ms": 0.6974169999998594,
+          "count": 1
+        },
+        "native-id": {
+          "ms": 0.6659169999998085,
+          "count": 1
+        },
+        "native-es": {
+          "ms": 0.699833000000126,
+          "count": 1
+        },
+        "spans": {
+          "ms": 1.061916999999994,
+          "count": 1
+        },
+        "scm": {
+          "ms": 1.3937909999999647,
+          "count": 1
+        },
+        "scm-es": {
+          "ms": 1.38675000000012,
+          "count": 1
+        },
+        "js": {
+          "ms": 1.144083000000137,
+          "count": 1
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.7151669999998376,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.8678330000002461,
+          "count": 1
+        }
+      },
+      "scm": "((member_expression property: [(private_property_identifier) (property_identifier)] @c1) @node (#eq? @c1 \"length\"))",
+      "notes": []
+    },
+    {
+      "grammar": "typescript",
+      "file": "emitters/wrap.ts",
+      "label": "member: object match ^this\\.",
+      "matches": 224,
+      "result": {
+        "native": {
+          "ms": 0.8143330000002607,
+          "count": 5
+        },
+        "native-id": {
+          "ms": 0.693875000000844,
+          "count": 5
+        },
+        "native-es": {
+          "ms": 0.6942500000004657,
+          "count": 5
+        },
+        "spans": {
+          "ms": 0.9228339999999662,
+          "count": 5
+        },
+        "scm": {
+          "ms": 2.77862499999992,
+          "count": 5
+        },
+        "scm-es": {
+          "ms": 2.853208999999879,
+          "count": 5
+        },
+        "js": {
+          "ms": 0.9695419999998194,
+          "count": 5
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.6802080000006754,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.267624999999498,
+          "count": 5
+        }
+      },
+      "scm": "((member_expression object: [(number_bigint) (call_expression) (meta_property) (parenthesized_expression) (string) (update_expression) (identifier) (undefined) (number_hex) (number_float_point) (number_float_leading_point) (number_float_scientific) (number_decimal) (number_binary) (number_octal) (import) (yield_expression) (object) (array) (class) (function_expression) (generator_function) (arrow_function) (new_expression) (await_expression) (member_expression) (subscript_expression) (assignment_expression) (augmented_assignment_expression) (ternary_expression) (binary_expression) (unary_expression) (template_string) (regex) (this) (super) (true) (false) (null) (non_null_expression) (type_assertion) (as_expression) (satisfies_expression) (instantiation_expression) (internal_module)] @c1) @node (#match? @c1 \"^this\\\\.\"))",
+      "notes": []
+    },
+    {
+      "grammar": "typescript",
+      "file": "common/src/engine.ts",
+      "label": "member: property eq length",
+      "matches": 83,
+      "result": {
+        "native": {
+          "ms": 0.4180420000002414,
+          "count": 1
+        },
+        "native-id": {
+          "ms": 0.389458999999988,
+          "count": 1
+        },
+        "native-es": {
+          "ms": 0.38933300000007875,
+          "count": 1
+        },
+        "spans": {
+          "ms": 0.4993750000003274,
+          "count": 1
+        },
+        "scm": {
+          "ms": 0.7097499999999854,
+          "count": 1
+        },
+        "scm-es": {
+          "ms": 0.7065419999998994,
+          "count": 1
+        },
+        "js": {
+          "ms": 0.572041999999783,
+          "count": 1
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.3946670000004815,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.4553749999995489,
+          "count": 1
+        }
+      },
+      "scm": "((member_expression property: [(private_property_identifier) (property_identifier)] @c1) @node (#eq? @c1 \"length\"))",
+      "notes": []
+    },
+    {
+      "grammar": "typescript",
+      "file": "common/src/engine.ts",
+      "label": "member: object match ^this\\.",
+      "matches": 83,
+      "result": {
+        "native": {
+          "ms": 0.4541669999998703,
+          "count": 0
+        },
+        "native-id": {
+          "ms": 0.3898750000007567,
+          "count": 0
+        },
+        "native-es": {
+          "ms": 0.3966659999996409,
+          "count": 0
+        },
+        "spans": {
+          "ms": 0.5151249999998981,
+          "count": 0
+        },
+        "scm": {
+          "ms": 1.0263340000001335,
+          "count": 0
+        },
+        "scm-es": {
+          "ms": 1.0195830000002388,
+          "count": 0
+        },
+        "js": {
+          "ms": 0.5047919999997248,
+          "count": 0
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.38291600000047765,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.9996659999997064,
+          "count": 0
+        }
+      },
+      "scm": "((member_expression object: [(number_bigint) (call_expression) (meta_property) (parenthesized_expression) (string) (update_expression) (identifier) (undefined) (number_hex) (number_float_point) (number_float_leading_point) (number_float_scientific) (number_decimal) (number_binary) (number_octal) (import) (yield_expression) (object) (array) (class) (function_expression) (generator_function) (arrow_function) (new_expression) (await_expression) (member_expression) (subscript_expression) (assignment_expression) (augmented_assignment_expression) (ternary_expression) (binary_expression) (unary_expression) (template_string) (regex) (this) (super) (true) (false) (null) (non_null_expression) (type_assertion) (as_expression) (satisfies_expression) (instantiation_expression) (internal_module)] @c1) @node (#match? @c1 \"^this\\\\.\"))",
+      "notes": []
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/read.rs",
+      "label": "fn: name match ^read",
+      "matches": 148,
+      "result": {
+        "native": {
+          "ms": 2.2972090000002936,
+          "count": 8
+        },
+        "native-id": {
+          "ms": 2.1899999999996,
+          "count": 8
+        },
+        "native-es": {
+          "ms": 2.174542000000656,
+          "count": 8
+        },
+        "spans": {
+          "ms": 2.4687919999996666,
+          "count": 8
+        },
+        "scm": {
+          "ms": 4.36004099999991,
+          "count": 8
+        },
+        "scm-es": {
+          "ms": 4.288542000000234,
+          "count": 8
+        },
+        "js": {
+          "ms": 2.472208999999566,
+          "count": 8
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.165333000000828,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.6536249999990105,
+          "count": 8
+        }
+      },
+      "scm": "((function_item name: [(identifier) (metavariable)] @c1) @node (#match? @c1 \"^read\"))",
+      "notes": []
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/read.rs",
+      "label": "field: field eq kind",
+      "matches": 358,
+      "result": {
+        "native": {
+          "ms": 2.3648749999993015,
+          "count": 3
+        },
+        "native-id": {
+          "ms": 2.282583000000159,
+          "count": 3
+        },
+        "native-es": {
+          "ms": 2.283208000000741,
+          "count": 3
+        },
+        "spans": {
+          "ms": 2.7556659999991098,
+          "count": 3
+        },
+        "scm": {
+          "ms": 4.344750000000204,
+          "count": 3
+        },
+        "scm-es": {
+          "ms": 4.323500000000422,
+          "count": 3
+        },
+        "js": {
+          "ms": 3.0912090000001626,
+          "count": 3
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 2.2592920000006416,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 2.7207909999997355,
+          "count": 3
+        }
+      },
+      "scm": "((field_expression field: [(integer_literal) (field_identifier)] @c1) @node (#eq? @c1 \"kind\"))",
+      "notes": []
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/render.rs",
+      "label": "fn: name match ^read",
+      "matches": 48,
+      "result": {
+        "native": {
+          "ms": 0.4278329999997368,
+          "count": 1
+        },
+        "native-id": {
+          "ms": 0.359083000001192,
+          "count": 1
+        },
+        "native-es": {
+          "ms": 0.36358300000028976,
+          "count": 1
+        },
+        "spans": {
+          "ms": 0.4220839999998134,
+          "count": 1
+        },
+        "scm": {
+          "ms": 0.7598749999997381,
+          "count": 1
+        },
+        "scm-es": {
+          "ms": 0.7447499999998399,
+          "count": 1
+        },
+        "js": {
+          "ms": 0.4331659999988915,
+          "count": 1
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.36516599999959,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.4629160000004049,
+          "count": 1
+        }
+      },
+      "scm": "((function_item name: [(identifier) (metavariable)] @c1) @node (#match? @c1 \"^read\"))",
+      "notes": []
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/render.rs",
+      "label": "field: field eq kind",
+      "matches": 48,
+      "result": {
+        "native": {
+          "ms": 0.38249999999970896,
+          "count": 0
+        },
+        "native-id": {
+          "ms": 0.34579200000007404,
+          "count": 0
+        },
+        "native-es": {
+          "ms": 0.3477499999989959,
+          "count": 0
+        },
+        "spans": {
+          "ms": 0.43070800000168674,
+          "count": 0
+        },
+        "scm": {
+          "ms": 0.4717500000006112,
+          "count": 0
+        },
+        "scm-es": {
+          "ms": 0.47770800000034797,
+          "count": 0
+        },
+        "js": {
+          "ms": 0.46437499999956344,
+          "count": 0
+        }
+      },
+      "evalOnly": {
+        "native-id walk": {
+          "ms": 0.3467500000006112,
+          "count": 0
+        },
+        "scm query": {
+          "ms": 0.47466700000040873,
+          "count": 0
+        }
+      },
+      "scm": "((field_expression field: [(integer_literal) (field_identifier)] @c1) @node (#eq? @c1 \"kind\"))",
+      "notes": []
+    }
+  ],
+  "perNode": [
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name eq format_help",
+      "nodes": 144,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 3.4262152777770893,
+        "native-id": 2.0596041666662597,
+        "scm": 1.7282986111110985,
+        "js holds": 0.35040277777811624,
+        "js compiled": 0.3547430555551993
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name match ^_",
+      "nodes": 144,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 11.07407638888939,
+        "native-id": 2.051798611112253,
+        "scm": 1.7604166666668815,
+        "js holds": 0.40538194444334547,
+        "js compiled": 0.29195138888837846
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name match ^_ and not ^__",
+      "nodes": 144,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 20.696472222221967,
+        "native-id": 2.346930555556052,
+        "scm": 1.7763263888891996,
+        "js holds": 0.6310763888895584,
+        "js compiled": 0.4898749999995289
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "def: name eq add_argument or returnType .",
+      "nodes": 144,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 27.132236111109858,
+        "native-id": 2.333333333333422,
+        "scm": 1.8379583333335683,
+        "js holds": 0.5170763888900056,
+        "js compiled": 0.47771527777721684
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "call: function eq isinstance",
+      "nodes": 657,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 4.791792998478034,
+        "native-id": 3.17782800608835,
+        "scm": 7.126331811262997,
+        "js holds": 0.483130898021621,
+        "js compiled": 0.477929984779765
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "argparse.py",
+      "label": "call: function match ^self\\.",
+      "nodes": 657,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 13.703196347032202,
+        "native-id": 3.1840441400300445,
+        "scm": 7.095319634703479,
+        "js holds": 0.43309284627073663,
+        "js compiled": 0.3784885844753363
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name eq format_help",
+      "nodes": 9,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 2.944444444437977,
+        "native-id": 1.5045555555338472,
+        "scm": 1.425888888863685,
+        "js holds": 0.2314444444285376,
+        "js compiled": 0.23144444447906506
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name match ^_",
+      "nodes": 9,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 10.68055555555879,
+        "native-id": 1.5647777777808694,
+        "scm": 1.4630000000074181,
+        "js holds": 0.2916666666755595,
+        "js compiled": 0.22677777779891686
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name match ^_ and not ^__",
+      "nodes": 9,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 18.847222222221816,
+        "native-id": 1.76844444442597,
+        "scm": 1.4861111111107068,
+        "js holds": 0.4352222222223645,
+        "js compiled": 0.35655555555220214
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "def: name eq add_argument or returnType .",
+      "nodes": 9,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 25.550888888877427,
+        "native-id": 1.8518888889250067,
+        "scm": 1.555555555569299,
+        "js holds": 0.3796666666554908,
+        "js compiled": 0.35655555555220214
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "call: function eq isinstance",
+      "nodes": 75,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 4.261666666667831,
+        "native-id": 2.633333333336244,
+        "scm": 6.548333333333479,
+        "js holds": 0.3327733333329282,
+        "js compiled": 0.32333333333250874
+      }
+    },
+    {
+      "grammar": "python",
+      "file": "json/decoder.py",
+      "label": "call: function match ^self\\.",
+      "nodes": 75,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 12.211106666666941,
+        "native-id": 2.6438933333338355,
+        "scm": 6.483893333333981,
+        "js holds": 0.3766666666645809,
+        "js compiled": 0.3327733333329282
+      }
+    },
+    {
+      "grammar": "typescript",
+      "file": "emitters/wrap.ts",
+      "label": "member: property eq length",
+      "nodes": 224,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 4.820683035715335,
+        "native-id": 2.9071785714275427,
+        "scm": 2.47823660714224,
+        "js holds": 0.7771562499994745,
+        "js compiled": 0.7098214285718996
+      }
+    },
+    {
+      "grammar": "typescript",
+      "file": "emitters/wrap.ts",
+      "label": "member: object match ^this\\.",
+      "nodes": 224,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 11.728794642859189,
+        "native-id": 2.6923392857156614,
+        "scm": 11.659040178573475,
+        "js holds": 0.5824017857126559,
+        "js compiled": 0.46447321428542765
+      }
+    },
+    {
+      "grammar": "typescript",
+      "file": "common/src/engine.ts",
+      "label": "member: property eq length",
+      "nodes": 83,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 5.454325301206516,
+        "native-id": 3.835337349399591,
+        "scm": 2.6907710843403607,
+        "js holds": 0.4884457831361811,
+        "js compiled": 0.5025180722901518
+      }
+    },
+    {
+      "grammar": "typescript",
+      "file": "common/src/engine.ts",
+      "label": "member: object match ^this\\.",
+      "nodes": 83,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 13.391566265059978,
+        "native-id": 3.786144578306591,
+        "scm": 12.384036144575509,
+        "js holds": 0.44678313253212126,
+        "js compiled": 0.35692771084486374
+      }
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/read.rs",
+      "label": "fn: name match ^read",
+      "nodes": 148,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 12.736770270269492,
+        "native-id": 2.4498918918947608,
+        "scm": 2.0560270270318535,
+        "js holds": 0.4529864864904281,
+        "js compiled": 0.3699324324279095
+      }
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/read.rs",
+      "label": "field: field eq kind",
+      "nodes": 358,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 5.6650391061440795,
+        "native-id": 3.2108938547473027,
+        "scm": 2.451583798879433,
+        "js holds": 0.6227877094980161,
+        "js compiled": 0.5932262569859637
+      }
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/render.rs",
+      "label": "fn: name match ^read",
+      "nodes": 48,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 12.912333333323053,
+        "native-id": 2.4114583333130213,
+        "scm": 1.947041666653604,
+        "js holds": 0.47483333336610184,
+        "js compiled": 0.3602500000094248
+      }
+    },
+    {
+      "grammar": "rust",
+      "file": "sittir-core/src/render.rs",
+      "label": "field: field eq kind",
+      "nodes": 48,
+      "disagree": {
+        "native": 0,
+        "native-id": 0,
+        "scm": 0,
+        "js holds": 0,
+        "js compiled": 0
+      },
+      "us": {
+        "native": 5.150187499983379,
+        "native-id": 2.8003333333117553,
+        "scm": 2.2708333333412156,
+        "js holds": 0.4965208333184516,
+        "js compiled": 0.5069583333276265
+      }
+    }
+  ],
+  "dialect": [
+    {
+      "pattern": "^\\w+$",
+      "native (Rust regex)": 4,
+      "native (regress, u)": 1,
+      "JavaScript holds (u)": 1,
+      "scm #match? (Rust binding)": 4,
+      "scm #es-match? (regress)": 1,
+      "scm #match? (web-tree-sitter)": 1
+    },
+    {
+      "pattern": "\\d",
+      "native (Rust regex)": 1,
+      "native (regress, u)": 0,
+      "JavaScript holds (u)": 0,
+      "scm #match? (Rust binding)": 1,
+      "scm #es-match? (regress)": 0,
+      "scm #match? (web-tree-sitter)": 0
+    },
+    {
+      "pattern": "\\b\\w",
+      "native (Rust regex)": 4,
+      "native (regress, u)": 4,
+      "JavaScript holds (u)": 4,
+      "scm #match? (Rust binding)": 4,
+      "scm #es-match? (regress)": 4,
+      "scm #match? (web-tree-sitter)": 4
+    },
+    {
+      "pattern": "^[\\p{L}\\p{N}_]+$",
+      "native (Rust regex)": 4,
+      "native (regress, u)": 4,
+      "JavaScript holds (u)": 4,
+      "scm #match? (Rust binding)": 4,
+      "scm #es-match? (regress)": 4,
+      "scm #match? (web-tree-sitter)": 0
+    },
+    {
+      "pattern": "\\p{Nd}",
+      "native (Rust regex)": 1,
+      "native (regress, u)": 1,
+      "JavaScript holds (u)": 1,
+      "scm #match? (Rust binding)": 1,
+      "scm #es-match? (regress)": 1,
+      "scm #match? (web-tree-sitter)": 0
+    },
+    {
+      "pattern": "^na",
+      "native (Rust regex)": 1,
+      "native (regress, u)": 1,
+      "JavaScript holds (u)": 1,
+      "scm #match? (Rust binding)": 1,
+      "scm #es-match? (regress)": 1,
+      "scm #match? (web-tree-sitter)": 1
+    },
+    {
+      "pattern": "^[a-z]+$",
+      "native (Rust regex)": 1,
+      "native (regress, u)": 1,
+      "JavaScript holds (u)": 1,
+      "scm #match? (Rust binding)": 1,
+      "scm #es-match? (regress)": 1,
+      "scm #match? (web-tree-sitter)": 1
+    }
+  ],
+  "coverage": [
+    {
+      "label": "field eq",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 1,
+      "scm": 1,
+      "query": "((function_definition name: (_) @c1) @node (#eq? @c1 \"c\"))",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "field match",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 2,
+      "scm": 2,
+      "query": "((function_definition name: (_) @c1) @node (#match? @c1 \"^_\"))",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "not match, one value",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 2,
+      "scm": 2,
+      "query": "((function_definition name: (_) @c1) @node (#not-match? @c1 \"^_\"))\n(function_definition !name) @node",
+      "gap": null,
+      "notes": [
+        "function_definition slot 1: a negated test holds natively when no value passes, absent included; scm tests each captured value on its own (exact where the slot holds at most one value) and a negated field covers absence"
+      ]
+    },
+    {
+      "label": "present (field)",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 1,
+      "scm": 1,
+      "query": "(function_definition return_type: (_) @c1) @node",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "not present (field)",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 3,
+      "scm": 3,
+      "query": "(function_definition !return_type) @node",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "not match, optional slot",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 3,
+      "scm": 3,
+      "query": "((function_definition return_type: (_) @c1) @node (#not-match? @c1 \"int\"))\n(function_definition !return_type) @node",
+      "gap": null,
+      "notes": [
+        "function_definition slot 4: a negated test holds natively when no value passes, absent included; scm tests each captured value on its own (exact where the slot holds at most one value) and a negated field covers absence"
+      ]
+    },
+    {
+      "label": "and across slots",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 1,
+      "scm": 1,
+      "query": "((function_definition name: (_) @c1 return_type: (_) @c2) @node (#match? @c1 \"^[a-z]\"))",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "or across slots",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 2,
+      "scm": 2,
+      "query": "((function_definition name: (_) @c1) @node (#eq? @c1 \"d\"))\n(function_definition return_type: (_) @c2) @node",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "and on one slot, one value",
+      "grammar": "python",
+      "source": "def _a(): pass\ndef __b__(): pass\ndef c() -> int: return 1\ndef d(): pass\n",
+      "native": 1,
+      "scm": 1,
+      "query": "((function_definition name: (_) @c1) @node (#match? @c1 \"^_\") (#not-match? @c1 \"^__\"))",
+      "gap": null,
+      "notes": [
+        "function_definition slot 1: 2 literals on one slot share its capture, so they test one value together; the native plan tests each against any value (exact where the slot holds one value)"
+      ]
+    },
+    {
+      "label": "not match, several values",
+      "grammar": "python",
+      "source": "from m import os, sys\nfrom m import sys\nfrom m import os\n",
+      "native": 1,
+      "scm": 2,
+      "query": "((import_list name: [(aliased_import) (dotted_name)] @c1) @node (#not-match? @c1 \"^os$\"))\n(import_list !name) @node",
+      "gap": null,
+      "notes": [
+        "import_list slot 0: a negated test holds natively when no value passes, absent included; scm tests each captured value on its own (exact where the slot holds at most one value) and a negated field covers absence"
+      ]
+    },
+    {
+      "label": "and on one slot, several values",
+      "grammar": "python",
+      "source": "from m import os, sys\nfrom m import sys\nfrom m import os\n",
+      "native": 1,
+      "scm": 0,
+      "query": "((import_list name: [(aliased_import) (dotted_name)] @c1) @node (#eq? @c1 \"os\") (#eq? @c1 \"sys\"))",
+      "gap": null,
+      "notes": [
+        "import_list slot 0: 2 literals on one slot share its capture, so they test one value together; the native plan tests each against any value (exact where the slot holds one value)"
+      ]
+    },
+    {
+      "label": "present (unfielded)",
+      "grammar": "python",
+      "source": "@a\ndef f(): pass\nclass C:\n    @property\n    def g(self): pass\n",
+      "native": 1,
+      "scm": 1,
+      "query": "((decorated_definition (decorator) @c1) @node (#match? @c1 \"property\"))",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "not present (unfielded)",
+      "grammar": "python",
+      "source": "@a\ndef f(): pass\n",
+      "native": 0,
+      "scm": null,
+      "query": null,
+      "gap": "decorated_definition slot 0: absence of a slot routed by kind or by several fields; scm negates only a field",
+      "notes": []
+    },
+    {
+      "label": "is on a slot's values",
+      "grammar": "python",
+      "source": "f(1)\nself.g(2)\n",
+      "native": 1,
+      "scm": 1,
+      "query": "(call function: (attribute) @c1) @node",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "is on the node itself",
+      "grammar": "python",
+      "source": "f(1)\nself.g(2)\n",
+      "native": 2,
+      "scm": 2,
+      "query": "(call) @node",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "child step",
+      "grammar": "python",
+      "source": "f(1)\nself.g(2)\nother.g(3)\n",
+      "native": 1,
+      "scm": 1,
+      "query": "((call function: (attribute object: [(float) (integer_decimal) (identifier) (ellipsis) (true) (false) (none) (integer_hex) (integer_octal) (integer_binary) (list_splat_pattern) (binary_operator) (unary_operator) (attribute) (subscript) (call) (list) (set) (tuple) (dictionary) (list_comprehension) (dictionary_comprehension) (set_comprehension) (generator_expression) (parenthesized_expression) (concatenated_string) (string) (await)] @c2) @c1) @node (#eq? @c2 \"self\"))",
+      "gap": null,
+      "notes": []
+    },
+    {
+      "label": "anchored child step",
+      "grammar": "python",
+      "source": "f(1)\nself.g(2)\n",
+      "native": 1,
+      "scm": null,
+      "query": null,
+      "gap": "call slot 0: an anchored child step (first, last, only) counts the slot's values; scm's `.` anchors to the parent's named children",
+      "notes": []
+    }
+  ],
+  "census": [
+    {
+      "grammar": "python",
+      "pairs": 272,
+      "compiled": 235,
+      "withNotes": 1,
+      "gaps": {
+        "an interior slot is a group of a token's text, not a node": 31,
+        "a hidden kind is never a node of the tree": 3,
+        "an envelope's slot is the node itself or its hidden child": 3
+      }
+    },
+    {
+      "grammar": "typescript",
+      "pairs": 506,
+      "compiled": 471,
+      "withNotes": 1,
+      "gaps": {
+        "an interior slot is a group of a token's text, not a node": 28,
+        "an envelope's slot is the node itself or its hidden child": 6,
+        "a hidden kind is never a node of the tree": 1
+      }
+    },
+    {
+      "grammar": "rust",
+      "pairs": 439,
+      "compiled": 409,
+      "withNotes": 0,
+      "gaps": {
+        "an interior slot is a group of a token's text, not a node": 24,
+        "an envelope's slot is the node itself or its hidden child": 4,
+        "a hidden kind is never a node of the tree": 2
+      }
+    }
+  ],
+  "built": {
+    "nodes": 2000,
+    "results": {
+      "js holds, one text meaning ($text, else span; none for a built compound)": {
+        "us": 0.7160204999963753,
+        "count": 0
+      },
+      "js holds, rendered text": {
+        "us": 5.3868545000004815,
+        "count": 1000
+      },
+      "render only": {
+        "us": 2.8868749999965075,
+        "count": 2000
+      },
+      "render + parse": {
+        "us": 31.35762500000419,
+        "count": 2000
+      },
+      "render + parse + scm": {
+        "us": 67.04950000000827,
+        "count": 1000
+      }
+    },
+    "standalone": [
+      {
+        "grammar": "python",
+        "kind": "call",
+        "nodes": 657,
+        "reparsed": 657
+      },
+      {
+        "grammar": "python",
+        "kind": "function_definition",
+        "nodes": 144,
+        "reparsed": 144
+      },
+      {
+        "grammar": "python",
+        "kind": "keyword_argument",
+        "nodes": 126,
+        "reparsed": 0
+      },
+      {
+        "grammar": "typescript",
+        "kind": "member_expression",
+        "nodes": 224,
+        "reparsed": 224
+      },
+      {
+        "grammar": "rust",
+        "kind": "function_item",
+        "nodes": 48,
+        "reparsed": 48
+      },
+      {
+        "grammar": "rust",
+        "kind": "field_expression",
+        "nodes": 48,
+        "reparsed": 0
+      }
+    ]
+  }
+}
