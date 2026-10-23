@@ -1,0 +1,4271 @@
+{
+	"machine": {
+		"node": "v24.21.0",
+		"cpus": 4,
+		"model": "AMD EPYC 9V45 96-Core Processor",
+		"memory": 16765411328,
+		"platform": "linux-x64"
+	},
+	"settings": {
+		"rounds": 5,
+		"passes": 100,
+		"warmup": 10,
+		"copies": 5,
+		"maxSpread": 4
+	},
+	"attempts": [
+		{
+			"rounds": {
+				"rust": {
+					"a": [
+						{
+							"ms": 2.96453249999999,
+							"min": 2.9122500000000002,
+							"max": 3.8438370000000077,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.990254500000006,
+							"min": 2.906444000000022,
+							"max": 6.301818000000026,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 3.0015314999999987,
+							"min": 2.926503999999994,
+							"max": 3.3497760000000056,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9213960000000014,
+							"min": 2.793615999999986,
+							"max": 3.382343999999989,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.952458000000007,
+							"min": 2.9158680000000174,
+							"max": 3.291328,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.584670999999979,
+							"min": 4.457121000000029,
+							"max": 5.068691999999999,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.679377999999986,
+							"min": 4.6024539999999945,
+							"max": 5.114828000000003,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.6318625000000395,
+							"min": 4.507101999999975,
+							"max": 5.168136999999987,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.527766,
+							"min": 4.395103000000006,
+							"max": 4.8368319999999585,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.584141000000017,
+							"min": 4.479841000000079,
+							"max": 4.951484000000008,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 10.563244499999982,
+							"min": 10.141570999999999,
+							"max": 28.282803000000058,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.839959499999992,
+							"min": 10.480454000000009,
+							"max": 12.721483000000006,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.881697999999986,
+							"min": 10.26664100000005,
+							"max": 11.832225999999991,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.33579199999997,
+							"min": 10.115383000000008,
+							"max": 11.512796999999864,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.588715500000006,
+							"min": 10.01448400000001,
+							"max": 14.301066999999989,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 10.698689000000059,
+							"min": 10.322430999999938,
+							"max": 12.102394000000004,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 11.134954499999964,
+							"min": 10.752870000000001,
+							"max": 12.53275199999996,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.978116999999997,
+							"min": 10.731334000000004,
+							"max": 11.644174999999905,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.610851999999966,
+							"min": 10.092579,
+							"max": 18.038276999999994,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.646111000000005,
+							"min": 10.052411000000006,
+							"max": 11.960125999999946,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 19.07396700000004,
+							"min": 18.395956000000012,
+							"max": 24.398327999999992,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.120616500000096,
+							"min": 18.628252999999972,
+							"max": 32.58164099999999,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.16142100000002,
+							"min": 17.79432699999984,
+							"max": 20.25715100000002,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.219138000000044,
+							"min": 18.543339999999944,
+							"max": 37.49091199999998,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.09271700000005,
+							"min": 17.53469899999999,
+							"max": 20.92838000000006,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				},
+				"typescript": {
+					"a": [
+						{
+							"ms": 2.7186195000000026,
+							"min": 2.6569920000000025,
+							"max": 3.306711000000007,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.658896999999996,
+							"min": 2.6126029999999787,
+							"max": 3.2843540000000075,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.6997410000000173,
+							"min": 2.6642630000000054,
+							"max": 3.186130999999996,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.62602050000001,
+							"min": 2.5136680000000524,
+							"max": 2.906043000000004,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.743170499999991,
+							"min": 2.631734999999992,
+							"max": 3.3094950000000054,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 3.9963094999999953,
+							"min": 3.9279880000000276,
+							"max": 5.278632000000016,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.092112499999999,
+							"min": 4.033090000000016,
+							"max": 4.6090580000000045,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.068827499999998,
+							"min": 3.840608000000003,
+							"max": 4.723123000000001,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 3.8875064999999935,
+							"min": 3.8183429999999987,
+							"max": 9.723938000000032,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.141681999999982,
+							"min": 3.956792000000007,
+							"max": 5.4873249999999985,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 9.327886000000035,
+							"min": 8.985791000000035,
+							"max": 10.075576999999953,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.422875500000004,
+							"min": 9.164305000000013,
+							"max": 10.778660000000059,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.746208000000024,
+							"min": 8.587286000000063,
+							"max": 9.483441999999997,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.784027000000009,
+							"min": 8.508616999999958,
+							"max": 10.160930000000008,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.316927499999963,
+							"min": 8.597312999999986,
+							"max": 9.992965999999996,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 9.45992800000002,
+							"min": 8.842888000000016,
+							"max": 10.779246,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.545647500000015,
+							"min": 9.064084999999977,
+							"max": 15.944056999999987,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.854593999999992,
+							"min": 8.567677000000003,
+							"max": 9.691281999999987,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.115521000000001,
+							"min": 8.561114000000032,
+							"max": 10.409070999999983,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.071680500000014,
+							"min": 8.373309000000063,
+							"max": 19.22404400000005,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 16.439963500000033,
+							"min": 15.358394999999973,
+							"max": 18.126502999999985,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 16.114194999999995,
+							"min": 15.29713300000003,
+							"max": 18.32649599999999,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.647949499999982,
+							"min": 15.14062899999999,
+							"max": 17.294399999999996,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.838455499999952,
+							"min": 14.964713000000074,
+							"max": 17.201960000000014,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 16.232666999999992,
+							"min": 15.486658999999918,
+							"max": 18.091985999999906,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				},
+				"python": {
+					"a": [
+						{
+							"ms": 2.823496000000006,
+							"min": 2.756101000000001,
+							"max": 3.276636999999994,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.94146649999999,
+							"min": 2.7637619999999856,
+							"max": 3.3234059999999914,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9209054999999893,
+							"min": 2.7893789999999967,
+							"max": 3.2907769999999914,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9431385000000034,
+							"min": 2.9078569999999786,
+							"max": 5.917924999999997,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.919685000000001,
+							"min": 2.8829700000000003,
+							"max": 3.3451689999999985,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.491287999999983,
+							"min": 4.390928999999971,
+							"max": 4.830473999999995,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.5127099999999984,
+							"min": 4.314003000000071,
+							"max": 4.838386000000014,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.480486500000012,
+							"min": 4.319141000000002,
+							"max": 5.204160999999999,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.577210499999978,
+							"min": 4.475933999999995,
+							"max": 5.060035999999997,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.5021955000000276,
+							"min": 4.345171999999991,
+							"max": 7.787977000000012,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 11.41716699999995,
+							"min": 11.104330000000004,
+							"max": 11.857193000000024,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.821909000000005,
+							"min": 10.518387000000075,
+							"max": 11.69796500000001,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.77724649999999,
+							"min": 10.534148000000016,
+							"max": 11.584615999999983,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 11.401553000000021,
+							"min": 10.955237000000011,
+							"max": 25.580296999999973,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.972752000000014,
+							"min": 10.595884999999953,
+							"max": 11.874381999999969,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 10.96466799999996,
+							"min": 10.586027999999999,
+							"max": 21.707052999999974,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 11.047753,
+							"min": 10.163075999999819,
+							"max": 14.96810800000003,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.44464000000005,
+							"min": 9.988815999999986,
+							"max": 13.950473999999986,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.43121350000007,
+							"min": 9.953801999999996,
+							"max": 26.315766999999994,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.594732499999964,
+							"min": 10.079213999999979,
+							"max": 11.234706999999958,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 19.852847999999994,
+							"min": 19.122820000000047,
+							"max": 43.596362,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.786711999999966,
+							"min": 19.249161000000015,
+							"max": 23.662051999999903,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.21675899999991,
+							"min": 18.31030300000009,
+							"max": 20.62233999999998,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.23869049999996,
+							"min": 18.159897,
+							"max": 38.48327900000004,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.35909749999999,
+							"min": 18.07690700000012,
+							"max": 20.680931999999984,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				}
+			},
+			"ms": {
+				"rust": {
+					"a": 2.96453249999999,
+					"t": 4.584670999999979,
+					"b": 10.588715500000006,
+					"c": 10.698689000000059,
+					"d": 19.120616500000096
+				},
+				"typescript": {
+					"a": 2.6997410000000173,
+					"t": 4.068827499999998,
+					"b": 9.316927499999963,
+					"c": 9.115521000000001,
+					"d": 16.114194999999995
+				},
+				"python": {
+					"a": 2.9209054999999893,
+					"t": 4.5021955000000276,
+					"b": 10.972752000000014,
+					"c": 10.594732499999964,
+					"d": 19.35909749999999
+				}
+			},
+			"spread": {
+				"rust": {
+					"a": 2.7031412204115663,
+					"t": 3.3069330383791242,
+					"b": 5.155545070599131,
+					"c": 4.8987544174804505,
+					"d": 0.7592380716385588
+				},
+				"typescript": {
+					"a": 4.339305140751659,
+					"t": 6.246897908549533,
+					"b": 7.262775201373866,
+					"c": 7.58106420905644,
+					"d": 4.9150081651615345
+				},
+				"python": {
+					"a": 4.096075686118503,
+					"t": 2.1483740543911454,
+					"b": 5.8319052503871305,
+					"c": 5.819302186250884,
+					"d": 3.2857368480120726
+				}
+			},
+			"counts": {
+				"rust": {
+					"a": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 4547,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 149,
+						"nodes": 8337,
+						"routed": 3298,
+						"withLists": 246,
+						"lists": 246,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 149,
+						"nodes": 8337,
+						"routed": 3298,
+						"withLists": 246,
+						"lists": 246,
+						"runs": 0,
+						"readRefused": 0
+					}
+				},
+				"typescript": {
+					"a": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 3931,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 119,
+						"nodes": 6784,
+						"routed": 2404,
+						"withLists": 167,
+						"lists": 167,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 119,
+						"nodes": 6784,
+						"routed": 2404,
+						"withLists": 167,
+						"lists": 167,
+						"runs": 0,
+						"readRefused": 0
+					}
+				},
+				"python": {
+					"a": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 4245,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 116,
+						"nodes": 8441,
+						"routed": 3959,
+						"withLists": 316,
+						"lists": 316,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 116,
+						"nodes": 8441,
+						"routed": 3959,
+						"withLists": 316,
+						"lists": 316,
+						"runs": 0,
+						"readRefused": 0
+					}
+				}
+			},
+			"meets": false
+		},
+		{
+			"rounds": {
+				"rust": {
+					"a": [
+						{
+							"ms": 2.95984,
+							"min": 2.9153089999999793,
+							"max": 4.447363999999993,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.921866999999999,
+							"min": 2.830320000000029,
+							"max": 3.3216229999999953,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9415465000000154,
+							"min": 2.908787000000018,
+							"max": 3.3265910000000076,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9469240000000028,
+							"min": 2.8196249999999736,
+							"max": 3.3407419999999917,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9668000000000063,
+							"min": 2.9217779999999607,
+							"max": 3.3371470000000016,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.669916499999999,
+							"min": 4.578009000000009,
+							"max": 7.859956000000011,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.578207000000006,
+							"min": 4.402273999999977,
+							"max": 8.58020300000004,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.5767045000000195,
+							"min": 4.491257000000019,
+							"max": 5.184089999999998,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.637931000000009,
+							"min": 4.496645000000001,
+							"max": 5.04328000000001,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.668983500000024,
+							"min": 4.530987999999979,
+							"max": 5.302027999999993,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 10.733617499999923,
+							"min": 10.49861199999998,
+							"max": 12.192228,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.762587499999995,
+							"min": 10.300239000000033,
+							"max": 11.60740800000002,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.805972499999996,
+							"min": 10.171227000000044,
+							"max": 11.54648700000007,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.556039499999997,
+							"min": 10.105557999999974,
+							"max": 11.57113400000003,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.937753499999985,
+							"min": 10.25507499999992,
+							"max": 12.188718999999992,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 10.856095500000038,
+							"min": 10.477881000000025,
+							"max": 22.650811000000033,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.46899499999995,
+							"min": 9.901905000000056,
+							"max": 28.374098000000004,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.718452500000012,
+							"min": 10.266688999999985,
+							"max": 13.59795600000001,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.438268999999991,
+							"min": 10.078416999999945,
+							"max": 11.409992999999986,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.249761999999976,
+							"min": 9.755069000000049,
+							"max": 11.795041999999967,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 19.02196200000006,
+							"min": 17.905762000000095,
+							"max": 22.919120999999905,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.776772500000106,
+							"min": 17.77163900000005,
+							"max": 20.67637000000002,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.67849149999995,
+							"min": 17.547906999999896,
+							"max": 20.492477000000008,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.19231700000006,
+							"min": 18.21757400000024,
+							"max": 20.837931000000026,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.183170000000075,
+							"min": 17.464808000000176,
+							"max": 32.276990000000296,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				},
+				"typescript": {
+					"a": [
+						{
+							"ms": 2.6058909999999997,
+							"min": 2.492876999999993,
+							"max": 2.9807750000000013,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.7019169999999804,
+							"min": 2.6201350000000048,
+							"max": 6.214812000000009,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.582105000000027,
+							"min": 2.518855000000002,
+							"max": 3.0892260000000036,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.5777935000000127,
+							"min": 2.503653,
+							"max": 2.8934440000000023,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.768278500000008,
+							"min": 2.7339380000000233,
+							"max": 3.4018629999999987,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.0580014999999605,
+							"min": 3.948627999999985,
+							"max": 4.484678000000002,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.161347499999991,
+							"min": 4.043035999999972,
+							"max": 4.996245999999999,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.055937499999999,
+							"min": 3.9719129999999723,
+							"max": 4.553119999999993,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 3.87206350000001,
+							"min": 3.8211479999999938,
+							"max": 12.498156000000009,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.1687524999999965,
+							"min": 3.996860999999967,
+							"max": 4.621732999999992,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 9.345320500000014,
+							"min": 8.979299999999967,
+							"max": 10.099591000000004,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.34014049999999,
+							"min": 9.12137400000006,
+							"max": 11.560048999999992,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.031216499999971,
+							"min": 8.696737999999982,
+							"max": 9.65691000000001,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.194338999999957,
+							"min": 8.773762000000033,
+							"max": 13.256867,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.096715500000002,
+							"min": 8.936375999999996,
+							"max": 10.216875999999957,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 9.107947000000024,
+							"min": 8.712071000000037,
+							"max": 10.497793999999999,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.46393500000002,
+							"min": 9.100603999999976,
+							"max": 23.489078000000006,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.111185500000033,
+							"min": 8.381507999999997,
+							"max": 10.269262000000026,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.613918999999981,
+							"min": 8.364863000000014,
+							"max": 9.80410900000004,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 9.114326500000004,
+							"min": 8.793313000000012,
+							"max": 21.836213000000043,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 16.595506999999998,
+							"min": 15.40357899999998,
+							"max": 20.631264999999985,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 16.820710499999933,
+							"min": 15.92118900000014,
+							"max": 20.224091999999928,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 16.144323000000043,
+							"min": 15.299893999999995,
+							"max": 17.866039999999998,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.90603249999998,
+							"min": 14.675993999999946,
+							"max": 29.348191000000043,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.97728650000002,
+							"min": 14.541864999999916,
+							"max": 23.18909999999994,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				},
+				"python": {
+					"a": [
+						{
+							"ms": 2.9329289999999872,
+							"min": 2.8626289999999983,
+							"max": 3.3703359999999947,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9085925000000046,
+							"min": 2.8733849999999848,
+							"max": 3.276586000000009,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.7851675,
+							"min": 2.75950499999999,
+							"max": 3.198008999999999,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.935288000000014,
+							"min": 2.9034099999999796,
+							"max": 3.465789000000001,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9382070000000198,
+							"min": 2.9081060000000036,
+							"max": 3.3090150000000023,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.470957499999983,
+							"min": 4.286911999999916,
+							"max": 4.9581930000000085,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.490390500000004,
+							"min": 4.449103999999977,
+							"max": 4.901297999999997,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.484752499999985,
+							"min": 4.348573999999985,
+							"max": 4.8844840000000005,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.565269000000015,
+							"min": 4.472199999999987,
+							"max": 9.394472000000064,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.5298455000000075,
+							"min": 4.440491999999992,
+							"max": 9.765142000000026,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 11.246185000000082,
+							"min": 10.770601,
+							"max": 25.01355999999987,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 11.147222,
+							"min": 10.92337800000007,
+							"max": 12.221112999999946,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 11.214186499999983,
+							"min": 10.635469,
+							"max": 24.6276620000001,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.920692500000087,
+							"min": 10.324328000000037,
+							"max": 12.624143000000004,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.939613999999978,
+							"min": 10.52563599999985,
+							"max": 11.627620000000093,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 10.828527000000008,
+							"min": 10.166529999999966,
+							"max": 11.430294000000004,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 11.14329600000002,
+							"min": 10.481089000000111,
+							"max": 11.497413999999992,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.864740000000012,
+							"min": 10.48141799999999,
+							"max": 14.24134499999991,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.995459999999923,
+							"min": 10.60643499999992,
+							"max": 11.94718499999999,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.436098000000015,
+							"min": 10.26852299999996,
+							"max": 11.521821999999986,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 19.557065499999965,
+							"min": 18.6530130000001,
+							"max": 24.352821000000176,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.395268999999985,
+							"min": 18.54336699999999,
+							"max": 20.669927,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.630956499999996,
+							"min": 18.975623999999925,
+							"max": 26.710797999999954,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 19.124911999999995,
+							"min": 18.205976999999848,
+							"max": 24.410907999999836,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.472224999999924,
+							"min": 17.613333999999895,
+							"max": 19.68082800000002,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				}
+			},
+			"ms": {
+				"rust": {
+					"a": 2.9469240000000028,
+					"t": 4.637931000000009,
+					"b": 10.762587499999995,
+					"c": 10.46899499999995,
+					"d": 18.776772500000106
+				},
+				"typescript": {
+					"a": 2.6058909999999997,
+					"t": 4.0580014999999605,
+					"b": 9.194338999999957,
+					"c": 9.111185500000033,
+					"d": 16.144323000000043
+				},
+				"python": {
+					"a": 2.9329289999999872,
+					"t": 4.490390500000004,
+					"b": 11.147222,
+					"c": 10.864740000000012,
+					"d": 19.395268999999985
+				}
+			},
+			"spread": {
+				"rust": {
+					"a": 1.52474240937355,
+					"t": 2.0097754796261453,
+					"b": 3.546674997996423,
+					"c": 5.7917068448314755,
+					"d": 5.37444334482925
+				},
+				"typescript": {
+					"a": 7.309783870468695,
+					"t": 7.311209717393878,
+					"b": 3.416276036809655,
+					"c": 9.329367731565076,
+					"d": 5.665632433146624
+				},
+				"python": {
+					"a": 5.21797493222715,
+					"t": 2.1002961769144974,
+					"b": 2.9199427444792594,
+					"c": 6.50911112461048,
+					"d": 5.974299711955909
+				}
+			},
+			"counts": {
+				"rust": {
+					"a": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 4547,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 149,
+						"nodes": 8337,
+						"routed": 3298,
+						"withLists": 246,
+						"lists": 246,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 149,
+						"nodes": 8337,
+						"routed": 3298,
+						"withLists": 246,
+						"lists": 246,
+						"runs": 0,
+						"readRefused": 0
+					}
+				},
+				"typescript": {
+					"a": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 3931,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 119,
+						"nodes": 6784,
+						"routed": 2404,
+						"withLists": 167,
+						"lists": 167,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 119,
+						"nodes": 6784,
+						"routed": 2404,
+						"withLists": 167,
+						"lists": 167,
+						"runs": 0,
+						"readRefused": 0
+					}
+				},
+				"python": {
+					"a": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 4245,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 116,
+						"nodes": 8441,
+						"routed": 3959,
+						"withLists": 316,
+						"lists": 316,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 116,
+						"nodes": 8441,
+						"routed": 3959,
+						"withLists": 316,
+						"lists": 316,
+						"runs": 0,
+						"readRefused": 0
+					}
+				}
+			},
+			"meets": false
+		},
+		{
+			"rounds": {
+				"rust": {
+					"a": [
+						{
+							"ms": 2.8784874999999914,
+							"min": 2.781908000000044,
+							"max": 3.162054999999995,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9452019999999948,
+							"min": 2.901217000000031,
+							"max": 3.185300000000005,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9901734999999974,
+							"min": 2.9372299999999996,
+							"max": 3.3736800000000358,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.887104999999991,
+							"min": 2.842427999999984,
+							"max": 3.866866000000016,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9493480000000005,
+							"min": 2.909247999999991,
+							"max": 6.832517999999993,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.5831050000000175,
+							"min": 4.4868999999999915,
+							"max": 4.883482000000015,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.575253000000032,
+							"min": 4.365711000000005,
+							"max": 9.109294000000006,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.542463499999997,
+							"min": 4.496325000000013,
+							"max": 4.885555999999994,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.54007,
+							"min": 4.439350000000019,
+							"max": 4.812826000000001,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.586498999999989,
+							"min": 4.523425000000032,
+							"max": 4.915809999999965,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4547,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 10.161132000000038,
+							"min": 9.788086000000021,
+							"max": 10.978510999999997,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.200200999999993,
+							"min": 9.902606999999989,
+							"max": 11.092562000000044,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.417599999999979,
+							"min": 10.326348999999993,
+							"max": 11.67683199999999,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.795843999999988,
+							"min": 10.243825000000015,
+							"max": 12.015657000000033,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.404308999999998,
+							"min": 10.258916,
+							"max": 11.065607999999997,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 9.805181500000003,
+							"min": 9.530832000000032,
+							"max": 13.580219999999997,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.186470500000013,
+							"min": 9.949828000000025,
+							"max": 11.198268999999982,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.135493999999994,
+							"min": 9.734105,
+							"max": 10.743110000000001,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.045149000000038,
+							"min": 9.755728000000005,
+							"max": 13.509334999999965,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.12897700000002,
+							"min": 9.905918999999983,
+							"max": 14.450595000000021,
+							"counts": {
+								"trees": 149,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 18.241596500000014,
+							"min": 17.270503000000076,
+							"max": 19.183806000000004,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.0540575,
+							"min": 16.97481400000015,
+							"max": 18.968987999999968,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 17.763814000000025,
+							"min": 16.888734000000113,
+							"max": 18.198337000000038,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 17.491398000000004,
+							"min": 16.79321200000004,
+							"max": 18.895996999999966,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.03108900000001,
+							"min": 17.010692000000063,
+							"max": 19.142471,
+							"counts": {
+								"trees": 149,
+								"nodes": 8337,
+								"routed": 3298,
+								"withLists": 246,
+								"lists": 246,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				},
+				"typescript": {
+					"a": [
+						{
+							"ms": 2.6596210000000013,
+							"min": 2.634709000000001,
+							"max": 2.9720219999999955,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.647823500000001,
+							"min": 2.624873999999977,
+							"max": 2.939694000000003,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.6548990000000003,
+							"min": 2.6358010000000007,
+							"max": 2.9755370000000028,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.6193904999999944,
+							"min": 2.5170040000000427,
+							"max": 2.8454929999999976,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.7025540000000063,
+							"min": 2.6231310000000008,
+							"max": 2.9732430000000036,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.074911499999999,
+							"min": 3.976569999999981,
+							"max": 4.378788999999998,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.03891800000001,
+							"min": 3.998332000000005,
+							"max": 4.419611000000003,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.070971,
+							"min": 4.0235700000000065,
+							"max": 9.554327,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 3.9642060000000185,
+							"min": 3.8011979999999994,
+							"max": 6.9119759999999815,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.038997000000009,
+							"min": 3.967956000000001,
+							"max": 4.337337000000005,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 3931,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 8.956936499999998,
+							"min": 8.620965999999953,
+							"max": 10.722058999999945,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.75842000000003,
+							"min": 8.337643000000014,
+							"max": 9.473586999999952,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.73939150000001,
+							"min": 8.479303999999956,
+							"max": 9.982676000000083,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.711640000000003,
+							"min": 8.479284000000007,
+							"max": 13.425249000000008,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.831412499999999,
+							"min": 8.566521999999992,
+							"max": 9.137985,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 8.907623000000001,
+							"min": 8.635086000000001,
+							"max": 21.912536000000046,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.966075000000004,
+							"min": 8.67632900000001,
+							"max": 10.65427799999999,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.655046000000027,
+							"min": 8.247548999999992,
+							"max": 9.296452999999985,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.644329999999997,
+							"min": 8.30659700000001,
+							"max": 16.639893,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 8.759019499999965,
+							"min": 8.559842000000003,
+							"max": 9.767783000000009,
+							"counts": {
+								"trees": 119,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 15.89533299999998,
+							"min": 15.486333000000059,
+							"max": 16.89233999999999,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.451641499999965,
+							"min": 14.601333999999952,
+							"max": 19.180693999999903,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.422312500000032,
+							"min": 14.46952599999986,
+							"max": 22.526820999999984,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.104123500000071,
+							"min": 14.409548000000086,
+							"max": 27.55304700000005,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 15.394416999999976,
+							"min": 15.005331999999953,
+							"max": 31.11137599999995,
+							"counts": {
+								"trees": 119,
+								"nodes": 6784,
+								"routed": 2404,
+								"withLists": 167,
+								"lists": 167,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				},
+				"python": {
+					"a": [
+						{
+							"ms": 3.0086565000000007,
+							"min": 2.905163000000016,
+							"max": 3.4248369999999966,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9140100000000047,
+							"min": 2.8811059999999884,
+							"max": 3.1647800000000004,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.7991995000000145,
+							"min": 2.7641519999999957,
+							"max": 3.720497000000023,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9047914999999946,
+							"min": 2.8783520000000067,
+							"max": 3.193111000000016,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 2.9163979999999867,
+							"min": 2.887855000000002,
+							"max": 3.2015130000000056,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"t": [
+						{
+							"ms": 4.568061999999998,
+							"min": 4.507932000000011,
+							"max": 8.059207999999984,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.6365089999999896,
+							"min": 4.465449000000035,
+							"max": 5.0470260000000025,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.506099499999976,
+							"min": 4.294623999999999,
+							"max": 5.277899999999988,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.5478060000000085,
+							"min": 4.514691999999997,
+							"max": 4.874869000000004,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 4.616187500000009,
+							"min": 4.557834999999955,
+							"max": 4.8908210000000025,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 4245,
+								"readRefused": 0
+							}
+						}
+					],
+					"b": [
+						{
+							"ms": 10.923634499999963,
+							"min": 10.796358999999995,
+							"max": 11.676723000000038,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.86396000000002,
+							"min": 10.683731999999964,
+							"max": 11.485346999999933,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.91160149999996,
+							"min": 10.694346999999993,
+							"max": 24.77726800000005,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.826208000000008,
+							"min": 10.58525400000002,
+							"max": 23.19958300000002,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.92229949999998,
+							"min": 10.770317000000091,
+							"max": 19.88674800000001,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"c": [
+						{
+							"ms": 10.38820100000001,
+							"min": 10.156706000000014,
+							"max": 11.13793899999996,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.414610500000038,
+							"min": 10.16960499999999,
+							"max": 13.693919999999935,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.483683499999984,
+							"min": 10.085659999999962,
+							"max": 11.238618999999971,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.283358499999963,
+							"min": 9.832952000000006,
+							"max": 11.245288000000073,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 10.332419499999986,
+							"min": 10.170312999999965,
+							"max": 10.865159000000006,
+							"counts": {
+								"trees": 116,
+								"nodes": 0,
+								"routed": 0,
+								"withLists": 0,
+								"lists": 0,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					],
+					"d": [
+						{
+							"ms": 18.78709100000006,
+							"min": 17.73226199999999,
+							"max": 19.618824999999987,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.879372499999988,
+							"min": 17.724731000000247,
+							"max": 19.97964300000001,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.92793000000006,
+							"min": 17.62813600000004,
+							"max": 23.084282999999914,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.414162999999974,
+							"min": 17.588145999999995,
+							"max": 31.842742000000044,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						},
+						{
+							"ms": 18.586510500000145,
+							"min": 18.37160999999992,
+							"max": 19.201107000000007,
+							"counts": {
+								"trees": 116,
+								"nodes": 8441,
+								"routed": 3959,
+								"withLists": 316,
+								"lists": 316,
+								"runs": 0,
+								"readRefused": 0
+							}
+						}
+					]
+				}
+			},
+			"ms": {
+				"rust": {
+					"a": 2.9452019999999948,
+					"t": 4.575253000000032,
+					"b": 10.404308999999998,
+					"c": 10.12897700000002,
+					"d": 18.03108900000001
+				},
+				"typescript": {
+					"a": 2.6548990000000003,
+					"t": 4.038997000000009,
+					"b": 8.75842000000003,
+					"c": 8.759019499999965,
+					"d": 15.422312500000032
+				},
+				"python": {
+					"a": 2.9140100000000047,
+					"t": 4.568061999999998,
+					"b": 10.91160149999996,
+					"c": 10.38820100000001,
+					"d": 18.78709100000006
+				}
+			},
+			"spread": {
+				"rust": {
+					"a": 3.7921337823350028,
+					"t": 1.0147854118665973,
+					"b": 6.100472410036561,
+					"c": 3.764338688892361,
+					"d": 4.160583423441646
+				},
+				"typescript": {
+					"a": 3.132454379620917,
+					"t": 2.7409156283101996,
+					"b": 2.8006935040794354,
+					"c": 3.673299277390675,
+					"d": 5.130290933995188
+				},
+				"python": {
+					"a": 7.1879300345567065,
+					"t": 2.8548102017882693,
+					"b": 0.892870766953459,
+					"c": 1.9283897182969463,
+					"d": 2.7346809572598816
+				}
+			},
+			"counts": {
+				"rust": {
+					"a": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 4547,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 149,
+						"nodes": 8337,
+						"routed": 3298,
+						"withLists": 246,
+						"lists": 246,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 149,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 149,
+						"nodes": 8337,
+						"routed": 3298,
+						"withLists": 246,
+						"lists": 246,
+						"runs": 0,
+						"readRefused": 0
+					}
+				},
+				"typescript": {
+					"a": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 3931,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 119,
+						"nodes": 6784,
+						"routed": 2404,
+						"withLists": 167,
+						"lists": 167,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 119,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 119,
+						"nodes": 6784,
+						"routed": 2404,
+						"withLists": 167,
+						"lists": 167,
+						"runs": 0,
+						"readRefused": 0
+					}
+				},
+				"python": {
+					"a": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"t": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 4245,
+						"readRefused": 0
+					},
+					"b": {
+						"trees": 116,
+						"nodes": 8441,
+						"routed": 3959,
+						"withLists": 316,
+						"lists": 316,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"c": {
+						"trees": 116,
+						"nodes": 0,
+						"routed": 0,
+						"withLists": 0,
+						"lists": 0,
+						"runs": 0,
+						"readRefused": 0
+					},
+					"d": {
+						"trees": 116,
+						"nodes": 8441,
+						"routed": 3959,
+						"withLists": 316,
+						"lists": 316,
+						"runs": 0,
+						"readRefused": 0
+					}
+				}
+			},
+			"meets": false
+		}
+	],
+	"counted": 2,
+	"memory": {
+		"rust": {
+			"a": {
+				"trees": 745,
+				"live": 745,
+				"rssPer100": 1599914.0939597315,
+				"heapPer100": -1206.979865771812,
+				"externalPer100": 5.369127516778524
+			},
+			"t": {
+				"trees": 745,
+				"live": 745,
+				"rssPer100": 2248676.510067114,
+				"heapPer100": -1044.8322147651006,
+				"externalPer100": 5.369127516778524
+			},
+			"b": {
+				"trees": 745,
+				"live": 745,
+				"rssPer100": 3557197.3154362417,
+				"heapPer100": 322.1476510067114,
+				"externalPer100": 5.369127516778524
+			}
+		},
+		"typescript": {
+			"a": {
+				"trees": 595,
+				"live": 595,
+				"rssPer100": 1673508.5714285714,
+				"heapPer100": 1487.0588235294117,
+				"externalPer100": 6.722689075630252
+			},
+			"t": {
+				"trees": 595,
+				"live": 595,
+				"rssPer100": 2376368.4033613442,
+				"heapPer100": 1690.0840336134454,
+				"externalPer100": 6.722689075630252
+			},
+			"b": {
+				"trees": 595,
+				"live": 595,
+				"rssPer100": 3711182.521008403,
+				"heapPer100": 3401.6806722689075,
+				"externalPer100": 6.722689075630252
+			}
+		},
+		"python": {
+			"a": {
+				"trees": 580,
+				"live": 580,
+				"rssPer100": 1558598.6206896552,
+				"heapPer100": -544.8275862068965,
+				"externalPer100": 6.896551724137931
+			},
+			"t": {
+				"trees": 580,
+				"live": 580,
+				"rssPer100": 2334013.793103448,
+				"heapPer100": -336.55172413793105,
+				"externalPer100": 6.896551724137931
+			},
+			"b": {
+				"trees": 580,
+				"live": 580,
+				"rssPer100": 4048684.1379310344,
+				"heapPer100": 1419.310344827586,
+				"externalPer100": 6.896551724137931
+			}
+		}
+	},
+	"memoryRounds": {
+		"rust": {
+			"a": [
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 11816960,
+					"heap": -8992,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 11919360,
+					"heap": -8992,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 11915264,
+					"heap": -8992,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 12181504,
+					"heap": -8992,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 11923456,
+					"heap": -8992,
+					"external": 40
+				}
+			],
+			"t": [
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 16781312,
+					"heap": -7784,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 16752640,
+					"heap": -7784,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 16617472,
+					"heap": -7840,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 16842752,
+					"heap": -7784,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 16736256,
+					"heap": -7840,
+					"external": 40
+				}
+			],
+			"b": [
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 26509312,
+					"heap": 2400,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 26476544,
+					"heap": 2400,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 26615808,
+					"heap": 2344,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 26501120,
+					"heap": 2400,
+					"external": 40
+				},
+				{
+					"trees": 745,
+					"live": 745,
+					"rss": 26488832,
+					"heap": 2400,
+					"external": 40
+				}
+			]
+		},
+		"typescript": {
+			"a": [
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 9953280,
+					"heap": 8848,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 9957376,
+					"heap": 8848,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 9822208,
+					"heap": 8848,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 9969664,
+					"heap": 8848,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 10002432,
+					"heap": 8848,
+					"external": 40
+				}
+			],
+			"t": [
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 14217216,
+					"heap": 10056,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 14016512,
+					"heap": 10000,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 14139392,
+					"heap": 10056,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 14090240,
+					"heap": 10056,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 14155776,
+					"heap": 10000,
+					"external": 40
+				}
+			],
+			"b": [
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 21995520,
+					"heap": 20240,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 22114304,
+					"heap": 20240,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 22253568,
+					"heap": 20240,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 22081536,
+					"heap": 20184,
+					"external": 40
+				},
+				{
+					"trees": 595,
+					"live": 595,
+					"rss": 21975040,
+					"heap": 20240,
+					"external": 40
+				}
+			]
+		},
+		"python": {
+			"a": [
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 9039872,
+					"heap": -3160,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 9031680,
+					"heap": -3160,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 8908800,
+					"heap": -3160,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 9175040,
+					"heap": -3160,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 9150464,
+					"heap": -3160,
+					"external": 40
+				}
+			],
+			"t": [
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 13217792,
+					"heap": -1952,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 13553664,
+					"heap": -1952,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 13369344,
+					"heap": -2008,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 13660160,
+					"heap": -1952,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 13537280,
+					"heap": -1952,
+					"external": 40
+				}
+			],
+			"b": [
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 23478272,
+					"heap": 8176,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 23683072,
+					"heap": 8232,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 23404544,
+					"heap": 8232,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 23482368,
+					"heap": 8232,
+					"external": 40
+				},
+				{
+					"trees": 580,
+					"live": 580,
+					"rss": 23580672,
+					"heap": 8232,
+					"external": 40
+				}
+			]
+		}
+	}
+}
