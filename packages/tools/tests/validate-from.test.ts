@@ -26,7 +26,7 @@ describe('validateFrom — module load failure sentinel', () => {
 
 		expect(result.total).toBe(0);
 		expect(result.pass).toBe(0);
-		expect(result.fail).toBe(0);
+		expect(result.fail).toBe(1);
 		expect(result.skip).toBe(0);
 		expect(result.errors).toHaveLength(1);
 		expect(result.errors[0]).toMatchObject({ kind: '(from-module-load)', severity: 'error' });

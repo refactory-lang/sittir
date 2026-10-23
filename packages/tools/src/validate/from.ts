@@ -41,7 +41,8 @@ import {
 	type TSNode,
 	type TSTree,
 	type ValidatorSkip,
-	type CorpusEntry
+	type CorpusEntry,
+	FAILED_RUN
 } from './common.ts';
 import { KindCases, type CasesByKind } from './kind-cases.ts';
 
@@ -239,19 +240,12 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	}
 	const readNode = await readNodeOf(grammar);
 
-	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
-	// in factoryMap` below and total stays 0 — silently reporting a passing
-	// "0/0" run instead of the real load failure. Short-circuit and surface
-	// it, matching validateFactoryStorage's importFailure guard.
 	if (errors.length === 0) factoryMap = await loadScopedFactoryMap(grammar, factoryMap);
 	if (errors.length > 0) {
 		return {
 			grammar,
-			total: 0,
+			...FAILED_RUN,
 			casesByKind: {},
-			pass: 0,
-			fail: 0,
-			skip: 0,
 			undefinedCount: 0,
 			divergentCount: 0,
 			errors,

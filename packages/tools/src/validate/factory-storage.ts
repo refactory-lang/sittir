@@ -51,7 +51,8 @@ import {
 	type ReadNodeLike,
 	loadScopedFactoryMap,
 	loadNativeEngine,
-	loadStorageKindNameFromId
+	loadStorageKindNameFromId,
+	FAILED_RUN
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
 import {
@@ -444,31 +445,18 @@ function initKindEntryDeduplicator(): Set<string> {
 	return new Set<string>();
 }
 
-/**
- * Record a factory-module load failure as a sentinel error entry. Without
- * this entry, an empty `factoryMap` silently skips every kind, making the
- * reported "factory pass" count reflect an all-skip run rather than a real
- * failure signal.
- *
- * @param importFailure - The load-failure descriptor, or `null` if loading succeeded.
- * @param errors - Mutable error list to append to.
- */
-function recordFactoryModuleLoadFailure(
-	importFailure: { message: string } | null,
-	errors: {
-		kind: string;
-		entry?: string;
-		message: string;
-		input?: string;
-		rendered?: string;
-	}[]
-): void {
-	if (importFailure) {
-		errors.push({
-			kind: '(factory-module-load)',
-			message: importFailure.message
-		});
-	}
+function failedRun(grammar: string, errors: FactoryStorageResult['errors']): FactoryStorageResult {
+	return {
+		grammar,
+		...FAILED_RUN,
+		casesByKind: {},
+		astMatchPass: 0,
+		errors,
+		astMismatches: [],
+		skips: [],
+		excluded: [],
+		render: emptyBuiltRender()
+	};
 }
 
 function buildFactoryUntypedNode(
@@ -560,32 +548,10 @@ export async function validateFactoryStorage(
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 
-	recordFactoryModuleLoadFailure(importFailure, errors);
-	if (options.surface === 'ir' && surface === undefined) {
-		errors.push({ kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` });
-	}
-	if (importFailure || (options.surface === 'ir' && surface === undefined)) {
-		return {
-			grammar,
-			total: 0,
-			casesByKind: {},
-			pass: 0,
-			fail: 0,
-			skip: 0,
-			astMatchPass: 0,
-			errors,
-			astMismatches: [],
-			skips: [],
-			excluded: [],
-			render: emptyBuiltRender()
-		};
-	}
+	if (importFailure) return failedRun(grammar, [...errors, { kind: '(factory-module-load)', message: importFailure.message }]);
+	if (options.surface === 'ir' && surface === undefined)
+		return failedRun(grammar, [...errors, { kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` }]);
 
-	// This validator's storage comparison only has meaning against the
-	// wrapped NATIVE read path (readNode + handle.read). Without it,
-	// every candidate below would be silently rejected and the run would
-	// report a misleading "0/0 pass" instead of a real failure. Probe
-	// availability up front and fail loudly instead of skipping.
 	let readPathFailure: string | undefined;
 	if (!readNode) {
 		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
@@ -599,24 +565,11 @@ export async function validateFactoryStorage(
 			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
 		}
 	}
-	if (readPathFailure || !readNode) {
-		const message = `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}`;
-		errors.push({ kind: '(read-tree-unavailable)', message });
-		return {
-			grammar,
-			total: 0,
-			casesByKind: {},
-			pass: 0,
-			fail: 1,
-			skip: 0,
-			astMatchPass: 0,
-			errors,
-			astMismatches: [],
-			skips: [],
-			excluded: [],
-			render: emptyBuiltRender()
-		};
-	}
+	if (readPathFailure || !readNode)
+		return failedRun(grammar, [
+			...errors,
+			{ kind: '(read-tree-unavailable)', message: `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}` }
+		]);
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;

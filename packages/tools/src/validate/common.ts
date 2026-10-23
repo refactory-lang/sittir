@@ -966,6 +966,8 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 	return { entries, seats: model.seats, modelTypes: model.modelTypes };
 }
 
+export const FAILED_RUN = { total: 0, pass: 0, fail: 1, skip: 0 } as const;
+
 export async function loadStorageKindNameFromId(grammar: string): Promise<(id: number) => string | undefined> {
 	const kindNames = (await requireGrammarModule(grammar, 'types.ts')).KIND_NAMES;
 	return (id: number) => kindNames.get(id);
