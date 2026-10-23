@@ -4939,7 +4939,7 @@ arms, so a gap prints once.
 A slot that can hold a unit (`RustBodyPrinter.unitSlot`) prints through
 `layout::render_unit(node.layout.as_deref(), "<key>", 0, w, |w| <slot>.render(w))`.
 
-### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.unitSlot`
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter::unitSlot`
 
 The wire key (`slotWireKey`) of a slot that can hold a unit, a kind its
 slot stores bare and that so carries no layout of its own; `undefined` for a
@@ -4949,7 +4949,7 @@ the sides the node's layout holds for item 0 of that slot
 (`NodeLayout::units`). A list's items are framed by its `ListView`'s
 `units`.
 
-### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.innerGap`
+### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter::innerGap`
 
 Whether a slot name is the node's inner site (`AbstractAssembledCompound.innerSite`), where the body renders the native node's inner entries. `render-module.ts` supplies it from the node the body renders.
 
@@ -7809,7 +7809,7 @@ prints through it.
  * see its docstring) rather than looping forever. */
 ```
 
-### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral.resolvedKindId`
+### `packages/codegen/src/emitters/node-projection.ts::NodeLiteral::resolvedKindId`
 
 The mint-time literal-chain id (`NodeRef.resolvedKindId`) carried through from
 the terminal value. Absent for kind-derived literals (keyword/token model
@@ -8628,7 +8628,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  */
 ```
 
-### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData.forwardsTo`
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData::forwardsTo`
 
 ```text
 /** Companion fact to a `'forwarded'` factoryShape: the kind whose
@@ -9142,7 +9142,7 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
 token's grammar-wide face (origin `cascade`), beside the preference,
 literal-default and fallback counts.
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::isLiteralMergePair`
 
 ```text
 // Same merge-hazard pairs the emitted SpacingWriter table uses (one
@@ -9152,7 +9152,7 @@ literal-default and fallback counts.
 // inside some real token of the grammar.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.emittedSlotNames`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::emittedSlotNames`
 
 ```text
 // Slot storage names already emitted during this kind's tree walk. Two
@@ -9175,14 +9175,14 @@ literal-default and fallback counts.
 // `visitingHelpers`).
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.seamBoundaries`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::seamBoundaries`
 
 ```text
 // Seam-census sink (optional so hand-built test ctx literals stay valid):
 // the SEQ join appends one record per boundary it classifies.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.mergePairClassCombos`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::mergePairClassCombos`
 
 ```text
 // Class combos (`${leftClass}\0${rightClass}`) for which at least one
@@ -9191,7 +9191,7 @@ literal-default and fallback counts.
 // so it stays `runtime-varying`. Optional for hand-built test ctx.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::EmitCtx.mergePairLeftChars`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::mergePairLeftChars`
 
 ```text
 // The pair table's left/right character projections: a char absent from

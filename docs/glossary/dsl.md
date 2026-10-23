@@ -3525,7 +3525,7 @@ The global `eof()` a grammar file calls. Under tree-sitter's CLI it is tree-sitt
  */
 ```
 
-### `packages/codegen/src/dsl/rule-walker.ts::RuleWalker.diagnostics`
+### `packages/codegen/src/dsl/rule-walker.ts::RuleWalker::diagnostics`
 
 ```text
 /** Sink for future diagnostic-emitting walks (slot-grouping family). Public
@@ -4176,13 +4176,13 @@ A separated-list body in the form enrich's list-body stage gives it: the nested 
 
 A field enrich itself added (`fieldSource: 'enriched'`) is transparent: the element is named by the field's content, as it was before enrich wrapped it, so the name a hidden list is promoted under does not depend on whether the item field exists yet.
 
-### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.elementName`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo::elementName`
 
 ```text
 /** Element name per {@link separatedListElementName}; null for multi-arm/compound elements. */
 ```
 
-### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.flankCarrying`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo::flankCarrying`
 
 ```text
 /** True when a flank is per-instance data: an optional trailing/leading
@@ -4190,7 +4190,7 @@ A field enrich itself added (`fieldSource: 'enriched'`) is transparent: the elem
 	 *  choice. Flankless lists carry no such data and never hoist. */
 ```
 
-### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.form`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo::form`
 
 ```text
 /** Which spelling matched: `head` = `[elem, repeat(sep elem), opt(sep)?]`,
@@ -4210,19 +4210,19 @@ grammar's parser keeps the spelling its upstream wrote:
 
 `flatMembers` is the body's members as written.
 
-### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.element`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo::element`
 
 ```text
 /** The element rule at the repeat position (fields/wrappers intact). */
 ```
 
-### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.separatorRule`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo::separatorRule`
 
 ```text
 /** The separator rule (STRING literal or CHOICE). */
 ```
 
-### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.flatMembers`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo::flatMembers`
 
 ```text
 /** The body's members with any nested-head seq spliced FLAT — the
@@ -5775,7 +5775,7 @@ field labels instead of taking the minted `element` field.
 // auto-groups.ts synthesizeGroupName).
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.opt`
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter::opt`
 
 ```text
 // Counts ALL optional(seq) positions in traversal order — both clause
@@ -5791,7 +5791,7 @@ field labels instead of taking the minted `element` field.
 // collide with applyAutoGroups's emission for the non-clause position.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.grp`
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter::grp`
 
 ```text
 // Counts inline-UNSAFE positions surfaced as visible content-aliases
@@ -5801,7 +5801,7 @@ field labels instead of taking the minted `element` field.
 // sync for the visible groups.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.arm`
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter::arm`
 
 ```text
 // Counts CHOICE-arm mints surfaced as visible content-aliases
@@ -5810,7 +5810,7 @@ field labels instead of taking the minted `element` field.
 // name suffixes (armN vs groupN).
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.supertypeNames`
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter::supertypeNames`
 
 ```text
 // DECLARED supertype names (grammar's `supertypes:` array, base +
@@ -5824,7 +5824,7 @@ field labels instead of taking the minted `element` field.
 // travels through every applyClauseHoist recursion into the mint site.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::InlineSeparatedListRun.body`
+### `packages/codegen/src/dsl/enrich.ts::InlineSeparatedListRun::body`
 
 ```text
 /** The run's synthetic seq body — the exact members slice, reusable as a
@@ -7285,23 +7285,23 @@ True iff the rule, anywhere in its tree, names a field. Decides whether a choice
 
 The per-arm partition of a choice. Every arm lands in exactly one bucket.
 
-### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.degenerateNamedArms`
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition::degenerateNamedArms`
 
 Arms that reduce to a bare `field(x, ref)`: one slot, no ambient literals (enum_body's `field('name', _property_name)`). They join the union slot, routed by field label; tree-sitter already labels these children.
 
-### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.structuredNamedArms`
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition::structuredNamedArms`
 
 Arms with fields plus ambient literals, or more than one field (dict_pattern's `field(key) ":" field(value)`). They keep their own field slots.
 
-### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.unionArms`
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition::unionArms`
 
 Unnamed single-nonterminal reference arms: union-member kind identity.
 
-### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.literalArms`
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition::literalArms`
 
 Bare terminal arms (a literal string or token): no slot and no kind identity.
 
-### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.structuredArms`
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition::structuredArms`
 
 Unnamed structured arms: a multi-member seq with ambient literals, or a nested choice.
 
@@ -7337,7 +7337,7 @@ The set of topologies a partition's arms produce.
 
 True iff the arms produce more than one slot topology. Kinds, supertype expansion and variant kinds never enter it: two arms routed by different field names are the same topology, and so are two union arms of different kinds.
 
-### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.elementChoices`
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter::elementChoices`
 
 The owner's element choices (`elementChoiceSlots`), computed on the rule before the clause hoist rewrites it: `ruleKey` of the choice → the slot its elements fill.
 

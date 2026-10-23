@@ -93,13 +93,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // (feedback_metadata_not_behavior.md); the compiler never sees this type.
 ```
 
-### `packages/tools/src/validate/common.ts::SlotModel.storageKey`
+### `packages/tools/src/validate/common.ts::SlotModel::storageKey`
 
 ```text
 // always `_<name>` (or `$other` for the catch-all unmatched-children slot)
 ```
 
-### `packages/tools/src/validate/common.ts::SlotModel.metadata`
+### `packages/tools/src/validate/common.ts::SlotModel::metadata`
 
 ```text
 /** Validator-only facts; read ONLY via `readFacts` (never branched on by the compiler). */
@@ -244,7 +244,7 @@ What `walkNativeForKind` records for a node it visits: an unread coordinate as t
 Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
 
-### `packages/tools/src/validate/common.ts::NativeNodeCoords.embeddedData`
+### `packages/tools/src/validate/common.ts::NativeNodeCoords::embeddedData`
 
 ```text
 /**
@@ -697,7 +697,7 @@ One export of a grammar's generated wrap module, loaded through the typed intern
 A `forwarded` seat names a group whose builder forwards to another kind's
 builder: the parent takes the group's value whole under the slot key.
 
-### `packages/tools/src/validate/common.ts::Seat.seated`
+### `packages/tools/src/validate/common.ts::Seat::seated`
 
 ```text
 /** An arm whose config-shaped child is handed to the wrapper as its own
@@ -972,7 +972,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 // without the recursion cost.
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factoryShapes`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factoryShapes`
 
 ```text
 /** Per-kind factory signature hint (from the generated `_factoryShapes`
@@ -983,7 +983,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 	 * the whole Config object as the single rest-param item. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.fieldAliasMap`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::fieldAliasMap`
 
 ```text
 /** Per-field alias-source map (from the generated `_fieldAliasMap`).
@@ -995,7 +995,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 	 * wrong factory (e.g. `block` factory on a `_match_block` body). */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factoryFields`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factoryFields`
 
 ```text
 /** Per-kind list of declared factory Config field names (from the
@@ -1006,61 +1006,61 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 	 * children into the declared fields by position. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.factorySlots`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factorySlots`
 
 ```text
 /** Per-kind slot metadata (from the generated `_factorySlots`).
 	 * Drives config-surface normalization for both named and unnamed slots. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.cstNodeKindHint`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::cstNodeKindHint`
 
 ```text
 /** Validator-supplied CST node-kind fallback for override polymorphs whose
 	 * read shape collapsed the discriminating wrapper before factory dispatch. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.firstNamedChildKindHint`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::firstNamedChildKindHint`
 
 ```text
 /** Validator-supplied CST fallback for override polymorphs whose native
 	 * read collapsed the wrapper child kind before factory dispatch. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.namedChildKindHints`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::namedChildKindHints`
 
 ```text
 /** Ordered CST named-child candidates for override polymorphs whose
 	 * discriminating wrapper kind is not the first named child. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts._parentKind`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::_parentKind`
 
 ```text
 /** Internal — current parent kind during field recursion. Used with
 	 * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts._fieldName`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::_fieldName`
 
 ```text
 /** Internal — current field name during field recursion. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts._depth`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::_depth`
 
 ```text
 /** Internal recursion guard — set by the helper, not the caller. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.kindNameFromId`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::kindNameFromId`
 
 ```text
 /** Resolver for numeric $type → string kind name; every read node
 	 * carries a numeric $type. */
 ```
 
-### `packages/tools/src/validate/common.ts::NodeToConfigOpts.surface`
+### `packages/tools/src/validate/common.ts::NodeToConfigOpts::surface`
 
 ```text
 /** When set, nodes are built through the author-facing `ir` surface and a
@@ -1071,7 +1071,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 
 The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$text`, `$span`, `$parentHandle`, `$childIndex`, `$named`), its unnamed children under `$other`, and its `$_trivia`. It is the one read-node type in tools; the exercise roundtrip and the factory-source printer import it rather than declaring narrower copies.
 
-### `packages/tools/src/validate/common.ts::ReadNodeLike.$type`
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$type`
 
 The node's kind id (`TSKindId`); a reader resolves it to a kind name through the grammar's `kindNameFromId`.
 
@@ -1580,15 +1580,15 @@ The placement rows for one source text, for probes and tests.
 
 The rows and summary for one grammar's whole corpus. Entries that parse with errors are skipped.
 
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::fullForms`
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
 
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.oneSurfaceKinds`
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::oneSurfaceKinds`
 
 The kinds the node model stamps `oneSurface`: one builder, no `.strict` or `.coerce` member. The factory-source printer spells their call as the bare path.
 
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::root`
 
 The grammar's root kind as the node model records it; `undefined` when no model is loaded.
 

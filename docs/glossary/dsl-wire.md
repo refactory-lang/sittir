@@ -186,7 +186,7 @@ array form `transform()` consumes as its rest parameter.
 A `rule('w', body)` mints `w` itself, visible or hidden as the author named
 it.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.symbols`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::symbols`
 
 The base grammar's predicted symbol facts (`baseSymbolSourceOf`), computed on first use. A patch asks it what a referenced name is to the parser (`wireSymbols`) before any parser exists.
 
@@ -194,7 +194,7 @@ The base grammar's predicted symbol facts (`baseSymbolSourceOf`), computed on fi
 
 The predicted `SymbolSource` of the base grammar a wire runs over (`predictedSymbolSourceOf` over its rules, externals, supertypes and inline names), deferred behind a thunk so a wire that never asks does not pay for the prediction. A base with no rules has no symbols to predict, so it yields none.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.textTokens`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::textTokens`
 
 The text tokens enrich minted (`getEnrichTextTokens`), each with the rules that reference it. `wireImpl` gives each one a deferred rule function (`makeDeferredContentFn`), so a patch that rewrites its body lands before the minted rule is read.
 
@@ -924,13 +924,13 @@ The active wire context's predicted symbol facts (`WireContext.symbols`), or und
 
 Whether the active wire context's base grammar lists a rule as a supertype.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.ruleCauses`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::ruleCauses`
 
 The `rules:` entries' declarations by name (`reauthored` or `vocabulary`),
 read from each rule function with `ruleCauseOf`. Together with
 `undeclaredRules` it partitions `authoredRuleNames`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.undeclaredRules`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::undeclaredRules`
 
 The `rules:` entries whose function carries no declaration (bare bodies).
 
@@ -952,18 +952,18 @@ lifts own.
 
 A patch site's identity, `owner|path|form`: the key of `WireContext.patchSites` and `WireContext.liftClaims`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.patchSites`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::patchSites`
 
 Every `patches:` entry applied under this wire context, keyed by
 owner|path|form so an entry recorded by a rule function that runs more than
 once counts once.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::baseRuleBodies`
 
 The rule bodies of the base `wire()` received (the enriched grammar's
 rules), read-only. A lift with no patched body falls back to them.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftBodies`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::liftBodies`
 
 The patched lift bodies: every enrich group-lift body a patch rewrote, by lift
 name. Patches write here, never into the base, so the upstream grammar and
@@ -1008,16 +1008,16 @@ function.
 
 Adds a lift to the claims of every active patch site; a no-op outside a wire context or while no patch applies.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftClaims`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::liftClaims`
 
 The lifts each patch site rewrote or renamed, by `patchSiteKey`. `drainPatchSitesMetadata` copies them onto
 `PatchSite.lifts`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.activePatchSites`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::activePatchSites`
 
 The keys of the patch sites whose application is running, set by `wireWithPatchSites`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.source`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::source`
 
 The upstream base before enrich: `wire()`'s third argument, which defaults to the base it was given, since a
 grammar wired without `sittirGrammar` ran no enrich. Evaluate reads it as the raw stage.
@@ -1036,7 +1036,7 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 /** Hidden-rule name → captured content body. */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftNames`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::liftNames`
 
 The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. The rule hook's drain resolves every rule body through it (`resolveLiftNames`), wire's list and `word` callbacks read it through `liftRenames`, and the conflict-derivation records follow it back to the lift.
 
@@ -1633,7 +1633,7 @@ against the wrong one.
 
 The `externals` callback wire hands the runtime. It calls the config's callback (or passes the base list through), records the names it returned on `WireContext.evaluatedExternals`, and returns the list unchanged: an external is never renamed, because a renamed lift among the externals is an error. The names are recorded from the one call the runtime makes; wire never calls the callback itself. It also checks the names against the lift names known at that moment, so a runtime that read `externals` after the rules would still throw.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::evaluatedExternals`
 
 The names the grammar's `externals` callback returned, empty until the runtime calls it. The rule hook's drain checks renamed lifts against it.
 
@@ -2010,11 +2010,11 @@ Every `liftNames` key must be a rule enrich minted, else it throws. A renamed li
 
 The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` hole takes rendered text so it parses as a whole file, the priority order between reachable supertype hosts, and the kinds whose own host applies only when a variant is adopted. It passes through wire, evaluate and generate untouched and is emitted as data; the validator and the delimiter check both read it.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bindingEffects`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::bindingEffects`
 
 The effects the binding patch sets had, in the order they applied (`bind.ts::BindingEffect`). `sittirGrammar` reads them through `wireBindingEffects` to rewrite the authored options.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.recordingBindingEffects`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::recordingBindingEffects`
 
 True while a binding patch set applies (`wireWithBindingEffects`); `wireRecordBindingEffect` records only then, so authored patches leave no effects.
 

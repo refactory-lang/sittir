@@ -569,7 +569,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
  */
 ```
 
-### `packages/codegen/src/scripts/reconcile-naming.ts::Divergence.slot`
+### `packages/codegen/src/scripts/reconcile-naming.ts::Divergence::slot`
 
 ```text
 // the legacy slot.name (its current identity)
@@ -621,7 +621,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
  */
 ```
 
-### `packages/codegen/src/scripts/emit-diff.ts::FileChange.path`
+### `packages/codegen/src/scripts/emit-diff.ts::FileChange::path`
 
 ```text
 // repo-relative
