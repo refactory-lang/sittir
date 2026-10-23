@@ -70,3 +70,53 @@ jobs:
           name: toys-${{ matrix.name }}
           path: ${{ runner.temp }}/toys/report.json
           if-no-files-found: ignore
+
+  grammars:
+    name: grammars (${{ matrix.name }})
+    runs-on: ${{ matrix.host }}
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: macos-arm64, host: macos-14, flags: "" }
+          - { name: linux-x64-gnu, host: ubuntu-22.04, flags: "" }
+          - { name: linux-arm64-gnu-lld, host: ubuntu-24.04-arm, flags: "-C link-arg=-fuse-ld=lld", apt: lld }
+          - { name: linux-x64-musl-lld, host: ubuntu-22.04, container: "node:22-alpine", flags: "-C target-feature=-crt-static -C link-arg=-fuse-ld=lld" }
+          - { name: windows-x64, host: windows-2022, flags: "" }
+    steps:
+      - name: Alpine packages
+        if: matrix.container
+        run: apk add --no-cache bash build-base git lld rustup
+      - uses: actions/checkout@v6
+      - name: Node.js
+        if: ${{ !matrix.container }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+      - name: apt packages
+        if: matrix.apt
+        run: sudo apt-get update && sudo apt-get install -y ${{ matrix.apt }}
+      - name: Rust (pinned)
+        if: ${{ !matrix.container }}
+        uses: ./.github/actions/rust-toolchain
+        with:
+          components: llvm-tools
+      - name: Rust (pinned, alpine)
+        if: matrix.container
+        shell: bash
+        run: |
+          channel=$(sed -n 's/^channel *= *"\(.*\)"$/\1/p' rust-toolchain.toml)
+          rustup-init -y --profile minimal --default-toolchain "$channel"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: Grammars
+        shell: bash
+        env:
+          RUSTFLAGS: -C prefer-dynamic ${{ matrix.flags }}
+        run: node "$PROBE/scripts/grammars-ci.mjs" --out "$RUNNER_TEMP/grammars" --target-dir "$RUNNER_TEMP/target"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: grammars-${{ matrix.name }}
+          path: ${{ runner.temp }}/grammars/report.json
+          if-no-files-found: ignore

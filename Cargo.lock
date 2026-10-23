@@ -454,6 +454,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "sittir-engine",
  "sittir-node-macros",
  "tree-sitter",
  "tree-sitter-python",

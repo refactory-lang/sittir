@@ -453,46 +453,13 @@ const HANDLE_INDEX_MASK: u64 = (1u64 << HANDLE_INDEX_BITS) - 1;
 /// Largest tree id that still fits beside an index in an exact double.
 pub const MAX_TREE_ID: u32 = (1u32 << (53 - HANDLE_INDEX_BITS)) - 1;
 
-static NEXT_TREE_ID: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
-
-/// Mint the next tree id from this linked image's counter. One counter
-/// serves every engine the image holds, so no two of them ever hold a tree
-/// under the same id: a coordinate names its tree unambiguously, and an
-/// engine handed another engine's coordinate finds no such tree and refuses
-/// it rather than slicing whatever tree sits at that index in its own table.
-/// Ids are never reused — a stale handle must not come back to life under a
-/// later tree — so once `MAX_TREE_ID` is claimed every later claim gets
-/// `None` and the counter stays put. Each grammar's addon is its own image
-/// with its own copy of this counter; the napi engine therefore claims from
-/// the JavaScript process instead (`claim_tree_id_from`), and this counter
-/// serves engines built in Rust alone.
+/// Mint the next tree id from the process's one counter, in sittir-engine,
+/// which every grammar addon shares: no two trees in the process hold the
+/// same id, whichever engine of whichever grammar parsed them, so an engine
+/// handed another tree's coordinate finds no such tree and refuses it. Once
+/// `MAX_TREE_ID` is claimed every later claim gets `None`.
 pub fn claim_tree_id() -> Option<TreeId> {
-    claim_tree_id_from_counter(&NEXT_TREE_ID).map(TreeId)
-}
-
-fn claim_tree_id_from_counter(counter: &std::sync::atomic::AtomicU32) -> Option<u32> {
-    use std::sync::atomic::Ordering::Relaxed;
-
-    // try_update requires Rust 1.95; this bounded CAS preserves the 1.88 minimum.
-    let mut next = counter.load(Relaxed);
-    while next <= MAX_TREE_ID {
-        match counter.compare_exchange_weak(next, next + 1, Relaxed, Relaxed) {
-            Ok(id) => return Some(id),
-            Err(observed) => next = observed,
-        }
-    }
-    None
-}
-
-/// Mint the next tree id from a counter shared by every image in the
-/// process. `next` is the last value the owner recorded (none on the first
-/// claim); the id and the value to record come back together, or nothing
-/// once `MAX_TREE_ID` has been claimed — the owner then records nothing, so
-/// the counter stays put and no id is ever reused.
-#[must_use]
-pub fn claim_tree_id_from(next: Option<f64>) -> Option<(TreeId, f64)> {
-    let id = crate::types::exact_whole(next.unwrap_or(0.0)).ok().and_then(|whole| u32::try_from(whole).ok()).filter(|&id| id <= MAX_TREE_ID)?;
-    Some((TreeId(id), f64::from(id) + 1.0))
+    sittir_engine::claim_tree_id(MAX_TREE_ID).map(TreeId)
 }
 
 /// Pack a tree id and a node index into one self-identifying handle.
@@ -1683,44 +1650,6 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn counter_exhaustion_does_not_wrap_or_reuse_an_id() {
-        use std::sync::atomic::{AtomicU32, Ordering::Relaxed};
-
-        let counter = AtomicU32::new(MAX_TREE_ID - 1);
-        assert_eq!(claim_tree_id_from_counter(&counter), Some(MAX_TREE_ID - 1));
-        assert_eq!(claim_tree_id_from_counter(&counter), Some(MAX_TREE_ID));
-        assert_eq!(claim_tree_id_from_counter(&counter), None);
-        assert_eq!(claim_tree_id_from_counter(&counter), None);
-        assert_eq!(counter.load(Relaxed), MAX_TREE_ID + 1);
-    }
-
-    #[test]
-    fn concurrent_counter_claims_are_unique() {
-        use std::sync::{atomic::AtomicU32, Arc, Barrier};
-
-        let counter = Arc::new(AtomicU32::new(0));
-        let barrier = Arc::new(Barrier::new(8));
-        let threads: Vec<_> = (0..8)
-            .map(|_| {
-                let counter = Arc::clone(&counter);
-                let barrier = Arc::clone(&barrier);
-                std::thread::spawn(move || {
-                    barrier.wait();
-                    (0..256)
-                        .map(|_| claim_tree_id_from_counter(&counter).unwrap())
-                        .collect::<Vec<_>>()
-                })
-            })
-            .collect();
-        let mut ids: Vec<_> = threads
-            .into_iter()
-            .flat_map(|thread| thread.join().unwrap())
-            .collect();
-        ids.sort_unstable();
-        assert_eq!(ids, (0..2048).collect::<Vec<_>>());
-    }
 
     /// A test `function_item`'s slots: `name` 0, `return_type` 1.
     #[allow(clippy::unnecessary_wraps, reason = "a `Router::Children` route, whose type returns a `Result`")]

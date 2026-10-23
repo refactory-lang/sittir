@@ -3,7 +3,7 @@ name = "toy-napi-b"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
-build = "../../build/addon.rs"
+build = "../../build-scripts/addon.rs"
 
 [lib]
 crate-type = ["cdylib"]

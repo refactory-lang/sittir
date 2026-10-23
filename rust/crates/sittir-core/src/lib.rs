@@ -60,6 +60,9 @@ macro_rules! grammar_trivia {
 #[doc(hidden)]
 pub use ::napi as __napi;
 
+#[doc(hidden)]
+pub use ::sittir_engine as __engine;
+
 /// The items of a derived node's wire codec, kept only when this crate
 /// is built with napi bindings, so a crate that derives `Node` needs no
 /// napi dependency or feature of its own.

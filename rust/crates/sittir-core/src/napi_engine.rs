@@ -20,15 +20,21 @@
 //!
 //! A coordinate names a tree, not the engine that parsed it, so the table is
 //! one per grammar addon: every engine of a language resolves every tree of
-//! that language, and a tree outlives the engine that parsed it. It is a
-//! `thread_local!`, because tree ids are minted from `globalThis` and each
-//! JavaScript thread has its own — a table shared across threads would meet
-//! the same id twice.
+//! that language, and a tree outlives the engine that parsed it. Tree ids
+//! come from sittir-engine's one counter, shared by every addon and thread
+//! in the process.
 //!
 //! Trees are dropped when JavaScript drops its side: the boundary registers
 //! each tree with a `FinalizationRegistry` and calls the addon's `disposeTree`
 //! once the last object naming it is collected. An engine's `dispose` leaves
 //! them alone. A thread that ends takes its table with it.
+//!
+//! ## A tree as a JavaScript object
+//!
+//! `parseTree` returns the tree as a `Tree` object that owns it, with no
+//! table: it is freed when the object is collected, and a read or render
+//! that names it resolves through it. `Tree` is each grammar's own class, so
+//! napi's type tag refuses a tree of another grammar.
 
 /// Emit the `SittirEngine` napi class for one grammar.
 ///
@@ -124,6 +130,80 @@ macro_rules! napi_engine {
             LIVE_TREES.with(|trees| trees.borrow().len() as u32)
         }
 
+        /// Refuse to load against an engine library other than the one this
+        /// addon was built against (`sittir_engine::check_stamp`).
+        #[::napi_derive::napi(module_exports)]
+        pub fn check_engine(_exports: ::napi::bindgen_prelude::Object) -> ::napi::Result<()> {
+            $crate::__engine::check_stamp($crate::__engine::BUILT).map_err(::napi::Error::from_reason)
+        }
+
+        /// One parsed tree, owned by the JavaScript object that holds it and
+        /// freed when that object is collected; no table keeps it.
+        #[::napi_derive::napi]
+        pub struct Tree {
+            parsed: $crate::ParsedTree<$grammar>,
+        }
+
+        /// `Tree` objects JavaScript holds that are not yet collected.
+        static TREE_OBJECTS: ::std::sync::atomic::AtomicU32 = ::std::sync::atomic::AtomicU32::new(0);
+
+        impl Tree {
+            fn new(parsed: $crate::ParsedTree<$grammar>) -> Self {
+                TREE_OBJECTS.fetch_add(1, ::std::sync::atomic::Ordering::Relaxed);
+                Self { parsed }
+            }
+        }
+
+        impl ::std::ops::Drop for Tree {
+            fn drop(&mut self) {
+                TREE_OBJECTS.fetch_sub(1, ::std::sync::atomic::Ordering::Relaxed);
+            }
+        }
+
+        #[::napi_derive::napi]
+        impl Tree {
+            /// The id this tree's coordinates carry.
+            #[::napi_derive::napi(getter)]
+            pub fn id(&self) -> $crate::types::TreeId {
+                self.parsed.tree_id()
+            }
+
+            /// As `SittirEngine.read`, on this tree.
+            #[::napi_derive::napi(ts_return_type = "object")]
+            pub fn read(&self, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+                read_parsed(&self.parsed, index, $crate::napi_engine::depth_from_wire(depth)?)
+            }
+        }
+
+        /// `Tree` objects not yet collected. Diagnostics only, as
+        /// `liveTreeCount` is for the table.
+        #[::napi_derive::napi]
+        pub fn live_tree_objects() -> u32 {
+            TREE_OBJECTS.load(::std::sync::atomic::Ordering::Relaxed)
+        }
+
+        /// The node at `index` of `parsed` read into its native node, `depth`
+        /// levels down. An `ERROR` node reads as its text and coordinate.
+        /// Refuses an index past the tree's last node and a node the model
+        /// has no route for, naming the kind, the child and the index.
+        fn read_parsed(
+            parsed: &$crate::ParsedTree<$grammar>,
+            index: $crate::types::NodeIndex,
+            depth: $crate::read::Depth,
+        ) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+            if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
+                return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {}", parsed.tree_id())));
+            }
+            if let Some(error) = parsed.read_error(index) {
+                return Ok(::napi::Either::B(error));
+            }
+            let grammar = <$grammar as ::std::default::Default>::default();
+            ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
+                .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
+                .map(::napi::Either::A)
+                .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+        }
+
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,
@@ -187,8 +267,8 @@ macro_rules! napi_engine {
             /// layer of the render options (`ParsedTree::inferred_options`),
             /// and its error regions.
             #[::napi_derive::napi]
-            pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
-                let tree_id = self.claim_tree_id(&env)?;
+            pub fn parse(&mut self, source: String) -> ::napi::Result<String> {
+                let tree_id = self.claim_tree_id()?;
                 let parsed = self.engine.parse(&source, tree_id).map_err(::napi::Error::from_reason)?;
                 let json = ::serde_json::json!({
                     "treeId": tree_id,
@@ -212,17 +292,7 @@ macro_rules! napi_engine {
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                    if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
-                        return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")));
-                    }
-                    if let Some(error) = parsed.read_error(index) {
-                        return Ok(::napi::Either::B(error));
-                    }
-                    let grammar = <$grammar as ::std::default::Default>::default();
-                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read::<$any>(index, depth)))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
-                        .map(::napi::Either::A)
-                        .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                    read_parsed(parsed, index, depth)
                 })
             }
 
@@ -473,25 +543,25 @@ macro_rules! napi_engine {
                 // borrow cannot be re-entered.
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
-                    let base = match tree_id.and_then(|id| trees.get(&id)) {
-                        Some(tree) => tree.inferred().over(self.engine.options()),
-                        None => self.engine.options().clone(),
-                    };
-                    let resolved = match options {
-                        Some(opts) => opts.resolve(&base).map_err(::napi::Error::from_reason)?,
-                        None => base,
-                    };
-                    let table = &resolved;
-                    let ctx = $crate::prepare::RenderContext {
-                        options: table,
-                        sources: &*trees,
-                        recording: None,
-                    };
-                    let (_, canonical) = $render_parts(node, &ctx).map_err(|e| {
-                        ::napi::Error::from_reason(format!("render_node failed: {e}"))
-                    })?;
-                    Ok($crate::line_endings::spell(canonical, &table.newline))
+                    self.render_through(node, &*trees, tree_id.and_then(|id| trees.get(&id)), options)
                 })
+            }
+
+            /// Render `node`, its coordinates resolving through `tree` alone,
+            /// with no table: the options are the call's own over `tree`'s
+            /// layer over the engine's.
+            #[::napi_derive::napi(ts_args_type = "node: object, tree: Tree, options?: object | undefined | null")]
+            pub fn render_in(&self, node: $render_root, tree: &Tree, options: Option<$options>) -> ::napi::Result<String> {
+                self.render_through(node, &tree.parsed, Some(&tree.parsed), options)
+            }
+
+            /// Parse `source` into a `Tree` that owns it: no table holds it,
+            /// and it is freed when JavaScript collects the object.
+            #[::napi_derive::napi]
+            pub fn parse_tree(&mut self, source: String) -> ::napi::Result<Tree> {
+                let tree_id = self.claim_tree_id()?;
+                let parsed = self.engine.parse(&source, tree_id).map_err(::napi::Error::from_reason)?;
+                Ok(Tree::new(parsed))
             }
 
             #[::napi_derive::napi(
@@ -518,27 +588,35 @@ macro_rules! napi_engine {
         }
 
         impl SittirEngine {
-            /// Take the next tree id from the JavaScript process, refusing to wrap.
-            ///
-            /// Every grammar's addon is its own linked image, so a counter in
-            /// Rust static memory would be one counter per addon and a rust
-            /// engine and a typescript engine could both mint tree 0. The
-            /// process's one `globalThis` is the owner every addon shares: the
-            /// next id lives there, so a coordinate minted by any engine names
-            /// no tree in any other, whatever grammar it speaks. Ids are never
+            /// Take the next tree id from the process's one counter
+            /// (`engine::claim_tree_id`), refusing to wrap: ids are never
             /// reused, so exhausting them is the honest end state.
-            fn claim_tree_id(&mut self, env: &::napi::Env) -> ::napi::Result<$crate::types::TreeId> {
-                const KEY: &str = "__sittirNextTreeId";
-                let mut global = env.get_global()?;
-                let next: Option<f64> = ::napi::bindgen_prelude::JsObjectValue::get_named_property(&global, KEY)?;
-                let (id, record) = $crate::engine::claim_tree_id_from(next).ok_or_else(|| {
-                    ::napi::Error::from_reason(format!(
-                        "this process exhausted its {} tree ids",
-                        $crate::engine::MAX_TREE_ID
-                    ))
-                })?;
-                ::napi::bindgen_prelude::JsObjectValue::set_named_property(&mut global, KEY, record)?;
-                Ok(id)
+            fn claim_tree_id(&mut self) -> ::napi::Result<$crate::types::TreeId> {
+                $crate::engine::claim_tree_id().ok_or_else(|| {
+                    ::napi::Error::from_reason(format!("this process exhausted its {} tree ids", $crate::engine::MAX_TREE_ID))
+                })
+            }
+
+            /// Render `node` with `sources` resolving its coordinates and
+            /// `tree`'s layer (when given) under the call's options.
+            fn render_through(
+                &self,
+                node: $render_root,
+                sources: &dyn $crate::SourceTable,
+                tree: Option<&$crate::ParsedTree<$grammar>>,
+                options: Option<$options>,
+            ) -> ::napi::Result<String> {
+                let base = match tree {
+                    Some(tree) => tree.inferred().over(self.engine.options()),
+                    None => self.engine.options().clone(),
+                };
+                let resolved = match options {
+                    Some(opts) => opts.resolve(&base).map_err(::napi::Error::from_reason)?,
+                    None => base,
+                };
+                let ctx = $crate::prepare::RenderContext { options: &resolved, sources, recording: None };
+                let (_, canonical) = $render_parts(node, &ctx).map_err(|e| ::napi::Error::from_reason(format!("render_node failed: {e}")))?;
+                Ok($crate::line_endings::spell(canonical, &resolved.newline))
             }
         }
     };

@@ -10,6 +10,7 @@ import { join } from 'node:path';
 
 const run = (cmd, args) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 1 << 28 });
 const runtime = (names) => names.filter((name) => /^_?ts_/.test(name));
+const allocator = (names) => runtime(names).filter((name) => /ts_current_/.test(name)).map((name) => name.replace(/^_/, '')).sort();
 
 function llvmTool(tool) {
 	const sysroot = run('rustc', ['--print', 'sysroot']).trim();
@@ -29,7 +30,8 @@ export function linkFacts(image) {
 			rpaths: [...loads.matchAll(/cmd LC_RPATH\n\s+cmdsize \d+\n\s+path (\S+)/g)].map((m) => m[1]),
 			needs: run('otool', ['-L', image]).split('\n').slice(1).map((line) => line.trim().split(' ')[0]).filter(Boolean),
 			definesRuntime: runtime(run('nm', ['-gU', image]).split('\n').map((line) => line.trim().split(/\s+/)[2]).filter(Boolean)).length,
-			needsRuntime: runtime(run('nm', ['-u', image]).split('\n').map((line) => line.trim())).length
+			needsRuntime: runtime(run('nm', ['-u', image]).split('\n').map((line) => line.trim())).length,
+			needsAllocator: allocator(run('nm', ['-u', image]).split('\n').map((line) => line.trim()))
 		};
 	}
 	if (process.platform === 'linux') {
@@ -40,7 +42,8 @@ export function linkFacts(image) {
 			rpaths: [...dynamic.matchAll(/\((?:RUNPATH|RPATH)\).*\[(.+)\]/g)].map((m) => m[1]),
 			needs: [...dynamic.matchAll(/\(NEEDED\).*\[(.+)\]/g)].map((m) => m[1]),
 			definesRuntime: runtime(symbols('--defined-only')).length,
-			needsRuntime: runtime(symbols('--undefined-only')).length
+			needsRuntime: runtime(symbols('--undefined-only')).length,
+			needsAllocator: allocator(symbols('--undefined-only'))
 		};
 	}
 	const readobj = llvmTool('llvm-readobj');
@@ -53,6 +56,7 @@ export function linkFacts(image) {
 		rpaths: [],
 		needs: [...new Set(needs)],
 		definesRuntime: runtime([...exportsTable.matchAll(/^\s*Name: (\S+)$/gm)].map((m) => m[1])).length,
-		needsRuntime: runtime(importedSymbols).length
+		needsRuntime: runtime(importedSymbols).length,
+		needsAllocator: allocator(importedSymbols)
 	};
 }
