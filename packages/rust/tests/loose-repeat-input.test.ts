@@ -31,7 +31,7 @@ describe('loose repeated-envelope inputs', () => {
 
 	it('keeps config arrays equivalent to spread arguments', () => {
 		const spread = rs.build.functionModifiers('async', 'unsafe');
-		const config = rs.build.functionModifiers({ modifier: ['async', 'unsafe'] });
+		const config = rs.build.functionModifiers({ modifiers: ['async', 'unsafe'] });
 		expect(config._modifier).toEqual(spread._modifier);
 		expect(config.$render().toString()).toBe(spread.$render().toString());
 	});

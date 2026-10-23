@@ -32,6 +32,7 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
+	slotKeyOf,
 	nodeToConfig,
 	loadNodeModel,
 	loadScopedFactoryMap,
@@ -421,9 +422,10 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						// names one, otherwise treat it as a single child call.
 						const fieldNames = factoryFields[readKind];
 						const rawName = fieldNames?.[0];
-						const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-						const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
+						const value =
+							rawName !== undefined
+								? (config as Record<string, unknown>)[slotKeyOf(factorySlots, readKind, rawName)]
+								: getChildFactoryArgs(readKind, config, factorySlots, factoryFields)[0];
 						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
 							readTree !== undefined && readNode !== null && isCoordinate(value) ? readNode(readTree, value) : value
 						);

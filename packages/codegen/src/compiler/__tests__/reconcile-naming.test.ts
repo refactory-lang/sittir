@@ -3,7 +3,7 @@
  *
  * The probe asserts every legacy projected slot name equals the value the §2
  * PROJECTION (`projectSlotNaming`) computes from the slot's `values` + `fieldName`:
- * storageName, name (snake, == storageName), configKey/propertyName/paramName
+ * storageName, name (snake, == storageName), propertyName/paramName
  * (camelCase projections). A divergence in ANY projection is reported. `parseNames`
  * is a pure projection of `values` (the CST kinds) with no legacy stored field, so
  * it isn't a divergence axis here.
@@ -35,7 +35,6 @@ function cleanSlot(): AssembledNonterminal {
 	return {
 		name: storage,
 		storageName: storage,
-		configKey: camel,
 		propertyName: camel,
 		paramName: safeParamName(camel),
 		values: [nodeRefValue('expression')],
@@ -70,7 +69,6 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			...cleanSlot(),
 			name: storage,
 			storageName: storage,
-			configKey: snakeToCamel(storage),
 			propertyName: snakeToCamel(storage), // BUG: not pluralized
 			paramName: safeParamName(snakeToCamel(storage)),
 			values: [nodeRefValue('parameter', 'array')]
@@ -93,7 +91,6 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			...cleanSlot(),
 			name: 'content',
 			storageName: 'content',
-			configKey: 'content',
 			propertyName: 'content',
 			paramName: 'content',
 			values: [nodeRefValue('identifier'), literalValue('_')]
@@ -131,7 +128,6 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			// legacy cross-wired to the parseName `block`
 			name: 'block',
 			storageName: 'block',
-			configKey: 'block',
 			propertyName: 'block',
 			paramName: 'block',
 			values: [aliasedRef('_simple_statements', 'block'), aliasedRef('block', 'block'), aliasedRef('_newline', 'block')]

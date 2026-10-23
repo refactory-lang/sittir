@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import python from '../src/index.ts';
+import python from '../../python/src/index.ts';
 import { createEngine } from '@sittir/common';
+import { loadSlotAccessorOf } from '../src/validate/common.ts';
 
 const py = await createEngine(python);
+const pythonSlots = await loadSlotAccessorOf('python');
 
 function shapeOf(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(shapeOf);
@@ -37,17 +39,16 @@ function findParsed(node: unknown, kind: number): Record<string, unknown> | unde
 	return undefined;
 }
 
-const accessorOf = (storageKey: string): string => storageKey.slice(1).replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
-
 function parsedShape(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(parsedShape);
 	if (node === null || typeof node !== 'object') return node;
 	const record = node as Record<string, unknown>;
+	const slots = typeof record.$type === 'number' ? pythonSlots(record.$type).accessors : {};
 	return Object.fromEntries(
 		Object.entries(record)
 			.filter(([key, value]) => typeof value !== 'function' && (key === '$type' || !key.startsWith('$')))
 			.map(([key, value]) => {
-				const accessor = key.startsWith('_') ? record[accessorOf(key)] : undefined;
+				const accessor = slots[key] === undefined ? undefined : record[slots[key]];
 				return [key, parsedShape(typeof accessor === 'function' && accessor.length === 0 ? accessor.call(node) : value)];
 			})
 	);

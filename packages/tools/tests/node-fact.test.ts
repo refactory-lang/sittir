@@ -9,7 +9,7 @@ import type { Language, LanguageAPI } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { isCoordinate, isNode, Source, sourceOf } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries, walkWrappedTree } from '../src/validate/common.ts';
+import { loadCorpusEntries, loadSlotAccessorOf, walkWrappedTree, type SlotAccessorOf } from '../src/validate/common.ts';
 
 interface Parser {
 	parse(source: string): unknown;
@@ -22,14 +22,15 @@ const WIRES: Readonly<Record<string, (language: Language<LanguageAPI>) => Promis
 
 function readNodeFact(
 	engine: Parser,
-	grammar: string
+	grammar: string,
+	accessorOf: SlotAccessorOf
 ): { read: number; unrecognised: string[]; twinsRecognised: string[]; sourceUnread: string[] } {
 	const unrecognised: string[] = [];
 	const twinsRecognised: string[] = [];
 	const sourceUnread: string[] = [];
 	let read = 0;
 	for (const entry of loadCorpusEntries(grammar)) {
-		walkWrappedTree(engine.parse(entry.source), (node) => {
+		walkWrappedTree(engine.parse(entry.source), accessorOf, (node) => {
 			if (isCoordinate(node)) return;
 			read++;
 			const at = `${entry.name}: ${node.$type}`;
@@ -47,7 +48,8 @@ for (const [wire, engineOf] of Object.entries(WIRES)) {
 			it(`${grammar}: a read node is a node whose sourceOf is Ts, and its string-key twin is not`, async () => {
 				const { read, unrecognised, twinsRecognised, sourceUnread } = readNodeFact(
 					await engineOf(await languageByName(grammar)),
-					grammar
+					grammar,
+					await loadSlotAccessorOf(grammar)
 				);
 				expect(read).toBeGreaterThan(0);
 				expect(unrecognised).toEqual([]);

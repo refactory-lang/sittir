@@ -1633,7 +1633,7 @@ const termGroup: {
 	disable: bundle(termGroup$disable$strict, termGroup$disable$coerce, { key: 'termGroup.disable', max: 2 })
 });
 
-const term$termGroup = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+const term$termGroups = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
@@ -1643,13 +1643,13 @@ const term$termGroup = <PF extends (...args: never[]) => unknown, CF extends (..
 };
 function term$seated<A extends T.Term.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildTerm>;
 function term$seated(...args: T.Term.BuildArgs): ReturnType<typeof F.buildTerm> {
-	return term$termGroup(F.buildTerm, F.buildTermGroup)(...args);
+	return term$termGroups(F.buildTerm, F.buildTermGroup)(...args);
 }
 function term$seatedCoerce<const A extends T.Term.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.Term.LooseArgs>
 ): ReturnType<typeof C.coerceToTerm>;
 function term$seatedCoerce(...args: T.Term.LooseArgs): ReturnType<typeof C.coerceToTerm> {
-	return term$termGroup(C.coerceToTerm, C.coerceToTermGroup)(...args);
+	return term$termGroups(C.coerceToTerm, C.coerceToTermGroup)(...args);
 }
 export const term = Object.freeze({
 	...B.term,

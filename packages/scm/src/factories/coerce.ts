@@ -677,8 +677,8 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('content' in head)) return input;
-		const v = (head as Record<string, unknown>)['content'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('contents' in head)) return input;
+		const v = (head as Record<string, unknown>)['contents'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringContent(
@@ -759,7 +759,7 @@ export function coerceToList(input: T.List.Loose): ReturnType<typeof F.buildList
 }
 
 export function resolveGrouping_groupingGroups(
-	value: T.Grouping.LooseConfig['groupingGroup']
+	value: T.Grouping.LooseConfig['groupingGroups']
 ): Admit<T.Grouping['_grouping_group']> {
 	return _resolveManyBranch<T.GroupingGroup>(value, 'grouping_group') as Admit<T.Grouping['_grouping_group']>;
 }
@@ -774,7 +774,7 @@ export function coerceToGrouping<const I extends T.Grouping.Loose>(
 export function coerceToGrouping(input: T.Grouping.Loose): ReturnType<typeof F.buildGrouping> {
 	if (!_isLooseConfig<T.Grouping.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildGrouping>;
 	return F.buildGrouping({
-		groupingGroup: resolveGrouping_groupingGroups(input.groupingGroup),
+		groupingGroups: resolveGrouping_groupingGroups(input.groupingGroups),
 		elements: resolveGrouping_elements(input.elements)
 	});
 }

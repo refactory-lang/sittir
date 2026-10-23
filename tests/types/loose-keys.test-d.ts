@@ -69,7 +69,7 @@ export const listItemKeys = rs.build.block({ statements: [{ $type: rs.kinds.Expr
 export const deepKeys = rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, statements: [] } } } });
 export const numericKeys = rs.build.integerLiteralDecimal({ content: 1 });
 export const strictNumericKeys = rs.build.integerLiteralDecimal.strict({ content: 1 });
-export const pythonKeys = py.build.ifStatement({ condition: 'x', consequence: py.build.block(), alternative: [] });
+export const pythonKeys = py.build.ifStatement({ condition: 'x', consequence: py.build.block(), alternatives: [] });
 
 // The two shapes whose keys stay unchecked, each admitted:
 // an untagged config where the place declares several untagged configs (a kind's own and its bare slot's) is checked

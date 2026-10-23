@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { nodeToConfig, type Hydrate } from '../validate/common.ts';
 
-const slot = { unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false };
+const slot = (propertyName: string) => ({ propertyName, unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false });
 const KINDS = ['owner', 'clause', 'word'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
@@ -18,7 +18,7 @@ describe('nodeToConfig hydrates a coordinate through the wrap', () => {
 			hydrate,
 			factoryMap: { clause } as never,
 			factoryShapes: { owner: 'config', clause: 'config', word: 'text' },
-			factorySlots: { owner: { body: slot }, clause: { value: slot } }
+			factorySlots: { owner: { body: slot('body') }, clause: { value: slot('value') } }
 		});
 		expect(clause).toHaveBeenCalledWith(expect.objectContaining({ value: expect.objectContaining({ $text: 'x' }) }));
 		expect(config).toMatchObject({ body: { $type: id('clause') } });

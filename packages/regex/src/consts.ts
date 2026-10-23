@@ -6,7 +6,7 @@ import type { TokenInterior } from '@sittir/common/utils';
 export const TOKEN_INTERIORS = {
 	identity_escape: {
 		regex: '^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 

@@ -1,12 +1,15 @@
 import type { FactorySlotMeta } from './factory-map.ts';
+import { slotPropertyName } from '../compiler/model/node-map.ts';
 
 export interface WrittenValue {
 	readonly kind?: string;
+	readonly multiplicity?: string;
 	readonly name?: string;
 	readonly parseKind?: string;
 }
 
 export interface WrittenSlot {
+	readonly name: string;
 	readonly required?: boolean;
 	readonly multiple?: boolean;
 	readonly nonEmpty?: boolean;
@@ -30,6 +33,7 @@ export function slotKindsOf(slot: WrittenSlot): string[] {
 
 export function factorySlotMetaOf(slot: WrittenSlot): FactorySlotMeta {
 	return {
+		propertyName: slotPropertyName(slot),
 		required: slot.required === true,
 		multiple: slot.multiple === true,
 		nonEmpty: slot.nonEmpty === true,

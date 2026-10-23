@@ -996,7 +996,7 @@ export const structure: StructureTable = Object.freeze({
 	210: {
 		kind: 'function_modifiers',
 		nonEmpty: [['_modifier', 'function_modifiers.children']],
-		nodeOnly: [['_modifier', 'FunctionModifiers.modifier', 'a built ExternModifier']]
+		nodeOnly: [['_modifier', 'FunctionModifiers.modifiers', 'a built ExternModifier']]
 	},
 	211: {
 		kind: 'where_clause',
@@ -1481,7 +1481,7 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'value']
 		],
 		nodeOnly: [
-			['_attribute_item', 'FieldInitializer.attributeItem', 'a built AttributeItem'],
+			['_attribute_item', 'FieldInitializer.attributeItems', 'a built AttributeItem'],
 			['_field', 'FieldInitializer.field', 'a built FieldIdentifier / IntegerLiteral'],
 			['_value', 'FieldInitializer.value', 'a built Expression']
 		]
@@ -1519,7 +1519,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_left', 'left']],
 		nodeOnly: [
 			['_left', 'LetChain.left', 'a built LetChain / LetCondition / Expression'],
-			['_right', 'LetChain.right', 'a built LetCondition / Expression']
+			['_right', 'LetChain.rights', 'a built LetCondition / Expression']
 		]
 	},
 	291: {
@@ -2252,7 +2252,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'attributed_field_declaration',
 		required: [['_field_declaration', 'fieldDeclaration']],
 		nodeOnly: [
-			['_attribute_item', 'AttributedFieldDeclaration.attributeItem', 'a built AttributeItem'],
+			['_attribute_item', 'AttributedFieldDeclaration.attributeItems', 'a built AttributeItem'],
 			['_field_declaration', 'AttributedFieldDeclaration.fieldDeclaration', 'a built FieldDeclaration']
 		]
 	},
@@ -2260,7 +2260,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'attributed_enum_variant',
 		required: [['_enum_variant', 'enumVariant']],
 		nodeOnly: [
-			['_attribute_item', 'AttributedEnumVariant.attributeItem', 'a built AttributeItem'],
+			['_attribute_item', 'AttributedEnumVariant.attributeItems', 'a built AttributeItem'],
 			['_enum_variant', 'AttributedEnumVariant.enumVariant', 'a built EnumVariant']
 		]
 	},
@@ -2276,7 +2276,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'attributed_type_parameter',
 		required: [['_content', 'content']],
 		nodeOnly: [
-			['_attribute_item', 'AttributedTypeParameter.attributeItem', 'a built AttributeItem'],
+			['_attribute_item', 'AttributedTypeParameter.attributeItems', 'a built AttributeItem'],
 			[
 				'_content',
 				'AttributedTypeParameter.content',
@@ -2288,7 +2288,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'attributed_argument',
 		required: [['_expression', 'expression']],
 		nodeOnly: [
-			['_attribute_item', 'AttributedArgument.attributeItem', 'a built AttributeItem'],
+			['_attribute_item', 'AttributedArgument.attributeItems', 'a built AttributeItem'],
 			['_expression', 'AttributedArgument.expression', 'a built Expression']
 		]
 	},
@@ -2296,7 +2296,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'attributed_ordered_field',
 		required: [['_type', 'type']],
 		nodeOnly: [
-			['_attribute_item', 'AttributedOrderedField.attributeItem', 'a built AttributeItem'],
+			['_attribute_item', 'AttributedOrderedField.attributeItems', 'a built AttributeItem'],
 			['_visibility_modifier', 'AttributedOrderedField.visibilityModifier', 'a built VisibilityModifier'],
 			['_type', 'AttributedOrderedField.type', 'a built Type']
 		]
