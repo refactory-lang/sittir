@@ -693,6 +693,10 @@ export async function validateFactoryStorage(
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
+				if (factoryMap[kind] === undefined) {
+					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
+					continue;
+				}
 				const factoryData = buildFactoryUntypedNode(
 					referenceData,
 					kind,
@@ -711,13 +715,6 @@ export async function validateFactoryStorage(
 					kindNameFromId,
 					handle
 				);
-				if (factoryData === null) {
-					// No factory for this kind, or the factory threw (already
-					// recorded). Either way there's nothing to compare.
-					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
-					continue;
-				}
-
 				render.cases.add(kind);
 				const renderFailure = (message: string, rendered?: string): BuiltRenderFailure => ({
 					kind,
@@ -805,6 +802,7 @@ export async function validateFactoryStorage(
 					}
 				}
 
+				if (factoryData === null) continue;
 				const diff = compareNodeStorage(
 					referenceData as unknown as Record<string, unknown>,
 					factoryData as unknown as Record<string, unknown>,
