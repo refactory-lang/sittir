@@ -490,7 +490,7 @@ export class FactoryInlineUnnestableError extends Error {
 	}
 }
 
-function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
+export function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 	const claimed = new Set<string>();
 	preclaimSupertypeIrKeys(nodes, claimed);
 	const { phase1, phase2 } = partitionNodesIntoIrKeyPhases(nodes);

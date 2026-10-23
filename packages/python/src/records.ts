@@ -36,12 +36,7 @@ export const records = {
 	},
 	ElifClauseNode: { words: 17, condition: { word: 2, width: 5 }, consequence: { word: 7, width: 10, inline: 8 } },
 	ElseClauseNode: { words: 12, body: { word: 2, width: 10, inline: 8 } },
-	MatchStatementNode: {
-		words: 21,
-		subjects: { word: 2, width: 6, inline: 4 },
-		body: { word: 8, width: 13, inline: 11 }
-	},
-	MatchBlockNode: { words: 11, content: { word: 2, width: 9, inline: 7 } },
+	MatchStatementNode: { words: 17, subjects: { word: 2, width: 6, inline: 4 }, body: { word: 8, width: 9, inline: 7 } },
 	CaseClauseNode: {
 		words: 27,
 		case_patterns: { word: 2, width: 6, inline: 4 },

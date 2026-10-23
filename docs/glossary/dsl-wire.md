@@ -231,17 +231,23 @@ are appended to the base list, the way conflict groups are appended to
 `conflicts`. tree-sitter evaluates `supertypes` after every rule, so the
 whole-grammar facts are complete here. A parent is skipped when it is
 already listed, or when its name is an alias target: some other rule
-presents content as a node of that kind, and tree-sitter cannot treat one
-kind as both a concrete node and a supertype (node-type generation panics
-sorting the supertype graph). typescript's `decorator` aliasing
-`decorator_call_expression` to `call_expression` is the case that forces it.
+presents content as a node of that kind (`namedAliasValues`, read from the
+evaluated bodies `recordEvaluatedBodies` keeps). tree-sitter cannot treat
+one kind as both a concrete node and a supertype, and node-type generation
+panics sorting the supertype graph. typescript's `decorator` aliasing
+`decorator_call_expression` to `call_expression` is the case that forces
+it. A parent referenced under an alias of its own is listed, and
+`dropFlattenedParentAliases` drops those aliases once the grammar is
+evaluated.
 
-### `packages/codegen/src/dsl/wire/wire.ts::recordAliasTargets`
+### `packages/codegen/src/dsl/wire/wire.ts::recordEvaluatedBodies`
 
-The last wrapper applied to every rule fn: after the rule evaluates, walk
-its final tree and add each named `ALIAS` value to
-`context.aliasTargets`. It wraps outside pattern replacement and the
-visible-externals rewrite so it sees the tree those passes produce.
+The last wrapper applied to every rule fn: after the rule evaluates, it
+keeps the rule's final tree in `context.evaluatedBodies`, keyed by rule
+name. It wraps outside pattern replacement and the visible-externals
+rewrite, so it records the tree those passes produce. Wire gives every base
+rule a rule fn, so the bodies cover the whole grammar.
+`wrapSupertypesCallback` reads them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsPrecedenceRankedRule`
 
@@ -2023,6 +2029,14 @@ Records one effect while a binding patch set applies; outside one it does nothin
 ### `packages/codegen/src/dsl/wire/wire.ts::wireBindingEffects`
 
 The effects recorded on the wire context that `wire()` attached to `opts`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::namedAliasValues`
+
+The value of every named `ALIAS` in `bodies`: each kind name that some rule presents content as.
+
+### `packages/codegen/src/dsl/wire/wire.ts::dropFlattenedParentAliases`
+
+Replaces every alias whose content is a listed flattened parent, bare or under precedence wrappers (`unwrapPrec`), with that content, wrappers kept, in the evaluated grammar, so the slot holds the parent's variants directly, as any supertype slot does, and a flattened parent is never shown as a node. The parents are the registered flattened parents that the evaluated `supertypes` list holds, so the drop and the listing come from one place. Sittir's evaluator strips precedence wrappers and tree-sitter keeps them, so the drop looks through them in both pipelines alike, or `alias(prec(1, $.parent), $.shown)` would survive in the parser's grammar alone. It runs after `grammar()` returns, in both pipelines, because the patches register a flattened parent only when its own rule evaluates, and a rule that references it can evaluate first (python's `match_statement` before `_match_block`). python's `match_statement` body, upstream's `alias($._match_block, $.block)`, is the case: the body holds `match_block_block` or `match_block_empty`.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 

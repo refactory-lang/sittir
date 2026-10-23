@@ -125,6 +125,9 @@ export interface SubBuilderRowKind {
 	lineContinuation: TSKindId.LineContinuationNewline;
 	'lineContinuation.newline': TSKindId.LineContinuationNewline;
 	'lineContinuation.nul': TSKindId.LineContinuationNul;
+	matchBlock: TSKindId.MatchBlockBlock;
+	'matchBlock.block': TSKindId.MatchBlockBlock;
+	'matchBlock.empty': TSKindId.MatchBlockEmpty;
 	'parameter.default': TSKindId.DefaultParameter;
 	'parameter.dictionarySplat': TSKindId.DictionarySplatPattern;
 	'parameter.identifier': TSKindId.Identifier;

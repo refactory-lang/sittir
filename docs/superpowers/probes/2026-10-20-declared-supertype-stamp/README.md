@@ -29,12 +29,13 @@ parser's own. Enrich renames upstream's `alias($._match_block, $.block)` to the 
 `match_block` (`dsl/rule-transforms.ts::unaliasOverloadedDisplays`), so tree-sitter default-aliases
 `_match_block` into a visible node (`.visible = true` in `parser.c`, no alias symbol). That node's
 one child is the form, `match_block_block` or `match_block_empty`, and never the default form in
-its place. Wire still lists `_match_block` under `supertypes:`, because it compares the rule's own
-name with alias values. The design either keeps the wrapper, since a parent the parser shows as a
-node does not flatten ("Which parents flatten"), or removes the node so the slot holds the form
-directly ("End state"). Until one of those holds, the compiler's supertype set joins the declared
-supertypes with the stamped ones (`compiler/normalize.ts::supertypeKindsOf`), which counts
-`match_block` without changing how it reads.
+its place.
+
+**Outcome.** The wrapper is `match_block`'s end state, by the design's rule that a parent the parser
+shows as a node does not flatten ("Which parents flatten"). Wire now declines a parent whose every
+reference carries a named alias, so `_match_block` is no longer listed under `supertypes:`. Every
+declared supertype is then stamped, so the join is gone: the compiler's supertype set is the stamp
+alone (`compiler/normalize.ts::supertypeKindsOf`), and it matches the parser.
 
 **Method.** A throwaway worktree at master `30a6a7eda`. In `compiler/link.ts::classifyHiddenChoiceRule`
 the condition for building a `SupertypeRule` was changed so that a declared supertype no longer

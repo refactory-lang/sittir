@@ -42,9 +42,14 @@ export interface IsGuards {
 	immediateString<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateString };
-	stringContent<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
+	readonly stringContent: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContent };
+		escapeSequence<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
+	};
 	parameters<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Parameters };
@@ -81,6 +86,9 @@ export interface IsGuards {
 	namedNodeExpressionArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
+	groupingGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupingGroup };
 	namedNodePlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodePlain };
@@ -219,62 +227,92 @@ export function guardsWith(test: KindTest): IsGuards {
 		(kinds: ReadonlySet<number>) =>
 		(v: unknown): boolean =>
 			test(v, kinds);
+	const _kind_AnonymousNode_guard = _g(TSKindId.AnonymousNode);
+	const _kind_MissingNode_guard = _g(TSKindId.MissingNode);
+	const _kind_Grouping_guard = _g(TSKindId.Grouping);
+	const _kind_Predicate_guard = _g(TSKindId.Predicate);
+	const _kind_List_guard = _g(TSKindId.List);
+	const _kind_FieldDefinition_guard = _g(TSKindId.FieldDefinition);
+	const _kind_NamedNodePlain_guard = _g(TSKindId.NamedNodePlain);
+	const _kind_NamedNodeSupertyped_guard = _g(TSKindId.NamedNodeSupertyped);
+	const _kind_Capture_guard = _g(TSKindId.Capture);
+	const _kind_ListElementQuantifier_guard = _g(TSKindId.ListElementQuantifier);
+	const _kind_NamedNodeGroupChildren_guard = _g(TSKindId.NamedNodeGroupChildren);
+	const _kind_NamedNodeGroupAnchoredLast_guard = _g(TSKindId.NamedNodeGroupAnchoredLast);
+	const _kind_Program_guard = _g(TSKindId.Program);
+	const _kind_EscapeSequence_guard = _g(TSKindId.EscapeSequence);
+	const _kind_String_guard = _g(TSKindId.String);
+	const _kind_ImmediateString_guard = _g(TSKindId.ImmediateString);
+	const _kind_Parameters_guard = _g(TSKindId.Parameters);
+	const _kind_Comment_guard = _g(TSKindId.Comment);
+	const _kind_NegatedField_guard = _g(TSKindId.NegatedField);
+	const _kind_GroupExpressionArm_guard = _g(TSKindId.GroupExpressionArm);
+	const _kind_NamedNodeExpressionArm_guard = _g(TSKindId.NamedNodeExpressionArm);
+	const _kind_GroupingGroup_guard = _g(TSKindId.GroupingGroup);
+	const _kind_Quantifier_guard = _mg(TSKindId.Quantifier);
+	const _kind_Identifier_guard = _g(TSKindId.Identifier);
+	const _kind_ImmediateIdentifier_guard = _g(TSKindId.ImmediateIdentifier);
+	const _kind_PredicateType_guard = _mg(TSKindId.PredicateType);
+	const _kind_StringContentText_guard = _g(TSKindId.StringContentText);
+	const _kind_Anchor_guard = _mg(TSKindId.Anchor);
+	const _form_StringContent_guard = _vg(_g(TSKindId.StringContent), { escapeSequence: _kind_EscapeSequence_guard });
 	const _supertype_namedNode_guard = _vg(_mg(48), {
-		plain: _g(TSKindId.NamedNodePlain),
-		supertyped: _g(TSKindId.NamedNodeSupertyped)
+		plain: _kind_NamedNodePlain_guard,
+		supertyped: _kind_NamedNodeSupertyped_guard
 	});
 	const _supertype_listElement_guard = _vg(_mg(55), {
-		capture: _g(TSKindId.Capture),
-		quantifier: _g(TSKindId.ListElementQuantifier)
+		capture: _kind_Capture_guard,
+		quantifier: _kind_ListElementQuantifier_guard
 	});
 	const _supertype_namedNodeGroup_guard = _vg(_mg(59), {
-		children: _g(TSKindId.NamedNodeGroupChildren),
-		anchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast)
+		children: _kind_NamedNodeGroupChildren_guard,
+		anchoredLast: _kind_NamedNodeGroupAnchoredLast_guard
 	});
 	const _supertype_definition_guard = _vg(_mg(34), {
 		namedNode: _supertype_namedNode_guard,
-		anonymousNode: _g(TSKindId.AnonymousNode),
-		missingNode: _g(TSKindId.MissingNode),
-		grouping: _g(TSKindId.Grouping),
-		predicate: _g(TSKindId.Predicate),
-		list: _g(TSKindId.List),
-		field: _g(TSKindId.FieldDefinition)
+		anonymousNode: _kind_AnonymousNode_guard,
+		missingNode: _kind_MissingNode_guard,
+		grouping: _kind_Grouping_guard,
+		predicate: _kind_Predicate_guard,
+		list: _kind_List_guard,
+		field: _kind_FieldDefinition_guard
 	});
 	return Object.freeze({
-		program: _g(TSKindId.Program),
-		escapeSequence: _g(TSKindId.EscapeSequence),
-		capture: _g(TSKindId.Capture),
-		string: _g(TSKindId.String),
-		immediateString: _g(TSKindId.ImmediateString),
-		stringContent: _g(TSKindId.StringContent),
-		parameters: _g(TSKindId.Parameters),
-		comment: _g(TSKindId.Comment),
-		list: _g(TSKindId.List),
-		grouping: _g(TSKindId.Grouping),
-		missingNode: _g(TSKindId.MissingNode),
-		anonymousNode: _g(TSKindId.AnonymousNode),
-		fieldDefinition: _g(TSKindId.FieldDefinition),
-		negatedField: _g(TSKindId.NegatedField),
-		predicate: _g(TSKindId.Predicate),
-		listElementQuantifier: _g(TSKindId.ListElementQuantifier),
-		groupExpressionArm: _g(TSKindId.GroupExpressionArm),
-		namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
-		namedNodePlain: _g(TSKindId.NamedNodePlain),
-		namedNodeSupertyped: _g(TSKindId.NamedNodeSupertyped),
-		namedNodeGroupChildren: _g(TSKindId.NamedNodeGroupChildren),
-		namedNodeGroupAnchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast),
+		program: _kind_Program_guard,
+		escapeSequence: _kind_EscapeSequence_guard,
+		capture: _kind_Capture_guard,
+		string: _kind_String_guard,
+		immediateString: _kind_ImmediateString_guard,
+		stringContent: _form_StringContent_guard,
+		parameters: _kind_Parameters_guard,
+		comment: _kind_Comment_guard,
+		list: _kind_List_guard,
+		grouping: _kind_Grouping_guard,
+		missingNode: _kind_MissingNode_guard,
+		anonymousNode: _kind_AnonymousNode_guard,
+		fieldDefinition: _kind_FieldDefinition_guard,
+		negatedField: _kind_NegatedField_guard,
+		predicate: _kind_Predicate_guard,
+		listElementQuantifier: _kind_ListElementQuantifier_guard,
+		groupExpressionArm: _kind_GroupExpressionArm_guard,
+		namedNodeExpressionArm: _kind_NamedNodeExpressionArm_guard,
+		groupingGroup: _kind_GroupingGroup_guard,
+		namedNodePlain: _kind_NamedNodePlain_guard,
+		namedNodeSupertyped: _kind_NamedNodeSupertyped_guard,
+		namedNodeGroupChildren: _kind_NamedNodeGroupChildren_guard,
+		namedNodeGroupAnchoredLast: _kind_NamedNodeGroupAnchoredLast_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		definition: _supertype_definition_guard,
 		namedNode: _supertype_namedNode_guard,
 		listElement: _supertype_listElement_guard,
 		namedNodeGroup: _supertype_namedNodeGroup_guard,
 		layout: _sg(_supertype_layout_ids),
-		quantifier: _mg(TSKindId.Quantifier),
-		identifier: _g(TSKindId.Identifier),
-		immediateIdentifier: _g(TSKindId.ImmediateIdentifier),
-		predicateType: _mg(TSKindId.PredicateType),
-		stringContentText: _g(TSKindId.StringContentText),
-		anchor: _mg(TSKindId.Anchor)
+		quantifier: _kind_Quantifier_guard,
+		identifier: _kind_Identifier_guard,
+		immediateIdentifier: _kind_ImmediateIdentifier_guard,
+		predicateType: _kind_PredicateType_guard,
+		stringContentText: _kind_StringContentText_guard,
+		anchor: _kind_Anchor_guard
 	}) as unknown as IsGuards;
 }
 
