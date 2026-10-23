@@ -40,6 +40,8 @@ export interface GeneratedFiles {
 	backend: string;
 	templates: EmittedTemplates;
 	factories: string;
+	factoriesRecords: string;
+	factoriesDispatch: string;
 	overlays: Record<OverlayName, string>;
 	factoriesBundle: string;
 	factoriesIndex: string;
@@ -174,6 +176,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			arenaDescriptor: emitArenaDescriptor(cfg.grammar),
 			templates: emitted.templates,
 			factories: emitted.factories,
+			factoriesRecords: emitted.factoriesRecords,
+			factoriesDispatch: emitted.factoriesDispatch,
 			overlays: emitted.overlays,
 			factoriesBundle: emitted.factoriesBundle,
 			factoriesIndex: emitted.factoriesIndex,

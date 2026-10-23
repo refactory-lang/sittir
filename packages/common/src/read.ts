@@ -1,3 +1,4 @@
+import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat } from './record-cell.ts';
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
@@ -38,11 +39,19 @@ export interface TreeHandle {
 	siblings?(index: number): Siblings;
 	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
 	records?: RecordReader;
+	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
+	built?: BuiltArena;
+}
+
+/** What any record view reads its records' words through. */
+export interface RecordWords {
+	readonly format: CellFormat;
+	/** The words of the chunk `address` lies in, holding at least `length` words from it. */
+	words(address: number, length: number): Uint32Array;
 }
 
 /** What a record view reads its tree's records through. */
-export interface RecordReader {
-	readonly format: CellFormat;
+export interface RecordReader extends RecordWords {
 	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
 	record(index: number, depth?: number): number | undefined;
 	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */

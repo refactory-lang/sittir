@@ -53,7 +53,7 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 		it(`${grammar}: the list views the model finds are the interfaces stamped $listView and the nodes that install one`, () => {
 			const nodeMap = nodeMaps[grammar]!;
 			const types = typeSources(grammar);
-			const raw = read(grammar, 'factories/raw.ts');
+			const raw = read(grammar, 'factories/objects.ts');
 			const views = [...nodeMap.nodes.values()].filter((node) => listViewHint(node, nodeMap, undefined) !== undefined);
 			if (['rust', 'python', 'typescript'].includes(grammar)) expect(views.length).toBeGreaterThan(0);
 			const stamped = [...types.matchAll(/export interface (\w+) \{(?:(?!\n\}\n)[\s\S])*?\$listView: ListViewHint</g)].map((m) => m[1]!);
@@ -64,7 +64,7 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 				expect(element, `${node.kind} list factory`).toBeDefined();
 				expect(compact(interfaceBlock(types, node.typeName)), `${node.kind} view element`).toContain(`$listView:ListViewHint<${element}`);
 			}
-			expect(installsIn(functionsOf(raw, /^/)), 'factories/raw.ts').toBe(views.length);
+			expect(installsIn(functionsOf(raw, /^/)), 'factories/objects.ts').toBe(views.length);
 			const wrap = read(grammar, 'wrap.ts');
 			expect(installsIn(functionsOf(wrap, /^export function wrap/)), 'wrap.ts wraps').toBe(views.length);
 			const viewed = functionsOf(wrap, /^function view/).filter((block) => installsIn([block]) > 0).map((block) => /^function view(\w+)\(/.exec(block)![1]!);
@@ -87,7 +87,7 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 			}
 			const stamped = [...types.matchAll(/readonly \$listSlots: \{/g)];
 			expect(stamped).toHaveLength(parents.length);
-			for (const file of ['wrap.ts', 'factories/raw.ts']) {
+			for (const file of ['wrap.ts', 'factories/objects.ts']) {
 				const wired = [...read(grammar, file).matchAll(/kind: TSKindId\.\w+ as const,\s*optional: (?:true|false),\s*make:/g)];
 				expect(wired, file).toHaveLength(parents.reduce((total, node) => total + listSlotHints(node, nodeMap, undefined).length, 0));
 			}

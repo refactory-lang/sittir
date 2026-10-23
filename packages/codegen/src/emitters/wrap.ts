@@ -25,9 +25,8 @@ import {
 import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface } from './factories.ts';
 import { collectKindEntries, findKindEntry, collectCatalogKinds, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { nodeRecordLayout } from './render-module.ts';
+import { recordPlacesOf } from './record-construction.ts';
 import type { RecordPlace } from './record-layout.ts';
-import { rustFieldIdent } from './node-common.ts';
 
 export function listKindIds(nodeMap: NodeMap): number[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
@@ -156,18 +155,8 @@ type WrapStorage =
 const OBJECT: WrapStorage = { mode: 'object' };
 
 function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): WrapStorage | undefined {
-	if (seatPlanOf(node, nodeMap, kindEntries, 'RAW.').groups.length > 0) return undefined;
-	const layout = nodeRecordLayout(node, nodeMap);
-	if (layout === undefined) return undefined;
-	const fields = new Map(layout.places.map((place) => [place.field, place]));
-	const places = new Map<string, RecordPlace>();
-	for (const slot of node.slots) {
-		const field = rustFieldIdent(slot.storageName);
-		const place = fields.get(field);
-		if (place === undefined) return undefined;
-		places.set(slot.storageKey, place);
-	}
-	return { mode: 'record', places };
+	const places = recordPlacesOf(node, nodeMap, kindEntries);
+	return places === undefined ? undefined : { mode: 'record', places };
 }
 
 function placeOf(storage: WrapStorage & { readonly mode: 'record' }, storageKey: string): RecordPlace {

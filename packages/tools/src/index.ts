@@ -128,7 +128,7 @@ export {
 	resolveGrammars,
 	resolveBackends
 } from './commands.ts';
-export { parseNodeStorage } from './validate/common.ts';
+export { parseConstruction, parseNodeStorage } from './validate/common.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';

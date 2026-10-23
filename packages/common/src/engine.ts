@@ -332,6 +332,8 @@ export interface SittirEngine<
 	IndentChar extends string = never
 > extends RenderEngine<O, IndentChar> {
 	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
+	/** The cell format of an engine reading trees as records (`nodeStorage: 'arena'`); `undefined` for objects. */
+	readonly cellFormat?: CellFormat;
 }
 
 export type { ParsedRoot };
@@ -505,6 +507,7 @@ export function createNativeEngine<
 
 		return {
 			engine: {
+				cellFormat,
 				render(node, opts) {
 					return renderNativeNode(node, opts);
 				},
@@ -611,10 +614,17 @@ export function createNativeEngine<
 	}
 }
 
+const nativeFormats = new WeakMap<object, CellFormat>();
+
+/** The cell format of the language engine `native` when it reads trees as records, `undefined` otherwise. */
+export function nativeCellFormat(native: object): CellFormat | undefined {
+	return nativeFormats.get(native);
+}
+
 export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends string = never>(
 	engine: SittirEngine<AnyUntypedNode, API['options'], IndentChar>
 ): NativeLanguageEngine<API> {
-	return {
+	const language: NativeLanguageEngine<API> = {
 		render(node, options) {
 			return options === undefined || Object.keys(options).length === 0 ? engine.render(node) : engine.render(node, { options });
 		},
@@ -626,4 +636,6 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 			engine.dispose();
 		}
 	};
+	if (engine.cellFormat !== undefined) nativeFormats.set(language, engine.cellFormat);
+	return language;
 }

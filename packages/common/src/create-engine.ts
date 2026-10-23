@@ -21,13 +21,15 @@ import type {
 	CreateEngineOptions,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, foreignEngine, inEngine, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
-import { verifyStructure } from './verify-structure.ts';
+import { checkRow, verifyStructure } from './verify-structure.ts';
+import { BuiltArena } from './built-arena.ts';
+import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
-import { createRenderHandle } from './engine.ts';
+import { createRenderHandle, nativeCellFormat } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
@@ -154,11 +156,33 @@ function interceptedRender<Call>(
 }
 
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
+const recordConstruction = new WeakMap<object, (records: object) => void>();
+
+/**
+ * Makes the builders of `engine`, an engine reading trees as records, dispatch to `records`, the language's record
+ * builder module (`factories/records.ts`), from now on, so every node it builds is a view of its record. Internal:
+ * the construction switch tests and measurements use until an arena engine loads the record builders itself.
+ *
+ * @throws When `engine` was not made by `createEngine` with `nodeStorage: 'arena'`.
+ */
+export function useRecordConstruction(engine: object, records: object): void {
+	const use = recordConstruction.get(engine);
+	if (use === undefined) throw new Error("useRecordConstruction: the engine was not made by createEngine with nodeStorage 'arena'");
+	use(records);
+}
 
 export function scopeBuilders<T extends object>(engine: object, table: T): T {
 	const scope = builderScopes.get(engine);
 	if (scope === undefined) throw new Error('scopeBuilders: the engine was not made by createEngine');
 	return scope(table);
+}
+
+function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['verifyStored'] {
+	if (mode !== 'runtime') return undefined;
+	return (kind, stored) => {
+		const row = table[kind];
+		if (row !== undefined) checkRow(stored, row);
+	};
 }
 
 function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['settle'] {
@@ -183,10 +207,12 @@ function assembleEngine<API extends LanguageAPI>(
 		trivia: hooks.trivia,
 		portable: hooks.portable
 	});
+	stampEngineStorage(identity, options?.nodeStorage ?? 'object');
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
-		settle: settlerOf(options?.verifyStructure, hooks.structure)
+		settle: settlerOf(options?.verifyStructure, hooks.structure),
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));
@@ -294,7 +320,15 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	handle.current = engine;
 	const frozen = Object.freeze(engine);
+	stampEngineStorage(frozen, options?.nodeStorage ?? 'object');
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
+	const format = nativeCellFormat(native);
+	if (format !== undefined) {
+		recordConstruction.set(frozen, (records) => {
+			handle.builtArena ??= new BuiltArena(format, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle);
+			handle.records = records;
+		});
+	}
 	return frozen;
 }
 

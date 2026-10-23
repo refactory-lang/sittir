@@ -81,7 +81,7 @@ describe('a group seat flattens exactly the group fields its config surface name
 				}
 			}
 			const hints = seated.flatMap(({ hints }) => hints);
-			for (const file of ['wrap.ts', 'factories/raw.ts']) {
+			for (const file of ['wrap.ts', 'factories/objects.ts']) {
 				expect([...read(grammar, file).matchAll(/const readGroup_\w+ = /g)]).toHaveLength(hints.length);
 			}
 		});
@@ -102,7 +102,7 @@ describe('an elements seat sets the element config objects its config surface ta
 				expect(block, `${node.kind}.${fact.slot}`).toMatch(new RegExp(`readonly${fact.slot}:SlotHint<[\\s\\S]*?,(?:true|false),(?:true|false),T\\.${fact.group}\\.Config>;`));
 			}
 			const seatCalls = (file: string): number => [...read(grammar, file).matchAll(/\b(?:withElementsSeat|elementsWith)\(/g)].length;
-			expect(seatCalls('factories/raw.ts')).toBe(seats.length);
+			expect(seatCalls('factories/objects.ts')).toBe(seats.length);
 			expect(seatCalls('wrap.ts')).toBe(seats.length);
 		});
 
@@ -114,7 +114,7 @@ describe('an elements seat sets the element config objects its config surface ta
 				.filter((hint) => hint.config !== 'never');
 			const stamped = [...types.matchAll(/ListSlotHint<[^;]*?,(T\.\w+\.Config)>;/g)];
 			expect(stamped).toHaveLength(carried.length);
-			for (const file of ['wrap.ts', 'factories/raw.ts']) {
+			for (const file of ['wrap.ts', 'factories/objects.ts']) {
 				const specs = [...read(grammar, file).matchAll(/element: \{ keys:/g)];
 				expect(specs).toHaveLength(carried.length);
 			}

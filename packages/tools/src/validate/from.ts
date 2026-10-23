@@ -29,6 +29,7 @@ import {
 	findWrappedNode,
 	loadSlotReaders,
 	materialize,
+	materializeBuildInput,
 	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
@@ -382,7 +383,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				// factory that must dispatch as `factory()` with no args).
 				const shape = factoryShapes[readKind] ?? 'config';
 				const factory = factoryMap[readKind]!;
-				const readStorage = materialize(readData, readers);
+				const readStorage = materializeBuildInput(readData, readers);
 				const configOf = (): Record<string, unknown> =>
 					nodeToConfig(readStorage, {
 						readers,

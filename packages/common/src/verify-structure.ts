@@ -3,9 +3,10 @@ import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
 import { isRebuilt } from './node-data.ts';
 import { sourceOf } from './source-stamp.ts';
+import { isBuiltNode } from './built-arena.ts';
 
 export function verifyStructure(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
-	if (typeof value === 'object' && value !== null && !seen.has(value)) verifyNode(value as Record<string, unknown>, table, seen);
+	if (typeof value === 'object' && value !== null && !seen.has(value) && !isBuiltNode(value)) verifyNode(value as Record<string, unknown>, table, seen);
 }
 
 function verifyNode(node: Record<string, unknown>, table: StructureTable, seen: WeakSet<object>): void {
@@ -27,7 +28,7 @@ function verifyBuilt(value: unknown, table: StructureTable, seen: WeakSet<object
 	if (sourceOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, seen);
 }
 
-function checkRow(node: Record<string, unknown>, row: StructureRow): void {
+export function checkRow(node: Readonly<Record<string, unknown>>, row: StructureRow): void {
 	for (const [storage, slot] of row.required ?? []) {
 		if (node[storage] === undefined || node[storage] === null) throw new Error(`Missing required slot '${slot}' on ${row.kind}`);
 	}

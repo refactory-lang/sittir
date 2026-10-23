@@ -264,7 +264,9 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
 	rmSync(join(outDir, 'factories.ts'), { force: true });
 	rmSync(join(outDir, 'from.ts'), { force: true });
-	await writeFile(join(factoriesDir, 'raw.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'raw.ts'), result.factoriesDispatch);
+	await writeFile(join(factoriesDir, 'objects.ts'), result.factories);
+	await writeFile(join(factoriesDir, 'records.ts'), result.factoriesRecords);
 	await writeFile(join(factoriesDir, 'coerce.ts'), result.from);
 	await writeFile(join(factoriesDir, 'bundle.ts'), result.factoriesBundle);
 	for (const name of OVERLAY_CHAIN) {

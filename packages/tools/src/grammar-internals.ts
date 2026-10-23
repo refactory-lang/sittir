@@ -18,6 +18,7 @@ export interface GrammarModules {
 		kindNameFromId(id: number): string;
 	};
 	'factories/raw.ts': Readonly<Record<string, unknown>> & { readonly _factoryMap: Record<string, FactoryEntry> };
+	'factories/records.ts': Readonly<Record<string, unknown>>;
 	'factories/coerce.ts': { readonly _fromMap: Record<string, (input: unknown) => unknown> };
 	'wrap.ts': {
 		wrapNode(data: unknown, tree: TreeHandle): unknown;
@@ -29,7 +30,7 @@ export interface GrammarModules {
 	'utils.ts': { readonly triviaFacts: TriviaFacts; readonly querySlots: QuerySlots };
 }
 
-export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/bundle.ts';
+export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/bundle.ts' | 'factories/objects.ts';
 
 export function grammarModulePath(grammar: string, file: GrammarFile): string | undefined {
 	if (!isGrammar(grammar)) return undefined;

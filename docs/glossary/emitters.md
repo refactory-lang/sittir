@@ -12331,7 +12331,7 @@ The object form of `WrapStorage`: the wrap that reads a read object node's stora
 
 ### `packages/codegen/src/emitters/wrap.ts::recordStorageOf`
 
-The record form of a kind's wrap: each model slot's place, from the layout its native struct stamps (`nodeRecordLayout`) by its Rust field name (`rustFieldIdent` of its storage name). `undefined` when the kind has a group seat, whose readers read the group's stored data, when it has no record layout, or when a slot has no place there. Such a kind has no view: its stub reads as its row's object node (`WrapEmitter::finalize`).
+The record form of a kind's wrap: each model slot's place (`recordPlacesOf`), the same places the kind's record builder writes. `undefined` when the kind has a group seat, whose readers read the group's stored data, when it has no record layout, or when a slot has no place there. Such a kind has no view: its stub reads as its row's object node (`WrapEmitter::finalize`).
 
 ### `packages/codegen/src/emitters/wrap.ts::placeOf`
 
@@ -15502,3 +15502,63 @@ A JSON value as the printer walks it.
 ### `packages/codegen/src/emitters/membership.ts::membershipKindsOf`
 
 The kinds a value of any of `names` can read as, each once: a supertype's transitive parse kinds (`expandToConcreteParseKinds`), with each enum kind among them replaced by its members (`memberKindsOf`). The enum kind's own id is left out: a read stores the member id and never the enum's, a query walk yields such a node as that member id rather than as a coordinate, and a coordinate's `$type` is the shared stamp, so no value a guard or `ofType` meets has the enum's kind. It is the one membership derivation: the `is` guards' rows in `_members` (so `isMember`, `membersOf` and a query's `ofType` read the same sets), the same rows as types in `KindMembers` (which the guards and a query view's `ofType` narrow through), and the portable flag tables' kinds (`emitPortable`'s `typesOf`, `slotFlagsOf`'s `kindsOf`) all come from it.
+
+### `packages/codegen/src/emitters/record-construction.ts::recordPlacesOf`
+
+The record cell of each of a node's slots, by storage key, from the one layout pass (`nodeRecordLayout`), found by the slot's Rust field name (`rustFieldIdent` of its storage name): the places a record view reads and a record builder writes. `undefined` for a kind with no record view: one whose seat plan has groups, or one with a slot the layout gives no cell.
+
+### `packages/codegen/src/emitters/record-construction.ts::RECORD_CONSTRUCTION_IMPORTS`
+
+The shared helpers a record builder calls, imported into `records.ts` with the builders' other helpers and pruned where no builder uses them.
+
+### `packages/codegen/src/emitters/record-construction.ts::RecordConstruction`
+
+What a record builder's tail is made from, the facts the object builder's literal is made from too: the node and its kind discriminant, the slots it stores, which list settings it chose, the `$with` setters and inner positions its row binds, the checks it runs on its result and the type it returns.
+
+### `packages/codegen/src/emitters/record-construction.ts::slotStore`
+
+The store a slot's place takes: a presence bit sets its flag, a run writes a list, an inline place copies a bounded compound, and any other place writes one cell. The offset and the mask or stride are literals from the layout.
+
+### `packages/codegen/src/emitters/factories.ts::Backend`
+
+Which construction a builder module's builders end in: `objects`, the node literal (`factories/objects.ts`), or `records`, the record stores (`factories/records.ts`). Both modules come from one pass over the node map, so every builder's prelude, setters, signatures and checks are the same derivation in both; only the tail after the prelude differs.
+
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::finalizeRecords`
+
+The text of `factories/records.ts`: the record backend's builders, with the same preamble and maps as `objects.ts` and the shared record stores added to its imports. Only an engine that builds records loads it (`useRecordConstruction`).
+
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter::finalizeDispatch`
+
+The text of `factories/raw.ts`, the module every other module imports builders from. It re-exports `objects.ts` and replaces each exported builder function with one that runs the same builder of the backend of the engine in scope (`dispatched`, `recordBuilders`): the record builders in an engine that builds records, the object builders otherwise. A builder constant (a kind id) is re-exported as it is. Its `_factoryMap` names the dispatching builders, so a validator that scopes the map in an engine builds in that engine's backend. The record module is typed by the object module's types: both are generated from the same signatures, and TypeScript cannot prove two copies of a generic overload set assignable to each other.
+
+### `packages/codegen/src/emitters/factories.ts::utilsImportLine`
+
+The builder modules' import from `@sittir/common/utils`; the record module adds the record stores to the object module's names.
+
+### `packages/codegen/src/emitters/record-construction.ts::recordTailLines`
+
+A record builder's tail, after the prelude it shares with the object builder: the values that prelude stored, written as a record. It takes the engine's arena (`builtArenaOf`), checks the values when the engine verifies structure at run time (`verifyStored`), allocates the record at the layout's length, and writes each slot at its literal word offset through the shared stores. A list's chosen delimiters and separator go in its side record. The node it returns is the record's view (`BuiltArena::view`), bound to a row of the builder's `$with` setters and `$trivia` members (`builtRowLines`), so a `$with` rebuilds through the same record builder; then the builder's checks run on it. A kind without record places gets the refusal instead.
+
+### `packages/codegen/src/emitters/record-construction.ts::recordRefusalLines`
+
+The tail of a kind the record backend cannot build yet, because it has no record view to read its record back through: the builder refuses, naming the kind, rather than writing a record nothing reads.
+
+### `packages/codegen/src/emitters/record-construction.ts::leafAdoptLine`
+
+A text leaf's record tail: the leaf stays the object node its builder made, and the engine's arena gives it a header-only record and its interned text (`BuiltArena::adoptLeaf`), which a parent's cell names.
+
+### `packages/codegen/src/emitters/node-members.ts::builtRowLines`
+
+The row a built record's view writes through (`bindRow`): the `$with` setters and `$trivia` members an object node of the kind has, rendered by the same `withBlockLines` and `triviaBlockLines` the object literal's members use.
+
+### `packages/codegen/src/emitters/node-members.ts::withBlockLines`
+
+A node's `$with` member: one entry per setter, rendered by `withEntry` for a node that writes itself or `rowWithEntry` for a parsed view that writes through its row; nothing for a kind with no setters.
+
+### `packages/codegen/src/emitters/node-members.ts::triviaBlockLines`
+
+A node's `$trivia` member: its `leading` and `trailing` sides, and `inner` for a kind with inner positions, each writing through the node itself or, for a parsed view, through its row.
+
+### `packages/codegen/src/emitters/factories.ts::sharedImportLine`
+
+The record module's import of the constants both builder modules use: the leaf and slot patterns, the delimiter specs and the reserved-word sets, declared once in `objects.ts` and imported by `records.ts`, so each pattern is one literal in the package.

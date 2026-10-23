@@ -6,12 +6,13 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
-import { register, registered, type Role } from './identity.ts';
+import { registered, wrapRegistered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { recordOf } from './record-view.ts';
+import { isBuiltNode } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -347,7 +348,7 @@ export interface OwnerView {
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
 	if (list == null) return { list: undefined, stored: [], length: 0 };
-	const source = count in list || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
+	const source = count in list || isBuiltNode(list) || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
 	if (source === undefined) return { list: undefined, stored: undefined, length: undefined };
 	if (recordOf(source) !== undefined) return { list: source as Record<string, unknown>, stored: undefined, length: (source as { readonly length: number }).length };
 	const elements = (source as Record<string, unknown>)[count];
@@ -614,21 +615,6 @@ export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, de
 	return wrapRegistered(value, tree, wrap, role);
 }
 
-/**
- * The node `value` reads as on `tree`: the wrapper already registered at its index and role, or
- * `wrap(value, tree)`, registered there. A value that names no index of `tree` is wrapped and not
- * registered.
- */
-export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
-	const handle = treeHandleOf(value);
-	if (handle === undefined || decodeTree(handle) !== tree.id) return wrap(value, tree);
-	const index = decodeIndex(handle);
-	const known = registered(tree, index, role);
-	if (known !== undefined) return known as T;
-	const wrapper = wrap(value, tree);
-	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
-	return wrapper;
-}
 
 /** The role an envelope's content is reached in: `aliasContent` when it shares the envelope's parser node (both stamp one index), else `node`. */
 export function contentRole(envelope: object, content: unknown): Role {
@@ -694,7 +680,7 @@ export {
 	type TriviaSideName
 } from './read.ts';
 export type { Role } from './identity.ts';
-export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
+export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEngine, hydrateStored, recordBuilders, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
@@ -714,7 +700,7 @@ export {
 	type InteriorSlot,
 	type ProjectedInterior
 } from './interior.ts';
-export { mapTriviaEntries };
+export { mapTriviaEntries, wrapRegistered };
 export * from './runtime.ts';
 export {
 	RECORD,
@@ -729,5 +715,8 @@ export {
 	rowOf,
 	rowTrivia,
 	rowWith,
+	bindRow,
 	type RecordStub
 } from './record-view.ts';
+
+export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeInline, storeList, storeListOptions, type BuiltPlace, type BuiltText } from './built-arena.ts';

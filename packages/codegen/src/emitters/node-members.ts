@@ -46,6 +46,18 @@ export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
 
+export function builtRowLines(setters: readonly SetterEntry[] | undefined, inner: InnerPositions): string[] {
+	return ['  bindRow(node, {', ...withBlockLines(setters, withEntry), ...triviaBlockLines(false, inner), '  });'];
+}
+
+function withBlockLines(setters: readonly SetterEntry[] | undefined, entry: (setter: SetterEntry) => string): string[] {
+	return setters === undefined ? [] : ['    $with: {', ...setters.map(entry), '    },'];
+}
+
+function triviaBlockLines(row: boolean, inner: InnerPositions): string[] {
+	return ['    $trivia: {', triviaMember(row, 'leading'), triviaMember(row, 'trailing'), ...(inner.inner ? [triviaMember(row, 'inner')] : []), '    },'];
+}
+
 function rowWithEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (...args: unknown[]) => rowWith(node, tree, _wrap, ${JSON.stringify(entry.name)}, args),`;
 }
@@ -61,20 +73,14 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	const lines: string[] = [];
 	const row = spec.row === true;
 	const target = row ? 'rowOf(node, tree, _wrap)' : 'node';
-	if (spec.setters !== undefined) {
-		lines.push('    $with: {', ...spec.setters.map(row ? rowWithEntry : withEntry), '    },');
-	}
+	lines.push(...withBlockLines(spec.setters, row ? rowWithEntry : withEntry));
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
-		'    $trivia: {',
-		triviaMember(row, 'leading'),
-		triviaMember(row, 'trailing'),
-		...(spec.inner.inner ? [triviaMember(row, 'inner')] : []),
-		'    },',
+		...triviaBlockLines(row, spec.inner),
 		...(spec.parsed
 			? [
 					`    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, ${target}) : undefined,`,
@@ -164,7 +170,7 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 			environment === 'factory'
 				? [
 						`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
-						`  if (listView.stored === undefined) refuseReadStub(${JSON.stringify(storage)});`
+						`  if (listView.length === undefined) refuseReadStub(${JSON.stringify(storage)});`
 					]
 				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
 		members: [

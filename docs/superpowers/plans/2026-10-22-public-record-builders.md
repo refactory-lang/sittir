@@ -9,18 +9,23 @@ public cutover evidence.
 
 ## Accepted boundary
 
-- **One generator, two construction backends.** Each raw builder emits its
-  shared prelude once: normalization, coercion, admission and checks. It then
-  constructs either the object node or the record. The object construction
-  comes from `factories.ts` and the record stores from `factory-record.ts`.
-  Both are fed one structured construction contract. Neither backend reads
-  the other's source text.
-- **The engine picks the backend through its handle.** An arena engine's
-  handle carries its built arena. A builder reads the handle it runs under
-  (`inEngine`). Every route reaches the raw builders inside an engine scope,
-  so each stays in that engine's backend with no second module graph and no
-  dispatcher. The routes are coercion, bundles, overlays, IR, `from` and a
-  parsed node's `$with` rebuild.
+- **Three builder modules from one generator.** `factories/objects.ts` holds
+  the object builders and `factories/records.ts` the record builders, with the
+  same names and signatures. Each builder's prelude (normalization, coercion,
+  admission and checks) comes from one emitter in both; then the object backend
+  writes the node literal and the record backend writes the record
+  (`record-construction.ts`). Both are fed one structured construction
+  contract. Neither backend reads the other's source text.
+- **`raw.ts` dispatches by engine.** Every module that calls builders imports
+  them from `factories/raw.ts`: coercion, bundles, overlays, IR, `from` and a
+  parsed node's `$with` rebuild. `raw.ts` re-exports `objects.ts` and replaces
+  each builder with one that runs the builder of the backend of the engine in
+  scope. The record builder module reaches an engine by `import()`, so a
+  process that never builds records never loads it. Inside one backend,
+  builders call their own backend directly.
+- **Storages do not mix.** A builder refuses a child from an engine of the
+  same language that stores its nodes differently, so an object node never
+  holds a record and a record never holds an object node.
 - **Literal record stores.** Codegen emits literal word offsets, widths,
   presence bits, run strides and inline capacities from the one layout pass.
   There are no runtime layout descriptors and no generic record writer.
@@ -44,22 +49,37 @@ public cutover evidence.
 Each slice is green on its own. Arena engines keep building objects until
 the last slice.
 
-- [ ] **Construction contract and built-only records.** A structured
-  `FactoryConstruction` carries kind discriminant, slot values and list
-  options; object output stays byte-identical in all five grammars. The shared
-  runtime covers chunks, allocation and interning. Record stores cover every
-  constructible kind whose children are built: compounds, lists, text leaves,
-  refinement forms and units. Built views read them back. Tests compare each
-  record's accessors with the object builder's over the corpus.
+- [ ] **Record builders and parsed links.** `factories/records.ts`, generated
+  from the same construction contract as `objects.ts`, and the dispatching
+  `raw.ts`. `objects.ts` keeps today's builders. The shared runtime covers
+  chunks, allocation and interning. Record stores cover every constructible
+  kind: compounds, lists, text leaves, refinement forms and units. Built views
+  read them back. An internal switch (`useRecordConstruction`) gives an arena
+  engine the record backend for tests and `validate counts --construction
+  records`.
+  - Built records hold the untouched parsed children of their inputs by link,
+    as the native writer does: a compound by its record in the parsed tree, a
+    parsed leaf as a built leaf whose side record names its tree, row and
+    span. The arena holds each linked tree. The factory and IR storage rows
+    build every candidate over its parsed children, so they compare nothing
+    without links.
+  - Every non-render row must match object construction in all five grammars.
+    The built-render-parse row fails until the render bridge.
 - [ ] **Native render bridge.** Every addon renders JS-owned chunks borrowed per call,
-  with admission. Render bytes match the object path over the corpus.
-- [ ] **Parsed links, trivia and edits.**
-  - Built records hold parsed children by link, including children read by
-    another engine of the same language.
+  with admission, including the parsed trees a built record links. Render bytes
+  match the object path over the corpus.
+- [ ] **Trivia and edits.**
+  - Links to children read by another engine of the same language.
   - Written sides go to the native store.
   - `$with` shares unchanged children and copies bounded ones.
   - Cover disposal, growth and invalid buffers.
-- [ ] **Switch.** Arena engines build records. Prove that construction calls no
+- [ ] **Record views for every compound kind.** A kind whose seat plan has
+  groups, or that has a slot the layout gives no cell, has no record view, so
+  the record backend refuses it. Today these are rust `last_match_arm`,
+  `match_arm_block_ending`, `match_arm_with_comma`, `match_block` and
+  `use_wildcard`, typescript `catch_clause`, and python `slice`. The wrap
+  emitter gives them record views before the switch.
+- [ ] **Switch.** Arena engines load the record backend. Prove that construction calls no
   object builder or serializer. Benchmark metadata names the construction
   backend. Both storages' complete validation history must be unchanged, and
   the corpus comparison runs in CI.
@@ -74,7 +94,7 @@ the dispatcher is on master, and each run is dispatched at the slice's branch
   arena engines over the complete validation buckets. Its factory and IR
   buckets time construction (`build`) and render on each storage. From the
   render bridge until the switch, `--construction records` gives the arena
-  arm's engines their built arena, so the same buckets compare the record
+  arm's engines the record backend, so the same buckets compare the record
   builders with the object builders. The report names the construction
   backend.
 - **Eager job.** It measures the probe's private builders. It is the

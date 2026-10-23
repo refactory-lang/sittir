@@ -330,6 +330,8 @@ export const SIDE_FIELD_EDGES: number
 
 export const SIDE_FIELD_SEPARATOR: number
 
+export const SIDE_FIELD_SEPARATOR_KIND: number
+
 export const SIDE_FIELD_SIDES: number
 
 export const SIDE_FIELD_SPAN: number

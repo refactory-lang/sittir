@@ -22,6 +22,7 @@ export interface RecordCodecConstants {
 	readonly SIDE_FIELD_SEPARATOR: number;
 	readonly SIDE_WORDS_SEPARATOR: number;
 	readonly SIDE_FIELD_DELIMITER: number;
+	readonly SIDE_FIELD_SEPARATOR_KIND: number;
 }
 
 /** A side record field before a list's delimiters setting: its mask bit and its words. */
@@ -46,6 +47,10 @@ export interface CellFormat {
 	/** The fields a side record holds before a list's delimiters setting, in its order, `at` first. */
 	readonly sideBeforeDelimiter: readonly SideField[];
 	readonly sideDelimiter: number;
+	/** The side record's `sides`: the parsed node a built one stands for, by its tree, rows and byte span. */
+	readonly sideSides: SideField;
+	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
+	readonly sideSeparatorKind: number;
 }
 
 /** A parsed node's place as its record's side record stamps it. */
@@ -104,7 +109,8 @@ const CODEC_KEYS = [
 	'SIDE_WORDS_SIDES',
 	'SIDE_FIELD_SEPARATOR',
 	'SIDE_WORDS_SEPARATOR',
-	'SIDE_FIELD_DELIMITER'
+	'SIDE_FIELD_DELIMITER',
+	'SIDE_FIELD_SEPARATOR_KIND'
 ] as const satisfies readonly (keyof RecordCodecConstants)[];
 
 /** The cell format of `native`, `undefined` for an addon built without the record codec. */
@@ -130,7 +136,9 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
 			{ bit: codec.SIDE_FIELD_SEPARATOR, words: codec.SIDE_WORDS_SEPARATOR }
 		],
-		sideDelimiter: codec.SIDE_FIELD_DELIMITER
+		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
+		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
+		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND
 	};
 }
 
