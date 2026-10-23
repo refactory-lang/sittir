@@ -10245,7 +10245,7 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
           "slot": "pattern",
           "path": [
@@ -10943,7 +10943,7 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
           "slot": "pattern",
           "path": [
@@ -10990,7 +10990,7 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
           "slot": "pattern",
           "path": [

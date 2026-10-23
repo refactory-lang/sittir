@@ -197,8 +197,8 @@
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
-(match_arm) @clause.match.arm
-(last_match_arm) @clause.match.arm.last
+(match_arm pattern: _ @match) @clause.match.arm
+(last_match_arm pattern: _ @match) @clause.match.arm.last
 (use_as_clause) @clause.import.alias
 (use_as_clause path: (_) @name)
 (use_list) @clause.import.list
