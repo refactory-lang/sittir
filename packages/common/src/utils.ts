@@ -1,9 +1,9 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideTreeOf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { register, registered, type Role } from './identity.ts';
@@ -126,7 +126,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const facts: TriviaFacts = handle.current.trivia;
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
-	const read = (side: TriviaSideName): readonly TriviaEntry[] => hydratedEntries(sideOf(node, side));
+	const read = (side: TriviaSideName): readonly TriviaEntry[] => hydratedEntries(sideOf(node, side), sideTreeOf(node));
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
 		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 		const at = tableAt(node);
@@ -147,14 +147,15 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	};
 }
 
-function hydratedEntries(entries: readonly TriviaEntry[]): readonly TriviaEntry[] {
-	if (entries.some(isCoordinate)) return entries.map(hydrateTriviaEntry);
+function hydratedEntries(entries: readonly TriviaEntry[], tree: TreeHandle | undefined): readonly TriviaEntry[] {
+	if (tree !== undefined || entries.some(isCoordinate)) return entries.map((entry) => hydrateTriviaEntry(entry, tree));
 	entries.forEach(asTextNode);
 	return entries;
 }
 
-export function hydrateTriviaEntry(entry: unknown): TriviaEntry {
-	return (isCoordinate(entry) ? hydrateStored(entry) : asTextNode(entry)) as TriviaEntry;
+export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEntry {
+	if (isCoordinate(entry)) return hydrateStored(entry) as TriviaEntry;
+	return asTextNode(tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
 }
 
 /**

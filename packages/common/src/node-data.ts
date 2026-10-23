@@ -455,6 +455,15 @@ export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry
 	return table === undefined ? [] : (table.tree.triviaSide(table.index, side) as TriviaEntry[]);
 }
 
+/** The tree whose trivia table answers `sideOf` for `node`: its own live tree, else that of the node it was rebuilt from (`placeOf`) while it lives; `undefined` for a node whose sides are its own data. */
+export function sideTreeOf(node: object): TreeHandle | undefined {
+	if (envelopeKindOf(node) !== undefined) return undefined;
+	if (tableAt(node) !== undefined) return treeOf(node);
+	if (triviaOf(node) !== undefined) return undefined;
+	const source = placeOf(node);
+	return source === undefined ? undefined : sourceTree(source);
+}
+
 /** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */
 export function sidesOf(node: object): NodeTrivia | undefined {
 	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};

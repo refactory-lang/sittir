@@ -344,6 +344,10 @@ The handle in scope, or `undefined` outside any engine call. A node built with n
 
 Whether a handle's `current` is a live engine rather than an identity, told by the presence of a `render` member.
 
+### `packages/common/src/engine-scope.ts::hydrateOn`
+
+A value as an accessor of a node of a tree returns it, through the generated `hydrate` of the engine the tree is bound to (`hydrateWith` with the grammar's wrap): node data is wrapped as its kind's node, and anything else passes through. A tree bound to no engine returns the value as it is. `hydrateStored` reaches the same `hydrate` from a coordinate's own tree token; this takes the tree from the caller, for data that names no tree, such as a trivia entry written into a tree's table.
+
 ### `packages/common/src/engine.ts::createRenderHandle`
 
 A lazily rendered text: the render runs on first use and its text is cached. `save` writes through the native file path when the engine offers one, else writes the text. Disposing drops the cached text; any use after that throws `rendered text disposed`.
@@ -756,11 +760,11 @@ A keyword-presence slot's loose input as what the slot stores: `true` for any pr
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry with its text as the method `$text()` (`asTextNode`).
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); a written entry, stored as detached data, wrapped as its kind's node through the engine bound to the tree whose table holds it (`hydrateOn`) when that tree is given; and any entry with its text as the method `$text()` (`asTextNode`).
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 
-A trivia side as its reader gets it, each entry through `hydrateTriviaEntry`. The array is a new one only when an entry is a coordinate. Otherwise it is the same array, its entries given the method `$text()` in place, so a side read back is the one stored.
+A trivia side as its reader gets it, each entry through `hydrateTriviaEntry` on the tree whose table answered the side (`sideTreeOf`). A written entry is stored as detached data, which the render reads; the reader gets it as its kind's node, the same surface a read entry has, so `toJSON` and every other reader meet one shape. A side a node holds as its own data, with no coordinate in it, is read back as the same array, its entries given the method `$text()` in place.
 
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
@@ -881,6 +885,10 @@ Whether a value has a text member in either form, a node's `$text()` method or n
 ### `packages/common/src/node-data.ts::envelopeKindOf`
 
 The display id of the alias envelope whose content a node is, read from the same parser node, else `undefined`. The reader stamps a coordinate with the grammar id, except at an alias envelope, where it stamps the display id; the envelope and its content are wrapped from that one coordinate, so the content is the node whose stamp (its own coordinate's, or the one an edit carried forward, `placeOf`) differs from its own kind. Over the corpora this matches "shares its holder's tree handle" exactly. The contract: an alias content's comments belong to its envelope. `sideOf` gives the content no sides, and a `$trivia` write through the content lands on the one parser node, which the envelope reads once and every writer (JSON, render) writes once. `isAliasContent` asks this of a holder's child.
+
+### `packages/common/src/node-data.ts::sideTreeOf`
+
+The tree whose trivia table answers `sideOf` for a node, in the order `sideOf` asks: none for an alias envelope's content (its sides are the envelope's), the node's own live tree when it has a table index, none when the node holds its sides as its own data, else the tree of the node it was rebuilt from (`placeOf`) while that lives. The `$trivia` reader hydrates the entries it reads through this tree.
 
 ### `packages/common/src/interior.ts::interiorPattern`
 

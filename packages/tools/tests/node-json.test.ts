@@ -277,3 +277,29 @@ describe('a parsed alias envelope and its content are one node, whose comments t
 		}
 	});
 });
+
+describe('a comment written through $trivia reads back as the node a parsed comment is', () => {
+	type Entry = { readonly $type: number; content(): unknown };
+	type Sides = { readonly $trivia: Record<'leading' | 'trailing', (...items: unknown[]) => readonly unknown[]> };
+	const comments = (entries: readonly unknown[]): Entry[] => entries.filter((entry): entry is Entry => typeof entry !== 'number');
+
+	it.each(['leading', 'trailing'] as const)('%s: its text survives JSON and a revive, and it renders once', (side) => {
+		const root = ts.parse('let a = 1;\nlet b = 2;\n');
+		(root.statements()[0] as unknown as Sides).$trivia[side]('// c');
+		const written = JSON.stringify(root);
+		expect(written).toContain('" c"');
+		const revived = JSON.parse(written, ts.reviver) as object;
+		expect(JSON.stringify(revived)).toBe(written);
+		expect(String(revived).split('// c')).toHaveLength(2);
+	});
+
+	it.each(['leading', 'trailing'] as const)('%s: a written entry has the content a read entry has', (side) => {
+		const read = ts.parse(side === 'leading' ? '// c\nlet a = 1;\nlet b = 2;\n' : 'let a = 1; // c\nlet b = 2;\n').statements()[0] as unknown as Sides;
+		const written = ts.parse('let a = 1;\nlet b = 2;\n').statements()[0] as unknown as Sides;
+		written.$trivia[side]('// c');
+		const [fromRead] = comments(read.$trivia[side]());
+		const [fromWrite] = comments(written.$trivia[side]());
+		expect(fromWrite?.$type).toBe(fromRead?.$type);
+		expect(fromWrite?.content()).toEqual(fromRead?.content());
+	});
+});
