@@ -6,25 +6,23 @@ const ts = await typescript.createEngine();
 export function rebuildFormatLoose() {
 	return ts.build.program({
 		statements: [ts.build.importStatement.clauseFrom({
-			importClause: ts.kinds.TypeKeyword,
-			fromClause: {
-				importClause: ts.build.namedImports(ts.build.importSpecifierName({
-					name: "FormatRecord",
-				}), ts.build.importSpecifierName({
-					name: "FormatTrivia",
-				})),
-				source: ts.build.stringSingle("@sittir/types"),
-			},
+			typeOnly: ts.kinds.TypeKeyword,
+			importClause: ts.build.namedImports(ts.build.importSpecifierName({
+				name: "FormatRecord",
+			}), ts.build.importSpecifierName({
+				name: "FormatTrivia",
+			})),
+			source: ts.build.stringSingle("@sittir/types"),
 		}), ts.build.exportStatementDefaultDeclaration({
 			content: ts.build.functionDeclaration({
 				name: "applyFormat",
-				parameters: [ts.build.requiredParameter({
-					pattern: "canonicalRender",
+				parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+					name: "canonicalRender",
 					type: ts.kinds.StringKeyword,
 				}), ts.build.requiredParameter({
-					pattern: "format",
+					name: "format",
 					type: "FormatRecord",
-				})],
+				})),
 				returnType: ts.kinds.StringKeyword,
 				body: [ts.build.lexicalDeclaration({
 					kind: ts.kinds.LetKeyword,
@@ -50,13 +48,13 @@ export function rebuildFormatLoose() {
 			}),
 		}).$trivia.leading(ts.build.commentBlock("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), ts.build.functionDeclaration({
 			name: "applyBoundary",
-			parameters: [ts.build.requiredParameter({
-				pattern: "s",
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+				name: "s",
 				type: ts.kinds.StringKeyword,
 			}), ts.build.requiredParameter({
-				pattern: "format",
+				name: "format",
 				type: "FormatRecord",
-			})],
+			})),
 			returnType: ts.kinds.StringKeyword,
 			body: [ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
@@ -79,7 +77,7 @@ export function rebuildFormatLoose() {
 					value: ts.build.binaryExpression({
 						left: ts.build.memberExpression({
 							object: "boundary",
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: "leading",
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -93,7 +91,7 @@ export function rebuildFormatLoose() {
 					value: ts.build.binaryExpression({
 						left: ts.build.memberExpression({
 							object: "boundary",
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: "trailing",
 						}),
 						operator: ts.kinds.QmarkQmark,
@@ -105,13 +103,13 @@ export function rebuildFormatLoose() {
 			terminator: ts.kinds.AutomaticSemicolon,
 		}).$trivia.leading(ts.build.commentBlock("* Prepend/append boundary whitespace. ")), ts.build.functionDeclaration({
 			name: "applyTrivia",
-			parameters: [ts.build.requiredParameter({
-				pattern: "s",
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+				name: "s",
 				type: ts.kinds.StringKeyword,
 			}), ts.build.requiredParameter({
-				pattern: "format",
+				name: "format",
 				type: "FormatRecord",
-			})],
+			})),
 			returnType: ts.kinds.StringKeyword,
 			body: [ts.build.lexicalDeclaration({
 				kind: ts.kinds.ConstKeyword,
@@ -130,7 +128,7 @@ export function rebuildFormatLoose() {
 						right: ts.build.binaryExpression({
 							left: ts.build.memberExpression({
 								object: "trivia",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "length",
 							}),
 							operator: ts.kinds.EqEqEq,
@@ -146,27 +144,27 @@ export function rebuildFormatLoose() {
 					value: ts.build.callExpressionCall({
 						function: ts.build.memberExpression({
 							object: ts.build.array(ts.build.spreadElement("trivia")),
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: "sort",
 						}),
 						arguments: ts.build.arrowFunction({
 							content: ts.build.callSignature({
-								parameters: [ts.build.requiredParameter({
-									pattern: "a",
+								parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+									name: "a",
 								}), ts.build.requiredParameter({
-									pattern: "b",
-								})],
+									name: "b",
+								})),
 							}),
 							body: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: "b",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "offset",
 								}),
 								operator: ts.kinds.Dash,
 								right: ts.build.memberExpression({
 									object: "a",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "offset",
 								}),
 							}),
@@ -195,22 +193,22 @@ export function rebuildFormatLoose() {
 						value: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: "Math",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "max",
 							}),
 							arguments: ["0", ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: "Math",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "min",
 								}),
 								arguments: [ts.build.memberExpression({
 									object: "item",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "offset",
 								}), ts.build.memberExpression({
 									object: "result",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "length",
 								})],
 							})],
@@ -223,7 +221,7 @@ export function rebuildFormatLoose() {
 							left: ts.build.callExpressionCall({
 								function: ts.build.memberExpression({
 									object: "result",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "slice",
 								}),
 								arguments: ["0", "offset"],
@@ -231,7 +229,7 @@ export function rebuildFormatLoose() {
 							operator: ts.kinds.Plus,
 							right: ts.build.memberExpression({
 								object: "item",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "text",
 							}),
 						}),
@@ -239,7 +237,7 @@ export function rebuildFormatLoose() {
 						right: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: "result",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "slice",
 							}),
 							arguments: "offset",
@@ -252,16 +250,16 @@ export function rebuildFormatLoose() {
 		}).$trivia.leading(ts.build.commentBlock("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), ts.build.exportStatementDefaultDeclaration({
 			content: ts.build.functionDeclaration({
 				name: "rebaseTrivia",
-				parameters: [ts.build.requiredParameter({
-					pattern: "format",
+				parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+					name: "format",
 					type: "FormatRecord",
 				}), ts.build.requiredParameter({
-					pattern: "editStart",
+					name: "editStart",
 					type: ts.kinds.NumberKeyword,
 				}), ts.build.requiredParameter({
-					pattern: "delta",
+					name: "delta",
 					type: ts.kinds.NumberKeyword,
-				})],
+				})),
 				returnType: ts.build.typeAnnotation("FormatRecord"),
 				body: [ts.build.lexicalDeclaration({
 					kind: ts.kinds.ConstKeyword,
@@ -271,7 +269,7 @@ export function rebuildFormatLoose() {
 							function: "rebaseTriviaItems",
 							arguments: [ts.build.memberExpression({
 								object: "format",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "trivia",
 							}), "editStart", "delta"],
 						}),
@@ -284,7 +282,7 @@ export function rebuildFormatLoose() {
 							function: "rebaseKinds",
 							arguments: [ts.build.memberExpression({
 								object: "format",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "kinds",
 							}), "editStart", "delta"],
 						}),
@@ -315,19 +313,19 @@ export function rebuildFormatLoose() {
 			}),
 		}).$trivia.leading(ts.build.commentBlock("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), ts.build.functionDeclaration({
 			name: "rebaseTriviaItems",
-			parameters: [ts.build.requiredParameter({
-				pattern: "trivia",
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+				name: "trivia",
 				type: ts.build.readonlyType(ts.build.unionType({
 					left: ts.build.arrayType("FormatTrivia"),
 					right: ts.build.literalType(ts.kinds.Undefined),
 				})),
 			}), ts.build.requiredParameter({
-				pattern: "editStart",
+				name: "editStart",
 				type: ts.kinds.NumberKeyword,
 			}), ts.build.requiredParameter({
-				pattern: "delta",
+				name: "delta",
 				type: ts.kinds.NumberKeyword,
-			})],
+			})),
 			returnType: ts.build.unionType({
 				left: ts.build.arrayType("FormatTrivia"),
 				right: ts.build.literalType(ts.kinds.Undefined),
@@ -343,21 +341,21 @@ export function rebuildFormatLoose() {
 			}), ts.build.returnStatement(ts.build.callExpressionCall({
 				function: ts.build.memberExpression({
 					object: "trivia",
-					separator: ts.kinds.Dot,
+					optionalChain: ts.kinds.Dot,
 					property: "map",
 				}),
 				arguments: ts.build.arrowFunction({
 					content: ts.build.callSignature({
-						parameters: ts.build.requiredParameter({
-							pattern: "item",
-						}),
+						parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+							name: "item",
+						})),
 					}),
 					body: ts.build.statementBlock(ts.build.ifStatement({
 						condition: ts.build.parenthesizedExpressionTyped({
 							expression: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: "item",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "offset",
 								}),
 								operator: ts.kinds.Lt,
@@ -372,7 +370,7 @@ export function rebuildFormatLoose() {
 							value: ts.build.binaryExpression({
 								left: ts.build.memberExpression({
 									object: "item",
-									separator: ts.kinds.Dot,
+									optionalChain: ts.kinds.Dot,
 									property: "offset",
 								}),
 								operator: ts.kinds.Plus,
@@ -384,7 +382,7 @@ export function rebuildFormatLoose() {
 						value: ts.build.callExpressionCall({
 							function: ts.build.memberExpression({
 								object: "Math",
-								separator: ts.kinds.Dot,
+								optionalChain: ts.kinds.Dot,
 								property: "max",
 							}),
 							arguments: ["0", "newOffset"],
@@ -396,8 +394,8 @@ export function rebuildFormatLoose() {
 			terminator: ts.kinds.AutomaticSemicolon,
 		}).$trivia.leading(ts.build.commentBlock("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), ts.build.functionDeclaration({
 			name: "rebaseKinds",
-			parameters: [ts.build.requiredParameter({
-				pattern: "kinds",
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
+				name: "kinds",
 				type: ts.build.unionType({
 					left: ts.build.genericType({
 						name: "Record",
@@ -406,12 +404,12 @@ export function rebuildFormatLoose() {
 					right: ts.build.literalType(ts.kinds.Undefined),
 				}),
 			}), ts.build.requiredParameter({
-				pattern: "editStart",
+				name: "editStart",
 				type: ts.kinds.NumberKeyword,
 			}), ts.build.requiredParameter({
-				pattern: "delta",
+				name: "delta",
 				type: ts.kinds.NumberKeyword,
-			})],
+			})),
 			returnType: ts.build.unionType({
 				left: ts.build.genericType({
 					name: "Record",
@@ -445,7 +443,7 @@ export function rebuildFormatLoose() {
 					right: ts.build.callExpressionCall({
 						function: ts.build.memberExpression({
 							object: "Object",
-							separator: ts.kinds.Dot,
+							optionalChain: ts.kinds.Dot,
 							property: "entries",
 						}),
 						arguments: "kinds",

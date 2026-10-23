@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { dropFlattenedParentAliases, wire } from '../wire/wire.ts';
 import { variant } from '../primitives/variant.ts';
-import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { evaluateWired, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import type { GrammarJson } from '../../grammar-shapes/grammar-json.ts';
 import { baseOf } from '../../__tests__/helpers/empty-base.ts';
 
@@ -13,12 +13,9 @@ const sym = (name: string) => ({ type: 'SYMBOL', name });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
 const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
 
-/** Evaluate every wired rule in insertion order, then the supertypes callback — the order tree-sitter's grammar() uses. */
-function flattenedSupertypes(
-	wired: { rules: Record<string, unknown>; supertypes?: unknown },
-	base: Record<string, unknown>
-): string[] {
-	for (const [name, fn] of Object.entries(wired.rules)) (fn as RuleFn).call($, $, base[name]);
+/** Call the externals callback, read every wired rule, then the supertypes callback — the order tree-sitter's grammar() uses. */
+function flattenedSupertypes(wired: { externals?: unknown; rules: Record<string, unknown>; supertypes?: unknown }): string[] {
+	evaluateWired(wired);
 	const list = (wired.supertypes as RuleFn).call($, $, []) as { name: string }[];
 	return list.map((s) => s.name);
 }
@@ -31,8 +28,8 @@ describe('flattening classifier', () => {
 	afterAll(() => restoreFakeDsl());
 
 	it('registers a parent whose variants hoist into a pure choice of its own variant rules', () => {
-		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } }, baseOf(tokenArms));
-		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } }, baseOf(tokenArms));
+		expect(flattenedSupertypes(wired as never)).toEqual(['parent']);
 	});
 
 	it('does not register an extra', () => {
@@ -40,41 +37,41 @@ describe('flattening classifier', () => {
 			name: 'g',
 			rules: {},
 			extras: (d: any) => [d.parent],
-			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
+			edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
-		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
+		expect(flattenedSupertypes(wired as never)).toEqual([]);
 	});
 
 	it('does not register a parent whose arms stay unmaterialized', () => {
-		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '0/0': variant('x'), '0/1': variant('y') } } }, baseOf(bareArms));
-		expect(flattenedSupertypes(wired as never, bareArms)).toEqual([]);
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, edits: { parent: { '0/0': variant('x'), '0/1': variant('y') } } }, baseOf(bareArms));
+		expect(flattenedSupertypes(wired as never)).toEqual([]);
 	});
 
 	it('does not add a parent that another rule presents as a node of the same kind', () => {
 		const wired = wire<GrammarJson>({
 			name: 'g',
 			rules: { other: (d: any) => (globalThis as any).alias(d.inner, d.parent) },
-			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
+			edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
-		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
+		expect(flattenedSupertypes(wired as never)).toEqual([]);
 	});
 
 	it('adds a parent referenced only under a named alias, since the alias over a flattened parent is dropped afterwards', () => {
 		const wired = wire<GrammarJson>({
 			name: 'g',
 			rules: { other: (d: any) => (globalThis as any).alias(d.parent, d.shown) },
-			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
+			edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
-		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
+		expect(flattenedSupertypes(wired as never)).toEqual(['parent']);
 	});
 
 	it('adds a parent that has one aliased reference and one bare reference, since the bare one keeps it a supertype', () => {
 		const wired = wire<GrammarJson>({
 			name: 'g',
 			rules: { other: (d: any) => (globalThis as any).seq((globalThis as any).alias(d.parent, d.shown), d.parent) },
-			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
+			edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
-		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
+		expect(flattenedSupertypes(wired as never)).toEqual(['parent']);
 	});
 	describe('an alias over a flattened parent is dropped, through a prec wrapper too', () => {
 		const forms: Array<[string, (d: any) => unknown]> = [
@@ -89,14 +86,13 @@ describe('flattening classifier', () => {
 		};
 		it.each(forms)('%s: the parent stays a supertype with its variants, and the shown alias is gone', (_label, body) => {
 			const wired = wire<GrammarJson>(
-				{ name: 'g', rules: { other: body }, patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } } as never,
+				{ name: 'g', rules: { other: body }, edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } } as never,
 				baseOf(tokenArms)
 			);
-			expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
-			const evaluatedRules: Record<string, unknown> = {};
-			for (const [name, fn] of Object.entries(wired.rules)) evaluatedRules[name] = (fn as RuleFn).call($, $, tokenArms[name as 'parent']);
-			const supertypes = (wired.supertypes as RuleFn).call($, $, []);
-			const grammar = { rules: evaluatedRules, supertypes };
+			const rules = evaluateWired(wired as never);
+			const supertypes = (wired.supertypes as RuleFn).call($, $, []) as { name: string }[];
+			expect(supertypes.map((s) => s.name)).toEqual(['parent']);
+			const grammar = { rules, supertypes };
 			dropFlattenedParentAliases(grammar as never, wired as never);
 			expect(aliasesNamed(grammar.rules['other'], 'shown')).toBe(0);
 			expect(Object.keys(grammar.rules)).not.toContain('shown');

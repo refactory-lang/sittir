@@ -529,7 +529,7 @@ describe('portable is: typescript', async () => {
 
 	it('reads a method by its visibility keyword, which the reader holds as the modifier\'s member kind', () => {
 		const SOURCE = 'class C { private a() {} protected b() {} public c() {} d() {} }\n';
-		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition', undefined, n));
+		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition_plain', undefined, n));
 		expect(methods.map((n) => at('declaration.method.private')(n))).toEqual([true, false, false, false]);
 		expect(methods.map((n) => at('declaration.method.protected')(n))).toEqual([false, true, false, false]);
 		expect(methods.map((n) => at('declaration.method.public')(n))).toEqual([false, false, true, false]);
@@ -622,12 +622,12 @@ describe('portable is: typescript', async () => {
 
 	it('reads a getter, a setter and an auto-accessor as properties, and a plain method or field as neither', () => {
 		const SOURCE = 'class C { get g() { return 1; } set s(v) {} private get p() { return 2; } m() {} accessor a = 1; f = 2; }\n';
-		const getter = find(SOURCE, 'method_definition');
-		const setter = find(SOURCE, 'method_definition', undefined, 1);
-		const privateGetter = find(SOURCE, 'method_definition', undefined, 2);
-		const method = find(SOURCE, 'method_definition', undefined, 3);
-		const auto = find(SOURCE, 'public_field_definition');
-		const field = find(SOURCE, 'public_field_definition', undefined, 1);
+		const getter = find(SOURCE, 'method_definition_getter');
+		const setter = find(SOURCE, 'method_definition_setter');
+		const privateGetter = find(SOURCE, 'method_definition_getter', undefined, 1);
+		const method = find(SOURCE, 'method_definition_plain');
+		const auto = find(SOURCE, 'public_field_definition_accessor');
+		const field = find(SOURCE, 'public_field_definition_plain');
 		expect(at('declaration.property.getter')(getter)).toBe(true);
 		expect(at('declaration.property')(getter)).toBe(true);
 		expect(at('declaration.method')(getter)).toBe(false);
@@ -645,10 +645,10 @@ describe('portable is: typescript', async () => {
 
 	it('reads an accessor signature as a property signature, abstract or not', () => {
 		const SOURCE = 'interface I { get x(): number; m(): void; }\nabstract class A { abstract set y(v: number); abstract n(): void; }\n';
-		const getter = find(SOURCE, 'method_signature');
-		const method = find(SOURCE, 'method_signature', undefined, 1);
-		const setter = find(SOURCE, 'abstract_method_signature');
-		const abstractMethod = find(SOURCE, 'abstract_method_signature', undefined, 1);
+		const getter = find(SOURCE, 'method_signature_getter');
+		const method = find(SOURCE, 'method_signature_plain');
+		const setter = find(SOURCE, 'abstract_method_signature_setter');
+		const abstractMethod = find(SOURCE, 'abstract_method_signature_plain');
 		expect(at('declaration.property.signature.getter')(getter)).toBe(true);
 		expect(at('declaration.method.signature')(getter)).toBe(false);
 		expect(at('declaration.method.signature')(method)).toBe(true);

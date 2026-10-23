@@ -1,10 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, join, normalize, relative } from 'node:path';
 import { hostPlatform, platformSuffix } from '@sittir/common/engine';
 import { moduleClosure } from './module-closure.ts';
+import { sha256File } from '../util/content-hash.ts';
+import { writeFileAtomic } from '../util/write-file-atomic.ts';
 import { REPO_ROOT, grammarPackageDir, nativeBinaryName, nativeBindingRelDir, nativeCrateRelDir, type GrammarName } from '../grammars.ts';
 
 export type NativeProfile = 'release' | 'gate' | 'dev';
@@ -54,10 +55,6 @@ function rustToolchain(repoRoot: string): string {
 	const toolchain = execFileSync('rustc', ['-vV'], { cwd: repoRoot, encoding: 'utf8' }).trim();
 	toolchains.set(repoRoot, toolchain);
 	return toolchain;
-}
-
-function sha256(file: string): string {
-	return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
 function walk(path: string, out: string[]): void {
@@ -116,7 +113,7 @@ export function nativeInputs(repoRoot: string, grammar: string): Record<string, 
 		quotedIncludeClosure(scanner, scannerIncludes);
 	}
 	const inputs: Record<string, string> = {};
-	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[relative(repoRoot, file)] = sha256(file);
+	for (const file of [...new Set([...files, ...scannerIncludes])].sort()) inputs[relative(repoRoot, file)] = sha256File(file);
 	return inputs;
 }
 
@@ -133,7 +130,7 @@ function cargoConfigFiles(repoRoot: string, grammar: string, env: NodeJS.Process
 export function nativeBuildConfig(repoRoot: string, grammar: string, env: NodeJS.ProcessEnv): Record<string, string> {
 	const config: Record<string, string> = {};
 	for (const name of Object.keys(env).filter((name) => BUILD_ENV.test(name)).sort()) config[name] = env[name] ?? '';
-	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[relative(repoRoot, file)] = sha256(file);
+	for (const file of cargoConfigFiles(repoRoot, grammar, env)) config[relative(repoRoot, file)] = sha256File(file);
 	return config;
 }
 
@@ -155,12 +152,8 @@ export function nativeBuildFingerprint(repoRoot: string, grammar: string, settin
 }
 
 export function writeNativeBuildStamp(repoRoot: string, grammar: string, profile: NativeProfile, binary: string, built: NativeBuildFingerprint): void {
-	const stamp: NativeBuildStamp = { profile, binarySha256: sha256(join(repoRoot, nativeBindingRelDir(grammar), binary)), ...built };
-	const path = stampPath(repoRoot, grammar, binary);
-	mkdirSync(dirname(path), { recursive: true });
-	const scratch = `${path}.${process.pid}.tmp`;
-	writeFileSync(scratch, JSON.stringify(stamp, null, 2) + '\n');
-	renameSync(scratch, path);
+	const stamp: NativeBuildStamp = { profile, binarySha256: sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary)), ...built };
+	writeFileAtomic(stampPath(repoRoot, grammar, binary), JSON.stringify(stamp, null, 2) + '\n');
 }
 
 function changedKey(recorded: Readonly<Record<string, string>>, current: Readonly<Record<string, string>>): string | undefined {
@@ -169,7 +162,7 @@ function changedKey(recorded: Readonly<Record<string, string>>, current: Readonl
 
 function staleness(repoRoot: string, grammar: string, binary: string, stamp: NativeBuildStamp | undefined): string | undefined {
 	if (stamp === undefined) return 'no record of the build that wrote the binary';
-	if (stamp.binarySha256 !== sha256(join(repoRoot, nativeBindingRelDir(grammar), binary))) return `${binary} is not the binary the last build wrote`;
+	if (stamp.binarySha256 !== sha256File(join(repoRoot, nativeBindingRelDir(grammar), binary))) return `${binary} is not the binary the last build wrote`;
 	const changed = changedKey(stamp.inputs, nativeInputs(repoRoot, grammar));
 	return changed === undefined ? undefined : `${changed} changed since the build`;
 }

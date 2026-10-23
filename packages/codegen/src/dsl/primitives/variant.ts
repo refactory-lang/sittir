@@ -19,8 +19,25 @@ export function isVariantPlaceholder(v: unknown): v is VariantPlaceholder {
 	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'variant';
 }
 
-export function variant(name: string, options?: VariantOptions): VariantPlaceholder {
+export const DIRECT_VARIANT_KEY: unique symbol = Symbol.for('sittir.directVariant');
+
+export function variant(name: string, options?: VariantOptions): VariantPlaceholder;
+export function variant<R extends object>(name: string, rule: R, options?: VariantOptions): R;
+export function variant(name: string, ruleOrOptions?: object, options?: VariantOptions): object {
+	if (!isRuleShape(ruleOrOptions)) return variantPlaceholder(name, ruleOrOptions as VariantOptions | undefined);
+	return Object.defineProperty({ ...ruleOrOptions }, DIRECT_VARIANT_KEY, { value: variantPlaceholder(name, options), enumerable: false });
+}
+
+function variantPlaceholder(name: string, options: VariantOptions | undefined): VariantPlaceholder {
 	return { __sittirPlaceholder: 'variant' as const, name, ...(options?.absent === true ? { absent: true as const } : {}), ...(options?.default === true ? { default: true as const } : {}) };
+}
+
+function isRuleShape(value: unknown): value is object {
+	return !!value && typeof value === 'object' && typeof (value as { type?: unknown }).type === 'string';
+}
+
+export function directVariantOf(rule: unknown): VariantPlaceholder | undefined {
+	return isRuleShape(rule) ? (Reflect.get(rule, DIRECT_VARIANT_KEY) as VariantPlaceholder | undefined) : undefined;
 }
 
 export function variantMintName(v: VariantPlaceholder): string {

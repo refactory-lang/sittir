@@ -33,7 +33,7 @@ describe('a pattern-position name that spells a primitive reads as an identifier
 	}
 
 	it("builds identifier('str') in a pattern position", () => {
-		const built = rs.build.letDeclaration({ pattern: rs.build.identifier('str'), value: rs.build.integerLiteral('1') });
+		const built = rs.build.letDeclaration({ name: rs.build.identifier('str'), value: rs.build.integerLiteral('1') });
 		expect(built.$render().toString()).toBe('let str = 1;');
 	});
 });

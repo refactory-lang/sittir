@@ -141,7 +141,11 @@ interface GatedCompilation {
 }
 
 async function gatedCompilation(pkg: GrammarPackage, allowDiagnostics: ReadonlySet<string>): Promise<GatedCompilation> {
-	const gated = await compileGrammar({ package: pkg, allowDiagnostics }).then(
+	const gated = await compileGrammar({
+		package: pkg,
+		allowDiagnostics,
+		evaluation: { checkGeneratedLayers: true }
+	}).then(
 		(compilation): GatedCompilation => ({ records: compilation.grammarDiagnostics, blocked: [], compilation }),
 		(error: unknown): GatedCompilation => {
 			if (!(error instanceof GrammarDiagnosticError)) throw error;

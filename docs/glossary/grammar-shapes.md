@@ -268,18 +268,16 @@ map minted rejects, in the first map as in any other.
 
 `true` when `applyPath` would accept path `P` on rule `N`, `false` when it
 would throw; `Minted` (default `never`) is the set of labels earlier maps in a
-patch list minted, threaded by `PatchesCheck`. What `PatchesCheck` consults per written key.
+patch list minted, threaded by `EditsCheck`. What `EditsCheck` consults per written key.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchValue`
 
-A single patch value: a rule or literal (tree-sitter's or the grammar-json
-`GrammarRule` the typed authoring builders return), or a `field` / `alias` /
-`variant` / `arm.default` placeholder.
+A single patch value: a rule or literal (tree-sitter's or the grammar-json `GrammarRule` the typed authoring builders return), or a `field` / `alias` / `variant` / `arm.default` / `rule` / `flatten` / `regex` / `narrow` / `lead` / `rename` placeholder.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 
 A patch map for one rule, path key to patch value. Keys are open here; their
-validity is decided per written key by `PatchesCheck`, from the base the
+validity is decided per written key by `EditsCheck`, from the base the
 grammar hands `wire()`.
 
 ### `packages/codegen/src/grammar-shapes/enrich-type.ts::module`
@@ -516,7 +514,6 @@ production loads is the one that is read.
 ### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::emitGrammarShapeSource`
 
 The shape file's text for one grammar, formatted with the repo's oxfmt config.
-Supertypes are emitted under `supertypeNames`: tree-sitter's ambient
-`Grammar.supertypes` is an authoring callback, so the same key would keep
-`GrammarJson` from matching its schema. Run the file directly to rewrite every
-grammar's shape.
+Supertypes are emitted under `supertypes`, the key grammar.json and
+tree-sitter's normalized grammar both use. Run the file directly to rewrite
+every grammar's shape.

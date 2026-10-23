@@ -22,10 +22,11 @@ import {
 	preference,
 	reauthored,
 	vocabulary,
-	sittirGrammar
+	enrich,
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'rust',
 	supertypes: ($, previous) => [...(previous ?? []), $.comment, $._statement],
@@ -205,7 +206,7 @@ export default sittirGrammar(base, {
 		}
 	},
 
-	patches: {
+	edits: {
 		comment: { 0: arm.default },
 		// See docs/rust-grammar-sittir-glossary.md::tuple_expression
 		tuple_expression: {
@@ -730,4 +731,4 @@ export default sittirGrammar(base, {
 		},
 		gated: ['visibility_modifier']
 	},
-});
+}));

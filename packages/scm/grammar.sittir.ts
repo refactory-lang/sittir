@@ -3,16 +3,17 @@ import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	alias,
+	enrich,
 	field,
 	preference,
 	variant,
-	sittirGrammar
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'scm',
-	patches: {
+	edits: {
 		grouping: { '1/0/1/0': alias('anchor') },
 		_group_expression: { '1/0': field('left'), '1/2': field('right') },
 		_named_node_expression: { '2/0': field('left'), '2/2': field('right') },
@@ -40,4 +41,4 @@ export default sittirGrammar(base, {
 	expectDiagnostics: {
 		'unclassifiable-shape': ['predicate']
 	}
-});
+}));

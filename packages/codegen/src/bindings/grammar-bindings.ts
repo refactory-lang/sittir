@@ -1,14 +1,29 @@
-import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Lead, type Split } from '../dsl/bind.ts';
+import {
+	childFields,
+	fieldHosts,
+	fieldRenameIssue,
+	fieldWrapIssue,
+	isWrapSite,
+	wrapHosts,
+	type FieldRename,
+	type FieldWrap,
+	type Split
+} from '../dsl/bind.ts';
+import type { Lead } from '../dsl/verbs/effects.ts';
+import { isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
-import type { RawGrammar } from '../compiler/types.ts';
+import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
-import { isParserHiddenName } from '../dsl/rule-patterns.ts';
+import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
+import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
 
-export type GrammarBindingsEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
+export type GrammarBindingsEdit =
+	| { readonly field: string }
+	| { readonly alias: string };
 
 export interface GrammarBindingsPatch {
 	readonly path: string;
@@ -44,6 +59,7 @@ export interface GrammarBindingsInput {
 	readonly file: string;
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
+	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf'>;
 	readonly model: SlotModel;
@@ -71,11 +87,20 @@ function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: strin
 	return found;
 }
 
+function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
+	return (model.get(owner)?.slots ?? []).some((slot) => slot.kinds.length > 1 && slot.kinds.includes(kind));
+}
+
 const targetKey = (r: FieldRequest): string =>
 	'from' in r ? `${r.owner}\u0000field:${r.from}` : `${r.owner}\u0000${'token' in r.target ? `token:${r.target.token}` : `symbol:${r.target.symbol}`}`;
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
 
-function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], routed: ReadonlyMap<string, readonly MemberRoute[]>): readonly string[] {
+function sameShapeAs(
+	kinds: readonly string[],
+	members: readonly MemberFact[],
+	routed: ReadonlyMap<string, readonly MemberRoute[]>,
+	symbols: SymbolSource
+): readonly string[] {
 	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
 		(routed.get(kind) ?? [])
@@ -84,7 +109,11 @@ function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], r
 			.join('\0');
 	const [first, ...rest] = kinds;
 	if (first === undefined) return [];
-	const same = (kind: string): boolean => !readAsKind.has(first) && !readAsKind.has(kind) && supplied(kind) === supplied(first);
+	const same = (kind: string): boolean =>
+		!readAsKind.has(first) &&
+		!readAsKind.has(kind) &&
+		symbols.isTerminal(kind) === symbols.isTerminal(first) &&
+		supplied(kind) === supplied(first);
 	return [first, ...rest.filter(same)];
 }
 
@@ -93,7 +122,11 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	report: GrammarBindingsReport;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const { facts, base, vocabMembers, routes } = input;
+	const { facts, base, vocabMembers, routes, model } = input;
+	const symbols = renameAwareSymbolSource({
+		...symbolFactsOf(base),
+		kindEntries: predictedEntriesOf(base.predictedKinds)
+	});
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
 	const residue: GrammarBindingsResidue[] = [];
@@ -103,10 +136,36 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const claims = refineClaims(facts.claims, (kind) => formsOf(input.model, kind));
 	const placed = (c: RefinedClaim): boolean => c.within.length > 0;
 	const naming = new Map<string, RefinedClaim>();
-	for (const c of claims) if (c.refinement === null && c.kind !== null && c.kind !== WILDCARD && c.toplevel && !placed(c) && !naming.has(c.kind)) naming.set(c.kind, c);
-	const kindsOfPath = new Map<string, Set<string>>();
-	for (const [kind, c] of naming) (kindsOfPath.get(c.vocab) ?? kindsOfPath.set(c.vocab, new Set()).get(c.vocab)!).add(kind);
-	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members, routes.members)]));
+	for (const c of claims)
+		if (
+			c.refinement === null &&
+			c.kind !== null &&
+			c.kind !== WILDCARD &&
+			c.toplevel &&
+			!placed(c) &&
+			!naming.has(c.kind)
+		)
+			naming.set(c.kind, c);
+	const kindsOfPath = new Map<string, string[]>();
+	const unpatchableOfPath = new Map<string, string[]>();
+	for (const [kind, c] of naming) {
+		const into = ruleNames.has(kind) ? kindsOfPath : unpatchableOfPath;
+		(into.get(c.vocab) ?? into.set(c.vocab, []).get(c.vocab)!).push(kind);
+	}
+	const mergedOfPath = new Map(
+		[...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs(kinds, facts.members, routes.members, symbols)])
+	);
+	for (const path of new Set([...kindsOfPath.keys(), ...unpatchableOfPath.keys()])) {
+		const kinds = kindsOfPath.get(path) ?? [];
+		const merged = mergedOfPath.get(path) ?? [];
+		const unpatchable = unpatchableOfPath.get(path) ?? [];
+		if (kinds.length + unpatchable.length < 2 || (merged.length === kinds.length && unpatchable.length === 0)) continue;
+		const groups = [merged.join(' + '), ...kinds.filter((kind) => !merged.includes(kind))].filter((g) => g !== '');
+		left(
+			'claimed kinds not merged',
+			`${path}: ${groups.join(' | ')}${unpatchable.length > 0 ? `; not a base rule: ${unpatchable.join(', ')}` : ''}`
+		);
+	}
 
 	const renames: Record<string, string> = {};
 	const aliases: Record<string, string> = {};
@@ -255,6 +314,11 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		const where = childFields(checks, m.owner, target);
+		const child = target !== null && 'symbol' in target ? target.symbol : undefined;
+		if (child !== undefined && where.fields.length === 0 && where.unfielded && isUnionSlotMember(model, m.owner, child)) {
+			realizedMembers.push(row);
+			continue;
+		}
 		if (where.arm) {
 			left('the child is an arm of the owner, not a slot', row);
 			continue;
@@ -350,7 +414,8 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		else fieldWraps.push(request);
 	}
 
-	const patches = grammarBindingsPatches(rules, fieldWrapGrammar(fieldRenameGrammar(checks, fieldRenames), fieldWraps).rules as Record<string, unknown>, aliases);
+	const layerRules = Object.fromEntries(Object.keys(rules).map((name) => [name, input.layerRules[name]]));
+	const patches = grammarBindingsPatches({ ...checks, rules: layerRules }, fieldRenames, fieldWraps, aliases);
 	const { leads, diagnostics } = deriveLeads({ file: input.file, base, facts });
 	return {
 		bindings: { patches, renames, leads, splits },
@@ -370,11 +435,26 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	};
 }
 
-function grammarBindingsPatches(
-	before: Record<string, unknown>,
-	fielded: Record<string, unknown>,
+export function grammarBindingsPatches(
+	grammar: GrammarRecord,
+	renames: readonly FieldRename[],
+	wraps: readonly FieldWrap[],
 	aliases: Readonly<Record<string, string>>
 ): Map<string, GrammarBindingsPatch[][]> {
+	const rules = (isRecord(grammar.rules) ? grammar.rules : {}) as Record<string, unknown>;
+	const stop = supertypesOf(grammar);
+	const renamesAt = byHost(renames, (rename) => fieldHosts(rules, rename.owner, rename.from, stop));
+	const wrapsAt = byHost(wraps, (wrap) => wrapHosts(rules, wrap, stop));
+	const fieldNameAt = (host: string, name: string): string => (renamesAt.get(host) ?? []).reduce((current, r) => (current === r.from ? r.to : current), name);
+	const wrapAt = (host: string, rule: GrammarRecord): FieldWrap | undefined => wrapsAt.get(host)?.find((wrap) => isWrapSite(rule, wrap.target));
+	const fieldEditAt = (host: string, rule: GrammarRecord, wrappable: boolean): GrammarBindingsEdit | undefined => {
+		const wrap = wrappable ? wrapAt(host, rule) : undefined;
+		if (wrap !== undefined) return { field: wrap.field };
+		if (rule.type !== 'FIELD' || typeof rule.name !== 'string') return undefined;
+		const name = fieldNameAt(host, rule.name);
+		return name === rule.name ? undefined : { field: name };
+	};
+
 	const liftNames = new Set<string>();
 	const collectLifts = (r: unknown): void => {
 		if (Array.isArray(r)) r.forEach(collectLifts);
@@ -383,69 +463,90 @@ function grammarBindingsPatches(
 			Object.values(r).forEach(collectLifts);
 		}
 	};
-	Object.values(before).forEach(collectLifts);
-	const roots = Object.keys(before).filter((name) => !liftNames.has(name));
+	Object.values(rules).forEach(collectLifts);
+	const roots = Object.keys(rules).filter((name) => !liftNames.has(name));
 
-	const pathMode = (root: unknown, patches: readonly GrammarBindingsPatch[]): GrammarBindingsPatch[] => {
-		let node = root;
-		while (isRecord(node) && isPrecWrapper(node as { type: string })) node = node.content;
-		if (!isRecord(node) || node.type === 'SEQ' || patches.some((p) => p.path.includes('/') || p.path === '.')) return [...patches];
-		const length = Array.isArray(node.members) ? node.members.length : 1;
-		return patches.map((p) => ({ ...p, path: String(Number(p.path) - length) }));
-	};
-	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: GrammarRecord, a: GrammarRecord) => GrammarBindingsEdit | undefined): Map<string, GrammarBindingsPatch[]> => {
-		const out = new Map<string, GrammarBindingsPatch[]>();
-		const reached = new Set<string>();
-		for (const root of roots) {
-			const patches: GrammarBindingsPatch[] = [];
-			const walk = (b: unknown, a: unknown, path: readonly number[]): void => {
-				if (!isRecord(b) || !isRecord(a)) return;
-				if (isPrecWrapper(b as { type: string })) return walk(b.content, a.content, path);
-				const edit = site(b, a);
-				if (edit !== undefined) patches.push({ path: path.length === 0 ? '.' : path.join('/'), edit });
-				if (isLift(b)) {
-					const name = b.name as string;
-					if (reached.has(name)) return;
-					reached.add(name);
-					return walk(b0[name], a0[name], path);
-				}
-				if (isGroupAlias(b)) return walk(b.content, a.content, path);
-				const inner = a.type === 'FIELD' && b.type !== 'FIELD' ? a.content : a;
-				if (Array.isArray(b.members) && isRecord(inner) && Array.isArray(inner.members)) b.members.forEach((m, i) => walk(m, (inner.members as unknown[])[i], [...path, i]));
-				else if (SINGLE.has(b.type as string) && isRecord(inner)) walk(b.content, inner.content, [...path, 0]);
-			};
-			walk(b0[root], a0[root], []);
-			if (patches.length > 0) out.set(root, pathMode(b0[root], patches));
-		}
-		const unreached = [...liftNames].filter((name) => !reached.has(name) && JSON.stringify(b0[name]) !== JSON.stringify(a0[name]));
-		if (unreached.length > 0) throw new Error(`edited group lifts no rule reaches: ${unreached.join(', ')}`);
-		return out;
-	};
-
-	const fieldPatches = patchesBetween(before, fielded, (b, a) =>
-		a.type === 'FIELD' && (b.type !== 'FIELD' || b.name !== a.name) ? { field: a.name as string } : undefined
-	);
-	const aliasPatches = patchesBetween(fielded, fielded, (b) =>
-		b.type === 'SYMBOL' && typeof b.name === 'string' && Object.hasOwn(aliases, b.name) ? { alias: { from: b.name, to: aliases[b.name]! } } : undefined
-	);
-	const at = (r: unknown): GrammarRecord =>
-		isRecord(r) && (isPrecWrapper(r as { type: string }) || isGroupAlias(r)) ? at(r.content) : isRecord(r) && isLift(r) ? at(fielded[r.name as string]) : (r as GrammarRecord);
-	for (const [root, patches] of aliasPatches) {
-		const kept = patches.filter((p) => {
-			if (p.path === '.') return true;
-			let node: unknown = fielded[root];
-			for (const segment of p.path.split('/').slice(0, -1)) {
-				const r = at(node);
-				node = Array.isArray(r.members) ? r.members[Number(segment)] : r.content;
+	const fieldPatches = new Map<string, GrammarBindingsPatch[]>();
+	const aliasPatches = new Map<string, GrammarBindingsPatch[]>();
+	const reached = new Set<string>();
+	for (const root of roots) {
+		const fields: GrammarBindingsPatch[] = [];
+		const aliased: GrammarBindingsPatch[] = [];
+		const walk = (rule: unknown, site: WalkSite): void => {
+			if (!isRecord(rule)) return;
+			if (isPrecWrapper(rule as { type: string })) return walk(rule.content, site);
+			const edit = fieldEditAt(site.host, rule, site.wrappable);
+			if (edit !== undefined) fields.push({ path: pathText(site.fieldPath), edit });
+			const wrapped = site.wrappable && wrapAt(site.host, rule) !== undefined;
+			const aliasPath = wrapped ? [...site.aliasPath, 0] : site.aliasPath;
+			const container = wrapped ? 'FIELD' : site.container;
+			if (rule.type === 'SYMBOL' && typeof rule.name === 'string' && Object.hasOwn(aliases, rule.name) && (aliasPath.length === 0 || container !== 'ALIAS'))
+				aliased.push({ path: pathText(aliasPath), edit: { alias: aliases[rule.name]! } });
+			if (isLift(rule)) {
+				const name = rule.name as string;
+				if (reached.has(name)) return;
+				reached.add(name);
+				return walk(rules[name], { host: name, wrappable: true, fieldPath: site.fieldPath, aliasPath, container });
 			}
-			return at(node).type !== 'ALIAS';
-		});
-		if (kept.length > 0) aliasPatches.set(root, kept);
-		else aliasPatches.delete(root);
+			if (isGroupAlias(rule)) return walk(rule.content, { ...site, wrappable: false, aliasPath, container });
+			const child = (fieldPath: readonly number[], index: number): WalkSite => ({
+				host: site.host,
+				wrappable: site.wrappable && !wrapped && !OPAQUE_RULES.has(rule.type) && rule.type !== 'ALIAS',
+				fieldPath: [...fieldPath, index],
+				aliasPath: [...aliasPath, index],
+				container: rule.type as string
+			});
+			if (Array.isArray(rule.members)) rule.members.forEach((member, index) => walk(member, child(site.fieldPath, index)));
+			else if (SINGLE.has(rule.type as string)) walk(rule.content, child(site.fieldPath, 0));
+		};
+		walk(rules[root], { host: root, wrappable: true, fieldPath: [], aliasPath: [], container: undefined });
+		const top = unwrappedPrec(rules[root]);
+		if (fields.length > 0) fieldPatches.set(root, pathMode(top, fields));
+		const fieldedTop = isRecord(top) && wrapAt(root, top) !== undefined ? { type: 'FIELD' } : top;
+		if (aliased.length > 0) aliasPatches.set(root, pathMode(fieldedTop, aliased));
 	}
+	const unreached = [...liftNames].filter((name) => !reached.has(name) && hasFieldEdit(rules[name], name, true));
+	if (unreached.length > 0) throw new Error(`edited group lifts no rule reaches: ${unreached.join(', ')}`);
+
+	function hasFieldEdit(rule: unknown, host: string, wrappable: boolean): boolean {
+		if (Array.isArray(rule)) return rule.some((r) => hasFieldEdit(r, host, wrappable));
+		if (!isRecord(rule)) return false;
+		if (fieldEditAt(host, rule, wrappable) !== undefined) return true;
+		const inner = wrappable && wrapAt(host, rule) === undefined && !OPAQUE_RULES.has(rule.type) && rule.type !== 'ALIAS';
+		return Object.values(rule).some((value) => hasFieldEdit(value, host, inner));
+	}
+
 	return new Map(
 		[...new Set([...fieldPatches.keys(), ...aliasPatches.keys()])]
 			.sort()
 			.map((kind) => [kind, [fieldPatches.get(kind), aliasPatches.get(kind)].filter((p): p is GrammarBindingsPatch[] => p !== undefined)])
 	);
+}
+
+interface WalkSite {
+	readonly host: string;
+	readonly wrappable: boolean;
+	readonly fieldPath: readonly number[];
+	readonly aliasPath: readonly number[];
+	readonly container: string | undefined;
+}
+
+function byHost<T>(requests: readonly T[], hosts: (request: T) => readonly string[]): Map<string, T[]> {
+	const out = new Map<string, T[]>();
+	for (const request of requests) for (const host of hosts(request)) (out.get(host) ?? out.set(host, []).get(host)!).push(request);
+	return out;
+}
+
+const pathText = (path: readonly number[]): string => (path.length === 0 ? '.' : path.join('/'));
+
+function unwrappedPrec(rule: unknown): unknown {
+	let node = rule;
+	while (isRecord(node) && isPrecWrapper(node as { type: string })) node = node.content;
+	return node;
+}
+
+function pathMode(top: unknown, patches: readonly GrammarBindingsPatch[]): GrammarBindingsPatch[] {
+	if (!isRecord(top) || top.type === 'SEQ' || patches.some((p) => p.path.includes('/') || p.path === '.')) return [...patches];
+	const length = Array.isArray(top.members) ? top.members.length : 1;
+	return patches.map((p) => ({ ...p, path: String(Number(p.path) - length) }));
 }

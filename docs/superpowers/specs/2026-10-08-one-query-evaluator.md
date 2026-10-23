@@ -4,7 +4,7 @@
 **Date:** 2026-10-08
 **Scope:** where a `QueryPlan` is evaluated. Two consumers compile plans: the query facet's `where` and the portable `is` guards.
 **Supersedes:** in the node query design (`2026-10-02-node-query-traversal-modification-api-design.md`), the §7.2 sentence "There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle", and the §7.3 paragraph on Rust's `regex` crate.
-**Measurements:** `docs/superpowers/probes/2026-10-08-one-query-evaluator/` (`where-cost.mts`, and `prototype-spans.patch` for the proposal's walk). The `is` numbers come from the binding-generator prototype's `is-cost` probe.
+**Measurements:** `docs/superpowers/probes/2026-10-08-one-query-evaluator/` (`where-cost.mts`, and `prototype-spans.patch` for the proposal's walk). The `is` numbers come from the binding-generator prototype's `is-cost` probe. The candidates were measured again in CI, scm among them, on the probe branch `probe/one-query-evaluator` at f998e75fb (`docs/superpowers/probes/2026-10-23-one-query-evaluator/README.md` there).
 
 ## What is there today
 
@@ -45,6 +45,10 @@ The two sides already give different answers on the same plan:
   - JavaScript slices the spans with the existing `spanSlicer`, evaluates `holds`, and hydrates only the stubs that pass.
   - A `where` over stored items (slot views, `$children`) makes one `subjectSpans(addresses, subjects)` call per batch, in place of today's `planHolds`.
   - Spans cost the same per value whatever the value's size, so a condition on a large slot (`body`) never copies text it does not compare.
+  - **A child step gets a nested report.** A `where` slot-flag test (`slotFlagRef`) records a `child` step: the flag's own plan, with a self kind test (`carriedBy`), evaluated on each value of the slot. The flag's plan reads the child's own slots, which a stub's report does not hold.
+    - So the walk takes the child plan's subjects with the step, and returns, per child value, a report of the stub's own shape: the child's kind, its own span, and the spans of the values each of the child plan's subjects admits.
+    - A child step inside a child plan nests the same way.
+    - JavaScript evaluates the step over the nested reports. No stub is hydrated for it.
 - **What a value's text is.** One definition, with one provider per place a node lives:
   - a parsed value's source text: a leaf's `$text` (the read stamps it from the same slice), otherwise its span's slice;
   - a built leaf's `$text`, or `fixedText[id]` for a kind-id item.
@@ -68,7 +72,7 @@ The two sides already give different answers on the same plan:
   - The leaf's kinds are named apart from its subject's `kinds`, which route unfielded children.
 - **A step may be anchored.** A `via` step toward a captured child may carry an anchor, `first` or `last`, and then reaches only that value of its slot. A python docstring is the string that opens a body, so both steps toward it carry `first`.
 
-The dialect becomes ECMAScript with the `u` flag everywhere. Rust `regex` remains in `sittir-core` for token interiors (`read.rs`) and leaves the query path.
+The dialect becomes ECMAScript with the `u` flag everywhere. Native code that must match a query pattern compiles it as ECMAScript `u` with the `regress` crate, which agrees with JavaScript on every measured pattern, the unicode cases included, at no measurable cost. Rust `regex` remains in `sittir-core` for token interiors (`read.rs`) and leaves the query path.
 
 ## 2. Self text and context nodes
 
@@ -85,6 +89,11 @@ The dialect becomes ECMAScript with the `u` flag everywhere. Rust `regex` remain
 `where-cost` runs on master's release addons, rebuilt with `prototype-spans.patch`. The patch only adds the walk's `subjects` argument; every other variant runs today's code. Every variant ends with the passing nodes hydrated and wrapped, and the times are medians of 7.
 
 **Caveat on load.** The load average was about 50 during the run. Compare columns within a row, not absolute times. Implementation reruns the probe as its gate.
+
+**Re-measured in CI** on release addons (seven runs per row, Linux x64 and macOS arm64 runners):
+- spans run at 0.79–1.30× today's native walk on Linux and 0.83–1.52× on macOS, inside the stop rule;
+- every candidate returns native's result count on all 20 rows, and 0 of 3,292 nodes answer differently from native per node;
+- per node in hand, JavaScript `holds` costs 0.21–1.18 µs, against 2.5–20.6 µs for native `planHolds` today.
 
 The variants:
 
@@ -163,7 +172,9 @@ These follow from the choice. Q1 and Q2 changed behaviour or surface that users 
 
 ## 5. Migration
 
-One branch, five tasks.
+One branch, five tasks. The scm export (§6) is its own change, after the branch.
+
+No interim native plan cache lands. Holding a compiled plan by id cuts a `planHolds` call 1.7–13.5× (Linux), but Task 5 deletes the native evaluator, so `planHolds` does not live long enough to repay it.
 
 **Depends on:** the typed reader's 1c-i and the binding generator's Stage 3, both merged.
 - 1c-i turns the walk's stubs into coordinates.
@@ -196,14 +207,16 @@ One branch, five tasks.
    - `ParsedTree::descendants` takes `subjects` in place of a plan, and each returned stub carries `spans[subject][value]`.
    - `subject_spans(addresses, subjects)` replaces `plan_holds`, and the napi bindings follow.
    - `Routes::admits` and the child loop of `any_value` become the span gatherer.
+   - A child step's subjects travel with the step, and each child value returns a nested report of the stub's shape (§1).
    - Rust tests:
      - a field route and an unfielded kind route;
      - self;
+     - a child step's nested report, nested two deep;
      - an extra child is never admitted;
      - an address naming no node is refused.
 4. **JavaScript pushdown over spans.**
    - `pushdown` sends subjects.
-   - The walk's batches filter through `holds` with texts from `spanSlicer` before hydration.
+   - The walk's batches filter through `holds` with texts from `spanSlicer` before hydration. A child step reads its nested reports, and no stub is hydrated to evaluate it.
    - `whereHolds` uses `subjectSpans`.
    - The existing query tests pass unchanged.
    - A parity test runs `where-cost`'s conditions on its corpus files and asserts master's native result counts.
@@ -212,6 +225,40 @@ One branch, five tasks.
    - Update the glossary entries for the query module.
    - Amend the node query design §7.2/§7.3 to point here.
 
-## 6. Open points
+## 6. scm: a plan exported as a tree-sitter query
 
+A plan can be exported as a tree-sitter query, for tools that run queries themselves. It is an extra beside the one evaluator, never an evaluator of sittir's:
+- `where` and `is` never run it;
+- it never reaches built nodes. A built node has no tree, rendering and reparsing would give a built compound a text the one meaning refuses, and a kind that needs its context does not reparse alone.
+
+**Exactness.** An exported query matches exactly the parsed nodes the one evaluator holds on, in every consumer's binding, or the export refuses with a diagnostic naming the construct. It never carries a second meaning. It refuses at least:
+- a negated match over a slot that can hold several values: a predicate tests each captured value on its own, so the query would read "some value fails" for "no value passes";
+- `and` on one slot that can hold several values: one capture cannot be two values;
+- an anchored step (`first`, `last`, `only`): a query's anchor binds to the parent's named children, not to a slot's values;
+- absence of an unfielded slot: a query negates only a field;
+- a (kind, slot) a query cannot name: an interior slot (a group of a token's text), an envelope's slot, or a slot of a hidden kind.
+
+**How it compiles.**
+- Each conjunct of the plan's disjunctive normal form is one pattern, every literal on a slot shares the slot's capture, and a node holds when any pattern matches it.
+- A slot's alternatives come from the kind's generated router, over every (field, symbol) a child can carry, so the query names exactly the children the read routes there.
+- A predicate sits inside its pattern's parentheses: written at top level, it would be a separate pattern that holds on every node. An alternation whose branches need different predicates becomes separate patterns.
+- A predicate sits only on a capture its pattern requires. The bindings disagree on a predicate over a capture that holds no node (the Rust binding's passes, web-tree-sitter's fails), so no exported pattern leaves one empty. A negated test that holds when the slot is absent gets its own pattern for the absence, a negated field.
+
+**The dialect.** A query has no regex dialect of its own; each binding brings one. The Rust binding compiles `#match?` with Rust `regex`, and web-tree-sitter with ECMAScript without `u`. So the export emits `#match?` only for a pattern that means the same in all three dialects (ECMAScript `u`, Rust `regex` and ECMAScript without `u`), and refuses any other, naming the construct. The shared subset is decided from the pattern's syntax:
+- ASCII literal characters and escaped ASCII punctuation;
+- character classes of ASCII literals and ASCII ranges, not negated;
+- `^` and `$`;
+- groups, non-capturing groups and alternation;
+- the quantifiers `*`, `+`, `?` and `{n,m}`, greedy or lazy.
+
+Everything else is refused: `.`, `\w`, `\d`, `\s`, `\b`, `\p{…}`, negated classes, non-ASCII literals, look-around, back-references and named groups. Each of these either differs between the dialects or, under ECMAScript without `u`, splits a character outside the basic plane into two code units. `#eq?` has no dialect and is always exact.
+
+**Gates for the export change.**
+- Every refusal above is pinned by a test that names its construct.
+- The probe's seven patterns are pinned: `^na` and `^[a-z]+$` export, and `^\w+$`, `\d`, `\b\w`, `^[\p{L}\p{N}_]+$` and `\p{Nd}` refuse.
+- A parity test runs each accepted plan over the `where-cost` corpus in both the Rust binding and web-tree-sitter, and asserts that both match exactly the nodes the one evaluator holds on.
+
+## 7. Open points
+
+- **The export's surface.** §6 settles what an exported query means and when the export refuses, not where it is called from: a method on the query facet, or a tool.
 - **A self test on a structured kind.** §1 has codegen refuse an `is` test whose subject can hold a built structured value, since a built structured value has no text. Applied as written, it refuses typescript's `comment.block.doc` and `comment.line`. Their read tests compare the comment's own text (`SelfText` on the claimed node: `^/\*\*`, `^//`), and the typed reader reads `comment_block` as a structured kind with a `content` slot. A parsed comment has its span's slice. A built one has no text, though its `content` and its kind fix it. Open: whether the refusal exempts a structured kind whose text its stored members determine, or the claims test `content` instead of the whole text.

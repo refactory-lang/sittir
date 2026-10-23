@@ -10,7 +10,10 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
-import { wireGetLiftBody, wireSetLiftBody, wireWithLiftScope } from '../wire/wire.ts';
+import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
+import type { WireCopyRequest } from '../wire/wire.ts';
+import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
+import { isParserHiddenName } from '../rule-patterns.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -49,6 +52,7 @@ export type PathSegment =
 	| {
 			kind: 'kind-match';
 			name: string;
+			as?: string;
 	  }
 	| {
 			kind: 'fieldName';
@@ -82,6 +86,8 @@ export function splitSegments(pathStr: string): string[] {
 	return parts;
 }
 
+const KIND_SEGMENT = /^\(([A-Za-z_][A-Za-z0-9_]*)(?: as ([A-Za-z_][A-Za-z0-9_]*))?\)$/;
+
 export function parsePath(pathStr: string): PathSegment[] {
 	if (pathStr === '.') return [];
 	if (typeof pathStr !== 'string' || pathStr.length === 0) {
@@ -99,8 +105,9 @@ export function parsePath(pathStr: string): PathSegment[] {
 			segments.push({ kind: 'wildcard' });
 		} else if (/^-?\d+$/.test(part)) {
 			segments.push({ kind: 'index', value: Number(part) });
-		} else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
-			segments.push({ kind: 'kind-match', name: part.slice(1, -1) });
+		} else if (KIND_SEGMENT.test(part)) {
+			const [, name, as] = KIND_SEGMENT.exec(part)!;
+			segments.push(as === undefined ? { kind: 'kind-match', name: name! } : { kind: 'kind-match', name: name!, as });
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
@@ -148,7 +155,7 @@ export function applyPath(
 
 	switch (head!.kind) {
 		case 'kind-match':
-			return dispatchKindMatch(rule, head!.name, rest, patch, enclosing);
+			return dispatchKindMatch(rule, head!, rest, patch, enclosing);
 
 		case 'fieldName':
 			return descendThroughNamedField(rule, head!.name, rest, patch, enclosing);
@@ -175,6 +182,17 @@ export function applyPath(
 			throw new Error(`applyPath: unknown segment kind '${(_exhaustive as PathSegment).kind}'`);
 		}
 	}
+}
+
+export function applyPathInRules(
+	rules: Record<string, unknown>,
+	kind: string,
+	segments: readonly PathSegment[],
+	patch: (member: RuntimeRule) => RuntimeRule
+): void {
+	const { result, ctx } = withWireContext(kind, () => applyPath(rules[kind] as RuntimeRule, segments, patch), { grammar: { rules } });
+	rules[kind] = result;
+	for (const [name, body] of ctx.liftBodies) rules[name] = body;
 }
 
 function descendThroughPrecWrapper(
@@ -343,9 +361,15 @@ function descendThroughNamedField(
 	enclosing: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	if (!isFieldType(rule.type)) {
-		throw new Error(
-			`applyPath: path segment '${fieldName}:' at this level expects a field('${fieldName}', ...) wrapper; got type '${rule.type}'`
+		const found = walkMatches(rule, enclosing, false, (node, stack) =>
+			node.type !== 'FIELD'
+				? undefined
+				: (node as unknown as { name: string }).name === fieldName
+					? { rule: reconstructWrapper(node, applyPath(contentOf(node), rest, patch, stack)), matched: true }
+					: { rule: node, matched: false }
 		);
+		if (!found.matched) throw new ApplyPathSkip(`applyPath: path segment '${fieldName}:' names no field of this subtree`);
+		return found.rule;
 	}
 	const actualName = (rule as unknown as { name: string }).name;
 	if (actualName !== fieldName) {
@@ -357,59 +381,96 @@ function descendThroughNamedField(
 	return reconstructWrapper(rule, newContent);
 }
 
-function dispatchKindMatch(
-	rule: RuntimeRule,
-	kindName: string,
-	rest: readonly PathSegment[],
-	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
-	enclosing: readonly RuntimeRule[] | undefined
-): RuntimeRule {
-	return applyKindMatch(rule, kindName, rest, patch, enclosing, false);
+type KindSegment = Extract<PathSegment, { kind: 'kind-match' }>;
+
+type PathPatch = RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule);
+
+interface WalkResult {
+	readonly rule: RuntimeRule;
+	readonly matched: boolean;
 }
 
-function applyKindMatch(
-	rule: RuntimeRule,
-	targetKind: string,
-	rest: readonly PathSegment[],
-	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
-	enclosing: readonly RuntimeRule[] | undefined,
-	insideNamedField: boolean
-): RuntimeRule {
-	const result = walkKindMatch(rule, targetKind, rest, patch, enclosing, insideNamedField);
+type WalkLeaf = (rule: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined, insideNamedField: boolean) => WalkResult | undefined;
+
+function dispatchKindMatch(rule: RuntimeRule, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch, enclosing: readonly RuntimeRule[] | undefined): RuntimeRule {
+	const result = walkKindMatch(rule, segment, rest, patch, enclosing, false);
 	if (!result.matched) {
-		throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
+		throw new ApplyPathSkip(`applyPath: kind '${segment.name}' matched zero occurrences in this subtree`);
 	}
 	return result.rule;
 }
 
 function applyKindMatchToSymbol(
 	rule: RuntimeRule,
-	targetKind: string,
+	segment: KindSegment,
 	rest: readonly PathSegment[],
-	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
+	patch: PathPatch,
 	enclosing: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
-): { rule: RuntimeRule; matched: boolean } {
-	const name = (rule as unknown as { name: string }).name;
-	if (name !== targetKind) return { rule, matched: false };
+): WalkResult {
+	const reached = reachedRule((rule as unknown as { name: string }).name);
+	if (reached.kind !== segment.name) return enteredHiddenRule(rule, reached, segment, rest, patch);
 	if (insideNamedField) return { rule, matched: false };
-	const patched =
-		rest.length === 0
-			? typeof patch === 'function'
-				? patch(rule, enclosing)
-				: patch
-			: applyPath(rule, rest, patch, enclosing);
-	return { rule: patched, matched: true };
+	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
+	return { rule: enteredCopy(rule, reached.request, (body) => applyPath(body, rest, patch), segment.as), matched: true };
+}
+
+interface ReachedRule {
+	readonly kind: string;
+	readonly request: WireCopyRequest;
+}
+
+function reachedRule(name: string): ReachedRule {
+	const copy = wireCopyOf(name);
+	if (copy === undefined) return { kind: name, request: { source: name, part: '.', via: 'path' } };
+	return { kind: copy.part === '.' ? copy.source : name, request: { source: copy.source, part: copy.part, via: 'path', from: name } };
+}
+
+function enteredCopy(reference: RuntimeRule, request: WireCopyRequest, edit: (body: RuntimeRule) => RuntimeRule, shown?: string): RuntimeRule {
+	const made = wireCopy(request, edit);
+	if (made === undefined) return reference;
+	return request.from === undefined ? copyReference(made, request.source, shown) : reachedCopyReference(reference, made, request.source, shown);
+}
+
+function enteredHiddenRule(rule: RuntimeRule, reached: ReachedRule, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch): WalkResult {
+	if (!isParserHiddenName(reached.kind) || isEnrichGroupLiftSymbol(rule)) return { rule, matched: false };
+	if (wireCopyEdited(reached.request)) return { rule: enteredCopy(rule, reached.request, (body) => body), matched: true };
+	const body = wireCopyBody(reached.request);
+	const inner = body === undefined ? undefined : wireEnteringRule(reached.kind, () => walkKindMatch(body, segment, rest, patch, undefined, false));
+	return inner?.matched === true ? { rule: enteredCopy(rule, reached.request, () => inner.rule), matched: true } : { rule, matched: false };
 }
 
 function walkKindMatch(
 	rule: RuntimeRule,
-	targetKind: string,
+	segment: KindSegment,
 	rest: readonly PathSegment[],
-	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
+	patch: PathPatch,
 	enclosing: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
-): { rule: RuntimeRule; matched: boolean } {
+): WalkResult {
+	return walkMatches(rule, enclosing, insideNamedField, (node, stack, inField) =>
+		node.type === 'SYMBOL' ? applyKindMatchToSymbol(node, segment, rest, patch, stack, inField) : applyKindMatchToCopyReference(node, segment, rest, patch, stack, inField)
+	);
+}
+
+function applyKindMatchToCopyReference(
+	rule: RuntimeRule,
+	segment: KindSegment,
+	rest: readonly PathSegment[],
+	patch: PathPatch,
+	enclosing: readonly RuntimeRule[] | undefined,
+	insideNamedField: boolean
+): WalkResult | undefined {
+	const content = (rule as unknown as { content?: RuntimeRule }).content;
+	if (rule.type !== 'ALIAS' || content?.type !== 'SYMBOL') return undefined;
+	const reached = reachedRule((content as unknown as { name: string }).name);
+	if (reached.request.from === undefined) return undefined;
+	if (reached.kind !== segment.name || insideNamedField) return { rule, matched: false };
+	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
+	return { rule: enteredCopy(rule, reached.request, (body) => applyPath(body, rest, patch), segment.as), matched: true };
+}
+
+function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined, insideNamedField: boolean, leaf: WalkLeaf): WalkResult {
 	if (!isWalkableNode(rule)) {
 		return { rule, matched: false };
 	}
@@ -417,19 +478,18 @@ function walkKindMatch(
 
 	if (isPrecWrapperShape(rule)) {
 		const stack = enclosing ? [...enclosing, rule] : [rule];
-		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, stack, insideNamedField);
+		const inner = walkMatches(contentOf(rule), stack, insideNamedField, leaf);
 		return {
 			rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule,
 			matched: inner.matched
 		};
 	}
 
-	if (t === 'SYMBOL') {
-		return applyKindMatchToSymbol(rule, targetKind, rest, patch, enclosing, insideNamedField);
-	}
+	const own = leaf(rule, enclosing, insideNamedField);
+	if (own !== undefined) return own;
 
 	if (t === 'FIELD') {
-		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, enclosing, true);
+		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField || readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.fieldSource !== 'enriched', leaf);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -437,7 +497,7 @@ function walkKindMatch(
 	}
 
 	if (isWrapperType(t)) {
-		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, enclosing, insideNamedField);
+		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField, leaf);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -448,7 +508,7 @@ function walkKindMatch(
 		const members = [...membersOf(rule)];
 		let anyMatched = false;
 		for (let i = 0; i < members.length; i++) {
-			const inner = walkKindMatch(members[i]!, targetKind, rest, patch, enclosing, insideNamedField);
+			const inner = walkMatches(members[i]!, enclosing, insideNamedField, leaf);
 			if (inner.matched) {
 				members[i] = inner.rule;
 				anyMatched = true;
@@ -531,9 +591,9 @@ export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): Run
 	if (variant) {
 		const fn = prec[variant];
 		if (typeof fn !== 'function') throw new Error(`transform: native prec.${variant} not available`);
-		return fn(value, newContent);
+		return carryOverProperties(rule, fn(value, newContent));
 	}
-	return prec(value, newContent);
+	return carryOverProperties(rule, prec(value, newContent));
 }
 
 export function wrapInPrecStack(
@@ -621,7 +681,7 @@ function applyWildcardToMembers(
 	let anyApplied = false;
 	for (let i = 0; i < members.length; i++) {
 		try {
-			members[i] = applyPath(members[i]!, rest, patch, enclosing);
+			members[i] = wireAtomic(() => applyPath(members[i]!, rest, patch, enclosing));
 			anyApplied = true;
 		} catch (e) {
 			if (e instanceof ApplyPathSkip) continue;

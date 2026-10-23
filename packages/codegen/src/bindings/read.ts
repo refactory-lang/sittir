@@ -1,9 +1,13 @@
 import { type ChildProcessByStdio, spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import type { Socket } from 'node:net';
+import { join, relative } from 'node:path';
 import { createInterface } from 'node:readline';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { bootstrapDir } from '../bootstrap/bootstrap.ts';
+import { REPO_ROOT } from '../grammars.ts';
 import type { FlagMember } from './flags.ts';
+import { type PinnedMemo, pinnedMemo, readerDigest } from './pinned-memo.ts';
 import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, BindingsSyntaxError } from './facts.ts';
 import type { Declared, FeatureIndex } from './vocabulary.ts';
 
@@ -16,6 +20,7 @@ export interface PinnedReaderModes {
 	readonly flagsModule: { readonly input: readonly FlagMember[]; readonly output: string };
 	readonly vocabularyDeclared: { readonly input: string; readonly output: Declared[] };
 	readonly vocabularyFeatureIndex: { readonly input: string; readonly output: FeatureIndex };
+	readonly exportedStrings: { readonly input: string; readonly output: Readonly<Record<string, string>> };
 }
 
 export type PinnedReaderMode = keyof PinnedReaderModes;
@@ -51,7 +56,17 @@ interface PinnedReader {
 
 const requireFromHere = createRequire(import.meta.url);
 
+const CHILD_ENTRY = fileURLToPath(new URL('./pinned-reader.child.ts', import.meta.url));
+
+const CHILD_TSCONFIG = fileURLToPath(new URL('../../tsconfig.pinned.json', import.meta.url));
+
+const LOCKFILE = 'pnpm-lock.yaml';
+
+const PINNED_READS_DIR = 'reads';
+
 let reader: PinnedReader | undefined;
+
+let memo: PinnedMemo | undefined;
 
 function hold(running: PinnedReader): void {
 	const busy = running.pending.size > 0;
@@ -74,10 +89,10 @@ function settle(running: PinnedReader, reply: PinnedReaderReply): void {
 function startReader(): PinnedReader {
 	const child = spawn(
 		process.execPath,
-		['--import', pathToFileURL(requireFromHere.resolve('tsx')).href, fileURLToPath(new URL('./pinned-reader.child.ts', import.meta.url))],
+		['--import', pathToFileURL(requireFromHere.resolve('tsx')).href, CHILD_ENTRY],
 		{
 			stdio: 'pipe',
-			env: { ...process.env, TSX_TSCONFIG_PATH: fileURLToPath(new URL('../../tsconfig.pinned.json', import.meta.url)) }
+			env: { ...process.env, TSX_TSCONFIG_PATH: CHILD_TSCONFIG }
 		}
 	) as ChildProcessByStdio<Socket, Socket, Socket>;
 	const running: PinnedReader = { child, pending: new Map(), next: 0, stderr: '' };
@@ -98,7 +113,7 @@ function startReader(): PinnedReader {
 	return running;
 }
 
-export function runPinned<M extends PinnedReaderMode>(mode: M, input: PinnedInput<M>): Promise<PinnedOutput<M>> {
+function askReader<M extends PinnedReaderMode>(mode: M, input: PinnedInput<M>): Promise<PinnedOutput<M>> {
 	reader ??= startReader();
 	const running = reader;
 	const id = running.next++;
@@ -107,6 +122,18 @@ export function runPinned<M extends PinnedReaderMode>(mode: M, input: PinnedInpu
 		hold(running);
 		running.child.stdin.write(`${JSON.stringify({ id, mode, input } satisfies PinnedReaderRequest<M>)}\n`);
 	});
+}
+
+function readsMemo(): PinnedMemo {
+	memo ??= pinnedMemo(
+		join(bootstrapDir(), PINNED_READS_DIR),
+		readerDigest(REPO_ROOT, relative(REPO_ROOT, CHILD_ENTRY), [relative(REPO_ROOT, CHILD_TSCONFIG), LOCKFILE])
+	);
+	return memo;
+}
+
+export function runPinned<M extends PinnedReaderMode>(mode: M, input: PinnedInput<M>): Promise<PinnedOutput<M>> {
+	return readsMemo().read(mode, JSON.stringify(input), () => askReader(mode, input));
 }
 
 export const readBindings = (text: string): Promise<BindingFacts> => runPinned('facts', text);

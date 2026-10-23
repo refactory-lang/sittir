@@ -1,1 +1,1 @@
-export { default } from '../grammar.sittir.ts';
+export { default } from '../grammar.bindings.ts';

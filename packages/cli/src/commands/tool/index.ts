@@ -22,12 +22,14 @@ import { syncBase } from './sync-base.ts';
 import { emitFactorySource } from './emit-factory-source.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
+import { glossaryKeys } from './glossary-keys.ts';
 import { grammarDiagnostics } from './grammar-diagnostics.ts';
 import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
 import { nodeJsonCensus } from './node-json-census.ts';
+import { outputGate } from './output-gate.ts';
 import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
 import { probeKind } from './probe-kind.ts';
@@ -71,12 +73,14 @@ export const toolModules: readonly CommandModule[] = [
 	emitFactorySource,
 	exercise,
 	fieldProvenance,
+	glossaryKeys,
 	grammarDiagnostics,
 	hoistedCensus,
 	inspectRefs,
 	inspectType,
 	listKinds,
 	nodeJsonCensus,
+	outputGate,
 	overrideCensus,
 	phantomKinds,
 	probeKind,

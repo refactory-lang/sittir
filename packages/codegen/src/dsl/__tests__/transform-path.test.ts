@@ -6,6 +6,7 @@ import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
 import { field } from '../primitives/field.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 const transform: typeof transformRule = (rule, patches) => withWireContext(null, () => transformRule(rule, patches)).result;
 
@@ -261,7 +262,7 @@ describe('applyPath()', () => {
 			});
 		});
 
-		it('throws when the rule at that position is not a field wrapper', () => {
+		it('throws when the subtree at that position holds no field of the name', () => {
 			const rule = seq(sym('identifier'), sym('body'));
 			expect(() =>
 				applyPath(
@@ -272,7 +273,12 @@ describe('applyPath()', () => {
 					],
 					sym('new_body')
 				)
-			).toThrow(/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'SYMBOL'/);
+			).toThrow(/path segment 'body:' names no field of this subtree/);
+		});
+
+		it('applies a path inside the field that a field segment finds among a seq', () => {
+			const rule = seq(str('x'), fld('body', seq(sym('a'), sym('b'))));
+			expect(applyPath(rule, parsePath('body:/0'), sym('c'))).toEqual(seq(str('x'), fld('body', seq(sym('c'), sym('b')))));
 		});
 
 		it('throws when the field name at that position does not match', () => {
@@ -652,5 +658,34 @@ describe('transform() — a field inside a token', () => {
 			name: 'byte',
 			content: { type: 'CHOICE', members: [{ type: 'STRING', value: 'b' }, { type: 'BLANK' }] }
 		});
+	});
+});
+
+describe('edit() inline equals the edits entry', () => {
+	const FORMS: readonly (readonly [string, string, string])[] = [
+		['a numeric index', '1', "k: ($) => seq($.word, ',', $.word)"],
+		['a field name', 'body:', "k: ($) => field('body', $.word)"],
+		['a kind match', '(word)', "k: ($) => choice(seq('(', $.word, ')'), $.word)"],
+		['a quoted literal', '","', "k: ($) => seq($.word, ',', $.word)"],
+		['the wildcard', '_', "k: ($) => seq($.word, ',', $.word)"],
+		['the whole rule', '.', "k: ($) => seq($.word, ',', $.word)"]
+	];
+
+	it.each(FORMS)('gives %s the same body, patch sites and binding effects as the edits entry', async (_form, path, rules) => {
+		const inline = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: `rules: { k: ($, previous) => edit(previous, { ${JSON.stringify(path)}: field('x') }) }` });
+		const keyed = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: `edits: { k: { ${JSON.stringify(path)}: field('x') } }` });
+		expect(inline.rules.k).toEqual(keyed.rules.k);
+		expect(inline.patchSites).toEqual(keyed.patchSites);
+		expect(inline.bindingEffects).toEqual(keyed.bindingEffects);
+	}, 60_000);
+});
+
+describe('transform() — flat-keys describe, with no context', () => {
+	it('Z7a: a flat key matching no choice arm throws outside a layer', () => {
+		expect(() => transformRule(choice(sym('a'), sym('b')), { 1: fld('x', sym('y')) } as never)).toThrow(/matched no choice arm/);
+	});
+
+	it('Z7b: a flat key on a non-SEQ throws outside a layer', () => {
+		expect(() => transformRule(sym('a'), { 0: fld('x', sym('y')) } as never)).toThrow(/holds no SEQ/);
 	});
 });

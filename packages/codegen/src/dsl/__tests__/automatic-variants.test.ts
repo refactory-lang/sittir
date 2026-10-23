@@ -172,7 +172,8 @@ describe('the supertype recognizer', () => {
 	const sym = (name: string) => ({ type: SYMBOL, name });
 	const shapes = {
 		'a prec-wrapped choice': { type: 'PREC', value: 1, content: { type: CHOICE, members: [sym('a_thing'), sym('b_thing')] } },
-		'a choice holding a choice': { type: CHOICE, members: [sym('a_thing'), { type: CHOICE, members: [sym('b_thing'), sym('c_thing')] }] }
+		'a choice holding a choice': { type: CHOICE, members: [sym('a_thing'), { type: CHOICE, members: [sym('b_thing'), sym('c_thing')] }] },
+		'a choice with a prec-wrapped arm': { type: CHOICE, members: [sym('a_thing'), { type: 'PREC_LEFT', value: 1, content: sym('b_thing') }] }
 	};
 	const supertypeInLink = (rules: Record<string, Rule<'evaluate'>>): boolean => {
 		const raw = {

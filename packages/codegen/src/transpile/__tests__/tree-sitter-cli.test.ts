@@ -2,19 +2,7 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { UNBOUND_ENV } from '../../dsl/sittir-grammar.ts';
-import { ensureWasmToolchain, nodeFloorViolation, wasmToolchainInstalled, treeSitterCacheDir, treeSitterCliEnv, treeSitterCliVersion, treeSitterToolchainIdentity } from '../tree-sitter-cli.ts';
-
-describe('treeSitterCliEnv', () => {
-	it('drops the unbound toggle an evaluation left in the parent environment', () => {
-		const env = treeSitterCliEnv({}, { PATH: '/bin', [UNBOUND_ENV]: '1' });
-		expect(env).toEqual({ PATH: '/bin' });
-	});
-
-	it('passes the unbound toggle a caller asks for', () => {
-		expect(treeSitterCliEnv({ [UNBOUND_ENV]: '1' }, { PATH: '/bin' })).toEqual({ PATH: '/bin', [UNBOUND_ENV]: '1' });
-	});
-});
+import { ensureWasmToolchain, nodeFloorViolation, wasmToolchainInstalled, treeSitterCacheDir, treeSitterCliVersion, treeSitterToolchainIdentity } from '../tree-sitter-cli.ts';
 
 describe('nodeFloorViolation', () => {
 	it('reads its floor from the codegen package engines', () => {

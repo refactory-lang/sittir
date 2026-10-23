@@ -111,7 +111,7 @@ describe('the sides of a parsed node come from its tree', () => {
 		if (element === undefined || !engine.is.expressionStatement(element)) throw new Error('expected an expression statement');
 		const assignment = element.content();
 		if (!engine.is.assignment.eq(assignment)) throw new Error('expected an assignment');
-		const edited = root.$with.statements(first, second.$with.elements(element.$with.content(assignment.$with.right(build.integer('3')))));
+		const edited = root.$with.statements(first, second.$with.elements(element.$with.content(assignment.$with.value(build.integer('3')))));
 		expect(edited.$render()).toBe('a = 1\n$\nb = 3\n');
 	});
 });

@@ -164,7 +164,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -180,7 +180,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "value"
 		},
 		{
 			"kind": "seam",
@@ -194,7 +194,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -224,7 +224,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -256,7 +256,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "value"
 		},
 		{
 			"kind": "seam",
@@ -286,7 +286,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "attribute"
+			"name": "property"
 		},
 		{
 			"kind": "seam",
@@ -674,11 +674,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "superclasses",
+					"test": "bases",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "superclasses"
+							"name": "bases"
 						}
 					]
 				}
@@ -906,7 +906,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body"
+			"name": "consequence"
 		},
 		{
 			"kind": "seam",
@@ -1042,7 +1042,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "default"
 		},
 		{
 			"kind": "seam",
@@ -1234,7 +1234,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "target"
+			"name": "pattern"
 		},
 		{
 			"kind": "seam",
@@ -1635,7 +1635,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "block"
+			"name": "body"
 		},
 		{
 			"kind": "seam",
@@ -2680,7 +2680,7 @@
 	"lambda": [
 		{
 			"kind": "seam",
-			"field": "lambda_before"
+			"field": "lambda_expression_before"
 		},
 		{
 			"kind": "text",
@@ -2722,7 +2722,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "lambda_after"
+			"field": "lambda_expression_after"
 		}
 	],
 	"lambda_parameters": [
@@ -2734,7 +2734,7 @@
 	"lambda_within_for_in_clause": [
 		{
 			"kind": "seam",
-			"field": "lambda_within_for_in_clause_before"
+			"field": "lambda_expression_before"
 		},
 		{
 			"kind": "text",
@@ -2776,7 +2776,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "lambda_within_for_in_clause_after"
+			"field": "lambda_expression_after"
 		}
 	],
 	"list": [
@@ -2796,11 +2796,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "collection_elements",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "collection_elements"
+							"name": "elements"
 						}
 					]
 				}
@@ -2870,11 +2870,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "patterns",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "patterns"
+							"name": "elements"
 						}
 					]
 				}
@@ -2936,7 +2936,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "target"
+			"name": "pattern"
 		},
 		{
 			"kind": "seam",
@@ -3064,7 +3064,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "name"
+			"name": "left"
 		},
 		{
 			"kind": "seam",
@@ -3080,7 +3080,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "right"
 		},
 		{
 			"kind": "seam",
@@ -3534,7 +3534,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "collection_elements"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -3754,7 +3754,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "name"
+			"name": "type"
 		},
 		{
 			"kind": "seam",
@@ -3802,7 +3802,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "object"
 		},
 		{
 			"kind": "seam",
@@ -3914,17 +3914,17 @@
 		},
 		{
 			"kind": "slot",
-			"name": "except_clauses"
+			"name": "handlers"
 		},
 		{
 			"kind": "if",
 			"arms": [
 				{
-					"test": "else_clause",
+					"test": "alternative",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "else_clause"
+							"name": "alternative"
 						}
 					]
 				}
@@ -3934,11 +3934,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "finally_clause",
+					"test": "finalizer",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "finally_clause"
+							"name": "finalizer"
 						}
 					]
 				}
@@ -4154,7 +4154,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "default"
 		},
 		{
 			"kind": "seam",

@@ -113,7 +113,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Repo-relative roots holding the cross-platform generated content for a
- * grammar. Single source of truth: the manifest (`files` section) and the
+ * grammar, with the two files codegen writes beside the package's `src`
+ * (`tests/nodes.test.ts` and `vitest.config.ts`). Single source of truth: the manifest (`files` section) and the
  * post-regen emit-diff report (`emit-diff.ts`) both consume this, so they can
  * never disagree about what counts as "generated."
  *
@@ -229,7 +230,7 @@ Adds `file` and, transitively, every existing file it names in a line starting `
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::writeNativeBuildStamp`
 
-Records the build that just wrote `binary`: its profile, the binary's SHA-256, and the fingerprint taken before the build started (`built`, from `nativeBuildFingerprint`), in `node_modules/.cache/sittir/native-build/<grammar>/<binary>.json` under the checkout. One stamp per binary, so building one target never invalidates another target's binary. `scripts/build-native.mts` takes the fingerprint before it runs cargo, under the environment the build runs with, and calls this after every successful build, so every native build that goes through the crate scripts, codegen or CI is recorded. CI ships the stamp directory in the native artifact alongside the binaries. The file is written beside its destination and renamed into place.
+Records the build that just wrote `binary`: its profile, the binary's SHA-256, and the fingerprint taken before the build started (`built`, from `nativeBuildFingerprint`), in `node_modules/.cache/sittir/native-build/<grammar>/<binary>.json` under the checkout. One stamp per binary, so building one target never invalidates another target's binary. `scripts/build-native.mts` takes the fingerprint before it runs cargo, under the environment the build runs with, and calls this after every successful build, so every native build that goes through the crate scripts, codegen or CI is recorded. CI ships the stamp directory in the native artifact alongside the binaries. The file is written with `writeFileAtomic`.
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::NativeBuildFingerprint`
 
@@ -493,7 +494,7 @@ Records the generation that just ran: hashes every generated file git tracks or 
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::recordGeneration`
 
-Writes a grammar's local manifest with the given file hashes and the given pair as the newest known-good pair, keeping the earlier pairs up to `KNOWN_PAIR_LIMIT`. The file is written beside its destination and renamed into place, so two processes verifying at once (validators run in parallel) never leave a half-written manifest.
+Writes a grammar's local manifest with the given file hashes and the given pair as the newest known-good pair, keeping the earlier pairs up to `KNOWN_PAIR_LIMIT`. The file is written with `writeFileAtomic`, so two processes verifying at once (validators run in parallel) never leave a half-written manifest.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::manifestPath`
 
@@ -569,7 +570,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
  */
 ```
 
-### `packages/codegen/src/scripts/reconcile-naming.ts::Divergence.slot`
+### `packages/codegen/src/scripts/reconcile-naming.ts::Divergence::slot`
 
 ```text
 // the legacy slot.name (its current identity)
@@ -621,7 +622,7 @@ Shared leaf module, consumed by `generated-manifest.ts` (manifest verification),
  */
 ```
 
-### `packages/codegen/src/scripts/emit-diff.ts::FileChange.path`
+### `packages/codegen/src/scripts/emit-diff.ts::FileChange::path`
 
 ```text
 // repo-relative

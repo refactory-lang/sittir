@@ -1855,6 +1855,46 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between primary_expression, _parameter_name_set_accessor_signature on '(' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name_set_accessor_signature"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name_set_accessor_signature"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'{'",
+          "'set'",
+          "_property_name",
+          "'('",
+          "'readonly'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name_set_accessor_signature"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between primary_expression, _property_name on '(' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -2359,14 +2399,14 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, method_definition on '*' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between primary_expression, method_definition_getter on '[' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "method_definition"
+          "method_definition_getter"
         ]
       },
       "step": "upstream-declared",
@@ -2375,6 +2415,45 @@
           "primary_expression"
         ],
         [
+          "method_definition_getter",
+          "method_definition"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'{'",
+          "'get'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "primary_expression",
+          "method_definition_getter"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, method_definition_plain on '*' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "method_definition_plain"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "method_definition_plain",
           "method_definition"
         ]
       ],
@@ -2386,8 +2465,46 @@
         "lookahead": "'*'",
         "interpretations": [
           "primary_expression",
-          "method_definition",
+          "method_definition_plain",
+          "method_definition_plain"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, method_definition_setter on '[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "method_definition_setter"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "method_definition_setter",
           "method_definition"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'{'",
+          "'set'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "primary_expression",
+          "method_definition_setter"
         ]
       }
     }
@@ -2668,6 +2785,167 @@
   },
   {
     "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, _parameter_name, _parameter_name_formal_parameter on '(' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name",
+          "_parameter_name_formal_parameter"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name"
+        ],
+        [
+          "_parameter_name_formal_parameter"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'readonly'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name",
+          "_parameter_name_formal_parameter"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, _parameter_name_receiver on ',' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "this"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, primary_type, _parameter_name_receiver on ')' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "primary_type"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_expression",
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_type, _parameter_name_receiver on ')' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_type"
+        ],
+        [
+          "_parameter_name_receiver"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_type",
+          "_parameter_name_receiver"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "conflict-unnecessary-upstream",
     "severity": "info",
     "grammar": "typescript",
@@ -2804,7 +3082,7 @@
     "severity": "error",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
@@ -2818,7 +3096,7 @@
     "severity": "error",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in patches: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
     "canProceed": false
   },
   {
@@ -2826,13 +3104,13 @@
     "code": "unclassifiable-shape",
     "severity": "error",
     "grammar": "typescript",
-    "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "ownerKind": "public_field_definition_plain",
+    "message": "[collect-slots] kind 'public_field_definition_plain': member rule:public_field_definition_plain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
-      "shape": "choice[4]",
-      "ruleId": "rule:public_field_definition:root"
+      "shape": "choice[3]",
+      "ruleId": "rule:public_field_definition_plain:root"
     }
   }
 ]

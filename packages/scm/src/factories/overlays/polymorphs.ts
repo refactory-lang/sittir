@@ -71,6 +71,110 @@ export const grouping = Object.freeze({
 	coerce: typeof grouping$seatedCoerce;
 };
 
+const namedNodeGroupChildren$namedNodeExpressions = <
+	PF extends (config: never) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['left', 'right']);
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['namedNodeExpressions'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{ ..._o(config), namedNodeExpressions: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) },
+			options
+		);
+	};
+};
+function namedNodeGroupChildren$seated<A extends T.NamedNodeGroupChildren.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildNamedNodeGroupChildren>;
+function namedNodeGroupChildren$seated(
+	...args: T.NamedNodeGroupChildren.BuildArgs
+): ReturnType<typeof F.buildNamedNodeGroupChildren> {
+	return namedNodeGroupChildren$namedNodeExpressions(
+		F.buildNamedNodeGroupChildren,
+		F.buildNamedNodeExpressionArm
+	)(...args);
+}
+function namedNodeGroupChildren$seatedCoerce<const A extends T.NamedNodeGroupChildren.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.NamedNodeGroupChildren.LooseArgs>
+): ReturnType<typeof C.coerceToNamedNodeGroupChildren>;
+function namedNodeGroupChildren$seatedCoerce(
+	...args: T.NamedNodeGroupChildren.LooseArgs
+): ReturnType<typeof C.coerceToNamedNodeGroupChildren> {
+	return namedNodeGroupChildren$namedNodeExpressions(
+		C.coerceToNamedNodeGroupChildren,
+		C.coerceToNamedNodeExpressionArm
+	)(...args);
+}
+export const namedNodeGroupChildren = Object.freeze({
+	...B.namedNodeGroupChildren,
+	...bundle(namedNodeGroupChildren$seated, namedNodeGroupChildren$seatedCoerce, {
+		key: 'namedNodeGroupChildren',
+		max: 1
+	})
+}) as unknown as Omit<typeof B.namedNodeGroupChildren, 'strict' | 'coerce'> & {
+	strict: typeof namedNodeGroupChildren$seated;
+	coerce: typeof namedNodeGroupChildren$seatedCoerce;
+};
+
+const namedNodeGroupAnchoredLast$namedNodeExpressions = <
+	PF extends (config: never) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['left', 'right']);
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['namedNodeExpressions'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{ ..._o(config), namedNodeExpressions: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) },
+			options
+		);
+	};
+};
+function namedNodeGroupAnchoredLast$seated<A extends T.NamedNodeGroupAnchoredLast.BuildArgs>(
+	...args: A & RefuseUndeclared<A>
+): ReturnType<typeof F.buildNamedNodeGroupAnchoredLast>;
+function namedNodeGroupAnchoredLast$seated(
+	...args: T.NamedNodeGroupAnchoredLast.BuildArgs
+): ReturnType<typeof F.buildNamedNodeGroupAnchoredLast> {
+	return namedNodeGroupAnchoredLast$namedNodeExpressions(
+		F.buildNamedNodeGroupAnchoredLast,
+		F.buildNamedNodeExpressionArm
+	)(...args);
+}
+function namedNodeGroupAnchoredLast$seatedCoerce<const A extends T.NamedNodeGroupAnchoredLast.LooseArgs>(
+	...args: A & RefuseUndeclared<A, T.NamedNodeGroupAnchoredLast.LooseArgs>
+): ReturnType<typeof C.coerceToNamedNodeGroupAnchoredLast>;
+function namedNodeGroupAnchoredLast$seatedCoerce(
+	...args: T.NamedNodeGroupAnchoredLast.LooseArgs
+): ReturnType<typeof C.coerceToNamedNodeGroupAnchoredLast> {
+	return namedNodeGroupAnchoredLast$namedNodeExpressions(
+		C.coerceToNamedNodeGroupAnchoredLast,
+		C.coerceToNamedNodeExpressionArm
+	)(...args);
+}
+export const namedNodeGroupAnchoredLast = Object.freeze({
+	...B.namedNodeGroupAnchoredLast,
+	...bundle(namedNodeGroupAnchoredLast$seated, namedNodeGroupAnchoredLast$seatedCoerce, {
+		key: 'namedNodeGroupAnchoredLast',
+		max: 1
+	})
+}) as unknown as Omit<typeof B.namedNodeGroupAnchoredLast, 'strict' | 'coerce'> & {
+	strict: typeof namedNodeGroupAnchoredLast$seated;
+	coerce: typeof namedNodeGroupAnchoredLast$seatedCoerce;
+};
+
 const namedNodePlain$underscore =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'>, options?: OptionsArg<PF>): ReturnType<PF> =>
@@ -88,11 +192,8 @@ const namedNodePlain$children =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, namedNodeGroup: _c(child)(inner) } as never, options as never);
 	};
-const namedNodePlain$children$strict = namedNodePlain$children(F.buildNamedNodePlain, F.buildNamedNodeGroupChildren);
-const namedNodePlain$children$coerce = namedNodePlain$children(
-	C.coerceToNamedNodePlain,
-	C.coerceToNamedNodeGroupChildren
-);
+const namedNodePlain$children$strict = namedNodePlain$children(F.buildNamedNodePlain, namedNodeGroupChildren.strict);
+const namedNodePlain$children$coerce = namedNodePlain$children(C.coerceToNamedNodePlain, namedNodeGroupChildren.coerce);
 const namedNodePlain$anchoredLast =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'namedNodeGroup'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -106,11 +207,11 @@ const namedNodePlain$anchoredLast =
 	};
 const namedNodePlain$anchoredLast$strict = namedNodePlain$anchoredLast(
 	F.buildNamedNodePlain,
-	F.buildNamedNodeGroupAnchoredLast
+	namedNodeGroupAnchoredLast.strict
 );
 const namedNodePlain$anchoredLast$coerce = namedNodePlain$anchoredLast(
 	C.coerceToNamedNodePlain,
-	C.coerceToNamedNodeGroupAnchoredLast
+	namedNodeGroupAnchoredLast.coerce
 );
 const namedNodePlain$underscore$applied: <const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>>(
 	config: V & RefuseUndeclared<V, OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'name'>>,
@@ -138,11 +239,11 @@ const namedNodePlain$underscore$children =
 	};
 const namedNodePlain$underscore$children$strict = namedNodePlain$underscore$children(
 	namedNodePlain$underscore$applied,
-	F.buildNamedNodeGroupChildren
+	namedNodeGroupChildren.strict
 );
 const namedNodePlain$underscore$children$coerce = namedNodePlain$underscore$children(
 	namedNodePlain$underscore$appliedCoerce,
-	C.coerceToNamedNodeGroupChildren
+	namedNodeGroupChildren.coerce
 );
 const namedNodePlain$underscore$anchoredLast =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -157,11 +258,11 @@ const namedNodePlain$underscore$anchoredLast =
 	};
 const namedNodePlain$underscore$anchoredLast$strict = namedNodePlain$underscore$anchoredLast(
 	namedNodePlain$underscore$applied,
-	F.buildNamedNodeGroupAnchoredLast
+	namedNodeGroupAnchoredLast.strict
 );
 const namedNodePlain$underscore$anchoredLast$coerce = namedNodePlain$underscore$anchoredLast(
 	namedNodePlain$underscore$appliedCoerce,
-	C.coerceToNamedNodeGroupAnchoredLast
+	namedNodeGroupAnchoredLast.coerce
 );
 export const namedNodePlain = Object.freeze({
 	...B.namedNodePlain,
@@ -200,25 +301,25 @@ export const namedNodePlain = Object.freeze({
 		children: {
 			strict: <
 				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+					ArgsOf<typeof namedNodeGroupChildren.strict>[0]
 			>(
 				config: V &
 					RefuseUndeclared<
 						V,
 						OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
-							ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+							ArgsOf<typeof namedNodeGroupChildren.strict>[0]
 					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$applied>
 			) => ReturnType<typeof namedNodePlain$underscore$applied>;
 			coerce: <
 				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+					ArgsOf<typeof namedNodeGroupChildren.coerce>[0]
 			>(
 				config: V &
 					RefuseUndeclared<
 						V,
 						OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
-							ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+							ArgsOf<typeof namedNodeGroupChildren.coerce>[0]
 					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$appliedCoerce>
 			) => ReturnType<typeof namedNodePlain$underscore$appliedCoerce>;
@@ -226,25 +327,25 @@ export const namedNodePlain = Object.freeze({
 		anchoredLast: {
 			strict: <
 				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+					ArgsOf<typeof namedNodeGroupAnchoredLast.strict>[0]
 			>(
 				config: V &
 					RefuseUndeclared<
 						V,
 						OmitEach<ArgsOf<typeof namedNodePlain$underscore$applied>[0], 'namedNodeGroup'> &
-							ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+							ArgsOf<typeof namedNodeGroupAnchoredLast.strict>[0]
 					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$applied>
 			) => ReturnType<typeof namedNodePlain$underscore$applied>;
 			coerce: <
 				const V extends OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
-					ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+					ArgsOf<typeof namedNodeGroupAnchoredLast.coerce>[0]
 			>(
 				config: V &
 					RefuseUndeclared<
 						V,
 						OmitEach<ArgsOf<typeof namedNodePlain$underscore$appliedCoerce>[0], 'namedNodeGroup'> &
-							ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+							ArgsOf<typeof namedNodeGroupAnchoredLast.coerce>[0]
 					>,
 				options?: OptionsArg<typeof namedNodePlain$underscore$appliedCoerce>
 			) => ReturnType<typeof namedNodePlain$underscore$appliedCoerce>;
@@ -253,25 +354,25 @@ export const namedNodePlain = Object.freeze({
 	children: {
 		strict: <
 			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+				ArgsOf<typeof namedNodeGroupChildren.strict>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+						ArgsOf<typeof namedNodeGroupChildren.strict>[0]
 				>,
 			options?: OptionsArg<typeof F.buildNamedNodePlain>
 		) => ReturnType<typeof F.buildNamedNodePlain>;
 		coerce: <
 			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+				ArgsOf<typeof namedNodeGroupChildren.coerce>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+						ArgsOf<typeof namedNodeGroupChildren.coerce>[0]
 				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
@@ -279,25 +380,25 @@ export const namedNodePlain = Object.freeze({
 	anchoredLast: {
 		strict: <
 			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+				ArgsOf<typeof namedNodeGroupAnchoredLast.strict>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof F.buildNamedNodePlain>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+						ArgsOf<typeof namedNodeGroupAnchoredLast.strict>[0]
 				>,
 			options?: OptionsArg<typeof F.buildNamedNodePlain>
 		) => ReturnType<typeof F.buildNamedNodePlain>;
 		coerce: <
 			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+				ArgsOf<typeof namedNodeGroupAnchoredLast.coerce>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof C.coerceToNamedNodePlain>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+						ArgsOf<typeof namedNodeGroupAnchoredLast.coerce>[0]
 				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodePlain>
 		) => ReturnType<typeof C.coerceToNamedNodePlain>;
@@ -317,11 +418,11 @@ const namedNodeSupertyped$children =
 	};
 const namedNodeSupertyped$children$strict = namedNodeSupertyped$children(
 	F.buildNamedNodeSupertyped,
-	F.buildNamedNodeGroupChildren
+	namedNodeGroupChildren.strict
 );
 const namedNodeSupertyped$children$coerce = namedNodeSupertyped$children(
 	C.coerceToNamedNodeSupertyped,
-	C.coerceToNamedNodeGroupChildren
+	namedNodeGroupChildren.coerce
 );
 const namedNodeSupertyped$anchoredLast =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -336,11 +437,11 @@ const namedNodeSupertyped$anchoredLast =
 	};
 const namedNodeSupertyped$anchoredLast$strict = namedNodeSupertyped$anchoredLast(
 	F.buildNamedNodeSupertyped,
-	F.buildNamedNodeGroupAnchoredLast
+	namedNodeGroupAnchoredLast.strict
 );
 const namedNodeSupertyped$anchoredLast$coerce = namedNodeSupertyped$anchoredLast(
 	C.coerceToNamedNodeSupertyped,
-	C.coerceToNamedNodeGroupAnchoredLast
+	namedNodeGroupAnchoredLast.coerce
 );
 export const namedNodeSupertyped = Object.freeze({
 	...B.namedNodeSupertyped,
@@ -356,25 +457,25 @@ export const namedNodeSupertyped = Object.freeze({
 	children: {
 		strict: <
 			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+				ArgsOf<typeof namedNodeGroupChildren.strict>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof F.buildNamedNodeGroupChildren>[0]
+						ArgsOf<typeof namedNodeGroupChildren.strict>[0]
 				>,
 			options?: OptionsArg<typeof F.buildNamedNodeSupertyped>
 		) => ReturnType<typeof F.buildNamedNodeSupertyped>;
 		coerce: <
 			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+				ArgsOf<typeof namedNodeGroupChildren.coerce>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof C.coerceToNamedNodeGroupChildren>[0]
+						ArgsOf<typeof namedNodeGroupChildren.coerce>[0]
 				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
 		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
@@ -382,25 +483,25 @@ export const namedNodeSupertyped = Object.freeze({
 	anchoredLast: {
 		strict: <
 			const V extends OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+				ArgsOf<typeof namedNodeGroupAnchoredLast.strict>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof F.buildNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof F.buildNamedNodeGroupAnchoredLast>[0]
+						ArgsOf<typeof namedNodeGroupAnchoredLast.strict>[0]
 				>,
 			options?: OptionsArg<typeof F.buildNamedNodeSupertyped>
 		) => ReturnType<typeof F.buildNamedNodeSupertyped>;
 		coerce: <
 			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-				ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+				ArgsOf<typeof namedNodeGroupAnchoredLast.coerce>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof C.coerceToNamedNodeSupertyped>[0], 'namedNodeGroup'> &
-						ArgsOf<typeof C.coerceToNamedNodeGroupAnchoredLast>[0]
+						ArgsOf<typeof namedNodeGroupAnchoredLast.coerce>[0]
 				>,
 			options?: OptionsArg<typeof C.coerceToNamedNodeSupertyped>
 		) => ReturnType<typeof C.coerceToNamedNodeSupertyped>;
@@ -424,11 +525,11 @@ export const listElement: {
 });
 
 export const namedNodeGroup: {
-	readonly children: typeof B.namedNodeGroupChildren;
-	readonly anchoredLast: typeof B.namedNodeGroupAnchoredLast;
+	readonly children: typeof namedNodeGroupChildren;
+	readonly anchoredLast: typeof namedNodeGroupAnchoredLast;
 } = Object.freeze({
-	children: B.namedNodeGroupChildren,
-	anchoredLast: B.namedNodeGroupAnchoredLast
+	children: namedNodeGroupChildren,
+	anchoredLast: namedNodeGroupAnchoredLast
 });
 
 export const definition: {

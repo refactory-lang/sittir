@@ -1092,6 +1092,18 @@ export interface IsGuards {
 	matchBlockArms<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockArms };
+	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
+	attributedParameterReceiver<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributedParameterReceiver };
+	parametersElementsReceiver<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParametersElementsReceiver };
+	parametersElementsReceiverGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParametersElementsReceiverGroup };
 	typeIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeIdentifier };
@@ -1445,19 +1457,6 @@ export interface IsGuards {
 			regular<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
 		};
 	};
-	layout<T extends { readonly $type: number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Tab
-		| TSKindId.Newline
-		| TSKindId.Blankline
-		| TSKindId.DoubleBlankline
-		| TSKindId.Indent
-		| TSKindId.Dedent
-	>;
 	readonly charLiteralEscaped: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.CharLiteralEscaped]>;
 		simple<T extends { readonly $type: number } | number>(
@@ -1473,6 +1472,19 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteralEscapedHex };
 	};
+	layout<T extends { readonly $type: number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
 	emptyStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyStatement>;
 	fragmentSpecifier<T extends { readonly $type: number } | number>(
 		v: T
@@ -1581,7 +1593,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	469, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	473, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
@@ -1613,8 +1625,8 @@ const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
 const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
 const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
-const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
+const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
@@ -1940,6 +1952,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_AttributedOrderedField_guard = _g(TSKindId.AttributedOrderedField);
 	const _kind_TypeArgument_guard = _g(TSKindId.TypeArgument);
 	const _kind_MatchBlockArms_guard = _g(TSKindId.MatchBlockArms);
+	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
+	const _kind_AttributedParameterReceiver_guard = _g(TSKindId.AttributedParameterReceiver);
+	const _kind_ParametersElementsReceiver_guard = _g(TSKindId.ParametersElementsReceiver);
+	const _kind_ParametersElementsReceiverGroup_guard = _g(TSKindId.ParametersElementsReceiverGroup);
 	const _kind_TypeIdentifier_guard = _g(TSKindId.TypeIdentifier);
 	const _kind_FieldIdentifier_guard = _g(TSKindId.FieldIdentifier);
 	const _kind_ShorthandFieldIdentifier_guard = _g(TSKindId.ShorthandFieldIdentifier);
@@ -2368,6 +2384,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		attributedOrderedField: _kind_AttributedOrderedField_guard,
 		typeArgument: _kind_TypeArgument_guard,
 		matchBlockArms: _kind_MatchBlockArms_guard,
+		receiverParameterDeclaration: _kind_ReceiverParameterDeclaration_guard,
+		attributedParameterReceiver: _kind_AttributedParameterReceiver_guard,
+		parametersElementsReceiver: _kind_ParametersElementsReceiver_guard,
+		parametersElementsReceiverGroup: _kind_ParametersElementsReceiverGroup_guard,
 		typeIdentifier: _kind_TypeIdentifier_guard,
 		fieldIdentifier: _kind_FieldIdentifier_guard,
 		crateVisibilityModifier: _kind_CrateVisibilityModifier_guard,
@@ -2401,8 +2421,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		charLiteral: _supertype_charLiteral_guard,
 		escapeSequence: _supertype_escapeSequence_guard,
 		comment: _supertype_comment_guard,
-		layout: _sg(_supertype_layout_ids),
 		charLiteralEscaped: _supertype_charLiteralEscaped_guard,
+		layout: _sg(_supertype_layout_ids),
 		emptyStatement: _kind_EmptyStatement_guard,
 		fragmentSpecifier: _kind_FragmentSpecifier_guard,
 		unitType: _kind_UnitType_guard,

@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { load } from './codegen-surface.ts';
 
 export interface RegenRecord {
 	readonly source: string;
@@ -16,12 +17,8 @@ export function readRegenRecord(cwd: string, grammar: string): RegenRecord | und
 	return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as RegenRecord) : undefined;
 }
 
-export function writeRegenRecord(cwd: string, grammar: string, record: RegenRecord): void {
-	const path = recordPath(cwd, grammar);
-	mkdirSync(dirname(path), { recursive: true });
-	const scratch = `${path}.${process.pid}.tmp`;
-	writeFileSync(scratch, JSON.stringify(record, null, 2) + '\n');
-	renameSync(scratch, path);
+export async function writeRegenRecord(cwd: string, grammar: string, record: RegenRecord): Promise<void> {
+	(await load('writeFileAtomic')).writeFileAtomic(recordPath(cwd, grammar), JSON.stringify(record, null, 2) + '\n');
 }
 
 export function clearRegenRecord(cwd: string, grammar: string): void {

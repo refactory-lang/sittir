@@ -69,6 +69,7 @@ import {
 	type LeadingOptions
 } from './shared.ts';
 import {
+	admitStatement,
 	fieldElementType,
 	childElementType,
 	kindEnumMemberDiscriminants,
@@ -155,7 +156,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -460,6 +461,7 @@ function emitBranchFrom(
 						? false
 						: (numericSlotShape(bareContent) ?? 'text');
 			emitBranchUntypedNodePassthrough(lines, inputOptional, returnType, typeName, bareKind);
+			lines.push(...admitStatement(node.kind, nodeMap, kindEntries, '[input]'));
 		}
 		if (bareInterior !== undefined) {
 			const shape = bareInterior.number;
@@ -578,6 +580,7 @@ function emitRestParamFromResolver(
 					`    return Array.isArray(v) ? v : [v];`,
 					`  })();`
 				];
+	const admit = admitStatement(kind, nodeMap, kindEntries, 'input');
 	const returnType = factoryReturnTypeExpr(factory);
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
@@ -586,6 +589,7 @@ function emitRestParamFromResolver(
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return [
 			...head,
+			...admit,
 			...split,
 			...unwrap,
 			`  return ${buildCallExpr(freshVar, false)};`,
@@ -597,6 +601,7 @@ function emitRestParamFromResolver(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		...head,
+		...admit,
 		...split,
 		`  if (${source}.length === 1 && isNodeOfKind(${source}[0], ${typeCheck})) {`,
 		`    const data = ${source}[0];`,
