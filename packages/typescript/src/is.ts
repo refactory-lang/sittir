@@ -1018,11 +1018,11 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderUsingKind };
 	formalParametersSetAccessorSignature<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersUSetAccessorSignature };
-	formalParametersElementsUSetAccessorSignature<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
+	formalParametersElementsSetAccessorSignature<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & {
-		readonly $type: TSKindId.FormalParametersElementsUSetAccessorSignature;
+		readonly $type: TSKindId.FormalParametersElementsSetAccessorSignature;
 	};
 	setterParameter<T extends { readonly $type: number } | number>(
 		v: T
@@ -1541,7 +1541,7 @@ export interface IsGuards {
 	): v is NarrowTo<T, TSKindId.MetaPropertyImportMeta>;
 	formalParametersGetAccessorSignature<T extends { readonly $type: number } | number>(
 		v: T
-	): v is NarrowTo<T, TSKindId.FormalParametersUGetAccessorSignature>;
+	): v is NarrowTo<T, TSKindId.FormalParametersGetAccessorSignature>;
 	htmlComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HtmlComment };
@@ -1923,9 +1923,9 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CatchClauseGroup_guard = _g(TSKindId.CatchClauseGroup);
 	const _kind_GetAccessorSignature_guard = _g(TSKindId.GetAccessorSignature);
 	const _kind_ObjectTypeContent_guard = _g(TSKindId.ObjectTypeContent);
-	const _kind_FormalParametersUSetAccessorSignature_guard = _g(TSKindId.FormalParametersUSetAccessorSignature);
-	const _kind_FormalParametersElementsUSetAccessorSignature_guard = _g(
-		TSKindId.FormalParametersElementsUSetAccessorSignature
+	const _kind_FormalParametersSetAccessorSignature_guard = _g(TSKindId.FormalParametersSetAccessorSignature);
+	const _kind_FormalParametersElementsSetAccessorSignature_guard = _g(
+		TSKindId.FormalParametersElementsSetAccessorSignature
 	);
 	const _kind_SetterParameter_guard = _g(TSKindId.SetterParameter);
 	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
@@ -1952,7 +1952,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_PredefinedType_guard = _mg(TSKindId.PredefinedType);
 	const _kind_UsingDeclarationArm_guard = _mg(TSKindId.UsingDeclarationArm);
 	const _kind_OptionalChainMarker_guard = _mg(TSKindId.OptionalChainMarker);
-	const _kind_FormalParametersUGetAccessorSignature_guard = _mg(TSKindId.FormalParametersUGetAccessorSignature);
+	const _kind_FormalParametersGetAccessorSignature_guard = _mg(TSKindId.FormalParametersGetAccessorSignature);
 	const _kind_HtmlComment_guard = _g(TSKindId.HtmlComment);
 	const _kind_JsxText_guard = _g(TSKindId.JsxText);
 	const _kind_TemplateChars_guard = _g(TSKindId.TemplateChars);
@@ -2379,8 +2379,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		forHeaderVarKind: _kind_ForHeaderVarKind_guard,
 		forHeaderLetConstKind: _kind_ForHeaderLetConstKind_guard,
 		forHeaderUsingKind: _kind_ForHeaderUsingKind_guard,
-		formalParametersSetAccessorSignature: _kind_FormalParametersUSetAccessorSignature_guard,
-		formalParametersElementsUSetAccessorSignature: _kind_FormalParametersElementsUSetAccessorSignature_guard,
+		formalParametersSetAccessorSignature: _kind_FormalParametersSetAccessorSignature_guard,
+		formalParametersElementsSetAccessorSignature: _kind_FormalParametersElementsSetAccessorSignature_guard,
 		setterParameter: _kind_SetterParameter_guard,
 		methodDefinitionPlain: _kind_MethodDefinitionPlain_guard,
 		methodDefinitionGetter: _kind_MethodDefinitionGetter_guard,
@@ -2454,7 +2454,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		optionalChainMarker: _kind_OptionalChainMarker_guard,
 		metaPropertyNewTarget: _kind_MetaPropertyNewTarget_guard,
 		metaPropertyImportMeta: _kind_MetaPropertyImportMeta_guard,
-		formalParametersGetAccessorSignature: _kind_FormalParametersUGetAccessorSignature_guard,
+		formalParametersGetAccessorSignature: _kind_FormalParametersGetAccessorSignature_guard,
 		htmlComment: _kind_HtmlComment_guard,
 		jsxText: _kind_JsxText_guard,
 		templateChars: _kind_TemplateChars_guard,

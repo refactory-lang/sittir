@@ -520,11 +520,11 @@ pub const SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER: SiteId = SiteId(510);
 pub const SITE_FOR_STATEMENT_FOR_STATEMENT_BEFORE: SiteId = SiteId(511);
 pub const SITE_FOR_STATEMENT_FOR_STATEMENT_AFTER: SiteId = SiteId(512);
 pub const SITE_FORMAL_PARAMETERS_LPAREN_AFTER: SiteId = SiteId(513);
-pub const SITE__FORMAL_PARAMETERS__GET_ACCESSOR_SIGNATURE_LPAREN_AFTER: SiteId = SiteId(514);
-pub const SITE__FORMAL_PARAMETERS__SET_ACCESSOR_SIGNATURE_LPAREN_AFTER: SiteId = SiteId(515);
+pub const SITE__FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE_LPAREN_AFTER: SiteId = SiteId(514);
+pub const SITE__FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE_LPAREN_AFTER: SiteId = SiteId(515);
 pub const SITE_FORMAL_PARAMETERS_RPAREN_BEFORE: SiteId = SiteId(516);
-pub const SITE__FORMAL_PARAMETERS__GET_ACCESSOR_SIGNATURE_RPAREN_BEFORE: SiteId = SiteId(517);
-pub const SITE__FORMAL_PARAMETERS__SET_ACCESSOR_SIGNATURE_RPAREN_BEFORE: SiteId = SiteId(518);
+pub const SITE__FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE_RPAREN_BEFORE: SiteId = SiteId(517);
+pub const SITE__FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE_RPAREN_BEFORE: SiteId = SiteId(518);
 pub const SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_BEFORE: SiteId = SiteId(519);
 pub const SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_AFTER: SiteId = SiteId(520);
 pub const SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_OPTIONAL_PARAMETER_AFTER: SiteId = SiteId(521);
@@ -7548,10 +7548,10 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_AFTER, path: "(formal_parameters)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_FORMAL_PARAMETERS_BEFORE, path: "(formal_parameters)/before" }] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(formal_parameters)/\"(\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_LPAREN_AFTER, path: "(formal_parameters)/\"(\"/after" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS__GET_ACCESSOR_SIGNATURE_LPAREN_AFTER, path: "(formal_parameters)/\"(\"/after" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS__SET_ACCESSOR_SIGNATURE_LPAREN_AFTER, path: "(formal_parameters)/\"(\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_LPAREN_AFTER, path: "(formal_parameters)/\"(\"/after" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE_LPAREN_AFTER, path: "(formal_parameters)/\"(\"/after" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE_LPAREN_AFTER, path: "(formal_parameters)/\"(\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(formal_parameters)/\")\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_RPAREN_BEFORE, path: "(formal_parameters)/\")\"/before" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS__GET_ACCESSOR_SIGNATURE_RPAREN_BEFORE, path: "(formal_parameters)/\")\"/before" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS__SET_ACCESSOR_SIGNATURE_RPAREN_BEFORE, path: "(formal_parameters)/\")\"/before" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_FORMAL_PARAMETERS_RPAREN_BEFORE, path: "(formal_parameters)/\")\"/before" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE_RPAREN_BEFORE, path: "(formal_parameters)/\")\"/before" }, ::sittir_core::options::SiteRef { site: SITE__FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE_RPAREN_BEFORE, path: "(formal_parameters)/\")\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "formalParametersElements", path: "(formal_parameters_elements)", children: &[

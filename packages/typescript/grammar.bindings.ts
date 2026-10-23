@@ -124,7 +124,7 @@ export default grammar(
 	wire({
 		generated: true,
 		edits: {
-			_call_signature__get_accessor_signature: { "2": field("type") },
+			_call_signature_get_accessor_signature: { "2": field("type") },
 			_number: { "1": field("value") },
 			_parameter_name: { "4": field("name") },
 			abstract_class_declaration: { "1": field("abstract") },

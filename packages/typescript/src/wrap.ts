@@ -7673,20 +7673,20 @@ export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHan
 	return node as unknown as T.ForHeaderUsingKind.Parsed;
 }
 
-export function wrapFormalParametersUSetAccessorSignature(
-	data: T.FormalParametersUSetAccessorSignature,
+export function wrapFormalParametersSetAccessorSignature(
+	data: T.FormalParametersSetAccessorSignature,
 	tree: TreeHandle
-): T.FormalParametersUSetAccessorSignature.Parsed {
+): T.FormalParametersSetAccessorSignature.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.FormalParametersUSetAccessorSignature as const,
+		$type: TSKindId.FormalParametersSetAccessorSignature as const,
 		elements() {
-			return hydrateSlot<T.FormalParametersElementsUSetAccessorSignature>(this, '_elements', tree);
+			return hydrateSlot<T.FormalParametersElementsSetAccessorSignature>(this, '_elements', tree);
 		},
 		$with: {
-			elements: (v: NonNullable<T.FormalParametersUSetAccessorSignature['_elements']>) =>
-				rebuilt(node, handle, () => wrapFormalParametersUSetAccessorSignature({ ...$edited(data), _elements: v }, tree))
+			elements: (v: NonNullable<T.FormalParametersSetAccessorSignature['_elements']>) =>
+				rebuilt(node, handle, () => wrapFormalParametersSetAccessorSignature({ ...$edited(data), _elements: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7699,24 +7699,24 @@ export function wrapFormalParametersUSetAccessorSignature(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FormalParametersUSetAccessorSignature.Parsed;
+	return node as unknown as T.FormalParametersSetAccessorSignature.Parsed;
 }
 
-export function wrapFormalParametersElementsUSetAccessorSignature(
-	data: T.FormalParametersElementsUSetAccessorSignature,
+export function wrapFormalParametersElementsSetAccessorSignature(
+	data: T.FormalParametersElementsSetAccessorSignature,
 	tree: TreeHandle
-): T.FormalParametersElementsUSetAccessorSignature.Parsed {
+): T.FormalParametersElementsSetAccessorSignature.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
-		$type: TSKindId.FormalParametersElementsUSetAccessorSignature as const,
+		$type: TSKindId.FormalParametersElementsSetAccessorSignature as const,
 		item() {
 			return hydrateSlot<T.SetterParameter>(this, '_item', tree);
 		},
 		$with: {
-			item: (v: NonNullable<T.FormalParametersElementsUSetAccessorSignature['_item']>) =>
+			item: (v: NonNullable<T.FormalParametersElementsSetAccessorSignature['_item']>) =>
 				rebuilt(node, handle, () =>
-					wrapFormalParametersElementsUSetAccessorSignature({ ...$edited(data), _item: v }, tree)
+					wrapFormalParametersElementsSetAccessorSignature({ ...$edited(data), _item: v }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -7730,7 +7730,7 @@ export function wrapFormalParametersElementsUSetAccessorSignature(
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
 	};
-	return node as unknown as T.FormalParametersElementsUSetAccessorSignature.Parsed;
+	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Parsed;
 }
 
 export function wrapSetterParameter(data: T.SetterParameter, tree: TreeHandle): T.SetterParameter.Parsed {
@@ -7966,7 +7966,7 @@ export function wrapMethodDefinitionSetter(
 			>(this, '_name', tree);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParametersUSetAccessorSignature>(this, '_parameters', tree);
+			return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
 		},
 		body() {
 			return hydrateSlot<T.StatementBlock>(this, '_body', tree);
@@ -8169,7 +8169,7 @@ export function wrapMethodSignatureSetter(
 			>(this, '_name', tree);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParametersUSetAccessorSignature>(this, '_parameters', tree);
+			return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
 		},
 		$with: {
 			accessibilityModifier: (v: NonNullable<T.MethodSignatureSetter['_accessibility_modifier']>) =>
@@ -8348,7 +8348,7 @@ export function wrapAbstractMethodSignatureSetter(
 			>(this, '_name', tree);
 		},
 		parameters() {
-			return hydrateSlot<T.FormalParametersUSetAccessorSignature>(this, '_parameters', tree);
+			return hydrateSlot<T.FormalParametersSetAccessorSignature>(this, '_parameters', tree);
 		},
 		$with: {
 			accessibilityModifier: (v: NonNullable<T.AbstractMethodSignatureSetter['_accessibility_modifier']>) =>
@@ -9133,13 +9133,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
 	[TSKindId.ForHeaderUsingKind]: (d, t) => wrapForHeaderUsingKind(d as unknown as T.ForHeaderUsingKind, t),
-	[TSKindId.FormalParametersUSetAccessorSignature]: (d, t) =>
-		wrapFormalParametersUSetAccessorSignature(d as unknown as T.FormalParametersUSetAccessorSignature, t),
-	[TSKindId.FormalParametersElementsUSetAccessorSignature]: (d, t) =>
-		wrapFormalParametersElementsUSetAccessorSignature(
-			d as unknown as T.FormalParametersElementsUSetAccessorSignature,
-			t
-		),
+	[TSKindId.FormalParametersSetAccessorSignature]: (d, t) =>
+		wrapFormalParametersSetAccessorSignature(d as unknown as T.FormalParametersSetAccessorSignature, t),
+	[TSKindId.FormalParametersElementsSetAccessorSignature]: (d, t) =>
+		wrapFormalParametersElementsSetAccessorSignature(d as unknown as T.FormalParametersElementsSetAccessorSignature, t),
 	[TSKindId.SetterParameter]: (d, t) => wrapSetterParameter(d as unknown as T.SetterParameter, t),
 	[TSKindId.MethodDefinitionPlain]: (d, t) => wrapMethodDefinitionPlain(d as unknown as T.MethodDefinitionPlain, t),
 	[TSKindId.MethodDefinitionGetter]: (d, t) => wrapMethodDefinitionGetter(d as unknown as T.MethodDefinitionGetter, t),

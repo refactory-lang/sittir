@@ -268,9 +268,9 @@ export const _fromMap = {
 	for_header_var_kind: coerceToForHeaderVarKind,
 	for_header_let_const_kind: coerceToForHeaderLetConstKind,
 	for_header_using_kind: coerceToForHeaderUsingKind,
-	_formal_parameters__get_accessor_signature: coerceToFormalParametersUGetAccessorSignature,
-	_formal_parameters__set_accessor_signature: coerceToFormalParametersUSetAccessorSignature,
-	_formal_parameters_elements__set_accessor_signature: coerceToFormalParametersElementsUSetAccessorSignature,
+	_formal_parameters_get_accessor_signature: coerceToFormalParametersGetAccessorSignature,
+	_formal_parameters_set_accessor_signature: coerceToFormalParametersSetAccessorSignature,
+	_formal_parameters_elements_set_accessor_signature: coerceToFormalParametersElementsSetAccessorSignature,
 	setter_parameter: coerceToSetterParameter,
 	method_definition_plain: coerceToMethodDefinitionPlain,
 	method_definition_getter: coerceToMethodDefinitionGetter,
@@ -394,9 +394,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	optional_chain_marker: { values: ['?.'], factory: () => F.buildOptionalChainMarker },
 	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget },
 	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta },
-	_formal_parameters__get_accessor_signature: {
+	_formal_parameters_get_accessor_signature: {
 		values: ['()'],
-		factory: () => F.buildFormalParametersUGetAccessorSignature
+		factory: () => F.buildFormalParametersGetAccessorSignature
 	},
 	html_comment: { pattern: F._leafRe_buildHtmlComment, factory: F.buildHtmlComment },
 	jsx_text: { pattern: F._leafRe_buildJsxText, factory: F.buildJsxText },
@@ -466,7 +466,7 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'optional_chain_marker',
 	'meta_property_new_target',
 	'meta_property_import_meta',
-	'_formal_parameters__get_accessor_signature',
+	'_formal_parameters_get_accessor_signature',
 	'html_comment',
 	'jsx_text',
 	'_template_chars',
@@ -537,7 +537,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'type_identifier',
 	'meta_property_new_target',
 	'meta_property_import_meta',
-	'_formal_parameters__get_accessor_signature'
+	'_formal_parameters_get_accessor_signature'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
@@ -907,8 +907,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 413, 417, 418,
 		419, 420, 421, 422, 423, 424, 425, 438, 439
 	]),
-	_formal_parameters__set_accessor_signature: new Set([447, 448]),
-	_formal_parameters_elements__set_accessor_signature: new Set([448]),
+	_formal_parameters_set_accessor_signature: new Set([447, 448]),
+	_formal_parameters_elements_set_accessor_signature: new Set([448]),
 	formal_parameters_elements_receiver_group: new Set([326, 327, 385]),
 	statement_identifier: new Set([1]),
 	shorthand_property_identifier: new Set([1]),
@@ -1178,8 +1178,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	export_statement_default_from_star_from: TSKindId.ExportStatementDefaultFromStarFrom,
 	export_statement_default_declaration_default_kw: TSKindId.ExportStatementDefaultDeclarationDefaultKw,
 	export_statement_default_declaration_default_kw_value: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue,
-	_formal_parameters__set_accessor_signature: TSKindId.FormalParametersUSetAccessorSignature,
-	_formal_parameters_elements__set_accessor_signature: TSKindId.FormalParametersElementsUSetAccessorSignature,
+	_formal_parameters_set_accessor_signature: TSKindId.FormalParametersSetAccessorSignature,
+	_formal_parameters_elements_set_accessor_signature: TSKindId.FormalParametersElementsSetAccessorSignature,
 	formal_parameters_elements_receiver_group: TSKindId.FormalParametersElementsReceiverGroup,
 	statement_identifier: TSKindId.StatementIdentifier,
 	shorthand_property_identifier: TSKindId.ShorthandPropertyIdentifier,
@@ -1241,8 +1241,8 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	arrow_function_parameter: 'identifier',
 	export_statement_default_from_star_from: 'string',
 	export_statement_default_declaration_default_kw_value: 'expression',
-	_formal_parameters__set_accessor_signature: '_formal_parameters_elements__set_accessor_signature',
-	_formal_parameters_elements__set_accessor_signature: 'setter_parameter',
+	_formal_parameters_set_accessor_signature: '_formal_parameters_elements_set_accessor_signature',
+	_formal_parameters_elements_set_accessor_signature: 'setter_parameter',
 	formal_parameters_elements_receiver_group: 'formal_parameters_elements',
 	statement_identifier: 'identifier',
 	shorthand_property_identifier: 'identifier',
@@ -1315,8 +1315,8 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'export_statement_default_from_star_from',
 	'export_statement_default_declaration_default_kw',
 	'export_statement_default_declaration_default_kw_value',
-	'_formal_parameters__set_accessor_signature',
-	'_formal_parameters_elements__set_accessor_signature',
+	'_formal_parameters_set_accessor_signature',
+	'_formal_parameters_elements_set_accessor_signature',
 	'formal_parameters_elements_receiver_group',
 	'statement_identifier',
 	'shorthand_property_identifier',
@@ -1531,13 +1531,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExportStatementDefaultDeclarationDefaultKwValue(
 				children[0] as Parameters<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]
 			);
-		case '_formal_parameters__set_accessor_signature':
-			return F.buildFormalParametersUSetAccessorSignature(
-				children[0] as Parameters<typeof F.buildFormalParametersUSetAccessorSignature>[0]
+		case '_formal_parameters_set_accessor_signature':
+			return F.buildFormalParametersSetAccessorSignature(
+				children[0] as Parameters<typeof F.buildFormalParametersSetAccessorSignature>[0]
 			);
-		case '_formal_parameters_elements__set_accessor_signature':
-			return F.buildFormalParametersElementsUSetAccessorSignature(
-				children[0] as Parameters<typeof F.buildFormalParametersElementsUSetAccessorSignature>[0]
+		case '_formal_parameters_elements_set_accessor_signature':
+			return F.buildFormalParametersElementsSetAccessorSignature(
+				children[0] as Parameters<typeof F.buildFormalParametersElementsSetAccessorSignature>[0]
 			);
 		case 'formal_parameters_elements_receiver_group':
 			return F.buildFormalParametersElementsReceiverGroup(
@@ -10213,56 +10213,56 @@ export function coerceToForHeaderUsingKind(
 	});
 }
 
-export function coerceToFormalParametersUGetAccessorSignature(
-	_input?: T.FormalParametersUGetAccessorSignature.Loose
-): typeof F.buildFormalParametersUGetAccessorSignature {
-	return F.buildFormalParametersUGetAccessorSignature;
+export function coerceToFormalParametersGetAccessorSignature(
+	_input?: T.FormalParametersGetAccessorSignature.Loose
+): typeof F.buildFormalParametersGetAccessorSignature {
+	return F.buildFormalParametersGetAccessorSignature;
 }
 
-export function resolveFormalParametersUSetAccessorSignature_elements(
-	value: T.FormalParametersUSetAccessorSignature.LooseConfig['elements']
-): Admit<T.FormalParametersUSetAccessorSignature['_elements']> {
-	return _resolveOneBranch<T.FormalParametersElementsUSetAccessorSignature>(
+export function resolveFormalParametersSetAccessorSignature_elements(
+	value: T.FormalParametersSetAccessorSignature.LooseConfig['elements']
+): Admit<T.FormalParametersSetAccessorSignature['_elements']> {
+	return _resolveOneBranch<T.FormalParametersElementsSetAccessorSignature>(
 		value,
-		'_formal_parameters_elements__set_accessor_signature'
+		'_formal_parameters_elements_set_accessor_signature'
 	);
 }
 
-export function coerceToFormalParametersUSetAccessorSignature<
-	const I extends T.FormalParametersUSetAccessorSignature.Loose
+export function coerceToFormalParametersSetAccessorSignature<
+	const I extends T.FormalParametersSetAccessorSignature.Loose
 >(
-	input: I & RefuseUndeclared<I, T.FormalParametersUSetAccessorSignature.Loose>
-): ReturnType<typeof F.buildFormalParametersUSetAccessorSignature>;
-export function coerceToFormalParametersUSetAccessorSignature(
-	input: T.FormalParametersUSetAccessorSignature.Loose
-): ReturnType<typeof F.buildFormalParametersUSetAccessorSignature> {
-	if (isNodeOfKind(input, TSKindId.FormalParametersUSetAccessorSignature))
-		return input as unknown as ReturnType<typeof F.buildFormalParametersUSetAccessorSignature>;
-	return F.buildFormalParametersUSetAccessorSignature(
-		_resolveOneBranch<T.FormalParametersElementsUSetAccessorSignature>(
+	input: I & RefuseUndeclared<I, T.FormalParametersSetAccessorSignature.Loose>
+): ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+export function coerceToFormalParametersSetAccessorSignature(
+	input: T.FormalParametersSetAccessorSignature.Loose
+): ReturnType<typeof F.buildFormalParametersSetAccessorSignature> {
+	if (isNodeOfKind(input, TSKindId.FormalParametersSetAccessorSignature))
+		return input as unknown as ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+	return F.buildFormalParametersSetAccessorSignature(
+		_resolveOneBranch<T.FormalParametersElementsSetAccessorSignature>(
 			configFieldOr(input, 'elements', () => input),
-			'_formal_parameters_elements__set_accessor_signature'
+			'_formal_parameters_elements_set_accessor_signature'
 		)
 	);
 }
 
-export function resolveFormalParametersElementsUSetAccessorSignature_item(
-	value: T.FormalParametersElementsUSetAccessorSignature.LooseConfig['item']
-): Admit<T.FormalParametersElementsUSetAccessorSignature['_item']> {
+export function resolveFormalParametersElementsSetAccessorSignature_item(
+	value: T.FormalParametersElementsSetAccessorSignature.LooseConfig['item']
+): Admit<T.FormalParametersElementsSetAccessorSignature['_item']> {
 	return _resolveOneBranch<T.SetterParameter>(value, 'setter_parameter');
 }
 
-export function coerceToFormalParametersElementsUSetAccessorSignature<
-	const I extends T.FormalParametersElementsUSetAccessorSignature.Loose
+export function coerceToFormalParametersElementsSetAccessorSignature<
+	const I extends T.FormalParametersElementsSetAccessorSignature.Loose
 >(
-	input: I & RefuseUndeclared<I, T.FormalParametersElementsUSetAccessorSignature.Loose>
-): ReturnType<typeof F.buildFormalParametersElementsUSetAccessorSignature>;
-export function coerceToFormalParametersElementsUSetAccessorSignature(
-	input: T.FormalParametersElementsUSetAccessorSignature.Loose
-): ReturnType<typeof F.buildFormalParametersElementsUSetAccessorSignature> {
-	if (isNodeOfKind(input, TSKindId.FormalParametersElementsUSetAccessorSignature))
-		return input as unknown as ReturnType<typeof F.buildFormalParametersElementsUSetAccessorSignature>;
-	return F.buildFormalParametersElementsUSetAccessorSignature(
+	input: I & RefuseUndeclared<I, T.FormalParametersElementsSetAccessorSignature.Loose>
+): ReturnType<typeof F.buildFormalParametersElementsSetAccessorSignature>;
+export function coerceToFormalParametersElementsSetAccessorSignature(
+	input: T.FormalParametersElementsSetAccessorSignature.Loose
+): ReturnType<typeof F.buildFormalParametersElementsSetAccessorSignature> {
+	if (isNodeOfKind(input, TSKindId.FormalParametersElementsSetAccessorSignature))
+		return input as unknown as ReturnType<typeof F.buildFormalParametersElementsSetAccessorSignature>;
+	return F.buildFormalParametersElementsSetAccessorSignature(
 		_resolveOneBranch<T.SetterParameter>(
 			configFieldOr(input, 'item', () => input),
 			'setter_parameter'
@@ -10558,10 +10558,7 @@ export function resolveMethodDefinitionSetter_name(
 export function resolveMethodDefinitionSetter_parameters(
 	value: T.MethodDefinitionSetter.LooseConfig['parameters']
 ): Admit<T.MethodDefinitionSetter['_parameters']> {
-	return _resolveOneBranch<T.FormalParametersUSetAccessorSignature>(
-		value,
-		'_formal_parameters__set_accessor_signature'
-	);
+	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(value, '_formal_parameters_set_accessor_signature');
 }
 
 export function resolveMethodDefinitionSetter_body(
@@ -10796,10 +10793,7 @@ export function resolveMethodSignatureSetter_name(
 export function resolveMethodSignatureSetter_parameters(
 	value: T.MethodSignatureSetter.LooseConfig['parameters']
 ): Admit<T.MethodSignatureSetter['_parameters']> {
-	return _resolveOneBranch<T.FormalParametersUSetAccessorSignature>(
-		value,
-		'_formal_parameters__set_accessor_signature'
-	);
+	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(value, '_formal_parameters_set_accessor_signature');
 }
 
 export function coerceToMethodSignatureSetter<const I extends T.MethodSignatureSetter.Loose>(
@@ -10993,10 +10987,7 @@ export function resolveAbstractMethodSignatureSetter_name(
 export function resolveAbstractMethodSignatureSetter_parameters(
 	value: T.AbstractMethodSignatureSetter.LooseConfig['parameters']
 ): Admit<T.AbstractMethodSignatureSetter['_parameters']> {
-	return _resolveOneBranch<T.FormalParametersUSetAccessorSignature>(
-		value,
-		'_formal_parameters__set_accessor_signature'
-	);
+	return _resolveOneBranch<T.FormalParametersSetAccessorSignature>(value, '_formal_parameters_set_accessor_signature');
 }
 
 export function coerceToAbstractMethodSignatureSetter<const I extends T.AbstractMethodSignatureSetter.Loose>(

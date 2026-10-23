@@ -618,8 +618,8 @@ export const records = {
 		operator: { word: 13, width: 5 },
 		right: { word: 18, width: 5 }
 	},
-	FormalParametersUSetAccessorSignatureNode: { words: 7, elements: { word: 2, width: 5 } },
-	FormalParametersElementsUSetAccessorSignatureNode: { words: 7, item: { word: 2, width: 5 } },
+	FormalParametersSetAccessorSignatureNode: { words: 7, elements: { word: 2, width: 5 } },
+	FormalParametersElementsSetAccessorSignatureNode: { words: 7, item: { word: 2, width: 5 } },
 	SetterParameterNode: {
 		words: 20,
 		decorator: { word: 3, width: 2, run: 5 },

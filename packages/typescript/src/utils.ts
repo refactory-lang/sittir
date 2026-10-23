@@ -2881,20 +2881,20 @@ export const structure: StructureTable = Object.freeze({
 		config: ['kind', 'left', 'terminator', 'operator', 'right']
 	},
 	446: {
-		kind: '_formal_parameters__set_accessor_signature',
+		kind: '_formal_parameters_set_accessor_signature',
 		required: [['_elements', 'elements']],
 		nodeOnly: [
 			[
 				'_elements',
-				'FormalParametersUSetAccessorSignature.elements',
-				'a built FormalParametersElementsUSetAccessorSignature'
+				'FormalParametersSetAccessorSignature.elements',
+				'a built FormalParametersElementsSetAccessorSignature'
 			]
 		]
 	},
 	447: {
-		kind: '_formal_parameters_elements__set_accessor_signature',
+		kind: '_formal_parameters_elements_set_accessor_signature',
 		required: [['_item', 'item']],
-		nodeOnly: [['_item', 'FormalParametersElementsUSetAccessorSignature.item', 'a built SetterParameter']]
+		nodeOnly: [['_item', 'FormalParametersElementsSetAccessorSignature.item', 'a built SetterParameter']]
 	},
 	448: {
 		kind: 'setter_parameter',
@@ -2990,7 +2990,7 @@ export const structure: StructureTable = Object.freeze({
 				'MethodDefinitionSetter.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
-			['_parameters', 'MethodDefinitionSetter.parameters', 'a built FormalParametersUSetAccessorSignature'],
+			['_parameters', 'MethodDefinitionSetter.parameters', 'a built FormalParametersSetAccessorSignature'],
 			['_body', 'MethodDefinitionSetter.body', 'a built StatementBlock']
 		],
 		config: ['accessibilityModifier', 'static', 'override', 'name', 'parameters', 'body']
@@ -3067,7 +3067,7 @@ export const structure: StructureTable = Object.freeze({
 				'MethodSignatureSetter.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
-			['_parameters', 'MethodSignatureSetter.parameters', 'a built FormalParametersUSetAccessorSignature']
+			['_parameters', 'MethodSignatureSetter.parameters', 'a built FormalParametersSetAccessorSignature']
 		],
 		config: ['accessibilityModifier', 'static', 'override', 'name', 'parameters']
 	},
@@ -3139,7 +3139,7 @@ export const structure: StructureTable = Object.freeze({
 				'AbstractMethodSignatureSetter.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
-			['_parameters', 'AbstractMethodSignatureSetter.parameters', 'a built FormalParametersUSetAccessorSignature']
+			['_parameters', 'AbstractMethodSignatureSetter.parameters', 'a built FormalParametersSetAccessorSignature']
 		],
 		config: ['accessibilityModifier', 'override', 'name', 'parameters']
 	},

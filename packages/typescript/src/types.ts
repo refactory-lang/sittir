@@ -84,7 +84,7 @@ export type LeafStringMap = {
 	[TSKindId.OptionalChainMarker]: '?.';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
-	[TSKindId.FormalParametersUGetAccessorSignature]: '()';
+	[TSKindId.FormalParametersGetAccessorSignature]: '()';
 	[TSKindId.AutomaticSemicolon]: '\n';
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: '\n';
 	[TSKindId.Space]: ' ';
@@ -619,13 +619,13 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[441, 'for_header_var_kind'],
 	[442, 'for_header_let_const_kind'],
 	[443, 'for_header_using_kind'],
-	[444, '_call_signature__get_accessor_signature'],
-	[445, '_formal_parameters__get_accessor_signature'],
-	[446, '_formal_parameters__set_accessor_signature'],
-	[447, '_formal_parameters_elements__set_accessor_signature'],
+	[444, '_call_signature_get_accessor_signature'],
+	[445, '_formal_parameters_get_accessor_signature'],
+	[446, '_formal_parameters_set_accessor_signature'],
+	[447, '_formal_parameters_elements_set_accessor_signature'],
 	[448, 'setter_parameter'],
-	[449, '_parameter_name__set_accessor_signature'],
-	[450, '_pattern_0__set_accessor_signature'],
+	[449, '_parameter_name_set_accessor_signature'],
+	[450, '_pattern_0_set_accessor_signature'],
 	[451, 'method_definition_plain'],
 	[452, 'method_definition_getter'],
 	[453, 'method_definition_setter'],
@@ -1124,13 +1124,13 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[441, 'for_header_var_kind'],
 	[442, 'for_header_let_const_kind'],
 	[443, 'for_header_using_kind'],
-	[444, '_call_signature__get_accessor_signature'],
+	[444, '_call_signature_get_accessor_signature'],
 	[445, 'formal_parameters'],
 	[446, 'formal_parameters'],
 	[447, 'formal_parameters_elements'],
 	[448, 'setter_parameter'],
-	[449, '_parameter_name__set_accessor_signature'],
-	[450, '_pattern_0__set_accessor_signature'],
+	[449, '_parameter_name_set_accessor_signature'],
+	[450, '_pattern_0_set_accessor_signature'],
 	[451, 'method_definition_plain'],
 	[452, 'method_definition_getter'],
 	[453, 'method_definition_setter'],
@@ -2077,19 +2077,19 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ForHeaderLetConstKind;
 		case 'for_header_using_kind':
 			return TSKindId.ForHeaderUsingKind;
-		case '_call_signature__get_accessor_signature':
+		case '_call_signature_get_accessor_signature':
 			return TSKindId._CallSignatureGetAccessorSignature;
-		case '_formal_parameters__get_accessor_signature':
-			return TSKindId.FormalParametersUGetAccessorSignature;
-		case '_formal_parameters__set_accessor_signature':
-			return TSKindId.FormalParametersUSetAccessorSignature;
-		case '_formal_parameters_elements__set_accessor_signature':
-			return TSKindId.FormalParametersElementsUSetAccessorSignature;
+		case '_formal_parameters_get_accessor_signature':
+			return TSKindId.FormalParametersGetAccessorSignature;
+		case '_formal_parameters_set_accessor_signature':
+			return TSKindId.FormalParametersSetAccessorSignature;
+		case '_formal_parameters_elements_set_accessor_signature':
+			return TSKindId.FormalParametersElementsSetAccessorSignature;
 		case 'setter_parameter':
 			return TSKindId.SetterParameter;
-		case '_parameter_name__set_accessor_signature':
+		case '_parameter_name_set_accessor_signature':
 			return TSKindId._ParameterNameSetAccessorSignature;
-		case '_pattern_0__set_accessor_signature':
+		case '_pattern_0_set_accessor_signature':
 			return TSKindId._Pattern0SetAccessorSignature;
 		case 'method_definition_plain':
 			return TSKindId.MethodDefinitionPlain;
@@ -9335,9 +9335,9 @@ export interface ForHeaderUsingKind {
 	readonly right: () => Expression | SequenceExpression;
 }
 
-export interface FormalParametersUSetAccessorSignature {
-	readonly $type: TSKindId.FormalParametersUSetAccessorSignature;
-	readonly _elements: FormalParametersElementsUSetAccessorSignature;
+export interface FormalParametersSetAccessorSignature {
+	readonly $type: TSKindId.FormalParametersSetAccessorSignature;
+	readonly _elements: FormalParametersElementsSetAccessorSignature;
 	readonly __slotNames__?: {
 		readonly _elements: 'elements';
 	};
@@ -9345,13 +9345,13 @@ export interface FormalParametersUSetAccessorSignature {
 		readonly elements: readonly Decorator[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.FormalParametersElementsUSetAccessorSignature>;
+		readonly elements: SlotHint<T.FormalParametersElementsSetAccessorSignature>;
 	};
-	readonly elements: () => FormalParametersElementsUSetAccessorSignature;
+	readonly elements: () => FormalParametersElementsSetAccessorSignature;
 }
 
-export interface FormalParametersElementsUSetAccessorSignature {
-	readonly $type: TSKindId.FormalParametersElementsUSetAccessorSignature;
+export interface FormalParametersElementsSetAccessorSignature {
+	readonly $type: TSKindId.FormalParametersElementsSetAccessorSignature;
 	readonly _item: SetterParameter;
 	readonly __slotNames__?: {
 		readonly _item: 'item';
@@ -9557,7 +9557,7 @@ export interface MethodDefinitionSetter {
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly _parameters: FormalParametersUSetAccessorSignature;
+	readonly _parameters: FormalParametersSetAccessorSignature;
 	readonly _body: StatementBlock;
 	readonly __slotNames__?: {
 		readonly _accessibility_modifier: 'accessibilityModifier';
@@ -9595,14 +9595,14 @@ export interface MethodDefinitionSetter {
 			| T.ComputedPropertyName
 			| T.PropertyIdentifier.Types
 		>;
-		readonly parameters: SlotHint<T.FormalParametersUSetAccessorSignature>;
+		readonly parameters: SlotHint<T.FormalParametersSetAccessorSignature>;
 		readonly body: SlotHint<T.StatementBlock>;
 	};
 	readonly accessibilityModifier: () => number | undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly parameters: () => FormalParametersUSetAccessorSignature;
+	readonly parameters: () => FormalParametersSetAccessorSignature;
 	readonly body: () => StatementBlock;
 }
 
@@ -9743,7 +9743,7 @@ export interface MethodSignatureSetter {
 	readonly _static: boolean;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly _parameters: FormalParametersUSetAccessorSignature;
+	readonly _parameters: FormalParametersSetAccessorSignature;
 	readonly __slotNames__?: {
 		readonly _accessibility_modifier: 'accessibilityModifier';
 		readonly _static: 'static';
@@ -9778,13 +9778,13 @@ export interface MethodSignatureSetter {
 			| T.ComputedPropertyName
 			| T.PropertyIdentifier.Types
 		>;
-		readonly parameters: SlotHint<T.FormalParametersUSetAccessorSignature>;
+		readonly parameters: SlotHint<T.FormalParametersSetAccessorSignature>;
 	};
 	readonly accessibilityModifier: () => number | undefined;
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly parameters: () => FormalParametersUSetAccessorSignature;
+	readonly parameters: () => FormalParametersSetAccessorSignature;
 }
 
 export interface AbstractMethodSignaturePlain {
@@ -9906,7 +9906,7 @@ export interface AbstractMethodSignatureSetter {
 	readonly _accessibility_modifier?: number;
 	readonly _override: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly _parameters: FormalParametersUSetAccessorSignature;
+	readonly _parameters: FormalParametersSetAccessorSignature;
 	readonly __slotNames__?: {
 		readonly _accessibility_modifier: 'accessibilityModifier';
 		readonly _override: 'override';
@@ -9938,12 +9938,12 @@ export interface AbstractMethodSignatureSetter {
 			| T.ComputedPropertyName
 			| T.PropertyIdentifier.Types
 		>;
-		readonly parameters: SlotHint<T.FormalParametersUSetAccessorSignature>;
+		readonly parameters: SlotHint<T.FormalParametersSetAccessorSignature>;
 	};
 	readonly accessibilityModifier: () => number | undefined;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly parameters: () => FormalParametersUSetAccessorSignature;
+	readonly parameters: () => FormalParametersSetAccessorSignature;
 }
 
 export interface PublicFieldDefinitionPlain {
@@ -10330,7 +10330,7 @@ export type EmptyMember = TSKindId.EmptyMember;
 export type OptionalChainMarker = TSKindId.OptionalChainMarker;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
-export type FormalParametersUGetAccessorSignature = TSKindId.FormalParametersUGetAccessorSignature;
+export type FormalParametersGetAccessorSignature = TSKindId.FormalParametersGetAccessorSignature;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
@@ -16822,33 +16822,33 @@ export interface ForHeaderUsingKindNs extends NodeNs<
 	readonly BuildArgs: ForHeaderUsingKind.BuildArgs;
 	readonly LooseArgs: ForHeaderUsingKind.LooseArgs;
 }
-export interface FormalParametersUSetAccessorSignatureNs extends NodeNs<
-	FormalParametersUSetAccessorSignature,
+export interface FormalParametersSetAccessorSignatureNs extends NodeNs<
+	FormalParametersSetAccessorSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FormalParametersUSetAccessorSignature.Bound,
+	FormalParametersSetAccessorSignature.Bound,
 	'elements',
-	TSKindId.FormalParametersUSetAccessorSignature,
-	FormalParametersUSetAccessorSignature.Parsed,
+	TSKindId.FormalParametersSetAccessorSignature,
+	FormalParametersSetAccessorSignature.Parsed,
 	never
 > {
-	readonly BuildArgs: FormalParametersUSetAccessorSignature.BuildArgs;
-	readonly LooseArgs: FormalParametersUSetAccessorSignature.LooseArgs;
+	readonly BuildArgs: FormalParametersSetAccessorSignature.BuildArgs;
+	readonly LooseArgs: FormalParametersSetAccessorSignature.LooseArgs;
 }
-export interface FormalParametersElementsUSetAccessorSignatureNs extends NodeNs<
-	FormalParametersElementsUSetAccessorSignature,
+export interface FormalParametersElementsSetAccessorSignatureNs extends NodeNs<
+	FormalParametersElementsSetAccessorSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FormalParametersElementsUSetAccessorSignature.Bound,
+	FormalParametersElementsSetAccessorSignature.Bound,
 	'item',
-	TSKindId.FormalParametersElementsUSetAccessorSignature,
-	FormalParametersElementsUSetAccessorSignature.Parsed,
+	TSKindId.FormalParametersElementsSetAccessorSignature,
+	FormalParametersElementsSetAccessorSignature.Parsed,
 	never
 > {
-	readonly BuildArgs: FormalParametersElementsUSetAccessorSignature.BuildArgs;
-	readonly LooseArgs: FormalParametersElementsUSetAccessorSignature.LooseArgs;
+	readonly BuildArgs: FormalParametersElementsSetAccessorSignature.BuildArgs;
+	readonly LooseArgs: FormalParametersElementsSetAccessorSignature.LooseArgs;
 }
 export interface SetterParameterNs extends NodeNs<
 	SetterParameter,
@@ -17180,10 +17180,10 @@ export interface MetaPropertyImportMetaNs extends KeywordNs<
 	'import.meta',
 	TSKindId.MetaPropertyImportMeta
 > {}
-export interface FormalParametersUGetAccessorSignatureNs extends KeywordNs<
-	TSKindId.FormalParametersUGetAccessorSignature,
+export interface FormalParametersGetAccessorSignatureNs extends KeywordNs<
+	TSKindId.FormalParametersGetAccessorSignature,
 	'()',
-	TSKindId.FormalParametersUGetAccessorSignature
+	TSKindId.FormalParametersGetAccessorSignature
 > {}
 export interface AutomaticSemicolonNs extends KeywordNs<
 	TSKindId.AutomaticSemicolon,
@@ -17445,8 +17445,8 @@ export interface NamespaceMap {
 	[TSKindId.ForHeaderVarKind]: ForHeaderVarKindNs;
 	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKindNs;
 	[TSKindId.ForHeaderUsingKind]: ForHeaderUsingKindNs;
-	[TSKindId.FormalParametersUSetAccessorSignature]: FormalParametersUSetAccessorSignatureNs;
-	[TSKindId.FormalParametersElementsUSetAccessorSignature]: FormalParametersElementsUSetAccessorSignatureNs;
+	[TSKindId.FormalParametersSetAccessorSignature]: FormalParametersSetAccessorSignatureNs;
+	[TSKindId.FormalParametersElementsSetAccessorSignature]: FormalParametersElementsSetAccessorSignatureNs;
 	[TSKindId.SetterParameter]: SetterParameterNs;
 	[TSKindId.MethodDefinitionPlain]: MethodDefinitionPlainNs;
 	[TSKindId.MethodDefinitionGetter]: MethodDefinitionGetterNs;
@@ -17484,7 +17484,7 @@ export interface NamespaceMap {
 	[TSKindId.OptionalChainMarker]: OptionalChainMarkerNs;
 	[TSKindId.MetaPropertyNewTarget]: MetaPropertyNewTargetNs;
 	[TSKindId.MetaPropertyImportMeta]: MetaPropertyImportMetaNs;
-	[TSKindId.FormalParametersUGetAccessorSignature]: FormalParametersUGetAccessorSignatureNs;
+	[TSKindId.FormalParametersGetAccessorSignature]: FormalParametersGetAccessorSignatureNs;
 	[TSKindId.AutomaticSemicolon]: AutomaticSemicolonNs;
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: FunctionSignatureAutomaticSemicolonNs;
 	[TSKindId.Tight]: TightNs;
@@ -17723,8 +17723,8 @@ export interface BoundByKindId {
 	[TSKindId.ForHeaderVarKind]: ForHeaderVarKind.Bound;
 	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKind.Bound;
 	[TSKindId.ForHeaderUsingKind]: ForHeaderUsingKind.Bound;
-	[TSKindId.FormalParametersUSetAccessorSignature]: FormalParametersUSetAccessorSignature.Bound;
-	[TSKindId.FormalParametersElementsUSetAccessorSignature]: FormalParametersElementsUSetAccessorSignature.Bound;
+	[TSKindId.FormalParametersSetAccessorSignature]: FormalParametersSetAccessorSignature.Bound;
+	[TSKindId.FormalParametersElementsSetAccessorSignature]: FormalParametersElementsSetAccessorSignature.Bound;
 	[TSKindId.SetterParameter]: SetterParameter.Bound;
 	[TSKindId.MethodDefinitionPlain]: MethodDefinitionPlain.Bound;
 	[TSKindId.MethodDefinitionGetter]: MethodDefinitionGetter.Bound;
@@ -17974,8 +17974,8 @@ export interface ParsedByKindId {
 	[TSKindId.ForHeaderVarKind]: ForHeaderVarKind.Parsed;
 	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKind.Parsed;
 	[TSKindId.ForHeaderUsingKind]: ForHeaderUsingKind.Parsed;
-	[TSKindId.FormalParametersUSetAccessorSignature]: FormalParametersUSetAccessorSignature.Parsed;
-	[TSKindId.FormalParametersElementsUSetAccessorSignature]: FormalParametersElementsUSetAccessorSignature.Parsed;
+	[TSKindId.FormalParametersSetAccessorSignature]: FormalParametersSetAccessorSignature.Parsed;
+	[TSKindId.FormalParametersElementsSetAccessorSignature]: FormalParametersElementsSetAccessorSignature.Parsed;
 	[TSKindId.SetterParameter]: SetterParameter.Parsed;
 	[TSKindId.MethodDefinitionPlain]: MethodDefinitionPlain.Parsed;
 	[TSKindId.MethodDefinitionGetter]: MethodDefinitionGetter.Parsed;
@@ -18029,7 +18029,7 @@ export type FixedTextKindId =
 	| TSKindId.OptionalChainMarker
 	| TSKindId.MetaPropertyNewTarget
 	| TSKindId.MetaPropertyImportMeta
-	| TSKindId.FormalParametersUGetAccessorSignature
+	| TSKindId.FormalParametersGetAccessorSignature
 	| TSKindId.AutomaticSemicolon
 	| TSKindId.FunctionSignatureAutomaticSemicolon
 	| TSKindId.Space
@@ -18399,8 +18399,8 @@ export interface TypeKeyOf {
 	[TSKindId.ForHeaderVarKind]: 'forHeaderVarKind';
 	[TSKindId.ForHeaderLetConstKind]: 'forHeaderLetConstKind';
 	[TSKindId.ForHeaderUsingKind]: 'forHeaderUsingKind';
-	[TSKindId.FormalParametersUSetAccessorSignature]: 'formalParametersSetAccessorSignature';
-	[TSKindId.FormalParametersElementsUSetAccessorSignature]: 'formalParametersElementsUSetAccessorSignature';
+	[TSKindId.FormalParametersSetAccessorSignature]: 'formalParametersSetAccessorSignature';
+	[TSKindId.FormalParametersElementsSetAccessorSignature]: 'formalParametersElementsSetAccessorSignature';
 	[TSKindId.SetterParameter]: 'setterParameter';
 	[TSKindId.MethodDefinitionPlain]: 'methodDefinitionPlain';
 	[TSKindId.MethodDefinitionGetter]: 'methodDefinitionGetter';
@@ -18438,7 +18438,7 @@ export interface TypeKeyOf {
 	[TSKindId.OptionalChainMarker]: 'optionalChainMarker';
 	[TSKindId.MetaPropertyNewTarget]: 'metaPropertyNewTarget';
 	[TSKindId.MetaPropertyImportMeta]: 'metaPropertyImportMeta';
-	[TSKindId.FormalParametersUGetAccessorSignature]: 'formalParametersGetAccessorSignature';
+	[TSKindId.FormalParametersGetAccessorSignature]: 'formalParametersGetAccessorSignature';
 	[TSKindId.AutomaticSemicolon]: 'automaticSemicolon';
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: 'functionSignatureAutomaticSemicolon';
 	[TSKindId.Tight]: 'tight';
@@ -24810,16 +24810,16 @@ export namespace ForHeaderUsingKind {
 	export type LooseArgs = [config: T.ForHeaderUsingKind.Loose];
 	export type Kind = TSKindId.ForHeaderUsingKind;
 }
-export namespace FormalParametersUSetAccessorSignature {
-	export type Config = ConfigFor<TSKindId.FormalParametersUSetAccessorSignature>;
+export namespace FormalParametersSetAccessorSignature {
+	export type Config = ConfigFor<TSKindId.FormalParametersSetAccessorSignature>;
 	export interface Bound
-		extends BoundOf<T.FormalParametersUSetAccessorSignature, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.FormalParametersUSetAccessorSignature['$type'];
+		extends BoundOf<T.FormalParametersSetAccessorSignature, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.FormalParametersSetAccessorSignature['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.FormalParametersUSetAccessorSignature, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.FormalParametersUSetAccessorSignature['$type'];
+		extends ParsedOf<T.FormalParametersSetAccessorSignature, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.FormalParametersSetAccessorSignature['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -24828,30 +24828,30 @@ export namespace FormalParametersUSetAccessorSignature {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.FormalParametersUSetAccessorSignature['$type']>;
+		readonly $snapshot: () => Snapshot<T.FormalParametersSetAccessorSignature['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.FormalParametersUSetAccessorSignature>;
-	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersUSetAccessorSignature>;
+	export type Loose = LooseFor<TSKindId.FormalParametersSetAccessorSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersSetAccessorSignature>;
 	export type BuildArgs =
-		| [value: Admit<T.FormalParametersElementsUSetAccessorSignature>]
+		| [value: Admit<T.FormalParametersElementsSetAccessorSignature>]
 		| [config: T.SetterParameter.Config];
-	export type LooseArgs = [value: T.FormalParametersUSetAccessorSignature.Loose];
-	export type Kind = TSKindId.FormalParametersUSetAccessorSignature;
+	export type LooseArgs = [value: T.FormalParametersSetAccessorSignature.Loose];
+	export type Kind = TSKindId.FormalParametersSetAccessorSignature;
 }
-export namespace FormalParametersElementsUSetAccessorSignature {
-	export type Config = ConfigFor<TSKindId.FormalParametersElementsUSetAccessorSignature>;
+export namespace FormalParametersElementsSetAccessorSignature {
+	export type Config = ConfigFor<TSKindId.FormalParametersElementsSetAccessorSignature>;
 	export interface Bound
-		extends BoundOf<T.FormalParametersElementsUSetAccessorSignature, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.FormalParametersElementsUSetAccessorSignature['$type'];
+		extends BoundOf<T.FormalParametersElementsSetAccessorSignature, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.FormalParametersElementsSetAccessorSignature['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
 		extends
-			ParsedOf<T.FormalParametersElementsUSetAccessorSignature, ParsedByKindId>,
+			ParsedOf<T.FormalParametersElementsSetAccessorSignature, ParsedByKindId>,
 			NodeMethodsOf,
 			HoldsSource,
 			HoldsTree {
-		readonly $type: T.FormalParametersElementsUSetAccessorSignature['$type'];
+		readonly $type: T.FormalParametersElementsSetAccessorSignature['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -24860,13 +24860,13 @@ export namespace FormalParametersElementsUSetAccessorSignature {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.FormalParametersElementsUSetAccessorSignature['$type']>;
+		readonly $snapshot: () => Snapshot<T.FormalParametersElementsSetAccessorSignature['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.FormalParametersElementsUSetAccessorSignature>;
-	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElementsUSetAccessorSignature>;
+	export type Loose = LooseFor<TSKindId.FormalParametersElementsSetAccessorSignature>;
+	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElementsSetAccessorSignature>;
 	export type BuildArgs = [value: Admit<T.SetterParameter>] | [config: T.SetterParameter.Config];
-	export type LooseArgs = [value: T.FormalParametersElementsUSetAccessorSignature.Loose];
-	export type Kind = TSKindId.FormalParametersElementsUSetAccessorSignature;
+	export type LooseArgs = [value: T.FormalParametersElementsSetAccessorSignature.Loose];
+	export type Kind = TSKindId.FormalParametersElementsSetAccessorSignature;
 }
 export namespace SetterParameter {
 	export type Config = ConfigFor<TSKindId.SetterParameter>;
@@ -25574,15 +25574,15 @@ export namespace MetaPropertyImportMeta {
 	export type LooseArgs = MetaPropertyImportMetaNs['LooseArgs'];
 	export type Kind = TSKindId.MetaPropertyImportMeta;
 }
-export namespace FormalParametersUGetAccessorSignature {
-	export type Config = FormalParametersUGetAccessorSignatureNs['Config'];
-	export type Bound = FormalParametersUGetAccessorSignatureNs['Bound'];
-	export type Parsed = FormalParametersUGetAccessorSignatureNs['Bound'];
-	export type Loose = FormalParametersUGetAccessorSignatureNs['Loose'];
-	export type LooseConfig = FormalParametersUGetAccessorSignatureNs['LooseConfig'];
-	export type BuildArgs = FormalParametersUGetAccessorSignatureNs['BuildArgs'];
-	export type LooseArgs = FormalParametersUGetAccessorSignatureNs['LooseArgs'];
-	export type Kind = TSKindId.FormalParametersUGetAccessorSignature;
+export namespace FormalParametersGetAccessorSignature {
+	export type Config = FormalParametersGetAccessorSignatureNs['Config'];
+	export type Bound = FormalParametersGetAccessorSignatureNs['Bound'];
+	export type Parsed = FormalParametersGetAccessorSignatureNs['Bound'];
+	export type Loose = FormalParametersGetAccessorSignatureNs['Loose'];
+	export type LooseConfig = FormalParametersGetAccessorSignatureNs['LooseConfig'];
+	export type BuildArgs = FormalParametersGetAccessorSignatureNs['BuildArgs'];
+	export type LooseArgs = FormalParametersGetAccessorSignatureNs['LooseArgs'];
+	export type Kind = TSKindId.FormalParametersGetAccessorSignature;
 }
 export namespace AutomaticSemicolon {
 	export type Config = AutomaticSemicolonNs['Config'];

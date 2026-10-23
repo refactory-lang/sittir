@@ -141,7 +141,7 @@ export interface CopyRequest {
 
 export function copyNameOf(source: string, part: string, context: string): string {
 	const segments = part === '.' ? [] : part.split('/').map((segment) => (segment.endsWith(':') ? segment.slice(0, -1) : segment));
-	return `_${[undisplayedKindAddress(source), ...segments, context].join('_')}`;
+	return `_${[undisplayedKindAddress(source), ...segments, undisplayedKindAddress(context)].join('_')}`;
 }
 
 export function copySourceOf(name: string, ctx: Pick<VerbCtx, 'effects'>): string | undefined {

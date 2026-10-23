@@ -4862,7 +4862,7 @@ const table: PortableTable = {
 		[TSKindId.OptionalChainMarker]: '?.',
 		[TSKindId.MetaPropertyNewTarget]: 'new.target',
 		[TSKindId.MetaPropertyImportMeta]: 'import.meta',
-		[TSKindId.FormalParametersUGetAccessorSignature]: '()',
+		[TSKindId.FormalParametersGetAccessorSignature]: '()',
 		[TSKindId.AutomaticSemicolon]: '\n',
 		[TSKindId.FunctionSignatureAutomaticSemicolon]: '\n',
 		[TSKindId.Space]: ' ',
@@ -6557,7 +6557,7 @@ declare module './types.js' {
 	interface ForHeaderUsingKind {
 		readonly __slotFlags__?: { readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'privateName' };
 	}
-	interface FormalParametersElementsUSetAccessorSignature {
+	interface FormalParametersElementsSetAccessorSignature {
 		readonly __slotFlags__?: { readonly item: 'override' | 'readonly' };
 	}
 	interface PublicFieldDefinitionPlain {

@@ -13710,7 +13710,7 @@
     },
     "_get_accessor_signature": {
       "type": "SYMBOL",
-      "name": "_call_signature__get_accessor_signature"
+      "name": "_call_signature_get_accessor_signature"
     },
     "_set_accessor_signature": {
       "type": "FIELD",
@@ -13719,7 +13719,7 @@
         "type": "ALIAS",
         "content": {
           "type": "SYMBOL",
-          "name": "_formal_parameters__set_accessor_signature"
+          "name": "_formal_parameters_set_accessor_signature"
         },
         "named": true,
         "value": "formal_parameters"
@@ -16992,7 +16992,7 @@
         "hoisted": true
       }
     },
-    "_call_signature__get_accessor_signature": {
+    "_call_signature_get_accessor_signature": {
       "type": "SEQ",
       "members": [
         {
@@ -17005,7 +17005,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_formal_parameters__get_accessor_signature"
+              "name": "_formal_parameters_get_accessor_signature"
             },
             "named": true,
             "value": "formal_parameters"
@@ -17045,7 +17045,7 @@
         }
       ]
     },
-    "_formal_parameters__get_accessor_signature": {
+    "_formal_parameters_get_accessor_signature": {
       "type": "SEQ",
       "members": [
         {
@@ -17061,7 +17061,7 @@
         }
       ]
     },
-    "_formal_parameters__set_accessor_signature": {
+    "_formal_parameters_set_accessor_signature": {
       "type": "SEQ",
       "members": [
         {
@@ -17075,7 +17075,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_formal_parameters_elements__set_accessor_signature"
+              "name": "_formal_parameters_elements_set_accessor_signature"
             },
             "named": true,
             "value": "formal_parameters_elements"
@@ -17090,7 +17090,7 @@
         }
       ]
     },
-    "_formal_parameters_elements__set_accessor_signature": {
+    "_formal_parameters_elements_set_accessor_signature": {
       "type": "SEQ",
       "members": [
         {
@@ -17100,7 +17100,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_required_parameter__set_accessor_signature"
+              "name": "_required_parameter_set_accessor_signature"
             },
             "named": true,
             "value": "setter_parameter"
@@ -17120,12 +17120,12 @@
         "hoisted": true
       }
     },
-    "_required_parameter__set_accessor_signature": {
+    "_required_parameter_set_accessor_signature": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_parameter_name__set_accessor_signature"
+          "name": "_parameter_name_set_accessor_signature"
         },
         {
           "type": "FIELD",
@@ -17148,7 +17148,7 @@
         }
       ]
     },
-    "_parameter_name__set_accessor_signature": {
+    "_parameter_name_set_accessor_signature": {
       "type": "SEQ",
       "members": [
         {
@@ -17220,7 +17220,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "_pattern_0__set_accessor_signature"
+                "name": "_pattern_0_set_accessor_signature"
               },
               {
                 "type": "SYMBOL",
@@ -17231,7 +17231,7 @@
         }
       ]
     },
-    "_pattern_0__set_accessor_signature": {
+    "_pattern_0_set_accessor_signature": {
       "type": "ALIAS",
       "content": {
         "type": "SYMBOL",
@@ -19275,7 +19275,7 @@
     ],
     [
       "primary_expression",
-      "_parameter_name__set_accessor_signature"
+      "_parameter_name_set_accessor_signature"
     ],
     [
       "primary_expression",

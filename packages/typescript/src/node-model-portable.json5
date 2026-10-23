@@ -1,19 +1,19 @@
 {
   "grammar": "typescript",
   "kinds": {
-    "_formal_parameters__set_accessor_signature": {
+    "_formal_parameters_elements_set_accessor_signature": {
       "container": {
         "kinds": [
-          "_formal_parameters_elements__set_accessor_signature"
+          "setter_parameter"
         ],
         "terminals": [],
         "list": false
       }
     },
-    "_formal_parameters_elements__set_accessor_signature": {
+    "_formal_parameters_set_accessor_signature": {
       "container": {
         "kinds": [
-          "setter_parameter"
+          "_formal_parameters_elements_set_accessor_signature"
         ],
         "terminals": [],
         "list": false

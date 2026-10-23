@@ -10117,52 +10117,52 @@ export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.
 	return stampBuilt(node) as unknown as T.ForHeaderUsingKind.Bound;
 }
 
-export const buildFormalParametersUGetAccessorSignature: TSKindId.FormalParametersUGetAccessorSignature =
-	TSKindId.FormalParametersUGetAccessorSignature;
+export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
+	TSKindId.FormalParametersGetAccessorSignature;
 
-export function buildFormalParametersUSetAccessorSignature<
-	V extends Admit<T.FormalParametersElementsUSetAccessorSignature>
->(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildFormalParametersUSetAccessorSignature>;
-export function buildFormalParametersUSetAccessorSignature<
+export function buildFormalParametersSetAccessorSignature<
+	V extends Admit<T.FormalParametersElementsSetAccessorSignature>
+>(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildFormalParametersSetAccessorSignature>;
+export function buildFormalParametersSetAccessorSignature<
 	DecoratorsSlot extends T.SetterParameter.Config['decorators'],
 	PatternSlot extends T.SetterParameter.Config['pattern'],
 	TypeSlot extends T.SetterParameter.Config['type']
 >(
 	config: RefusingConfig<T.SetterParameter.Config, { decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }>
-): ReturnType<typeof _buildFormalParametersUSetAccessorSignature>;
-export function buildFormalParametersUSetAccessorSignature(...args: unknown[]) {
+): ReturnType<typeof _buildFormalParametersSetAccessorSignature>;
+export function buildFormalParametersSetAccessorSignature(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildFormalParametersUSetAccessorSignature(
-			args[0] as Parameters<typeof _buildFormalParametersUSetAccessorSignature>[0]
+		return _buildFormalParametersSetAccessorSignature(
+			args[0] as Parameters<typeof _buildFormalParametersSetAccessorSignature>[0]
 		);
 	}
 	const prebuilt =
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsUSetAccessorSignature as const);
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsSetAccessorSignature as const);
 	return prebuilt
-		? _buildFormalParametersUSetAccessorSignature(
-				args[0] as Parameters<typeof _buildFormalParametersUSetAccessorSignature>[0]
+		? _buildFormalParametersSetAccessorSignature(
+				args[0] as Parameters<typeof _buildFormalParametersSetAccessorSignature>[0]
 			)
-		: _buildFormalParametersUSetAccessorSignature(
-				(buildFormalParametersElementsUSetAccessorSignature as (...a: unknown[]) => unknown)(...args) as Parameters<
-					typeof _buildFormalParametersUSetAccessorSignature
+		: _buildFormalParametersSetAccessorSignature(
+				(buildFormalParametersElementsSetAccessorSignature as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildFormalParametersSetAccessorSignature
 				>[0]
 			);
 }
-function _buildFormalParametersUSetAccessorSignature(
-	value: Admit<T.FormalParametersElementsUSetAccessorSignature>
-): T.FormalParametersUSetAccessorSignature.Bound {
+function _buildFormalParametersSetAccessorSignature(
+	value: Admit<T.FormalParametersElementsSetAccessorSignature>
+): T.FormalParametersSetAccessorSignature.Bound {
 	const _elements = value;
 	const handle = currentHandle();
 	const node = {
-		$type: TSKindId.FormalParametersUSetAccessorSignature as const,
+		$type: TSKindId.FormalParametersSetAccessorSignature as const,
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (value: Admit<T.FormalParametersElementsUSetAccessorSignature>) =>
-				rebuilt(node, handle, () => _buildFormalParametersUSetAccessorSignature(value))
+			elements: (value: Admit<T.FormalParametersElementsSetAccessorSignature>) =>
+				rebuilt(node, handle, () => _buildFormalParametersSetAccessorSignature(value))
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
 		$render: () => renderText(handle, node),
@@ -10174,23 +10174,23 @@ function _buildFormalParametersUSetAccessorSignature(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return stampBuilt(node) as unknown as T.FormalParametersUSetAccessorSignature.Bound;
+	return stampBuilt(node) as unknown as T.FormalParametersSetAccessorSignature.Bound;
 }
 
-export function buildFormalParametersElementsUSetAccessorSignature<V extends Admit<T.SetterParameter>>(
+export function buildFormalParametersElementsSetAccessorSignature<V extends Admit<T.SetterParameter>>(
 	value: V & RefuseUndeclared<V>
-): ReturnType<typeof _buildFormalParametersElementsUSetAccessorSignature>;
-export function buildFormalParametersElementsUSetAccessorSignature<
+): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
+export function buildFormalParametersElementsSetAccessorSignature<
 	DecoratorsSlot extends T.SetterParameter.Config['decorators'],
 	PatternSlot extends T.SetterParameter.Config['pattern'],
 	TypeSlot extends T.SetterParameter.Config['type']
 >(
 	config: RefusingConfig<T.SetterParameter.Config, { decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }>
-): ReturnType<typeof _buildFormalParametersElementsUSetAccessorSignature>;
-export function buildFormalParametersElementsUSetAccessorSignature(...args: unknown[]) {
+): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
+export function buildFormalParametersElementsSetAccessorSignature(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildFormalParametersElementsUSetAccessorSignature(
-			args[0] as Parameters<typeof _buildFormalParametersElementsUSetAccessorSignature>[0]
+		return _buildFormalParametersElementsSetAccessorSignature(
+			args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0]
 		);
 	}
 	const prebuilt =
@@ -10199,27 +10199,27 @@ export function buildFormalParametersElementsUSetAccessorSignature(...args: unkn
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SetterParameter as const);
 	return prebuilt
-		? _buildFormalParametersElementsUSetAccessorSignature(
-				args[0] as Parameters<typeof _buildFormalParametersElementsUSetAccessorSignature>[0]
+		? _buildFormalParametersElementsSetAccessorSignature(
+				args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0]
 			)
-		: _buildFormalParametersElementsUSetAccessorSignature(
+		: _buildFormalParametersElementsSetAccessorSignature(
 				(buildSetterParameter as (...a: unknown[]) => unknown)(...args) as Parameters<
-					typeof _buildFormalParametersElementsUSetAccessorSignature
+					typeof _buildFormalParametersElementsSetAccessorSignature
 				>[0]
 			);
 }
-function _buildFormalParametersElementsUSetAccessorSignature(
+function _buildFormalParametersElementsSetAccessorSignature(
 	value: Admit<T.SetterParameter>
-): T.FormalParametersElementsUSetAccessorSignature.Bound {
+): T.FormalParametersElementsSetAccessorSignature.Bound {
 	const _item = value;
 	const handle = currentHandle();
 	const node = {
-		$type: TSKindId.FormalParametersElementsUSetAccessorSignature as const,
+		$type: TSKindId.FormalParametersElementsSetAccessorSignature as const,
 		$named: true as const,
 		_item,
 		$with: {
 			item: (value: Admit<T.SetterParameter>) =>
-				rebuilt(node, handle, () => _buildFormalParametersElementsUSetAccessorSignature(value))
+				rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value))
 		},
 		item: () => hydrateStoredSlot(node, '_item'),
 		$render: () => renderText(handle, node),
@@ -10231,7 +10231,7 @@ function _buildFormalParametersElementsUSetAccessorSignature(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	return stampBuilt(node) as unknown as T.FormalParametersElementsUSetAccessorSignature.Bound;
+	return stampBuilt(node) as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
 }
 
 export function buildSetterParameter<
@@ -10530,7 +10530,7 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 					| T.PropertyIdentifier.Types
 				>
 			) => rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, name: value })),
-			parameters: (value: Admit<T.FormalParametersUSetAccessorSignature>) =>
+			parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
 				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, parameters: value })),
 			body: (value: Admit<T.StatementBlock>) =>
 				rebuilt(node, handle, () => buildMethodDefinitionSetter({ ...config, body: value }))
@@ -10766,7 +10766,7 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 					| T.PropertyIdentifier.Types
 				>
 			) => rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, name: value })),
-			parameters: (value: Admit<T.FormalParametersUSetAccessorSignature>) =>
+			parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
 				rebuilt(node, handle, () => buildMethodSignatureSetter({ ...config, parameters: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
@@ -10999,7 +10999,7 @@ export function buildAbstractMethodSignatureSetter(
 					| T.PropertyIdentifier.Types
 				>
 			) => rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, name: value })),
-			parameters: (value: Admit<T.FormalParametersUSetAccessorSignature>) =>
+			parameters: (value: Admit<T.FormalParametersSetAccessorSignature>) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignatureSetter({ ...config, parameters: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
@@ -11951,9 +11951,9 @@ export type FluentKindMap = {
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
 	for_header_using_kind: T.ForHeaderUsingKind.Bound;
-	_formal_parameters__get_accessor_signature: T.FormalParametersUGetAccessorSignature;
-	_formal_parameters__set_accessor_signature: T.FormalParametersUSetAccessorSignature.Bound;
-	_formal_parameters_elements__set_accessor_signature: T.FormalParametersElementsUSetAccessorSignature.Bound;
+	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
+	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
+	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
 	setter_parameter: T.SetterParameter.Bound;
 	method_definition_plain: T.MethodDefinitionPlain.Bound;
 	method_definition_getter: T.MethodDefinitionGetter.Bound;
@@ -12229,9 +12229,9 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
-	_formal_parameters__get_accessor_signature: buildFormalParametersUGetAccessorSignature,
-	_formal_parameters__set_accessor_signature: buildFormalParametersUSetAccessorSignature,
-	_formal_parameters_elements__set_accessor_signature: buildFormalParametersElementsUSetAccessorSignature,
+	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
+	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
+	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
 	setter_parameter: buildSetterParameter,
 	method_definition_plain: buildMethodDefinitionPlain,
 	method_definition_getter: buildMethodDefinitionGetter,

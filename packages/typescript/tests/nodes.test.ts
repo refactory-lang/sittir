@@ -4731,11 +4731,11 @@ describe('class_body_member_method sub-factories', () => {
 		const node = ir.classBodyMemberMethod.setter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -4811,11 +4811,11 @@ describe('class_body_member_method_sig sub-factories', () => {
 			terminator: '\n',
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -6627,17 +6627,17 @@ describe('for_header_using_kind', () => {
 	});
 });
 
-describe('_formal_parameters__get_accessor_signature', () => {
+describe('_formal_parameters_get_accessor_signature', () => {
 	it('is the kind id', () => {
-		expect(ir.formalParametersGetAccessorSignature).toBe(TSKindId.FormalParametersUGetAccessorSignature);
+		expect(ir.formalParametersGetAccessorSignature).toBe(TSKindId.FormalParametersGetAccessorSignature);
 	});
 });
 
-describe('_formal_parameters__set_accessor_signature', () => {
+describe('_formal_parameters_set_accessor_signature', () => {
 	it('factory produces correct type', () => {
 		const node = ir.formalParametersSetAccessorSignature(
 			stampBuilt({
-				$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+				$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_item: stampBuilt({
@@ -6649,13 +6649,13 @@ describe('_formal_parameters__set_accessor_signature', () => {
 				}) as any
 			}) as any
 		);
-		expect(node.$type).toBe(TSKindId.FormalParametersUSetAccessorSignature);
+		expect(node.$type).toBe(TSKindId.FormalParametersSetAccessorSignature);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.formalParametersSetAccessorSignature(
 			stampBuilt({
-				$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+				$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_item: stampBuilt({
@@ -6735,11 +6735,11 @@ describe('method_definition_setter', () => {
 		const node = ir.methodDefinitionSetter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -6760,11 +6760,11 @@ describe('method_definition_setter', () => {
 		const node = ir.methodDefinitionSetter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -6824,11 +6824,11 @@ describe('method_signature_setter', () => {
 		const node = ir.methodSignatureSetter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -6848,11 +6848,11 @@ describe('method_signature_setter', () => {
 		const node = ir.methodSignatureSetter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -6911,11 +6911,11 @@ describe('abstract_method_signature_setter', () => {
 		const node = ir.abstractMethodSignatureSetter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({
@@ -6935,11 +6935,11 @@ describe('abstract_method_signature_setter', () => {
 		const node = ir.abstractMethodSignatureSetter({
 			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
 			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersUSetAccessorSignature,
+				$type: TSKindId.FormalParametersSetAccessorSignature,
 				$text: 'test',
 				$named: true,
 				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsUSetAccessorSignature,
+					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 					$text: 'test',
 					$named: true,
 					_item: stampBuilt({

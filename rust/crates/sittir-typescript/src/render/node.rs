@@ -466,10 +466,10 @@ pub enum AnyNode {
     ForHeaderLetConstKind(Box<ForHeaderLetConstKindNode>),
     #[kind(kind::FOR_HEADER_USING_KIND)]
     ForHeaderUsingKind(Box<ForHeaderUsingKindNode>),
-    #[kind(kind::_FORMAL_PARAMETERS_U_SET_ACCESSOR_SIGNATURE)]
-    FormalParametersUSetAccessorSignature(FormalParametersUSetAccessorSignatureNode),
-    #[kind(kind::_FORMAL_PARAMETERS_ELEMENTS_U_SET_ACCESSOR_SIGNATURE)]
-    FormalParametersElementsUSetAccessorSignature(FormalParametersElementsUSetAccessorSignatureNode),
+    #[kind(kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE)]
+    FormalParametersSetAccessorSignature(FormalParametersSetAccessorSignatureNode),
+    #[kind(kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE)]
+    FormalParametersElementsSetAccessorSignature(FormalParametersElementsSetAccessorSignatureNode),
     #[kind(kind::_SETTER_PARAMETER)]
     SetterParameter(SetterParameterNode),
     #[kind(kind::METHOD_DEFINITION_PLAIN)]
@@ -565,8 +565,8 @@ pub enum AnyNode {
     #[kind(kind::META_PROPERTY_IMPORT_META)]
     #[node(edged)]
     MetaPropertyImportMeta(::sittir_core::options::Edges),
-    #[kind(kind::_FORMAL_PARAMETERS_U_GET_ACCESSOR_SIGNATURE)]
-    FormalParametersUGetAccessorSignature,
+    #[kind(kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE)]
+    FormalParametersGetAccessorSignature,
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
     #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
@@ -1108,8 +1108,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ForHeaderVarKind(t) => t.prepare(ctx),
             AnyNode::ForHeaderLetConstKind(t) => t.prepare(ctx),
             AnyNode::ForHeaderUsingKind(t) => t.prepare(ctx),
-            AnyNode::FormalParametersUSetAccessorSignature(t) => t.prepare(ctx),
-            AnyNode::FormalParametersElementsUSetAccessorSignature(t) => t.prepare(ctx),
+            AnyNode::FormalParametersSetAccessorSignature(t) => t.prepare(ctx),
+            AnyNode::FormalParametersElementsSetAccessorSignature(t) => t.prepare(ctx),
             AnyNode::SetterParameter(t) => t.prepare(ctx),
             AnyNode::MethodDefinitionPlain(t) => t.prepare(ctx),
             AnyNode::MethodDefinitionGetter(t) => t.prepare(ctx),
@@ -1152,7 +1152,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::OptionalChainMarker => Ok(()),
             AnyNode::MetaPropertyNewTarget(_) => Ok(()),
             AnyNode::MetaPropertyImportMeta(_) => Ok(()),
-            AnyNode::FormalParametersUGetAccessorSignature => Ok(()),
+            AnyNode::FormalParametersGetAccessorSignature => Ok(()),
             AnyNode::AutomaticSemicolon => Ok(()),
             AnyNode::FunctionSignatureAutomaticSemicolon => Ok(()),
             AnyNode::Tight => Ok(()),
@@ -1536,8 +1536,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ForHeaderVarKind(t) => t.gap_edges(),
             AnyNode::ForHeaderLetConstKind(t) => t.gap_edges(),
             AnyNode::ForHeaderUsingKind(t) => t.gap_edges(),
-            AnyNode::FormalParametersUSetAccessorSignature(t) => t.gap_edges(),
-            AnyNode::FormalParametersElementsUSetAccessorSignature(t) => t.gap_edges(),
+            AnyNode::FormalParametersSetAccessorSignature(t) => t.gap_edges(),
+            AnyNode::FormalParametersElementsSetAccessorSignature(t) => t.gap_edges(),
             AnyNode::SetterParameter(t) => t.gap_edges(),
             AnyNode::MethodDefinitionPlain(t) => t.gap_edges(),
             AnyNode::MethodDefinitionGetter(t) => t.gap_edges(),
@@ -1580,7 +1580,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::OptionalChainMarker => None,
             AnyNode::MetaPropertyNewTarget(edges) => Some(edges),
             AnyNode::MetaPropertyImportMeta(edges) => Some(edges),
-            AnyNode::FormalParametersUGetAccessorSignature => None,
+            AnyNode::FormalParametersGetAccessorSignature => None,
             AnyNode::AutomaticSemicolon => None,
             AnyNode::FunctionSignatureAutomaticSemicolon => None,
             AnyNode::Tight => None,
@@ -1964,8 +1964,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ForHeaderVarKind(t) => t.snapshot_edge(),
             AnyNode::ForHeaderLetConstKind(t) => t.snapshot_edge(),
             AnyNode::ForHeaderUsingKind(t) => t.snapshot_edge(),
-            AnyNode::FormalParametersUSetAccessorSignature(t) => t.snapshot_edge(),
-            AnyNode::FormalParametersElementsUSetAccessorSignature(t) => t.snapshot_edge(),
+            AnyNode::FormalParametersSetAccessorSignature(t) => t.snapshot_edge(),
+            AnyNode::FormalParametersElementsSetAccessorSignature(t) => t.snapshot_edge(),
             AnyNode::SetterParameter(t) => t.snapshot_edge(),
             AnyNode::MethodDefinitionPlain(t) => t.snapshot_edge(),
             AnyNode::MethodDefinitionGetter(t) => t.snapshot_edge(),
@@ -2008,7 +2008,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::OptionalChainMarker => None,
             AnyNode::MetaPropertyNewTarget(_) => None,
             AnyNode::MetaPropertyImportMeta(_) => None,
-            AnyNode::FormalParametersUGetAccessorSignature => None,
+            AnyNode::FormalParametersGetAccessorSignature => None,
             AnyNode::AutomaticSemicolon => None,
             AnyNode::FunctionSignatureAutomaticSemicolon => None,
             AnyNode::Tight => None,
@@ -2392,8 +2392,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ForHeaderVarKind(t) => t.source_separator(ctx),
             AnyNode::ForHeaderLetConstKind(t) => t.source_separator(ctx),
             AnyNode::ForHeaderUsingKind(t) => t.source_separator(ctx),
-            AnyNode::FormalParametersUSetAccessorSignature(t) => t.source_separator(ctx),
-            AnyNode::FormalParametersElementsUSetAccessorSignature(t) => t.source_separator(ctx),
+            AnyNode::FormalParametersSetAccessorSignature(t) => t.source_separator(ctx),
+            AnyNode::FormalParametersElementsSetAccessorSignature(t) => t.source_separator(ctx),
             AnyNode::SetterParameter(t) => t.source_separator(ctx),
             AnyNode::MethodDefinitionPlain(t) => t.source_separator(ctx),
             AnyNode::MethodDefinitionGetter(t) => t.source_separator(ctx),
@@ -2436,7 +2436,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::OptionalChainMarker => None,
             AnyNode::MetaPropertyNewTarget(_) => None,
             AnyNode::MetaPropertyImportMeta(_) => None,
-            AnyNode::FormalParametersUGetAccessorSignature => None,
+            AnyNode::FormalParametersGetAccessorSignature => None,
             AnyNode::AutomaticSemicolon => None,
             AnyNode::FunctionSignatureAutomaticSemicolon => None,
             AnyNode::Tight => None,
@@ -27234,7 +27234,7 @@ impl ::sittir_core::prepare::Prepare for CatchClauseGroupNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_GET_ACCESSOR_SIGNATURE, layout = [kind::_FORMAL_PARAMETERS_U_GET_ACCESSOR_SIGNATURE], words = 7)]
+#[node(kind = kind::_GET_ACCESSOR_SIGNATURE, layout = [kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 7)]
 pub struct GetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -30393,18 +30393,18 @@ impl ::sittir_core::prepare::Prepare for ForHeaderUsingKindNode {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
-pub enum FormalParametersUGetAccessorSignatureNode {
-    #[kind(kind::_FORMAL_PARAMETERS_U_GET_ACCESSOR_SIGNATURE)]
-    FormalParametersUGetAccessorSignature,
+pub enum FormalParametersGetAccessorSignatureNode {
+    #[kind(kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE)]
+    FormalParametersGetAccessorSignature,
 }
 
-impl ::sittir_core::view::KindOf for FormalParametersUGetAccessorSignatureNode {
+impl ::sittir_core::view::KindOf for FormalParametersGetAccessorSignatureNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(445)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for FormalParametersUGetAccessorSignatureNode {
+impl ::sittir_core::prepare::Prepare for FormalParametersGetAccessorSignatureNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -30413,41 +30413,41 @@ impl ::sittir_core::prepare::Prepare for FormalParametersUGetAccessorSignatureNo
     }
 }
 
-impl ::sittir_core::render::Render for FormalParametersUGetAccessorSignatureNode {
+impl ::sittir_core::render::Render for FormalParametersGetAccessorSignatureNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_formal_parameters_uget_accessor_signature(w)
+        render_formal_parameters_get_accessor_signature(w)
     }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_U_SET_ACCESSOR_SIGNATURE, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
-pub struct FormalParametersUSetAccessorSignatureNode {
+#[node(kind = kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
+pub struct FormalParametersSetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS, word = 2, width = 5)]
-    pub elements: ::sittir_core::SlotValue<FormalParametersElementsUSetAccessorSignatureNode>,
+    pub elements: ::sittir_core::SlotValue<FormalParametersElementsSetAccessorSignatureNode>,
 }
 
-impl ::sittir_core::view::KindOf for FormalParametersUSetAccessorSignatureNode {
+impl ::sittir_core::view::KindOf for FormalParametersSetAccessorSignatureNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(446)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for FormalParametersUSetAccessorSignatureNode {
+impl ::sittir_core::options::Edged for FormalParametersSetAccessorSignatureNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(446) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for FormalParametersUSetAccessorSignatureNode {
+impl ::sittir_core::render::Render for FormalParametersSetAccessorSignatureNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(446)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_formal_parameters_uset_accessor_signature(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(446)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_formal_parameters_set_accessor_signature(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for FormalParametersUSetAccessorSignatureNode {
+impl ::sittir_core::prepare::Prepare for FormalParametersSetAccessorSignatureNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.elements.prepare(ctx)?;
@@ -30468,8 +30468,8 @@ impl ::sittir_core::prepare::Prepare for FormalParametersUSetAccessorSignatureNo
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_U_SET_ACCESSOR_SIGNATURE, words = 7)]
-pub struct FormalParametersElementsUSetAccessorSignatureNode {
+#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE, words = 7)]
+pub struct FormalParametersElementsSetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_item")]
@@ -30477,25 +30477,25 @@ pub struct FormalParametersElementsUSetAccessorSignatureNode {
     pub item: ::sittir_core::SlotValue<SetterParameterNode>,
 }
 
-impl ::sittir_core::view::KindOf for FormalParametersElementsUSetAccessorSignatureNode {
+impl ::sittir_core::view::KindOf for FormalParametersElementsSetAccessorSignatureNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(447)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for FormalParametersElementsUSetAccessorSignatureNode {
+impl ::sittir_core::options::Edged for FormalParametersElementsSetAccessorSignatureNode {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(447) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
-impl ::sittir_core::render::Render for FormalParametersElementsUSetAccessorSignatureNode {
+impl ::sittir_core::render::Render for FormalParametersElementsSetAccessorSignatureNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(447)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_formal_parameters_elements_uset_accessor_signature(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(447)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_formal_parameters_elements_set_accessor_signature(self, w))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for FormalParametersElementsUSetAccessorSignatureNode {
+impl ::sittir_core::prepare::Prepare for FormalParametersElementsSetAccessorSignatureNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         self.item.prepare(ctx)?;
@@ -30683,7 +30683,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionPlainNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_DEFINITION_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_U_GET_ACCESSOR_SIGNATURE], words = 23)]
+#[node(kind = kind::METHOD_DEFINITION_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 23)]
 pub struct MethodDefinitionGetterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -30770,7 +30770,7 @@ pub struct MethodDefinitionSetterNode {
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 13, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersUSetAccessorSignatureNode>,
+    pub parameters: ::sittir_core::SlotValue<FormalParametersSetAccessorSignatureNode>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 18, width = 5)]
     pub body: ::sittir_core::SlotValue<StatementBlockNode>,
@@ -30910,7 +30910,7 @@ impl ::sittir_core::prepare::Prepare for MethodSignaturePlainNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_SIGNATURE_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_U_GET_ACCESSOR_SIGNATURE], words = 18)]
+#[node(kind = kind::METHOD_SIGNATURE_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 18)]
 pub struct MethodSignatureGetterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -30993,7 +30993,7 @@ pub struct MethodSignatureSetterNode {
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 13, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersUSetAccessorSignatureNode>,
+    pub parameters: ::sittir_core::SlotValue<FormalParametersSetAccessorSignatureNode>,
 }
 
 impl ::sittir_core::view::KindOf for MethodSignatureSetterNode {
@@ -31117,7 +31117,7 @@ impl ::sittir_core::prepare::Prepare for AbstractMethodSignaturePlainNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_GETTER, layout = [kind::ABSTRACT_KEYWORD, kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_U_GET_ACCESSOR_SIGNATURE], words = 18)]
+#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_GETTER, layout = [kind::ABSTRACT_KEYWORD, kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 18)]
 pub struct AbstractMethodSignatureGetterNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
@@ -31193,7 +31193,7 @@ pub struct AbstractMethodSignatureSetterNode {
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, word = 13, width = 5)]
-    pub parameters: ::sittir_core::SlotValue<FormalParametersUSetAccessorSignatureNode>,
+    pub parameters: ::sittir_core::SlotValue<FormalParametersSetAccessorSignatureNode>,
 }
 
 impl ::sittir_core::view::KindOf for AbstractMethodSignatureSetterNode {
@@ -39184,7 +39184,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::MethodSignaturePlain(t) => t.seat_target(table, ctx),
             Self::MethodSignatureGetter(t) => t.seat_target(table, ctx),
             Self::MethodSignatureSetter(t) => t.seat_target(table, ctx),
-            Self::Program { .. } | Self::HashBangLine { .. } | Self::ExportClause { .. } | Self::ImportClause { .. } | Self::NamespaceImport { .. } | Self::NamedImports { .. } | Self::ImportAttribute { .. } | Self::ElseClause { .. } | Self::SwitchBody { .. } | Self::CatchClause { .. } | Self::FinallyClause { .. } | Self::ObjectPattern { .. } | Self::ArrayPattern { .. } | Self::NestedIdentifier { .. } | Self::ClassHeritage { .. } | Self::LhsExpression { .. } | Self::BinaryExpression { .. } | Self::SequenceExpression { .. } | Self::UnescapedDoubleStringFragment { .. } | Self::UnescapedSingleStringFragment { .. } | Self::EscapeSequence { .. } | Self::TemplateSubstitution { .. } | Self::RegexPattern { .. } | Self::RegexFlags { .. } | Self::Identifier { .. } | Self::PrivatePropertyIdentifier { .. } | Self::Arguments { .. } | Self::DecoratorMemberExpression { .. } | Self::DecoratorCallExpression { .. } | Self::ClassBody { .. } | Self::FormalParameters { .. } | Self::ComputedPropertyName { .. } | Self::DecoratorParenthesizedExpression { .. } | Self::ImportRequireClause { .. } | Self::ExtendsClause { .. } | Self::ImplementsClause { .. } | Self::ExtendsTypeClause { .. } | Self::EnumBody { .. } | Self::AccessibilityModifier { .. } | Self::OmittingTypeAnnotation { .. } | Self::AddingTypeAnnotation { .. } | Self::OptingTypeAnnotation { .. } | Self::TypeAnnotation { .. } | Self::Asserts { .. } | Self::AssertsAnnotation { .. } | Self::TemplateType { .. } | Self::TypePredicate { .. } | Self::TypePredicateAnnotation { .. } | Self::TypeQueryMemberExpression { .. } | Self::TypeQuerySubscriptExpression { .. } | Self::TypeQueryCallExpression { .. } | Self::TypeQueryInstantiationExpression { .. } | Self::MappedTypeClause { .. } | Self::PredefinedType { .. } | Self::TypeArguments { .. } | Self::TypeParameters { .. } | Self::DefaultType { .. } | Self::Constraint { .. } | Self::ExportSpecifiers { .. } | Self::ImportSpecifiers { .. } | Self::FormalParametersElements { .. } | Self::EnumBodyElementName { .. } | Self::EnumBodyElements { .. } | Self::Types { .. } | Self::TypeParametersElements { .. } | Self::TupleTypeMembers { .. } | Self::ImportClauseGroup { .. } | Self::CatchClauseGroup { .. } | Self::GetAccessorSignature { .. } | Self::AmbientDeclarationGlobal { .. } | Self::AmbientDeclarationModule { .. } | Self::ObjectTypeContent { .. } | Self::CommentLine { .. } | Self::CommentBlock { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpressionIn { .. } | Self::ImportStatementClauseFrom { .. } | Self::YieldExpressionDelegate { .. } | Self::ArrowFunctionParameter { .. } | Self::ClassHeritageExtendsClause { .. } | Self::ImportClauseDefaultImport { .. } | Self::ExportStatementDefaultFromStarFrom { .. } | Self::ExportStatementDefaultFromNsFrom { .. } | Self::ExportStatementDefaultFromClauseFrom { .. } | Self::ExportStatementDefaultDeclarationDefaultKwValue { .. } | Self::ForHeaderLhs { .. } | Self::ForHeaderVarKind { .. } | Self::ForHeaderLetConstKind { .. } | Self::ForHeaderUsingKind { .. } | Self::FormalParametersUSetAccessorSignature { .. } | Self::FormalParametersElementsUSetAccessorSignature { .. } | Self::SetterParameter { .. } | Self::AbstractMethodSignaturePlain { .. } | Self::AbstractMethodSignatureGetter { .. } | Self::AbstractMethodSignatureSetter { .. } | Self::PublicFieldDefinitionPlain { .. } | Self::PublicFieldDefinitionAccessor { .. } | Self::HtmlComment { .. } | Self::JsxText { .. } | Self::TemplateChars { .. } | Self::ReceiverParameterDeclaration { .. } | Self::FormalParametersElementsReceiver { .. } | Self::FormalParametersElementsReceiverGroup { .. } | Self::TernaryQmark { .. } | Self::ErrorRecovery { .. } | Self::StatementIdentifier { .. } | Self::ShorthandPropertyIdentifier { .. } | Self::ShorthandPropertyIdentifierPattern { .. } | Self::PropertyIdentifier { .. } | Self::TypeIdentifier { .. } | Self::InterfaceBody { .. } | Self::Import { .. } | Self::OptionalChain { .. } | Self::OverrideModifier { .. } | Self::UsingDeclarationArm { .. } | Self::OptionalChainMarker { .. } | Self::FormalParametersUGetAccessorSignature { .. } | Self::AutomaticSemicolon { .. } | Self::FunctionSignatureAutomaticSemicolon { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Star { .. } | Self::AsKeyword { .. } | Self::DefaultKeyword { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::TypeKeyword { .. } | Self::TypeofKeyword { .. } | Self::ImportKeyword { .. } | Self::Semi { .. } | Self::WithKeyword { .. } | Self::AssertKeyword { .. } | Self::VarKeyword { .. } | Self::LetKeyword { .. } | Self::ConstKeyword { .. } | Self::UsingKeyword { .. } | Self::ElseKeyword { .. } | Self::IfKeyword { .. } | Self::SwitchKeyword { .. } | Self::ForKeyword { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::AwaitKeyword { .. } | Self::WhileKeyword { .. } | Self::DoKeyword { .. } | Self::TryKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::DebuggerKeyword { .. } | Self::ReturnKeyword { .. } | Self::ThrowKeyword { .. } | Self::Colon { .. } | Self::CaseKeyword { .. } | Self::CatchKeyword { .. } | Self::FinallyKeyword { .. } | Self::YieldKeyword { .. } | Self::Eq { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Dot { .. } | Self::ClassKeyword { .. } | Self::AsyncKeyword { .. } | Self::FunctionKeyword { .. } | Self::EqGt { .. } | Self::QmarkDot { .. } | Self::NewKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::CaretEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::GtGtEq { .. } | Self::GtGtGtEq { .. } | Self::LtLtEq { .. } | Self::StarStarEq { .. } | Self::AmpAmpEq { .. } | Self::PipePipeEq { .. } | Self::QmarkQmarkEq { .. } | Self::DotDotDot { .. } | Self::Qmark { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::GtGt { .. } | Self::GtGtGt { .. } | Self::LtLt { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::Pipe { .. } | Self::Plus { .. } | Self::Dash { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::StarStar { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::EqEqEq { .. } | Self::BangEq { .. } | Self::BangEqEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::QmarkQmark { .. } | Self::InstanceofKeyword { .. } | Self::Bang { .. } | Self::Tilde { .. } | Self::VoidKeyword { .. } | Self::DeleteKeyword { .. } | Self::Bquote { .. } | Self::DollarLbrace { .. } | Self::ThisKeyword { .. } | Self::SuperKeyword { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::NullKeyword { .. } | Self::At { .. } | Self::StaticKeyword { .. } | Self::SatisfiesKeyword { .. } | Self::RequireKeyword { .. } | Self::ExtendsKeyword { .. } | Self::ImplementsKeyword { .. } | Self::DeclareKeyword { .. } | Self::AbstractKeyword { .. } | Self::ModuleKeyword { .. } | Self::NamespaceKeyword { .. } | Self::InterfaceKeyword { .. } | Self::EnumKeyword { .. } | Self::PublicKeyword { .. } | Self::PrivateKeyword { .. } | Self::ProtectedKeyword { .. } | Self::OverrideKeyword { .. } | Self::ReadonlyKeyword { .. } | Self::DashQmarkColon { .. } | Self::PlusQmarkColon { .. } | Self::QmarkColon { .. } | Self::AssertsKeyword { .. } | Self::InferKeyword { .. } | Self::IsKeyword { .. } | Self::KeyofKeyword { .. } | Self::InKeyword { .. } | Self::AnyKeyword { .. } | Self::NumberKeyword { .. } | Self::BooleanKeyword { .. } | Self::StringKeyword { .. } | Self::SymbolKeyword { .. } | Self::Unique { .. } | Self::UnknownKeyword { .. } | Self::NeverKeyword { .. } | Self::ObjectKeyword { .. } | Self::LbracePipe { .. } | Self::PipeRbrace { .. } | Self::Comma { .. } | Self::GlobalKeyword { .. } | Self::ExportKeyword { .. } | Self::FromKeyword { .. } | Self::Dquote { .. } | Self::Squote { .. } | Self::PlusPlus { .. } | Self::DashDash { .. } | Self::TargetKeyword { .. } | Self::MetaKeyword { .. } | Self::OfKeyword { .. } | Self::GetKeyword { .. } | Self::SetKeyword { .. } | Self::AccessorKeyword { .. } | Self::Verbatim { .. } => None,
+            Self::Program { .. } | Self::HashBangLine { .. } | Self::ExportClause { .. } | Self::ImportClause { .. } | Self::NamespaceImport { .. } | Self::NamedImports { .. } | Self::ImportAttribute { .. } | Self::ElseClause { .. } | Self::SwitchBody { .. } | Self::CatchClause { .. } | Self::FinallyClause { .. } | Self::ObjectPattern { .. } | Self::ArrayPattern { .. } | Self::NestedIdentifier { .. } | Self::ClassHeritage { .. } | Self::LhsExpression { .. } | Self::BinaryExpression { .. } | Self::SequenceExpression { .. } | Self::UnescapedDoubleStringFragment { .. } | Self::UnescapedSingleStringFragment { .. } | Self::EscapeSequence { .. } | Self::TemplateSubstitution { .. } | Self::RegexPattern { .. } | Self::RegexFlags { .. } | Self::Identifier { .. } | Self::PrivatePropertyIdentifier { .. } | Self::Arguments { .. } | Self::DecoratorMemberExpression { .. } | Self::DecoratorCallExpression { .. } | Self::ClassBody { .. } | Self::FormalParameters { .. } | Self::ComputedPropertyName { .. } | Self::DecoratorParenthesizedExpression { .. } | Self::ImportRequireClause { .. } | Self::ExtendsClause { .. } | Self::ImplementsClause { .. } | Self::ExtendsTypeClause { .. } | Self::EnumBody { .. } | Self::AccessibilityModifier { .. } | Self::OmittingTypeAnnotation { .. } | Self::AddingTypeAnnotation { .. } | Self::OptingTypeAnnotation { .. } | Self::TypeAnnotation { .. } | Self::Asserts { .. } | Self::AssertsAnnotation { .. } | Self::TemplateType { .. } | Self::TypePredicate { .. } | Self::TypePredicateAnnotation { .. } | Self::TypeQueryMemberExpression { .. } | Self::TypeQuerySubscriptExpression { .. } | Self::TypeQueryCallExpression { .. } | Self::TypeQueryInstantiationExpression { .. } | Self::MappedTypeClause { .. } | Self::PredefinedType { .. } | Self::TypeArguments { .. } | Self::TypeParameters { .. } | Self::DefaultType { .. } | Self::Constraint { .. } | Self::ExportSpecifiers { .. } | Self::ImportSpecifiers { .. } | Self::FormalParametersElements { .. } | Self::EnumBodyElementName { .. } | Self::EnumBodyElements { .. } | Self::Types { .. } | Self::TypeParametersElements { .. } | Self::TupleTypeMembers { .. } | Self::ImportClauseGroup { .. } | Self::CatchClauseGroup { .. } | Self::GetAccessorSignature { .. } | Self::AmbientDeclarationGlobal { .. } | Self::AmbientDeclarationModule { .. } | Self::ObjectTypeContent { .. } | Self::CommentLine { .. } | Self::CommentBlock { .. } | Self::NumberHex { .. } | Self::NumberFloatPoint { .. } | Self::NumberFloatLeadingPoint { .. } | Self::NumberFloatScientific { .. } | Self::NumberDecimal { .. } | Self::NumberBinary { .. } | Self::NumberOctal { .. } | Self::NumberBigintHex { .. } | Self::NumberBigintBinary { .. } | Self::NumberBigintOctal { .. } | Self::NumberBigintDecimal { .. } | Self::BinaryExpressionIn { .. } | Self::ImportStatementClauseFrom { .. } | Self::YieldExpressionDelegate { .. } | Self::ArrowFunctionParameter { .. } | Self::ClassHeritageExtendsClause { .. } | Self::ImportClauseDefaultImport { .. } | Self::ExportStatementDefaultFromStarFrom { .. } | Self::ExportStatementDefaultFromNsFrom { .. } | Self::ExportStatementDefaultFromClauseFrom { .. } | Self::ExportStatementDefaultDeclarationDefaultKwValue { .. } | Self::ForHeaderLhs { .. } | Self::ForHeaderVarKind { .. } | Self::ForHeaderLetConstKind { .. } | Self::ForHeaderUsingKind { .. } | Self::FormalParametersSetAccessorSignature { .. } | Self::FormalParametersElementsSetAccessorSignature { .. } | Self::SetterParameter { .. } | Self::AbstractMethodSignaturePlain { .. } | Self::AbstractMethodSignatureGetter { .. } | Self::AbstractMethodSignatureSetter { .. } | Self::PublicFieldDefinitionPlain { .. } | Self::PublicFieldDefinitionAccessor { .. } | Self::HtmlComment { .. } | Self::JsxText { .. } | Self::TemplateChars { .. } | Self::ReceiverParameterDeclaration { .. } | Self::FormalParametersElementsReceiver { .. } | Self::FormalParametersElementsReceiverGroup { .. } | Self::TernaryQmark { .. } | Self::ErrorRecovery { .. } | Self::StatementIdentifier { .. } | Self::ShorthandPropertyIdentifier { .. } | Self::ShorthandPropertyIdentifierPattern { .. } | Self::PropertyIdentifier { .. } | Self::TypeIdentifier { .. } | Self::InterfaceBody { .. } | Self::Import { .. } | Self::OptionalChain { .. } | Self::OverrideModifier { .. } | Self::UsingDeclarationArm { .. } | Self::OptionalChainMarker { .. } | Self::FormalParametersGetAccessorSignature { .. } | Self::AutomaticSemicolon { .. } | Self::FunctionSignatureAutomaticSemicolon { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Star { .. } | Self::AsKeyword { .. } | Self::DefaultKeyword { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::TypeKeyword { .. } | Self::TypeofKeyword { .. } | Self::ImportKeyword { .. } | Self::Semi { .. } | Self::WithKeyword { .. } | Self::AssertKeyword { .. } | Self::VarKeyword { .. } | Self::LetKeyword { .. } | Self::ConstKeyword { .. } | Self::UsingKeyword { .. } | Self::ElseKeyword { .. } | Self::IfKeyword { .. } | Self::SwitchKeyword { .. } | Self::ForKeyword { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::AwaitKeyword { .. } | Self::WhileKeyword { .. } | Self::DoKeyword { .. } | Self::TryKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::DebuggerKeyword { .. } | Self::ReturnKeyword { .. } | Self::ThrowKeyword { .. } | Self::Colon { .. } | Self::CaseKeyword { .. } | Self::CatchKeyword { .. } | Self::FinallyKeyword { .. } | Self::YieldKeyword { .. } | Self::Eq { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Dot { .. } | Self::ClassKeyword { .. } | Self::AsyncKeyword { .. } | Self::FunctionKeyword { .. } | Self::EqGt { .. } | Self::QmarkDot { .. } | Self::NewKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::CaretEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::GtGtEq { .. } | Self::GtGtGtEq { .. } | Self::LtLtEq { .. } | Self::StarStarEq { .. } | Self::AmpAmpEq { .. } | Self::PipePipeEq { .. } | Self::QmarkQmarkEq { .. } | Self::DotDotDot { .. } | Self::Qmark { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::GtGt { .. } | Self::GtGtGt { .. } | Self::LtLt { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::Pipe { .. } | Self::Plus { .. } | Self::Dash { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::StarStar { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::EqEqEq { .. } | Self::BangEq { .. } | Self::BangEqEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::QmarkQmark { .. } | Self::InstanceofKeyword { .. } | Self::Bang { .. } | Self::Tilde { .. } | Self::VoidKeyword { .. } | Self::DeleteKeyword { .. } | Self::Bquote { .. } | Self::DollarLbrace { .. } | Self::ThisKeyword { .. } | Self::SuperKeyword { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::NullKeyword { .. } | Self::At { .. } | Self::StaticKeyword { .. } | Self::SatisfiesKeyword { .. } | Self::RequireKeyword { .. } | Self::ExtendsKeyword { .. } | Self::ImplementsKeyword { .. } | Self::DeclareKeyword { .. } | Self::AbstractKeyword { .. } | Self::ModuleKeyword { .. } | Self::NamespaceKeyword { .. } | Self::InterfaceKeyword { .. } | Self::EnumKeyword { .. } | Self::PublicKeyword { .. } | Self::PrivateKeyword { .. } | Self::ProtectedKeyword { .. } | Self::OverrideKeyword { .. } | Self::ReadonlyKeyword { .. } | Self::DashQmarkColon { .. } | Self::PlusQmarkColon { .. } | Self::QmarkColon { .. } | Self::AssertsKeyword { .. } | Self::InferKeyword { .. } | Self::IsKeyword { .. } | Self::KeyofKeyword { .. } | Self::InKeyword { .. } | Self::AnyKeyword { .. } | Self::NumberKeyword { .. } | Self::BooleanKeyword { .. } | Self::StringKeyword { .. } | Self::SymbolKeyword { .. } | Self::Unique { .. } | Self::UnknownKeyword { .. } | Self::NeverKeyword { .. } | Self::ObjectKeyword { .. } | Self::LbracePipe { .. } | Self::PipeRbrace { .. } | Self::Comma { .. } | Self::GlobalKeyword { .. } | Self::ExportKeyword { .. } | Self::FromKeyword { .. } | Self::Dquote { .. } | Self::Squote { .. } | Self::PlusPlus { .. } | Self::DashDash { .. } | Self::TargetKeyword { .. } | Self::MetaKeyword { .. } | Self::OfKeyword { .. } | Self::GetKeyword { .. } | Self::SetKeyword { .. } | Self::AccessorKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -42564,17 +42564,17 @@ fn render_for_header_using_kind(node: &ForHeaderUsingKindNode, w: &mut dyn ::sit
     Ok(())
 }
 
-fn render_formal_parameters_uset_accessor_signature(node: &FormalParametersUSetAccessorSignatureNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_formal_parameters_set_accessor_signature(node: &FormalParametersSetAccessorSignatureNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = &node.elements;
     w.text("(")?;
-    w.site_at(options::SITE__FORMAL_PARAMETERS__SET_ACCESSOR_SIGNATURE_LPAREN_AFTER);
+    w.site_at(options::SITE__FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE_LPAREN_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
-    w.site_at(options::SITE__FORMAL_PARAMETERS__SET_ACCESSOR_SIGNATURE_RPAREN_BEFORE);
+    w.site_at(options::SITE__FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE_RPAREN_BEFORE);
     w.text(")")?;
     Ok(())
 }
 
-fn render_formal_parameters_elements_uset_accessor_signature(node: &FormalParametersElementsUSetAccessorSignatureNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_formal_parameters_elements_set_accessor_signature(node: &FormalParametersElementsSetAccessorSignatureNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = &node.item;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_item", ::sittir_core::types::ItemIndex(0), w, |w| item.render(w))?;
     Ok(())
@@ -43254,7 +43254,7 @@ fn render_meta_property_import_meta(w: &mut dyn ::sittir_core::render::RenderSin
     NodeLayout::render(None, Some(::sittir_core::types::KindId(439)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("import.meta"))
 }
 
-fn render_formal_parameters_uget_accessor_signature(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_formal_parameters_get_accessor_signature(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(445)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("()"))
 }
 
@@ -44397,8 +44397,8 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ForHeaderVarKind(inner) => inner.kind_in(kinds),
             Self::ForHeaderLetConstKind(inner) => inner.kind_in(kinds),
             Self::ForHeaderUsingKind(inner) => inner.kind_in(kinds),
-            Self::FormalParametersUSetAccessorSignature(inner) => inner.kind_in(kinds),
-            Self::FormalParametersElementsUSetAccessorSignature(inner) => inner.kind_in(kinds),
+            Self::FormalParametersSetAccessorSignature(inner) => inner.kind_in(kinds),
+            Self::FormalParametersElementsSetAccessorSignature(inner) => inner.kind_in(kinds),
             Self::SetterParameter(inner) => inner.kind_in(kinds),
             Self::MethodDefinitionPlain(inner) => inner.kind_in(kinds),
             Self::MethodDefinitionGetter(inner) => inner.kind_in(kinds),
@@ -44441,7 +44441,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::OptionalChainMarker => [::sittir_core::types::KindId(414)].iter().any(|k| kinds.contains(k)),
             Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(438)].iter().any(|k| kinds.contains(k)),
             Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(439)].iter().any(|k| kinds.contains(k)),
-            Self::FormalParametersUGetAccessorSignature => [::sittir_core::types::KindId(445)].iter().any(|k| kinds.contains(k)),
+            Self::FormalParametersGetAccessorSignature => [::sittir_core::types::KindId(445)].iter().any(|k| kinds.contains(k)),
             Self::AutomaticSemicolon => [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k)),
             Self::FunctionSignatureAutomaticSemicolon => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
             Self::Tight => [::sittir_core::types::KindId(180)].iter().any(|k| kinds.contains(k)),
@@ -44828,8 +44828,8 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ForHeaderVarKind(t) => t.render(w),
             AnyNode::ForHeaderLetConstKind(t) => t.render(w),
             AnyNode::ForHeaderUsingKind(t) => t.render(w),
-            AnyNode::FormalParametersUSetAccessorSignature(t) => t.render(w),
-            AnyNode::FormalParametersElementsUSetAccessorSignature(t) => t.render(w),
+            AnyNode::FormalParametersSetAccessorSignature(t) => t.render(w),
+            AnyNode::FormalParametersElementsSetAccessorSignature(t) => t.render(w),
             AnyNode::SetterParameter(t) => t.render(w),
             AnyNode::MethodDefinitionPlain(t) => t.render(w),
             AnyNode::MethodDefinitionGetter(t) => t.render(w),
@@ -44872,7 +44872,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::OptionalChainMarker => render_optional_chain_marker(w),
             AnyNode::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(438), edges, w, render_meta_property_new_target),
             AnyNode::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(439), edges, w, render_meta_property_import_meta),
-            AnyNode::FormalParametersUGetAccessorSignature => render_formal_parameters_uget_accessor_signature(w),
+            AnyNode::FormalParametersGetAccessorSignature => render_formal_parameters_get_accessor_signature(w),
             AnyNode::AutomaticSemicolon => render_automatic_semicolon(w),
             AnyNode::FunctionSignatureAutomaticSemicolon => render_function_signature_automatic_semicolon(w),
             AnyNode::Tight => render_tight(w),
@@ -45145,9 +45145,9 @@ const _: () = assert!(::core::mem::size_of::<ForStatementNode>() > 256, "ForStat
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsNode>() <= 256, "FormalParametersElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverGroupNode>() <= 256, "FormalParametersElementsReceiverGroupNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverNode>() <= 256, "FormalParametersElementsReceiverNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<FormalParametersElementsUSetAccessorSignatureNode>() <= 256, "FormalParametersElementsUSetAccessorSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FormalParametersElementsSetAccessorSignatureNode>() <= 256, "FormalParametersElementsSetAccessorSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FormalParametersNode>() <= 256, "FormalParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<FormalParametersUSetAccessorSignatureNode>() <= 256, "FormalParametersUSetAccessorSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FormalParametersSetAccessorSignatureNode>() <= 256, "FormalParametersSetAccessorSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FunctionDeclarationNode>() > 256, "FunctionDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<FunctionExpressionNode>() > 256, "FunctionExpressionNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<FunctionSignatureNode>() <= 256, "FunctionSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -45314,4 +45314,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateNode>() <= 256, "YieldExpressionDelegateNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, ExportStatementNode, DeclarationNode, ImportSpecifierNode, StatementNode, VariableDeclaratorNode, ForHeaderNode, ParenthesizedExpressionNode, ExpressionNode, PrimaryExpressionNode, CallExpressionNode, UpdateExpressionNode, StringNode, NumberNode, MetaPropertyNode, PatternNode, MethodDefinitionNode, MethodSignatureNode, TypeNode, PrimaryTypeNode, ClassBodyMemberNode, EnumBodyElementNode, ExportStatementDefaultNode, NumberBigintNode, NamespaceExportModuleExportNameNodeSlot, ExportSpecifierTypeOnlyNodeSlot, ExportSpecifierNameNodeSlot, ImportStatementTypeOnlyNodeSlot, ImportStatementFromClauseNodeSlot, ImportStatementTerminatorNodeSlot, ImportClauseContentNodeSlot, ImportAttributeAttributeKindNodeSlot, ExpressionStatementExpressionNodeSlot, ExpressionStatementTerminatorNodeSlot, VariableDeclarationTerminatorNodeSlot, LexicalDeclarationKindNodeSlot, LexicalDeclarationTerminatorNodeSlot, UsingDeclarationKindNodeSlot, UsingDeclarationAutomaticSemicolonNodeSlot, StatementBlockTerminatorNodeSlot, ForStatementInitializerNodeSlot, ForStatementConditionNodeSlot, DoStatementTerminatorNodeSlot, BreakStatementTerminatorNodeSlot, ContinueStatementTerminatorNodeSlot, DebuggerStatementTerminatorNodeSlot, ReturnStatementTerminatorNodeSlot, ThrowStatementTerminatorNodeSlot, SwitchBodyCasesNodeSlot, YieldExpressionExpressionNodeSlot, ObjectPropertiesNodeSlot, ObjectPatternPropertiesNodeSlot, ObjectAssignmentPatternLeftNodeSlot, ArrayElementsNodeSlot, ArrayPatternElementsNodeSlot, NestedIdentifierObjectNodeSlot, ClassHeritageContentNodeSlot, FunctionExpressionReturnTypeNodeSlot, ArrowFunctionBodyNodeSlot, ArrowFunctionContentNodeSlot, MemberExpressionObjectNodeSlot, MemberExpressionOptionalChainNodeSlot, MemberExpressionPropertyNodeSlot, SubscriptExpressionObjectNodeSlot, LhsExpressionContentNodeSlot, AssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, UnaryExpressionOperatorNodeSlot, TemplateStringElementsNodeSlot, DecoratorContentNodeSlot, DecoratorMemberExpressionObjectNodeSlot, DecoratorCallExpressionFunctionNodeSlot, FormalParametersElementsNodeSlot, PairKeyNodeSlot, FunctionSignatureTerminatorNodeSlot, DecoratorParenthesizedExpressionExpressionNodeSlot, AsExpressionTypeNodeSlot, AmbientDeclarationContentNodeSlot, ModuleNameNodeSlot, ImportAliasTerminatorNodeSlot, ExtendsTypeClauseTypeNodeSlot, TypeAliasDeclarationTerminatorNodeSlot, OptionalParameterNameNodeSlot, TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot, TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot, AssertsValueNodeSlot, TupleParameterNameNodeSlot, TemplateTypeTypeNodeSlot, TemplateLiteralTypeElementsNodeSlot, GenericTypeNameNodeSlot, TypePredicateNameNodeSlot, TypeQueryMemberExpressionObjectNodeSlot, TypeQueryMemberExpressionContentNodeSlot, TypeQuerySubscriptExpressionIndexNodeSlot, TypeQueryCallExpressionFunctionNodeSlot, TypeQueryExpressionNodeSlot, LiteralTypeContentNodeSlot, ObjectTypeOpeningNodeSlot, ObjectTypeClosingNodeSlot, ConstraintContentNodeSlot, FunctionTypeReturnTypeNodeSlot, FormalParametersElementsItemNodeSlot, TupleTypeMembersItemNodeSlot, ImportClauseGroupContentNodeSlot, CatchClauseGroupParameterNodeSlot, AmbientDeclarationModuleTerminatorNodeSlot, ObjectTypeContentItemNodeSlot, ExportStatementNamespaceExportTerminatorNodeSlot, ExportStatementEqualsExportTerminatorNodeSlot, BinaryExpressionInLeftNodeSlot, ClassBodyMemberMethodTerminatorNodeSlot, ClassBodyMemberMethodSigTerminatorNodeSlot, ClassBodyMemberDeclarationMemberNodeSlot, ClassBodyMemberDeclarationTerminatorNodeSlot, IndexSignatureColonSignNodeSlot, IndexSignatureColonTypeNodeSlot, ImportSpecifierNameTypeOnlyNodeSlot, ImportSpecifierAsTypeOnlyNodeSlot, ImportSpecifierAsNameNodeSlot, CallExpressionTemplateCallFunctionNodeSlot, StringDoubleElementsNodeSlot, StringSingleElementsNodeSlot, UpdateExpressionPostfixOperatorNodeSlot, UpdateExpressionPrefixOperatorNodeSlot, ExportStatementDefaultFromTerminatorNodeSlot, ExportStatementDefaultFromContentNodeSlot, ExportStatementDefaultDeclarationContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot, ForHeaderLhsLeftNodeSlot, ForHeaderLhsOperatorNodeSlot, ForHeaderLetConstKindKindNodeSlot, ForHeaderUsingKindKindNodeSlot, SetterParameterPatternNodeSlot, PublicFieldDefinitionPlainOptionalityNodeSlot, ProgramNode, HashBangLineNode, NamespaceExportNode, ExportClauseNode, ExportSpecifierNode, ImportNode, ImportStatementNode, ImportClauseNode, NamespaceImportNode, NamedImportsNode, ImportAttributeNode, ExpressionStatementNode, VariableDeclarationNode, LexicalDeclarationNode, UsingDeclarationNode, StatementBlockNode, ElseClauseNode, IfStatementNode, SwitchStatementNode, ForStatementNode, ForInStatementNode, WhileStatementNode, DoStatementNode, TryStatementNode, WithStatementNode, BreakStatementNode, ContinueStatementNode, DebuggerStatementNode, ReturnStatementNode, ThrowStatementNode, EmptyStatementNode, LabeledStatementNode, SwitchBodyNode, SwitchCaseNode, SwitchDefaultNode, CatchClauseNode, FinallyClauseNode, YieldExpressionNode, ObjectNode, ObjectPatternNode, AssignmentPatternNode, ObjectAssignmentPatternNode, ArrayNode, ArrayPatternNode, NestedIdentifierNode, ClassNode, ClassDeclarationNode, ClassHeritageNode, FunctionExpressionNode, FunctionDeclarationNode, GeneratorFunctionNode, GeneratorFunctionDeclarationNode, ArrowFunctionNode, OptionalChainNode, NewExpressionNode, AwaitExpressionNode, MemberExpressionNode, SubscriptExpressionNode, LhsExpressionNode, AssignmentExpressionNode, AugmentedAssignmentExpressionNode, SpreadElementNode, TernaryExpressionNode, BinaryExpressionNode, UnaryExpressionNode, SequenceExpressionNode, UnescapedDoubleStringFragmentNode, UnescapedSingleStringFragmentNode, EscapeSequenceNode, TemplateStringNode, TemplateSubstitutionNode, RegexNode, RegexPatternNode, RegexFlagsNode, IdentifierNode, PrivatePropertyIdentifierNode, ThisNode, SuperNode, TrueNode, FalseNode, NullNode, UndefinedNode, ArgumentsNode, DecoratorNode, DecoratorMemberExpressionNode, DecoratorCallExpressionNode, ClassBodyNode, FormalParametersNode, ClassStaticBlockNode, RestPatternNode, PairNode, PairPatternNode, ComputedPropertyNameNode, NonNullExpressionNode, FunctionSignatureNode, DecoratorParenthesizedExpressionNode, TypeAssertionNode, AsExpressionNode, SatisfiesExpressionNode, InstantiationExpressionNode, ImportRequireClauseNode, ExtendsClauseNode, ExtendsClauseSingleNode, ImplementsClauseNode, AmbientDeclarationNode, AbstractClassDeclarationNode, ModuleNode, InternalModuleNode, ImportAliasNode, NestedTypeIdentifierNode, InterfaceDeclarationNode, ExtendsTypeClauseNode, EnumDeclarationNode, EnumBodyNode, EnumAssignmentNode, TypeAliasDeclarationNode, AccessibilityModifierEnum, OverrideModifierNode, RequiredParameterNode, OptionalParameterNode, OmittingTypeAnnotationNode, AddingTypeAnnotationNode, OptingTypeAnnotationNode, TypeAnnotationNode, TypeQueryMemberExpressionInTypeAnnotationNode, TypeQueryCallExpressionInTypeAnnotationNode, AssertsNode, AssertsAnnotationNode, TupleParameterNode, OptionalTupleParameterNode, OptionalTypeNode, RestTypeNode, ConstructorTypeNode, TemplateTypeNode, TemplateLiteralTypeNode, InferTypeNode, ConditionalTypeNode, GenericTypeNode, TypePredicateNode, TypePredicateAnnotationNode, TypeQueryMemberExpressionNode, TypeQuerySubscriptExpressionNode, TypeQueryCallExpressionNode, TypeQueryInstantiationExpressionNode, TypeQueryNode, IndexTypeQueryNode, LookupTypeNode, MappedTypeClauseNode, LiteralTypeNode, ExistentialTypeNode, FlowMaybeTypeNode, ParenthesizedTypeNode, PredefinedTypeEnum, TypeArgumentsNode, ObjectTypeNode, CallSignatureNode, PropertySignatureNode, TypeParametersNode, TypeParameterNode, DefaultTypeNode, ConstraintNode, ConstructSignatureNode, ArrayTypeNode, TupleTypeNode, ReadonlyTypeNode, UnionTypeNode, IntersectionTypeNode, FunctionTypeNode, ExportSpecifiersNode, ImportSpecifiersNode, FormalParametersElementsNode, EnumBodyElementNameNode, EnumBodyElementsNode, TypesNode, TypeParametersElementsNode, TupleTypeMembersNode, ImportClauseGroupNode, UsingDeclarationArmNode, CatchClauseGroupNode, GetAccessorSignatureNode, AmbientDeclarationGlobalNode, AmbientDeclarationModuleNode, ObjectTypeContentNode, ExportStatementNamespaceExportNode, ExportStatementEqualsExportNode, CommentLineNode, CommentBlockNode, LiteralTypeNegativeNumberNode, NumberHexNode, NumberFloatPointNode, NumberFloatLeadingPointNode, NumberFloatScientificNode, NumberDecimalNode, NumberBinaryNode, NumberOctalNode, NumberBigintHexNode, NumberBigintBinaryNode, NumberBigintOctalNode, NumberBigintDecimalNode, BinaryExpressionInNode, EmptyMemberNode, ClassBodyMemberMethodNode, ClassBodyMemberMethodSigNode, ClassBodyMemberDeclarationNode, IndexSignatureColonNode, IndexSignatureMappedTypeClauseNode, ImportStatementClauseFromNode, YieldExpressionDelegateNode, OptionalChainMarkerNode, ImportSpecifierNameNode, ImportSpecifierAsNode, ParenthesizedExpressionTypedNode, ParenthesizedExpressionSequenceNode, CallExpressionCallNode, CallExpressionTemplateCallNode, CallExpressionMemberNode, StringDoubleNode, StringSingleNode, UpdateExpressionPostfixNode, UpdateExpressionPrefixNode, ArrowFunctionParameterNode, ClassHeritageExtendsClauseNode, ImportClauseDefaultImportNode, ExportStatementDefaultFromNode, ExportStatementDefaultDeclarationNode, ExportStatementDefaultFromStarFromNode, ExportStatementDefaultFromNsFromNode, ExportStatementDefaultFromClauseFromNode, ExportStatementDefaultDeclarationDefaultKwNode, ExportStatementDefaultDeclarationDefaultKwValueNode, VariableDeclaratorPlainNode, VariableDeclaratorDefiniteNode, MetaPropertyNewTargetNode, MetaPropertyImportMetaNode, ForHeaderLhsNode, ForHeaderVarKindNode, ForHeaderLetConstKindNode, ForHeaderUsingKindNode, FormalParametersUGetAccessorSignatureNode, FormalParametersUSetAccessorSignatureNode, FormalParametersElementsUSetAccessorSignatureNode, SetterParameterNode, MethodDefinitionPlainNode, MethodDefinitionGetterNode, MethodDefinitionSetterNode, MethodSignaturePlainNode, MethodSignatureGetterNode, MethodSignatureSetterNode, AbstractMethodSignaturePlainNode, AbstractMethodSignatureGetterNode, AbstractMethodSignatureSetterNode, PublicFieldDefinitionPlainNode, PublicFieldDefinitionAccessorNode, HtmlCommentNode, JsxTextNode, TemplateCharsNode, AutomaticSemicolonNode, FunctionSignatureAutomaticSemicolonNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ReceiverParameterDeclarationNode, FormalParametersElementsReceiverNode, FormalParametersElementsReceiverGroupNode, TernaryQmarkNode, ErrorRecoveryNode, StatementIdentifierNode, ShorthandPropertyIdentifierNode, ShorthandPropertyIdentifierPatternNode, PropertyIdentifierNode, TypeIdentifierNode, InterfaceBodyNode, StarNode, AsKeywordNode, DefaultKeywordNode, LbraceNode, RbraceNode, TypeKeywordNode, TypeofKeywordNode, ImportKeywordNode, SemiNode, WithKeywordNode, AssertKeywordNode, VarKeywordNode, LetKeywordNode, ConstKeywordNode, UsingKeywordNode, ElseKeywordNode, IfKeywordNode, SwitchKeywordNode, ForKeywordNode, LparenNode, RparenNode, AwaitKeywordNode, WhileKeywordNode, DoKeywordNode, TryKeywordNode, BreakKeywordNode, ContinueKeywordNode, DebuggerKeywordNode, ReturnKeywordNode, ThrowKeywordNode, ColonNode, CaseKeywordNode, CatchKeywordNode, FinallyKeywordNode, YieldKeywordNode, EqNode, LbrackNode, RbrackNode, DotNode, ClassKeywordNode, AsyncKeywordNode, FunctionKeywordNode, EqGtNode, QmarkDotNode, NewKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, CaretEqNode, AmpEqNode, PipeEqNode, GtGtEqNode, GtGtGtEqNode, LtLtEqNode, StarStarEqNode, AmpAmpEqNode, PipePipeEqNode, QmarkQmarkEqNode, DotDotDotNode, QmarkNode, AmpAmpNode, PipePipeNode, GtGtNode, GtGtGtNode, LtLtNode, AmpNode, CaretNode, PipeNode, PlusNode, DashNode, SlashNode, PercentNode, StarStarNode, LtNode, LtEqNode, EqEqNode, EqEqEqNode, BangEqNode, BangEqEqNode, GtEqNode, GtNode, QmarkQmarkNode, InstanceofKeywordNode, BangNode, TildeNode, VoidKeywordNode, DeleteKeywordNode, BquoteNode, DollarLbraceNode, ThisKeywordNode, SuperKeywordNode, TrueKeywordNode, FalseKeywordNode, NullKeywordNode, AtNode, StaticKeywordNode, SatisfiesKeywordNode, RequireKeywordNode, ExtendsKeywordNode, ImplementsKeywordNode, DeclareKeywordNode, AbstractKeywordNode, ModuleKeywordNode, NamespaceKeywordNode, InterfaceKeywordNode, EnumKeywordNode, PublicKeywordNode, PrivateKeywordNode, ProtectedKeywordNode, OverrideKeywordNode, ReadonlyKeywordNode, DashQmarkColonNode, PlusQmarkColonNode, QmarkColonNode, AssertsKeywordNode, InferKeywordNode, IsKeywordNode, KeyofKeywordNode, InKeywordNode, AnyKeywordNode, NumberKeywordNode, BooleanKeywordNode, StringKeywordNode, SymbolKeywordNode, UniqueNode, UnknownKeywordNode, NeverKeywordNode, ObjectKeywordNode, LbracePipeNode, PipeRbraceNode, CommaNode, GlobalKeywordNode, ExportKeywordNode, FromKeywordNode, DquoteNode, SquoteNode, PlusPlusNode, DashDashNode, TargetKeywordNode, MetaKeywordNode, OfKeywordNode, GetKeywordNode, SetKeywordNode, AccessorKeywordNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, ExportStatementNode, DeclarationNode, ImportSpecifierNode, StatementNode, VariableDeclaratorNode, ForHeaderNode, ParenthesizedExpressionNode, ExpressionNode, PrimaryExpressionNode, CallExpressionNode, UpdateExpressionNode, StringNode, NumberNode, MetaPropertyNode, PatternNode, MethodDefinitionNode, MethodSignatureNode, TypeNode, PrimaryTypeNode, ClassBodyMemberNode, EnumBodyElementNode, ExportStatementDefaultNode, NumberBigintNode, NamespaceExportModuleExportNameNodeSlot, ExportSpecifierTypeOnlyNodeSlot, ExportSpecifierNameNodeSlot, ImportStatementTypeOnlyNodeSlot, ImportStatementFromClauseNodeSlot, ImportStatementTerminatorNodeSlot, ImportClauseContentNodeSlot, ImportAttributeAttributeKindNodeSlot, ExpressionStatementExpressionNodeSlot, ExpressionStatementTerminatorNodeSlot, VariableDeclarationTerminatorNodeSlot, LexicalDeclarationKindNodeSlot, LexicalDeclarationTerminatorNodeSlot, UsingDeclarationKindNodeSlot, UsingDeclarationAutomaticSemicolonNodeSlot, StatementBlockTerminatorNodeSlot, ForStatementInitializerNodeSlot, ForStatementConditionNodeSlot, DoStatementTerminatorNodeSlot, BreakStatementTerminatorNodeSlot, ContinueStatementTerminatorNodeSlot, DebuggerStatementTerminatorNodeSlot, ReturnStatementTerminatorNodeSlot, ThrowStatementTerminatorNodeSlot, SwitchBodyCasesNodeSlot, YieldExpressionExpressionNodeSlot, ObjectPropertiesNodeSlot, ObjectPatternPropertiesNodeSlot, ObjectAssignmentPatternLeftNodeSlot, ArrayElementsNodeSlot, ArrayPatternElementsNodeSlot, NestedIdentifierObjectNodeSlot, ClassHeritageContentNodeSlot, FunctionExpressionReturnTypeNodeSlot, ArrowFunctionBodyNodeSlot, ArrowFunctionContentNodeSlot, MemberExpressionObjectNodeSlot, MemberExpressionOptionalChainNodeSlot, MemberExpressionPropertyNodeSlot, SubscriptExpressionObjectNodeSlot, LhsExpressionContentNodeSlot, AssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, UnaryExpressionOperatorNodeSlot, TemplateStringElementsNodeSlot, DecoratorContentNodeSlot, DecoratorMemberExpressionObjectNodeSlot, DecoratorCallExpressionFunctionNodeSlot, FormalParametersElementsNodeSlot, PairKeyNodeSlot, FunctionSignatureTerminatorNodeSlot, DecoratorParenthesizedExpressionExpressionNodeSlot, AsExpressionTypeNodeSlot, AmbientDeclarationContentNodeSlot, ModuleNameNodeSlot, ImportAliasTerminatorNodeSlot, ExtendsTypeClauseTypeNodeSlot, TypeAliasDeclarationTerminatorNodeSlot, OptionalParameterNameNodeSlot, TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot, TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot, AssertsValueNodeSlot, TupleParameterNameNodeSlot, TemplateTypeTypeNodeSlot, TemplateLiteralTypeElementsNodeSlot, GenericTypeNameNodeSlot, TypePredicateNameNodeSlot, TypeQueryMemberExpressionObjectNodeSlot, TypeQueryMemberExpressionContentNodeSlot, TypeQuerySubscriptExpressionIndexNodeSlot, TypeQueryCallExpressionFunctionNodeSlot, TypeQueryExpressionNodeSlot, LiteralTypeContentNodeSlot, ObjectTypeOpeningNodeSlot, ObjectTypeClosingNodeSlot, ConstraintContentNodeSlot, FunctionTypeReturnTypeNodeSlot, FormalParametersElementsItemNodeSlot, TupleTypeMembersItemNodeSlot, ImportClauseGroupContentNodeSlot, CatchClauseGroupParameterNodeSlot, AmbientDeclarationModuleTerminatorNodeSlot, ObjectTypeContentItemNodeSlot, ExportStatementNamespaceExportTerminatorNodeSlot, ExportStatementEqualsExportTerminatorNodeSlot, BinaryExpressionInLeftNodeSlot, ClassBodyMemberMethodTerminatorNodeSlot, ClassBodyMemberMethodSigTerminatorNodeSlot, ClassBodyMemberDeclarationMemberNodeSlot, ClassBodyMemberDeclarationTerminatorNodeSlot, IndexSignatureColonSignNodeSlot, IndexSignatureColonTypeNodeSlot, ImportSpecifierNameTypeOnlyNodeSlot, ImportSpecifierAsTypeOnlyNodeSlot, ImportSpecifierAsNameNodeSlot, CallExpressionTemplateCallFunctionNodeSlot, StringDoubleElementsNodeSlot, StringSingleElementsNodeSlot, UpdateExpressionPostfixOperatorNodeSlot, UpdateExpressionPrefixOperatorNodeSlot, ExportStatementDefaultFromTerminatorNodeSlot, ExportStatementDefaultFromContentNodeSlot, ExportStatementDefaultDeclarationContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot, ForHeaderLhsLeftNodeSlot, ForHeaderLhsOperatorNodeSlot, ForHeaderLetConstKindKindNodeSlot, ForHeaderUsingKindKindNodeSlot, SetterParameterPatternNodeSlot, PublicFieldDefinitionPlainOptionalityNodeSlot, ProgramNode, HashBangLineNode, NamespaceExportNode, ExportClauseNode, ExportSpecifierNode, ImportNode, ImportStatementNode, ImportClauseNode, NamespaceImportNode, NamedImportsNode, ImportAttributeNode, ExpressionStatementNode, VariableDeclarationNode, LexicalDeclarationNode, UsingDeclarationNode, StatementBlockNode, ElseClauseNode, IfStatementNode, SwitchStatementNode, ForStatementNode, ForInStatementNode, WhileStatementNode, DoStatementNode, TryStatementNode, WithStatementNode, BreakStatementNode, ContinueStatementNode, DebuggerStatementNode, ReturnStatementNode, ThrowStatementNode, EmptyStatementNode, LabeledStatementNode, SwitchBodyNode, SwitchCaseNode, SwitchDefaultNode, CatchClauseNode, FinallyClauseNode, YieldExpressionNode, ObjectNode, ObjectPatternNode, AssignmentPatternNode, ObjectAssignmentPatternNode, ArrayNode, ArrayPatternNode, NestedIdentifierNode, ClassNode, ClassDeclarationNode, ClassHeritageNode, FunctionExpressionNode, FunctionDeclarationNode, GeneratorFunctionNode, GeneratorFunctionDeclarationNode, ArrowFunctionNode, OptionalChainNode, NewExpressionNode, AwaitExpressionNode, MemberExpressionNode, SubscriptExpressionNode, LhsExpressionNode, AssignmentExpressionNode, AugmentedAssignmentExpressionNode, SpreadElementNode, TernaryExpressionNode, BinaryExpressionNode, UnaryExpressionNode, SequenceExpressionNode, UnescapedDoubleStringFragmentNode, UnescapedSingleStringFragmentNode, EscapeSequenceNode, TemplateStringNode, TemplateSubstitutionNode, RegexNode, RegexPatternNode, RegexFlagsNode, IdentifierNode, PrivatePropertyIdentifierNode, ThisNode, SuperNode, TrueNode, FalseNode, NullNode, UndefinedNode, ArgumentsNode, DecoratorNode, DecoratorMemberExpressionNode, DecoratorCallExpressionNode, ClassBodyNode, FormalParametersNode, ClassStaticBlockNode, RestPatternNode, PairNode, PairPatternNode, ComputedPropertyNameNode, NonNullExpressionNode, FunctionSignatureNode, DecoratorParenthesizedExpressionNode, TypeAssertionNode, AsExpressionNode, SatisfiesExpressionNode, InstantiationExpressionNode, ImportRequireClauseNode, ExtendsClauseNode, ExtendsClauseSingleNode, ImplementsClauseNode, AmbientDeclarationNode, AbstractClassDeclarationNode, ModuleNode, InternalModuleNode, ImportAliasNode, NestedTypeIdentifierNode, InterfaceDeclarationNode, ExtendsTypeClauseNode, EnumDeclarationNode, EnumBodyNode, EnumAssignmentNode, TypeAliasDeclarationNode, AccessibilityModifierEnum, OverrideModifierNode, RequiredParameterNode, OptionalParameterNode, OmittingTypeAnnotationNode, AddingTypeAnnotationNode, OptingTypeAnnotationNode, TypeAnnotationNode, TypeQueryMemberExpressionInTypeAnnotationNode, TypeQueryCallExpressionInTypeAnnotationNode, AssertsNode, AssertsAnnotationNode, TupleParameterNode, OptionalTupleParameterNode, OptionalTypeNode, RestTypeNode, ConstructorTypeNode, TemplateTypeNode, TemplateLiteralTypeNode, InferTypeNode, ConditionalTypeNode, GenericTypeNode, TypePredicateNode, TypePredicateAnnotationNode, TypeQueryMemberExpressionNode, TypeQuerySubscriptExpressionNode, TypeQueryCallExpressionNode, TypeQueryInstantiationExpressionNode, TypeQueryNode, IndexTypeQueryNode, LookupTypeNode, MappedTypeClauseNode, LiteralTypeNode, ExistentialTypeNode, FlowMaybeTypeNode, ParenthesizedTypeNode, PredefinedTypeEnum, TypeArgumentsNode, ObjectTypeNode, CallSignatureNode, PropertySignatureNode, TypeParametersNode, TypeParameterNode, DefaultTypeNode, ConstraintNode, ConstructSignatureNode, ArrayTypeNode, TupleTypeNode, ReadonlyTypeNode, UnionTypeNode, IntersectionTypeNode, FunctionTypeNode, ExportSpecifiersNode, ImportSpecifiersNode, FormalParametersElementsNode, EnumBodyElementNameNode, EnumBodyElementsNode, TypesNode, TypeParametersElementsNode, TupleTypeMembersNode, ImportClauseGroupNode, UsingDeclarationArmNode, CatchClauseGroupNode, GetAccessorSignatureNode, AmbientDeclarationGlobalNode, AmbientDeclarationModuleNode, ObjectTypeContentNode, ExportStatementNamespaceExportNode, ExportStatementEqualsExportNode, CommentLineNode, CommentBlockNode, LiteralTypeNegativeNumberNode, NumberHexNode, NumberFloatPointNode, NumberFloatLeadingPointNode, NumberFloatScientificNode, NumberDecimalNode, NumberBinaryNode, NumberOctalNode, NumberBigintHexNode, NumberBigintBinaryNode, NumberBigintOctalNode, NumberBigintDecimalNode, BinaryExpressionInNode, EmptyMemberNode, ClassBodyMemberMethodNode, ClassBodyMemberMethodSigNode, ClassBodyMemberDeclarationNode, IndexSignatureColonNode, IndexSignatureMappedTypeClauseNode, ImportStatementClauseFromNode, YieldExpressionDelegateNode, OptionalChainMarkerNode, ImportSpecifierNameNode, ImportSpecifierAsNode, ParenthesizedExpressionTypedNode, ParenthesizedExpressionSequenceNode, CallExpressionCallNode, CallExpressionTemplateCallNode, CallExpressionMemberNode, StringDoubleNode, StringSingleNode, UpdateExpressionPostfixNode, UpdateExpressionPrefixNode, ArrowFunctionParameterNode, ClassHeritageExtendsClauseNode, ImportClauseDefaultImportNode, ExportStatementDefaultFromNode, ExportStatementDefaultDeclarationNode, ExportStatementDefaultFromStarFromNode, ExportStatementDefaultFromNsFromNode, ExportStatementDefaultFromClauseFromNode, ExportStatementDefaultDeclarationDefaultKwNode, ExportStatementDefaultDeclarationDefaultKwValueNode, VariableDeclaratorPlainNode, VariableDeclaratorDefiniteNode, MetaPropertyNewTargetNode, MetaPropertyImportMetaNode, ForHeaderLhsNode, ForHeaderVarKindNode, ForHeaderLetConstKindNode, ForHeaderUsingKindNode, FormalParametersGetAccessorSignatureNode, FormalParametersSetAccessorSignatureNode, FormalParametersElementsSetAccessorSignatureNode, SetterParameterNode, MethodDefinitionPlainNode, MethodDefinitionGetterNode, MethodDefinitionSetterNode, MethodSignaturePlainNode, MethodSignatureGetterNode, MethodSignatureSetterNode, AbstractMethodSignaturePlainNode, AbstractMethodSignatureGetterNode, AbstractMethodSignatureSetterNode, PublicFieldDefinitionPlainNode, PublicFieldDefinitionAccessorNode, HtmlCommentNode, JsxTextNode, TemplateCharsNode, AutomaticSemicolonNode, FunctionSignatureAutomaticSemicolonNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ReceiverParameterDeclarationNode, FormalParametersElementsReceiverNode, FormalParametersElementsReceiverGroupNode, TernaryQmarkNode, ErrorRecoveryNode, StatementIdentifierNode, ShorthandPropertyIdentifierNode, ShorthandPropertyIdentifierPatternNode, PropertyIdentifierNode, TypeIdentifierNode, InterfaceBodyNode, StarNode, AsKeywordNode, DefaultKeywordNode, LbraceNode, RbraceNode, TypeKeywordNode, TypeofKeywordNode, ImportKeywordNode, SemiNode, WithKeywordNode, AssertKeywordNode, VarKeywordNode, LetKeywordNode, ConstKeywordNode, UsingKeywordNode, ElseKeywordNode, IfKeywordNode, SwitchKeywordNode, ForKeywordNode, LparenNode, RparenNode, AwaitKeywordNode, WhileKeywordNode, DoKeywordNode, TryKeywordNode, BreakKeywordNode, ContinueKeywordNode, DebuggerKeywordNode, ReturnKeywordNode, ThrowKeywordNode, ColonNode, CaseKeywordNode, CatchKeywordNode, FinallyKeywordNode, YieldKeywordNode, EqNode, LbrackNode, RbrackNode, DotNode, ClassKeywordNode, AsyncKeywordNode, FunctionKeywordNode, EqGtNode, QmarkDotNode, NewKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, CaretEqNode, AmpEqNode, PipeEqNode, GtGtEqNode, GtGtGtEqNode, LtLtEqNode, StarStarEqNode, AmpAmpEqNode, PipePipeEqNode, QmarkQmarkEqNode, DotDotDotNode, QmarkNode, AmpAmpNode, PipePipeNode, GtGtNode, GtGtGtNode, LtLtNode, AmpNode, CaretNode, PipeNode, PlusNode, DashNode, SlashNode, PercentNode, StarStarNode, LtNode, LtEqNode, EqEqNode, EqEqEqNode, BangEqNode, BangEqEqNode, GtEqNode, GtNode, QmarkQmarkNode, InstanceofKeywordNode, BangNode, TildeNode, VoidKeywordNode, DeleteKeywordNode, BquoteNode, DollarLbraceNode, ThisKeywordNode, SuperKeywordNode, TrueKeywordNode, FalseKeywordNode, NullKeywordNode, AtNode, StaticKeywordNode, SatisfiesKeywordNode, RequireKeywordNode, ExtendsKeywordNode, ImplementsKeywordNode, DeclareKeywordNode, AbstractKeywordNode, ModuleKeywordNode, NamespaceKeywordNode, InterfaceKeywordNode, EnumKeywordNode, PublicKeywordNode, PrivateKeywordNode, ProtectedKeywordNode, OverrideKeywordNode, ReadonlyKeywordNode, DashQmarkColonNode, PlusQmarkColonNode, QmarkColonNode, AssertsKeywordNode, InferKeywordNode, IsKeywordNode, KeyofKeywordNode, InKeywordNode, AnyKeywordNode, NumberKeywordNode, BooleanKeywordNode, StringKeywordNode, SymbolKeywordNode, UniqueNode, UnknownKeywordNode, NeverKeywordNode, ObjectKeywordNode, LbracePipeNode, PipeRbraceNode, CommaNode, GlobalKeywordNode, ExportKeywordNode, FromKeywordNode, DquoteNode, SquoteNode, PlusPlusNode, DashDashNode, TargetKeywordNode, MetaKeywordNode, OfKeywordNode, GetKeywordNode, SetKeywordNode, AccessorKeywordNode, TriviaNode);

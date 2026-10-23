@@ -1855,14 +1855,14 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, _parameter_name__set_accessor_signature on '(' resolved by AddConflict (default)",
+    "message": "conflict between primary_expression, _parameter_name_set_accessor_signature on '(' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "_parameter_name__set_accessor_signature"
+          "_parameter_name_set_accessor_signature"
         ]
       },
       "step": "default",
@@ -1871,7 +1871,7 @@
           "primary_expression"
         ],
         [
-          "_parameter_name__set_accessor_signature"
+          "_parameter_name_set_accessor_signature"
         ]
       ],
       "conflict": {
@@ -1885,7 +1885,7 @@
         "lookahead": "'('",
         "interpretations": [
           "primary_expression",
-          "_parameter_name__set_accessor_signature"
+          "_parameter_name_set_accessor_signature"
         ]
       }
     }

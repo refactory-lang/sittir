@@ -533,8 +533,8 @@ export const forHeaderUsingKind = bundle(F.buildForHeaderUsingKind, C.coerceToFo
 	max: 1
 });
 export const formalParametersSetAccessorSignature = bundle(
-	F.buildFormalParametersUSetAccessorSignature,
-	C.coerceToFormalParametersUSetAccessorSignature,
+	F.buildFormalParametersSetAccessorSignature,
+	C.coerceToFormalParametersSetAccessorSignature,
 	{ key: 'formalParametersSetAccessorSignature', max: 1 }
 );
 export const setterParameter = bundle(F.buildSetterParameter, C.coerceToSetterParameter, {

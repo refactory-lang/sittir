@@ -458,7 +458,7 @@ export const ir: {
 	readonly optionalChainMarker: typeof F.buildOptionalChainMarker;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
-	readonly formalParametersGetAccessorSignature: typeof F.buildFormalParametersUGetAccessorSignature;
+	readonly formalParametersGetAccessorSignature: typeof F.buildFormalParametersGetAccessorSignature;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
 	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
 	readonly hashBangLine: typeof F.buildHashBangLine;
@@ -731,7 +731,7 @@ export const ir: {
 	optionalChainMarker: F.buildOptionalChainMarker,
 	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
-	formalParametersGetAccessorSignature: F.buildFormalParametersUGetAccessorSignature,
+	formalParametersGetAccessorSignature: F.buildFormalParametersGetAccessorSignature,
 	automaticSemicolon: F.buildAutomaticSemicolon,
 	functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
 

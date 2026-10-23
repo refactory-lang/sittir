@@ -1,5 +1,11 @@
 {
-	"_formal_parameters__set_accessor_signature": [
+	"_formal_parameters_elements_set_accessor_signature": [
+		{
+			"kind": "slot",
+			"name": "item"
+		}
+	],
+	"_formal_parameters_set_accessor_signature": [
 		{
 			"kind": "text",
 			"text": "("
@@ -19,12 +25,6 @@
 		{
 			"kind": "text",
 			"text": ")"
-		}
-	],
-	"_formal_parameters_elements__set_accessor_signature": [
-		{
-			"kind": "slot",
-			"name": "item"
 		}
 	],
 	"_lhs_expression": [

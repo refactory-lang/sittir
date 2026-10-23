@@ -491,7 +491,7 @@ A copy is a rule made from a source rule for one context. Every rule a verb make
 - **Context.** The kind whose `edits` entry or `rules:` callback makes the copy. A helper sets its own: the lead copies in the context of its field or its item (§5.2).
 - **Body.** The source's body, or the selected part.
 - **Name.** A copy is always hidden.
-  - A whole copy is `_<source>_<context>`, with the source's own leading underscore dropped. So `_declaration_statement` copied in `impl_item_body` gives `_declaration_statement_impl_item_body`, as split clones and lead mints are named today.
+  - A whole copy is `_<source>_<context>`, with the source's and the context's own leading underscores dropped. So `_declaration_statement` copied in `impl_item_body` gives `_declaration_statement_impl_item_body`, as split clones and lead mints are named today, and `formal_parameters` copied in `_get_accessor_signature` gives `_formal_parameters_get_accessor_signature`.
   - A part copy puts the part's segments between the two: `_<source>_<part>_<context>`, so arm 2 of `_declaration` in `impl_item_body` gives `_declaration_2_impl_item_body`.
   - A name that some other rule already has is `rule-name-taken`.
 - **The reference.** `copy()` returns `alias($._<copy>, $.<source>)` when the source is visible, so the tree shows the source's kind. A copy of a hidden rule returns `$._<copy>`.
