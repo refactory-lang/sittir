@@ -132,10 +132,13 @@ These settle the cases the rule above leaves open. Implement builds to them.
   own type is a type literal nests: `A::prop::inner`.
 - An object-literal const is followed through `as const`, `satisfies` and parentheses only.
   `Object.freeze(...)` is not followed.
-- A key is valid only when its full path matches exactly one declaration's path in the file
-  (`Namespace::Owner::member`, or the bare name for a top-level declaration). Suffix matching
-  (`Owner::member` matching `Outer::Owner::member`) is not used: one owner name can occur under
-  several namespaces in one file, and a suffix would make such a key ambiguous.
+- A key names exactly one declaration in its file, as the rule above states: the bare name when
+  that name is declared once in the file (a top-level declaration, or a member of exactly one
+  owner), otherwise the full path (`Namespace::Owner::member`). A bare name that is a unique
+  member is valid, so a heading `file::tilt` where `tilt` is only `Box::tilt` is
+  `ok-bare-unique`. Suffix matching (`Owner::member` matching `Outer::Owner::member`) is not
+  used: one owner name can occur under several namespaces in one file, and a suffix would make
+  such a key ambiguous.
 
 ## Ceilings file
 
