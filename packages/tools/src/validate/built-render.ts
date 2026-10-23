@@ -1,5 +1,6 @@
 import type { ValidatorSkip } from './common.ts';
 import { KindCases, type CasesByKind } from './kind-cases.ts';
+import { surfaceLabel } from './surface-label.ts';
 
 /** A built node's render-and-reparse failure or AST mismatch, by the kind built. */
 export interface BuiltRenderFailure {
@@ -51,7 +52,7 @@ export const emptyBuiltRender = (): BuiltRenderResult => finishBuiltRender(empty
 export function combineBuiltRender(runs: Readonly<Record<string, BuiltRenderResult>>): BuiltRenderResult {
 	const combined = emptyBuiltRenderRun();
 	for (const [surface, run] of Object.entries(runs)) {
-		const label = <T extends { readonly kind?: string }>(r: T): T => ({ ...r, kind: `${surface}: ${r.kind}` });
+		const label = <T extends { readonly kind?: string }>(r: T): T => (r.kind === undefined ? r : { ...r, kind: surfaceLabel(surface, r.kind) });
 		for (const [kind, count] of Object.entries(run.casesByKind)) combined.cases.add(kind, count);
 		combined.pass += run.pass;
 		combined.astMatchPass += run.astMatchPass;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { combineBuiltRender, emptyBuiltRender, emptyBuiltRenderRun, finishBuiltRender } from '../built-render.ts';
 import { KindCases } from '../kind-cases.ts';
+import { kindOfLabel } from '../surface-label.ts';
 
 describe('KindCases', () => {
 	it('counts cases per kind, totals them, and lists them by kind in sorted order', () => {
@@ -55,5 +56,15 @@ describe('built render cases by kind', () => {
 		});
 		expect(combined.total).toBe(4);
 		expect(combined.casesByKind).toEqual({ block: 1, match_block: 3 });
+	});
+
+	it("labels each failure's kind with its surface, and the label reads back as the kind", () => {
+		const run = emptyBuiltRenderRun();
+		run.cases.add('match_block');
+		run.errors.push({ kind: 'match_block', entry: 'entry', message: 'did not reparse', input: 'input' });
+		const [failure] = combineBuiltRender({ ir: finishBuiltRender(run) }).errors;
+		expect(failure?.kind).toBe('ir: match_block');
+		expect(kindOfLabel(failure!.kind)).toBe('match_block');
+		expect(kindOfLabel('match_block')).toBe('match_block');
 	});
 });

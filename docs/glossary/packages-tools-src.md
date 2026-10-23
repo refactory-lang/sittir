@@ -238,7 +238,7 @@ The kinds one grammar entry records in `kinds` that the other does not: with the
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::validatorSum`
 
-The size of a validator's failing and format-deferred lists (`failingKinds` and `formatDeferredKinds`), leaving out the kinds in `uncounted`. `checkFormatDeferredRise` leaves out the head's arrived kinds (`kindsMissingFrom`): a kind that splits or is renamed lists its failing parts under new names, which is no spread of failures among kinds that exist on both sides, and `checkFailRise` holds their count. A departed kind is still counted in the base's list, so a failing kind merged into one that survives keeps the sum.
+The size of a validator's failing and format-deferred lists (`failingKinds` and `formatDeferredKinds`), leaving out the entries whose kind (`kindOfLabel`, since the built-render-parse row labels each with its surface) is in `uncounted`. `checkFormatDeferredRise` leaves out the head's arrived kinds (`kindsMissingFrom`): a kind that splits or is renamed lists its failing parts under new names, which is no spread of failures among kinds that exist on both sides, and `checkFailRise` holds their count. A departed kind is still counted in the base's list, so a failing kind merged into one that survives keeps the sum.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::isKindId`
 

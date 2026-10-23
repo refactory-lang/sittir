@@ -77,6 +77,8 @@
  *      must fail here rather than vanish from the fixture set. The sum,
  *      not each kind individually, is tracked — a kind rename moves
  *      fixtures between keys without changing how many don't reproduce.
+ *      A grammar the base does not record starts from zero, so a grammar
+ *      a change adds enters with no fixture left out.
  *
  * Importable surface: `checkRegression(base, head): RegressionVerdict`.
  * The CLI wrapper (bottom of file) reads `--base <path>` and `--head <path>`
@@ -87,6 +89,7 @@ import { stableGrammars } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
+import { kindOfLabel } from '../validate/surface-label.ts';
 import type {
 	BackendBaseline,
 	CounterPair,
@@ -667,8 +670,8 @@ function sumByKind(byKind: Readonly<Record<string, number>>): number {
 }
 
 function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	for (const [g, baseGE, headGE] of comparedGrammars(base, head)) {
-		const before = baseGE.parityFixtures.leftOutByKind ?? {};
+	for (const [g, headGE] of Object.entries(head.grammars)) {
+		const before = ownEntry(base.grammars, g)?.parityFixtures.leftOutByKind ?? {};
 		const after = headGE.parityFixtures.leftOutByKind ?? {};
 		const beforeSum = sumByKind(before);
 		const afterSum = sumByKind(after);
@@ -773,7 +776,7 @@ function checkFailRise(base: BackendBaseline, head: BackendBaseline): Regression
 // ---------------------------------------------------------------------------
 
 function validatorSum(v: ValidatorResult, uncounted: ReadonlySet<string> = new Set()): number {
-	return [...v.failingKinds, ...v.formatDeferredKinds].filter((kind) => !uncounted.has(kind)).length;
+	return [...v.failingKinds, ...v.formatDeferredKinds].filter((entry) => !uncounted.has(kindOfLabel(entry))).length;
 }
 
 function parityFixturesSum(p: ParityFixtures): number {

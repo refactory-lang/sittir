@@ -17,6 +17,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { checkRegression, run, type RegressionVerdict } from '../scripts/check-baseline-regression.ts';
+import { combineBuiltRender, emptyBuiltRenderRun, finishBuiltRender } from '../validate/built-render.ts';
 import {
 	computeTotals,
 	type BackendBaseline,
@@ -87,6 +88,17 @@ function baseline(backend: 'native' = 'native'): BackendBaseline {
 		grammars: Object.fromEntries(stableGrammars().map((grammar) => [grammar, entry()])),
 		totals: { pass: 50 * stableGrammars().length, fail: 0, total: 50 * stableGrammars().length }
 	};
+}
+
+/** The built-render-parse row's failing kinds as the collector writes them: one per surface-labelled failure. */
+function builtFailingKinds(kinds: readonly string[]): string[] {
+	const run = emptyBuiltRenderRun();
+	for (const kind of kinds) {
+		run.cases.add(kind);
+		run.errors.push({ kind, entry: 'entry', message: 'did not reparse', input: 'input' });
+	}
+	const built = combineBuiltRender({ factory: finishBuiltRender(run) });
+	return [...new Set(built.errors.map((failure) => failure.kind))].sort();
 }
 
 function clone<T>(v: T): T {
@@ -361,6 +373,19 @@ describe('checkRegression', () => {
 		expect(verdict.details.after).toBe(1);
 	});
 
+	it('a grammar the base does not record counts its left-out fixtures from zero', () => {
+		const head = baseline();
+		head.grammars.typescript!.parityFixtures = { ...pf(9, 9), leftOutByKind: { list: 1 } };
+		head.totals = computeTotals(head.grammars);
+		const base = clone(head);
+		delete (base.grammars as Record<string, GrammarEntry>).typescript;
+		base.totals = computeTotals(base.grammars);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('left-out-rise');
+		expect(verdict.details).toMatchObject({ path: 'grammars.typescript.parityFixtures.leftOutByKind', before: 0, after: 1 });
+	});
+
 	it('left-out rename passes — a kind split moving the same fixtures to a new key does not raise the sum', () => {
 		const base = baseline();
 		base.grammars.python!.parityFixtures.leftOutByKind = { assignment: 3 };
@@ -621,6 +646,22 @@ describe('checkRegression', () => {
 			const verdict = checkRegression(base, retotal(head));
 			expect(verdict.ok).toBe(true);
 			if (verdict.ok) expect(verdict.explained).toContain('grammars.typescript.validators.from 2/4 → 2/4: departed a (2 cases)');
+		});
+
+		it('a failing kind that splits lists its surface-labelled built-render failures under new names', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.builtRenderParse = {
+				...rt(58, 60, 58, builtFailingKinds(['a', 'a'])),
+				casesByKind: { a: 38, b: 12, c: 10 }
+			};
+			const head = clone(retotal(base));
+			head.grammars.typescript!.kinds = ['a1', 'a2', 'b', 'c'];
+			head.grammars.typescript!.validators.builtRenderParse = {
+				...rt(58, 60, 58, builtFailingKinds(['a1', 'a2'])),
+				casesByKind: { a1: 19, a2: 19, b: 12, c: 10 }
+			};
+			expect(head.grammars.typescript!.validators.builtRenderParse.failingKinds).toEqual(['factory: a1', 'factory: a2']);
+			expect(checkRegression(base, retotal(head)).ok).toBe(true);
 		});
 
 		it('a failure that spreads to a kind that still exists fails, though no count moves', () => {

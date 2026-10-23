@@ -1659,7 +1659,7 @@ A built node carries no source identity, so its render cannot fold back to sourc
 
 ### `packages/tools/src/validate/built-render.ts::combineBuiltRender`
 
-The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each kind's cases added across them (`casesByKind`), each failure's kind labeled with its surface (`factory: <kind>`, `ir: <kind>`).
+The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each kind's cases added across them (`casesByKind`), each failure's kind labeled with its surface (`surfaceLabel`: `factory: <kind>`, `ir: <kind>`).
 
 ### `packages/tools/src/validate/built-render.ts::BuiltRenderRun`
 
@@ -1855,3 +1855,11 @@ A validator's case counter, per kind. `add` counts a case (or several) of a kind
 ### `packages/tools/src/validate/kind-cases.ts::CasesByKind`
 
 Cases counted per kind, as a validator result and the baseline record them.
+
+### `packages/tools/src/validate/surface-label.ts::surfaceLabel`
+
+A failure's kind labeled with the surface whose run produced it, `<surface>: <kind>` (`factory: block`, `ir: block`). `combineBuiltRender` labels every built-render failure this way, so the built-render-parse row's `failingKinds` and the validation report name the surface; `kindOfLabel` reads the kind back.
+
+### `packages/tools/src/validate/surface-label.ts::kindOfLabel`
+
+The kind a `surfaceLabel` names, or the entry itself when it carries no surface. A kind name holds no `': '`, so an unlabeled kind reads back unchanged. The baseline check reads the built-render-parse row's failing kinds through it, to compare them with the grammar's `kinds`.
