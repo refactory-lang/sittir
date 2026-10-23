@@ -2508,7 +2508,7 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
  */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::name`
+### `packages/codegen/src/dsl/enrich.ts::SymbolTarget::name`
 
 ```text
 /** Raw symbol name (preserves any leading underscore for supertype detection). */
