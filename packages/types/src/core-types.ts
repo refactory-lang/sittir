@@ -167,7 +167,9 @@ export type GrammarTriviaEntry<Trivia> = TriviaItem<Trivia> | string;
  * The trivia positions of a node: `leading` and `trailing`. Called with items, a position
  * sets its entries, keeps the other position, and returns the node, so calls chain; called
  * with none, it returns the entries the position holds. An item is a trivia node or the
- * text of a comment.
+ * text of a comment. A parsed alias envelope and its content are one source node whose
+ * comments belong to the envelope: the content's positions read none, and a write through
+ * the content lands on the envelope.
  */
 export interface TriviaSetter<Self = AnyUntypedNode, Trivia = any> {
 	leading(): readonly TriviaItem<Trivia>[];

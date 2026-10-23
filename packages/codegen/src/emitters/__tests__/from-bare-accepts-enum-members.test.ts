@@ -100,8 +100,8 @@ describe('a wrapper over an enum-bearing slot accepts the enum members bare (rul
 		expect(emitted).toContain('(_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e))');
 	});
 
-	it('a number at a kind-enum slot is the discriminant only when it is a stored kind id', () => {
+	it('a number at a kind-enum slot is the discriminant only when it is a kind id the slot stores', () => {
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
-		expect(emitted).toContain('return typeof v === "number" && _KIND_ID_STORED.has(v) ? (v as T) : resolve();');
+		expect(emitted).toContain('return typeof v === "number" && stored.includes(v) ? (v as T) : resolve();');
 	});
 });

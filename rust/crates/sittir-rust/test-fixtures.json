@@ -11599,17 +11599,6 @@
     "expectedOutput": "Item",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "Item",
@@ -66367,17 +66356,6 @@
     "expectedOutput": "RHS",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "RHS",
@@ -66407,17 +66385,6 @@
     "expectedOutput": "Self",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "Self",
@@ -87048,17 +87015,6 @@
     "expectedOutput": "A",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            169
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "A",
@@ -95523,17 +95479,6 @@
     "expectedOutput": "napi_module",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            169
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "napi_module",
@@ -166058,17 +166003,6 @@
     "expectedOutput": "Person",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "Person",
@@ -166101,17 +166035,6 @@
     "expectedOutput": "Person",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "Person",
@@ -187051,17 +186974,6 @@
     "expectedOutput": "B",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            169
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "B",
@@ -188008,17 +187920,6 @@
     "expectedOutput": "K",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "trailing": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "K",
@@ -188048,17 +187949,6 @@
     "expectedOutput": "L",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            168
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "L",
@@ -195336,17 +195226,6 @@
     "expectedOutput": "c_void",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            169
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "c_void",
@@ -195405,17 +195284,6 @@
     "expectedOutput": "c_void",
     "grammar": "rust",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "leading": [
-            169
-          ]
-        }
-      },
       "$type": 469,
       "_content": {
         "$text": "c_void",

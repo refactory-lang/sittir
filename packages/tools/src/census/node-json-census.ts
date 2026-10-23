@@ -9,6 +9,7 @@ export interface TextLeafRow {
 	readonly kind: string;
 	readonly instances: number;
 	readonly rendering: number;
+	readonly trivia: number;
 }
 
 export interface NodeJsonCensus {
@@ -27,6 +28,20 @@ interface Walked {
 	readonly $type: number;
 	readonly $render?: unknown;
 	readonly $query: () => { readonly $descendants: Iterable<Walked> };
+	readonly $trivia?: Readonly<Record<string, (() => readonly unknown[]) | undefined>>;
+}
+
+const TRIVIA_SIDES = ['leading', 'trailing', 'inner'] as const;
+
+function jsonKinds(value: unknown): string[] {
+	if (Array.isArray(value)) return value.flatMap(jsonKinds);
+	if (!isObject(value)) return [];
+	const own = typeof (value as { $type?: unknown }).$type === 'string' ? [(value as { $type: string }).$type] : [];
+	return [...own, ...Object.values(value).flatMap(jsonKinds)];
+}
+
+function triviaKinds(node: Walked): string[] {
+	return TRIVIA_SIDES.flatMap((side) => node.$trivia?.[side]?.() ?? []).flatMap((entry) => (isObject(entry) ? jsonKinds(JSON.parse(JSON.stringify(entry))) : []));
 }
 
 const isObject = (value: unknown): value is object => typeof value === 'object' && value !== null;
@@ -64,7 +79,7 @@ export async function nodeJsonCensus(grammar: string): Promise<NodeJsonCensus> {
 	const units = new Set(unitKindIds(nodeMap).map(nameOf));
 
 	const engine = await loadNativeEngine(grammar);
-	const leaves = new Map<string, { instances: number; rendering: number }>(leafKinds.map((kind) => [kind, { instances: 0, rendering: 0 }]));
+	const leaves = new Map<string, { instances: number; rendering: number; trivia: number }>(leafKinds.map((kind) => [kind, { instances: 0, rendering: 0, trivia: 0 }]));
 	const produced = new Set<string>();
 	const shapes = new Map<string, Map<string, Map<SlotShape, number>>>();
 	const readFailures = new Map<string, number>();
@@ -87,6 +102,10 @@ export async function nodeJsonCensus(grammar: string): Promise<NodeJsonCensus> {
 				continue;
 			}
 			const node = item;
+			for (const name of triviaKinds(node)) {
+				const inTrivia = leaves.get(name);
+				if (inTrivia !== undefined) inTrivia.trivia += 1;
+			}
 			const kind = nameOf(node.$type);
 			produced.add(kind);
 			const leaf = leaves.get(kind);
@@ -132,10 +151,13 @@ export async function nodeJsonCensus(grammar: string): Promise<NodeJsonCensus> {
 }
 
 export function formatNodeJsonCensus(census: NodeJsonCensus): string {
-	const unwrapped = census.textLeaves.filter((row) => row.rendering < row.instances || row.instances === 0);
+	const unwrapped = census.textLeaves.filter((row) => row.instances > 0 && row.rendering < row.instances);
+	const unseen = census.textLeaves.filter((row) => row.instances === 0);
 	const lines = [`# ${census.grammar}: ${census.entries} corpus entries parsed, ${census.skipped} skipped`];
 	lines.push(`## 1. text-leaf kinds with no wrap (${unwrapped.length} of ${census.textLeaves.length}; instances = corpus nodes, rendering = those already carrying $render)`);
 	for (const row of unwrapped) lines.push(`  ${row.kind}\tinstances ${row.instances}\trendering ${row.rendering}`);
+	lines.push(`## 1b. text-leaf kinds with no corpus node (${unseen.length}; trivia = instances inside the corpus's comments, which the node walk does not visit)`);
+	for (const row of unseen) lines.push(`  ${row.kind}\t${row.trivia > 0 ? `trivia only\ttrivia ${row.trivia}` : 'no corpus instance'}`);
 	lines.push(`## 2. corpus kinds that are not keys of _fromMap and not units (${census.unbuildable.length}; ${census.unitsProduced} unit kinds revive to their kind id)`);
 	for (const kind of census.unbuildable) lines.push(`  ${kind}`);
 	lines.push('## 3. slot value shapes by kind and accessor (corpus instance counts)');

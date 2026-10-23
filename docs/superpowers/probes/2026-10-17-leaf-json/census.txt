@@ -1,17 +1,7 @@
 # python: 116 corpus entries parsed, 0 skipped
-## 1. text-leaf kinds with no wrap (12 of 12; instances = corpus nodes, rendering = those already carrying $render)
-  escape_interpolation	instances 10	rendering 0
-  format_specifier_text	instances 10	rendering 0
-  identifier	instances 917	rendering 0
-  import_prefix	instances 4	rendering 0
-  integer_decimal_imaginary	instances 7	rendering 0
-  integer_decimal_long	instances 1	rendering 0
-  integer_decimal_plain	instances 148	rendering 0
-  line_continuation_newline	instances 0	rendering 0
-  string_end	instances 137	rendering 0
-  string_fragment	instances 162	rendering 0
-  string_start	instances 137	rendering 0
-  type_conversion	instances 2	rendering 0
+## 1. text-leaf kinds with no wrap (0 of 12; instances = corpus nodes, rendering = those already carrying $render)
+## 1b. text-leaf kinds with no corpus node (1; trivia = instances inside the corpus's comments, which the node walk does not visit)
+  line_continuation_newline	no corpus instance
 ## 2. corpus kinds that are not keys of _fromMap and not units (0; 19 unit kinds revive to their kind id)
 ## 3. slot value shapes by kind and accessor (corpus instance counts)
   _simple_pattern.content	kind-id 6, node 118
@@ -118,21 +108,24 @@
   float_leading_point.integer	undefined 11
   float_leading_point.fraction	string 11
   float_leading_point.marker	string 1, undefined 10
+  float_leading_point.sign	undefined 11
   float_leading_point.exponent	string 1, undefined 10
   float_leading_point.imaginary	undefined 11
   float_point.integer	string 11
   float_point.fraction	string 7, undefined 4
   float_point.marker	string 2, undefined 9
+  float_point.sign	undefined 11
   float_point.exponent	string 2, undefined 9
   float_point.imaginary	string 2, undefined 9
   float_scientific.integer	string 5
   float_scientific.marker	string 5
+  float_scientific.sign	string 3, undefined 2
   float_scientific.exponent	string 5
   float_scientific.imaginary	string 1, undefined 4
   for_in_clause.async	boolean 19
   for_in_clause.left	node 19
   for_in_clause.rights	list 19
-  for_in_clause.comma	boolean 19
+  for_in_clause.trailingComma	kind-id 19
   for_statement.async	boolean 7
   for_statement.left	node 7
   for_statement.right	node 7
@@ -280,20 +273,10 @@
   comment
 ## 5. corpus entries whose read threw while enumerating nodes (0)
 # regex: 32 corpus entries parsed, 5 skipped
-## 1. text-leaf kinds with no wrap (13 of 13; instances = corpus nodes, rendering = those already carrying $render)
-  character_class_escape_text1	instances 3	rendering 0
-  character_class_escape_text2	instances 2	rendering 0
-  class_character	instances 47	rendering 0
-  control_escape	instances 0	rendering 0
-  control_letter_escape	instances 1	rendering 0
-  decimal_digits	instances 13	rendering 0
-  decimal_escape	instances 1	rendering 0
-  flags	instances 6	rendering 0
-  group_name	instances 9	rendering 0
-  pattern_character	instances 108	rendering 0
-  posix_class_name	instances 1	rendering 0
-  unicode_character_escape	instances 0	rendering 0
-  unicode_property_value	instances 2	rendering 0
+## 1. text-leaf kinds with no wrap (0 of 13; instances = corpus nodes, rendering = those already carrying $render)
+## 1b. text-leaf kinds with no corpus node (2; trivia = instances inside the corpus's comments, which the node walk does not visit)
+  control_escape	no corpus instance
+  unicode_character_escape	no corpus instance
 ## 2. corpus kinds that are not keys of _fromMap and not units (0; 8 unit kinds revive to their kind id)
 ## 3. slot value shapes by kind and accessor (corpus instance counts)
   alternation.terms	list 3
@@ -352,23 +335,16 @@
   1	unicode_character_escape_text1 (kind 43) at index 7 is no member of the type it was read into
   1	unicode_character_escape_text1 (kind 43) at index 8 is no member of the type it was read into
 # rust: 149 corpus entries parsed, 0 skipped
-## 1. text-leaf kinds with no wrap (16 of 16; instances = corpus nodes, rendering = those already carrying $render)
-  _block_comment_content	instances 0	rendering 0
-  _error_sentinel	instances 0	rendering 0
-  block_comment_regular	instances 0	rendering 0
-  char_literal_empty	instances 0	rendering 0
-  doc_comment	instances 0	rendering 0
-  float_literal	instances 11	rendering 0
-  identifier	instances 700	rendering 0
-  line_comment_extra_slashes	instances 0	rendering 0
-  line_comment_regular	instances 0	rendering 0
-  raw_string_literal_content	instances 9	rendering 0
-  raw_string_literal_end	instances 9	rendering 0
-  raw_string_literal_start	instances 9	rendering 0
-  string_close	instances 0	rendering 0
-  string_content	instances 60	rendering 0
-  string_open	instances 57	rendering 0
-  token_repetition_pattern_text	instances 6	rendering 0
+## 1. text-leaf kinds with no wrap (0 of 16; instances = corpus nodes, rendering = those already carrying $render)
+## 1b. text-leaf kinds with no corpus node (8; trivia = instances inside the corpus's comments, which the node walk does not visit)
+  _block_comment_content	trivia only	trivia 7
+  _error_sentinel	no corpus instance
+  block_comment_regular	trivia only	trivia 11
+  char_literal_empty	no corpus instance
+  doc_comment	trivia only	trivia 9
+  line_comment_extra_slashes	trivia only	trivia 1
+  line_comment_regular	trivia only	trivia 12
+  string_close	no corpus instance
 ## 2. corpus kinds that are not keys of _fromMap and not units (0; 45 unit kinds revive to their kind id)
 ## 3. slot value shapes by kind and accessor (corpus instance counts)
   _let_chain.left	node 5
@@ -459,6 +435,7 @@
   const_parameter.type	kind-id 3
   const_parameter.value	node 1, undefined 2
   continue_expression.label	node 2, undefined 1
+  crate_visibility_modifier.content	kind-id 5
   declaration_list.declarations	list 38
   delim_token_tree_brace.delimTokens	list 5
   delim_token_tree_bracket.delimTokens	list 3
@@ -578,7 +555,7 @@
   last_match_arm.attributes	list 13
   last_match_arm.pattern	kind-id 6, node 7
   last_match_arm.value	kind-id 1, node 12
-  last_match_arm.comma	boolean 13
+  last_match_arm.trailingComma	kind-id 13
   let_condition.pattern	node 13
   let_condition.value	kind-id 1, node 12
   let_declaration.mutable	boolean 36
@@ -781,7 +758,7 @@
   use_wildcard_group.path	node 2, undefined 1
   variadic_parameter.mutable	boolean 2
   variadic_parameter.pattern	node 1, undefined 1
-  visibility_modifier.content	kind-id 5, node 31
+  visibility_modifier.content	node 36
   visibility_modifier_pub.visibilityModifierPubScope	node 4, undefined 27
   visibility_modifier_pub_scope.content	kind-id 3, node 1
   visibility_modifier_pub_scope_in_path.path	node 1
@@ -798,10 +775,8 @@
   line_comment
 ## 5. corpus entries whose read threw while enumerating nodes (0)
 # scm: 19 corpus entries parsed, 0 skipped
-## 1. text-leaf kinds with no wrap (3 of 3; instances = corpus nodes, rendering = those already carrying $render)
-  _immediate_identifier	instances 36	rendering 0
-  identifier	instances 150	rendering 0
-  string_content_text	instances 35	rendering 0
+## 1. text-leaf kinds with no wrap (0 of 3; instances = corpus nodes, rendering = those already carrying $render)
+## 1b. text-leaf kinds with no corpus node (0; trivia = instances inside the corpus's comments, which the node walk does not visit)
 ## 2. corpus kinds that are not keys of _fromMap and not units (0; 5 unit kinds revive to their kind id)
 ## 3. slot value shapes by kind and accessor (corpus instance counts)
   anonymous_node.name	kind-id 3, node 26
@@ -849,18 +824,14 @@
   comment
 ## 5. corpus entries whose read threw while enumerating nodes (0)
 # typescript: 119 corpus entries parsed, 0 skipped
-## 1. text-leaf kinds with no wrap (11 of 11; instances = corpus nodes, rendering = those already carrying $render)
-  __error_recovery	instances 0	rendering 0
-  _template_chars	instances 12	rendering 0
-  _ternary_qmark	instances 0	rendering 0
-  html_comment	instances 0	rendering 0
-  identifier	instances 335	rendering 0
-  jsx_text	instances 0	rendering 0
-  number_decimal	instances 36	rendering 0
-  regex_flags	instances 0	rendering 0
-  regex_pattern	instances 0	rendering 0
-  unescaped_double_string_fragment	instances 33	rendering 0
-  unescaped_single_string_fragment	instances 41	rendering 0
+## 1. text-leaf kinds with no wrap (0 of 11; instances = corpus nodes, rendering = those already carrying $render)
+## 1b. text-leaf kinds with no corpus node (6; trivia = instances inside the corpus's comments, which the node walk does not visit)
+  __error_recovery	no corpus instance
+  _ternary_qmark	no corpus instance
+  html_comment	no corpus instance
+  jsx_text	no corpus instance
+  regex_flags	no corpus instance
+  regex_pattern	no corpus instance
 ## 2. corpus kinds that are not keys of _fromMap and not units (0; 28 unit kinds revive to their kind id)
 ## 3. slot value shapes by kind and accessor (corpus instance counts)
   _lhs_expression.content	node 67

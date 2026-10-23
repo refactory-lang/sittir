@@ -121,6 +121,31 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	}
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['identity_escape']);
+const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
+	'any_character',
+	'start_assertion',
+	'end_assertion',
+	'boundary_assertion',
+	'non_boundary_assertion',
+	'pattern_character',
+	'posix_class_name',
+	'class_character',
+	'flags',
+	'decimal_escape',
+	'unicode_character_escape',
+	'unicode_property_value',
+	'control_escape',
+	'control_letter_escape',
+	'group_name',
+	'decimal_digits',
+	'character_class_escape_text1',
+	'character_class_escape_text2',
+	'negation',
+	'_tight',
+	'_newline',
+	'_blankline',
+	'_double_blankline'
+]);
 
 function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
@@ -199,8 +224,16 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeValue(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
-	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
-	return fn(text);
+	if (typeof text === 'string') return _buildGuardedText(text, kind) as ReturnType<_FromMap[K]>;
+	if (_SLOTLESS_TEXT_KINDS.has(kind) || 'text' in rest)
+		throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
+	return fn(rest);
+}
+
+export function buildByKind(kind: string, ...input: unknown[]): unknown {
+	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
+	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
+	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -218,8 +251,19 @@ function _keywordOr<R>(
 /** A kind-enum slot's loose input. A stored kind id is already the slot's
  *  own discriminant; any other number is a numeric value and resolves as a
  *  leaf like every other shape. */
-function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
-	return typeof v === 'number' && _KIND_ID_STORED.has(v) ? (v as T) : resolve();
+function _resolveKindEnum<T>(v: _LooseFieldInput, stored: readonly number[], resolve: () => T): T {
+	return typeof v === 'number' && stored.includes(v) ? (v as T) : resolve();
+}
+
+function _resolveKindEnumItems<T>(
+	v: _LooseFieldInput,
+	stored: readonly number[],
+	resolve: (v: _LooseFieldInput) => readonly T[]
+): readonly T[] {
+	if (!Array.isArray(v)) return _resolveKindEnum(v, stored, () => resolve(v));
+	return v.flatMap((item: _LooseFieldInput) =>
+		typeof item === 'number' && stored.includes(item) ? [item as T] : resolve([item])
+	);
 }
 
 function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
@@ -806,7 +850,7 @@ export function resolveCharacterClass_classAtoms(
 	value: T.CharacterClass.LooseConfig['classAtoms']
 ): Admit<T.CharacterClass['_class_atoms']> {
 	return listStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnumItems(value, [TSKindId.BslashDash], (_v) =>
 			_resolveMany<
 				| T.ClassCharacter
 				| '\\-'
@@ -816,7 +860,7 @@ export function resolveCharacterClass_classAtoms(
 				| T.IdentityEscape
 				| T.PosixCharacterClass
 				| T.ClassRange
-			>(value, _K3, _K4)
+			>(_v, _K3, _K4)
 		),
 		(item) => coerceMixedEnumStorage(item, [['\\-', TSKindId.BslashDash] as const])
 	);
@@ -877,7 +921,7 @@ export function coerceToPosixClassName(input: T.PosixClassName.Loose): ReturnTyp
 
 export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']): Admit<T.ClassRange['_start']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnum(value, [TSKindId.Dash], () =>
 			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | '-'>(value, _K5, _K6)
 		),
 		[['-', TSKindId.Dash] as const]
@@ -886,7 +930,7 @@ export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']
 
 export function resolveClassRange_end(value: T.ClassRange.LooseConfig['end']): Admit<T.ClassRange['_end']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
+		_resolveKindEnum(value, [TSKindId.Dash], () =>
 			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | '-'>(value, _K5, _K6)
 		),
 		[['-', TSKindId.Dash] as const]
@@ -1264,29 +1308,38 @@ export function coerceToDecimalDigits(input: T.DecimalDigits.Loose): ReturnType<
 
 export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content']): Admit<T.TermGroup['_content']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<
-				| '^'
-				| '$'
-				| '\\b'
-				| '\\B'
-				| T.LookaroundAssertion
-				| T.PatternCharacter
-				| T.CharacterClass
-				| T.PosixCharacterClass
-				| '.'
-				| T.DecimalEscape
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.BackreferenceEscape
-				| T.NamedGroupBackreference
-				| T.AnonymousCapturingGroup
-				| T.NamedCapturingGroup
-				| T.NonCapturingGroup
-				| T.InlineFlagsGroup
-			>(value, _K11, _K12)
+		_resolveKindEnum(
+			value,
+			[
+				TSKindId.StartAssertion,
+				TSKindId.EndAssertion,
+				TSKindId.BoundaryAssertion,
+				TSKindId.NonBoundaryAssertion,
+				TSKindId.AnyCharacter
+			],
+			() =>
+				_resolveOne<
+					| '^'
+					| '$'
+					| '\\b'
+					| '\\B'
+					| T.LookaroundAssertion
+					| T.PatternCharacter
+					| T.CharacterClass
+					| T.PosixCharacterClass
+					| '.'
+					| T.DecimalEscape
+					| T.CharacterClassEscape
+					| T.ControlEscape
+					| T.ControlLetterEscape
+					| T.IdentityEscape
+					| T.BackreferenceEscape
+					| T.NamedGroupBackreference
+					| T.AnonymousCapturingGroup
+					| T.NamedCapturingGroup
+					| T.NonCapturingGroup
+					| T.InlineFlagsGroup
+				>(value, _K11, _K12)
 		),
 		[
 			['^', TSKindId.StartAssertion] as const,

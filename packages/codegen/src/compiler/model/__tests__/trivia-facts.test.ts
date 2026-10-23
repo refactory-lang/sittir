@@ -6,7 +6,7 @@ import { AbstractAssembledCompound } from '../node-map.ts';
 import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
-import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
 
 const nodeMaps = new Map<string, Promise<NodeMap>>();
@@ -121,13 +121,13 @@ describe('trivia model facts', () => {
 		expect(lineTerminated(typescript, 'html_comment')).toBe(false);
 	});
 
-	it('derives inner gaps from optional and repeat slots between the tokens, in render order', async () => {
+	it('derives inner gaps from optional and repeat slots between the tokens, in render order, each with the slots inside it', async () => {
 		const rust = await nodeMapOf('rust');
-		expect(innerGapsOf(rust, 'block')).toEqual([{ key: 'statements', precedingTokens: 1 }]);
-		expect(innerGapsOf(rust, 'arguments')).toEqual([{ key: 'elements', precedingTokens: 1 }]);
+		expect(innerGapsOf(rust, 'block')).toEqual([{ key: 'statements', precedingTokens: 1, slots: ['_statements', '_trailing_expression'] }]);
+		expect(innerGapsOf(rust, 'arguments')).toEqual([{ key: 'elements', precedingTokens: 1, slots: ['_elements'] }]);
 		expect(innerGapsOf(rust, 'function_item')).toEqual([]);
-		expect(innerGapsOf(rust, 'source_file')).toEqual([{ key: 'statements', precedingTokens: 0 }]);
-		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0 }]);
+		expect(innerGapsOf(rust, 'source_file')).toEqual([{ key: 'statements', precedingTokens: 0, slots: ['_shebang', '_statements'] }]);
+		expect(innerGapsOf(await nodeMapOf('typescript'), 'program')).toEqual([{ key: 'statements', precedingTokens: 0, slots: ['_hash_bang_line', '_statements'] }]);
 	});
 
 	it('gives no inner gap where tree-sitter cannot lex an extra, or where the node cannot be empty', async () => {
@@ -138,20 +138,20 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(scm, 'string')).toEqual([]);
 		expect(innerGapsOf(scm, 'named_node_plain')).toEqual([]);
 		expect(innerGapsOf(scm, 'named_node_supertyped')).toEqual([]);
-		expect(innerGapsOf(scm, 'missing_node')).toEqual([{ key: 'name', precedingTokens: 2 }]);
+		expect(innerGapsOf(scm, 'missing_node')).toEqual([{ key: 'name', precedingTokens: 2, slots: ['_name'] }]);
 		expect(innerGapsOf(await nodeMapOf('python'), 'comprehension_clauses')).toEqual([]);
 	});
 
 	it('counts a zero-width kind between the slots as a token, as it did when the grammar hid it', async () => {
 		const python = await nodeMapOf('python');
-		expect(innerGapsOf(python, 'match_block_block')).toEqual([{ key: 'alternative', precedingTokens: 1 }]);
+		expect(innerGapsOf(python, 'match_block_block')).toEqual([{ key: 'alternative', precedingTokens: 1, slots: ['_alternative'] }]);
 		expect(innerGapsOf(python, 'block')).toEqual([]);
 		expect(innerGapsOf(python, 'suite_block')).toEqual([]);
 	});
 
 	it('gives a tokenless kind a gap only when it is the grammar root, keying its repeat slot', async () => {
 		expect(innerGapsOf(await nodeMapOf('typescript'), 'enum_body_elements')).toEqual([]);
-		expect(innerGapsOf(await nodeMapOf('scm'), 'program')).toEqual([{ key: 'definitions', precedingTokens: 0 }]);
+		expect(innerGapsOf(await nodeMapOf('scm'), 'program')).toEqual([{ key: 'definitions', precedingTokens: 0, slots: ['_definitions'] }]);
 	});
 
 	it("takes the loose trivia form from ir.comment's default arm: its kind, literal delimiters, coercer and sibling leads", async () => {

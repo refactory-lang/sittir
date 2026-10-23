@@ -8816,7 +8816,15 @@ The file a grammar package evaluates: its `grammar.sittir.ts` when it exists, el
 
 ### `packages/codegen/src/dsl/evaluate-package.ts::evaluatePackage`
 
-The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`).
+The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`). It does not check the package's grammar bindings for freshness: the bindings inventory and the stage-inspection tools evaluate a package while its `bindings.scm` is being edited, before its grammar bindings are rederived. The compile checks them first (`compileGrammar`).
+
+### `packages/codegen/src/dsl/evaluate-package.ts::PackageEvaluationOptions`
+
+The options of a package evaluation: the entry it reads (`resolve-grammar.ts::PackageSourceOptions`) and how it evaluates that entry (`evaluate.ts::EvaluateOptions`). `compileGrammar` takes them as its config's `evaluation` and passes them through unchanged.
+
+### `packages/codegen/src/dsl/evaluate-package.ts::readsGrammarBindings`
+
+Whether evaluating the package with these options reads its grammar bindings: exactly when the evaluation is not `unbound` and its entry (`resolve-grammar.ts::packageSourceEntry`, the one `evaluatePackage` evaluates) is the package's own `grammar.sittir.ts`. The upstream grammar, taken for `base` or for a package with no `grammar.sittir.ts`, carries no grammar bindings. `compileGrammar` checks the grammar bindings for freshness exactly when it holds.
 
 ### `packages/codegen/src/dsl/resolve-grammar.ts::resolveGrammarJsPath`
 

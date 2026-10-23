@@ -30,6 +30,7 @@ import {
 	defineListIndices,
 	rebuilt,
 	renderText,
+	nodeJSON,
 	queryOf,
 	snapshotOf,
 	triviaSide,
@@ -54,6 +55,7 @@ import type { EmptyModule } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
 import * as RAW from './factories/raw.js';
+import { jsonFacts } from './utils.js';
 
 export type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
@@ -119,6 +121,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -168,6 +171,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -196,6 +200,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -230,6 +235,7 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -263,6 +269,7 @@ export function wrapFutureImportStatement(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -303,6 +310,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -344,6 +352,7 @@ export function wrapImportList(data: T.ImportList, tree: TreeHandle): T.ImportLi
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -379,6 +388,7 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -406,6 +416,7 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -433,6 +444,7 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -466,6 +478,7 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -500,6 +513,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -534,6 +548,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -564,6 +579,7 @@ export function wrapNamedExpressionLhs(data: T.NamedExpressionLhs, tree: TreeHan
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -594,6 +610,7 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -624,6 +641,7 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -661,6 +679,7 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -708,6 +727,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -742,6 +762,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClau
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -769,6 +790,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -811,6 +833,7 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -860,6 +883,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -918,6 +942,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -965,6 +990,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1025,6 +1051,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1066,6 +1093,7 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1093,6 +1121,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1137,6 +1166,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1164,6 +1194,7 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Par
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1248,6 +1279,7 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1289,6 +1321,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -1338,6 +1371,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1366,6 +1400,7 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle): T.ListSplat.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1396,6 +1431,7 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1426,6 +1462,7 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1456,6 +1493,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1496,6 +1534,7 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.Ex
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1536,6 +1575,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1600,6 +1640,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1641,6 +1682,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1675,6 +1717,7 @@ export function wrapParenthesizedListSplat(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1719,6 +1762,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -1764,6 +1808,7 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1791,6 +1836,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1821,6 +1867,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1862,6 +1909,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1893,6 +1941,7 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1920,6 +1969,7 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle): T.CasePa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1963,6 +2013,7 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2003,6 +2054,7 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle): T.Ca
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2057,6 +2109,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2098,6 +2151,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2150,6 +2204,7 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2200,6 +2255,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2234,6 +2290,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle): T.Spla
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2276,6 +2333,7 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.Clas
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2327,6 +2385,7 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2368,6 +2427,7 @@ export function wrapParametersElements(data: T.ParametersElements, tree: TreeHan
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2407,6 +2467,7 @@ export function wrapPatterns(data: T.Patterns, tree: TreeHandle): T.Patterns.Par
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2449,6 +2510,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2492,6 +2554,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2528,6 +2591,7 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2581,6 +2645,7 @@ export function wrapTypedDefaultParameter(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2611,6 +2676,7 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2644,6 +2710,7 @@ export function wrapDictionarySplatPattern(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2678,6 +2745,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2705,6 +2773,7 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle): T.NotOpe
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2749,6 +2818,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2790,6 +2860,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2824,6 +2895,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2873,6 +2945,7 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2912,6 +2985,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2960,6 +3034,7 @@ export function wrapLambdaWithinForInClause(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3012,6 +3087,7 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3053,6 +3129,7 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3081,6 +3158,7 @@ export function wrapYield(data: T.Yield, tree: TreeHandle): T.Yield.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3115,6 +3193,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3154,6 +3233,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3215,6 +3295,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3249,6 +3330,7 @@ export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3283,6 +3365,7 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3314,6 +3397,7 @@ export function wrapType(data: T.Type, tree: TreeHandle): T.Type.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3348,6 +3432,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3390,6 +3475,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3424,6 +3510,7 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3464,6 +3551,7 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3498,6 +3586,7 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3532,6 +3621,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3576,6 +3666,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3622,6 +3713,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3664,6 +3756,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3707,6 +3800,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3739,6 +3833,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3776,6 +3871,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3819,6 +3915,7 @@ export function wrapDictionaryComprehension(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3856,6 +3953,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3896,6 +3994,7 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3929,6 +4028,7 @@ export function wrapParenthesizedExpression(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3970,6 +4070,7 @@ export function wrapCollectionElements(data: T.CollectionElements, tree: TreeHan
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4028,6 +4129,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4055,6 +4157,7 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle): T.IfClause.Par
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4108,6 +4211,7 @@ export function wrapConditionalExpression(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4138,6 +4242,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4182,6 +4287,7 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4216,6 +4322,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4273,6 +4380,7 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4306,6 +4414,7 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4333,6 +4442,7 @@ export function wrapAwait(data: T.Await, tree: TreeHandle): T.Await.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4360,6 +4470,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4407,6 +4518,7 @@ export function wrapSimpleStatementsElements(
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4449,6 +4561,7 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4491,6 +4604,7 @@ export function wrapCasePatterns(data: T.CasePatterns, tree: TreeHandle): T.Case
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4533,6 +4647,7 @@ export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeH
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4572,6 +4687,7 @@ export function wrapTypes(data: T.Types, tree: TreeHandle): T.Types.Parsed {
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4619,6 +4735,7 @@ export function wrapArgumentListElements(
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4667,6 +4784,7 @@ export function wrapListPatternCasePatterns(
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4709,6 +4827,7 @@ export function wrapDictPatternElements(data: T.DictPatternElements, tree: TreeH
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4751,6 +4870,7 @@ export function wrapSubscripts(data: T.Subscripts, tree: TreeHandle): T.Subscrip
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4793,6 +4913,7 @@ export function wrapDictionaryElements(data: T.DictionaryElements, tree: TreeHan
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4821,6 +4942,7 @@ export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGro
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4865,6 +4987,7 @@ export function wrapTuplePatternElements(
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4907,6 +5030,7 @@ export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.Tu
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4951,6 +5075,7 @@ export function wrapExceptClauseExceptionAs(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4995,6 +5120,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -5041,6 +5167,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -5084,6 +5211,7 @@ export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5129,6 +5257,7 @@ export function wrapPrintChevronArguments(
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5181,6 +5310,7 @@ export function wrapPrintStatementChevron(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5225,6 +5355,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5273,6 +5404,7 @@ export function wrapParenthesizedImportList(
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5310,6 +5442,7 @@ export function wrapComprehensionClauses(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5344,6 +5477,7 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5378,6 +5512,7 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5412,6 +5547,7 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5474,6 +5610,7 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5551,6 +5688,7 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5612,6 +5750,7 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5645,6 +5784,7 @@ export function wrapEscapeSequenceUnicodeFixed(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5678,6 +5818,7 @@ export function wrapEscapeSequenceUnicodeWide(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5708,6 +5849,7 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5738,6 +5880,7 @@ export function wrapEscapeSequenceOctal(data: T.EscapeSequenceOctal, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5771,6 +5914,7 @@ export function wrapEscapeSequenceLineBreak(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5804,6 +5948,7 @@ export function wrapEscapeSequenceSimple(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5834,6 +5979,7 @@ export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeH
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5877,6 +6023,7 @@ export function wrapSimplePatternNegative(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5913,6 +6060,7 @@ export function wrapExceptClauseExceptionList(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5946,6 +6094,7 @@ export function wrapExceptClauseException(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5982,6 +6131,7 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.Assi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6016,6 +6166,7 @@ export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle): T.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6059,6 +6210,7 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6106,6 +6258,7 @@ export function wrapExpressionStatementTuple(
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6148,6 +6301,7 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6193,6 +6347,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6227,6 +6382,7 @@ export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -6258,6 +6414,7 @@ export function wrapMatchBlockEmpty(data: T.MatchBlockEmpty, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6303,6 +6460,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6331,6 +6489,7 @@ export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlo
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6358,6 +6517,7 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle): T.SuiteEmp
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6404,6 +6564,7 @@ export function wrapComparisonOperatorComparator(
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6434,6 +6595,7 @@ export function wrapYieldFromClause(data: T.YieldFromClause, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6466,6 +6628,7 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6496,6 +6659,7 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6526,6 +6690,7 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6550,6 +6715,7 @@ function viewModule(data: RecordStub, tree: TreeHandle): T.Module.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -6584,6 +6750,7 @@ function viewSimpleStatements(data: RecordStub, tree: TreeHandle): T.SimpleState
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6609,6 +6776,7 @@ function viewImportStatement(data: RecordStub, tree: TreeHandle): T.ImportStatem
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6637,6 +6805,7 @@ function viewRelativeImport(data: RecordStub, tree: TreeHandle): T.RelativeImpor
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6661,6 +6830,7 @@ function viewFutureImportStatement(data: RecordStub, tree: TreeHandle): T.Future
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6689,6 +6859,7 @@ function viewImportFromStatement(data: RecordStub, tree: TreeHandle): T.ImportFr
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6723,6 +6894,7 @@ function viewImportList(data: RecordStub, tree: TreeHandle): T.ImportList.Parsed
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6752,6 +6924,7 @@ function viewAliasedImport(data: RecordStub, tree: TreeHandle): T.AliasedImport.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6776,6 +6949,7 @@ function viewPrintStatement(data: RecordStub, tree: TreeHandle): T.PrintStatemen
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6800,6 +6974,7 @@ function viewChevron(data: RecordStub, tree: TreeHandle): T.Chevron.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6824,6 +6999,7 @@ function viewAssertStatement(data: RecordStub, tree: TreeHandle): T.AssertStatem
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6854,6 +7030,7 @@ function viewExpressionStatement(data: RecordStub, tree: TreeHandle): T.Expressi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6882,6 +7059,7 @@ function viewNamedExpression(data: RecordStub, tree: TreeHandle): T.NamedExpress
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6906,6 +7084,7 @@ function viewNamedExpressionLhs(data: RecordStub, tree: TreeHandle): T.NamedExpr
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6930,6 +7109,7 @@ function viewReturnStatement(data: RecordStub, tree: TreeHandle): T.ReturnStatem
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6954,6 +7134,7 @@ function viewDeleteStatement(data: RecordStub, tree: TreeHandle): T.DeleteStatem
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -6982,6 +7163,7 @@ function viewRaiseStatement(data: RecordStub, tree: TreeHandle): T.RaiseStatemen
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7014,6 +7196,7 @@ function viewIfStatement(data: RecordStub, tree: TreeHandle): T.IfStatement.Pars
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7042,6 +7225,7 @@ function viewElifClause(data: RecordStub, tree: TreeHandle): T.ElifClause.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7066,6 +7250,7 @@ function viewElseClause(data: RecordStub, tree: TreeHandle): T.ElseClause.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7094,6 +7279,7 @@ function viewMatchStatement(data: RecordStub, tree: TreeHandle): T.MatchStatemen
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7126,6 +7312,7 @@ function viewCaseClause(data: RecordStub, tree: TreeHandle): T.CaseClause.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7166,6 +7353,7 @@ function viewForStatement(data: RecordStub, tree: TreeHandle): T.ForStatement.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7198,6 +7386,7 @@ function viewWhileStatement(data: RecordStub, tree: TreeHandle): T.WhileStatemen
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7234,6 +7423,7 @@ function viewTryStatement(data: RecordStub, tree: TreeHandle): T.TryStatement.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7266,6 +7456,7 @@ function viewExceptClause(data: RecordStub, tree: TreeHandle): T.ExceptClause.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7290,6 +7481,7 @@ function viewFinallyClause(data: RecordStub, tree: TreeHandle): T.FinallyClause.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7322,6 +7514,7 @@ function viewWithStatement(data: RecordStub, tree: TreeHandle): T.WithStatement.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7346,6 +7539,7 @@ function viewWithItem(data: RecordStub, tree: TreeHandle): T.WithItem.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7390,6 +7584,7 @@ function viewFunctionDefinition(data: RecordStub, tree: TreeHandle): T.FunctionD
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7423,6 +7618,7 @@ function viewParameters(data: RecordStub, tree: TreeHandle): T.Parameters.Parsed
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -7458,6 +7654,7 @@ function viewLambdaParameters(data: RecordStub, tree: TreeHandle): T.LambdaParam
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7483,6 +7680,7 @@ function viewListSplat(data: RecordStub, tree: TreeHandle): T.ListSplat.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7507,6 +7705,7 @@ function viewDictionarySplat(data: RecordStub, tree: TreeHandle): T.DictionarySp
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7531,6 +7730,7 @@ function viewGlobalStatement(data: RecordStub, tree: TreeHandle): T.GlobalStatem
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7555,6 +7755,7 @@ function viewNonlocalStatement(data: RecordStub, tree: TreeHandle): T.NonlocalSt
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7583,6 +7784,7 @@ function viewExecStatement(data: RecordStub, tree: TreeHandle): T.ExecStatement.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7611,6 +7813,7 @@ function viewTypeAliasStatement(data: RecordStub, tree: TreeHandle): T.TypeAlias
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7647,6 +7850,7 @@ function viewClassDefinition(data: RecordStub, tree: TreeHandle): T.ClassDefinit
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7680,6 +7884,7 @@ function viewTypeParameter(data: RecordStub, tree: TreeHandle): T.TypeParameter.
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7705,6 +7910,7 @@ function viewParenthesizedListSplat(data: RecordStub, tree: TreeHandle): T.Paren
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7738,6 +7944,7 @@ function viewArgumentList(data: RecordStub, tree: TreeHandle): T.ArgumentList.Pa
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -7768,6 +7975,7 @@ function viewDecoratedDefinition(data: RecordStub, tree: TreeHandle): T.Decorate
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7792,6 +8000,7 @@ function viewDecorator(data: RecordStub, tree: TreeHandle): T.Decorator.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7816,6 +8025,7 @@ function viewBlock(data: RecordStub, tree: TreeHandle): T.Block.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7850,6 +8060,7 @@ function viewExpressionList(data: RecordStub, tree: TreeHandle): T.ExpressionLis
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7875,6 +8086,7 @@ function viewDottedName(data: RecordStub, tree: TreeHandle): T.DottedName.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7899,6 +8111,7 @@ function viewCasePattern(data: RecordStub, tree: TreeHandle): T.CasePattern.Pars
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7939,6 +8152,7 @@ function viewSimplePattern(data: RecordStub, tree: TreeHandle): T.SimplePattern.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -7967,6 +8181,7 @@ function viewCaseAsPattern(data: RecordStub, tree: TreeHandle): T.CaseAsPattern.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8007,6 +8222,7 @@ function viewUnionPattern(data: RecordStub, tree: TreeHandle): T.UnionPattern.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8040,6 +8256,7 @@ function viewDictPattern(data: RecordStub, tree: TreeHandle): T.DictPattern.Pars
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -8086,6 +8303,7 @@ function viewKeyValuePattern(data: RecordStub, tree: TreeHandle): T.KeyValuePatt
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8130,6 +8348,7 @@ function viewKeywordPattern(data: RecordStub, tree: TreeHandle): T.KeywordPatter
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8158,6 +8377,7 @@ function viewSplatPattern(data: RecordStub, tree: TreeHandle): T.SplatPattern.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8186,6 +8406,7 @@ function viewClassPattern(data: RecordStub, tree: TreeHandle): T.ClassPattern.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8222,6 +8443,7 @@ function viewComplexPattern(data: RecordStub, tree: TreeHandle): T.ComplexPatter
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8256,6 +8478,7 @@ function viewParametersElements(data: RecordStub, tree: TreeHandle): T.Parameter
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8291,6 +8514,7 @@ function viewPatterns(data: RecordStub, tree: TreeHandle): T.Patterns.Parsed {
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8325,6 +8549,7 @@ function viewTuplePattern(data: RecordStub, tree: TreeHandle): T.TuplePattern.Pa
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -8360,6 +8585,7 @@ function viewListPattern(data: RecordStub, tree: TreeHandle): T.ListPattern.Pars
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -8390,6 +8616,7 @@ function viewDefaultParameter(data: RecordStub, tree: TreeHandle): T.DefaultPara
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8422,6 +8649,7 @@ function viewTypedDefaultParameter(data: RecordStub, tree: TreeHandle): T.TypedD
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8446,6 +8674,7 @@ function viewListSplatPattern(data: RecordStub, tree: TreeHandle): T.ListSplatPa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8470,6 +8699,7 @@ function viewDictionarySplatPattern(data: RecordStub, tree: TreeHandle): T.Dicti
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8498,6 +8728,7 @@ function viewAsPattern(data: RecordStub, tree: TreeHandle): T.AsPattern.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8522,6 +8753,7 @@ function viewNotOperator(data: RecordStub, tree: TreeHandle): T.NotOperator.Pars
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8554,6 +8786,7 @@ function viewBooleanOperator(data: RecordStub, tree: TreeHandle): T.BooleanOpera
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8586,6 +8819,7 @@ function viewBinaryOperator(data: RecordStub, tree: TreeHandle): T.BinaryOperato
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8614,6 +8848,7 @@ function viewUnaryOperator(data: RecordStub, tree: TreeHandle): T.UnaryOperator.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8642,6 +8877,7 @@ function viewComparisonOperator(data: RecordStub, tree: TreeHandle): T.Compariso
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8670,6 +8906,7 @@ function viewLambda(data: RecordStub, tree: TreeHandle): T.Lambda.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8698,6 +8935,7 @@ function viewLambdaWithinForInClause(data: RecordStub, tree: TreeHandle): T.Lamb
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8736,6 +8974,7 @@ function viewAugmentedAssignment(data: RecordStub, tree: TreeHandle): T.Augmente
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8770,6 +9009,7 @@ function viewPatternList(data: RecordStub, tree: TreeHandle): T.PatternList.Pars
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8795,6 +9035,7 @@ function viewYield(data: RecordStub, tree: TreeHandle): T.Yield.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8823,6 +9064,7 @@ function viewAttribute(data: RecordStub, tree: TreeHandle): T.Attribute.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8851,6 +9093,7 @@ function viewSubscript(data: RecordStub, tree: TreeHandle): T.Subscript.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8879,6 +9122,7 @@ function viewCall(data: RecordStub, tree: TreeHandle): T.Call.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8907,6 +9151,7 @@ function viewTypedParameter(data: RecordStub, tree: TreeHandle): T.TypedParamete
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8937,6 +9182,7 @@ function viewType(data: RecordStub, tree: TreeHandle): T.Type.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8965,6 +9211,7 @@ function viewSplatType(data: RecordStub, tree: TreeHandle): T.SplatType.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -8993,6 +9240,7 @@ function viewGenericType(data: RecordStub, tree: TreeHandle): T.GenericType.Pars
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9021,6 +9269,7 @@ function viewUnionType(data: RecordStub, tree: TreeHandle): T.UnionType.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9049,6 +9298,7 @@ function viewConstrainedType(data: RecordStub, tree: TreeHandle): T.ConstrainedT
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9077,6 +9327,7 @@ function viewMemberType(data: RecordStub, tree: TreeHandle): T.MemberType.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9105,6 +9356,7 @@ function viewKeywordArgument(data: RecordStub, tree: TreeHandle): T.KeywordArgum
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9138,6 +9390,7 @@ function viewList(data: RecordStub, tree: TreeHandle): T.List.Parsed {
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -9173,6 +9426,7 @@ function viewSet(data: RecordStub, tree: TreeHandle): T.Set.Parsed {
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9207,6 +9461,7 @@ function viewTuple(data: RecordStub, tree: TreeHandle): T.Tuple.Parsed {
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -9242,6 +9497,7 @@ function viewDictionary(data: RecordStub, tree: TreeHandle): T.Dictionary.Parsed
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -9272,6 +9528,7 @@ function viewPair(data: RecordStub, tree: TreeHandle): T.Pair.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9300,6 +9557,7 @@ function viewListComprehension(data: RecordStub, tree: TreeHandle): T.ListCompre
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9328,6 +9586,7 @@ function viewDictionaryComprehension(data: RecordStub, tree: TreeHandle): T.Dict
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9356,6 +9615,7 @@ function viewSetComprehension(data: RecordStub, tree: TreeHandle): T.SetComprehe
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9384,6 +9644,7 @@ function viewGeneratorExpression(data: RecordStub, tree: TreeHandle): T.Generato
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9408,6 +9669,7 @@ function viewParenthesizedExpression(data: RecordStub, tree: TreeHandle): T.Pare
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9442,6 +9704,7 @@ function viewCollectionElements(data: RecordStub, tree: TreeHandle): T.Collectio
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9479,6 +9742,7 @@ function viewForInClause(data: RecordStub, tree: TreeHandle): T.ForInClause.Pars
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9503,6 +9767,7 @@ function viewIfClause(data: RecordStub, tree: TreeHandle): T.IfClause.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9535,6 +9800,7 @@ function viewConditionalExpression(data: RecordStub, tree: TreeHandle): T.Condit
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9559,6 +9825,7 @@ function viewConcatenatedString(data: RecordStub, tree: TreeHandle): T.Concatena
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9591,6 +9858,7 @@ function viewString(data: RecordStub, tree: TreeHandle): T.String.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9622,6 +9890,7 @@ function viewStringContent(data: RecordStub, tree: TreeHandle): T.StringContent.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9658,6 +9927,7 @@ function viewInterpolation(data: RecordStub, tree: TreeHandle): T.Interpolation.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9682,6 +9952,7 @@ function viewFormatSpecifier(data: RecordStub, tree: TreeHandle): T.FormatSpecif
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9706,6 +9977,7 @@ function viewAwait(data: RecordStub, tree: TreeHandle): T.Await.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9730,6 +10002,7 @@ function viewComment(data: RecordStub, tree: TreeHandle): T.Comment.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9764,6 +10037,7 @@ function viewSimpleStatementsElements(data: RecordStub, tree: TreeHandle): T.Sim
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9799,6 +10073,7 @@ function viewSubjects(data: RecordStub, tree: TreeHandle): T.Subjects.Parsed {
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9834,6 +10109,7 @@ function viewCasePatterns(data: RecordStub, tree: TreeHandle): T.CasePatterns.Pa
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9869,6 +10145,7 @@ function viewWithClauseWithItems(data: RecordStub, tree: TreeHandle): T.WithClau
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9904,6 +10181,7 @@ function viewTypes(data: RecordStub, tree: TreeHandle): T.Types.Parsed {
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9946,6 +10224,7 @@ function viewArgumentListElements(data: RecordStub, tree: TreeHandle): T.Argumen
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -9981,6 +10260,7 @@ function viewListPatternCasePatterns(data: RecordStub, tree: TreeHandle): T.List
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10016,6 +10296,7 @@ function viewDictPatternElements(data: RecordStub, tree: TreeHandle): T.DictPatt
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10051,6 +10332,7 @@ function viewSubscripts(data: RecordStub, tree: TreeHandle): T.Subscripts.Parsed
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10086,6 +10368,7 @@ function viewDictionaryElements(data: RecordStub, tree: TreeHandle): T.Dictionar
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10111,6 +10394,7 @@ function viewSliceGroup(data: RecordStub, tree: TreeHandle): T.SliceGroup.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10145,6 +10429,7 @@ function viewTuplePatternElements(data: RecordStub, tree: TreeHandle): T.TuplePa
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10180,6 +10465,7 @@ function viewTupleElements(data: RecordStub, tree: TreeHandle): T.TupleElements.
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10209,6 +10495,7 @@ function viewExceptClauseExceptionAs(data: RecordStub, tree: TreeHandle): T.Exce
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10242,6 +10529,7 @@ function viewCaseTuplePattern(data: RecordStub, tree: TreeHandle): T.CaseTuplePa
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -10277,6 +10565,7 @@ function viewCaseListPattern(data: RecordStub, tree: TreeHandle): T.CaseListPatt
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -10313,6 +10602,7 @@ function viewPrintArguments(data: RecordStub, tree: TreeHandle): T.PrintArgument
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10348,6 +10638,7 @@ function viewPrintChevronArguments(data: RecordStub, tree: TreeHandle): T.PrintC
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10377,6 +10668,7 @@ function viewPrintStatementChevron(data: RecordStub, tree: TreeHandle): T.PrintS
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10410,6 +10702,7 @@ function viewPrintStatementPlain(data: RecordStub, tree: TreeHandle): T.PrintSta
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10444,6 +10737,7 @@ function viewParenthesizedImportList(data: RecordStub, tree: TreeHandle): T.Pare
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10469,6 +10763,7 @@ function viewComprehensionClauses(data: RecordStub, tree: TreeHandle): T.Compreh
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10497,6 +10792,7 @@ function viewIntegerHex(data: RecordStub, tree: TreeHandle): T.IntegerHex.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10525,6 +10821,7 @@ function viewIntegerOctal(data: RecordStub, tree: TreeHandle): T.IntegerOctal.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10553,6 +10850,7 @@ function viewIntegerBinary(data: RecordStub, tree: TreeHandle): T.IntegerBinary.
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10597,6 +10895,7 @@ function viewFloatPoint(data: RecordStub, tree: TreeHandle): T.FloatPoint.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10641,6 +10940,7 @@ function viewFloatLeadingPoint(data: RecordStub, tree: TreeHandle): T.FloatLeadi
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10681,6 +10981,7 @@ function viewFloatScientific(data: RecordStub, tree: TreeHandle): T.FloatScienti
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10705,6 +11006,7 @@ function viewEscapeSequenceUnicodeFixed(data: RecordStub, tree: TreeHandle): T.E
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10729,6 +11031,7 @@ function viewEscapeSequenceUnicodeWide(data: RecordStub, tree: TreeHandle): T.Es
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10753,6 +11056,7 @@ function viewEscapeSequenceHex(data: RecordStub, tree: TreeHandle): T.EscapeSequ
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10777,6 +11081,7 @@ function viewEscapeSequenceOctal(data: RecordStub, tree: TreeHandle): T.EscapeSe
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10801,6 +11106,7 @@ function viewEscapeSequenceLineBreak(data: RecordStub, tree: TreeHandle): T.Esca
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10825,6 +11131,7 @@ function viewEscapeSequenceSimple(data: RecordStub, tree: TreeHandle): T.EscapeS
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10849,6 +11156,7 @@ function viewEscapeSequenceNamed(data: RecordStub, tree: TreeHandle): T.EscapeSe
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10877,6 +11185,7 @@ function viewSimplePatternNegative(data: RecordStub, tree: TreeHandle): T.Simple
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10901,6 +11210,7 @@ function viewExceptClauseExceptionList(data: RecordStub, tree: TreeHandle): T.Ex
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10925,6 +11235,7 @@ function viewExceptClauseException(data: RecordStub, tree: TreeHandle): T.Except
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10959,6 +11270,7 @@ function viewAssignmentEq(data: RecordStub, tree: TreeHandle): T.AssignmentEq.Pa
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -10987,6 +11299,7 @@ function viewAssignmentType(data: RecordStub, tree: TreeHandle): T.AssignmentTyp
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11025,6 +11338,7 @@ function viewAssignmentTyped(data: RecordStub, tree: TreeHandle): T.AssignmentTy
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11059,6 +11373,7 @@ function viewExpressionStatementTuple(data: RecordStub, tree: TreeHandle): T.Exp
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11094,6 +11409,7 @@ function viewWithClauseBare(data: RecordStub, tree: TreeHandle): T.WithClauseBar
 		delimiter: recordDelimiter(data, tree) ?? undefined,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11128,6 +11444,7 @@ function viewWithClauseParen(data: RecordStub, tree: TreeHandle): T.WithClausePa
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11153,6 +11470,7 @@ function viewMatchBlockBlock(data: RecordStub, tree: TreeHandle): T.MatchBlockBl
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
@@ -11178,6 +11496,7 @@ function viewMatchBlockEmpty(data: RecordStub, tree: TreeHandle): T.MatchBlockEm
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11211,6 +11530,7 @@ function viewSuiteInline(data: RecordStub, tree: TreeHandle): T.SuiteInline.Pars
 		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11236,6 +11556,7 @@ function viewSuiteBlock(data: RecordStub, tree: TreeHandle): T.SuiteBlock.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11260,6 +11581,7 @@ function viewSuiteEmpty(data: RecordStub, tree: TreeHandle): T.SuiteEmpty.Parsed
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11288,6 +11610,7 @@ function viewComparisonOperatorComparator(data: RecordStub, tree: TreeHandle): T
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11312,6 +11635,7 @@ function viewYieldFromClause(data: RecordStub, tree: TreeHandle): T.YieldFromCla
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11336,6 +11660,7 @@ function viewNames(data: RecordStub, tree: TreeHandle): T.Names.Parsed {
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11360,6 +11685,7 @@ function viewAsPatternTarget(data: RecordStub, tree: TreeHandle): T.AsPatternTar
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11384,6 +11710,7 @@ function viewFormatExpression(data: RecordStub, tree: TreeHandle): T.FormatExpre
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
 			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
@@ -11402,6 +11729,7 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 		$text: () => textOf(data),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)

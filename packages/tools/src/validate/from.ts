@@ -170,7 +170,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 
 	// Phase D: $type is numeric — load both resolvers.
 	// kindIdFromName (name→id): for treeHandle JS-side reads and findNativeNodeId's kindId variant.
-	// kindNameFromId (id→name): for findNativeNodeId's id-to-kind comparison.
+	// kindNameFromId (id→name): the display kind, which matches a read node to a corpus node.
+	// storageKindNameFromId (id→name): the grammar kind, which builders are keyed by.
 	// The generated kindIdFromName throws on missing entries; wrap it so
 	// readUntypedNode's resolveKindId falls back to the zero sentinel instead of
 	// propagating a TypeError for form kinds not in the numeric catalog.
@@ -400,7 +401,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: storageKindNameFromId
 					});
 				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
 					// ReadNode emits `_<name>` top-level keys, not

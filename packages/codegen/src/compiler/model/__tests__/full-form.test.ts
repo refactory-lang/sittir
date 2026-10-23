@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from '../../__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar } from '../../../__tests__/helpers/sittir-grammar.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';

@@ -14,7 +14,6 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
-import { structuralShape } from '../../../examples/helpers.ts';
 
 const REPO_ROOT = new URL('../../../', import.meta.url);
 
@@ -22,10 +21,9 @@ interface Rendered {
 	$render(): string;
 }
 
-/** A parsed root's kind tree, with source positions and text dropped, so two
- *  parses of equivalent source compare equal. */
+/** A parsed root's node JSON: kinds, slots, leaf text and comments, without layout. */
 function shapeOf(root: unknown): string {
-	return JSON.stringify(structuralShape(root));
+	return JSON.stringify(root);
 }
 
 const CASES: ReadonlyArray<{
