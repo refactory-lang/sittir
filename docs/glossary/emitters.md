@@ -15195,7 +15195,7 @@ The literal of one dummy node in a generated test: its `$type`, `$text` and `$na
 
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 
-Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: the host templates, the priority list and the gated kinds.
+Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: the host templates, the priority list and the gated kinds. A python expression host is written `_ = (…)`, because python allows a line break inside an expression only within brackets: a fragment read inside brackets, such as a `concatenated_string` whose strings sit on separate lines, is valid only in a bracketed context, and the parentheses supply it while the reparsed node at the fragment's offset is still the fragment.
 
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
