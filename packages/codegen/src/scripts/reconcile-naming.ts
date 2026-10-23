@@ -79,7 +79,7 @@ async function probeGrammar(grammar: GrammarName): Promise<Divergence[]> {
 	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	const normalized = normalizeGrammar(link(raw, { generatedIdTables }));
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const divergences: Divergence[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const slot of node.slots) {

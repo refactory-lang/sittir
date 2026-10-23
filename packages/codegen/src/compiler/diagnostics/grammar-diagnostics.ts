@@ -432,13 +432,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			slotGroupingCollector
 		})
 	);
-	const nodeMap = assemble(
-		AssembleCtx.from(
-			normalized,
-			linked.generatedIdTables,
-			compilerDiagnostics
-		)
-	);
+	const nodeMap = assemble(AssembleCtx.from(normalized, compilerDiagnostics));
 	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: rawGrammar.name,

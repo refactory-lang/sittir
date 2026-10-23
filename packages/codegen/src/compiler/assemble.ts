@@ -114,16 +114,12 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		return this._nodes;
 	}
 
-	static from(
-		normalized: SimplifiedGrammar,
-		generatedIdTables: GeneratedIdTables,
-		diagnostics: DiagnosticSink = new DiagnosticSink()
-	): AssembleCtx {
+	static from(normalized: SimplifiedGrammar, diagnostics: DiagnosticSink = new DiagnosticSink()): AssembleCtx {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
-			generatedIdTables,
+			generatedIdTables: normalized.generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
 			leafTextPatterns: normalized.leafTextPatterns
 		});
