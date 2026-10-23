@@ -5,6 +5,7 @@ import { decodeIndex, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
+import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
 import { RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
@@ -21,22 +22,19 @@ export interface BuiltPlace {
 	readonly words: number;
 }
 
-/** What a built node names: its arena and its record, the record's words when its builder wrote it, and for a leaf the text its cells hold. */
-interface BuiltRef {
-	readonly arena: BuiltArena;
-	readonly at: number;
-	readonly words: number | undefined;
-	readonly text: BuiltText | undefined;
-}
-
 type Wrap = (data: object, tree: TreeHandle) => unknown;
+
+/** What an engine that reads trees as records gives its built arena: the cell format, and the trivia table its records' sides are written to, by record address. */
+export interface BuiltRecords {
+	readonly format: CellFormat;
+	readonly trivia: Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
+}
 
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 12;
 const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0, at: 0, words: 0 });
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
-const builtRefs = new WeakMap<object, BuiltRef>();
 
 class Chunks<A extends Uint32Array | Uint8Array> {
 	readonly #make: (length: number) => A;
@@ -102,8 +100,8 @@ class Chunks<A extends Uint32Array | Uint8Array> {
  */
 export class BuiltArena {
 	readonly format: CellFormat;
-	/** The tree a built record's view reads through: its records are this arena's. */
-	readonly tree: TreeHandle;
+	/** The tree a built record's view reads through: its records are this arena's, and its trivia table is keyed by their addresses. */
+	readonly tree: TreeHandle & BuiltRecords['trivia'];
 	readonly #wrap: Wrap;
 	readonly #words: Chunks<Uint32Array>;
 	readonly #bytes: Chunks<Uint8Array>;
@@ -115,10 +113,10 @@ export class BuiltArena {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
 
-	constructor(format: CellFormat, wrap: Wrap, handle: TreeEngineHandle) {
+	constructor({ format, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
 		this.format = format;
 		this.#wrap = wrap;
-		this.tree = { built: this };
+		this.tree = { built: this, ...trivia };
 		bindTree(this.tree, handle);
 		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format);
 		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format);
@@ -195,7 +193,7 @@ export class BuiltArena {
 	}
 
 	#adopt<T extends object>(node: T, at: number, words: number | undefined, text: BuiltText | undefined): T {
-		builtRefs.set(node, { arena: this, at, words, text });
+		adoptBuilt(node, { arena: this, at, words, text });
 		this.#nodes.set(at, new WeakRef(node));
 		this.#released.register(node, at);
 		return node;
@@ -256,12 +254,17 @@ export class BuiltArena {
 
 /** Whether `value` is the node of a built record, which its builder checked as it wrote it. */
 export function isBuiltNode(value: object): boolean {
-	return builtRefs.has(value);
+	return builtRefOf(value) !== undefined;
+}
+
+/** The arena whose record `value` is the node of, `undefined` for a node no builder of an arena made. */
+export function builtArenaOf(value: object): BuiltArena | undefined {
+	return builtRefOf(value)?.arena;
 }
 
 /** The address of the record `value` is the node of in `arena`, `undefined` for any other value. */
 export function builtRecordOf(value: object, arena: BuiltArena): number | undefined {
-	const ref = builtRefs.get(value);
+	const ref = builtRefOf(value);
 	return ref?.arena === arena ? ref.at : undefined;
 }
 
@@ -332,7 +335,7 @@ export function storeCell(arena: BuiltArena, data: Uint32Array, at: number, valu
 	if (value === undefined || value === null) return;
 	if (typeof value === 'number') return writeUnit(data, at, arena.format, value, 0);
 	if (typeof value === 'string') return writeBuiltText(data, at, arena.format, arena.text(value));
-	const ref = typeof value === 'object' ? builtRefs.get(value) : undefined;
+	const ref = builtRefOf(value);
 	if (ref === undefined && typeof value === 'object') return storeParsed(arena, data, at, value);
 	if (ref === undefined || ref.arena !== arena) throw new Error(`a built record holds only nodes its own engine built, not ${foreignValue(value, ref)}`);
 	const kind = (value as { readonly $type: number }).$type;
@@ -403,7 +406,7 @@ export function storeList(arena: BuiltArena, data: Uint32Array, at: number, item
  * @throws For a node no builder of `arena` made.
  */
 export function storeInline(arena: BuiltArena, data: Uint32Array, at: number, value: unknown): void {
-	const ref = typeof value === 'object' && value !== null ? builtRefs.get(value) : undefined;
+	const ref = builtRefOf(value);
 	if (ref === undefined || ref.arena !== arena || ref.text !== undefined) return storeCell(arena, data, at, value);
 	if (ref.words === undefined) throw new Error(`the record at ${ref.at} has no stamped length, so no slot can hold it inline`);
 	const source = arena.words(ref.at, ref.words);

@@ -6,7 +6,7 @@ import { getActiveBackend } from '../src/backend.ts';
 const backend = getActiveBackend();
 const format = backend.name === 'native' ? cellFormatOf(backend.native) : undefined;
 const arenaOf = (): BuiltArena =>
-	new BuiltArena(format!, () => ({}), { current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined } as never);
+	new BuiltArena({ format: format!, trivia: { triviaSide: () => undefined, writeTriviaSide: () => undefined } }, () => ({}), { current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined } as never);
 
 describe('a built arena', () => {
 	it('never allocates address 0, and gives each record its kind and no side record', () => {

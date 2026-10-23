@@ -267,21 +267,11 @@ impl<G: RecordGrammar> ParsedTree<G> {
     }
 
     fn record_root(&self, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
-        let refused = |what| RenderError::Record(super::ArenaError::Malformed { what, word: at.0 });
-        if at == Address::NONE {
-            return Err(refused("record address"));
-        }
         let kind = {
             let arena = self.tree_arena();
-            let header = arena
-                .arena()
-                .words(at, HEADER_WORDS)
-                .map_err(RenderError::Record)?;
-            let kind = u16::try_from(header[0])
-                .map(KindId)
-                .map_err(|_| refused("record kind"))?;
+            let kind = arena.arena().header_kind(at).map_err(RenderError::Record)?;
             if !arena.contains_record(at) {
-                return Err(refused("record address"));
+                return Err(RenderError::Record(super::ArenaError::Malformed { what: "record address", word: at.0 }));
             }
             kind
         };

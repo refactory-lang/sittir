@@ -749,6 +749,59 @@ macro_rules! napi_engine {
                     })
                 }
 
+                /// The record at `address` of a built arena rendered as a
+                /// render root whose `leading` and `trailing` edges have no
+                /// neighbour, under `options` over the engine's. The arena's
+                /// `words` and `bytes` chunks are borrowed for this call; the
+                /// records the root reaches are admitted, and the parsed trees
+                /// they link held for the render (`Engine::render_built`).
+                /// Refuses a chunk that is not a typed array of its kind over
+                /// an ordinary `ArrayBuffer`, an address naming no record the
+                /// words admit, a linked tree that is not live, and a record
+                /// whose render refuses.
+                #[::napi_derive::napi(ts_args_type = "words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                pub fn render_built(&self, env: ::napi::Env, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let words = $crate::napi_engine::borrowed_chunks::<u32>(&env, &words)?;
+                    let bytes = $crate::napi_engine::borrowed_chunks::<u8>(&env, &bytes)?;
+                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let table = self.render_options(None, options)?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let changed = $crate::slot::ChangedEdges { leading, trailing };
+                        let shape = <$any as $crate::arena::RecordCells>::shape;
+                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| self.engine.render_built(&arena, address, changed, shape, &*trees, &table)))
+                            .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
+                            .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
+                        Ok($crate::line_endings::spell(canonical, &table.newline))
+                    })
+                }
+
+                /// The entries a write gave `side` (`leading`, `trailing` or
+                /// `inner`) of the built record at `address`, or `null` when
+                /// no write did. Refuses address 0 and any other side.
+                #[::napi_derive::napi(ts_return_type = "object[] | null")]
+                pub fn built_trivia_side(&self, address: f64, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    self.engine.built_trivia_side(address, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// Replace `side` of the built record at `address` with
+                /// `entries`, which `renderBuilt` then writes. Refuses as
+                /// `builtTriviaSide` does.
+                #[::napi_derive::napi]
+                pub fn write_built_trivia_side(
+                    &self,
+                    address: f64,
+                    side: String,
+                    #[napi(ts_arg_type = "object[]")] entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                ) -> ::napi::Result<()> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
                 /// Renders a parsed candidate without exporting its data or its
                 /// outer trivia. A record address must belong to its row; a
                 /// recordless node renders through its native coordinate.
@@ -927,4 +980,57 @@ pub fn tree_not_live(tree_id: crate::types::TreeId) -> napi::Error {
     napi::Error::from_reason(format!(
         "tree {tree_id} is not live (never parsed on this thread, or already released)"
     ))
+}
+
+/// An element of a built arena's chunks: its Rust type, paired with the
+/// typed array that holds it.
+pub trait ChunkElement: Copy {
+    const TYPE: napi::sys::napi_typedarray_type;
+    const NAME: &'static str;
+}
+
+impl ChunkElement for u32 {
+    const TYPE: napi::sys::napi_typedarray_type = napi::sys::TypedarrayType::uint32_array;
+    const NAME: &'static str = "Uint32Array";
+}
+
+impl ChunkElement for u8 {
+    const TYPE: napi::sys::napi_typedarray_type = napi::sys::TypedarrayType::uint8_array;
+    const NAME: &'static str = "Uint8Array";
+}
+
+/// Each of `values` borrowed as the slice of `T` it holds, for the rest of
+/// the call, without copying. Each must be a typed array of `T` over an
+/// ordinary `ArrayBuffer`: a `SharedArrayBuffer` could be written by another
+/// thread while the slice is read.
+pub fn borrowed_chunks<'a, T: ChunkElement>(env: &'a napi::Env, values: &[napi::Unknown<'a>]) -> napi::Result<Vec<&'a [T]>> {
+    values.iter().map(|value| borrowed_chunk(env, *value)).collect()
+}
+
+fn borrowed_chunk<'a, T: ChunkElement>(env: &'a napi::Env, value: napi::Unknown<'a>) -> napi::Result<&'a [T]> {
+    use napi::JsValue;
+    let refused = || napi::Error::new(napi::Status::InvalidArg, format!("a built arena chunk must be a {} over an ordinary ArrayBuffer", T::NAME));
+    if !value.is_typedarray()? {
+        return Err(refused());
+    }
+    let (mut kind, mut len, mut data, mut buffer, mut offset) = (0, 0, std::ptr::null_mut(), std::ptr::null_mut(), 0);
+    // SAFETY: inspecting a live typed array runs no JavaScript.
+    napi::check_status!(unsafe { napi::sys::napi_get_typedarray_info(env.raw(), value.raw(), &mut kind, &mut len, &mut data, &mut buffer, &mut offset) })?;
+    let mut ordinary = false;
+    // SAFETY: `buffer` is the live backing store `napi_get_typedarray_info` just answered.
+    napi::check_status!(unsafe { napi::sys::napi_is_arraybuffer(env.raw(), buffer, &mut ordinary) })?;
+    if kind != T::TYPE || !ordinary {
+        return Err(refused());
+    }
+    if len == 0 {
+        return Ok(&[]);
+    }
+    if data.is_null() || !data.cast::<T>().cast_const().is_aligned() {
+        return Err(napi::Error::from_reason(format!("a built arena {} is not aligned to its element", T::NAME)));
+    }
+    // SAFETY: the kind check pairs `T` with the array's element type, and
+    // `len` counts its elements. The array is a handle live for the call,
+    // its buffer is no other thread's, and no JavaScript runs while the
+    // slice is borrowed, so nothing resizes, detaches or writes it.
+    Ok(unsafe { std::slice::from_raw_parts(data.cast::<T>().cast_const(), len) })
 }

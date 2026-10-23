@@ -1,3 +1,6 @@
+/** The positions of a node's trivia, in the order a side record holds them. */
+export const TRIVIA_SIDES = ['leading', 'trailing', 'inner'] as const;
+
 /** The trivia a node owns, by position: before it, after it, and, with no child, inside it. */
 export interface TriviaSides<Entry> {
 	readonly leading?: readonly Entry[];

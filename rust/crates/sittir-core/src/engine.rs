@@ -1524,6 +1524,17 @@ impl<G: EngineGrammar> Engine<G> {
         &self.options
     }
 
+    /// The grammar the engine parses and renders with.
+    pub fn grammar(&self) -> G {
+        self.grammar
+    }
+
+    /// The store of the sides a write set, shared with every tree the
+    /// engine parses.
+    pub fn written(&self) -> &TriviaStore<G::Trivia> {
+        &self.written
+    }
+
     pub fn render_module_hash(&self) -> &'static str {
         self.grammar.render_module_hash()
     }

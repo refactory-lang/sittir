@@ -19,8 +19,8 @@ export interface TreeHandle {
 	query?: TreeQuery;
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;
-	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
-	triviaSide?(index: number, side: TriviaSideName): unknown[];
+	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it; `undefined` when the table assigns it none of its own, as for a built record no write gave the side. */
+	triviaSide?(index: number, side: TriviaSideName): unknown[] | undefined;
 	/** Replaces `side` of the node at descendant `index` with `entries`. */
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/** The sides of the unit children of the node at descendant `index`, by slot and item (`NodeLayout.units`). */

@@ -25,6 +25,7 @@ import {
 	hydrateStored,
 	sidesOf,
 	spanOf,
+	recordOf,
 	toDetachedNodeData,
 	type KindView,
 	type NodeDataLayout
@@ -440,6 +441,10 @@ export interface ReadRenderParseResult {
  * first (`storageOf`, `materializeShallow`). A copy keeps
  * the node's source identity. Both are measured without trailing whitespace,
  * which only the outer edge contributes.
+ *
+ * A record view measures 0: it renders as its record's root, which renders
+ * none of its outer sides, and a copy of it with a side emptied renders the
+ * same record, or for a built record no node at all.
  */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
@@ -447,6 +452,7 @@ export function leadingTriviaRenderedWidth(
 	triviaOf: (node: object) => NodeTrivia | undefined,
 	accessorOf: SlotAccessorOf
 ): number {
+	if (recordOf(data) !== undefined) return 0;
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
 		const copy = markEdited({ ...storageOf(data, accessorOf), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
@@ -793,6 +799,7 @@ export function wrapRendered(
  * every validator lane prepares a candidate.
  */
 export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => NodeTrivia | undefined): AnyUntypedNode {
+	if (recordOf(data) !== undefined) return data;
 	const trivia = triviaOf(data);
 	if (trivia?.leading === undefined && trivia?.trailing === undefined) return data;
 	const candidate = markEdited({ ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [], trailing: [] } } } as AnyUntypedNode);

@@ -232,6 +232,31 @@ readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | 
  */
 renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
+ * r" The record at `address` of a built arena rendered as a
+ * r" render root whose `leading` and `trailing` edges have no
+ * r" neighbour, under `options` over the engine's. The arena's
+ * r" `words` and `bytes` chunks are borrowed for this call; the
+ * r" records the root reaches are admitted, and the parsed trees
+ * r" they link held for the render (`Engine::render_built`).
+ * r" Refuses a chunk that is not a typed array of its kind over
+ * r" an ordinary `ArrayBuffer`, an address naming no record the
+ * r" words admit, a linked tree that is not live, and a record
+ * r" whose render refuses.
+ */
+renderBuilt(words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" The entries a write gave `side` (`leading`, `trailing` or
+ * r" `inner`) of the built record at `address`, or `null` when
+ * r" no write did. Refuses address 0 and any other side.
+ */
+builtTriviaSide(address: number, side: string): object[] | null
+/**
+ * r" Replace `side` of the built record at `address` with
+ * r" `entries`, which `renderBuilt` then writes. Refuses as
+ * r" `builtTriviaSide` does.
+ */
+writeBuiltTriviaSide(address: number, side: string, entries: object[]): void
+/**
  * r" Renders a parsed candidate without exporting its data or its
  * r" outer trivia. A record address must belong to its row; a
  * r" recordless node renders through its native coordinate.

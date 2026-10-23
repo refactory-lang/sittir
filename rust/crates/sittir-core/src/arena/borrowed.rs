@@ -1,4 +1,6 @@
 use super::{word_range, Address, ArenaError, StringRef, MAX_CHUNKS};
+use crate::record::HEADER_WORDS;
+use crate::types::KindId;
 
 /// Bounds-checked reads shared by native-owned and call-borrowed arena storage.
 pub trait ArenaRead {
@@ -17,6 +19,14 @@ pub trait ArenaRead {
     /// The written word at `at`.
     fn word(&self, at: Address) -> Result<u32, ArenaError> {
         self.words(at, 1).map(|words| words[0])
+    }
+
+    /// The kind the header of the record at `at` names. Refuses address 0,
+    /// which names no record, a header past the written words, and a kind
+    /// word wider than a kind.
+    fn header_kind(&self, at: Address) -> Result<KindId, ArenaError> {
+        let word = self.words(at.record()?, HEADER_WORDS)?[0];
+        u16::try_from(word).map(KindId).map_err(|_| ArenaError::Malformed { what: "record kind", word })
     }
 
     /// A string reference checked for bounds and UTF-8 on this read.

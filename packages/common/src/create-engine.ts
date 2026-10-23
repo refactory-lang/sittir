@@ -29,7 +29,7 @@ import { BuiltArena } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
-import { createRenderHandle, nativeCellFormat } from './engine.ts';
+import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
@@ -322,10 +322,10 @@ function assembleEngine<API extends LanguageAPI>(
 	const frozen = Object.freeze(engine);
 	stampEngineStorage(frozen, options?.nodeStorage ?? 'object');
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
-	const format = nativeCellFormat(native);
-	if (format !== undefined) {
+	const built = nativeBuiltRecords(native);
+	if (built !== undefined) {
 		recordConstruction.set(frozen, (records) => {
-			handle.builtArena ??= new BuiltArena(format, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle);
+			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle);
 			handle.records = records;
 		});
 	}

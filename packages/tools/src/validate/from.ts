@@ -422,7 +422,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						// options)` — factories without options ignore the extra argument.
 						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
 							config,
-							separatedListFactoryOptions(readStorage)
+							separatedListFactoryOptions(readStorage, accessorOf)
 						);
 					}
 				} else if (shape === 'constant') {
@@ -441,7 +441,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					// classifyFactoryShape's separatedList case).
 					const config = configOf();
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-					const options = separatedListFactoryOptions(readStorage);
+					const options = separatedListFactoryOptions(readStorage, accessorOf);
 					const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
 					factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 				} else {

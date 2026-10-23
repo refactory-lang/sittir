@@ -80,6 +80,31 @@ describe('record construction', () => {
 		expect((fn.body as () => unknown)()).toBe(body);
 	});
 
+	it('renders a built record natively, as the object builders render the same tree', () => {
+		expect(records.render(build(records) as never).toString()).toBe(objects.render(build(objects) as never).toString());
+	});
+
+	it('renders a built record holding a parsed child by link, through the parsed tree', () => {
+		const withParsedBody = (engine: typeof objects): unknown => {
+			const parsed = engine.parse('fn f() {\n    g(); // kept\n}\n').statements()[0] as unknown as Built;
+			const b = engine.build;
+			return b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: (parsed.body as () => unknown)() as never });
+		};
+		const rendered = records.render(withParsedBody(records) as never).toString();
+		expect(rendered).toBe(objects.render(withParsedBody(objects) as never).toString());
+		expect(rendered).toContain('g(); // kept');
+	});
+
+	it('renders a rebuild with its new child and its unchanged ones', () => {
+		const b = records.build;
+		const fn = b.functionItem({ name: b.identifier('f'), parameters: b.parameters(), body: b.block({ statements: [] }) }) as unknown as Built;
+		const renamed = (fn.$with as { name(value: unknown): Built }).name(b.identifier('g'));
+		const o = objects.build;
+		const expected = o.functionItem({ name: o.identifier('g'), parameters: o.parameters(), body: o.block({ statements: [] }) });
+		expect(records.render(renamed as never).toString()).toBe(objects.render(expected as never).toString());
+		expect(records.render(fn as never).toString()).toContain('fn f');
+	});
+
 	it('refuses a child of an engine that stores its nodes differently', async () => {
 		const plain = await rust.createEngine();
 		expect(() => objects.build.expressionStatement(plain.build.identifier('x') as never)).toThrow(/storing nodes as object .* stores them as arena/);

@@ -20,6 +20,7 @@ import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
+import { builtArenaOf, type BuiltRecords } from './built-arena.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -194,6 +195,29 @@ export interface NativeEngineLike<TNode = unknown> {
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
+	/**
+	 * The record at `address` of a built arena rendered as a render root whose `leading` and `trailing` edges have no
+	 * neighbour. The arena's `words` and `bytes` chunks are borrowed for the call, never copied. Present when the addon
+	 * carries the record codec.
+	 *
+	 * @throws when a chunk is not a typed array of its kind over an ordinary `ArrayBuffer`, the words at `address` are no
+	 * record the arena admits, a parsed tree a record links is not live, or the record's render refuses.
+	 */
+	renderBuilt?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object): string;
+	/**
+	 * The entries a write gave `side` of the built record at `address`, or `null` when no write did. Present when the
+	 * addon carries the record codec.
+	 *
+	 * @throws when `address` is 0 or `side` is none of the three.
+	 */
+	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
+	/**
+	 * Replaces `side` of the built record at `address` with `entries`, which {@link renderBuilt} then writes. Present when
+	 * the addon carries the record codec.
+	 *
+	 * @throws as {@link builtTriviaSide} does.
+	 */
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
 	/**
@@ -332,8 +356,8 @@ export interface SittirEngine<
 	IndentChar extends string = never
 > extends RenderEngine<O, IndentChar> {
 	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
-	/** The cell format of an engine reading trees as records (`nodeStorage: 'arena'`); `undefined` for objects. */
-	readonly cellFormat?: CellFormat;
+	/** What the built arena of an engine reading trees as records (`nodeStorage: 'arena'`) is made with; `undefined` for objects. */
+	readonly builtRecords?: BuiltRecords;
 }
 
 export type { ParsedRoot };
@@ -463,6 +487,17 @@ export function createNativeEngine<
 			// an object node), so it renders as the record it reads.
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
+				const changed = rootEdges(node as object);
+				const built = builtArenaOf(node as object);
+				if (built !== undefined) {
+					const renderBuilt = engine.renderBuilt;
+					if (renderBuilt === undefined)
+						throw new Error('arena node storage needs an addon built with the `arena` feature');
+					return createRenderHandle(() => {
+						const { words, bytes } = built.chunks();
+						return renderBuilt.call(engine, words, bytes, record, changed.leading, changed.trailing, perCall);
+					});
+				}
 				const tree = treeOf(node as object);
 				const treeId = tree?.id;
 				if (tree?.records === undefined || treeId === undefined)
@@ -470,7 +505,6 @@ export function createNativeEngine<
 				const renderRecord = engine.renderRecord;
 				if (renderRecord === undefined)
 					throw new Error('arena node storage needs an addon built with the `arena` feature');
-				const changed = rootEdges(node as object);
 				return createRenderHandle(() => {
 					holdsTrees();
 					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
@@ -507,7 +541,7 @@ export function createNativeEngine<
 
 		return {
 			engine: {
-				cellFormat,
+				builtRecords: cellFormat === undefined ? undefined : builtRecordsOf(engine, cellFormat),
 				render(node, opts) {
 					return renderNativeNode(node, opts);
 				},
@@ -614,11 +648,23 @@ export function createNativeEngine<
 	}
 }
 
-const nativeFormats = new WeakMap<object, CellFormat>();
+const nativeRecords = new WeakMap<object, BuiltRecords>();
 
-/** The cell format of the language engine `native` when it reads trees as records, `undefined` otherwise. */
-export function nativeCellFormat(native: object): CellFormat | undefined {
-	return nativeFormats.get(native);
+/** What the built arena of the language engine `native` is made with when it reads trees as records, `undefined` otherwise. */
+export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
+	return nativeRecords.get(native);
+}
+
+function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
+	const { builtTriviaSide, writeBuiltTriviaSide } = engine;
+	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+	return {
+		format,
+		trivia: {
+			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
+			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries)
+		}
+	};
 }
 
 export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends string = never>(
@@ -636,6 +682,6 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 			engine.dispose();
 		}
 	};
-	if (engine.cellFormat !== undefined) nativeFormats.set(language, engine.cellFormat);
+	if (engine.builtRecords !== undefined) nativeRecords.set(language, engine.builtRecords);
 	return language;
 }

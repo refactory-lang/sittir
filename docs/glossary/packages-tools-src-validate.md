@@ -1057,8 +1057,8 @@ The node's kind id (`TSKindId`); a reader resolves it to a kind name through the
 /**
  * The concrete node inside a factoryless wrapper. A supertype the read stamps
  * over its child (`_non_special_token` over a `string_literal`) has no factory
- * of its own, and holds that child under a single `_<kind>` key; resolution
- * has to go through it or the child arrives unbuilt. Only a node with a
+ * of its own, and holds that child as its one slot value (`wrappedValues`);
+ * resolution has to go through it or the child arrives unbuilt. Only a node with a
  * factory of its own is unwrapped: a wrapper holding bare text, or a token
  * with no builder, is left whole, because its text is what names the kind id
  * or the leaf a caller would type.
@@ -1305,7 +1305,7 @@ A read node's sides as the lanes build them: from its tree's table while it hold
 
 ### `packages/tools/src/validate/common.ts::writeSides`
 
-A factory rebuilds a node from its config alone, and trivia is not config, so the lanes copy a read node's sides onto the value built from it. It is a copy, not an edit: the sides are set as data, and none of the trivia writers' refusals apply (a parsed typescript block holds its zero-width automatic semicolon as a stored child, which a built block renders with width). A node read from a tree takes its sides from the tree's table (`tableSides`); a detached copy carries its sides as data, each entry resolved as a child: `rebuildChildren` takes them from the table, and the factory-source emitter seats them from the read.
+A factory rebuilds a node from its config alone, and trivia is not config, so the lanes copy a read node's sides onto the value built from it. It is a copy, not an edit: the sides are written where the built value holds them (`writeTrivia`: an object node's data, a built record's arena table), and none of the trivia writers' refusals apply (a parsed typescript block holds its zero-width automatic semicolon as a stored child, which a built block renders with width). A node read from a tree takes its sides from the tree's table (`tableSides`); a detached copy carries its sides as data, each entry resolved as a child: `rebuildChildren` takes them from the table, and the factory-source emitter seats them from the read.
 
 ### `packages/tools/src/validate/common.ts::directFactoryValue`
 
@@ -1449,18 +1449,7 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
 
 ### `packages/tools/src/validate/common.ts::separatedListFactoryOptions`
 
-```text
-/**
- * Build a separatedList factory's options bag from a read/wrap node's
- * kind-level separator facts — `_delimiter` (bitflag: leading = 1,
- * trailing = 2) and `_separator` (dynamic separator kind id). One wire
- * spelling: a delimiter-bearing list is always its own separatedList
- * kind, so the kind-level keys are the only place these facts live. A
- * read delimiter is always passed through, `Delimiter.None` included: the
- * factory's own default is the grammar's declared one and applies only
- * when the caller says nothing.
- */
-```
+A separated list factory's options bag, built from the list's kind-level separator facts, as `storedSlotValues` reads them: `_delimiter`, a bit flag (leading = 1, trailing = 2), and `_separator`, the chosen separator's kind id. An object node or a copy holds them under those keys; a record view gives its delimiter through its reader. A delimiter-bearing list is always its own separated list kind, so the kind-level keys are the only place these facts live. A read delimiter always passes through, `Delimiter.None` included: the factory's own default is the grammar's declared one, and it applies only when the caller says nothing.
 
 ### `packages/tools/src/validate/common.ts::FactoryDispatchArtifacts`
 
@@ -1599,7 +1588,7 @@ A display several storage kinds share is validated per storage kind (`occurrence
 
 ### `packages/tools/src/validate/common.ts::nodeToConfig`
 
-A built record's view keeps no `_<slot>` keys, so its named slots are read through the kind's slot readers (`slotValuesOf`); an object node's are its `_`-prefixed keys.
+A node's named slots are read through `storedSlotValues`: a record view's, or its copy's, through the kind's slot readers, an object node's from its `_`-prefixed keys. The same values decide whether a read leaf's interior is still unprojected.
 
 #### interior projection
 
@@ -1770,9 +1759,17 @@ A kind's slots for the tools' walkers (`slotValuesOf`, and through it `materiali
 
 A kind's slot, by its model slot name (the storage name a seat table or `factoryFields` lists), to the name a config builds it by and its accessor reads it by, from the loaded model (`LoadedNodeModel.slotAccessors`). The factory-source printer keys a seated slot (`wrapSeatedConfig`) and a trivia entry's content slot through it. A slot the model does not have throws, naming the kind and slot.
 
+### `packages/tools/src/validate/common.ts::wrappedValues`
+
+The values a node holds in its slots, each present one once, for a reader that goes through a node's sole wrapped child (`soleWrappedNode`, `readNodeText`), read through `storedSlotValues`. A built alias envelope holds its content only behind its `content` reader, and has no text or coordinate of its own to answer with, so its content is found this way.
+
+### `packages/tools/src/validate/common.ts::storedSlotValues`
+
+A node's slot values by storage key, the one reader the validator's view/copy split goes through. A record view, or a spread copy of one (it still carries the record's stamp, `recordOf`), stores nothing in data keys, so its values are read through its slot readers (`slotValuesOf`), its list's delimiter included. Any other node, an object node or a data copy, holds them under its `_`-prefixed storage keys. `nodeToConfig`, `wrappedValues` and `separatedListFactoryOptions` all read through it.
+
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
-The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
+The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. A record view is the candidate itself: it renders as its record's root, whose edges have no neighbour, so it renders none of its outer sides already, and a copy of it carries the record's stamp without being the record's node. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
 
 value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the
@@ -1789,6 +1786,10 @@ Selects deep or shallow read validation, optional diagnostics and a run-local pr
 ### `packages/tools/src/validate/read-render-parse.ts::RenderReparseContext`
 
 Run-local rendering, parser, wrapper and AST-comparison facts shared by read, factory and IR validators. An optional profiler observes primary render and reparse phases. The read validator may supply a native render callback to the shared operation; candidate projection and trivia-width probing apply to object inputs.
+
+### `packages/tools/src/validate/read-render-parse.ts::leadingTriviaRenderedWidth`
+
+The width a candidate's own leading trivia adds to its render, which a candidate render subtracts before it compares spans. A record view answers 0: it renders as its record, which a copy of it would not be, and the copy this measure makes would lose it.
 
 ### `packages/tools/src/validate/layout-runs.ts::withTreeOf`
 

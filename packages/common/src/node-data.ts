@@ -1,8 +1,9 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
-import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carrySourceStamp, stampSource } from './source-stamp.ts';
+import { builtRefOf } from './built-ref.ts';
 import { Source } from './source.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -277,9 +278,10 @@ function tableOf(tree: TreeHandle | undefined, index: number | undefined): Table
 		: { tree: { triviaSide: tree.triviaSide, writeTriviaSide: tree.writeTriviaSide }, index };
 }
 
-/** The table that holds a parsed node's sides: its live tree's, at its own index; `undefined` for a built node. */
+/** The table that holds a node's sides: a parsed node's live tree's, at its own index, and a built record's arena's, at its record's address; `undefined` for an object node. */
 export function tableAt(node: object): TableAt | undefined {
-	return tableOf(treeOf(node), indexOf(node));
+	const built = builtRefOf(node);
+	return built === undefined ? tableOf(treeOf(node), indexOf(node)) : { tree: built.arena.tree, index: built.at };
 }
 
 /** The tree of the node a source identity names, while it lives. */
@@ -464,20 +466,33 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
  */
 export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
 	const at = tableAt(node);
-	if (at !== undefined) return at.tree.triviaSide(at.index, side) as TriviaEntry[];
+	const written = at?.tree.triviaSide(at.index, side);
+	if (written !== undefined) return written as TriviaEntry[];
 	const stored = triviaOf(node)?.[side];
 	if (stored !== undefined) return stored;
 	const source = placeOf(node);
 	const table = source === undefined ? undefined : tableOf(sourceTree(source), decodeIndex(source.treeHandle));
-	return table === undefined ? [] : (table.tree.triviaSide(table.index, side) as TriviaEntry[]);
+	return (table?.tree.triviaSide(table.index, side) ?? []) as TriviaEntry[];
 }
 
 /** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */
 export function sidesOf(node: object): NodeTrivia | undefined {
 	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
-	for (const side of ['leading', 'trailing', 'inner'] as const) {
+	for (const side of TRIVIA_SIDES) {
 		const entries = sideOf(node, side);
 		if (entries.length > 0) sides[side] = entries;
+	}
+	return Object.keys(sides).length === 0 ? undefined : sides;
+}
+
+/** The sides a write gave `node` itself, which a rebuild of it carries: a built record's from its arena's table, any other node's from its data; `undefined` when it holds none. */
+export function writtenSides(node: object): NodeTrivia | undefined {
+	const built = builtRefOf(node);
+	if (built === undefined) return triviaOf(node);
+	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
+	for (const side of TRIVIA_SIDES) {
+		const entries = built.arena.tree.triviaSide(built.at, side);
+		if (entries !== undefined) sides[side] = entries as TriviaEntry[];
 	}
 	return Object.keys(sides).length === 0 ? undefined : sides;
 }

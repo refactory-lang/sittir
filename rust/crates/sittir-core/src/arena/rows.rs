@@ -70,9 +70,7 @@ impl TreeArena {
     /// `ArenaError::Unwritable` when `row` holds a record already. Either way
     /// the index is unchanged.
     pub(super) fn index(&mut self, row: NodeIndex, at: Address) -> Result<(), ArenaError> {
-        if at == Address::NONE {
-            return Err(ArenaError::Malformed { what: "record address", word: 0 });
-        }
+        at.record()?;
         if self.record(row).is_some() {
             return Err(ArenaError::Unwritable("a second record for a row"));
         }

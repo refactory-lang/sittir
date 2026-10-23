@@ -32,4 +32,13 @@ describe('a candidate rendered alone is its own span', () => {
 		expect(render(data)).toContain('# no args');
 		expect(render(candidateData(data, triviaOf))).not.toContain('# no args');
 	});
+
+	it('is a record view itself, never a copy of it: its record renders none of its outer sides', async () => {
+		const arena = await createEngine(python, { nodeStorage: 'arena' });
+		const statement = arena.parse('# lead\nfoo()\n').$query().$descendants.ofType(arena.kinds.ExpressionStatement).at(0);
+		if (statement === undefined) throw new Error('expected an expression statement');
+		const sides = (): NodeTrivia => ({ leading: [statement as never] });
+		expect(candidateData(statement as AnyUntypedNode, sides)).toBe(statement);
+		arena.dispose();
+	});
 });

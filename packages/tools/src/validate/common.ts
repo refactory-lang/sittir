@@ -12,7 +12,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { coordinateOf, hydrateTriviaEntry, isBuiltNode } from '@sittir/common/utils';
+import { coordinateOf, hydrateTriviaEntry, writeTrivia, writtenSides } from '@sittir/common/utils';
 import { scopeBuilders, useRecordConstruction } from '@sittir/common/engine';
 import {
 	carryRead,
@@ -37,6 +37,7 @@ import {
 	projectInterior,
 	storedSlotReader,
 	isDataKey,
+	recordOf,
 	type TokenInterior
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
@@ -936,6 +937,11 @@ export function slotValuesOf(
 	return values;
 }
 
+export function storedSlotValues(node: object, accessorOf: SlotAccessorOf): [storageKey: string, value: unknown][] {
+	if (recordOf(node) !== undefined && hasNumericType(node)) return slotValuesOf(node, accessorOf);
+	return Object.entries(node).filter(([key]) => key.startsWith('_'));
+}
+
 /** A kind and its slots: each storage key to the accessor that reads it, and whether it is a list whose delimiter is chosen per instance. */
 export interface KindSlots {
 	readonly kind: string;
@@ -1206,11 +1212,14 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	return buildWithFactory(hydrated, kind, factory, { ...opts, _depth: _depth + 1 });
 }
 
+function wrappedValues(node: ReadNodeLike, opts: NodeToConfigOpts): unknown[] {
+	return storedSlotValues(node, opts.accessorOf).flatMap(([, value]) => (value === undefined ? [] : [value]));
+}
+
 function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
-	const rec = hydrated as unknown as Record<string, unknown>;
-	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
-	if (keys.length !== 1) return undefined;
-	const value = rec[keys[0]!];
+	const values = wrappedValues(hydrated, opts);
+	if (values.length !== 1) return undefined;
+	const value = values[0];
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return undefined;
 	const kind = rawChildKindName(value, opts.kindNameFromId);
 	if (kind === undefined) return undefined;
@@ -1221,9 +1230,8 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	const text = sourceTextOf(node as object, opts.tree);
 	if (text !== undefined) return text;
-	const rec = node as unknown as Record<string, unknown>;
-	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
-	const wrapped = keys.length === 1 ? rec[keys[0]!] : undefined;
+	const values = wrappedValues(node, opts);
+	const wrapped = values.length === 1 ? values[0] : undefined;
 	return wrapped !== null && typeof wrapped === 'object' && !Array.isArray(wrapped) ? readNodeText(wrapped as ReadNodeLike, opts) : '';
 }
 
@@ -1337,10 +1345,8 @@ function carryGroupTrivia(group: ReadNodeLike, seat: string, container: Record<s
 			seatedTriviaEdges.push({ seat, group: String(group.$type), children: at === undefined ? 'none' : typeof child });
 			return;
 		}
-		const built = child as { $_layout?: NodeLayout };
-		const existing = built.$_layout?.trivia as Record<string, readonly unknown[] | undefined> | undefined;
-		const trivia = { ...existing, [side]: side === 'leading' ? [...entries, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...entries] } as NodeTrivia;
-		at.holder[at.key] = Object.assign(Object.create(Object.getPrototypeOf(built)), built, { $_layout: { ...built.$_layout, trivia } });
+		const existing = writtenSides(child);
+		writeTrivia(child, { [side]: side === 'leading' ? [...entries, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...entries] } as NodeTrivia);
 	};
 	const nodes = (entries: readonly unknown[] | undefined) => entries?.filter((entry) => typeof entry !== 'number');
 	move(holders[0], 'leading', nodes(resolved.leading));
@@ -1482,7 +1488,7 @@ function factoryArgs(
 	const route = armRouteOf(config);
 	if (shape === 'config') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts);
-		const listOptions = separatedListFactoryOptions(referenceData);
+		const listOptions = separatedListFactoryOptions(referenceData, opts.accessorOf);
 		const options = {
 			...(listOptions?.separator !== undefined && !('separator' in base) ? { separator: listOptions.separator } : {}),
 			...(listOptions?.delimiter !== undefined && !('delimiter' in base) ? { delimiter: listOptions.delimiter } : {}),
@@ -1502,7 +1508,7 @@ function factoryArgs(
 	}
 	const { base, registered } = splitRegisteredSlots(kind, config, opts);
 	const elements = getChildFactoryArgs(kind, base, opts.factorySlots, opts.factoryFields);
-	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData) : registered;
+	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData, opts.accessorOf) : registered;
 	return options !== undefined ? [options, ...elements] : elements;
 }
 
@@ -1572,9 +1578,7 @@ function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
 	if (built === null || typeof built !== 'object') return built;
 	const trivia = groupSides(source, opts);
-	if (trivia === undefined) return built;
-	const record = built as { $_layout?: NodeLayout };
-	record.$_layout = { ...record.$_layout, trivia };
+	if (trivia !== undefined) writeTrivia(built, trivia);
 	return built;
 }
 
@@ -1823,20 +1827,17 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record
 	const rec = data as unknown as Record<string, unknown>;
 	const interior = opts.shownKind === undefined ? undefined : opts.interiorOf?.(opts.shownKind);
 	const text = nodeText(data);
+	const stored = storedSlotValues(rec, opts.accessorOf);
 	const unprojected =
 		interior !== undefined &&
 		text !== undefined &&
-		!interior.slots.some((slot) => rec[`_${slot.name}`] !== undefined);
+		!interior.slots.some((slot) => stored.some(([key, value]) => key === storageKeyOf(slot.name) && value !== undefined));
 	const parentKind = unprojected
 		? opts.shownKind
 		: data.$type !== undefined
 			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 			: undefined;
-	const namedSlotEntries: [string, unknown][] = isBuiltNode(rec)
-		? slotValuesOf(rec as TypedNode, opts.accessorOf).map(([key, value]): [string, unknown] => [key.slice(1), value])
-		: Object.keys(rec)
-				.filter((key) => key.startsWith('_'))
-				.map((key): [string, unknown] => [key.slice(1), rec[key]]);
+	const namedSlotEntries = stored.map(([key, value]): [string, unknown] => [key.slice(1), value]);
 	if (unprojected) {
 		for (const [name, value] of Object.entries(projectInterior(text!, interior, opts.shownKind!))) {
 			if (value !== undefined && value !== false) namedSlotEntries.push([name, value]);
@@ -1882,10 +1883,18 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 	);
 }
 
-export function separatedListFactoryOptions(data: unknown): { separator?: number; delimiter?: number } | undefined {
-	const rec = (data ?? {}) as Record<string, unknown>;
-	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
-	const separator = typeof rec['_separator'] === 'number' ? rec['_separator'] : undefined;
+export function separatedListFactoryOptions(
+	data: unknown,
+	accessorOf: SlotAccessorOf
+): { separator?: number; delimiter?: number } | undefined {
+	if (data === null || typeof data !== 'object') return undefined;
+	const stored = new Map(storedSlotValues(data, accessorOf));
+	const held = (key: string): number | undefined => {
+		const value = stored.get(storageKeyOf(key));
+		return typeof value === 'number' ? value : undefined;
+	};
+	const delimiter = held('delimiter');
+	const separator = held('separator');
 	const options: { separator?: number; delimiter?: number } = {};
 	if (separator !== undefined) options.separator = separator;
 	if (delimiter !== undefined) options.delimiter = delimiter;

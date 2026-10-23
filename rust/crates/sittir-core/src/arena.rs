@@ -13,6 +13,7 @@
 
 mod admit;
 mod borrowed;
+mod built;
 pub mod cell;
 mod parsed;
 mod prep;
@@ -89,6 +90,18 @@ pub struct Address(pub u32);
 
 impl Address {
     pub const NONE: Address = Address(0);
+
+    /// This address, which names a record: every address but 0.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for address 0.
+    pub fn record(self) -> Result<Address, ArenaError> {
+        if self == Address::NONE {
+            return Err(ArenaError::Malformed { what: "record address", word: 0 });
+        }
+        Ok(self)
+    }
 
     #[must_use]
     pub fn new(chunk: u32, word: u32) -> Option<Address> {
