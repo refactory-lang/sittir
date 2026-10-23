@@ -1,0 +1,33 @@
+{
+  "variant": "today-release",
+  "host": "aarch64-apple-darwin",
+  "packages": [
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 121.03,
+    "user": 274.14,
+    "sys": 11.86
+  },
+  "sizes": {
+    "rust": {
+      "sittir-rust.node": 8367152
+    },
+    "typescript": {
+      "sittir-typescript.node": 9191952
+    },
+    "python": {
+      "sittir-python.node": 5964272
+    },
+    "scm": {
+      "sittir-scm.node": 2727296
+    },
+    "regex": {
+      "sittir-regex.node": 2743504
+    }
+  }
+}

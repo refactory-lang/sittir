@@ -1,0 +1,33 @@
+{
+  "variant": "today-gate",
+  "host": "aarch64-apple-darwin",
+  "packages": [
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 82.15,
+    "user": 225.82,
+    "sys": 7.49
+  },
+  "sizes": {
+    "rust": {
+      "sittir-rust.node": 10344592
+    },
+    "typescript": {
+      "sittir-typescript.node": 11119328
+    },
+    "python": {
+      "sittir-python.node": 7472656
+    },
+    "scm": {
+      "sittir-scm.node": 3461856
+    },
+    "regex": {
+      "sittir-regex.node": 3477520
+    }
+  }
+}

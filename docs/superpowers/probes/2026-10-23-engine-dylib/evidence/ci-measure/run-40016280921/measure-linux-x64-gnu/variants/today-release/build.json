@@ -1,0 +1,33 @@
+{
+  "variant": "today-release",
+  "host": "x86_64-unknown-linux-gnu",
+  "packages": [
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 146.93,
+    "user": 422,
+    "sys": 20.8
+  },
+  "sizes": {
+    "rust": {
+      "sittir-rust.node": 9980736
+    },
+    "typescript": {
+      "sittir-typescript.node": 10849712
+    },
+    "python": {
+      "sittir-python.node": 7271104
+    },
+    "scm": {
+      "sittir-scm.node": 3333120
+    },
+    "regex": {
+      "sittir-regex.node": 3358616
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "variant": "dylib-gate",
+  "host": "x86_64-unknown-linux-gnu",
+  "packages": [
+    "sittir-engine",
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 112.73,
+    "user": 409.95,
+    "sys": 20.17
+  },
+  "sizes": {
+    "rust": {
+      "libsittir_engine.so": 2582080,
+      "libstd-44675f186029a4cd.so": 1454272,
+      "sittir-rust.node": 9751688
+    },
+    "typescript": {
+      "libsittir_engine.so": 2582080,
+      "libstd-44675f186029a4cd.so": 1454272,
+      "sittir-typescript.node": 10525552
+    },
+    "python": {
+      "libsittir_engine.so": 2582080,
+      "libstd-44675f186029a4cd.so": 1454272,
+      "sittir-python.node": 6610792
+    },
+    "scm": {
+      "libsittir_engine.so": 2582080,
+      "libstd-44675f186029a4cd.so": 1454272,
+      "sittir-scm.node": 1914720
+    },
+    "regex": {
+      "libsittir_engine.so": 2582080,
+      "libstd-44675f186029a4cd.so": 1454272,
+      "sittir-regex.node": 1928072
+    }
+  }
+}

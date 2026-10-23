@@ -1,0 +1,2070 @@
+{
+  "names": [
+    "dylib-gate",
+    "dylib-release",
+    "today-gate",
+    "today-release"
+  ],
+  "rounds": 5,
+  "medians": {
+    "memory:1:dylib-gate": {
+      "loadedRss": 2293760,
+      "workedRss": 7356416,
+      "workedHeapUsed": 81912,
+      "workedExternal": 5142,
+      "loadedFootprint": 1363148.7999999989,
+      "workedFootprint": 1363148.8000000007
+    },
+    "memory:1:dylib-release": {
+      "loadedRss": 1916928,
+      "workedRss": 6144000,
+      "workedHeapUsed": 81912,
+      "workedExternal": 5142,
+      "loadedFootprint": 943718.4000000004,
+      "workedFootprint": 1153433.5999999996
+    },
+    "memory:1:today-gate": {
+      "loadedRss": 1933312,
+      "workedRss": 6848512,
+      "workedHeapUsed": 78928,
+      "workedExternal": 5142,
+      "loadedFootprint": 1153433.6000000015,
+      "workedFootprint": 1363148.7999999989
+    },
+    "memory:1:today-release": {
+      "loadedRss": 1638400,
+      "workedRss": 5718016,
+      "workedHeapUsed": 79032,
+      "workedExternal": 5007,
+      "loadedFootprint": 943718.3999999985,
+      "workedFootprint": 1153433.5999999996
+    },
+    "memory:5:dylib-gate": {
+      "loadedRss": 4833280,
+      "workedRss": 18612224,
+      "workedHeapUsed": 197640,
+      "workedExternal": 5142,
+      "loadedFootprint": 2726297.5999999996,
+      "workedFootprint": 2936012.8000000007
+    },
+    "memory:5:dylib-release": {
+      "loadedRss": 3932160,
+      "workedRss": 14876672,
+      "workedHeapUsed": 198440,
+      "workedExternal": 5142,
+      "loadedFootprint": 1992294.3999999985,
+      "workedFootprint": 2097152
+    },
+    "memory:5:today-gate": {
+      "loadedRss": 5799936,
+      "workedRss": 19922944,
+      "workedHeapUsed": 179112,
+      "workedExternal": 5003,
+      "loadedFootprint": 3565158.3999999985,
+      "workedFootprint": 3774873.5999999978
+    },
+    "memory:5:today-release": {
+      "loadedRss": 4653056,
+      "workedRss": 16318464,
+      "workedHeapUsed": 178712,
+      "workedExternal": 5142,
+      "loadedFootprint": 2516582.4000000004,
+      "workedFootprint": 2726297.6000000015
+    },
+    "throughput:rust:dylib-gate": {
+      "medianMs": 27.314458,
+      "minMs": 23.567875,
+      "parseMs": 4.001707,
+      "readMs": 10.490926,
+      "renderMs": 12.330043,
+      "sources": 149,
+      "leftOut": 0
+    },
+    "throughput:rust:dylib-release": {
+      "medianMs": 24.745917,
+      "minMs": 21.827084,
+      "parseMs": 3.84188,
+      "readMs": 9.236544,
+      "renderMs": 11.431376,
+      "sources": 149,
+      "leftOut": 0
+    },
+    "throughput:rust:today-gate": {
+      "medianMs": 26.466,
+      "minMs": 23.131709,
+      "parseMs": 4.068253,
+      "readMs": 10.170452,
+      "renderMs": 11.912299,
+      "sources": 149,
+      "leftOut": 0
+    },
+    "throughput:rust:today-release": {
+      "medianMs": 25.057167,
+      "minMs": 21.782792,
+      "parseMs": 3.888962,
+      "readMs": 8.968329,
+      "renderMs": 11.926956,
+      "sources": 149,
+      "leftOut": 0
+    },
+    "throughput:python:dylib-gate": {
+      "medianMs": 27.393292,
+      "minMs": 24.437708,
+      "parseMs": 3.750957,
+      "readMs": 10.553168,
+      "renderMs": 12.649334,
+      "sources": 116,
+      "leftOut": 0
+    },
+    "throughput:python:dylib-release": {
+      "medianMs": 25.715333,
+      "minMs": 22.760375,
+      "parseMs": 3.659956,
+      "readMs": 9.746756,
+      "renderMs": 12.185371,
+      "sources": 116,
+      "leftOut": 0
+    },
+    "throughput:python:today-gate": {
+      "medianMs": 27.768458,
+      "minMs": 24.801583,
+      "parseMs": 3.806785,
+      "readMs": 11.029791,
+      "renderMs": 12.603462,
+      "sources": 116,
+      "leftOut": 0
+    },
+    "throughput:python:today-release": {
+      "medianMs": 25.597,
+      "minMs": 22.837166,
+      "parseMs": 3.780835,
+      "readMs": 9.522121,
+      "renderMs": 12.161417,
+      "sources": 116,
+      "leftOut": 0
+    }
+  },
+  "failures": [],
+  "runs": [
+    {
+      "round": 0,
+      "cell": "memory:1",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46465024,
+          "heapUsed": 4128296,
+          "external": 2013264,
+          "footprint": 13316915.2
+        },
+        "loaded": {
+          "rss": 48775168,
+          "heapUsed": 4195856,
+          "external": 2018267,
+          "footprint": 14680064
+        },
+        "worked": {
+          "rss": 53821440,
+          "heapUsed": 4210208,
+          "external": 2018406,
+          "footprint": 14680064
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:1",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46661632,
+          "heapUsed": 4128232,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 48529408,
+          "heapUsed": 4195792,
+          "external": 2018267,
+          "footprint": 14365491.2
+        },
+        "worked": {
+          "rss": 52789248,
+          "heapUsed": 4210144,
+          "external": 2018406,
+          "footprint": 14575206.4
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:1",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46940160,
+          "heapUsed": 4128224,
+          "external": 2013264,
+          "footprint": 13736345.6
+        },
+        "loaded": {
+          "rss": 48775168,
+          "heapUsed": 4191808,
+          "external": 2018267,
+          "footprint": 14889779.2
+        },
+        "worked": {
+          "rss": 53641216,
+          "heapUsed": 4205968,
+          "external": 2018267,
+          "footprint": 14994636.8
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:1",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46465024,
+          "heapUsed": 4127512,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 48103424,
+          "heapUsed": 4191488,
+          "external": 2018271,
+          "footprint": 14260633.6
+        },
+        "worked": {
+          "rss": 52183040,
+          "heapUsed": 4206440,
+          "external": 2018406,
+          "footprint": 14365491.2
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:5",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46333952,
+          "heapUsed": 4128480,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 51281920,
+          "heapUsed": 4308312,
+          "external": 2018271,
+          "footprint": 16148070.4
+        },
+        "worked": {
+          "rss": 65339392,
+          "heapUsed": 4326120,
+          "external": 2018406,
+          "footprint": 16462643.2
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:5",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46694400,
+          "heapUsed": 4129208,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 50561024,
+          "heapUsed": 4308088,
+          "external": 2018267,
+          "footprint": 15309209.6
+        },
+        "worked": {
+          "rss": 61505536,
+          "heapUsed": 4326688,
+          "external": 2018267,
+          "footprint": 15414067.2
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:5",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46596096,
+          "heapUsed": 4126472,
+          "external": 2013264,
+          "footprint": 13316915.2
+        },
+        "loaded": {
+          "rss": 52396032,
+          "heapUsed": 4289088,
+          "external": 2018406,
+          "footprint": 16882073.6
+        },
+        "worked": {
+          "rss": 66519040,
+          "heapUsed": 4307736,
+          "external": 2018406,
+          "footprint": 17196646.4
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "memory:5",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46858240,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13631488
+        },
+        "loaded": {
+          "rss": 51445760,
+          "heapUsed": 4289384,
+          "external": 2018267,
+          "footprint": 16043212.8
+        },
+        "worked": {
+          "rss": 63062016,
+          "heapUsed": 4307200,
+          "external": 2018267,
+          "footprint": 16148070.4
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:rust",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.830625,
+        "medianMs": 27.314458,
+        "meanMs": 27.19018440999996,
+        "medianSplitMs": {
+          "parse": 4.213788,
+          "read": 10.490926,
+          "render": 12.330043
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:rust",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 20.8865,
+        "medianMs": 24.586959,
+        "meanMs": 24.997748724999997,
+        "medianSplitMs": {
+          "parse": 3.84188,
+          "read": 9.236544,
+          "render": 11.23932
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:rust",
+      "variant": "today-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.131709,
+        "medianMs": 27.675084,
+        "meanMs": 28.094728910000008,
+        "medianSplitMs": {
+          "parse": 4.217629,
+          "read": 10.688548,
+          "render": 12.483244
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:rust",
+      "variant": "today-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.938083,
+        "medianMs": 25.546625,
+        "meanMs": 25.536252109999978,
+        "medianSplitMs": {
+          "parse": 4.026246,
+          "read": 9.283789,
+          "render": 11.973168
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:python",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.422666,
+        "medianMs": 27.662209,
+        "meanMs": 27.974900190000003,
+        "medianSplitMs": {
+          "parse": 3.882502,
+          "read": 10.864285,
+          "render": 12.649334
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:python",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.671458,
+        "medianMs": 26.1115,
+        "meanMs": 26.111221474999994,
+        "medianSplitMs": {
+          "parse": 3.633081,
+          "read": 9.716913,
+          "render": 12.488459
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:python",
+      "variant": "today-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.834,
+        "medianMs": 27.605542,
+        "meanMs": 27.609027725,
+        "medianSplitMs": {
+          "parse": 3.834048,
+          "read": 10.980157,
+          "render": 12.526837
+        }
+      }
+    },
+    {
+      "round": 0,
+      "cell": "throughput:python",
+      "variant": "today-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.740917,
+        "medianMs": 25.58775,
+        "meanMs": 25.374336044999996,
+        "medianSplitMs": {
+          "parse": 3.854131,
+          "read": 9.522121,
+          "render": 11.964248
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:1",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46546944,
+          "heapUsed": 4127408,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 48300032,
+          "heapUsed": 4191480,
+          "external": 2018267,
+          "footprint": 14365491.2
+        },
+        "worked": {
+          "rss": 52346880,
+          "heapUsed": 4206440,
+          "external": 2018406,
+          "footprint": 14575206.4
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:1",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46514176,
+          "heapUsed": 4125376,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 48496640,
+          "heapUsed": 4191952,
+          "external": 2018406,
+          "footprint": 14680064
+        },
+        "worked": {
+          "rss": 53362688,
+          "heapUsed": 4206248,
+          "external": 2018545,
+          "footprint": 14784921.6
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:1",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46907392,
+          "heapUsed": 4128232,
+          "external": 2013264,
+          "footprint": 13736345.6
+        },
+        "loaded": {
+          "rss": 48840704,
+          "heapUsed": 4195792,
+          "external": 2018267,
+          "footprint": 14680064
+        },
+        "worked": {
+          "rss": 53067776,
+          "heapUsed": 4210144,
+          "external": 2018406,
+          "footprint": 14889779.2
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:1",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46497792,
+          "heapUsed": 4128224,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 48955392,
+          "heapUsed": 4195784,
+          "external": 2018267,
+          "footprint": 14784921.6
+        },
+        "worked": {
+          "rss": 53936128,
+          "heapUsed": 4210136,
+          "external": 2018406,
+          "footprint": 14889779.2
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:5",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46825472,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13631488
+        },
+        "loaded": {
+          "rss": 51478528,
+          "heapUsed": 4289192,
+          "external": 2018406,
+          "footprint": 16043212.8
+        },
+        "worked": {
+          "rss": 63045632,
+          "heapUsed": 4308032,
+          "external": 2018406,
+          "footprint": 16148070.4
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:5",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46972928,
+          "heapUsed": 4128480,
+          "external": 2013264,
+          "footprint": 13736345.6
+        },
+        "loaded": {
+          "rss": 52625408,
+          "heapUsed": 4288944,
+          "external": 2018267,
+          "footprint": 17091788.8
+        },
+        "worked": {
+          "rss": 66666496,
+          "heapUsed": 4307592,
+          "external": 2018267,
+          "footprint": 17301504
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:5",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46465024,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 50561024,
+          "heapUsed": 4315824,
+          "external": 2018271,
+          "footprint": 15309209.6
+        },
+        "worked": {
+          "rss": 61685760,
+          "heapUsed": 4326928,
+          "external": 2018406,
+          "footprint": 15728640
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "memory:5",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46415872,
+          "heapUsed": 4128480,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 51314688,
+          "heapUsed": 4308304,
+          "external": 2018267,
+          "footprint": 16148070.4
+        },
+        "worked": {
+          "rss": 65142784,
+          "heapUsed": 4326120,
+          "external": 2018406,
+          "footprint": 16252928
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:rust",
+      "variant": "today-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.243959,
+        "medianMs": 22.4125,
+        "meanMs": 22.66656332999998,
+        "medianSplitMs": {
+          "parse": 3.438583,
+          "read": 8.102753,
+          "render": 10.636169
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:rust",
+      "variant": "today-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.376792,
+        "medianMs": 25.545125,
+        "meanMs": 26.251728350000022,
+        "medianSplitMs": {
+          "parse": 3.693336,
+          "read": 9.764292,
+          "render": 11.816924
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:rust",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.53375,
+        "medianMs": 25.438167,
+        "meanMs": 25.202624355000008,
+        "medianSplitMs": {
+          "parse": 3.850581,
+          "read": 9.629959,
+          "render": 11.69754
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:rust",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.938959,
+        "medianMs": 23.757459,
+        "meanMs": 26.737342524999995,
+        "medianSplitMs": {
+          "parse": 3.306617,
+          "read": 9.267631,
+          "render": 10.938499
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:python",
+      "variant": "today-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.68675,
+        "medianMs": 25.780375,
+        "meanMs": 26.04277516,
+        "medianSplitMs": {
+          "parse": 3.828326,
+          "read": 9.540836,
+          "render": 12.161417
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:python",
+      "variant": "today-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 25.465042,
+        "medianMs": 27.316917,
+        "meanMs": 27.457712745000013,
+        "medianSplitMs": {
+          "parse": 3.779162,
+          "read": 10.89471,
+          "render": 12.357211
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:python",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.760375,
+        "medianMs": 25.715333,
+        "meanMs": 25.76397940500002,
+        "medianSplitMs": {
+          "parse": 3.703165,
+          "read": 9.378959,
+          "render": 12.389875
+        }
+      }
+    },
+    {
+      "round": 1,
+      "cell": "throughput:python",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.717458,
+        "medianMs": 27.315,
+        "meanMs": 26.953402129999994,
+        "medianSplitMs": {
+          "parse": 3.621584,
+          "read": 10.459541,
+          "render": 12.9645
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:1",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46399488,
+          "heapUsed": 4128224,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 48562176,
+          "heapUsed": 4195792,
+          "external": 2018271,
+          "footprint": 14470348.8
+        },
+        "worked": {
+          "rss": 53919744,
+          "heapUsed": 4210136,
+          "external": 2018406,
+          "footprint": 14784921.6
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:1",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46366720,
+          "heapUsed": 4127512,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 48381952,
+          "heapUsed": 4195800,
+          "external": 2018271,
+          "footprint": 14365491.2
+        },
+        "worked": {
+          "rss": 52527104,
+          "heapUsed": 4210144,
+          "external": 2018406,
+          "footprint": 14365491.2
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:1",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46383104,
+          "heapUsed": 4128224,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 48431104,
+          "heapUsed": 4191952,
+          "external": 2018410,
+          "footprint": 14470348.8
+        },
+        "worked": {
+          "rss": 53329920,
+          "heapUsed": 4206112,
+          "external": 2018406,
+          "footprint": 14575206.4
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:1",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46596096,
+          "heapUsed": 4128232,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 48349184,
+          "heapUsed": 4191816,
+          "external": 2018267,
+          "footprint": 14365491.2
+        },
+        "worked": {
+          "rss": 52559872,
+          "heapUsed": 4205976,
+          "external": 2018267,
+          "footprint": 14680064
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:5",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46628864,
+          "heapUsed": 4126472,
+          "external": 2013264,
+          "footprint": 13526630.4
+        },
+        "loaded": {
+          "rss": 51314688,
+          "heapUsed": 4307968,
+          "external": 2018267,
+          "footprint": 16043212.8
+        },
+        "worked": {
+          "rss": 65241088,
+          "heapUsed": 4326664,
+          "external": 2018267,
+          "footprint": 16357785.6
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:5",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46612480,
+          "heapUsed": 4128664,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 50626560,
+          "heapUsed": 4308264,
+          "external": 2018267,
+          "footprint": 15414067.2
+        },
+        "worked": {
+          "rss": 61472768,
+          "heapUsed": 4326904,
+          "external": 2018267,
+          "footprint": 15518924.8
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:5",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46596096,
+          "heapUsed": 4128552,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 52396032,
+          "heapUsed": 4289016,
+          "external": 2018267,
+          "footprint": 16882073.6
+        },
+        "worked": {
+          "rss": 66453504,
+          "heapUsed": 4307808,
+          "external": 2018406,
+          "footprint": 17196646.4
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "memory:5",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46579712,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13316915.2
+        },
+        "loaded": {
+          "rss": 51232768,
+          "heapUsed": 4289064,
+          "external": 2018267,
+          "footprint": 15833497.6
+        },
+        "worked": {
+          "rss": 62898176,
+          "heapUsed": 4307856,
+          "external": 2018406,
+          "footprint": 16043212.8
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:rust",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.316167,
+        "medianMs": 25.447417,
+        "meanMs": 25.353629364999993,
+        "medianSplitMs": {
+          "parse": 3.785742,
+          "read": 10.0618,
+          "render": 11.340994
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:rust",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.664917,
+        "medianMs": 23.986416,
+        "meanMs": 24.018957064999977,
+        "medianSplitMs": {
+          "parse": 3.6855,
+          "read": 8.790172,
+          "render": 11.259704
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:rust",
+      "variant": "today-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.536125,
+        "medianMs": 26.995666,
+        "meanMs": 27.27996538000002,
+        "medianSplitMs": {
+          "parse": 4.068253,
+          "read": 10.170452,
+          "render": 12.480665
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:rust",
+      "variant": "today-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.259042,
+        "medianMs": 23.67425,
+        "meanMs": 23.480663389999997,
+        "medianSplitMs": {
+          "parse": 3.710838,
+          "read": 8.550085,
+          "render": 11.138542
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:python",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 25.666208,
+        "medianMs": 27.657041,
+        "meanMs": 28.356342055000006,
+        "medianSplitMs": {
+          "parse": 3.750957,
+          "read": 10.553168,
+          "render": 13.099661
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:python",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.892042,
+        "medianMs": 26.080417,
+        "meanMs": 26.478077980000002,
+        "medianSplitMs": {
+          "parse": 3.740376,
+          "read": 9.890581,
+          "render": 12.185371
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:python",
+      "variant": "today-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.119167,
+        "medianMs": 28.320875,
+        "meanMs": 28.10152043499997,
+        "medianSplitMs": {
+          "parse": 3.900788,
+          "read": 11.092423,
+          "render": 13.070407
+        }
+      }
+    },
+    {
+      "round": 2,
+      "cell": "throughput:python",
+      "variant": "today-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.494333,
+        "medianMs": 25.960459,
+        "meanMs": 25.968000050000004,
+        "medianSplitMs": {
+          "parse": 3.780835,
+          "read": 9.64517,
+          "render": 12.246536
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:1",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46858240,
+          "heapUsed": 4126224,
+          "external": 2013264,
+          "footprint": 13631488
+        },
+        "loaded": {
+          "rss": 48463872,
+          "heapUsed": 4191800,
+          "external": 2018267,
+          "footprint": 14470348.8
+        },
+        "worked": {
+          "rss": 52559872,
+          "heapUsed": 4206152,
+          "external": 2018267,
+          "footprint": 14784921.6
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:1",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46514176,
+          "heapUsed": 4127504,
+          "external": 2013264,
+          "footprint": 13316915.2
+        },
+        "loaded": {
+          "rss": 48381952,
+          "heapUsed": 4191616,
+          "external": 2018406,
+          "footprint": 14470348.8
+        },
+        "worked": {
+          "rss": 53198848,
+          "heapUsed": 4206432,
+          "external": 2018406,
+          "footprint": 14575206.4
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:1",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 47235072,
+          "heapUsed": 4127512,
+          "external": 2013264,
+          "footprint": 14050918.4
+        },
+        "loaded": {
+          "rss": 49152000,
+          "heapUsed": 4195792,
+          "external": 2018267,
+          "footprint": 14994636.8
+        },
+        "worked": {
+          "rss": 53215232,
+          "heapUsed": 4210000,
+          "external": 2018267,
+          "footprint": 14994636.8
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:1",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46874624,
+          "heapUsed": 4126216,
+          "external": 2013264,
+          "footprint": 13736345.6
+        },
+        "loaded": {
+          "rss": 49070080,
+          "heapUsed": 4195784,
+          "external": 2018267,
+          "footprint": 14889779.2
+        },
+        "worked": {
+          "rss": 54116352,
+          "heapUsed": 4209992,
+          "external": 2018267,
+          "footprint": 15099494.4
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:5",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46694400,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13526630.4
+        },
+        "loaded": {
+          "rss": 51527680,
+          "heapUsed": 4289400,
+          "external": 2018267,
+          "footprint": 16148070.4
+        },
+        "worked": {
+          "rss": 63258624,
+          "heapUsed": 4307024,
+          "external": 2018267,
+          "footprint": 16357785.6
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:5",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46596096,
+          "heapUsed": 4128480,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 52445184,
+          "heapUsed": 4288944,
+          "external": 2018267,
+          "footprint": 16986931.2
+        },
+        "worked": {
+          "rss": 66535424,
+          "heapUsed": 4307592,
+          "external": 2018267,
+          "footprint": 17196646.4
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:5",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46841856,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13631488
+        },
+        "loaded": {
+          "rss": 50774016,
+          "heapUsed": 4308216,
+          "external": 2018406,
+          "footprint": 15518924.8
+        },
+        "worked": {
+          "rss": 61718528,
+          "heapUsed": 4327104,
+          "external": 2018406,
+          "footprint": 15728640
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "memory:5",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46514176,
+          "heapUsed": 4128656,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 51347456,
+          "heapUsed": 4308480,
+          "external": 2018267,
+          "footprint": 16148070.4
+        },
+        "worked": {
+          "rss": 65126400,
+          "heapUsed": 4326240,
+          "external": 2018406,
+          "footprint": 16252928
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:rust",
+      "variant": "today-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.61075,
+        "medianMs": 25.229958,
+        "meanMs": 26.33706119999998,
+        "medianSplitMs": {
+          "parse": 3.986698,
+          "read": 9.050871,
+          "render": 11.92759
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:rust",
+      "variant": "today-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.900458,
+        "medianMs": 26.466,
+        "meanMs": 26.498561065,
+        "medianSplitMs": {
+          "parse": 4.125407,
+          "read": 10.229214,
+          "render": 11.843547
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:rust",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.061125,
+        "medianMs": 24.948792,
+        "meanMs": 25.173962905000018,
+        "medianSplitMs": {
+          "parse": 3.928337,
+          "read": 9.327124,
+          "render": 11.431376
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:rust",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.567875,
+        "medianMs": 27.742041,
+        "meanMs": 27.868038504999994,
+        "medianSplitMs": {
+          "parse": 4.113128,
+          "read": 10.569877,
+          "render": 12.748079
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:python",
+      "variant": "today-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.070958,
+        "medianMs": 25.597,
+        "meanMs": 25.63440478500001,
+        "medianSplitMs": {
+          "parse": 3.69329,
+          "read": 9.215585,
+          "render": 12.411614
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:python",
+      "variant": "today-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.801583,
+        "medianMs": 27.86225,
+        "meanMs": 27.89750208499999,
+        "medianSplitMs": {
+          "parse": 3.806785,
+          "read": 11.029791,
+          "render": 12.776711
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:python",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.082,
+        "medianMs": 25.526541,
+        "meanMs": 25.368011034999977,
+        "medianSplitMs": {
+          "parse": 3.625467,
+          "read": 9.804746,
+          "render": 11.827205
+        }
+      }
+    },
+    {
+      "round": 3,
+      "cell": "throughput:python",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.437708,
+        "medianMs": 26.731458,
+        "meanMs": 26.906105000000007,
+        "medianSplitMs": {
+          "parse": 3.625998,
+          "read": 10.313997,
+          "render": 12.540508
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:1",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46546944,
+          "heapUsed": 4124000,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 48840704,
+          "heapUsed": 4195784,
+          "external": 2018267,
+          "footprint": 14784921.6
+        },
+        "worked": {
+          "rss": 53870592,
+          "heapUsed": 4210136,
+          "external": 2018406,
+          "footprint": 14784921.6
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:1",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46628864,
+          "heapUsed": 4128232,
+          "external": 2013264,
+          "footprint": 13526630.4
+        },
+        "loaded": {
+          "rss": 48529408,
+          "heapUsed": 4195792,
+          "external": 2018267,
+          "footprint": 14365491.2
+        },
+        "worked": {
+          "rss": 52772864,
+          "heapUsed": 4210000,
+          "external": 2018267,
+          "footprint": 14575206.4
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:1",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46350336,
+          "heapUsed": 4127504,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 48283648,
+          "heapUsed": 4191480,
+          "external": 2018271,
+          "footprint": 14365491.2
+        },
+        "worked": {
+          "rss": 53395456,
+          "heapUsed": 4206432,
+          "external": 2018406,
+          "footprint": 14784921.6
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:1",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust"
+        ],
+        "before": {
+          "rss": 46383104,
+          "heapUsed": 4122848,
+          "external": 2013264,
+          "footprint": 13212057.6
+        },
+        "loaded": {
+          "rss": 47988736,
+          "heapUsed": 4191488,
+          "external": 2018271,
+          "footprint": 13946060.8
+        },
+        "worked": {
+          "rss": 52068352,
+          "heapUsed": 4206304,
+          "external": 2018271,
+          "footprint": 14260633.6
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:5",
+      "variant": "dylib-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46858240,
+          "heapUsed": 4128552,
+          "external": 2013264,
+          "footprint": 13631488
+        },
+        "loaded": {
+          "rss": 51462144,
+          "heapUsed": 4308024,
+          "external": 2018267,
+          "footprint": 16148070.4
+        },
+        "worked": {
+          "rss": 65454080,
+          "heapUsed": 4326912,
+          "external": 2018267,
+          "footprint": 16567500.8
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:5",
+      "variant": "dylib-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46628864,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 50544640,
+          "heapUsed": 4308088,
+          "external": 2018267,
+          "footprint": 15414067.2
+        },
+        "worked": {
+          "rss": 61669376,
+          "heapUsed": 4326928,
+          "external": 2018406,
+          "footprint": 15728640
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:5",
+      "variant": "today-gate",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46563328,
+          "heapUsed": 4128480,
+          "external": 2013264,
+          "footprint": 13421772.8
+        },
+        "loaded": {
+          "rss": 52379648,
+          "heapUsed": 4289280,
+          "external": 2018267,
+          "footprint": 16986931.2
+        },
+        "worked": {
+          "rss": 66486272,
+          "heapUsed": 4306904,
+          "external": 2018267,
+          "footprint": 17196646.4
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "memory:5",
+      "variant": "today-release",
+      "result": {
+        "addons": [
+          "rust",
+          "typescript",
+          "python",
+          "scm",
+          "regex"
+        ],
+        "before": {
+          "rss": 46497792,
+          "heapUsed": 4128488,
+          "external": 2013264,
+          "footprint": 13316915.2
+        },
+        "loaded": {
+          "rss": 51314688,
+          "heapUsed": 4289432,
+          "external": 2018267,
+          "footprint": 15938355.2
+        },
+        "worked": {
+          "rss": 62947328,
+          "heapUsed": 4307168,
+          "external": 2018406,
+          "footprint": 16043212.8
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:rust",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 25.504667,
+        "medianMs": 27.600416,
+        "meanMs": 27.836897445000012,
+        "medianSplitMs": {
+          "parse": 4.001707,
+          "read": 10.618998,
+          "render": 12.65017
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:rust",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.827084,
+        "medianMs": 24.745917,
+        "meanMs": 24.545252859999977,
+        "medianSplitMs": {
+          "parse": 3.745708,
+          "read": 9.096251,
+          "render": 11.589421
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:rust",
+      "variant": "today-gate",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.999666,
+        "medianMs": 26.18925,
+        "meanMs": 26.08732292000001,
+        "medianSplitMs": {
+          "parse": 3.882999,
+          "read": 10.086203,
+          "render": 11.912299
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:rust",
+      "variant": "today-release",
+      "result": {
+        "sources": 149,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 21.782792,
+        "medianMs": 25.057167,
+        "meanMs": 25.046973374999993,
+        "medianSplitMs": {
+          "parse": 3.888962,
+          "read": 8.968329,
+          "render": 11.926956
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:python",
+      "variant": "dylib-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 23.858625,
+        "medianMs": 27.393292,
+        "meanMs": 27.354043970000017,
+        "medianSplitMs": {
+          "parse": 3.854091,
+          "read": 10.706832,
+          "render": 12.501416
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:python",
+      "variant": "dylib-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.215542,
+        "medianMs": 25.567792,
+        "meanMs": 25.549340384999997,
+        "medianSplitMs": {
+          "parse": 3.659956,
+          "read": 9.746756,
+          "render": 11.896538
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:python",
+      "variant": "today-gate",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 24.373916,
+        "medianMs": 27.768458,
+        "meanMs": 27.848326475000007,
+        "medianSplitMs": {
+          "parse": 3.781336,
+          "read": 11.138663,
+          "render": 12.603462
+        }
+      }
+    },
+    {
+      "round": 4,
+      "cell": "throughput:python",
+      "variant": "today-release",
+      "result": {
+        "sources": 116,
+        "leftOut": 0,
+        "iterations": 200,
+        "minMs": 22.837166,
+        "medianMs": 25.162083,
+        "meanMs": 26.276132085000004,
+        "medianSplitMs": {
+          "parse": 3.562918,
+          "read": 9.410039,
+          "render": 11.950629
+        }
+      }
+    }
+  ]
+}

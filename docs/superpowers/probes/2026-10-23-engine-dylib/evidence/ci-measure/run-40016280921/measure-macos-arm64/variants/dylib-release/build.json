@@ -1,0 +1,44 @@
+{
+  "variant": "dylib-release",
+  "host": "aarch64-apple-darwin",
+  "packages": [
+    "sittir-engine",
+    "sittir-rust",
+    "sittir-typescript",
+    "sittir-python",
+    "sittir-scm",
+    "sittir-regex"
+  ],
+  "time": {
+    "real": 106.38,
+    "user": 272.19,
+    "sys": 11.56
+  },
+  "sizes": {
+    "rust": {
+      "libsittir_engine.dylib": 1720048,
+      "libstd-614bb9b33bbc23af.dylib": 1275840,
+      "sittir-rust.node": 6903200
+    },
+    "typescript": {
+      "libsittir_engine.dylib": 1720048,
+      "libstd-614bb9b33bbc23af.dylib": 1275840,
+      "sittir-typescript.node": 7760912
+    },
+    "python": {
+      "libsittir_engine.dylib": 1720048,
+      "libstd-614bb9b33bbc23af.dylib": 1275840,
+      "sittir-python.node": 4516992
+    },
+    "scm": {
+      "libsittir_engine.dylib": 1720048,
+      "libstd-614bb9b33bbc23af.dylib": 1275840,
+      "sittir-scm.node": 1279584
+    },
+    "regex": {
+      "libsittir_engine.dylib": 1720048,
+      "libstd-614bb9b33bbc23af.dylib": 1275840,
+      "sittir-regex.node": 1312304
+    }
+  }
+}
