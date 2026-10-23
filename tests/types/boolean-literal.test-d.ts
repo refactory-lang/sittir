@@ -15,6 +15,15 @@ interface MixedSlots {
 	readonly _true_list: readonly (TSKindId.TrueKeyword | Identifier)[];
 	readonly _boolean_list: readonly (TSKindId.TrueKeyword | TSKindId.FalseKeyword | Identifier)[];
 	readonly _numeric: TSKindId.IntegerLiteralDecimal;
+	readonly __slotNames__?: {
+		readonly _true_or_identifier: 'trueOrIdentifier';
+		readonly _false_or_identifier: 'falseOrIdentifier';
+		readonly _boolean_or_identifier: 'booleanOrIdentifier';
+		readonly _optional_true: 'optionalTrue';
+		readonly _true_list: 'trueList';
+		readonly _boolean_list: 'booleanList';
+		readonly _numeric: 'numeric';
+	};
 }
 
 type Loose = LooseConfigOf<MixedSlots, LeafScalarMap>;

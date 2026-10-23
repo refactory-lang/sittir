@@ -183,7 +183,7 @@ describe('list', () => {
 describe('grouping', () => {
 	it('factory produces correct type', () => {
 		const node = ir.grouping({
-			groupingGroup: [
+			groupingGroups: [
 				stampBuilt({
 					$type: TSKindId.GroupingGroup,
 					$text: 'test',
@@ -215,7 +215,7 @@ describe('grouping', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.grouping({
-			groupingGroup: [
+			groupingGroups: [
 				stampBuilt({
 					$type: TSKindId.GroupingGroup,
 					$text: 'test',

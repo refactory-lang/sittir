@@ -29,6 +29,7 @@ export interface PrintContext {
 	readonly irPathOfKind: (kind: string) => string | undefined;
 	readonly delimiterArmOfId: (id: number) => string | undefined;
 	readonly seats?: SeatTable;
+	readonly slotNameOf: (kind: string, slot: string) => string;
 	readonly absorbedKinds?: ReadonlySet<string>;
 	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
 	readonly textLeafKinds?: ReadonlySet<string>;
@@ -525,7 +526,7 @@ function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unk
 	if (slots === undefined || !isPlainObject(out)) return out;
 	for (const [slotName, table] of Object.entries(slots)) {
 		for (const seat of Object.values(table)) {
-			const key = camelCase(slotName);
+			const key = ctx.slotNameOf(kind, slotName);
 			const value = (out as Record<string, unknown>)[key];
 			if (seat.shape === 'elements') {
 				if (!Array.isArray(value)) continue;
@@ -808,7 +809,8 @@ import {
 	readNodeOf,
 	hydrateOf,
 	materialize,
-	loadSlotReaders,
+	slotAccessorOf,
+	slotNameOf,
 	type ModelFullForm
 } from '../validate/common.ts';
 import { Delimiter } from '@sittir/common/utils';
@@ -866,6 +868,7 @@ interface TriviaTextContext {
 	readonly fullForms: Record<string, ModelFullForm>;
 	readonly factoryFields: Record<string, readonly string[]>;
 	readonly slotDefaults: Record<string, Record<string, string>>;
+	readonly slotNameOf: (kind: string, slot: string) => string;
 }
 
 function seatTableSides(node: unknown, layoutKinds: ReadonlySet<number>, depth = 0): void {
@@ -924,7 +927,7 @@ function spelledTriviaEntry(entry: unknown, ctx: TriviaTextContext): unknown {
 	if (kind === undefined || ctx.textLeafKinds.has(kind)) return entry;
 	const form = ctx.fullForms[kind];
 	const field = ctx.factoryFields[kind]?.[0];
-	const contentKind = field === undefined ? undefined : ctx.slotDefaults[kind]?.[camelCase(field)];
+	const contentKind = field === undefined ? undefined : ctx.slotDefaults[kind]?.[ctx.slotNameOf(kind, field)];
 	const contentId = contentKind === undefined ? undefined : ctx.kindIdOfName(contentKind);
 	const interior = form === undefined ? undefined : fullFormInterior(entry.$text, form);
 	if (interior === undefined || contentId === undefined) {
@@ -1052,8 +1055,8 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const readers = await loadSlotReaders(grammar);
-	const root = materialize(readNode(handle), readers) as ReadNodeLike;
+	const accessorOf = slotAccessorOf(model, (id) => types.KIND_NAMES.get(id));
+	const root = materialize(readNode(handle), accessorOf) as ReadNodeLike;
 	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
 	seatTableSides(root, triviaFacts?.layout ?? new Set());
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
@@ -1064,7 +1067,8 @@ export async function emitFactorySourceText(
 		textLeafKinds,
 		fullForms: model.fullForms,
 		factoryFields: model.factoryFields,
-		slotDefaults: model.slotDefaults
+		slotDefaults: model.slotDefaults,
+		slotNameOf: slotNameOf(model)
 	});
 	const leafFindings: string[] = [];
 	const binding = engineBinding(grammar, (await languageByName(grammar)).fileTypes);
@@ -1078,6 +1082,7 @@ export async function emitFactorySourceText(
 		blankKindId: (await load('sitePreferences')).BLANK_KIND_ID,
 		irPathOfKind: irPathResolver(model.builderPaths, binding.engine),
 		seats: model.seats,
+		slotNameOf: slotNameOf(model),
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,
 		leafPatterns: model.leafPatterns,
@@ -1126,7 +1131,7 @@ export async function emitFactorySourceText(
 	};
 	const rootKind = root.$type === undefined ? undefined : kindNameFromId(root.$type);
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
-	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, readers, tree: handle, hydrate }, ctx);
+	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, accessorOf, tree: handle, hydrate }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);
 	const used = new RegExp(`(?<![\\w.$"'\`])${binding.engine}\\.`).test(body);
 	const engineStatement = `${used ? `const ${binding.engine} = ` : ''}await ${engineCall(binding.descriptor)};`;

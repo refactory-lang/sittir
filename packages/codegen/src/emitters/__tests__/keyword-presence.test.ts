@@ -30,7 +30,6 @@ function makeField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 	return {
 		name: 'field',
 		propertyName: 'field',
-		configKey: 'field',
 		paramName: 'field',
 		values,
 		hasTrailingDelimiter: false,

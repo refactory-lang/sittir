@@ -973,7 +973,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildUnionItem({ ...config, typeParameters: value })
 					)
@@ -994,7 +994,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 							kind: TSKindId.FieldDeclarationList as const,
 							optional: false,
 							make: buildFieldDeclarationList,
-							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+							element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 						},
 						(value: Admit<T.FieldDeclarationList>) => buildUnionItem({ ...config, body: value })
 					)
@@ -1072,7 +1072,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildEnumItem({ ...config, typeParameters: value })
 					)
@@ -1093,7 +1093,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 							kind: TSKindId.EnumVariantList as const,
 							optional: false,
 							make: buildEnumVariantList,
-							element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
+							element: { keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant }
 						},
 						(value: Admit<T.EnumVariantList>) => buildEnumItem({ ...config, body: value })
 					)
@@ -1162,7 +1162,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 							kind: TSKindId.EnumVariantListElements as const,
 							optional: true,
 							make: buildEnumVariantListElements,
-							element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
+							element: { keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant }
 						},
 						(value?: Admit<T.EnumVariantListElements>) => _buildEnumVariantList(value)
 					)
@@ -1299,7 +1299,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 							kind: TSKindId.FieldDeclarationListElements as const,
 							optional: true,
 							make: buildFieldDeclarationListElements,
-							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+							element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 						},
 						(value?: Admit<T.FieldDeclarationListElements>) => _buildFieldDeclarationList(value)
 					)
@@ -1433,7 +1433,7 @@ function _buildOrderedFieldDeclarationList(
 							kind: TSKindId.OrderedFieldDeclarationListElements as const,
 							optional: true,
 							make: buildOrderedFieldDeclarationListElements,
-							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
 						},
 						(value?: Admit<T.OrderedFieldDeclarationListElements>) => _buildOrderedFieldDeclarationList(value)
 					)
@@ -1707,7 +1707,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildTypeItem({ ...config, typeParameters: value })
 					)
@@ -1822,7 +1822,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildFunctionItem({ ...config, typeParameters: value })
 					)
@@ -1940,7 +1940,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildFunctionSignatureItem({ ...config, typeParameters: value })
 					)
@@ -2011,7 +2011,7 @@ export function buildFunctionModifiers(
 ): T.FunctionModifiers.Bound {
 	const _modifier = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'function_modifiers', { modifier: _modifier });
+	if (handle !== undefined) admitChildren(handle, 'function_modifiers', { modifiers: _modifier });
 	const node = {
 		$type: TSKindId.FunctionModifiers as const,
 		$named: true as const,
@@ -2209,7 +2209,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildTraitItem({ ...config, typeParameters: value })
 					)
@@ -2288,7 +2288,7 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildAssociatedType({ ...config, typeParameters: value })
 					)
@@ -2380,7 +2380,7 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 							kind: TSKindId.TypeParameters as const,
 							optional: false,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value: Admit<T.TypeParameters>) => buildHigherRankedTraitBound({ ...config, typeParameters: value })
 					)
@@ -2483,7 +2483,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 							kind: TSKindId.TypeParametersElements as const,
 							optional: false,
 							make: buildTypeParametersElements,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value: Admit<T.TypeParametersElements>) => _buildTypeParameters(value)
 					)
@@ -4082,7 +4082,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildAbstractType({ ...config, typeParameters: value })
 					)
@@ -4638,7 +4638,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 							kind: TSKindId.Arguments as const,
 							optional: false,
 							make: buildArguments,
-							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
 						},
 						(value: Admit<T.Arguments>) => buildCallExpression({ ...config, arguments: value })
 					)
@@ -4702,7 +4702,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 							kind: TSKindId.ArgumentsElements as const,
 							optional: true,
 							make: buildArgumentsElements,
-							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
 						},
 						(value?: Admit<T.ArgumentsElements>) => _buildArguments(value)
 					)
@@ -4970,24 +4970,24 @@ export function buildShorthandFieldInitializer(
 }
 
 export function buildFieldInitializer<
-	AttributeItemSlot extends T.FieldInitializer.Config['attributeItem'],
+	AttributeItemsSlot extends T.FieldInitializer.Config['attributeItems'],
 	FieldSlot extends T.FieldInitializer.Config['field'],
 	ValueSlot extends T.FieldInitializer.Config['value']
 >(
 	config: RefusingConfig<
 		T.FieldInitializer.Config,
-		{ attributeItem: AttributeItemSlot; field: FieldSlot; value: ValueSlot }
+		{ attributeItems: AttributeItemsSlot; field: FieldSlot; value: ValueSlot }
 	>
 ): T.FieldInitializer.Bound;
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
-	const _attribute_item = listStorage<NonNullable<T.FieldInitializer['_attribute_item']>>(config.attributeItem ?? []);
+	const _attribute_item = listStorage<NonNullable<T.FieldInitializer['_attribute_item']>>(config.attributeItems ?? []);
 	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_initializer', { attributeItem: _attribute_item, field: _field, value: _value });
+		admitChildren(handle, 'field_initializer', { attributeItems: _attribute_item, field: _field, value: _value });
 	const node = {
 		$type: TSKindId.FieldInitializer as const,
 		$named: true as const,
@@ -4997,7 +4997,7 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildFieldInitializer({ ...config, attributeItem: restItems('attributeItems', values) })
+					buildFieldInitializer({ ...config, attributeItems: restItems('attributeItems', values) })
 				),
 			field: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, field: value })),
@@ -5126,14 +5126,15 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 	return stampBuilt(node) as unknown as T.LetCondition.Bound;
 }
 
-export function buildLetChain<LeftSlot extends T.LetChain.Config['left'], RightSlot extends T.LetChain.Config['right']>(
-	config: RefusingConfig<T.LetChain.Config, { left: LeftSlot; right: RightSlot }>
-): T.LetChain.Bound;
+export function buildLetChain<
+	LeftSlot extends T.LetChain.Config['left'],
+	RightsSlot extends T.LetChain.Config['rights']
+>(config: RefusingConfig<T.LetChain.Config, { left: LeftSlot; rights: RightsSlot }>): T.LetChain.Bound;
 export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 	const _left = kindIdStorage<NonNullable<T.LetChain['_left']>>(config.left);
-	const _right = listStorage<NonNullable<T.LetChain['_right']>>(config.right ?? [], kindIdStorage);
+	const _right = listStorage<NonNullable<T.LetChain['_right']>>(config.rights ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, '_let_chain', { left: _left, right: _right });
+	if (handle !== undefined) admitChildren(handle, '_let_chain', { left: _left, rights: _right });
 	const node = {
 		$type: TSKindId.LetChain as const,
 		$named: true as const,
@@ -5142,8 +5143,8 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 		$with: {
 			left: (value: Admit<NonNullable<T.LetChain.Config>['left']>) =>
 				rebuilt(node, handle, () => buildLetChain({ ...config, left: value })),
-			rights: (...values: Admit<NonNullable<NonNullable<T.LetChain.Config>['right']>[number][]>) =>
-				rebuilt(node, handle, () => buildLetChain({ ...config, right: restItems('rights', values) }))
+			rights: (...values: Admit<NonNullable<NonNullable<T.LetChain.Config>['rights']>[number][]>) =>
+				rebuilt(node, handle, () => buildLetChain({ ...config, rights: restItems('rights', values) }))
 		},
 		left: () => hydrateStoredSlot(node, '_left'),
 		rights: () => hydrateStoredSlots(node, '_right'),
@@ -6789,7 +6790,7 @@ function _buildEnumVariantListElements(
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant },
+						{ slot: 'items', keys: ['attributeItems', 'enumVariant'], make: buildAttributedEnumVariant },
 						(...vs: NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>) =>
 							buildEnumVariantListElements(options, ...vs)
 					)
@@ -6877,7 +6878,7 @@ function _buildFieldDeclarationListElements(
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration },
+						{ slot: 'items', keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration },
 						(...vs: NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>) =>
 							buildFieldDeclarationListElements(options, ...vs)
 					)
@@ -6965,7 +6966,11 @@ function _buildOrderedFieldDeclarationListElements(
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField },
+						{
+							slot: 'items',
+							keys: ['attributeItems', 'visibilityModifier', 'type'],
+							make: buildAttributedOrderedField
+						},
 						(...vs: NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>) =>
 							buildOrderedFieldDeclarationListElements(options, ...vs)
 					)
@@ -7120,7 +7125,7 @@ function _buildTypeParametersElements(
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter },
+						{ slot: 'items', keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter },
 						(
 							...vs: NonEmptyArray<
 								Admit<
@@ -7786,7 +7791,7 @@ function _buildArgumentsElements(
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
-						{ slot: 'items', keys: ['attributeItem', 'expression'], make: buildAttributedArgument },
+						{ slot: 'items', keys: ['attributeItems', 'expression'], make: buildAttributedArgument },
 						(...vs: NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>) => buildArgumentsElements(options, ...vs)
 					)
 				),
@@ -8937,7 +8942,7 @@ export function buildArrayExpressionList(
 							kind: TSKindId.ArgumentsElements as const,
 							optional: true,
 							make: buildArgumentsElements,
-							element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+							element: { keys: ['attributeItems', 'expression'], make: buildAttributedArgument }
 						},
 						(value?: Admit<T.ArgumentsElements>) => buildArrayExpressionList({ ...config, elements: value })
 					)
@@ -9349,7 +9354,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildImplItemBody({ ...config, typeParameters: value })
 					)
@@ -9434,7 +9439,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildImplItemSemi({ ...config, typeParameters: value })
 					)
@@ -11131,7 +11136,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildStructItemBrace({ ...config, typeParameters: value })
 					)
@@ -11152,7 +11157,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 							kind: TSKindId.FieldDeclarationList as const,
 							optional: false,
 							make: buildFieldDeclarationList,
-							element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+							element: { keys: ['attributeItems', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 						},
 						(value: Admit<T.FieldDeclarationList>) => buildStructItemBrace({ ...config, body: value })
 					)
@@ -11230,7 +11235,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildStructItemTuple({ ...config, typeParameters: value })
 					)
@@ -11243,7 +11248,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 							kind: TSKindId.OrderedFieldDeclarationList as const,
 							optional: false,
 							make: buildOrderedFieldDeclarationList,
-							element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
+							element: { keys: ['attributeItems', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
 						},
 						(value: Admit<T.OrderedFieldDeclarationList>) => buildStructItemTuple({ ...config, body: value })
 					)
@@ -11315,7 +11320,7 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 							kind: TSKindId.TypeParameters as const,
 							optional: true,
 							make: buildTypeParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
 						},
 						(value?: Admit<T.TypeParameters>) => buildStructItemUnit({ ...config, typeParameters: value })
 					)
@@ -11338,25 +11343,25 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
 
 export function buildAttributedFieldDeclaration<
-	AttributeItemSlot extends T.AttributedFieldDeclaration.Config['attributeItem'],
+	AttributeItemsSlot extends T.AttributedFieldDeclaration.Config['attributeItems'],
 	FieldDeclarationSlot extends T.AttributedFieldDeclaration.Config['fieldDeclaration']
 >(
 	config: RefusingConfig<
 		T.AttributedFieldDeclaration.Config,
-		{ attributeItem: AttributeItemSlot; fieldDeclaration: FieldDeclarationSlot }
+		{ attributeItems: AttributeItemsSlot; fieldDeclaration: FieldDeclarationSlot }
 	>
 ): T.AttributedFieldDeclaration.Bound;
 export function buildAttributedFieldDeclaration(
 	config: T.AttributedFieldDeclaration.Config
 ): T.AttributedFieldDeclaration.Bound {
 	const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
-		config.attributeItem ?? []
+		config.attributeItems ?? []
 	);
 	const _field_declaration = config.fieldDeclaration;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'attributed_field_declaration', {
-			attributeItem: _attribute_item,
+			attributeItems: _attribute_item,
 			fieldDeclaration: _field_declaration
 		});
 	const node = {
@@ -11367,7 +11372,7 @@ export function buildAttributedFieldDeclaration(
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedFieldDeclaration({ ...config, attributeItem: restItems('attributeItems', values) })
+					buildAttributedFieldDeclaration({ ...config, attributeItems: restItems('attributeItems', values) })
 				),
 			fieldDeclaration: (value: Admit<T.FieldDeclaration>) =>
 				rebuilt(node, handle, () => buildAttributedFieldDeclaration({ ...config, fieldDeclaration: value }))
@@ -11386,22 +11391,22 @@ export function buildAttributedFieldDeclaration(
 }
 
 export function buildAttributedEnumVariant<
-	AttributeItemSlot extends T.AttributedEnumVariant.Config['attributeItem'],
+	AttributeItemsSlot extends T.AttributedEnumVariant.Config['attributeItems'],
 	EnumVariantSlot extends T.AttributedEnumVariant.Config['enumVariant']
 >(
 	config: RefusingConfig<
 		T.AttributedEnumVariant.Config,
-		{ attributeItem: AttributeItemSlot; enumVariant: EnumVariantSlot }
+		{ attributeItems: AttributeItemsSlot; enumVariant: EnumVariantSlot }
 	>
 ): T.AttributedEnumVariant.Bound;
 export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config): T.AttributedEnumVariant.Bound {
 	const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
-		config.attributeItem ?? []
+		config.attributeItems ?? []
 	);
 	const _enum_variant = config.enumVariant;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'attributed_enum_variant', { attributeItem: _attribute_item, enumVariant: _enum_variant });
+		admitChildren(handle, 'attributed_enum_variant', { attributeItems: _attribute_item, enumVariant: _enum_variant });
 	const node = {
 		$type: TSKindId.AttributedEnumVariant as const,
 		$named: true as const,
@@ -11410,7 +11415,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedEnumVariant({ ...config, attributeItem: restItems('attributeItems', values) })
+					buildAttributedEnumVariant({ ...config, attributeItems: restItems('attributeItems', values) })
 				),
 			enumVariant: (value: Admit<T.EnumVariant>) =>
 				rebuilt(node, handle, () => buildAttributedEnumVariant({ ...config, enumVariant: value }))
@@ -11468,21 +11473,21 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 }
 
 export function buildAttributedTypeParameter<
-	AttributeItemSlot extends T.AttributedTypeParameter.Config['attributeItem'],
+	AttributeItemsSlot extends T.AttributedTypeParameter.Config['attributeItems'],
 	ContentSlot extends T.AttributedTypeParameter.Config['content']
 >(
-	config: RefusingConfig<T.AttributedTypeParameter.Config, { attributeItem: AttributeItemSlot; content: ContentSlot }>
+	config: RefusingConfig<T.AttributedTypeParameter.Config, { attributeItems: AttributeItemsSlot; content: ContentSlot }>
 ): T.AttributedTypeParameter.Bound;
 export function buildAttributedTypeParameter(
 	config: T.AttributedTypeParameter.Config
 ): T.AttributedTypeParameter.Bound {
 	const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
-		config.attributeItem ?? []
+		config.attributeItems ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'attributed_type_parameter', { attributeItem: _attribute_item, content: _content });
+		admitChildren(handle, 'attributed_type_parameter', { attributeItems: _attribute_item, content: _content });
 	const node = {
 		$type: TSKindId.AttributedTypeParameter as const,
 		$named: true as const,
@@ -11491,7 +11496,7 @@ export function buildAttributedTypeParameter(
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedTypeParameter({ ...config, attributeItem: restItems('attributeItems', values) })
+					buildAttributedTypeParameter({ ...config, attributeItems: restItems('attributeItems', values) })
 				),
 			content: (value: Admit<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>) =>
 				rebuilt(node, handle, () => buildAttributedTypeParameter({ ...config, content: value }))
@@ -11510,17 +11515,22 @@ export function buildAttributedTypeParameter(
 }
 
 export function buildAttributedArgument<
-	AttributeItemSlot extends T.AttributedArgument.Config['attributeItem'],
+	AttributeItemsSlot extends T.AttributedArgument.Config['attributeItems'],
 	ExpressionSlot extends T.AttributedArgument.Config['expression']
 >(
-	config: RefusingConfig<T.AttributedArgument.Config, { attributeItem: AttributeItemSlot; expression: ExpressionSlot }>
+	config: RefusingConfig<
+		T.AttributedArgument.Config,
+		{ attributeItems: AttributeItemsSlot; expression: ExpressionSlot }
+	>
 ): T.AttributedArgument.Bound;
 export function buildAttributedArgument(config: T.AttributedArgument.Config): T.AttributedArgument.Bound {
-	const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(config.attributeItem ?? []);
+	const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(
+		config.attributeItems ?? []
+	);
 	const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'attributed_argument', { attributeItem: _attribute_item, expression: _expression });
+		admitChildren(handle, 'attributed_argument', { attributeItems: _attribute_item, expression: _expression });
 	const node = {
 		$type: TSKindId.AttributedArgument as const,
 		$named: true as const,
@@ -11529,7 +11539,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedArgument({ ...config, attributeItem: restItems('attributeItems', values) })
+					buildAttributedArgument({ ...config, attributeItems: restItems('attributeItems', values) })
 				),
 			expression: (value: Admit<NonNullable<T.AttributedArgument.Config>['expression']>) =>
 				rebuilt(node, handle, () => buildAttributedArgument({ ...config, expression: value }))
@@ -11548,18 +11558,18 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 }
 
 export function buildAttributedOrderedField<
-	AttributeItemSlot extends T.AttributedOrderedField.Config['attributeItem'],
+	AttributeItemsSlot extends T.AttributedOrderedField.Config['attributeItems'],
 	VisibilityModifierSlot extends T.AttributedOrderedField.Config['visibilityModifier'],
 	TypeSlot extends T.AttributedOrderedField.Config['type']
 >(
 	config: RefusingConfig<
 		T.AttributedOrderedField.Config,
-		{ attributeItem: AttributeItemSlot; visibilityModifier: VisibilityModifierSlot; type: TypeSlot }
+		{ attributeItems: AttributeItemsSlot; visibilityModifier: VisibilityModifierSlot; type: TypeSlot }
 	>
 ): T.AttributedOrderedField.Bound;
 export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Bound {
 	const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
-		config.attributeItem ?? []
+		config.attributeItems ?? []
 	);
 	const _visibility_modifier = config.visibilityModifier;
 	const _type = admitAliasContent<NonNullable<T.AttributedOrderedField['_type']>>(
@@ -11569,7 +11579,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'attributed_ordered_field', {
-			attributeItem: _attribute_item,
+			attributeItems: _attribute_item,
 			visibilityModifier: _visibility_modifier,
 			type: _type
 		});
@@ -11582,7 +11592,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 		$with: {
 			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
-					buildAttributedOrderedField({ ...config, attributeItem: restItems('attributeItems', values) })
+					buildAttributedOrderedField({ ...config, attributeItems: restItems('attributeItems', values) })
 				),
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildAttributedOrderedField({ ...config, visibilityModifier: value })),

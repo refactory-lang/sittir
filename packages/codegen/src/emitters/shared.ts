@@ -1029,7 +1029,7 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	const registered = registeredSlots(node);
 	return registered.length === 0
 		? undefined
-		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey) };
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName) };
 }
 
 export function classifyFactoryShape(

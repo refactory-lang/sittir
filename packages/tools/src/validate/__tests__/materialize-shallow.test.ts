@@ -3,14 +3,14 @@ import { createEngine } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
 
 import { languageByName } from '../../languages.ts';
-import { findWrappedNode, loadKindNameFromId, loadSlotReaders, materializeShallow } from '../common.ts';
+import { findWrappedNode, loadKindNameFromId, loadSlotAccessorOf, materializeShallow } from '../common.ts';
 
 async function shallow(nodeStorage: 'object' | 'arena', kind: string, source: string) {
 	const engine = await createEngine(await languageByName('rust'), { nodeStorage });
-	const readers = await loadSlotReaders('rust');
-	const node = findWrappedNode(engine.parse(source), readers, kind, await loadKindNameFromId('rust'));
+	const accessorOf = await loadSlotAccessorOf('rust');
+	const node = findWrappedNode(engine.parse(source), accessorOf, kind, await loadKindNameFromId('rust'));
 	if (node === undefined) throw new Error(`no ${kind} in ${JSON.stringify(source)}`);
-	const data = materializeShallow(node, readers) as unknown as Record<string, unknown>;
+	const data = materializeShallow(node, accessorOf) as unknown as Record<string, unknown>;
 	const rendered = engine.render(data as never).toString();
 	return { data, rendered, dispose: () => engine.dispose() };
 }

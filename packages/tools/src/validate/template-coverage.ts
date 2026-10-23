@@ -36,6 +36,7 @@ import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
 import { isLeafModelType, parseNodeModel, type ValidatorSkip } from './common.ts';
+import { KindCases, type CasesByKind } from './kind-cases.ts';
 
 /**
  * Every emitted kind's body in the checker's placeholder shape
@@ -64,6 +65,7 @@ import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 export interface TemplateCoverageResult {
 	grammar: string;
 	total: number;
+	casesByKind: CasesByKind;
 	/** Kinds where every declared field is reachable in the template. */
 	pass: number;
 	/** Kinds with at least one unreferenced field. */
@@ -118,7 +120,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 
 	const issues: CoverageIssue[] = [];
 	const excluded: ValidatorSkip[] = [];
-	let total = 0;
+	const cases = new KindCases();
 	let pass = 0;
 
 	for (const entry of sharedDisplayEntries(entries, nodeModelFacts.displayUnions)) {
@@ -147,7 +149,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		const rawTemplate = rawByKind[resolvedKind];
 		const templatePath = `${renderBodiesPath(grammar)}#${resolvedKind}`;
 
-		total++;
+		cases.add(resolvedKind);
 		const kindIssues = checkRule(
 			entry,
 			rule,
@@ -166,7 +168,8 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		}
 	}
 
-	return { grammar, total, pass, fail: total - pass, issues, excluded };
+	const total = cases.total;
+	return { grammar, total, casesByKind: cases.byKind(), pass, fail: total - pass, issues, excluded };
 }
 
 // ---------------------------------------------------------------------------

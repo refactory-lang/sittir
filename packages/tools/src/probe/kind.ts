@@ -84,8 +84,8 @@ import {
 	detachedHoldingTree,
 	holdingTreeOf,
 	materializeDetached,
-	loadSlotReaders,
-	type SlotReaders,
+	loadSlotAccessorOf,
+	type SlotAccessorOf,
 	readNodeOf,
 	findWrappedNode,
 	walkWrappedTree,
@@ -571,8 +571,8 @@ export async function probe(
 	if ((opts.range || opts.kind) && !readNode) {
 		throw new Error('probe-kind: --no-wrap reads the raw root only; finding a node by kind or range walks the wrapped tree through its slot readers');
 	}
-	if (opts.range) untypedNode = smallestNodeCovering(root, await loadSlotReaders(grammar), opts.range) ?? null;
-	else if (opts.kind) untypedNode = findWrappedNode(root, await loadSlotReaders(grammar), opts.kind, await loadKindNameFromId(grammar)) ?? null;
+	if (opts.range) untypedNode = smallestNodeCovering(root, await loadSlotAccessorOf(grammar), opts.range) ?? null;
+	else if (opts.kind) untypedNode = findWrappedNode(root, await loadSlotAccessorOf(grammar), opts.kind, await loadKindNameFromId(grammar)) ?? null;
 	if (!isRoot && !untypedNode) throw new Error(`probe-kind: no node match in the read tree`);
 
 	let rendered: string | undefined;
@@ -793,12 +793,12 @@ function dumpCst(node: TSNode, fieldName: string | null): CstNode {
 export function resolveNativeTraceUntypedNode(
 	typed: unknown | undefined,
 	deepUntypedNode: unknown,
-	readers: SlotReaders,
+	accessorOf: SlotAccessorOf,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
 	return typed === undefined
 		? deepUntypedNode
-		: materializeDetached(typed, readers, onAccessorThrow);
+		: materializeDetached(typed, accessorOf, onAccessorThrow);
 }
 
 async function readProbeLanes(
@@ -811,12 +811,12 @@ async function readProbeLanes(
 ): Promise<{ shallow: unknown; deep: unknown; deepTyped?: unknown; deepUntypedNode?: unknown }> {
 	const handle = readNativeTree(await loadNativeEngine(grammar), source).tree;
 	const readNode = await readNodeOf(grammar);
-	const readers = await loadSlotReaders(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	let coordinate: NodeCoordinate | undefined;
 	if (!isRoot) {
 		if (readNode === null) throw new Error('probe-kind: the grammar has no read');
 		const kindNameFromId = await loadKindNameFromId(grammar);
-		const found = findWrappedNode(readNode(handle), readers, targetKind ?? targetNode.type, kindNameFromId, spanOfNode(sourceSpans(source), targetNode));
+		const found = findWrappedNode(readNode(handle), accessorOf, targetKind ?? targetNode.type, kindNameFromId, spanOfNode(sourceSpans(source), targetNode));
 		coordinate = found === undefined ? undefined : coordinateOf(found);
 		if (coordinate === undefined) throw new Error('probe-kind: no read node at the target span');
 	}
@@ -824,7 +824,7 @@ async function readProbeLanes(
 	const shallow = stripBigInts(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
 	const deepTyped = readNode ? readNode(handle, coordinate) : undefined;
-	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, readers, onAccessorThrow);
+	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, accessorOf, onAccessorThrow);
 	return { shallow, deep, deepTyped, deepUntypedNode };
 }
 
@@ -954,7 +954,7 @@ function parseRange(spec: string): { start: number; end: number } {
  *  no other renderer. `materializeDetached` resolves the lazy
  *  wrap getters the native node cannot read. */
 async function renderUntypedNode(grammar: string, untypedNode: unknown): Promise<string> {
-	return renderUntypedNodeNative(grammar, materializeDetached(untypedNode, await loadSlotReaders(grammar)));
+	return renderUntypedNodeNative(grammar, materializeDetached(untypedNode, await loadSlotAccessorOf(grammar)));
 }
 
 /** @internal — the node data the engine renders for `untypedNode`: the
@@ -1051,10 +1051,10 @@ function shapeOf(node: CstNode): string {
 }
 
 /** The smallest node of the wrapped tree, read through its slot readers, whose span covers `range`; of two the same width, the inner one. */
-function smallestNodeCovering(root: unknown, readers: SlotReaders, range: { readonly start: number; readonly end: number }): TypedNode | undefined {
+function smallestNodeCovering(root: unknown, accessorOf: SlotAccessorOf, range: { readonly start: number; readonly end: number }): TypedNode | undefined {
 	let best: TypedNode | undefined;
 	let width = Infinity;
-	walkWrappedTree(root, readers, (node) => {
+	walkWrappedTree(root, accessorOf, (node) => {
 		const span = spanOf(node);
 		if (span === undefined || span.start > range.start || span.end < range.end || span.end - span.start > width) return;
 		best = node;

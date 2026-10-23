@@ -670,8 +670,8 @@ export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.bu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('termGroup' in head)) return input;
-		const v = (head as Record<string, unknown>)['termGroup'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('termGroups' in head)) return input;
+		const v = (head as Record<string, unknown>)['termGroups'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildTerm(

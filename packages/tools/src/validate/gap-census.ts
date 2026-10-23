@@ -10,9 +10,9 @@ import {
 	loadKindNameFromId,
 	loadLanguageForGrammar,
 	loadNativeEngine,
-	loadSlotReaders,
+	loadSlotAccessorOf,
 	slotValuesOf as storedValuesOf,
-	type SlotReaders,
+	type SlotAccessorOf,
 	type TSNode,
 	type TypedNode as ReadNode
 } from './common.ts';
@@ -208,18 +208,19 @@ const isArrayLike = (value: unknown): value is ArrayLike<unknown> =>
 const holdsMany = (owner: unknown, value: unknown): value is ArrayLike<unknown> =>
 	isArrayLike(value) && (spanOf(value) === undefined || isArrayLike(owner));
 
-function* slotValuesOf(node: TypedNode, readers: SlotReaders): Generator<{ camel: string; values: unknown[]; many: boolean }> {
-	for (const [, value, reader] of storedValuesOf(node, readers, () => {})) {
-		if (!('accessor' in reader)) continue;
-		const camel = reader.accessor;
+function* slotValuesOf(node: TypedNode, accessorOf: SlotAccessorOf): Generator<{ camel: string; values: unknown[]; many: boolean }> {
+	const { accessors } = accessorOf(node.$type);
+	for (const [storageKey, value] of storedValuesOf(node, accessorOf, () => {})) {
+		const camel = accessors[storageKey];
+		if (camel === undefined) continue;
 		yield holdsMany(node, value) ? { camel, values: Array.from(value), many: true } : { camel, values: [value], many: false };
 	}
 }
 
-function rebuiltLists(root: TypedNode, kindName: (id: number) => string, readers: SlotReaders, rebuildFailures: string[]): RebuiltList[] {
+function rebuiltLists(root: TypedNode, kindName: (id: number) => string, accessorOf: SlotAccessorOf, rebuildFailures: string[]): RebuiltList[] {
 	const lists: RebuiltList[] = [];
 	const visit = (node: TypedNode): void => {
-		for (const { camel, values, many } of slotValuesOf(node, readers)) {
+		for (const { camel, values, many } of slotValuesOf(node, accessorOf)) {
 			const items = values.filter(isTypedNode);
 			if (many && items.length >= 2) {
 				const rebuild = node.$with?.[camel];
@@ -260,7 +261,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	const engine = await loadNativeEngine(grammar);
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const nameOf = await loadKindNameFromId(grammar);
-	const readers = await loadSlotReaders(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const kindName = (id: number): string => nameOf?.(id) ?? String(id);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -283,7 +284,7 @@ export async function createGapMeter(grammar: string): Promise<GapMeter> {
 		const rebuildFailures: string[] = [];
 		let lists: RebuiltList[];
 		try {
-			lists = rebuiltLists(engine.parse(source) as unknown as TypedNode, kindName, readers, rebuildFailures);
+			lists = rebuiltLists(engine.parse(source) as unknown as TypedNode, kindName, accessorOf, rebuildFailures);
 		} catch {
 			return { ...UNMEASURED, status: 'unrendered' };
 		}

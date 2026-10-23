@@ -921,9 +921,9 @@ function seatEmission(
 	nodeMap: NodeMap,
 	forwardedList?: AssembledList
 ): SeatEmission {
-	const m = methodName(parentKey, kind === 'flatten' ? `flatten$${seat.slot.configKey}` : seat.slot.configKey);
+	const m = methodName(parentKey, kind === 'flatten' ? `flatten$${seat.slot.propertyName}` : seat.slot.propertyName);
 	const direct = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
-	const wrapperSeat = kind === 'flatten' && !direct && configKeysOf(seat.group).includes(seat.slot.configKey);
+	const wrapperSeat = kind === 'flatten' && !direct && configKeysOf(seat.group).includes(seat.slot.propertyName);
 	const wrapperId = wrapperSeat ? kindDiscriminantExpr(seat.group.kind, nodeMap, wires.kindEntries) : undefined;
 	const childKey = wires.keyByKind.get(seat.group.kind);
 	const child: FlavorRefs =
@@ -935,11 +935,11 @@ function seatEmission(
 				};
 	const s =
 		kind === 'tuple'
-			? tupleShape(seat.slot.configKey, m)
+			? tupleShape(seat.slot.propertyName, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.configKey, flattenedKeysOf(seat), configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
+			? flattenShape(seat.slot.propertyName, flattenedKeysOf(seat), configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
 			: elementsShape(
-					seat.slot.configKey,
+					seat.slot.propertyName,
 					configKeysOf(seat.group),
 					m,
 					forwardedList !== undefined || parent instanceof AssembledList || classifyFactoryShape(parent, nodeMap) === 'spread',
@@ -980,7 +980,7 @@ function emitSub(
 ): SubEmission | undefined {
 	const m = methodName(parentKey, methodKey ?? sub.name);
 	const p = parentOverride ?? parentRefs(parent, wires.coerceEmitted);
-	const k = sub.slot.configKey;
+	const k = sub.slot.propertyName;
 	const positional = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 
 	if (sub.arm.via === 'value') {

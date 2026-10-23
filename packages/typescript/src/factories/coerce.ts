@@ -2803,7 +2803,7 @@ export function resolveUsingDeclaration_kind(
 }
 
 export function resolveUsingDeclaration_variableDeclarators(
-	value: T.UsingDeclaration.LooseConfig['variableDeclarator']
+	value: T.UsingDeclaration.LooseConfig['variableDeclarators']
 ): Admit<T.UsingDeclaration['_variable_declarator']> {
 	return _resolveMany<T.VariableDeclarator>(value, _K2, _super_variable_declarator) as Admit<
 		T.UsingDeclaration['_variable_declarator']
@@ -2823,7 +2823,7 @@ export function coerceToUsingDeclaration(
 	return F.buildUsingDeclaration(
 		{
 			kind: resolveUsingDeclaration_kind(input.kind),
-			variableDeclarator: resolveUsingDeclaration_variableDeclarators(input.variableDeclarator)
+			variableDeclarators: resolveUsingDeclaration_variableDeclarators(input.variableDeclarators)
 		},
 		options
 	);
@@ -3362,7 +3362,7 @@ export function resolveSwitchCase_value(value: T.SwitchCase.LooseConfig['value']
 	);
 }
 
-export function resolveSwitchCase_bodies(value: T.SwitchCase.LooseConfig['body']): Admit<T.SwitchCase['_body']> {
+export function resolveSwitchCase_bodies(value: T.SwitchCase.LooseConfig['bodies']): Admit<T.SwitchCase['_body']> {
 	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
 		(item) => coerceMixedEnumStorage(item, [])
@@ -3376,7 +3376,7 @@ export function coerceToSwitchCase(input: T.SwitchCase.Loose): ReturnType<typeof
 	if (!_isLooseConfig<T.SwitchCase.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildSwitchCase>;
 	return F.buildSwitchCase({
 		value: resolveSwitchCase_value(input.value),
-		body: resolveSwitchCase_bodies(input.body)
+		bodies: resolveSwitchCase_bodies(input.bodies)
 	});
 }
 
@@ -3390,8 +3390,8 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('body' in head)) return input;
-		const v = (head as Record<string, unknown>)['body'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('bodies' in head)) return input;
+		const v = (head as Record<string, unknown>)['bodies'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSwitchDefault(
@@ -3654,7 +3654,7 @@ export function coerceToNestedIdentifier(input: T.NestedIdentifier.Loose): Retur
 	});
 }
 
-export function resolveClass_decorators(value: T.Class.LooseConfig['decorator']): Admit<T.Class['_decorator']> {
+export function resolveClass_decorators(value: T.Class.LooseConfig['decorators']): Admit<T.Class['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
 
@@ -3683,7 +3683,7 @@ export function coerceToClass(input?: T.Class.Loose): ReturnType<typeof F.buildC
 	if (!_isLooseConfig<T.Class.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildClass>;
 	return F.buildClass({
-		decorator: resolveClass_decorators(input?.decorator),
+		decorators: resolveClass_decorators(input?.decorators),
 		name: resolveClass_name(input?.name),
 		typeParameters: resolveClass_typeParameters(input?.typeParameters),
 		heritage: resolveClass_heritage(input?.heritage),
@@ -3692,7 +3692,7 @@ export function coerceToClass(input?: T.Class.Loose): ReturnType<typeof F.buildC
 }
 
 export function resolveClassDeclaration_decorators(
-	value: T.ClassDeclaration.LooseConfig['decorator']
+	value: T.ClassDeclaration.LooseConfig['decorators']
 ): Admit<T.ClassDeclaration['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -3733,7 +3733,7 @@ export function coerceToClassDeclaration(
 		return input as unknown as ReturnType<typeof F.buildClassDeclaration>;
 	return F.buildClassDeclaration(
 		{
-			decorator: resolveClassDeclaration_decorators(input.decorator),
+			decorators: resolveClassDeclaration_decorators(input.decorators),
 			name: resolveClassDeclaration_name(input.name),
 			typeParameters: resolveClassDeclaration_typeParameters(input.typeParameters),
 			heritage: resolveClassDeclaration_heritage(input.heritage),
@@ -4541,8 +4541,8 @@ export function coerceToSequenceExpression(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('expression' in head)) return input;
-		const v = (head as Record<string, unknown>)['expression'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('expressions' in head)) return input;
+		const v = (head as Record<string, unknown>)['expressions'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSequenceExpression(
@@ -5187,7 +5187,7 @@ export function coerceToComputedPropertyName(
 }
 
 export function resolvePublicFieldDefinition_decorators(
-	value: T.PublicFieldDefinition.LooseConfig['decorator']
+	value: T.PublicFieldDefinition.LooseConfig['decorators']
 ): Admit<T.PublicFieldDefinition['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -5287,7 +5287,7 @@ export function coerceToPublicFieldDefinition(
 	if (!_isLooseConfig<T.PublicFieldDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildPublicFieldDefinition>;
 	return F.buildPublicFieldDefinition({
-		decorator: resolvePublicFieldDefinition_decorators(input.decorator),
+		decorators: resolvePublicFieldDefinition_decorators(input.decorators),
 		declare: resolvePublicFieldDefinition_declare(input.declare),
 		accessibilityModifier: resolvePublicFieldDefinition_accessibilityModifier(input.accessibilityModifier),
 		static: resolvePublicFieldDefinition_static(input.static),
@@ -5805,8 +5805,8 @@ export function coerceToImplementsClause(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('type' in head)) return input;
-		const v = (head as Record<string, unknown>)['type'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('types' in head)) return input;
+		const v = (head as Record<string, unknown>)['types'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildImplementsClause(
@@ -5839,7 +5839,7 @@ export function coerceToAmbientDeclaration(
 }
 
 export function resolveAbstractClassDeclaration_decorators(
-	value: T.AbstractClassDeclaration.LooseConfig['decorator']
+	value: T.AbstractClassDeclaration.LooseConfig['decorators']
 ): Admit<T.AbstractClassDeclaration['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -5877,7 +5877,7 @@ export function coerceToAbstractClassDeclaration(
 	if (!_isLooseConfig<T.AbstractClassDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAbstractClassDeclaration>;
 	return F.buildAbstractClassDeclaration({
-		decorator: resolveAbstractClassDeclaration_decorators(input.decorator),
+		decorators: resolveAbstractClassDeclaration_decorators(input.decorators),
 		name: resolveAbstractClassDeclaration_name(input.name),
 		typeParameters: resolveAbstractClassDeclaration_typeParameters(input.typeParameters),
 		heritage: resolveAbstractClassDeclaration_heritage(input.heritage),
@@ -6033,8 +6033,8 @@ export function coerceToExtendsTypeClause(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('type' in head)) return input;
-		const v = (head as Record<string, unknown>)['type'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('types' in head)) return input;
+		const v = (head as Record<string, unknown>)['types'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildExtendsTypeClause(
@@ -6182,7 +6182,7 @@ export function coerceToOverrideModifier(_input?: T.OverrideModifier.Loose): typ
 }
 
 export function resolveRequiredParameter_decorators(
-	value: T.RequiredParameter.LooseConfig['decorator']
+	value: T.RequiredParameter.LooseConfig['decorators']
 ): Admit<T.RequiredParameter['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -6249,7 +6249,7 @@ export function coerceToRequiredParameter(
 	if (!_isLooseConfig<T.RequiredParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRequiredParameter>;
 	return F.buildRequiredParameter({
-		decorator: resolveRequiredParameter_decorators(input.decorator),
+		decorators: resolveRequiredParameter_decorators(input.decorators),
 		accessibilityModifier: resolveRequiredParameter_accessibilityModifier(input.accessibilityModifier),
 		override: resolveRequiredParameter_override(input.override),
 		readonly: resolveRequiredParameter_readonly(input.readonly),
@@ -6260,7 +6260,7 @@ export function coerceToRequiredParameter(
 }
 
 export function resolveOptionalParameter_decorators(
-	value: T.OptionalParameter.LooseConfig['decorator']
+	value: T.OptionalParameter.LooseConfig['decorators']
 ): Admit<T.OptionalParameter['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -6327,7 +6327,7 @@ export function coerceToOptionalParameter(
 	if (!_isLooseConfig<T.OptionalParameter.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildOptionalParameter>;
 	return F.buildOptionalParameter({
-		decorator: resolveOptionalParameter_decorators(input.decorator),
+		decorators: resolveOptionalParameter_decorators(input.decorators),
 		accessibilityModifier: resolveOptionalParameter_accessibilityModifier(input.accessibilityModifier),
 		override: resolveOptionalParameter_override(input.override),
 		readonly: resolveOptionalParameter_readonly(input.readonly),
@@ -8971,7 +8971,7 @@ export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): typeof F.buil
 }
 
 export function resolveClassBodyMemberMethod_decorators(
-	value: T.ClassBodyMemberMethod.LooseConfig['decorator']
+	value: T.ClassBodyMemberMethod.LooseConfig['decorators']
 ): Admit<T.ClassBodyMemberMethod['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -8994,7 +8994,7 @@ export function coerceToClassBodyMemberMethod(
 		return input as unknown as ReturnType<typeof F.buildClassBodyMemberMethod>;
 	return F.buildClassBodyMemberMethod(
 		{
-			decorator: resolveClassBodyMemberMethod_decorators(input.decorator),
+			decorators: resolveClassBodyMemberMethod_decorators(input.decorators),
 			methodDefinition: resolveClassBodyMemberMethod_methodDefinition(input.methodDefinition)
 		},
 		options
@@ -9673,7 +9673,7 @@ export function coerceToExportStatementDefaultFrom(
 }
 
 export function resolveExportStatementDefaultDeclaration_decorators(
-	value: T.ExportStatementDefaultDeclaration.LooseConfig['decorator']
+	value: T.ExportStatementDefaultDeclaration.LooseConfig['decorators']
 ): Admit<T.ExportStatementDefaultDeclaration['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator');
 }
@@ -9693,7 +9693,7 @@ export function coerceToExportStatementDefaultDeclaration(
 	if (!_isLooseConfig<T.ExportStatementDefaultDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultDeclaration>;
 	return F.buildExportStatementDefaultDeclaration({
-		decorator: resolveExportStatementDefaultDeclaration_decorators(input.decorator),
+		decorators: resolveExportStatementDefaultDeclaration_decorators(input.decorators),
 		content: resolveExportStatementDefaultDeclaration_content(input.content)
 	});
 }

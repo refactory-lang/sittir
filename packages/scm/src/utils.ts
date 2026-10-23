@@ -118,7 +118,7 @@ export const structure: StructureTable = Object.freeze({
 	42: {
 		kind: 'string_content',
 		nonEmpty: [['_content', 'string_content.children']],
-		nodeOnly: [['_content', 'StringContent.content', 'buildStringContentText(…)']]
+		nodeOnly: [['_content', 'StringContent.contents', 'buildStringContentText(…)']]
 	},
 	43: {
 		kind: 'parameters',
@@ -137,7 +137,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'grouping',
 		nonEmpty: [['_grouping_group', 'grouping.groupingGroups']],
 		nodeOnly: [
-			['_grouping_group', 'Grouping.groupingGroup', 'a built GroupingGroup'],
+			['_grouping_group', 'Grouping.groupingGroups', 'a built GroupingGroup'],
 			['_elements', 'Grouping.elements', 'a built ListElement']
 		]
 	},

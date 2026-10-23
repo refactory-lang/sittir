@@ -330,7 +330,7 @@ function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap, kindEntr
 }
 
 function bareTextLabel(f: AssembledNonterminal, typeName: string): string {
-	return `${typeName}.${f.configKey}`;
+	return `${typeName}.${f.propertyName}`;
 }
 
 
@@ -344,9 +344,9 @@ function keywordTextRejection(
 	const keywords = seatedKeywordTexts(f, nodeMap, kindEntries);
 	const word = kindEntries === undefined || !nodeMap.word ? undefined : kindDiscriminantExpr(nodeMap.word, nodeMap, kindEntries);
 	const keywordChecked =
-		keywords.length === 0 ? expr : `rejectKeywordText(${expr}, '${typeName}.${f.configKey}', ${word!}, ${JSON.stringify(keywords)})`;
+		keywords.length === 0 ? expr : `rejectKeywordText(${expr}, '${typeName}.${f.propertyName}', ${word!}, ${JSON.stringify(keywords)})`;
 	if (word === undefined || kindEntries === undefined || slotUnreservedAliases(f, nodeMap).length === 0) return keywordChecked;
-	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.configKey}', ${word}, ${wordsetConstName(f.reservedWordsets, nodeMap)})`;
+	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.propertyName}', ${word}, ${wordsetConstName(f.reservedWordsets, nodeMap)})`;
 }
 
 function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
@@ -840,7 +840,7 @@ function slotStorageExpr(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	return slotStorageFromValueExpr(f, defaultedValueExpr(f, `${configAccess}.${f.configKey}`, nodeMap, kindEntries), nodeMap, kindEntries, typeName);
+	return slotStorageFromValueExpr(f, defaultedValueExpr(f, `${configAccess}.${f.propertyName}`, nodeMap, kindEntries), nodeMap, kindEntries, typeName);
 }
 
 function defaultedValueExpr(
@@ -867,7 +867,7 @@ function setterElemType(
 	fnTakesFieldDirectly = false
 ): string {
 	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim') {
-		return fnTakesFieldDirectly ? `NonNullable<${paramType}>` : `NonNullable<${paramType}>['${f.configKey}']`;
+		return fnTakesFieldDirectly ? `NonNullable<${paramType}>` : `NonNullable<${paramType}>['${f.propertyName}']`;
 	}
 	return elemType;
 }
@@ -918,7 +918,7 @@ export function restSetterType(
 		f,
 		resolveFieldStorageInfo(f, nodeMap, kindEntries).kind === 'verbatim'
 			? constructionFieldElementType(f, nodeMap, kindEntries)
-			: `NonNullable<NonNullable<${configType}>['${f.configKey}']>[number]`
+			: `NonNullable<NonNullable<${configType}>['${f.propertyName}']>[number]`
 	);
 	if (isNonEmpty(f)) return `NonEmptyArray<${elemType}>`;
 	return `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`;
@@ -1198,7 +1198,7 @@ function refusingSlots(
 	slots: readonly AssembledNonterminal[]
 ): RefusingParams | undefined {
 	if (slots.length === 0 && numeric === undefined) return undefined;
-	const slotParams = slots.map((slot) => ({ key: slot.configKey, name: `${slot.configKey.charAt(0).toUpperCase()}${slot.configKey.slice(1)}Slot` }));
+	const slotParams = slots.map((slot) => ({ key: slot.propertyName, name: `${slot.propertyName.charAt(0).toUpperCase()}${slot.propertyName.slice(1)}Slot` }));
 	const refusing = `RefusingConfig<${param.strictType}, { ${slotParams.map(({ key, name }) => `${quoteKey(key)}: ${name}`).join('; ')} }>`;
 	return {
 		typeParams: `<${[...(numeric === undefined ? [] : [numeric.typeParam]), ...slotParams.map(({ key, name }) => `${name} extends ${configType}[${JSON.stringify(key)}]`)].join(', ')}>`,
@@ -1244,26 +1244,26 @@ function registeredSlotSource(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	if (slot.registeredOption === 'choice') {
-		return storedSlotValueExpr(slot, blankFromInput(hasBlankArm(slot), `options?.${slot.configKey}`), nodeMap, kindEntries, node.typeName, true);
+		return storedSlotValueExpr(slot, blankFromInput(hasBlankArm(slot), `options?.${slot.propertyName}`), nodeMap, kindEntries, node.typeName, true);
 	}
-	const value = `options?.${slot.configKey} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
+	const value = `options?.${slot.propertyName} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
 	const present = (peers ?? [])
 		.map((name) => node.slots.find((candidate) => candidate.name === name))
 		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption === undefined)
-		.map((peer) => `config.${peer.configKey} !== undefined`);
+		.map((peer) => `config.${peer.propertyName} !== undefined`);
 	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
 }
 
 export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }): string {
-	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.configKey));
+	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.propertyName));
 	return keys.length === 0 ? type : `OmitEach<${type}, ${keys.join(' | ')}>`;
 }
 
 export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string | undefined {
 	const registered = registeredSlots(node);
 	if (registered.length === 0) return undefined;
-	return `{ ${registered.map((slot) => `readonly ${slot.configKey}?: ${constructionFieldElementType(slot, nodeMap, kindEntries)}${hasBlankArm(slot) ? ' | null' : ''}`).join('; ')} }`;
+	return `{ ${registered.map((slot) => `readonly ${slot.propertyName}?: ${constructionFieldElementType(slot, nodeMap, kindEntries)}${hasBlankArm(slot) ? ' | null' : ''}`).join('; ')} }`;
 }
 
 function resolveFactorySurface(
@@ -1596,7 +1596,7 @@ export function compoundStructureRow(
 	const { spreadFacts } = resolveFactorySurface(node, nodeMap, kindEntries);
 	const registered = new Set(registeredSlots(node));
 	const stored = emittedSlots(node.slots, spreadFacts, registered).filter((f) => !registered.has(f));
-	const required = stored.filter((f) => isRequired(f) && !isMultiple(f)).map((f) => [f.storageKey, f.configKey] as const);
+	const required = stored.filter((f) => isRequired(f) && !isMultiple(f)).map((f) => [f.storageKey, f.propertyName] as const);
 	const nonEmpty = stored
 		.filter((f) => needsNonEmptyHoist(f, nodeMap))
 		.map((f) => [f.storageKey, `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`] as const);
@@ -1660,7 +1660,7 @@ function emitFieldCarryingFactory(
 		registered.map((f) => ({
 			name: f.propertyName,
 			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}${hasBlankArm(f) ? ' | null' : ''}`,
-			body: rebuild(`{ ...options, ${f.configKey}: spelling }`)
+			body: rebuild(`{ ...options, ${f.propertyName}: spelling }`)
 		}));
 	let setters: SetterEntry[];
 
@@ -1699,12 +1699,12 @@ function emitFieldCarryingFactory(
 				setters.push({
 					name: method,
 					params: `...values: ${admitNodes(restType)}`,
-					body: `${fn}({ ...${configAccess}, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+					body: `${fn}({ ...${configAccess}, ${f.propertyName}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
 				});
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				setters.push({ name: method, params: setterSig, body: `${fn}({ ...${configAccess}, ${f.configKey}: value }${optionsArg})` });
+				setters.push({ name: method, params: setterSig, body: `${fn}({ ...${configAccess}, ${f.propertyName}: value }${optionsArg})` });
 			}
 		}
 		setters.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`));
@@ -1756,7 +1756,7 @@ function emitFieldCarryingFactory(
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
 	const spelled = spelledGroupSlots(plan);
 	lines.push(...(view?.prelude ?? []), ...groups.prelude);
-	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.configKey, f.storageKey] as const)));
+	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push('    $named: true as const,');
@@ -1948,12 +1948,12 @@ function emitRefineFormFactory(
 			formSetters.push({
 				name: method,
 				params: `...values: ${admitNodes(restType)}`,
-				body: `${formFn}({ ...config, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+				body: `${formFn}({ ...config, ${f.propertyName}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
 			});
 		} else {
 			const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
 			const setterSig = setterValueSignature(f, elemType);
-			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.configKey}: value }${optionsArg})` });
+			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.propertyName}: value }${optionsArg})` });
 		}
 	}
 	for (const f of registered) {
@@ -1961,10 +1961,10 @@ function emitRefineFormFactory(
 		formSetters.push({
 			name: f.propertyName,
 			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}${hasBlankArm(f) ? ' | null' : ''}`,
-			body: `${formFn}(config, { ...options, ${f.configKey}: spelling })`
+			body: `${formFn}(config, { ...options, ${f.propertyName}: spelling })`
 		});
 	}
-	lines.push(...builderHandleLines(node.kind, allSlots.map((f) => [f.configKey, f.storageKey] as const)));
+	lines.push(...builderHandleLines(node.kind, allSlots.map((f) => [f.propertyName, f.storageKey] as const)));
 	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $named: true as const,');
@@ -2163,7 +2163,7 @@ export function groupSeatHints(
 		const restKeys = new Set(
 			(builtTypeSurfaceOf(seat.group, nodeMap, kindEntries)?.setters ?? []).filter((setter) => setter.rest).map((setter) => setter.name)
 		);
-		const slotByKey = new Map(seat.group.slots.map((slot) => [slot.configKey, slot]));
+		const slotByKey = new Map(seat.group.slots.map((slot) => [slot.propertyName, slot]));
 		const keys = seat.keys.map(({ key, field }) => {
 			const slot = slotByKey.get(field)!;
 			return {
@@ -2447,7 +2447,7 @@ export function separatedListSurface(
 			wrapper = {
 				member: entry.member,
 				factory: factoryName,
-				contentKey: content.configKey,
+				contentKey: content.propertyName,
 				contentProperty: content.propertyName,
 				decorationAccessors: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.propertyName),
 				typeName: nodeMap.nodes.get(wKind)!.typeName

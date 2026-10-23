@@ -4,7 +4,7 @@ import { sidesOf } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
-import { loadNativeEngine, loadSlotReaders, materializeDetached } from '../src/validate/common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, materializeDetached } from '../src/validate/common.ts';
 import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts';
 
 /**
@@ -15,7 +15,7 @@ import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts
  */
 const ts = await createEngine(typescript);
 const native = await loadNativeEngine('typescript');
-const readers = await loadSlotReaders('typescript');
+const accessorOf = await loadSlotAccessorOf('typescript');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
 const triviaOf = (node: object) => sidesOf(node);
 
@@ -26,20 +26,20 @@ function secondTypeArgument(source: string): AnyUntypedNode {
 	if (!ts.is.genericType(value)) throw new Error('expected a generic type');
 	const second = value.typeArguments().types().items()[1];
 	if (second === undefined) throw new Error('expected a second type argument');
-	return materializeDetached(second, readers);
+	return materializeDetached(second, accessorOf);
 }
 
 describe('leadingTriviaRenderedWidth on a detached alias envelope', () => {
 	it('is zero when only a line gap comes before it', () => {
 		const data = secondTypeArgument('type T = A<\n  X,\n  Y,\n>;\n');
 		expect(render(data)).toBe('Y');
-		expect(leadingTriviaRenderedWidth(data, render, triviaOf, readers)).toBe(0);
+		expect(leadingTriviaRenderedWidth(data, render, triviaOf, accessorOf)).toBe(0);
 	});
 
 	it('is the owned comment and its line break', () => {
 		const data = secondTypeArgument('type T = A<\n  X,\n  // c\n  Y,\n>;\n');
 		expect(render(data)).toBe('// c\nY');
-		expect(leadingTriviaRenderedWidth(data, render, triviaOf, readers)).toBe('// c\n'.length);
+		expect(leadingTriviaRenderedWidth(data, render, triviaOf, accessorOf)).toBe('// c\n'.length);
 	});
 });
 
@@ -58,9 +58,9 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
 		const suite = statement.consequence();
 		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
-		const pyReaders = await loadSlotReaders('python');
-		const block = materializeDetached(suite.block(), pyReaders);
+		const pyAccessorOf = await loadSlotAccessorOf('python');
+		const block = materializeDetached(suite.block(), pyAccessorOf);
 		expect(renderPy(block).startsWith('# one\n# two\n  # three\nb')).toBe(true);
-		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyReaders)).toBe('# one\n# two\n  # three\n'.length);
+		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyAccessorOf)).toBe('# one\n# two\n  # three\n'.length);
 	});
 });

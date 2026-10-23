@@ -14,6 +14,7 @@ const ctx: PrintContext = {
 	grammar: 'test',
 	engine: 'rs',
 	surface: 'strict',
+	slotNameOf: (_kind, slot) => slot,
 	facts: {
 		modelTypes: {},
 		subtypes: {},
@@ -150,7 +151,7 @@ describe('printFactorySource', () => {
 			{ $type: 3, $text: 'main' },
 			'identifier',
 			artifacts,
-			{ kindNameFromId: ctx.kindNameFromId, readers: () => [] },
+			{ kindNameFromId: ctx.kindNameFromId, accessorOf: (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false }) },
 			ctx
 		);
 		expect(source).toBe('ir.identifier("main")');

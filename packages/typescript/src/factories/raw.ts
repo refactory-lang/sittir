@@ -729,8 +729,8 @@ export function buildLexicalDeclaration(
 	return stampBuilt(node) as unknown as T.LexicalDeclaration.Bound;
 }
 
-export function buildUsingDeclaration<VariableDeclaratorSlot extends T.UsingDeclaration.Config['variableDeclarator']>(
-	config: RefusingConfig<T.UsingDeclaration.Config, { variableDeclarator: VariableDeclaratorSlot }>,
+export function buildUsingDeclaration<VariableDeclaratorsSlot extends T.UsingDeclaration.Config['variableDeclarators']>(
+	config: RefusingConfig<T.UsingDeclaration.Config, { variableDeclarators: VariableDeclaratorsSlot }>,
 	options?: T.UsingDeclaration.Options
 ): T.UsingDeclaration.Bound;
 export function buildUsingDeclaration(
@@ -739,7 +739,7 @@ export function buildUsingDeclaration(
 ): T.UsingDeclaration.Bound {
 	const _kind = kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind);
 	const _variable_declarator = listStorage<NonNullable<T.UsingDeclaration['_variable_declarator']>>(
-		config.variableDeclarator
+		config.variableDeclarators
 	);
 	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
 		options?.automaticSemicolon,
@@ -749,7 +749,7 @@ export function buildUsingDeclaration(
 	if (handle !== undefined)
 		admitChildren(handle, 'using_declaration', {
 			kind: _kind,
-			variableDeclarator: _variable_declarator,
+			variableDeclarators: _variable_declarator,
 			automaticSemicolon: _automatic_semicolon
 		});
 	const node = {
@@ -763,7 +763,7 @@ export function buildUsingDeclaration(
 				rebuilt(node, handle, () => buildUsingDeclaration({ ...config, kind: value }, options)),
 			variableDeclarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
 				rebuilt(node, handle, () =>
-					buildUsingDeclaration({ ...config, variableDeclarator: restItems('variableDeclarators', values) }, options)
+					buildUsingDeclaration({ ...config, variableDeclarators: restItems('variableDeclarators', values) }, options)
 				),
 			automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
 				rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling }))
@@ -1489,13 +1489,13 @@ export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefau
 
 export function buildSwitchCase<
 	ValueSlot extends T.SwitchCase.Config['value'],
-	BodySlot extends T.SwitchCase.Config['body']
->(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; body: BodySlot }>): T.SwitchCase.Bound;
+	BodiesSlot extends T.SwitchCase.Config['bodies']
+>(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; bodies: BodiesSlot }>): T.SwitchCase.Bound;
 export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound {
 	const _value = kindIdStorage<NonNullable<T.SwitchCase['_value']>>(config.value);
-	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.body ?? [], kindIdStorage);
+	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, body: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, bodies: _body });
 	const node = {
 		$type: TSKindId.SwitchCase as const,
 		$named: true as const,
@@ -1504,8 +1504,8 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		$with: {
 			value: (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
 				rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value })),
-			bodies: (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['body']>[number][]>) =>
-				rebuilt(node, handle, () => buildSwitchCase({ ...config, body: restItems('bodies', values) }))
+			bodies: (...values: Admit<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>[number][]>) =>
+				rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
 		},
 		value: () => hydrateStoredSlot(node, '_value'),
 		bodies: () => hydrateStoredSlots(node, '_body'),
@@ -1526,7 +1526,7 @@ export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
 export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	const _body = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_default', { body: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_default', { bodies: _body });
 	const node = {
 		$type: TSKindId.SwitchDefault as const,
 		$named: true as const,
@@ -1981,7 +1981,7 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 }
 
 export function buildClass<
-	DecoratorSlot extends T.Class.Config['decorator'],
+	DecoratorsSlot extends T.Class.Config['decorators'],
 	NameSlot extends T.Class.Config['name'],
 	TypeParametersSlot extends T.Class.Config['typeParameters'],
 	HeritageSlot extends T.Class.Config['heritage'],
@@ -1990,7 +1990,7 @@ export function buildClass<
 	config?: RefusingConfig<
 		Partial<T.Class.Config>,
 		{
-			decorator: DecoratorSlot;
+			decorators: DecoratorsSlot;
 			name: NameSlot;
 			typeParameters: TypeParametersSlot;
 			heritage: HeritageSlot;
@@ -1999,7 +1999,7 @@ export function buildClass<
 	>
 ): T.Class.Bound;
 export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound {
-	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(config.decorators ?? []);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -2009,7 +2009,7 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class', {
-			decorator: _decorator,
+			decorators: _decorator,
 			name: _name,
 			typeParameters: _type_parameters,
 			heritage: _heritage,
@@ -2025,7 +2025,7 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		_body,
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildClass({ ...config, decorator: restItems('decorators', values) })),
+				rebuilt(node, handle, () => buildClass({ ...config, decorators: restItems('decorators', values) })),
 			name: (value?: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildClass({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
@@ -2057,7 +2057,7 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 }
 
 export function buildClassDeclaration<
-	DecoratorSlot extends T.ClassDeclaration.Config['decorator'],
+	DecoratorsSlot extends T.ClassDeclaration.Config['decorators'],
 	NameSlot extends T.ClassDeclaration.Config['name'],
 	TypeParametersSlot extends T.ClassDeclaration.Config['typeParameters'],
 	HeritageSlot extends T.ClassDeclaration.Config['heritage'],
@@ -2066,7 +2066,7 @@ export function buildClassDeclaration<
 	config: RefusingConfig<
 		T.ClassDeclaration.Config,
 		{
-			decorator: DecoratorSlot;
+			decorators: DecoratorsSlot;
 			name: NameSlot;
 			typeParameters: TypeParametersSlot;
 			heritage: HeritageSlot;
@@ -2079,7 +2079,7 @@ export function buildClassDeclaration(
 	config: T.ClassDeclaration.Config,
 	options?: T.ClassDeclaration.Options
 ): T.ClassDeclaration.Bound {
-	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(config.decorators ?? []);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -2093,7 +2093,7 @@ export function buildClassDeclaration(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class_declaration', {
-			decorator: _decorator,
+			decorators: _decorator,
 			name: _name,
 			typeParameters: _type_parameters,
 			heritage: _heritage,
@@ -2112,7 +2112,7 @@ export function buildClassDeclaration(
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
-					buildClassDeclaration({ ...config, decorator: restItems('decorators', values) }, options)
+					buildClassDeclaration({ ...config, decorators: restItems('decorators', values) }, options)
 				),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildClassDeclaration({ ...config, name: value }, options)),
@@ -3080,7 +3080,7 @@ export function buildSequenceExpression<A extends NonEmptyArray<Admit<T.Expressi
 export function buildSequenceExpression(...children: NonEmptyArray<Admit<T.Expression>>): T.SequenceExpression.Bound {
 	const _expression = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'sequence_expression', { expression: _expression });
+	if (handle !== undefined) admitChildren(handle, 'sequence_expression', { expressions: _expression });
 	const node = {
 		$type: TSKindId.SequenceExpression as const,
 		$named: true as const,
@@ -4048,18 +4048,18 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 }
 
 export function buildPublicFieldDefinition<
-	DecoratorSlot extends T.PublicFieldDefinition.Config['decorator'],
+	DecoratorsSlot extends T.PublicFieldDefinition.Config['decorators'],
 	NameSlot extends T.PublicFieldDefinition.Config['name'],
 	TypeSlot extends T.PublicFieldDefinition.Config['type'],
 	ValueSlot extends T.PublicFieldDefinition.Config['value']
 >(
 	config: RefusingConfig<
 		T.PublicFieldDefinition.Config,
-		{ decorator: DecoratorSlot; name: NameSlot; type: TypeSlot; value: ValueSlot }
+		{ decorators: DecoratorsSlot; name: NameSlot; type: TypeSlot; value: ValueSlot }
 	>
 ): T.PublicFieldDefinition.Bound;
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config): T.PublicFieldDefinition.Bound {
-	const _decorator = listStorage<NonNullable<T.PublicFieldDefinition['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.PublicFieldDefinition['_decorator']>>(config.decorators ?? []);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -4079,7 +4079,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'public_field_definition', {
-			decorator: _decorator,
+			decorators: _decorator,
 			declare: _declare,
 			accessibilityModifier: _accessibility_modifier,
 			static: _static,
@@ -4110,7 +4110,7 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
-					buildPublicFieldDefinition({ ...config, decorator: restItems('decorators', values) })
+					buildPublicFieldDefinition({ ...config, decorators: restItems('decorators', values) })
 				),
 			declare: (value?: Admit<NonNullable<T.PublicFieldDefinition.Config>['declare']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, declare: value })),
@@ -4825,7 +4825,7 @@ export function buildImplementsClause(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'implements_clause', { type: _type });
+	if (handle !== undefined) admitChildren(handle, 'implements_clause', { types: _type });
 	const node = {
 		$type: TSKindId.ImplementsClause as const,
 		$named: true as const,
@@ -4876,7 +4876,7 @@ export function buildAmbientDeclaration(
 }
 
 export function buildAbstractClassDeclaration<
-	DecoratorSlot extends T.AbstractClassDeclaration.Config['decorator'],
+	DecoratorsSlot extends T.AbstractClassDeclaration.Config['decorators'],
 	NameSlot extends T.AbstractClassDeclaration.Config['name'],
 	TypeParametersSlot extends T.AbstractClassDeclaration.Config['typeParameters'],
 	HeritageSlot extends T.AbstractClassDeclaration.Config['heritage'],
@@ -4885,7 +4885,7 @@ export function buildAbstractClassDeclaration<
 	config: RefusingConfig<
 		T.AbstractClassDeclaration.Config,
 		{
-			decorator: DecoratorSlot;
+			decorators: DecoratorsSlot;
 			name: NameSlot;
 			typeParameters: TypeParametersSlot;
 			heritage: HeritageSlot;
@@ -4896,7 +4896,7 @@ export function buildAbstractClassDeclaration<
 export function buildAbstractClassDeclaration(
 	config: T.AbstractClassDeclaration.Config
 ): T.AbstractClassDeclaration.Bound {
-	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(config.decorators ?? []);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -4906,7 +4906,7 @@ export function buildAbstractClassDeclaration(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'abstract_class_declaration', {
-			decorator: _decorator,
+			decorators: _decorator,
 			name: _name,
 			typeParameters: _type_parameters,
 			heritage: _heritage,
@@ -4923,7 +4923,7 @@ export function buildAbstractClassDeclaration(
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
-					buildAbstractClassDeclaration({ ...config, decorator: restItems('decorators', values) })
+					buildAbstractClassDeclaration({ ...config, decorators: restItems('decorators', values) })
 				),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildAbstractClassDeclaration({ ...config, name: value })),
@@ -5180,7 +5180,7 @@ export function buildExtendsTypeClause(
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'extends_type_clause', { type: _type });
+	if (handle !== undefined) admitChildren(handle, 'extends_type_clause', { types: _type });
 	const node = {
 		$type: TSKindId.ExtendsTypeClause as const,
 		$named: true as const,
@@ -5437,18 +5437,18 @@ export function buildTypeAliasDeclaration(
 export const buildOverrideModifier: TSKindId.OverrideModifier = TSKindId.OverrideModifier;
 
 export function buildRequiredParameter<
-	DecoratorSlot extends T.RequiredParameter.Config['decorator'],
+	DecoratorsSlot extends T.RequiredParameter.Config['decorators'],
 	PatternSlot extends T.RequiredParameter.Config['pattern'],
 	TypeSlot extends T.RequiredParameter.Config['type'],
 	ValueSlot extends T.RequiredParameter.Config['value']
 >(
 	config: RefusingConfig<
 		T.RequiredParameter.Config,
-		{ decorator: DecoratorSlot; pattern: PatternSlot; type: TypeSlot; value: ValueSlot }
+		{ decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot; value: ValueSlot }
 	>
 ): T.RequiredParameter.Bound;
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
-	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(config.decorators ?? []);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -5460,7 +5460,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'required_parameter', {
-			decorator: _decorator,
+			decorators: _decorator,
 			accessibilityModifier: _accessibility_modifier,
 			override: _override,
 			readonly: _readonly,
@@ -5480,7 +5480,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		_value,
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorator: restItems('decorators', values) })),
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorators: restItems('decorators', values) })),
 			accessibilityModifier: (value?: Admit<NonNullable<T.RequiredParameter.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, accessibilityModifier: value })),
 			override: (value?: Admit<NonNullable<T.RequiredParameter.Config>['override']>) =>
@@ -5513,18 +5513,18 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 }
 
 export function buildOptionalParameter<
-	DecoratorSlot extends T.OptionalParameter.Config['decorator'],
+	DecoratorsSlot extends T.OptionalParameter.Config['decorators'],
 	PatternSlot extends T.OptionalParameter.Config['pattern'],
 	TypeSlot extends T.OptionalParameter.Config['type'],
 	ValueSlot extends T.OptionalParameter.Config['value']
 >(
 	config: RefusingConfig<
 		T.OptionalParameter.Config,
-		{ decorator: DecoratorSlot; pattern: PatternSlot; type: TypeSlot; value: ValueSlot }
+		{ decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot; value: ValueSlot }
 	>
 ): T.OptionalParameter.Bound;
 export function buildOptionalParameter(config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
-	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(config.decorators ?? []);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -5536,7 +5536,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'optional_parameter', {
-			decorator: _decorator,
+			decorators: _decorator,
 			accessibilityModifier: _accessibility_modifier,
 			override: _override,
 			readonly: _readonly,
@@ -5556,7 +5556,7 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		_value,
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorator: restItems('decorators', values) })),
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorators: restItems('decorators', values) })),
 			accessibilityModifier: (value?: Admit<NonNullable<T.OptionalParameter.Config>['accessibilityModifier']>) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, accessibilityModifier: value })),
 			override: (value?: Admit<NonNullable<T.OptionalParameter.Config>['override']>) =>
@@ -9381,12 +9381,12 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 export const buildEmptyMember: TSKindId.EmptyMember = TSKindId.EmptyMember;
 
 export function buildClassBodyMemberMethod<
-	DecoratorSlot extends T.ClassBodyMemberMethod.Config['decorator'],
+	DecoratorsSlot extends T.ClassBodyMemberMethod.Config['decorators'],
 	MethodDefinitionSlot extends T.ClassBodyMemberMethod.Config['methodDefinition']
 >(
 	config: RefusingConfig<
 		T.ClassBodyMemberMethod.Config,
-		{ decorator: DecoratorSlot; methodDefinition: MethodDefinitionSlot }
+		{ decorators: DecoratorsSlot; methodDefinition: MethodDefinitionSlot }
 	>,
 	options?: T.ClassBodyMemberMethod.Options
 ): T.ClassBodyMemberMethod.Bound;
@@ -9394,7 +9394,7 @@ export function buildClassBodyMemberMethod(
 	config: T.ClassBodyMemberMethod.Config,
 	options?: T.ClassBodyMemberMethod.Options
 ): T.ClassBodyMemberMethod.Bound {
-	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorator ?? []);
+	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorators ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
 		options?.terminator === null ? 0 : options?.terminator,
@@ -9403,7 +9403,7 @@ export function buildClassBodyMemberMethod(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'class_body_member_method', {
-			decorator: _decorator,
+			decorators: _decorator,
 			methodDefinition: _method_definition,
 			terminator: _terminator
 		});
@@ -9416,7 +9416,7 @@ export function buildClassBodyMemberMethod(
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
-					buildClassBodyMemberMethod({ ...config, decorator: restItems('decorators', values) }, options)
+					buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
 				),
 			methodDefinition: (value: Admit<T.MethodDefinition>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
@@ -10308,21 +10308,24 @@ export function buildExportStatementDefaultFrom(
 }
 
 export function buildExportStatementDefaultDeclaration<
-	DecoratorSlot extends T.ExportStatementDefaultDeclaration.Config['decorator'],
+	DecoratorsSlot extends T.ExportStatementDefaultDeclaration.Config['decorators'],
 	ContentSlot extends T.ExportStatementDefaultDeclaration.Config['content']
 >(
-	config: RefusingConfig<T.ExportStatementDefaultDeclaration.Config, { decorator: DecoratorSlot; content: ContentSlot }>
+	config: RefusingConfig<
+		T.ExportStatementDefaultDeclaration.Config,
+		{ decorators: DecoratorsSlot; content: ContentSlot }
+	>
 ): T.ExportStatementDefaultDeclaration.Bound;
 export function buildExportStatementDefaultDeclaration(
 	config: T.ExportStatementDefaultDeclaration.Config
 ): T.ExportStatementDefaultDeclaration.Bound {
 	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
-		config.decorator ?? []
+		config.decorators ?? []
 	);
 	const _content = config.content;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'export_statement_default_declaration', { decorator: _decorator, content: _content });
+		admitChildren(handle, 'export_statement_default_declaration', { decorators: _decorator, content: _content });
 	const node = {
 		$type: TSKindId.ExportStatementDefaultDeclaration as const,
 		$named: true as const,
@@ -10331,7 +10334,7 @@ export function buildExportStatementDefaultDeclaration(
 		$with: {
 			decorators: (...values: Admit<T.Decorator[]>) =>
 				rebuilt(node, handle, () =>
-					buildExportStatementDefaultDeclaration({ ...config, decorator: restItems('decorators', values) })
+					buildExportStatementDefaultDeclaration({ ...config, decorators: restItems('decorators', values) })
 				),
 			content: (value: Admit<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultDeclaration({ ...config, content: value }))

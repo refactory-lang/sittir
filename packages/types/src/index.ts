@@ -3,7 +3,7 @@
  * language engine. Pure type-level module — zero runtime code.
  */
 
-import type { CamelCase, KeysOfUnion } from 'type-fest';
+import type { KeysOfUnion } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
 export type {
 	Cond,
@@ -359,55 +359,17 @@ export type KindOf<T> = T extends { readonly $type: infer N extends number } ? N
 // Field keys — a grammar field's camelCase key, as the runtime spells it
 // ---------------------------------------------------------------------------
 
+/** @internal — the generator-emitted map from a slot's storage key to the model's slot name. */
+type SlotNamesOf<T> = T extends { readonly __slotNames__?: infer M } ? M : {};
+
 /**
- * Mirrors `RESERVED_ACCESSOR_NAMES` in the codegen's `node-map.ts` — the
- * runtime's `snakeToCamel()` appends a trailing `_` to a camelCased field
- * name that would otherwise shadow an `Object.prototype` member (e.g. a
- * grammar field named `constructor`). `CamelCase<K>` from `type-fest` has
- * no knowledge of that escaping, so any generic projection that recomputes
- * a field's camelCase key must route it through this lookup to match the
- * real generated code. A plain table, not a chain of per-name conditionals —
- * extend this map (and its runtime twin) together, never branch on the name.
+ * The name a slot is configured and read by: the model's slot name, as the
+ * generator writes it in `__slotNames__`, keyed by the storage key `_K`.
+ * A slot with no written name has no key (`never`).
  */
-type ReservedAccessorEscapes = {
-	constructor: 'constructor_';
-	toString: 'toString_';
-	valueOf: 'valueOf_';
-	hasOwnProperty: 'hasOwnProperty_';
-	isPrototypeOf: 'isPrototypeOf_';
-	propertyIsEnumerable: 'propertyIsEnumerable_';
-	toLocaleString: 'toLocaleString_';
-	__proto__: '__proto___';
-};
-
-/** Escapes a camelCased field key that collides with an `Object.prototype` member. */
-type EscapeReservedAccessor<S extends string> = S extends keyof ReservedAccessorEscapes
-	? ReservedAccessorEscapes[S]
-	: S;
-
-export type SetterKey<K extends string> = EscapeReservedAccessor<CamelCase<K>>;
-
-type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
-type Pluralize<S extends string> = S extends `${string}s`
-	? S
-	: S extends `${string}List`
-		? S
-		: S extends `${string}children`
-			? S
-			: S extends `${string}Children`
-				? S
-				: S extends `${infer Pre}Child`
-					? `${Pre}Children`
-					: S extends `${infer Pre}child`
-						? `${Pre}children`
-						: S extends `${string}${Vowel}y`
-							? `${S}s`
-							: S extends `${infer Pre}y`
-								? `${Pre}ies`
-								: `${S}s`;
-
-type FieldKey<K extends string, V> =
-	NonNullable<V> extends readonly any[] ? Pluralize<CamelCase<K>> : EscapeReservedAccessor<CamelCase<K>>;
+export type SlotKey<T, K extends string> = `_${K}` extends keyof SlotNamesOf<T>
+	? SlotNamesOf<T>[`_${K}`] & string
+	: never;
 
 // ---------------------------------------------------------------------------
 // Concrete interface transformations
@@ -488,7 +450,7 @@ type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly chil
  */
 export type WrappedNode<T> = Simplify<
 	T & {
-		readonly [K in keyof FieldsOf<T> & string as FieldKey<K, FieldsOf<T>[K]>]: FieldsOf<T>[K];
+		readonly [K in keyof FieldsOf<T> & string as SlotKey<T, K>]: FieldsOf<T>[K];
 	} & (T extends {
 			readonly $other?: infer C;
 		}
@@ -530,8 +492,7 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
 export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSlot<V, Scalars, Strings, [], NsMap>;
 
 /**
- * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
- * field values are the raw interface types (already snake_case internally).
+ * ConfigOf<T> — factory input shape, keyed by each slot's model name ({@link SlotKey}).
  *
  * A keyword-presence slot (boolean keyword, bitflag, kind enum) admits an
  * explicit `undefined` only on a key the node declares optional; a required
@@ -557,12 +518,12 @@ export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
-					? EscapeReservedAccessor<CamelCase<K & string>>
+					? SlotKey<T, K & string>
 					: never]: ConfigFieldValue<T, K>;
 			} & {
 				[K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
 					? never
-					: EscapeReservedAccessor<CamelCase<K & string>>]?: ConfigFieldValue<T, K>;
+					: SlotKey<T, K & string>]?: ConfigFieldValue<T, K>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -773,11 +734,11 @@ type LooseConfigBody<
 	? { readonly $type?: K }
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
-		? EscapeReservedAccessor<CamelCase<K & string>>
+		? SlotKey<T, K & string>
 		: never]: Exclude<WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>, undefined>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalKeys<FieldsOf<T>>
-		? EscapeReservedAccessor<CamelCase<K & string>>
+		? SlotKey<T, K & string>
 		: never]?: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }
 		? {

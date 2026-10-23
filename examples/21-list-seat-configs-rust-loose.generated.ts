@@ -13,7 +13,7 @@ export function rebuildListSeatConfigsRustLoose() {
 					function: "call",
 					arguments: [{
 						$type: rs.kinds.AttributedArgument,
-						attributeItem: [rs.build.attribute.input({
+						attributeItems: [rs.build.attribute.input({
 							path: "cfg",
 							arguments: rs.build.delimTokenTreeParen(rs.build.identifier("a")),
 						})],

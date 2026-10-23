@@ -9,13 +9,13 @@ const y = rs.build.identifier('y');
 
 describe('a list owner takes every argument list its list takes', () => {
 	it('seats a config element on the strict surface', () => {
-		const list = rs.build.argumentsElements.strict({ attributeItem: [], expression: x }, { expression: y });
+		const list = rs.build.argumentsElements.strict({ attributeItems: [], expression: x }, { expression: y });
 		expect(list.$render()).toBe('x, y');
-		expect(rs.build.arguments.strict({ attributeItem: [], expression: x }, { expression: y }).$render()).toBe('(x, y)');
+		expect(rs.build.arguments.strict({ attributeItems: [], expression: x }, { expression: y }).$render()).toBe('(x, y)');
 	});
 
 	it('seats a config element on the loose surface', () => {
-		expect(rs.build.arguments({ attributeItem: [], expression: x }, { expression: y }).$render()).toBe('(x, y)');
+		expect(rs.build.arguments({ attributeItems: [], expression: x }, { expression: y }).$render()).toBe('(x, y)');
 		expect(rs.build.arguments({ expression: x }).$render()).toBe('(x)');
 	});
 

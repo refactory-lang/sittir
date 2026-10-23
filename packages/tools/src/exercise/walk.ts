@@ -1,7 +1,7 @@
 import { isCoordinate } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-import { slotValuesOf, type AccessorThrowRecord, type SlotReaders } from '../validate/common.ts';
+import { slotValuesOf, type AccessorThrowRecord, type SlotAccessorOf } from '../validate/common.ts';
 
 type CommonModule = typeof import('../validate/common.ts');
 
@@ -41,11 +41,11 @@ function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string
 	return kindNameFromId?.(node.$type) ?? String(node.$type);
 }
 
-export function collectChildren(node: WalkNode, readers: SlotReaders): unknown[] {
-	return slotValuesOf(node, readers).map(([, value]) => value);
+export function collectChildren(node: WalkNode, accessorOf: SlotAccessorOf): unknown[] {
+	return slotValuesOf(node, accessorOf).map(([, value]) => value);
 }
 
-function walkTree(root: unknown, readers: SlotReaders, visit: (node: WalkNode) => void): void {
+function walkTree(root: unknown, accessorOf: SlotAccessorOf, visit: (node: WalkNode) => void): void {
 	const seenCoords = new Set<number>();
 	const seenRefs = new WeakSet<object>();
 
@@ -62,7 +62,7 @@ function walkTree(root: unknown, readers: SlotReaders, visit: (node: WalkNode) =
 		seenRefs.add(ref);
 		if (coordKey !== undefined) seenCoords.add(coordKey);
 		visit(value);
-		for (const child of collectChildren(value, readers)) {
+		for (const child of collectChildren(value, accessorOf)) {
 			visitValue(child);
 		}
 	};
@@ -83,7 +83,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 	}
 
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	const readers = await common.loadSlotReaders(grammar);
+	const accessorOf = await common.loadSlotAccessorOf(grammar);
 	// Native engine render — same engine the validators use; the
 	// removed legacy-core renderer had no SpacingWriter, so its output was
 	// seam-less garbage for any grammar with word-word seams.
@@ -98,13 +98,13 @@ export async function run(opts: WalkOptions): Promise<number> {
 		accessorThrows.push(rec);
 	};
 
-	walkTree(root, readers, (node) => {
+	walkTree(root, accessorOf, (node) => {
 		const kind = resolveKindName(node, kindNameFromId);
 		counts.set(kind, (counts.get(kind) ?? 0) + 1);
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = common.materialize(node, readers, onAccessorThrow);
+			const renderable = common.materialize(node, accessorOf, onAccessorThrow);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {

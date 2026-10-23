@@ -639,9 +639,9 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 // `fnTakesFieldDirectly` distinguishes the two factory calling conventions:
 // config-object factories (`fn(config)`) take the kind's `T.<Kind>.Config`,
 // so re-deriving the field's type means indexing that config type by
-// `configKey`; single-field factories (`fn(value)`) pass the field's own
+// `propertyName`; single-field factories (`fn(value)`) pass the field's own
 // value as that first parameter, so `paramType` IS the field's type and
-// indexing by `configKey` would reach into a non-object type instead. The
+// indexing by `propertyName` would reach into a non-object type instead. The
 // config type is named rather than read back through
 // `Parameters<typeof fn>[0]` so the same text is valid in `types.ts`,
 // where no builder is in scope.
@@ -1398,7 +1398,7 @@ Fails generation when a kind's builder may omit a required slot that has no empt
 // Only the SPREAD surface gets the children-taking coercer. A sole
 // singular slot falls through to the field-carrying path below, whose
 // direct-call emission already tolerates both shapes — bare value or
-// `{ <configKey>: value }` — keyed on the slot's own config key, which
+// `{ <propertyName>: value }` — keyed on the slot's own name, which
 // the model supplies for an unnamed slot (`content`) exactly as for a
 // named one.
 //
@@ -5912,12 +5912,12 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
 ```text
 // Nested stubs are raw object literals passed directly as
 // `UntypedNode` — NOT routed through the field's factory (which is
-// what translates a Config's `configKey` into `_<storageKey>` at
+// what translates a Config's `propertyName` into `_<storageKey>` at
 // runtime). Native's node `FromNapiValue` reads the storage
 // key straight off the object (`napi(js_name = "_pattern")`), so
 // the literal must use `storageKey` here, unlike the top-level
 // `emitBranchTest` config object (which legitimately uses
-// `configKey` because it IS passed through `ir.<kind>(...)`).
+// `propertyName` because it IS passed through `ir.<kind>(...)`).
 ```
 
 #### body
@@ -6774,10 +6774,10 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 ```text
 // Match `fieldAccessorLines`' convention (`f.propertyName`, camelCase):
 // `canonical.name` is the raw storage-level slot name (snake_case for
-// kind-derived slots, e.g. `attributed_parameter`). The node model stamps
-// each slot's accessor from its `propertyName`, and consumers call that
-// stamped name (the validators' slot readers), so an accessor emitted
-// under the raw name is one nobody calls.
+// kind-derived slots, e.g. `attributed_parameter`). An accessor emitted
+// under that raw name is invisible to consumers that look the accessor
+// up by the model's slot name (e.g. the validator's `slotAccessorOf`),
+// which then refuse the node as storing a slot it has no reader for.
 ```
 
 
@@ -8939,6 +8939,8 @@ A storage key is optional exactly when its slot is a single optional value: a li
 
 A separated list's interface also declares its option storage (`listOptionStorageMembers`), optional, so a `$with` option setter can write it into the list's data and every surface over the interface inherits it.
 
+`__slotNames__` maps each storage key to its slot's model name (`propertyName`). It is the only place the type level learns a slot's name: `SlotKey` reads it, and through it `ConfigOf`, `LooseConfigOf` and the accessor keys of `WrappedNode`, so the type level never camel-cases, pluralizes or escapes a storage key itself.
+
 Every member of a node interface is `readonly`, its slot getters included: a getter is declared `readonly <name>: () => T` rather than with method syntax, which TypeScript lets a caller reassign, so nothing on a node surface can be swapped without a cast.
 
 #### body
@@ -10490,7 +10492,7 @@ The keyword-arm texts a strict slot refuses as an identifier: the texts of `keyw
 
 ### `packages/codegen/src/emitters/factories.ts::keywordTextRejection`
 
-Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs on the stored value, so a keyword arm's text is already its kind id. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
+Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<propertyName>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs on the stored value, so a keyword arm's text is already its kind id. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
 
 ### `packages/codegen/src/emitters/factories.ts::slotStorageFromValueExpr`
 
@@ -14506,7 +14508,7 @@ What a strict slot takes instead of bare text, for the bare-text refusal: the le
 
 ### `packages/codegen/src/emitters/factories.ts::bareTextLabel`
 
-`<TypeName>.<configKey>`: how a bare-text refusal names the slot, in the builder and in the structure row alike.
+`<TypeName>.<propertyName>`: how a bare-text refusal names the slot, in the builder and in the structure row alike.
 
 ### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
 
@@ -14728,7 +14730,7 @@ the id matches the native options table's default for the same site.
 
 ### `packages/codegen/src/emitters/factory-map.ts::createFactorySlotMeta`
 
-One slot's factory metadata: its arity facts plus, for a registered slot,
+One slot's factory metadata: its model name (`propertyName`, the key a config holds it under), its arity facts plus, for a registered slot,
 `registered` and `optionDefault`.
 
 ### `packages/codegen/src/emitters/test.ts::subFactoryCallArgs`
@@ -15473,7 +15475,7 @@ The kinds a slot holds: the distinct names (`valueNameOf`) of its node-reference
 
 ### `packages/codegen/src/emitters/node-model-read.ts::factorySlotMetaOf`
 
-A slot's factory metadata read back from the slot itself: its `required`, `multiple` and `nonEmpty` flags, which equal the factory map's for every kind with a factory shape, and `registered` and `optionDefault` where the slot carries them. A reader builds it only for kinds with a `factoryShape` (`buildNodeModel` throws on a kind with factory slots and no shape).
+A slot's factory metadata read back from the slot itself: its model name (`slotPropertyName` of the written name and value multiplicities, which the record omits), its `required`, `multiple` and `nonEmpty` flags, which equal the factory map's for every kind with a factory shape, and `registered` and `optionDefault` where the slot carries them. A reader builds it only for kinds with a `factoryShape` (`buildNodeModel` throws on a kind with factory slots and no shape).
 
 ### `packages/codegen/src/emitters/record-lines.ts::module`
 
