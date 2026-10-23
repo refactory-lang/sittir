@@ -8887,7 +8887,7 @@ The names of the rules this evaluation added itself, filled as each is injected.
 /** The evaluated base grammar object, or null for fresh grammars. */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::externals`
+### `packages/codegen/src/dsl/evaluate.ts::EvaluateCtx::externals`
 
 ```text
 /** The externals metadata sink (same live array as sinks.externals): the grammar's `externals` rule list. */

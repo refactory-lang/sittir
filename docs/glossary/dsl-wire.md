@@ -1339,20 +1339,6 @@ are what the shape-free half of the load-time check can promise.
 
 Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and `sittirGrammar` sets the final list from the derived resolutions (`dsl/conflict-resolutions.ts::applyConflictResolutions`).
 
-### `packages/codegen/src/dsl/wire/wire.ts::rules`
-
-```text
-/**
-	 * Rule<'evaluate'> bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
-	 * `B['rules'][K]` directly — the input rule's exact shape, preserved not
-	 * flattened. (`B` here is the ALREADY-ENRICHED schema from `enrich()`'s typed
-	 * return, so `B['rules'][K]` is the post-enrich shape; no re-application of
-	 * `EnrichRule`.) Keyed over the schema's CONCRETE rule names (mapping over
-	 * `NewRules` would absorb to `string` and lose per-key precision). Loose
-	 * `=> unknown` return accepts sittir DSL outputs.
-	 */
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
 ```text
@@ -1541,6 +1527,8 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::rules`
+
+The per-rule `Rule<'evaluate'>` bodies, built with clean `$` builders. `previous` and `original` are typed per rule as `B['rules'][K]`, the input rule's exact shape, preserved rather than flattened. `B` is the schema already enriched by `enrich()`'s typed return, so `B['rules'][K]` is the post-enrich shape and `EnrichRule` is not applied again. The keys range over the schema's concrete rule names: mapping over `NewRules` would widen to `string` and lose per-key precision. The return is loose (`unknown`) so it accepts sittir DSL outputs.
 
 #### body
 

@@ -7351,37 +7351,37 @@ identifiers and numbers are read through the C parser, as the name tables are.
 // compiler-side importers keep working.
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSGrammar`
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag::TSGrammar`
 
 ```text
 /** Rule appears in `grammar.js` (codegen rule catalog). */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSNodeTypes`
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag::TSNodeTypes`
 
 ```text
 /** Kind appears in `node-types.json`. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindPresenceFlag.TSInternals`
+### `packages/codegen/src/compiler/types.ts::KindPresenceFlag::TSInternals`
 
 ```text
 /** Kind has a parser symbol — IDs come from `parser.c` internal metadata. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindUseFlag.Readable`
+### `packages/codegen/src/compiler/types.ts::KindUseFlag::Readable`
 
 ```text
 /** Sittir can ingest/hydrate the kind from parsed runtime nodes. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindUseFlag.Buildable`
+### `packages/codegen/src/compiler/types.ts::KindUseFlag::Buildable`
 
 ```text
 /** Sittir can produce/build it from factories or `.from()`. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::KindUseFlag.Renderable`
+### `packages/codegen/src/compiler/types.ts::KindUseFlag::Renderable`
 
 ```text
 /** Sittir can render/dispatch it. */

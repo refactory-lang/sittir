@@ -8272,7 +8272,7 @@ The leaf shape of a kind's guard. A pattern leaf is `'text'` and is tested like 
  *  `isKindIdStored(storageTargetOf(...))` directly. */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::TypeComponent.kind`
+### `packages/codegen/src/emitters/shared.ts::TypeComponent::resolvedKindId`
 
 ```text
 // A `literal` component is a fixed-text arm. `rawKind` is the kind it
