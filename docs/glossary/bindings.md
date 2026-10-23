@@ -443,7 +443,7 @@ Generation refused over a grammar's committed grammar bindings: missing, or deri
 
 ### `packages/codegen/src/bindings/hash.ts::assertBindingsFresh`
 
-Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the grammar bindings are on or off, since the facts codegen reads come from `bindings.scm` itself and the grammar bindings must agree with them. `compileGrammar` runs it after its diagnostic gate; the base grammar's own staleness is the generated-output freshness check's.
+Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the grammar bindings are on or off, since the facts codegen reads come from `bindings.scm` itself and the grammar bindings must agree with them. `evaluatePackage` runs it before it evaluates a package with its grammar bindings; the base grammar's own staleness is the generated-output freshness check's.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsEdit`
 

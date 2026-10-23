@@ -8816,7 +8816,11 @@ The file a grammar package evaluates: its `grammar.sittir.ts` when it exists, el
 
 ### `packages/codegen/src/dsl/evaluate-package.ts::evaluatePackage`
 
-The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`).
+The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`). Before it evaluates a package with its grammar bindings, it refuses stale ones (`bindings/hash.ts::assertBindingsFresh` over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so nothing is evaluated or compiled with grammar bindings derived from other sources than the ones on disk. An `unbound` evaluation, which reads no grammar bindings, and a `base` one, which reads the upstream grammar alone, skip the check.
+
+### `packages/codegen/src/dsl/evaluate-package.ts::PackageEvaluationOptions`
+
+The options of a package evaluation: the entry it reads (`resolve-grammar.ts::PackageSourceOptions`) and how it evaluates that entry (`evaluate.ts::EvaluateOptions`). `compileGrammar` takes them as its config's `evaluation` and passes them through unchanged.
 
 ### `packages/codegen/src/dsl/resolve-grammar.ts::resolveGrammarJsPath`
 

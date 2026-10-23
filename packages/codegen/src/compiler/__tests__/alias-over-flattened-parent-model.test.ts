@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateTempGrammar } from './_temp-grammar.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { link } from './../link.ts';
 import { normalizeGrammar } from './../normalize.ts';
 import { assemble, AssembleCtx } from './../assemble.ts';
 import { AssembledSupertype } from './../model/node-map.ts';
+import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
 
-const config = "patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }";
+const config = `${SITE_EDITS_KEY}: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }`;
 
 const upstreamWith = (shown: string) => ({
 	extras: '/\\s/',

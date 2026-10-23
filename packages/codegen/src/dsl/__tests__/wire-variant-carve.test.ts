@@ -2,11 +2,11 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { evaluate } from '../../dsl/evaluate.ts';
-import { EMPTY_CONFLICT_RESOLUTIONS } from '../../dsl/conflict-resolutions.ts';
-import { NO_FILE_TYPES } from '../upstream-file-types.ts';
+import { evaluate } from '../evaluate.ts';
+import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 
-const DSL = JSON.stringify(resolve(__dirname, '../../dsl/index.ts'));
+const DSL = JSON.stringify(resolve(__dirname, '../index.ts'));
 
 async function evaluateCarve(): Promise<Record<string, unknown>> {
 	const dir = mkdtempSync(join(tmpdir(), 'sittir-carve-'));

@@ -1629,11 +1629,7 @@ and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with t
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
-After the gate it refuses stale grammar bindings (`bindings/hash.ts::assertBindingsFresh`
-over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so
-codegen never runs with grammar bindings derived from other sources than the ones on disk.
-With `unbound` it evaluates the package without its grammar bindings and skips that check: the
-base grammar's compilation, whose model the grammar bindings are derived against.
+The config's `evaluation` options pass through to `evaluatePackage` unchanged, so how the package is evaluated, and whether its grammar bindings are first checked as fresh, is the evaluation's own. With `unbound` it is the base grammar's compilation, whose model the grammar bindings are derived against.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
