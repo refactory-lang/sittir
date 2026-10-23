@@ -363,15 +363,17 @@ function carriesSource(value: unknown): boolean {
 	return Object.values(value).some(carriesSource);
 }
 
-async function loadFactoryModuleForGrammar(grammar: string): Promise<{
-	factoryMap: Record<string, FactoryEntry>;
-	factoryShapes: Record<string, FactoryShape>;
-	fieldAliasMap: Record<string, Record<string, string>>;
-	factoryFields: Record<string, readonly string[]>;
-	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-	kindNameFromId: ((id: number) => string | undefined) | undefined;
-	importFailure: { message: string } | null;
-}> {
+interface FactoryArtifacts {
+	readonly factoryMap: Record<string, FactoryEntry>;
+	readonly factoryShapes: Record<string, FactoryShape>;
+	readonly fieldAliasMap: Record<string, Record<string, string>>;
+	readonly factoryFields: Record<string, readonly string[]>;
+	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+	readonly kindNameFromId: (id: number) => string | undefined;
+	readonly readNode: Awaited<ReturnType<typeof readNodeOf>>;
+}
+
+async function loadFactoryModuleForGrammar(grammar: string): Promise<FactoryArtifacts | { readonly importFailure: string }> {
 	try {
 		const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
 		const { factoryShapes, fieldAliasMap, factoryFields, factorySlots } = await loadNodeModel(grammar);
@@ -382,12 +384,12 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryFields,
 			factorySlots,
 			kindNameFromId: await loadStorageKindNameFromId(grammar),
-			importFailure: null
+			readNode: await readNodeOf(grammar)
 		};
 	} catch (e) {
-		const message = `[validate-factory-roundtrip] failed to load ${grammar} factory artifacts: ${e instanceof Error ? e.message : e}`;
-		console.error(message);
-		return { factoryMap: {}, factoryShapes: {}, fieldAliasMap: {}, factoryFields: {}, factorySlots: {}, kindNameFromId: undefined, importFailure: { message } };
+		const importFailure = `[validate-factory-roundtrip] failed to load ${grammar} factory artifacts: ${e instanceof Error ? e.message : e}`;
+		console.error(importFailure);
+		return { importFailure };
 	}
 }
 
@@ -476,10 +478,10 @@ export async function validateFactoryStorage(
 	loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(grammar);
 
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, importFailure } =
-		await loadFactoryModuleForGrammar(grammar);
+	const loaded = await loadFactoryModuleForGrammar(grammar);
+	if ('importFailure' in loaded) return failedRun(grammar, [{ kind: '(factory-module-load)', message: loaded.importFailure }]);
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, readNode } = loaded;
 
-	const readNode = await readNodeOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
 	const { listSeparators } = await loadNodeModel(grammar);
@@ -509,28 +511,20 @@ export async function validateFactoryStorage(
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 
-	if (importFailure) return failedRun(grammar, [...errors, { kind: '(factory-module-load)', message: importFailure.message }]);
 	if (options.surface === 'ir' && surface === undefined)
 		return failedRun(grammar, [...errors, { kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` }]);
 
 	let readPathFailure: string | undefined;
-	if (!readNode) {
-		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
-	} else {
-		try {
-			const probeHandle = await buildReadHandle(grammar, '');
-			if (!probeHandle.read) {
-				readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
-			}
-		} catch (e) {
-			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
+	try {
+		const probeHandle = await buildReadHandle(grammar, '');
+		if (!probeHandle.read) {
+			readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
 		}
+	} catch (e) {
+		readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
 	}
-	if (readPathFailure || !readNode)
-		return failedRun(grammar, [
-			...errors,
-			{ kind: '(read-tree-unavailable)', message: `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}` }
-		]);
+	if (readPathFailure !== undefined)
+		return failedRun(grammar, [...errors, { kind: '(read-tree-unavailable)', message: `[validate-factory-roundtrip] ${readPathFailure}` }]);
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
@@ -554,7 +548,7 @@ export async function validateFactoryStorage(
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
 			if (w.$named === false) return;
-			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+			const sourceKind = kindNameFromId(w.$type);
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = spanOf(w);
@@ -619,7 +613,7 @@ export async function validateFactoryStorage(
 					...(rendered === undefined ? {} : { rendered })
 				});
 				const buildInner = (node: Record<string, unknown>): unknown => {
-					const innerKind = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+					const innerKind = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
 					if (innerKind === undefined) return null;
 					const innerSurface = surface?.entries[innerKind] === undefined ? undefined : surface;
 					return buildFactoryNodeFromReference(
@@ -633,7 +627,7 @@ export async function validateFactoryStorage(
 				let builtTree: AnyUntypedNode | null = null;
 				try {
 					const takesText = (node: Record<string, unknown>): boolean => {
-						const name = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+						const name = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
 						return name !== undefined && factoryShapes[name] === 'placed';
 					};
 					const root = referenceData as unknown as Record<string, unknown>;

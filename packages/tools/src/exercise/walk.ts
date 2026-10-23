@@ -7,8 +7,8 @@ import type { SlotAccessorOf } from '../validate/common.ts';
 interface CommonModule {
 	buildReadHandle(grammar: string, source: string): Promise<TreeHandle>;
 	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
-	readNodeOf(grammar: string): Promise<((tree: TreeHandle) => unknown) | null>;
-	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
+	readNodeOf(grammar: string): Promise<(tree: TreeHandle) => unknown>;
+	loadKindNameFromId(grammar: string): Promise<(id: number) => string>;
 	loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf>;
 	materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
 }
@@ -52,8 +52,8 @@ function isWalkNode(value: unknown): value is WalkNode {
 	);
 }
 
-function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
-	return kindNameFromId?.(node.$type) ?? String(node.$type);
+function resolveKindName(node: WalkNode, kindNameFromId: (id: number) => string): string {
+	return kindNameFromId(node.$type);
 }
 
 export function collectChildren(node: WalkNode, accessorOf: SlotAccessorOf): unknown[] {
@@ -105,10 +105,6 @@ export async function run(opts: WalkOptions): Promise<number> {
 
 	const common = await loadCommon();
 	const readNode = await common.readNodeOf(grammar);
-	if (readNode === null) {
-		process.stderr.write(`walk: no wrap module available for grammar '${grammar}'\n`);
-		return 1;
-	}
 
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
 	const accessorOf = await common.loadSlotAccessorOf(grammar);

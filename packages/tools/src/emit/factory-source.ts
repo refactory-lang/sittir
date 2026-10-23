@@ -786,7 +786,7 @@ export function printFactorySource(
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
-import { importGrammarModule, requireGrammarModule } from '../grammar-internals.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 import {
 	buildReadHandle,
 	loadKindNameFromId,
@@ -1008,13 +1008,11 @@ export async function emitFactorySourceText(
 	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
 	const readNode = await readNodeOf(grammar);
 	const hydrate = await hydrateOf(grammar);
-	if (!readNode || !hydrate) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const handle = await buildReadHandle(grammar, source);
 	const model = await loadNodeModel(grammar);
-	const types = await importGrammarModule(grammar, 'types.ts');
-	if (!types) throw new Error(`emit-factory-source: no types module for ${grammar}`);
+	const types = await requireGrammarModule(grammar, 'types.ts');
 	const displayNameFromId = await loadKindNameFromId(grammar);
-	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id) ?? displayNameFromId?.(id);
+	const kindNameFromId = (id: number): string => types.KIND_NAMES.get(id) ?? displayNameFromId(id);
 	const idOfName = new Map<string, number>();
 	for (const [id, name] of types.KIND_NAMES) {
 		if (!idOfName.has(name)) idOfName.set(name, id);

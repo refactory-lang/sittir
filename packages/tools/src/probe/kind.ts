@@ -819,7 +819,7 @@ async function readProbeLanes(
 	const read = (depth?: number): unknown => (coordinate === undefined ? handle.read!(0, depth) : readUntyped(handle, coordinate, depth));
 	const shallow = stripBigInts(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
-	const deepTyped = readNode ? readNode(handle, coordinate) : undefined;
+	const deepTyped = readNode(handle, coordinate);
 	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, await loadSlotAccessorOf(grammar), onAccessorThrow);
 	return { shallow, deep, deepTyped, deepUntypedNode };
 }

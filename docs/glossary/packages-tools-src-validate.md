@@ -453,32 +453,13 @@ The upstream judge: `.sittir/upstream.wasm`, the unmodified grammar sittir build
 
 A native node is a kind when its `$type` or its shown kind id (`$displayType` when present) names it; numeric ids resolve through the grammar's `kindNameFromId`.
 
-### `packages/tools/src/validate/common.ts::wrapExportOf`
-
-One export of a grammar's generated wrap module, loaded through the typed internal loader: `readNode`, `wrapNode` or `hydrateChild`. The selected export determines the return type. A module that fails to load is reported on stderr and yields null, as does a missing export.
-
 ### `packages/tools/src/validate/common.ts::readNodeOf`
 
-```text
-/**
- * Dynamic import of a grammar's `readNode` entry point. Used by
- * validators to build source-typed wrapped views — the wire `$type` is
- * the grammar symbol, so nodes arrive under their source kind and the
- * validator render dispatches through the source template directly.
- */
-```
+The grammar's wrapped read, built from the generated wrap module's `wrapNode` and `hydrate`: the root, or the node a coordinate names, read `depth` levels down and wrapped, so nodes arrive under their source kind. The wrap module is required (`requireGrammarModule`): a module that cannot load, or lacks either export, throws, and each validator turns that into its failed run.
 
 ### `packages/tools/src/validate/common.ts::loadWrapNode`
 
-```text
-/**
- * Dynamic import of a grammar's `wrapNode` entry point — the fluent-view
- * wrapper `readNode` applies after reading. Used to produce the same
- * wrapped shape for already-materialized data (e.g. a trivia entry's
- * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
- * through `readNode` itself.
- */
-```
+The generated wrap module's `wrapNode`, from the required module: the wrapper `readNodeOf` applies after reading, for data already materialized (a trivia entry's `NativeNodeCoords.embeddedData`) that has no handle to read through.
 
 ### `packages/tools/src/validate/common.ts::Seat`
 
@@ -660,29 +641,15 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 
 ### `packages/tools/src/validate/common.ts::loadIsLeafKind`
 
-The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id. Unknown ids, and a grammar with no node model, are not leaves.
+The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id through `loadKindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::loadKindNameFromId`
 
-#### body
-
-```text
-// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds findNativeNodeId/
-// walkNativeForKind's native<->WASM kind-name bridge, which must
-// match tree-sitter's own raw `.type` string (the display label),
-// not the canonical catalog key. See emitKindIdEnumAndLookups's
-// KIND_DISPLAY_NAMES doc comment.
-```
+Names a kind id with its display name from the generated `KIND_DISPLAY_NAMES` (not `KIND_NAMES`): it feeds the native/WASM kind-name bridge (`findNativeNodeId`, `walkNativeForKind`), which compares against tree-sitter's own `.type` string. The types module is required (`requireGrammarModule`), so a grammar whose module cannot load throws instead of answering nothing, and an id the table does not name throws: the table names every kind id and `ERROR`, so such an id is a defect, never a label to fall back on.
 
 ### `packages/tools/src/validate/common.ts::loadKindIdFromName`
 
-```text
-/**
- * Load the grammar package's `kindIdFromName` resolver for Phase D numeric
- * `$type` support. Returns the raw function (which throws on unknown names)
- * so callers can wrap it in try/catch as needed.
- */
-```
+The grammar package's generated `kindIdFromName`, from the required types module (`requireGrammarModule`). It throws on a name the catalog does not have, so a caller that reads names outside the catalog wraps it.
 
 ### `packages/tools/src/validate/common.ts::loadLanguageForGrammar`
 
@@ -1437,7 +1404,7 @@ Loads the grammar's generated `reparse-hosts.ts` once; `wrapForReparse` reads it
 
 ### `packages/tools/src/validate/factory-storage.ts::loadFactoryModuleForGrammar`
 
-Loads the generated raw factory map through `requireGrammarModule`, scopes builders to the existing engine, reads validator-only calling conventions and slot metadata from the pure-data node model, and takes factory identity from `loadStorageKindNameFromId`. Every artifact is required: a missing module, a module without its declared exports, or a failing types module becomes the one import-failure record, which the validator reports as a failed run rather than an empty 0/0 pass.
+Loads everything factory storage validates against, or the one reason it could not: the raw factory map through `requireGrammarModule` (builders scoped to the existing engine), the validator-only calling conventions and slot metadata from the node model, factory identity from `loadStorageKindNameFromId`, and the wrapped read (`readNodeOf`). Every artifact is required, so a missing module, a module without its declared exports, or a failing types or wrap module returns `importFailure`, which the validator reports as a failed run rather than an empty 0/0 pass.
 
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 
@@ -1453,7 +1420,7 @@ The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as 
 
 ### `packages/tools/src/validate/common.ts::hydrateOf`
 
-A grammar's generated `hydrate`, or `null` when the grammar has no wrap module, so a validator hydrates read data on the same path as the accessors.
+The generated wrap module's `hydrate`, from the required module, so a validator hydrates read data on the same path as the accessors.
 
 ### `packages/tools/src/validate/common.ts::storedChildren`
 
