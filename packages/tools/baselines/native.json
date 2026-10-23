@@ -17,7 +17,7 @@
         },
         "reason": "Upstream's \"Literal types\" corpus entry holds `let x: 2 | -3 | +4`. TypeScript admits a minus sign on a numeric literal type and never a plus, and the grammar rejects `+4` in a type position, so every validator skips that entry as a parse error. The local entry \"Literal types with a minus sign\" is the same entry with `-4` for `+4`, and keeps its shapes under test."
     },
-    "commit": "5243294",
+    "commit": "63af940",
     "grammars": {
         "python": {
             "kinds": [
