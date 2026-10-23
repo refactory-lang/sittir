@@ -12,6 +12,7 @@ import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts';
 import { emitTypesModules } from '../types.ts';
 import { emitIs } from '../is.ts';
+import { resolveIrKeys } from '../../compiler/assemble.ts';
 
 function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 	const members = [
@@ -37,11 +38,12 @@ function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 			{ separatorRule: undefined, simplifiedRule, renderRule, kindEntries }
 		)
 	);
+	resolveIrKeys(nodes);
 	return makeNodeMapWith(nodes);
 }
 
 it.each(['typescript', 'typescript6'])(
-	'compiles self-containing list argument rows with %s (#577)',
+	'compiles self-containing list argument rows with %s',
 	(compiler) => {
 		const root = fileURLToPath(new URL('../../../../..', import.meta.url));
 		const dir = mkdtempSync(join(root, '.self-containing-list-'));

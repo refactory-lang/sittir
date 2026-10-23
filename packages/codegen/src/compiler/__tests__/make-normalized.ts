@@ -42,7 +42,6 @@ export function makeNormalized(
 		fileTypes: [],
 		normalizedRules,
 		rules: simplifiedRules,
-		supertypes: new Set(),
 		factoryInline: new Set(),
 		word: null,
 		...overrides

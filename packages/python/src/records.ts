@@ -33,7 +33,6 @@ export const records = {
 	ElifClauseNode: { words: 12, condition: { word: 2, width: 5 }, consequence: { word: 7, width: 5 } },
 	ElseClauseNode: { words: 7, body: { word: 2, width: 5 } },
 	MatchStatementNode: { words: 12, subjects: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
-	MatchBlockNode: { words: 7, content: { word: 2, width: 5 } },
 	CaseClauseNode: {
 		words: 17,
 		case_patterns: { word: 2, width: 5 },

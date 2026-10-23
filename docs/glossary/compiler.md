@@ -8039,7 +8039,7 @@ The normalize phase. It restructures sequences, choices, optionals and repeats f
 
 ### `packages/codegen/src/compiler/normalize.ts::supertypeKindsOf`
 
-Every supertype the model has, the one place the two link facts that name them are joined: the grammar's declared supertypes, under the names link gives them (`supertypes`), and every rule link stamps `SUPERTYPE`, declared or a hidden choice that is a supertype by shape. They differ because link builds a declared supertype that is the parent of a wire variant split as a visible polymorph, with no stamp: python's `match_block`, which the grammar declares as `_match_block`. assemble reads its supertype arms from this set (`dsl/symbol-table.ts::supertypeArmsOf`).
+Every supertype the model has: the rules link stamps `SUPERTYPE`, declared or a hidden choice that is a supertype by shape. The stamp is the one fact, and it matches the parser. A declared supertype the parser shows as a node is no supertype in the parser either: tree-sitter drops its supertype flag (`dsl/symbol-table.ts::predictSymbolTable`), and link builds the kind as that node. Wire never lists a parent the parser shows as a node (`dsl/wire/wire.ts::wrapSupertypesCallback`). assemble reads its supertype arms from this set (`dsl/symbol-table.ts::supertypeArmsOf`).
 
 ### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
 

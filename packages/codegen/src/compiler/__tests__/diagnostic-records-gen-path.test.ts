@@ -38,9 +38,9 @@ describe('diagnostic records on the gen path', () => {
 		}, 180_000);
 	}
 
-	it('a kind renamed in some stages keeps its source rule id in every stage', async () => {
+	it('a hidden kind keeps its source rule id in every stage', async () => {
 		const { stages, raw } = await compilationOf('python');
-		expect(raw.ruleCatalog.rootsByKind.get('match_block')).toBe('rule:_match_block:root');
+		expect(raw.ruleCatalog.rootsByKind.get('_match_block')).toBe('rule:_match_block:root');
 		for (const catalog of [stages!.raw.ruleCatalog!, stages!.enriched.ruleCatalog!]) {
 			expect([...catalog.rootsByKind.values()]).toContain('rule:_match_block:root');
 		}
