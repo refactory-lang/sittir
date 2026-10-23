@@ -474,7 +474,7 @@ describe('flattenSeatsOf prefixes a group key that collides with the parent', ()
 		const [seat] = flattenSeatsOf(nodeMap.nodes.get('binary')!, nodeMap) as [ReturnType<typeof flattenSeatsOf>[number]];
 		expect(seat.group.kind).toBe('binary_in');
 		expect(seat.keys).toEqual([
-			{ key: `${seat.slot.configKey}Left`, field: 'left' },
+			{ key: `${seat.slot.propertyName}Left`, field: 'left' },
 			{ key: 'right', field: 'right' }
 		]);
 	});
@@ -510,11 +510,11 @@ describe('flattenSeatsOf flattens every group a node seats', () => {
 		const [from, to] = seats as [(typeof seats)[number], (typeof seats)[number]];
 		expect(from.keys).toEqual([
 			{ key: 'start', field: 'start' },
-			{ key: `${from.slot.configKey}Step`, field: 'step' }
+			{ key: `${from.slot.propertyName}Step`, field: 'step' }
 		]);
 		expect(to.keys).toEqual([
 			{ key: 'end', field: 'end' },
-			{ key: `${to.slot.configKey}Step`, field: 'step' }
+			{ key: `${to.slot.propertyName}Step`, field: 'step' }
 		]);
 	});
 });

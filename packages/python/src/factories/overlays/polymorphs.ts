@@ -884,7 +884,7 @@ const keywordPattern$string =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
+			if (key === 'stringStart' || key === 'contents' || key === 'stringEnd') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
@@ -2496,7 +2496,7 @@ const keyValuePattern$string =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
+			if (key === 'stringStart' || key === 'contents' || key === 'stringEnd') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);

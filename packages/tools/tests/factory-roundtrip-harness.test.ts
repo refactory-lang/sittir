@@ -15,7 +15,7 @@ describe('factory-roundtrip harness', () => {
 		// A direct factory's value is the sole slot resolved from the model's
 		// slot record, falling back to the first child arg.
 		expect(content).toMatch(
-			/if \(camelName !== undefined\) return record\[camelName\];\s*return getChildFactoryArgs\([^)]*\)\[0\];/
+			/if \(rawName !== undefined\) return record\[slotKeyOf\(factorySlots, kind, rawName\)\];\s*return getChildFactoryArgs\([^)]*\)\[0\];/
 		);
 		expect(content).not.toMatch(/: \(\(readData\.\$children \?\? \[\]\)\.filter/);
 		expect(content).not.toMatch(/: \(\(config\.children \?\? \[\]\) as unknown\[\]\)\[0\]/);

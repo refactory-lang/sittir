@@ -1030,7 +1030,7 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	const registered = registeredSlots(node);
 	return registered.length === 0
 		? undefined
-		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey), storageKeys: registered.map((slot) => slot.storageKey) };
+		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.propertyName), storageKeys: registered.map((slot) => slot.storageKey) };
 }
 
 export function classifyFactoryShape(

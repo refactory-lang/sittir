@@ -32,6 +32,7 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	getChildFactoryArgs,
+	slotKeyOf,
 	nodeToConfig,
 	loadNodeModel,
 	loadScopedFactoryMap,
@@ -42,6 +43,7 @@ import {
 	type ValidatorSkip,
 	type CorpusEntry
 } from './common.ts';
+import { KindCases, type CasesByKind } from './kind-cases.ts';
 
 // ---------------------------------------------------------------------------
 // Structural analysis
@@ -138,6 +140,7 @@ export interface FromValidationError {
 export interface FromValidationResult {
 	grammar: string;
 	total: number;
+	casesByKind: CasesByKind;
 	pass: number;
 	fail: number;
 	skip: number;
@@ -245,6 +248,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		return {
 			grammar,
 			total: 0,
+			casesByKind: {},
 			pass: 0,
 			fail: 0,
 			skip: 0,
@@ -258,9 +262,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	}
 
 	const entries = loadCorpusEntries(grammar);
-	const testedKinds = new Set<string>();
+	const cases = new KindCases();
 	let pass = 0;
-	let total = 0;
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 	const orphanedExtras = new Map<string, ValidatorSkip>();
@@ -421,9 +424,10 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						// names one, otherwise treat it as a single child call.
 						const fieldNames = factoryFields[readKind];
 						const rawName = fieldNames?.[0];
-						const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-						const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
+						const value =
+							rawName !== undefined
+								? (config as Record<string, unknown>)[slotKeyOf(factorySlots, readKind, rawName)]
+								: getChildFactoryArgs(readKind, config, factorySlots, factoryFields)[0];
 						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
 							readTree !== undefined && readNode !== null && isCoordinate(value) ? readNode(readTree, value) : value
 						);
@@ -558,9 +562,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				}
 				continue;
 			}
-			if (testedKinds.has(kind)) continue;
-			testedKinds.add(kind);
-			total++;
+			if (cases.has(kind)) continue;
+			cases.add(kind);
 
 			const node1 = findFirst(tree1.rootNode, kind, occurrenceKind);
 			if (!node1) {
@@ -569,8 +572,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			}
 			const unread = await validateAt(entry, node1, kind, kind);
 			if (unread === undefined) continue;
-			total--;
-			testedKinds.delete(kind);
+			cases.remove(kind);
 			if (unread === 'native-read-dropped-extra') {
 				if (!orphanedExtras.has(kind)) orphanedExtras.set(kind, { entry: entry.name, kind, reason: unread, input: entry.source });
 			} else if (!unreadKinds.has(kind)) {
@@ -580,9 +582,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	}
 
 	for (const [kind, entry] of unreadKinds) {
-		if (testedKinds.has(kind)) continue;
-		testedKinds.add(kind);
-		total++;
+		if (cases.has(kind)) continue;
+		cases.add(kind);
 		const tree = parser.parse(entry.source) as TSTree;
 		let ancestor = findFirst(tree.rootNode, kind, occurrenceKind)?.parent ?? null;
 		while (ancestor !== null) {
@@ -595,11 +596,13 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		}
 	}
 
-	const trivia = [...orphanedExtras].filter(([kind]) => !testedKinds.has(kind)).map(([, skip]) => skip);
+	const trivia = [...orphanedExtras].filter(([kind]) => !cases.has(kind)).map(([, skip]) => skip);
+	const total = cases.total;
 	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
+		casesByKind: cases.byKind(),
 		pass,
 		fail: total - pass - skips.length,
 		skip: skips.length,

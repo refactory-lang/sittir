@@ -35,6 +35,7 @@ import {
 	buildReadHandle,
 	walkWrappedTree,
 	materialize,
+	loadSlotAccessorOf,
 	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -52,7 +53,14 @@ import {
 	loadNativeEngine
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
-import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
+import {
+	emptyBuiltRender,
+	emptyBuiltRenderRun,
+	finishBuiltRender,
+	type BuiltRenderFailure,
+	type BuiltRenderResult
+} from './built-render.ts';
+import { KindCases, type CasesByKind } from './kind-cases.ts';
 import { sourceSpans } from '@sittir/common';
 
 /**
@@ -273,6 +281,7 @@ function compareNodeStorage(
 export interface FactoryStorageResult {
 	grammar: string;
 	total: number;
+	casesByKind: CasesByKind;
 	pass: number;
 	fail: number;
 	skip: number;
@@ -540,7 +549,8 @@ export async function validateFactoryStorage(
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
 	const { listSeparators } = await loadNodeModel(grammar);
-	const render = emptyBuiltRender();
+	const accessorOf = await loadSlotAccessorOf(grammar);
+	const render = emptyBuiltRenderRun();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -561,7 +571,7 @@ export async function validateFactoryStorage(
 	}[] = [];
 	const testedPairs = initKindEntryDeduplicator();
 	let pass = 0;
-	let total = 0;
+	const cases = new KindCases();
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 
@@ -573,6 +583,7 @@ export async function validateFactoryStorage(
 		return {
 			grammar,
 			total: 0,
+			casesByKind: {},
 			pass: 0,
 			fail: 0,
 			skip: 0,
@@ -609,6 +620,7 @@ export async function validateFactoryStorage(
 		return {
 			grammar,
 			total: 0,
+			casesByKind: {},
 			pass: 0,
 			fail: 1,
 			skip: 0,
@@ -641,7 +653,7 @@ export async function validateFactoryStorage(
 		const wrappedRoot = readNode(handle) as TypedNode;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
-		walkWrappedTree(wrappedRoot, (w: TypedNode) => {
+		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
@@ -661,7 +673,7 @@ export async function validateFactoryStorage(
 				const pairKey = `${kind}\0${entry.name}`;
 				if (testedPairs.has(pairKey)) continue;
 				testedPairs.add(pairKey);
-				total++;
+				cases.add(kind);
 
 				const indices = spans.toIndices(cand);
 				const node1 =
@@ -673,7 +685,7 @@ export async function validateFactoryStorage(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = materialize(cand.node);
+				const referenceData = materialize(cand.node, accessorOf);
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
@@ -701,7 +713,7 @@ export async function validateFactoryStorage(
 					continue;
 				}
 
-				render.total++;
+				render.cases.add(kind);
 				const renderFailure = (message: string, rendered?: string): BuiltRenderFailure => ({
 					kind,
 					entry: entry.name,
@@ -753,7 +765,7 @@ export async function validateFactoryStorage(
 				}
 				const hostless = wrapRendered('', kind, node1?.type ?? kind, renderReparseContext) === null;
 				if (hostless) {
-					render.total--;
+					render.cases.remove(kind);
 					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
@@ -772,7 +784,7 @@ export async function validateFactoryStorage(
 							tolerance
 						);
 						if (outcome.status === 'excluded') {
-							render.total--;
+							render.cases.remove(kind);
 							render.excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
 						} else if (outcome.status === 'failed') {
 							render.errors.push(renderFailure(outcome.message, outcome.rendered));
@@ -811,10 +823,12 @@ export async function validateFactoryStorage(
 		}
 	}
 
+	const total = cases.total;
 	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
+		casesByKind: cases.byKind(),
 		pass,
 		fail: total - pass - skips.length,
 		skip: skips.length,
@@ -823,7 +837,7 @@ export async function validateFactoryStorage(
 		astMismatches: dedupeMismatchesByContainment(astMismatches),
 		skips,
 		excluded,
-		render
+		render: finishBuiltRender(render)
 	};
 }
 

@@ -4,89 +4,89 @@ import type { TokenInterior } from '@sittir/common/utils';
 
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
-	comment: { regex: '^#(?<content>(?:.*))$', slots: [{ name: 'content', configKey: 'content' }] },
+	comment: { regex: '^#(?<content>(?:.*))$', slots: [{ name: 'content', propertyName: 'content' }] },
 	escape_sequence_hex: {
 		regex: '^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_line_break: {
 		regex: '^\\\\(?<content>(?:\\r?\\n))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_named: {
 		regex: '^\\\\(?<content>(?:N\\{[^}]+\\}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_octal: {
 		regex: '^\\\\(?<content>(?:\\d{1,3}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_simple: {
 		regex: '^\\\\(?<content>(?:[\'"abfrntv\\\\]))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_unicode_fixed: {
 		regex: '^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_unicode_wide: {
 		regex: '^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	float_leading_point: {
 		regex:
 			'^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
 		slots: [
-			{ name: 'integer', configKey: 'integer' },
-			{ name: 'fraction', configKey: 'fraction' },
-			{ name: 'marker', configKey: 'marker' },
-			{ name: 'sign', configKey: 'sign' },
-			{ name: 'exponent', configKey: 'exponent' },
-			{ name: 'imaginary', configKey: 'imaginary' }
+			{ name: 'integer', propertyName: 'integer' },
+			{ name: 'fraction', propertyName: 'fraction' },
+			{ name: 'marker', propertyName: 'marker' },
+			{ name: 'sign', propertyName: 'sign' },
+			{ name: 'exponent', propertyName: 'exponent' },
+			{ name: 'imaginary', propertyName: 'imaginary' }
 		]
 	},
 	float_point: {
 		regex:
 			'^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
 		slots: [
-			{ name: 'integer', configKey: 'integer' },
-			{ name: 'fraction', configKey: 'fraction' },
-			{ name: 'marker', configKey: 'marker' },
-			{ name: 'sign', configKey: 'sign' },
-			{ name: 'exponent', configKey: 'exponent' },
-			{ name: 'imaginary', configKey: 'imaginary' }
+			{ name: 'integer', propertyName: 'integer' },
+			{ name: 'fraction', propertyName: 'fraction' },
+			{ name: 'marker', propertyName: 'marker' },
+			{ name: 'sign', propertyName: 'sign' },
+			{ name: 'exponent', propertyName: 'exponent' },
+			{ name: 'imaginary', propertyName: 'imaginary' }
 		]
 	},
 	float_scientific: {
 		regex:
 			'^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$',
 		slots: [
-			{ name: 'integer', configKey: 'integer' },
-			{ name: 'marker', configKey: 'marker' },
-			{ name: 'sign', configKey: 'sign' },
-			{ name: 'exponent', configKey: 'exponent' },
-			{ name: 'imaginary', configKey: 'imaginary' }
+			{ name: 'integer', propertyName: 'integer' },
+			{ name: 'marker', propertyName: 'marker' },
+			{ name: 'sign', propertyName: 'sign' },
+			{ name: 'exponent', propertyName: 'exponent' },
+			{ name: 'imaginary', propertyName: 'imaginary' }
 		]
 	},
 	integer_binary: {
 		regex: '^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$',
 		slots: [
-			{ name: 'prefix', configKey: 'prefix' },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	integer_hex: {
 		regex: '^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$',
 		slots: [
-			{ name: 'prefix', configKey: 'prefix' },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'content', propertyName: 'content' }
 		]
 	},
 	integer_octal: {
 		regex: '^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$',
 		slots: [
-			{ name: 'prefix', configKey: 'prefix' },
-			{ name: 'content', configKey: 'content' }
+			{ name: 'prefix', propertyName: 'prefix' },
+			{ name: 'content', propertyName: 'content' }
 		]
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };

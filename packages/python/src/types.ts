@@ -1888,6 +1888,9 @@ export enum IntegerDecimalKind {
 export interface Module {
 	readonly $type: TSKindId.Module;
 	readonly _statements: readonly Statement[];
+	readonly __slotNames__?: {
+		readonly _statements: 'statements';
+	};
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
@@ -1897,6 +1900,9 @@ export interface Module {
 export interface SimpleStatements {
 	readonly $type: TSKindId.SimpleStatements;
 	readonly _elements: SimpleStatementsElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements: readonly SimpleStatement[];
 	};
@@ -1913,6 +1919,9 @@ export interface SimpleStatements {
 export interface ImportStatement {
 	readonly $type: TSKindId.ImportStatement;
 	readonly _names: Names;
+	readonly __slotNames__?: {
+		readonly _names: 'names';
+	};
 	readonly __looseHints__?: {
 		readonly names: readonly ImportList[];
 	};
@@ -1926,6 +1935,10 @@ export interface RelativeImport {
 	readonly $type: TSKindId.RelativeImport;
 	readonly _prefix: ImportPrefix;
 	readonly _name?: DottedName;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _name: 'name';
+	};
 	readonly __looseHints__?: {
 		readonly name?: readonly Identifier[];
 	};
@@ -1940,6 +1953,9 @@ export interface RelativeImport {
 export interface FutureImportStatement {
 	readonly $type: TSKindId.FutureImportStatement;
 	readonly _content: ImportList | ParenthesizedImportList;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ImportList | T.ParenthesizedImportList>;
 	};
@@ -1950,6 +1966,10 @@ export interface ImportFromStatement {
 	readonly $type: TSKindId.ImportFromStatement;
 	readonly _module_name: RelativeImport | DottedName;
 	readonly _content: TSKindId.WildcardImport | ImportList | ParenthesizedImportList;
+	readonly __slotNames__?: {
+		readonly _module_name: 'moduleName';
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'*', TSKindId.WildcardImport | TSKindId.Star> | ImportList | ParenthesizedImportList;
 	};
@@ -1964,6 +1984,9 @@ export interface ImportFromStatement {
 export interface ImportList {
 	readonly $type: TSKindId.ImportList;
 	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
+	readonly __slotNames__?: {
+		readonly _name: 'names';
+	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.DottedName | T.AliasedImport>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -1979,6 +2002,10 @@ export interface AliasedImport {
 	readonly $type: TSKindId.AliasedImport;
 	readonly _name: DottedName;
 	readonly _alias: Identifier;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _alias: 'alias';
+	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 	};
@@ -1993,6 +2020,9 @@ export interface AliasedImport {
 export interface PrintStatement {
 	readonly $type: TSKindId.PrintStatement;
 	readonly _content: PrintStatementChevron | PrintStatementPlain;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.PrintStatementChevron | T.PrintStatementPlain>;
 	};
@@ -2002,6 +2032,9 @@ export interface PrintStatement {
 export interface Chevron {
 	readonly $type: TSKindId.Chevron;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2016,6 +2049,9 @@ export interface Chevron {
 export interface AssertStatement {
 	readonly $type: TSKindId.AssertStatement;
 	readonly _expression: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _expression: 'expressions';
+	};
 	readonly __inputHints__?: {
 		readonly expression: NonEmptyArray<
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2031,6 +2067,9 @@ export interface AssertStatement {
 export interface ExpressionStatement {
 	readonly $type: TSKindId.ExpressionStatement;
 	readonly _content: Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2052,6 +2091,10 @@ export interface NamedExpression {
 	readonly $type: TSKindId.NamedExpression;
 	readonly _name: Identifier;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2068,6 +2111,9 @@ export interface NamedExpression {
 export interface NamedExpressionLhs {
 	readonly $type: TSKindId.NamedExpressionLhs;
 	readonly _identifier: Identifier;
+	readonly __slotNames__?: {
+		readonly _identifier: 'identifier';
+	};
 	readonly __slotHints__?: {
 		readonly identifier: SlotHint<T.Identifier>;
 	};
@@ -2077,6 +2123,9 @@ export interface NamedExpressionLhs {
 export interface ReturnStatement {
 	readonly $type: TSKindId.ReturnStatement;
 	readonly _expressions?: Expression | ExpressionList;
+	readonly __slotNames__?: {
+		readonly _expressions: 'expressions';
+	};
 	readonly __inputHints__?: {
 		readonly expressions?:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2092,6 +2141,9 @@ export interface ReturnStatement {
 export interface DeleteStatement {
 	readonly $type: TSKindId.DeleteStatement;
 	readonly _expressions: Expression | ExpressionList;
+	readonly __slotNames__?: {
+		readonly _expressions: 'expressions';
+	};
 	readonly __inputHints__?: {
 		readonly expressions:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2108,6 +2160,10 @@ export interface RaiseStatement {
 	readonly $type: TSKindId.RaiseStatement;
 	readonly _expressions?: Expression | ExpressionList;
 	readonly _cause?: Expression;
+	readonly __slotNames__?: {
+		readonly _expressions: 'expressions';
+		readonly _cause: 'cause';
+	};
 	readonly __inputHints__?: {
 		readonly expressions?:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2130,6 +2186,11 @@ export interface IfStatement {
 	readonly _condition: Expression;
 	readonly _consequence: Suite;
 	readonly _alternative: readonly (ElifClause | ElseClause)[];
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+		readonly _consequence: 'consequence';
+		readonly _alternative: 'alternatives';
+	};
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2149,6 +2210,10 @@ export interface ElifClause {
 	readonly $type: TSKindId.ElifClause;
 	readonly _condition: Expression;
 	readonly _consequence: Suite;
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+		readonly _consequence: 'consequence';
+	};
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2165,6 +2230,9 @@ export interface ElifClause {
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
 	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<T.Suite>;
 	};
@@ -2175,6 +2243,10 @@ export interface MatchStatement {
 	readonly $type: TSKindId.MatchStatement;
 	readonly _subjects: Subjects;
 	readonly _body: MatchBlock;
+	readonly __slotNames__?: {
+		readonly _subjects: 'subjects';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly subjects: readonly Expression[];
 	};
@@ -2194,6 +2266,11 @@ export interface CaseClause {
 	readonly _case_patterns: CasePatterns;
 	readonly _guard?: IfClause;
 	readonly _consequence: Suite;
+	readonly __slotNames__?: {
+		readonly _case_patterns: 'casePatterns';
+		readonly _guard: 'guard';
+		readonly _consequence: 'consequence';
+	};
 	readonly __looseHints__?: {
 		readonly case_patterns: readonly CasePattern[];
 		readonly guard?: readonly Expression[];
@@ -2218,6 +2295,13 @@ export interface ForStatement {
 	readonly _right: Expression | ExpressionList;
 	readonly _body: Suite;
 	readonly _alternative?: ElseClause;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _left: 'left';
+		readonly _right: 'right';
+		readonly _body: 'body';
+		readonly _alternative: 'alternative';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly right:
@@ -2247,6 +2331,11 @@ export interface WhileStatement {
 	readonly _condition: Expression;
 	readonly _body: Suite;
 	readonly _alternative?: ElseClause;
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+		readonly _body: 'body';
+		readonly _alternative: 'alternative';
+	};
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2271,6 +2360,12 @@ export interface TryStatement {
 	readonly _except_clauses: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _except_clauses: 'exceptClauses';
+		readonly _else_clause: 'elseClause';
+		readonly _finally_clause: 'finallyClause';
+	};
 	readonly __looseHints__?: {
 		readonly else_clause?: readonly Suite[];
 		readonly finally_clause?: readonly Suite[];
@@ -2292,6 +2387,11 @@ export interface ExceptClause {
 	readonly _group: boolean;
 	readonly _exception?: ExceptClauseException;
 	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _group: 'group';
+		readonly _exception: 'exception';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly group?: BaseBooleanKeyword<'*'>;
 	};
@@ -2311,6 +2411,9 @@ export interface ExceptClause {
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
 	readonly _block: Suite;
+	readonly __slotNames__?: {
+		readonly _block: 'block';
+	};
 	readonly __slotHints__?: {
 		readonly block: SlotHint<T.Suite>;
 	};
@@ -2322,6 +2425,11 @@ export interface WithStatement {
 	readonly _async: boolean;
 	readonly _with_clause: WithClause;
 	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _with_clause: 'withClause';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 	};
@@ -2338,6 +2446,9 @@ export interface WithStatement {
 export interface WithItem {
 	readonly $type: TSKindId.WithItem;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2357,6 +2468,14 @@ export interface FunctionDefinition {
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
 	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 	};
@@ -2388,6 +2507,9 @@ export interface FunctionDefinition {
 export interface Parameters {
 	readonly $type: TSKindId.Parameters;
 	readonly _elements?: ParametersElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly Parameter[];
 	};
@@ -2404,6 +2526,9 @@ export interface Parameters {
 export interface LambdaParameters {
 	readonly $type: TSKindId.LambdaParameters;
 	readonly _parameters_elements: ParametersElements;
+	readonly __slotNames__?: {
+		readonly _parameters_elements: 'parametersElements';
+	};
 	readonly __looseHints__?: {
 		readonly parameters_elements: readonly Parameter[];
 	};
@@ -2420,6 +2545,9 @@ export interface LambdaParameters {
 export interface ListSplat {
 	readonly $type: TSKindId.ListSplat;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2434,6 +2562,9 @@ export interface ListSplat {
 export interface DictionarySplat {
 	readonly $type: TSKindId.DictionarySplat;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2448,6 +2579,9 @@ export interface DictionarySplat {
 export interface GlobalStatement {
 	readonly $type: TSKindId.GlobalStatement;
 	readonly _names: NonEmptyArray<Identifier>;
+	readonly __slotNames__?: {
+		readonly _names: 'names';
+	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
@@ -2457,6 +2591,9 @@ export interface GlobalStatement {
 export interface NonlocalStatement {
 	readonly $type: TSKindId.NonlocalStatement;
 	readonly _names: NonEmptyArray<Identifier>;
+	readonly __slotNames__?: {
+		readonly _names: 'names';
+	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
@@ -2467,6 +2604,10 @@ export interface ExecStatement {
 	readonly $type: TSKindId.ExecStatement;
 	readonly _code: String | Identifier;
 	readonly _in_clause: readonly Expression[];
+	readonly __slotNames__?: {
+		readonly _code: 'code';
+		readonly _in_clause: 'inClauses';
+	};
 	readonly __inputHints__?: {
 		readonly in_clause?: readonly (
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2475,7 +2616,7 @@ export interface ExecStatement {
 	};
 	readonly __slotHints__?: {
 		readonly code: SlotHint<T.String | T.Identifier>;
-		readonly inClauses: SlotHint<NonNullable<NonNullable<T.ExecStatement.Config>['inClause']>[number][], true, true>;
+		readonly inClauses: SlotHint<NonNullable<NonNullable<T.ExecStatement.Config>['inClauses']>[number][], true, true>;
 	};
 	readonly code: () => String | Identifier;
 	readonly inClauses: () => readonly Expression[];
@@ -2485,6 +2626,10 @@ export interface TypeAliasStatement {
 	readonly $type: TSKindId.TypeAliasStatement;
 	readonly _left: Type;
 	readonly _right: Type;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __looseHints__?: {
 		readonly left: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly right: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -2503,6 +2648,12 @@ export interface ClassDefinition {
 	readonly _type_parameters?: TypeParameter;
 	readonly _superclasses?: ArgumentList;
 	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _superclasses: 'superclasses';
+		readonly _body: 'body';
+	};
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly Type[];
 		readonly superclasses?: readonly (
@@ -2535,6 +2686,9 @@ export interface ClassDefinition {
 export interface TypeParameter {
 	readonly $type: TSKindId.TypeParameter;
 	readonly _types: Types;
+	readonly __slotNames__?: {
+		readonly _types: 'types';
+	};
 	readonly __looseHints__?: {
 		readonly types: readonly Type[];
 	};
@@ -2551,6 +2705,9 @@ export interface TypeParameter {
 export interface ParenthesizedListSplat {
 	readonly $type: TSKindId.ParenthesizedListSplat;
 	readonly _content: ParenthesizedListSplat | ListSplat;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ParenthesizedListSplat | T.ListSplat>;
 	};
@@ -2560,6 +2717,9 @@ export interface ParenthesizedListSplat {
 export interface ArgumentList {
 	readonly $type: TSKindId.ArgumentList;
 	readonly _arguments?: ArgumentListElements;
+	readonly __slotNames__?: {
+		readonly _arguments: 'arguments';
+	};
 	readonly __looseHints__?: {
 		readonly arguments?: readonly (
 			| Expression
@@ -2589,6 +2749,10 @@ export interface DecoratedDefinition {
 	readonly $type: TSKindId.DecoratedDefinition;
 	readonly _decorator: NonEmptyArray<Decorator>;
 	readonly _definition: ClassDefinition | FunctionDefinition;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _definition: 'definition';
+	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
 		readonly definition: SlotHint<T.ClassDefinition | T.FunctionDefinition>;
@@ -2600,6 +2764,9 @@ export interface DecoratedDefinition {
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2614,6 +2781,9 @@ export interface Decorator {
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _statements: readonly Statement[];
+	readonly __slotNames__?: {
+		readonly _statements: 'statements';
+	};
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
@@ -2623,6 +2793,9 @@ export interface Block {
 export interface ExpressionList {
 	readonly $type: TSKindId.ExpressionList;
 	readonly _item: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -2634,6 +2807,9 @@ export interface ExpressionList {
 export interface DottedName {
 	readonly $type: TSKindId.DottedName;
 	readonly _names: NonEmptyArray<Identifier>;
+	readonly __slotNames__?: {
+		readonly _names: 'names';
+	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
@@ -2643,6 +2819,9 @@ export interface DottedName {
 export interface CasePattern {
 	readonly $type: TSKindId.CasePattern;
 	readonly _content: CaseAsPattern | KeywordPattern | SimplePattern;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>;
 	};
@@ -2667,6 +2846,9 @@ export interface SimplePattern {
 		| ComplexPattern
 		| DottedName
 		| TSKindId.WildcardPattern;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<
@@ -2728,6 +2910,10 @@ export interface CaseAsPattern {
 	readonly $type: TSKindId.CaseAsPattern;
 	readonly _case_pattern: CasePattern;
 	readonly _identifier: Identifier;
+	readonly __slotNames__?: {
+		readonly _case_pattern: 'casePattern';
+		readonly _identifier: 'identifier';
+	};
 	readonly __looseHints__?: {
 		readonly case_pattern: readonly (CaseAsPattern | KeywordPattern | SimplePattern)[];
 	};
@@ -2758,6 +2944,9 @@ export interface UnionPattern {
 		| DottedName
 		| TSKindId.WildcardPattern
 	>;
+	readonly __slotNames__?: {
+		readonly _patterns: 'patterns';
+	};
 	readonly __inputHints__?: {
 		readonly patterns: NonEmptyArray<
 			| KindEnum<
@@ -2823,6 +3012,9 @@ export interface UnionPattern {
 export interface DictPattern {
 	readonly $type: TSKindId.DictPattern;
 	readonly _elements?: DictPatternElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (KeyValuePattern | SplatPattern)[];
 	};
@@ -2861,6 +3053,10 @@ export interface KeyValuePattern {
 		| DottedName
 		| TSKindId.WildcardPattern;
 	readonly _value: CasePattern;
+	readonly __slotNames__?: {
+		readonly _key: 'key';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly key:
 			| KindEnum<
@@ -2924,6 +3120,10 @@ export interface KeywordPattern {
 		| ComplexPattern
 		| DottedName
 		| TSKindId.WildcardPattern;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<
@@ -2969,6 +3169,10 @@ export interface SplatPattern {
 	readonly $type: TSKindId.SplatPattern;
 	readonly _operator: number;
 	readonly _name: Identifier | TSKindId.Underscore;
+	readonly __slotNames__?: {
+		readonly _operator: 'operator';
+		readonly _name: 'name';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
 		readonly name: KindEnum<'_', TSKindId.Underscore> | Identifier;
@@ -2985,6 +3189,10 @@ export interface ClassPattern {
 	readonly $type: TSKindId.ClassPattern;
 	readonly _name: DottedName;
 	readonly _arguments?: ListPatternCasePatterns;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _arguments: 'arguments';
+	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 		readonly arguments?: readonly CasePattern[];
@@ -3006,6 +3214,12 @@ export interface ComplexPattern {
 	readonly _real: Integer | Float;
 	readonly _operator: number;
 	readonly _imaginary: Integer | Float;
+	readonly __slotNames__?: {
+		readonly _sign: 'sign';
+		readonly _real: 'real';
+		readonly _operator: 'operator';
+		readonly _imaginary: 'imaginary';
+	};
 	readonly __inputHints__?: {
 		readonly sign?: BaseBooleanKeyword<'-'>;
 		readonly operator: KindEnum<'+' | '-', TSKindId.Plus | TSKindId.Dash>;
@@ -3025,6 +3239,9 @@ export interface ComplexPattern {
 export interface ParametersElements {
 	readonly $type: TSKindId.ParametersElements;
 	readonly _item: NonEmptyArray<Parameter>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Parameter>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -3036,6 +3253,9 @@ export interface ParametersElements {
 export interface Patterns {
 	readonly $type: TSKindId.Patterns;
 	readonly _item: NonEmptyArray<Pattern>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -3047,6 +3267,9 @@ export interface Patterns {
 export interface TuplePattern {
 	readonly $type: TSKindId.TuplePattern;
 	readonly _elements?: TuplePatternElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly Pattern[];
 	};
@@ -3063,6 +3286,9 @@ export interface TuplePattern {
 export interface ListPattern {
 	readonly $type: TSKindId.ListPattern;
 	readonly _patterns?: Patterns;
+	readonly __slotNames__?: {
+		readonly _patterns: 'patterns';
+	};
 	readonly __looseHints__?: {
 		readonly patterns?: readonly Pattern[];
 	};
@@ -3080,6 +3306,10 @@ export interface DefaultParameter {
 	readonly $type: TSKindId.DefaultParameter;
 	readonly _name: Identifier | TuplePattern;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3098,6 +3328,11 @@ export interface TypedDefaultParameter {
 	readonly _name: Identifier;
 	readonly _type: Type;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3119,6 +3354,9 @@ export interface TypedDefaultParameter {
 export interface ListSplatPattern {
 	readonly $type: TSKindId.ListSplatPattern;
 	readonly _target: Identifier | Subscript | Attribute;
+	readonly __slotNames__?: {
+		readonly _target: 'target';
+	};
 	readonly __slotHints__?: {
 		readonly target: SlotHint<T.Identifier | T.Subscript | T.Attribute>;
 	};
@@ -3128,6 +3366,9 @@ export interface ListSplatPattern {
 export interface DictionarySplatPattern {
 	readonly $type: TSKindId.DictionarySplatPattern;
 	readonly _target: Identifier | Subscript | Attribute;
+	readonly __slotNames__?: {
+		readonly _target: 'target';
+	};
 	readonly __slotHints__?: {
 		readonly target: SlotHint<T.Identifier | T.Subscript | T.Attribute>;
 	};
@@ -3138,6 +3379,10 @@ export interface AsPattern {
 	readonly $type: TSKindId.AsPattern;
 	readonly _expression: Expression;
 	readonly _alias: AsPatternTarget;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _alias: 'alias';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3157,6 +3402,9 @@ export interface AsPattern {
 export interface NotOperator {
 	readonly $type: TSKindId.NotOperator;
 	readonly _argument: Expression;
+	readonly __slotNames__?: {
+		readonly _argument: 'argument';
+	};
 	readonly __inputHints__?: {
 		readonly argument:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3173,6 +3421,11 @@ export interface BooleanOperator {
 	readonly _left: Expression;
 	readonly _operator: number;
 	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3197,6 +3450,11 @@ export interface BinaryOperator {
 	readonly _left: PrimaryExpression;
 	readonly _operator: number;
 	readonly _right: PrimaryExpression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3235,6 +3493,10 @@ export interface UnaryOperator {
 	readonly $type: TSKindId.UnaryOperator;
 	readonly _operator: number;
 	readonly _argument: PrimaryExpression;
+	readonly __slotNames__?: {
+		readonly _operator: 'operator';
+		readonly _argument: 'argument';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'+' | '-' | '~', TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde>;
 		readonly argument:
@@ -3253,6 +3515,10 @@ export interface ComparisonOperator {
 	readonly $type: TSKindId.ComparisonOperator;
 	readonly _left: PrimaryExpression;
 	readonly _comparators: NonEmptyArray<ComparisonOperatorComparator>;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _comparators: 'comparators';
+	};
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3275,6 +3541,10 @@ export interface Lambda {
 	readonly $type: TSKindId.Lambda;
 	readonly _parameters?: LambdaParameters;
 	readonly _body: Expression;
+	readonly __slotNames__?: {
+		readonly _parameters: 'parameters';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3298,6 +3568,10 @@ export interface LambdaWithinForInClause {
 	readonly $type: TSKindId.LambdaWithinForInClause;
 	readonly _parameters?: LambdaParameters;
 	readonly _body: Expression | LambdaWithinForInClause;
+	readonly __slotNames__?: {
+		readonly _parameters: 'parameters';
+		readonly _body: 'body';
+	};
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3323,6 +3597,11 @@ export interface AugmentedAssignment {
 	readonly _left: Pattern | PatternList;
 	readonly _operator: number;
 	readonly _right: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<
 			'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=',
@@ -3362,6 +3641,9 @@ export interface AugmentedAssignment {
 export interface PatternList {
 	readonly $type: TSKindId.PatternList;
 	readonly _item: NonEmptyArray<Pattern>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -3373,6 +3655,9 @@ export interface PatternList {
 export interface Yield {
 	readonly $type: TSKindId.Yield;
 	readonly _content?: YieldFromClause | Expression | ExpressionList;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content?:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3390,6 +3675,10 @@ export interface Attribute {
 	readonly $type: TSKindId.Attribute;
 	readonly _object: PrimaryExpression;
 	readonly _attribute: Identifier;
+	readonly __slotNames__?: {
+		readonly _object: 'object';
+		readonly _attribute: 'attribute';
+	};
 	readonly __inputHints__?: {
 		readonly object:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3407,6 +3696,10 @@ export interface Subscript {
 	readonly $type: TSKindId.Subscript;
 	readonly _value: PrimaryExpression;
 	readonly _subscripts: Subscripts;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _subscripts: 'subscripts';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3431,6 +3724,11 @@ export interface Slice {
 	readonly _start?: Expression;
 	readonly _stop?: Expression;
 	readonly _step?: SliceGroup;
+	readonly __slotNames__?: {
+		readonly _start: 'start';
+		readonly _stop: 'stop';
+		readonly _step: 'step';
+	};
 	readonly __inputHints__?: {
 		readonly start?:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3457,6 +3755,10 @@ export interface Call {
 	readonly $type: TSKindId.Call;
 	readonly _function: PrimaryExpression;
 	readonly _arguments: GeneratorExpression | ArgumentList;
+	readonly __slotNames__?: {
+		readonly _function: 'function';
+		readonly _arguments: 'arguments';
+	};
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3474,6 +3776,10 @@ export interface TypedParameter {
 	readonly $type: TSKindId.TypedParameter;
 	readonly _name: Identifier | ListSplatPattern | DictionarySplatPattern;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
@@ -3488,6 +3794,9 @@ export interface TypedParameter {
 export interface Type {
 	readonly $type: TSKindId.Type;
 	readonly _content: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3510,6 +3819,10 @@ export interface SplatType {
 	readonly $type: TSKindId.SplatType;
 	readonly _operator: number;
 	readonly _name: Identifier;
+	readonly __slotNames__?: {
+		readonly _operator: 'operator';
+		readonly _name: 'name';
+	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
 	};
@@ -3525,6 +3838,10 @@ export interface GenericType {
 	readonly $type: TSKindId.GenericType;
 	readonly _name: Identifier;
 	readonly _type_parameter: TypeParameter;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type_parameter: 'typeParameter';
+	};
 	readonly __looseHints__?: {
 		readonly type_parameter: readonly Type[];
 	};
@@ -3543,6 +3860,10 @@ export interface UnionType {
 	readonly $type: TSKindId.UnionType;
 	readonly _left: Type;
 	readonly _right: Type;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __looseHints__?: {
 		readonly left: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly right: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -3559,6 +3880,10 @@ export interface ConstrainedType {
 	readonly $type: TSKindId.ConstrainedType;
 	readonly _base_type: Type;
 	readonly _constraint: Type;
+	readonly __slotNames__?: {
+		readonly _base_type: 'baseType';
+		readonly _constraint: 'constraint';
+	};
 	readonly __looseHints__?: {
 		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 		readonly constraint: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
@@ -3575,6 +3900,10 @@ export interface MemberType {
 	readonly $type: TSKindId.MemberType;
 	readonly _base_type: Type;
 	readonly _name: Identifier;
+	readonly __slotNames__?: {
+		readonly _base_type: 'baseType';
+		readonly _name: 'name';
+	};
 	readonly __looseHints__?: {
 		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
@@ -3590,6 +3919,10 @@ export interface KeywordArgument {
 	readonly $type: TSKindId.KeywordArgument;
 	readonly _name: Identifier;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3606,6 +3939,9 @@ export interface KeywordArgument {
 export interface List {
 	readonly $type: TSKindId.List;
 	readonly _collection_elements?: CollectionElements;
+	readonly __slotNames__?: {
+		readonly _collection_elements: 'collectionElements';
+	};
 	readonly __looseHints__?: {
 		readonly collection_elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
@@ -3628,6 +3964,9 @@ export interface List {
 export interface Set {
 	readonly $type: TSKindId.Set;
 	readonly _collection_elements: CollectionElements;
+	readonly __slotNames__?: {
+		readonly _collection_elements: 'collectionElements';
+	};
 	readonly __looseHints__?: {
 		readonly collection_elements: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
@@ -3650,6 +3989,9 @@ export interface Set {
 export interface Tuple {
 	readonly $type: TSKindId.Tuple;
 	readonly _elements?: TupleElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 	};
@@ -3672,6 +4014,9 @@ export interface Tuple {
 export interface Dictionary {
 	readonly $type: TSKindId.Dictionary;
 	readonly _elements?: DictionaryElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly (Pair | DictionarySplat)[];
 	};
@@ -3689,6 +4034,10 @@ export interface Pair {
 	readonly $type: TSKindId.Pair;
 	readonly _key: Expression;
 	readonly _value: Expression;
+	readonly __slotNames__?: {
+		readonly _key: 'key';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly key:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3709,6 +4058,10 @@ export interface ListComprehension {
 	readonly $type: TSKindId.ListComprehension;
 	readonly _body: Expression;
 	readonly _clauses: ComprehensionClauses;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _clauses: 'clauses';
+	};
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3729,6 +4082,10 @@ export interface DictionaryComprehension {
 	readonly $type: TSKindId.DictionaryComprehension;
 	readonly _body: Pair;
 	readonly _clauses: ComprehensionClauses;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _clauses: 'clauses';
+	};
 	readonly __looseHints__?: {
 		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
@@ -3744,6 +4101,10 @@ export interface SetComprehension {
 	readonly $type: TSKindId.SetComprehension;
 	readonly _body: Expression;
 	readonly _clauses: ComprehensionClauses;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _clauses: 'clauses';
+	};
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3764,6 +4125,10 @@ export interface GeneratorExpression {
 	readonly $type: TSKindId.GeneratorExpression;
 	readonly _body: Expression;
 	readonly _clauses: ComprehensionClauses;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _clauses: 'clauses';
+	};
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3783,6 +4148,9 @@ export interface GeneratorExpression {
 export interface ParenthesizedExpression {
 	readonly $type: TSKindId.ParenthesizedExpression;
 	readonly _expression: Expression | Yield;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3798,6 +4166,9 @@ export interface ParenthesizedExpression {
 export interface CollectionElements {
 	readonly $type: TSKindId.CollectionElements;
 	readonly _item: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<
 			NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
@@ -3819,6 +4190,12 @@ export interface ForInClause {
 	readonly _left: Pattern | PatternList;
 	readonly _right: NonEmptyArray<Expression | LambdaWithinForInClause>;
 	readonly _trailing_comma?: number;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _left: 'left';
+		readonly _right: 'rights';
+		readonly _trailing_comma: 'trailingComma';
+	};
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly right: NonEmptyArray<
@@ -3832,7 +4209,7 @@ export interface ForInClause {
 		readonly async: SlotHint<NonNullable<T.ForInClause.Config>['async'], true>;
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
 		readonly rights: SlotHint<
-			NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>,
+			NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['rights']>[number]>,
 			false,
 			true
 		>;
@@ -3847,6 +4224,9 @@ export interface ForInClause {
 export interface IfClause {
 	readonly $type: TSKindId.IfClause;
 	readonly _condition: Expression;
+	readonly __slotNames__?: {
+		readonly _condition: 'condition';
+	};
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3863,6 +4243,11 @@ export interface ConditionalExpression {
 	readonly _body: Expression;
 	readonly _condition: Expression;
 	readonly _alternative: Expression;
+	readonly __slotNames__?: {
+		readonly _body: 'body';
+		readonly _condition: 'condition';
+		readonly _alternative: 'alternative';
+	};
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3887,6 +4272,9 @@ export interface ConditionalExpression {
 export interface ConcatenatedString {
 	readonly $type: TSKindId.ConcatenatedString;
 	readonly _string: NonEmptyArray<String>;
+	readonly __slotNames__?: {
+		readonly _string: 'strings';
+	};
 	readonly __slotHints__?: {
 		readonly strings: SlotHint<NonEmptyArray<T.String>, false, true>;
 	};
@@ -3898,6 +4286,11 @@ export interface String {
 	readonly _string_start: StringStart;
 	readonly _content: readonly (Interpolation | StringContent)[];
 	readonly _string_end: StringEnd;
+	readonly __slotNames__?: {
+		readonly _string_start: 'stringStart';
+		readonly _content: 'contents';
+		readonly _string_end: 'stringEnd';
+	};
 	readonly __slotHints__?: {
 		readonly stringStart: SlotHint<T.StringStart>;
 		readonly contents: SlotHint<(T.Interpolation | T.StringContent)[], true, true>;
@@ -3911,6 +4304,9 @@ export interface String {
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
 	readonly _elements: NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __inputHints__?: {
 		readonly elements: NonEmptyArray<
 			| KindEnum<'\\', TSKindId.NotEscapeSequence | TSKindId.Bslash>
@@ -3937,6 +4333,12 @@ export interface Interpolation {
 	readonly _debug: boolean;
 	readonly _type_conversion?: TypeConversion;
 	readonly _format_specifier?: FormatSpecifier;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _debug: 'debug';
+		readonly _type_conversion: 'typeConversion';
+		readonly _format_specifier: 'formatSpecifier';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3964,6 +4366,9 @@ export interface Interpolation {
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
 	readonly _elements: readonly (FormatSpecifierText | FormatExpression)[];
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<
 			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
@@ -3977,6 +4382,9 @@ export interface FormatSpecifier {
 export interface Await {
 	readonly $type: TSKindId.Await;
 	readonly _expression: PrimaryExpression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -3991,6 +4399,9 @@ export interface Await {
 export interface Comment {
 	readonly $type: TSKindId.Comment;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4000,6 +4411,9 @@ export interface Comment {
 export interface SimpleStatementsElements {
 	readonly $type: TSKindId.SimpleStatementsElements;
 	readonly _item: NonEmptyArray<SimpleStatement>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.SimpleStatement>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4011,6 +4425,9 @@ export interface SimpleStatementsElements {
 export interface Subjects {
 	readonly $type: TSKindId.Subjects;
 	readonly _subject: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _subject: 'subjects';
+	};
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4022,6 +4439,9 @@ export interface Subjects {
 export interface CasePatterns {
 	readonly $type: TSKindId.CasePatterns;
 	readonly _item: NonEmptyArray<CasePattern>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4033,6 +4453,9 @@ export interface CasePatterns {
 export interface WithClauseWithItems {
 	readonly $type: TSKindId.WithClauseWithItems;
 	readonly _item: NonEmptyArray<WithItem>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4044,6 +4467,9 @@ export interface WithClauseWithItems {
 export interface Types {
 	readonly $type: TSKindId.Types;
 	readonly _item: NonEmptyArray<Type>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Type>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4055,6 +4481,9 @@ export interface Types {
 export interface ArgumentListElements {
 	readonly $type: TSKindId.ArgumentListElements;
 	readonly _item: NonEmptyArray<Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<
 			NonEmptyArray<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>,
@@ -4075,6 +4504,9 @@ export interface ArgumentListElements {
 export interface ListPatternCasePatterns {
 	readonly $type: TSKindId.ListPatternCasePatterns;
 	readonly _item: NonEmptyArray<CasePattern>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4086,6 +4518,9 @@ export interface ListPatternCasePatterns {
 export interface DictPatternElements {
 	readonly $type: TSKindId.DictPatternElements;
 	readonly _item: NonEmptyArray<KeyValuePattern | SplatPattern>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.KeyValuePattern | T.SplatPattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4100,6 +4535,9 @@ export interface DictPatternElements {
 export interface Subscripts {
 	readonly $type: TSKindId.Subscripts;
 	readonly _subscript: NonEmptyArray<Expression | Slice>;
+	readonly __slotNames__?: {
+		readonly _subscript: 'subscripts';
+	};
 	readonly __slotHints__?: {
 		readonly subscripts: SlotHint<NonEmptyArray<T.Expression | T.Slice>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4111,6 +4549,9 @@ export interface Subscripts {
 export interface DictionaryElements {
 	readonly $type: TSKindId.DictionaryElements;
 	readonly _item: NonEmptyArray<Pair | DictionarySplat>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Pair | T.DictionarySplat>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4122,6 +4563,9 @@ export interface DictionaryElements {
 export interface SliceGroup {
 	readonly $type: TSKindId.SliceGroup;
 	readonly _expression?: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression?:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4136,6 +4580,9 @@ export interface SliceGroup {
 export interface TuplePatternElements {
 	readonly $type: TSKindId.TuplePatternElements;
 	readonly _item: NonEmptyArray<Pattern>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4147,6 +4594,9 @@ export interface TuplePatternElements {
 export interface TupleElements {
 	readonly $type: TSKindId.TupleElements;
 	readonly _item: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<
 			NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
@@ -4166,6 +4616,10 @@ export interface ExceptClauseExceptionAs {
 	readonly $type: TSKindId.ExceptClauseExceptionAs;
 	readonly _value: Expression;
 	readonly _alias?: Expression;
+	readonly __slotNames__?: {
+		readonly _value: 'value';
+		readonly _alias: 'alias';
+	};
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4185,6 +4639,9 @@ export interface ExceptClauseExceptionAs {
 export interface CaseTuplePattern {
 	readonly $type: TSKindId.CaseTuplePattern;
 	readonly _elements?: ListPatternCasePatterns;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly CasePattern[];
 	};
@@ -4201,6 +4658,9 @@ export interface CaseTuplePattern {
 export interface CaseListPattern {
 	readonly $type: TSKindId.CaseListPattern;
 	readonly _elements?: ListPatternCasePatterns;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements?: readonly CasePattern[];
 	};
@@ -4217,6 +4677,9 @@ export interface CaseListPattern {
 export interface PrintArguments {
 	readonly $type: TSKindId.PrintArguments;
 	readonly _item: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4228,6 +4691,9 @@ export interface PrintArguments {
 export interface PrintChevronArguments {
 	readonly $type: TSKindId.PrintChevronArguments;
 	readonly _item: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4240,6 +4706,10 @@ export interface PrintStatementChevron {
 	readonly $type: TSKindId.PrintStatementChevron;
 	readonly _chevron: Chevron;
 	readonly _print_chevron_arguments?: PrintChevronArguments | TSKindId.Comma;
+	readonly __slotNames__?: {
+		readonly _chevron: 'chevron';
+		readonly _print_chevron_arguments: 'printChevronArguments';
+	};
 	readonly __inputHints__?: {
 		readonly print_chevron_arguments?: KindEnum<',', TSKindId.Comma> | PrintChevronArguments;
 	};
@@ -4264,6 +4734,9 @@ export interface PrintStatementChevron {
 export interface PrintStatementPlain {
 	readonly $type: TSKindId.PrintStatementPlain;
 	readonly _print_arguments: PrintArguments;
+	readonly __slotNames__?: {
+		readonly _print_arguments: 'printArguments';
+	};
 	readonly __looseHints__?: {
 		readonly print_arguments: readonly Expression[];
 	};
@@ -4280,6 +4753,9 @@ export interface PrintStatementPlain {
 export interface ParenthesizedImportList {
 	readonly $type: TSKindId.ParenthesizedImportList;
 	readonly _import_list: ImportList;
+	readonly __slotNames__?: {
+		readonly _import_list: 'importList';
+	};
 	readonly __looseHints__?: {
 		readonly import_list: readonly (DottedName | AliasedImport)[];
 	};
@@ -4302,6 +4778,9 @@ export interface ParenthesizedImportList {
 export interface ComprehensionClauses {
 	readonly $type: TSKindId.ComprehensionClauses;
 	readonly _content: NonEmptyArray<ForInClause | IfClause>;
+	readonly __slotNames__?: {
+		readonly _content: 'contents';
+	};
 	readonly __slotHints__?: {
 		readonly contents: SlotHint<NonEmptyArray<T.ForInClause | T.IfClause>, false, true>;
 	};
@@ -4312,6 +4791,10 @@ export interface IntegerHex {
 	readonly $type: TSKindId.IntegerHex;
 	readonly _prefix: '0x' | '0X';
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 		readonly prefix: SlotHint<'0x' | '0X'>;
@@ -4324,6 +4807,10 @@ export interface IntegerOctal {
 	readonly $type: TSKindId.IntegerOctal;
 	readonly _prefix: '0o' | '0O';
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 		readonly prefix: SlotHint<'0o' | '0O'>;
@@ -4336,6 +4823,10 @@ export interface IntegerBinary {
 	readonly $type: TSKindId.IntegerBinary;
 	readonly _prefix: '0b' | '0B';
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _prefix: 'prefix';
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 		readonly prefix: SlotHint<'0b' | '0B'>;
@@ -4352,6 +4843,14 @@ export interface FloatPoint {
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly _imaginary?: string;
+	readonly __slotNames__?: {
+		readonly _integer: 'integer';
+		readonly _fraction: 'fraction';
+		readonly _marker: 'marker';
+		readonly _sign: 'sign';
+		readonly _exponent: 'exponent';
+		readonly _imaginary: 'imaginary';
+	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly fraction: SlotHint<string | number | bigint, true>;
@@ -4376,6 +4875,14 @@ export interface FloatLeadingPoint {
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
 	readonly _imaginary?: string;
+	readonly __slotNames__?: {
+		readonly _integer: 'integer';
+		readonly _fraction: 'fraction';
+		readonly _marker: 'marker';
+		readonly _sign: 'sign';
+		readonly _exponent: 'exponent';
+		readonly _imaginary: 'imaginary';
+	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint, true>;
 		readonly fraction: SlotHint<string | number | bigint>;
@@ -4399,6 +4906,13 @@ export interface FloatScientific {
 	readonly _sign?: '-' | '+';
 	readonly _exponent: string;
 	readonly _imaginary?: string;
+	readonly __slotNames__?: {
+		readonly _integer: 'integer';
+		readonly _marker: 'marker';
+		readonly _sign: 'sign';
+		readonly _exponent: 'exponent';
+		readonly _imaginary: 'imaginary';
+	};
 	readonly __slotHints__?: {
 		readonly integer: SlotHint<string | number | bigint>;
 		readonly sign: SlotHint<'-' | '+', true>;
@@ -4416,6 +4930,9 @@ export interface FloatScientific {
 export interface EscapeSequenceUnicodeFixed {
 	readonly $type: TSKindId.EscapeSequenceUnicodeFixed;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4425,6 +4942,9 @@ export interface EscapeSequenceUnicodeFixed {
 export interface EscapeSequenceUnicodeWide {
 	readonly $type: TSKindId.EscapeSequenceUnicodeWide;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4434,6 +4954,9 @@ export interface EscapeSequenceUnicodeWide {
 export interface EscapeSequenceHex {
 	readonly $type: TSKindId.EscapeSequenceHex;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4443,6 +4966,9 @@ export interface EscapeSequenceHex {
 export interface EscapeSequenceOctal {
 	readonly $type: TSKindId.EscapeSequenceOctal;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string | number | bigint>;
 	};
@@ -4452,6 +4978,9 @@ export interface EscapeSequenceOctal {
 export interface EscapeSequenceLineBreak {
 	readonly $type: TSKindId.EscapeSequenceLineBreak;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4461,6 +4990,9 @@ export interface EscapeSequenceLineBreak {
 export interface EscapeSequenceSimple {
 	readonly $type: TSKindId.EscapeSequenceSimple;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4470,6 +5002,9 @@ export interface EscapeSequenceSimple {
 export interface EscapeSequenceNamed {
 	readonly $type: TSKindId.EscapeSequenceNamed;
 	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
@@ -4480,6 +5015,10 @@ export interface SimplePatternNegative {
 	readonly $type: TSKindId.SimplePatternNegative;
 	readonly _sign: boolean;
 	readonly _value: Integer | Float;
+	readonly __slotNames__?: {
+		readonly _sign: 'sign';
+		readonly _value: 'value';
+	};
 	readonly __inputHints__?: {
 		readonly sign?: BaseBooleanKeyword<'-'>;
 	};
@@ -4494,6 +5033,9 @@ export interface SimplePatternNegative {
 export interface ExceptClauseExceptionList {
 	readonly $type: TSKindId.ExceptClauseExceptionList;
 	readonly _value: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _value: 'values';
+	};
 	readonly __inputHints__?: {
 		readonly value: NonEmptyArray<
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4509,6 +5051,9 @@ export interface ExceptClauseExceptionList {
 export interface ExceptClauseException {
 	readonly $type: TSKindId.ExceptClauseException;
 	readonly _content: ExceptClauseExceptionAs | ExceptClauseExceptionList;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>;
 	};
@@ -4519,6 +5064,10 @@ export interface AssignmentEq {
 	readonly $type: TSKindId.AssignmentEq;
 	readonly _left: Pattern | PatternList;
 	readonly _right: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly right:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4541,6 +5090,10 @@ export interface AssignmentType {
 	readonly $type: TSKindId.AssignmentType;
 	readonly _left: Pattern | PatternList;
 	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _type: 'type';
+	};
 	readonly __looseHints__?: {
 		readonly type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
@@ -4557,6 +5110,11 @@ export interface AssignmentTyped {
 	readonly _left: Pattern | PatternList;
 	readonly _type: Type;
 	readonly _right: Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _type: 'type';
+		readonly _right: 'right';
+	};
 	readonly __inputHints__?: {
 		readonly right:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4583,6 +5141,9 @@ export interface AssignmentTyped {
 export interface ExpressionStatementTuple {
 	readonly $type: TSKindId.ExpressionStatementTuple;
 	readonly _item: NonEmptyArray<Expression>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4594,6 +5155,9 @@ export interface ExpressionStatementTuple {
 export interface WithClauseBare {
 	readonly $type: TSKindId.WithClauseBare;
 	readonly _item: NonEmptyArray<WithItem>;
+	readonly __slotNames__?: {
+		readonly _item: 'items';
+	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
@@ -4605,6 +5169,9 @@ export interface WithClauseBare {
 export interface WithClauseParen {
 	readonly $type: TSKindId.WithClauseParen;
 	readonly _with_items: WithClauseWithItems;
+	readonly __slotNames__?: {
+		readonly _with_items: 'withItems';
+	};
 	readonly __looseHints__?: {
 		readonly with_items: readonly WithItem[];
 	};
@@ -4621,6 +5188,9 @@ export interface WithClauseParen {
 export interface MatchBlockBlock {
 	readonly $type: TSKindId.MatchBlockBlock;
 	readonly _alternative: readonly CaseClause[];
+	readonly __slotNames__?: {
+		readonly _alternative: 'alternatives';
+	};
 	readonly __slotHints__?: {
 		readonly alternatives: SlotHint<T.CaseClause[], false, true>;
 	};
@@ -4630,6 +5200,9 @@ export interface MatchBlockBlock {
 export interface MatchBlockEmpty {
 	readonly $type: TSKindId.MatchBlockEmpty;
 	readonly _newline: number;
+	readonly __slotNames__?: {
+		readonly _newline: 'newline';
+	};
 	readonly __inputHints__?: {
 		readonly newline: KindEnum<'\n', TSKindId.Newline>;
 	};
@@ -4642,6 +5215,9 @@ export interface MatchBlockEmpty {
 export interface SuiteInline {
 	readonly $type: TSKindId.SuiteInline;
 	readonly _elements: SimpleStatementsElements;
+	readonly __slotNames__?: {
+		readonly _elements: 'elements';
+	};
 	readonly __looseHints__?: {
 		readonly elements: readonly SimpleStatement[];
 	};
@@ -4658,6 +5234,9 @@ export interface SuiteInline {
 export interface SuiteBlock {
 	readonly $type: TSKindId.SuiteBlock;
 	readonly _block: Block;
+	readonly __slotNames__?: {
+		readonly _block: 'block';
+	};
 	readonly __looseHints__?: {
 		readonly block: readonly Statement[];
 	};
@@ -4670,6 +5249,9 @@ export interface SuiteBlock {
 export interface SuiteEmpty {
 	readonly $type: TSKindId.SuiteEmpty;
 	readonly _newline: number;
+	readonly __slotNames__?: {
+		readonly _newline: 'newline';
+	};
 	readonly __inputHints__?: {
 		readonly newline: KindEnum<'\n', TSKindId.Newline>;
 	};
@@ -4683,6 +5265,10 @@ export interface ComparisonOperatorComparator {
 	readonly $type: TSKindId.ComparisonOperatorComparator;
 	readonly _operators: number;
 	readonly _primary_expression: PrimaryExpression;
+	readonly __slotNames__?: {
+		readonly _operators: 'operators';
+		readonly _primary_expression: 'primaryExpression';
+	};
 	readonly __inputHints__?: {
 		readonly operators: KindEnum<
 			'<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'not in' | 'is' | 'is not',
@@ -4713,6 +5299,9 @@ export interface ComparisonOperatorComparator {
 export interface YieldFromClause {
 	readonly $type: TSKindId.YieldFromClause;
 	readonly _expression: Expression;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+	};
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4727,6 +5316,9 @@ export interface YieldFromClause {
 export interface Names {
 	readonly $type: TSKindId.Names;
 	readonly _content: ImportList;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __looseHints__?: {
 		readonly content: readonly (DottedName | AliasedImport)[];
 	};
@@ -4746,6 +5338,9 @@ export interface Names {
 export interface AsPatternTarget {
 	readonly $type: TSKindId.AsPatternTarget;
 	readonly _content: Expression;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __inputHints__?: {
 		readonly content:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -4761,6 +5356,9 @@ export interface AsPatternTarget {
 export interface FormatExpression {
 	readonly $type: TSKindId.FormatExpression;
 	readonly _content: Interpolation;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Interpolation>;
 	};
@@ -10661,7 +11259,7 @@ export namespace ImportList {
 		  ];
 	export type Kind = TSKindId.ImportList;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'name'>, KeyRefusesEmpty<LooseConfig, 'name'>, SetterRefusesEmpty<Bound, 'names'>]
+		[KeyRefusesEmpty<Config, 'names'>, KeyRefusesEmpty<LooseConfig, 'names'>, SetterRefusesEmpty<Bound, 'names'>]
 	>;
 }
 export namespace AliasedImport {
@@ -10767,8 +11365,8 @@ export namespace AssertStatement {
 	export type Kind = TSKindId.AssertStatement;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'expression'>,
-			KeyRefusesEmpty<LooseConfig, 'expression'>,
+			KeyRefusesEmpty<Config, 'expressions'>,
+			KeyRefusesEmpty<LooseConfig, 'expressions'>,
 			SetterRefusesEmpty<Bound, 'expressions'>
 		]
 	>;
@@ -11602,8 +12200,8 @@ export namespace DecoratedDefinition {
 	export type Kind = TSKindId.DecoratedDefinition;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'decorator'>,
-			KeyRefusesEmpty<LooseConfig, 'decorator'>,
+			KeyRefusesEmpty<Config, 'decorators'>,
+			KeyRefusesEmpty<LooseConfig, 'decorators'>,
 			SetterRefusesEmpty<Bound, 'decorators'>
 		]
 	>;
@@ -11705,7 +12303,7 @@ export namespace ExpressionList {
 		  ];
 	export type Kind = TSKindId.ExpressionList;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace DottedName {
@@ -12184,7 +12782,7 @@ export namespace ParametersElements {
 		  ];
 	export type Kind = TSKindId.ParametersElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace Patterns {
@@ -12228,7 +12826,7 @@ export namespace Patterns {
 		  ];
 	export type Kind = TSKindId.Patterns;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace TuplePattern {
@@ -12670,7 +13268,7 @@ export namespace PatternList {
 		  ];
 	export type Kind = TSKindId.PatternList;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace Yield {
@@ -13334,7 +13932,7 @@ export namespace CollectionElements {
 		  ];
 	export type Kind = TSKindId.CollectionElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ForInClause {
@@ -13362,7 +13960,7 @@ export namespace ForInClause {
 	export type LooseArgs = [config: T.ForInClause.Loose, options?: T.ForInClause.Options];
 	export type Kind = TSKindId.ForInClause;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'right'>, KeyRefusesEmpty<LooseConfig, 'right'>, SetterRefusesEmpty<Bound, 'rights'>]
+		[KeyRefusesEmpty<Config, 'rights'>, KeyRefusesEmpty<LooseConfig, 'rights'>, SetterRefusesEmpty<Bound, 'rights'>]
 	>;
 }
 export namespace IfClause {
@@ -13445,7 +14043,7 @@ export namespace ConcatenatedString {
 		| [children: Readonly<NonEmptyArray<LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ConcatenatedString;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'string'>, KeyRefusesEmpty<LooseConfig, 'string'>, SetterRefusesEmpty<Bound, 'strings'>]
+		[KeyRefusesEmpty<Config, 'strings'>, KeyRefusesEmpty<LooseConfig, 'strings'>, SetterRefusesEmpty<Bound, 'strings'>]
 	>;
 }
 export namespace String {
@@ -13717,7 +14315,7 @@ export namespace SimpleStatementsElements {
 		  ];
 	export type Kind = TSKindId.SimpleStatementsElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace Subjects {
@@ -13761,7 +14359,11 @@ export namespace Subjects {
 		  ];
 	export type Kind = TSKindId.Subjects;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'subject'>, KeyRefusesEmpty<LooseConfig, 'subject'>, SetterRefusesEmpty<Bound, 'subjects'>]
+		[
+			KeyRefusesEmpty<Config, 'subjects'>,
+			KeyRefusesEmpty<LooseConfig, 'subjects'>,
+			SetterRefusesEmpty<Bound, 'subjects'>
+		]
 	>;
 }
 export namespace CasePatterns {
@@ -13811,7 +14413,7 @@ export namespace CasePatterns {
 		  ];
 	export type Kind = TSKindId.CasePatterns;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace WithClauseWithItems {
@@ -13862,7 +14464,7 @@ export namespace WithClauseWithItems {
 		  ];
 	export type Kind = TSKindId.WithClauseWithItems;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace Types {
@@ -13906,7 +14508,7 @@ export namespace Types {
 		  ];
 	export type Kind = TSKindId.Types;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ArgumentListElements {
@@ -13988,7 +14590,7 @@ export namespace ArgumentListElements {
 		  ];
 	export type Kind = TSKindId.ArgumentListElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ListPatternCasePatterns {
@@ -14043,7 +14645,7 @@ export namespace ListPatternCasePatterns {
 		  ];
 	export type Kind = TSKindId.ListPatternCasePatterns;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace DictPatternElements {
@@ -14098,7 +14700,7 @@ export namespace DictPatternElements {
 		  ];
 	export type Kind = TSKindId.DictPatternElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace Subscripts {
@@ -14153,8 +14755,8 @@ export namespace Subscripts {
 	export type Kind = TSKindId.Subscripts;
 	type NonEmptySlots = Proven<
 		[
-			KeyRefusesEmpty<Config, 'subscript'>,
-			KeyRefusesEmpty<LooseConfig, 'subscript'>,
+			KeyRefusesEmpty<Config, 'subscripts'>,
+			KeyRefusesEmpty<LooseConfig, 'subscripts'>,
 			SetterRefusesEmpty<Bound, 'subscripts'>
 		]
 	>;
@@ -14211,7 +14813,7 @@ export namespace DictionaryElements {
 		  ];
 	export type Kind = TSKindId.DictionaryElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace SliceGroup {
@@ -14286,7 +14888,7 @@ export namespace TuplePatternElements {
 		  ];
 	export type Kind = TSKindId.TuplePatternElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace TupleElements {
@@ -14363,7 +14965,7 @@ export namespace TupleElements {
 		  ];
 	export type Kind = TSKindId.TupleElements;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace ExceptClauseExceptionAs {
@@ -14486,7 +15088,7 @@ export namespace PrintArguments {
 		  ];
 	export type Kind = TSKindId.PrintArguments;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace PrintChevronArguments {
@@ -14541,7 +15143,7 @@ export namespace PrintChevronArguments {
 		  ];
 	export type Kind = TSKindId.PrintChevronArguments;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace PrintStatementChevron {
@@ -14655,7 +15257,11 @@ export namespace ComprehensionClauses {
 		  ];
 	export type Kind = TSKindId.ComprehensionClauses;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'content'>, KeyRefusesEmpty<LooseConfig, 'content'>, SetterRefusesEmpty<Bound, 'contents'>]
+		[
+			KeyRefusesEmpty<Config, 'contents'>,
+			KeyRefusesEmpty<LooseConfig, 'contents'>,
+			SetterRefusesEmpty<Bound, 'contents'>
+		]
 	>;
 }
 export namespace IntegerHex {
@@ -15123,7 +15729,7 @@ export namespace ExceptClauseExceptionList {
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ExceptClauseExceptionList;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'value'>, KeyRefusesEmpty<LooseConfig, 'value'>, SetterRefusesEmpty<Bound, 'values'>]
+		[KeyRefusesEmpty<Config, 'values'>, KeyRefusesEmpty<LooseConfig, 'values'>, SetterRefusesEmpty<Bound, 'values'>]
 	>;
 }
 export namespace ExceptClauseException {
@@ -15275,7 +15881,7 @@ export namespace ExpressionStatementTuple {
 		  ];
 	export type Kind = TSKindId.ExpressionStatementTuple;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace WithClauseBare {
@@ -15325,7 +15931,7 @@ export namespace WithClauseBare {
 		  ];
 	export type Kind = TSKindId.WithClauseBare;
 	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
 }
 export namespace WithClauseParen {

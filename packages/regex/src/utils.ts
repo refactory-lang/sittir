@@ -111,7 +111,7 @@ export const structure: StructureTable = Object.freeze({
 	53: {
 		kind: 'term',
 		nonEmpty: [['_term_group', 'term.children']],
-		nodeOnly: [['_term_group', 'Term.termGroup', 'a built TermGroup']]
+		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup']]
 	},
 	55: {
 		kind: 'lookaround_assertion',

@@ -14,6 +14,7 @@ const ctx: PrintContext = {
 	grammar: 'test',
 	engine: 'rs',
 	surface: 'strict',
+	slotNameOf: (_kind, slot) => slot,
 	facts: {
 		modelTypes: {},
 		subtypes: {},

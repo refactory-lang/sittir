@@ -2248,8 +2248,8 @@ export function coerceToAssertStatement(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('expression' in head)) return input;
-		const v = (head as Record<string, unknown>)['expression'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('expressions' in head)) return input;
+		const v = (head as Record<string, unknown>)['expressions'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildAssertStatement(
@@ -2446,7 +2446,7 @@ export function resolveIfStatement_consequence(
 }
 
 export function resolveIfStatement_alternatives(
-	value: T.IfStatement.LooseConfig['alternative']
+	value: T.IfStatement.LooseConfig['alternatives']
 ): Admit<T.IfStatement['_alternative']> {
 	return _resolveMany<T.ElifClause | T.ElseClause>(value, _K0, _K11);
 }
@@ -2460,7 +2460,7 @@ export function coerceToIfStatement(input: T.IfStatement.Loose): ReturnType<type
 	return F.buildIfStatement({
 		condition: resolveIfStatement_condition(input.condition),
 		consequence: resolveIfStatement_consequence(input.consequence),
-		alternative: resolveIfStatement_alternatives(input.alternative)
+		alternatives: resolveIfStatement_alternatives(input.alternatives)
 	});
 }
 
@@ -3009,7 +3009,7 @@ export function resolveExecStatement_code(value: T.ExecStatement.LooseConfig['co
 }
 
 export function resolveExecStatement_inClauses(
-	value: T.ExecStatement.LooseConfig['inClause']
+	value: T.ExecStatement.LooseConfig['inClauses']
 ): Admit<T.ExecStatement['_in_clause']> {
 	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Expression>(value, _K7, _K8)),
@@ -3025,7 +3025,7 @@ export function coerceToExecStatement(input: T.ExecStatement.Loose): ReturnType<
 		return input as unknown as ReturnType<typeof F.buildExecStatement>;
 	return F.buildExecStatement({
 		code: resolveExecStatement_code(input.code),
-		inClause: resolveExecStatement_inClauses(input.inClause)
+		inClauses: resolveExecStatement_inClauses(input.inClauses)
 	});
 }
 
@@ -3170,7 +3170,7 @@ export function coerceToArgumentList(...args: unknown[]): ReturnType<typeof F.bu
 }
 
 export function resolveDecoratedDefinition_decorators(
-	value: T.DecoratedDefinition.LooseConfig['decorator']
+	value: T.DecoratedDefinition.LooseConfig['decorators']
 ): Admit<T.DecoratedDefinition['_decorator']> {
 	return _resolveManyBranch<T.Decorator>(value, 'decorator') as Admit<T.DecoratedDefinition['_decorator']>;
 }
@@ -3190,7 +3190,7 @@ export function coerceToDecoratedDefinition(
 	if (!_isLooseConfig<T.DecoratedDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildDecoratedDefinition>;
 	return F.buildDecoratedDefinition({
-		decorator: resolveDecoratedDefinition_decorators(input.decorator),
+		decorators: resolveDecoratedDefinition_decorators(input.decorators),
 		definition: resolveDecoratedDefinition_definition(input.definition)
 	});
 }
@@ -5060,7 +5060,7 @@ export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']
 	return _resolveOne<T.Pattern | T.PatternList>(value, _K12, _K13);
 }
 
-export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): Admit<T.ForInClause['_right']> {
+export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['rights']): Admit<T.ForInClause['_right']> {
 	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K27)),
 		(item) => coerceMixedEnumStorage(item, [])
@@ -5081,7 +5081,7 @@ export function coerceToForInClause(
 		{
 			async: resolveForInClause_async(input.async),
 			left: resolveForInClause_left(input.left),
-			right: resolveForInClause_rights(input.right)
+			rights: resolveForInClause_rights(input.rights)
 		},
 		options
 	);
@@ -5175,8 +5175,8 @@ export function coerceToConcatenatedString(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('string' in head)) return input;
-		const v = (head as Record<string, unknown>)['string'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('strings' in head)) return input;
+		const v = (head as Record<string, unknown>)['strings'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildConcatenatedString(
@@ -5190,7 +5190,7 @@ export function resolveString_stringStart(
 	return _resolveOneLeaf<T.StringStart>(value, 'string_start');
 }
 
-export function resolveString_contents(value: T.String.LooseConfig['content']): Admit<T.String['_content']> {
+export function resolveString_contents(value: T.String.LooseConfig['contents']): Admit<T.String['_content']> {
 	return _resolveMany<T.Interpolation | T.StringContent>(value, _K0, _K35);
 }
 
@@ -5205,7 +5205,7 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 	if (!_isLooseConfig<T.String.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildString>;
 	return F.buildString({
 		stringStart: resolveString_stringStart(input.stringStart),
-		content: resolveString_contents(input.content),
+		contents: resolveString_contents(input.contents),
 		stringEnd: resolveString_stringEnd(input.stringEnd)
 	});
 }
@@ -6376,8 +6376,8 @@ export function coerceToComprehensionClauses(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('content' in head)) return input;
-		const v = (head as Record<string, unknown>)['content'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('contents' in head)) return input;
+		const v = (head as Record<string, unknown>)['contents'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
@@ -6964,8 +6964,8 @@ export function coerceToExceptClauseExceptionList(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('value' in head)) return input;
-		const v = (head as Record<string, unknown>)['value'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('values' in head)) return input;
+		const v = (head as Record<string, unknown>)['values'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildExceptClauseExceptionList(
@@ -7241,8 +7241,8 @@ export function coerceToMatchBlockBlock(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('alternative' in head)) return input;
-		const v = (head as Record<string, unknown>)['alternative'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('alternatives' in head)) return input;
+		const v = (head as Record<string, unknown>)['alternatives'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildMatchBlockBlock(

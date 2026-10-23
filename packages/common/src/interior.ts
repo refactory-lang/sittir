@@ -1,6 +1,6 @@
 export interface InteriorSlot {
 	readonly name: string;
-	readonly configKey: string;
+	readonly propertyName: string;
 	readonly flag?: true;
 }
 
@@ -40,7 +40,7 @@ export function lexedConfig(text: string, interior: TokenInterior, kind: string)
 	const out: Record<string, string | true> = {};
 	for (const slot of interior.slots) {
 		const value = projected[slot.name];
-		if (value !== undefined && value !== false) out[slot.configKey] = value === true ? true : value;
+		if (value !== undefined && value !== false) out[slot.propertyName] = value === true ? true : value;
 	}
 	return out;
 }

@@ -745,11 +745,12 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 ```text
 /**
  * Walk a wrapped tree via declared getters, calling `visit` on each
- * encountered wrapped node. Enumeration uses `Object.keys` + accessor
- * invocation — accessors defined via `{get foo() {}}` appear as
- * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's hydration ($type on every node is the grammar-symbol
- * wire identity stamped by the read).
+ * encountered wrapped node. A stored member is read through the accessor
+ * the model names for it (`slotAccessorOf`, by the node's stamped kind id);
+ * a stored member the model has no slot for (a list's `_delimiter`) is
+ * plain data. Each child materializes through the wrap layer's hydration
+ * ($type on every node is the grammar-symbol wire identity stamped by the
+ * read).
  *
  * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
@@ -1461,8 +1462,8 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
  * `nodeToConfig`'s output. `nodeToConfig` only writes the literal
  * `children` key for genuinely UNNAMED ($other-derived) slots — a
  * spread-shape kind whose sole field has a real grammar name (e.g.
- * python `module`'s `statement`) gets that key instead
- * (`slotConfigKey`'s field-origin branch: `snakeToCamel(slot.name)`).
+ * python `module`'s `statement`) gets that slot's model name instead
+ * (`slotKeyOf`).
  * Without `factoryFields`, such kinds always read `undefined` here and
  * the spread call silently invokes the factory with zero arguments.
  *
@@ -1653,11 +1654,21 @@ The render-and-reparse step every rendering row shares. It renders a node with t
 
 Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other.
 
+Each candidate tested is one case of its kind, and `total` and `casesByKind` are read from that one count (`KindCases`). The render counts the built nodes it renders the same way, taking a case back out when the kind has no reparse host or the render is excluded.
+
 A built node carries no source identity, so its render cannot fold back to source bytes or classify its layout from the source. A node that does carry one (`placeOf` on it or any node under it) is a render failure.
 
 ### `packages/tools/src/validate/built-render.ts::combineBuiltRender`
 
-The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each failure's kind labeled with its surface (`factory: <kind>`, `ir: <kind>`).
+The `built-render-parse` row: the render results of the raw and the `ir` runs summed, each kind's cases added across them (`casesByKind`), each failure's kind labeled with its surface (`surfaceLabel`: `factory: <kind>`, `ir: <kind>`).
+
+### `packages/tools/src/validate/built-render.ts::BuiltRenderRun`
+
+A storage run's render result while the run goes on: the counts and failures of `BuiltRenderResult`, with its cases in a `KindCases`, from which `finishBuiltRender` reads `total` and `casesByKind`.
+
+### `packages/tools/src/validate/built-render.ts::finishBuiltRender`
+
+The `BuiltRenderResult` of a run: its counts and failures, with `total` and `casesByKind` read from its cases.
 
 ### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
 
@@ -1685,7 +1696,7 @@ Shallow comparison of a `from()` result against the factory's: `$type`, the slot
 
 A read leaf whose stored kind differs from the kind the corpus shows (an in-place leaf alias reads as the shared anonymous token) is validated by its text: `from(node.$text)` is compared with `factory(nodeToConfig(node))`, and `from(node)` must return the same object. Either the read identity is kept or the row is an error. The scalarized text and constant leaves, which have no node, keep comparing `from(text)` with `factory(text)` through the same closure.
 
-An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). An extra is reported as trivia. Any other kind is retried in later entries, so it is tested directly wherever some entry reads it as a node. A kind no entry reads as a node did not leave the grammar, it is stored inside its parent, so after the walk it is tested through the nearest ancestor of its first occurrence that the read holds, and that ancestor's result is credited to it; it counts toward the total like any tested kind. An occurrence none of these explains stays an error.
+An occurrence the read holds no node for is not a failure. The walk finds the first occurrence of each kind in the WASM tree, and when the native read has no node at its span, `unreadReason` names the model fact that explains it: inside an extra (`native-read-dropped-extra`, reported as trivia); under a parent the model stores as its text (`folded-into-parent-text`, a parent of `factoryShape` `text`, such as regex `zero_or_more` holding its `lazy` `?`); or a grammar symbol the model stores as its kind id (`read-as-unit-variant`, `isUnitModelType`, such as the `\-` a regex class reads as `bslash_dash`). An extra is reported as trivia. Any other kind is retried in later entries, so it is tested directly wherever some entry reads it as a node. A kind no entry reads as a node did not leave the grammar, it is stored inside its parent, so after the walk it is tested through the nearest ancestor of its first occurrence that the read holds, and that ancestor's result is credited to it; it counts toward the total like any tested kind. Each tested kind is one case, under its own name, and `total` and `casesByKind` are read from that one count (`KindCases`); a kind put back to be retried leaves it. An occurrence none of these explains stays an error.
 
 Each occurrence is compared by `validateAt`, which looks the node up by the kind it is read as and credits the pass or error to the kind being tested; the two differ only when an ancestor stands in.
 
@@ -1782,6 +1793,18 @@ A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `col
 
 Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
 
+### `packages/tools/src/validate/common.ts::slotKeyOf`
+
+The key a config holds a kind's slot under: the slot's model name, read from the factory slot metadata (`FactorySlotMeta.propertyName`), which the node-model reader derives once (`slotPropertyName`). The validators build every config through it and never camel-case or pluralize a slot name themselves. A slot with no metadata throws, naming the kind and slot, instead of falling back to a guessed key.
+
+### `packages/tools/src/validate/common.ts::slotAccessorOf`
+
+A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). It answers the kind's name with the map (`KindSlots`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind, and so does a slot whose model-named accessor the node does not have as a reader (`resolveWrappedStorageValue`): the model and the generated node disagree. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
+
+### `packages/tools/src/validate/common.ts::slotNameOf`
+
+A kind's slot, by its model slot name (the storage name a seat table or `factoryFields` lists), to the name a config builds it by and its accessor reads it by, from the loaded model (`LoadedNodeModel.slotAccessors`). The factory-source printer keys a seated slot (`wrapSeatedConfig`) and a trivia entry's content slot through it. A slot the model does not have throws, naming the kind and slot.
+
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
 The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
@@ -1837,3 +1860,19 @@ The kind a node counts as: `storage` when it is one of the storage kinds sharing
 ### `packages/tools/src/validate/display-families.ts::sharedDisplayEntries`
 
 Node-types entries with each shared display's entry repeated once per storage kind (`sharedDisplayStorageKinds`), named for that kind. Template coverage walks these, so each storage kind's own template is checked against the display's node-types entry.
+
+### `packages/tools/src/validate/kind-cases.ts::KindCases`
+
+A validator's case counter, per kind. `add` counts a case (or several) of a kind, `remove` takes one back and throws when none is counted, and `total` and `byKind` read the same counts, so a result's `total` and its `casesByKind` cannot disagree. `byKind` sorts by kind and leaves out a kind whose last case was taken back.
+
+### `packages/tools/src/validate/kind-cases.ts::CasesByKind`
+
+Cases counted per kind, as a validator result and the baseline record them.
+
+### `packages/tools/src/validate/surface-label.ts::surfaceLabel`
+
+A failure's kind labeled with the surface whose run produced it, `<surface>: <kind>` (`factory: block`, `ir: block`). `combineBuiltRender` labels every built-render failure this way, so the built-render-parse row's `failingKinds` and the validation report name the surface; `kindOfLabel` reads the kind back.
+
+### `packages/tools/src/validate/surface-label.ts::kindOfLabel`
+
+The kind a `surfaceLabel` names, or the entry itself when it carries no surface. A kind name holds no `': '`, so an unlabeled kind reads back unchanged. The baseline check reads the built-render-parse row's failing kinds through it, to compare them with the grammar's `kinds`.

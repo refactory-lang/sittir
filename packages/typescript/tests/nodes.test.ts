@@ -446,7 +446,7 @@ describe('using_declaration', () => {
 		const node = ir.usingDeclaration(
 			{
 				kind: 'using',
-				variableDeclarator: [
+				variableDeclarators: [
 					stampBuilt({
 						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
@@ -464,7 +464,7 @@ describe('using_declaration', () => {
 		const node = ir.usingDeclaration(
 			{
 				kind: 'using',
-				variableDeclarator: [
+				variableDeclarators: [
 					stampBuilt({
 						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
@@ -484,7 +484,7 @@ describe('using_declaration sub-factories', () => {
 	it('automaticSemicolon builds the parent', () => {
 		const node = ir.usingDeclaration.automaticSemicolon({
 			kind: 'using',
-			variableDeclarator: [
+			variableDeclarators: [
 				stampBuilt({
 					$type: TSKindId.VariableDeclaratorPlain,
 					$text: 'test',
@@ -501,7 +501,7 @@ describe('using_declaration sub-factories', () => {
 	it('semi builds the parent', () => {
 		const node = ir.usingDeclaration.semi({
 			kind: 'using',
-			variableDeclarator: [
+			variableDeclarators: [
 				stampBuilt({
 					$type: TSKindId.VariableDeclaratorPlain,
 					$text: 'test',
@@ -2635,7 +2635,7 @@ describe('ambient_declaration sub-factories', () => {
 		const node = ir.ambientDeclaration.using(
 			{
 				kind: 'using',
-				variableDeclarator: [
+				variableDeclarators: [
 					stampBuilt({
 						$type: TSKindId.VariableDeclaratorPlain,
 						$text: 'test',
@@ -2771,7 +2771,7 @@ describe('ambient_declaration sub-factories', () => {
 	it('using.automaticSemicolon builds the parent', () => {
 		const node = ir.ambientDeclaration.using.automaticSemicolon({
 			kind: 'using',
-			variableDeclarator: [
+			variableDeclarators: [
 				stampBuilt({
 					$type: TSKindId.VariableDeclaratorPlain,
 					$text: 'test',
@@ -2787,7 +2787,7 @@ describe('ambient_declaration sub-factories', () => {
 	it('using.semi builds the parent', () => {
 		const node = ir.ambientDeclaration.using.semi({
 			kind: 'using',
-			variableDeclarator: [
+			variableDeclarators: [
 				stampBuilt({
 					$type: TSKindId.VariableDeclaratorPlain,
 					$text: 'test',
@@ -5755,7 +5755,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 	it('using builds the parent', () => {
 		const node = ir.exportStatementDefaultDeclaration.using({
 			kind: 'using',
-			variableDeclarator: [
+			variableDeclarators: [
 				stampBuilt({
 					$type: TSKindId.VariableDeclaratorPlain,
 					$text: 'test',
@@ -5898,7 +5898,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -5918,7 +5918,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6020,7 +6020,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6179,7 +6179,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6199,7 +6199,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6301,7 +6301,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6468,7 +6468,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6488,7 +6488,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6590,7 +6590,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6749,7 +6749,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',
@@ -6769,7 +6769,7 @@ describe('export_statement_default_declaration sub-factories', () => {
 			content: [
 				{
 					kind: 'using',
-					variableDeclarator: [
+					variableDeclarators: [
 						stampBuilt({
 							$type: TSKindId.VariableDeclaratorPlain,
 							$text: 'test',

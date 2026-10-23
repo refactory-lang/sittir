@@ -7,14 +7,13 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { KindOf, SetterKey, ConfigOf } from '../src/index.ts';
+import type { KindOf, SlotKey, ConfigOf } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Helper: assert types are equal
 // ---------------------------------------------------------------------------
 type Expect<T extends true> = T;
 type Equal<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;
-type Extends<A, B> = A extends B ? true : false;
 
 // ---------------------------------------------------------------------------
 // 1. KindOf — extract the kind id from a node
@@ -27,22 +26,29 @@ type _1c = Expect<Equal<KindOf<{ readonly $type: 7 }>, 7>>;
 type _1d = Expect<Equal<KindOf<{ readonly $type: 7 } | { readonly $type: 9 }>, 7 | 9>>;
 
 // ---------------------------------------------------------------------------
-// 2. SetterKey / ConfigOf — Object.prototype-colliding field names escape
-//     to a trailing underscore, matching the runtime's snakeToCamel(). A
-//     grammar field named `constructor` (e.g. TypeScript's new_expression)
-//     must project to a `constructor_` key, not `constructor` — the
-//     latter would shadow Object.prototype.constructor.
+// 2. SlotKey / ConfigOf — a slot is configured by the model's slot name, as
+//     the generator writes it in `__slotNames__`: a repeated slot's plural,
+//     and a name that would shadow an Object.prototype member escaped.
 // ---------------------------------------------------------------------------
-
-type _2a = Expect<Equal<SetterKey<'constructor'>, 'constructor_'>>;
-type _2b = Expect<Equal<SetterKey<'name'>, 'name'>>;
 
 interface NewExpression {
 	readonly $type: 1;
 	readonly _constructor: { readonly $type: 2; readonly $text: string };
-	readonly _typeArguments?: { readonly $type: 3; readonly $text: string };
+	readonly _argument: readonly { readonly $type: 3; readonly $text: string }[];
+	readonly __slotNames__?: { readonly _constructor: 'constructor_'; readonly _argument: 'arguments' };
 }
 type NewExpressionConfig = ConfigOf<NewExpression>;
 
-type _2c = Expect<Extends<'constructor_', keyof NewExpressionConfig>>;
-type _2d = Expect<Equal<Extends<'constructor', keyof NewExpressionConfig>, false>>;
+type _2a = Expect<Equal<SlotKey<NewExpression, 'argument'>, 'arguments'>>;
+type _2b = Expect<Equal<keyof NewExpressionConfig, 'constructor_' | 'arguments'>>;
+
+// A slot the generator wrote no name for has no key: the storage name is
+// never a config key.
+interface Unnamed {
+	readonly $type: 4;
+	readonly _type_arguments?: { readonly $type: 5; readonly $text: string };
+	readonly _argument: readonly { readonly $type: 3; readonly $text: string }[];
+	readonly __slotNames__?: { readonly _argument: 'arguments' };
+}
+type _2c = Expect<Equal<keyof ConfigOf<Unnamed>, 'arguments'>>;
+type _2d = Expect<Equal<SlotKey<{ readonly _value: string }, 'value'>, never>>;

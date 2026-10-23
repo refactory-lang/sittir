@@ -7,6 +7,7 @@ function makeFactorySlots(
 	slots: Record<
 		string,
 		{
+			propertyName: string;
 			unnamed: boolean;
 			slotCount: number;
 			required: boolean;
@@ -37,6 +38,7 @@ describe('nodeToConfig field promotion', () => {
 				kindNameFromId,
 				factorySlots: makeFactorySlots('single_field_parent', {
 					value: {
+						propertyName: 'value',
 						unnamed: false,
 						slotCount: 1,
 						required: true,
@@ -58,6 +60,7 @@ describe('nodeToConfig field promotion', () => {
 				kindNameFromId,
 				factorySlots: makeFactorySlots('repeat_field_parent', {
 					items: {
+						propertyName: 'items',
 						unnamed: false,
 						slotCount: 1,
 						required: true,

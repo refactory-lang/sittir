@@ -12,7 +12,7 @@ export function rebuildListSeatConfigsRustGenerated() {
 				statements: [rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
 					function: rs.build.identifier("call"),
 					arguments: rs.build.arguments.strict({
-						attributeItem: [rs.build.attributeItem.strict(rs.build.attribute.input.strict({
+						attributeItems: [rs.build.attributeItem.strict(rs.build.attribute.input.strict({
 							path: rs.build.identifier("cfg"),
 							arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("a"))),
 						}))],
