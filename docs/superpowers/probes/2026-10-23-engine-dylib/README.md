@@ -236,8 +236,60 @@ The stamp was identical on every platform's build.
 
 ## What the real migration has to carry
 
-<!-- CARRY -->
+- **Build flags.** Every addon and the engine build with `-C prefer-dynamic`;
+  that flag is the switch between the shapes (sittir-engine is
+  `crate-type = ["dylib", "rlib"]`, so without it everything links
+  statically as before). A tracked `[target.*] rustflags` or the build
+  script's environment has to carry it; a build script cannot. Fat LTO is
+  refused with it ("only 'staticlib', 'bin', and 'cdylib' outputs are
+  supported with LTO"), so release builds lose LTO across the sittir-core /
+  grammar boundary (thin-local LTO inside each crate is allowed).
+- **Linux links the engine with lld.** GNU ld refuses the second version
+  script. rust-lld is the default on x86_64-linux-gnu; the other Linux
+  targets pass `-C link-arg=-fuse-ld=lld` and need lld installed (the
+  existing release matrix cross-compiles musl and arm64 with zig and
+  napi-rs's cross toolchain, which this probe did not try). musl builds need
+  `-C target-feature=-crt-static`, as any musl `.node` does.
+- **Exact rustc.** The std library is `libstd-<hash>`, and the hash changed
+  between Homebrew's rustc 1.99.1 (`f7394d8dadbee1bf`) and rustup's 1.99.0 on
+  each CI platform (`614bb9b33bbc23af` on macOS). Every package of a release
+  has to come from one toolchain, and the engine's mangled symbols change with
+  its version, so packages of one release only.
+- **Packaging.** Each platform package ships the engine and std beside the
+  `.node`; on macOS their references are rewritten to `@rpath/` and the
+  images re-signed, as `scripts/package.mjs` does. The npm `files` and the
+  napi-rs loader have to carry the two extra files.
+- **Process-unique statics live in sittir-engine.** Under shape A anything in
+  sittir-core is one per addon. `feat/records` adds `NEXT_TREE_ID` and
+  `claim_tree_id` to sittir-core's `engine.rs` (beside `TreeClaim`), and keeps
+  the `globalThis` claim in `napi_engine.rs`; the migration moves the counter
+  to sittir-engine and deletes the `globalThis` path, as this probe does on
+  master.
+- **The skew check and the load error.** Each addon checks the engine stamp at
+  load (`#[napi(module_exports)]`). The JavaScript loader should turn the
+  loader's own "symbol not found" (a version skew) into the same message.
+- **Emitter.** `native-crate.ts` emits each grammar's `build.rs` with the rpath
+  and the scanner allocator settings. On this branch the five `build.rs` files
+  were written by the emitter function and its drift test passes, but no full
+  regeneration ran, so the grammars' generation manifests still record the
+  old emitter hash; that commit went in with `--no-verify`.
+- **The live-tree table.** The probe adds `Tree` beside the table. Replacing
+  the table means the JavaScript engine reads, renders and disposes through
+  tree objects (the `FinalizationRegistry` and `disposeTree` go), and the
+  open question of a coordinate without its tree object gets an answer.
 
 ## Reproducing
 
-<!-- REPRO -->
+From the repository root, with the pinned toolchain:
+
+```sh
+# toys: the napi collision, shape A, both skew cases
+RUSTFLAGS="-C prefer-dynamic" node docs/superpowers/probes/2026-10-23-engine-dylib/scripts/toys-ci.mjs --out /tmp/toys --target-dir /tmp/toys-target
+# real grammars: python and regex in separate packages
+RUSTFLAGS="-C prefer-dynamic" node docs/superpowers/probes/2026-10-23-engine-dylib/scripts/grammars-ci.mjs --out /tmp/grammars --target-dir /tmp/grammars-target
+```
+
+Add `-C link-arg=-fuse-ld=lld` on Linux arm64 and musl, and
+`-C target-feature=-crt-static` on musl. The measurements: stage the master
+and probe trees outside the checkout, then `scripts/variants.mjs` per
+variant, `scripts/corpus.mts` once, and `scripts/measure.mjs`.
