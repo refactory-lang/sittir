@@ -10,11 +10,18 @@ function addon() {
 	return status.native;
 }
 
+function arenaEngine() {
+	const native = new (addon().SittirEngine)();
+	const { renderBuilt, builtTriviaSide, writeBuiltTriviaSide } = native;
+	if (renderBuilt === undefined || builtTriviaSide === undefined || writeBuiltTriviaSide === undefined) throw new Error('the native addon was built without the arena feature');
+	return { renderBuilt: renderBuilt.bind(native), builtTriviaSide: builtTriviaSide.bind(native), writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native) };
+}
+
 const words = (...values: number[]) => new Uint32Array([0, ...values]);
 
 describe('a built arena rendered natively', () => {
 	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer', () => {
-		const native = new (addon().SittirEngine)();
+		const native = arenaEngine();
 		const shared = new Uint32Array(new SharedArrayBuffer(16));
 		expect(() => native.renderBuilt([shared], [], 1, false, false)).toThrow(/a built arena chunk must be a Uint32Array over an ordinary ArrayBuffer/);
 		expect(() => native.renderBuilt([new Uint8Array(16) as never], [], 1, false, false)).toThrow(/must be a Uint32Array/);
@@ -25,21 +32,21 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it('refuses words that are no record it admits', () => {
-		const native = new (addon().SittirEngine)();
+		const native = arenaEngine();
 		expect(() => native.renderBuilt([words(1, 0)], [], 0, false, false)).toThrow(/record address 0 is not one a record writer writes/);
 		expect(() => native.renderBuilt([words(60000, 0)], [], 1, false, false)).toThrow(/record kind 60000 is not one a record writer writes/);
 		expect(() => native.renderBuilt([words(1, 0)], [], 9, false, false)).toThrow(/past what the arena wrote/);
 	});
 
 	it('reads and writes the sides of a built record by its address, refusing address 0', () => {
-		const native = new (addon().SittirEngine)();
+		const native = arenaEngine();
 		expect(native.builtTriviaSide(5, 'leading')).toBeNull();
 		native.writeBuiltTriviaSide(5, 'leading', []);
 		expect(native.builtTriviaSide(5, 'leading')).toEqual([]);
 		expect(native.builtTriviaSide(6, 'leading')).toBeNull();
 		expect(() => native.builtTriviaSide(0, 'leading')).toThrow(/record address 0/);
 		expect(() => native.writeBuiltTriviaSide(0, 'leading', [])).toThrow(/record address 0/);
-		expect(() => native.builtTriviaSide(5, 'beside')).toThrow();
+		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
 	});
 
 	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
