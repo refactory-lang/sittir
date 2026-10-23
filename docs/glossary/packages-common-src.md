@@ -904,6 +904,10 @@ The display id of the alias envelope whose content a node is, read from the same
 
 One side of a node and the tree whose trivia table holds it, decided per side, the one source `sideOf` and the `$trivia` reader share: a parsed node's live table at its own index, else the side the node holds as its own data (no tree), else the table of the node it was rebuilt from (`placeOf`) while that tree lives. So a rebuilt node that wrote one side and inherits the other reads each from where it lives, and the reader hydrates each through its own tree. An alias envelope's content (`envelopeKindOf`) reads nothing from either table, since that parser node's entries are its envelope's; a side it holds as its own data, after an edit rebuilt it, is still read.
 
+### `packages/common/src/node-data.ts::setUnitSides`
+
+Gives a built node its unit children's sides as held layout (`$_layout.units`), the record `unitSidesOf` reads first. The node reviver uses it to put back a unit's comments, which a unit (a bare kind id) cannot hold itself.
+
 ### `packages/common/src/interior.ts::interiorPattern`
 
 The compiled whole-token regex of a token interior, built once per interior object (flags `su`) and cached. `projectInterior` splits text with it, and the coercer's leaf registry row for a lexed kind holds it as its pattern, so the interior's `regex` string is compiled in one place on the client.
@@ -958,8 +962,24 @@ Stamps `to` with the source stamp `from` holds, when it holds one, and returns `
 
 ### `packages/common/src/node-json.ts::nodeJSON`
 
-A node's JSON, the body of every node's `toJSON`. What the node's kind is decides what is written, from the grammar's `jsonFacts`: `$type` is the kind's name; a text leaf (`leaves`) and an ERROR node add `$text`; each slot of the kind (`slots`) is written under its accessor's name, read through the accessor so a parsed node and a built node give the same JSON. A slot's value is written by what it holds: a node as its JSON, a kind id as a node of that kind (`{ $type }`), a list (anything iterable that is not a node, since a list owner is itself iterable) as an array whose empty element is `null`, `true` and strings as they are, the blank arm of an optional slot that chose none (`blank`, the kind id no parser kind holds) as `null`, the spelling a builder takes it in (a `null` in a slot is a blank arm and a `null` inside a list is a hole: the position tells them apart); `undefined` and an absent keyword (`false`) are left out. Each trivia side's entries whose kind is not layout are the comments, written as `leadingComments`, `trailingComments` and `innerComments` when the side has any; an ERROR the parser left is one of them. Nothing else crosses: no storage keys, no layout, no provenance stamp or tree token, no `$with`, so the JSON names no tree and needs none to revive. The walk calls `nodeJSON` on the children itself rather than their `toJSON`, so an entry that is not a generated node (an ERROR) is written the same way.
+A node's JSON, the body of every node's `toJSON`. What the node's kind is decides what is written, from the grammar's `jsonFacts`: `$type` is the kind's name; a text leaf (`leaves`) and an ERROR node add `$text`; each slot of the kind (`slots`) is written under its accessor's name, read through the accessor so a parsed node and a built node give the same JSON. A slot's value is written by what it holds: a node as its JSON, a kind id as a node of that kind (`{ $type }`), with the comments its parent holds for it (`unitSidesOf`, by the slot's storage key from its `querySlots` row and its item there) as its own `leadingComments` and `trailingComments`, so a comment on a unit crosses the way a node's does, a list (anything iterable that is not a node, since a list owner is itself iterable) as an array whose empty element is `null`, `true` and strings as they are, the blank arm of an optional slot that chose none (`blank`, the kind id no parser kind holds) as `null`, the spelling a builder takes it in (a `null` in a slot is a blank arm and a `null` inside a list is a hole: the position tells them apart); `undefined` and an absent keyword (`false`) are left out. Each trivia side's entries whose kind is not layout are the comments, written as `leadingComments`, `trailingComments` and `innerComments` when the side has any; an ERROR the parser left is one of them. Nothing else crosses: no storage keys, no layout, no provenance stamp or tree token, no `$with`, so the JSON names no tree and needs none to revive. The walk calls `nodeJSON` on the children itself rather than their `toJSON`, so an entry that is not a generated node (an ERROR) is written the same way.
 
 ### `packages/common/src/node-json.ts::contentText`
 
 The text a text envelope's JSON carries in its one slot: the content leaf's `$text`, when the content is written as the kind the envelope holds (`jsonFacts.textEnvelopes`) with no member but `$type` and `$text`. Any other content (another kind, an `ERROR`, an unknown kind, comments) gives none, and the envelope revives through its slots, which refuse what it cannot hold at the content's path. The reviver builds an envelope with text through the envelope's own builder, never the content kind's, because the content kind's reserved words do not bind the envelope: `x.default` writes its property as `{ $type: 'property_identifier', content: { $type: 'identifier', $text: 'default' } }`, and `identifier` refuses `default` while `property_identifier` admits it.
+
+### `packages/common/src/node-json.ts::unitSidesBySlot`
+
+A node's unit-side records (`unitSidesOf`) grouped by slot storage key, then by item, so `nodeJSON` finds the comments of each unit it writes by its slot's `querySlots` storage key and its position in that slot.
+
+### `packages/common/src/node-json.ts::commentsJSON`
+
+The comments among a trivia side's entries as JSON. An entry whose kind is layout is left out. Each other entry is hydrated (`hydrateTriviaEntry`: a coordinate a tree's unit side holds becomes its comment node) and written as its node's JSON. A node's own sides and a unit's sides are written through it alike.
+
+### `packages/common/src/node-json.ts::unitJSON`
+
+A kind id's JSON: `{ $type }` naming its kind, with `leadingComments` and `trailingComments` from the unit's side record when it has comments there. A unit has no inner side.
+
+### `packages/common/src/node-json.ts::reviveItem`
+
+Revives one slot value, or one list item, of the node the reviver is building. When it revives to a kind id and its JSON carried comments, it records them as a unit-side record: the slot's storage key from its `querySlots` row, the item's position, and the revived comments. After building the node, the reviver gives it those records (`setUnitSides`), the record a parsed tree gives, so render, `$snapshot()` and `toJSON` read them with no path of their own.

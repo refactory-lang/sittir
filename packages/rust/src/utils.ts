@@ -72,683 +72,683 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
-	124: [['content', 0]],
-	128: [['name', 0]],
+	124: [['content', 0, undefined, '_content']],
+	128: [['name', 0, undefined, '_name']],
 	141: [
-		['content', 0],
-		['suffix', 1]
+		['content', 0, undefined, '_content'],
+		['suffix', 1, undefined, '_suffix']
 	],
 	142: [
-		['content', 0],
-		['suffix', 1]
+		['content', 0, undefined, '_content'],
+		['suffix', 1, undefined, '_suffix']
 	],
 	143: [
-		['content', 0],
-		['suffix', 1]
+		['content', 0, undefined, '_content'],
+		['suffix', 1, undefined, '_suffix']
 	],
 	144: [
-		['content', 0],
-		['suffix', 1]
+		['content', 0, undefined, '_content'],
+		['suffix', 1, undefined, '_suffix']
 	],
 	145: [
-		['byte', 0, 'b'],
-		['content', 1]
+		['byte', 0, 'b', '_byte'],
+		['content', 1, undefined, '_content']
 	],
 	147: [
-		['byte', 0, 'b'],
-		['content', 1]
+		['byte', 0, 'b', '_byte'],
+		['content', 1, undefined, '_content']
 	],
 	148: [
-		['byte', 0, 'b'],
-		['content', 1]
+		['byte', 0, 'b', '_byte'],
+		['content', 1, undefined, '_content']
 	],
 	149: [
-		['byte', 0, 'b'],
-		['content', 1]
+		['byte', 0, 'b', '_byte'],
+		['content', 1, undefined, '_content']
 	],
 	150: [
-		['byte', 0, 'b'],
-		['content', 1]
+		['byte', 0, 'b', '_byte'],
+		['content', 1, undefined, '_content']
 	],
-	151: [['content', 0]],
-	152: [['content', 0]],
-	153: [['content', 0]],
-	154: [['content', 0]],
+	151: [['content', 0, undefined, '_content']],
+	152: [['content', 0, undefined, '_content']],
+	153: [['content', 0, undefined, '_content']],
+	154: [['content', 0, undefined, '_content']],
 	176: [
-		['shebang', 0],
-		['statements', 1]
+		['shebang', 0, undefined, '_shebang'],
+		['statements', 1, undefined, '_statements']
 	],
-	179: [['content', 0]],
+	179: [['content', 0, undefined, '_content']],
 	181: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	184: [
-		['name', 0],
-		['type', 1]
+		['name', 0, undefined, '_name'],
+		['type', 1, undefined, '_type']
 	],
 	185: [
-		['tokenPatterns', 0],
-		['separator', 1],
-		['operator', 2]
+		['tokenPatterns', 0, undefined, '_token_patterns'],
+		['separator', 1, undefined, '_separator'],
+		['operator', 2, undefined, '_operator']
 	],
 	188: [
-		['tokens', 0],
-		['separator', 1],
-		['operator', 2]
+		['tokens', 0, undefined, '_tokens'],
+		['separator', 1, undefined, '_separator'],
+		['operator', 2, undefined, '_operator']
 	],
-	189: [['content', 0]],
-	190: [['attribute', 0]],
-	191: [['attribute', 0]],
+	189: [['content', 0, undefined, '_content']],
+	190: [['attribute', 0, undefined, '_attribute']],
+	191: [['attribute', 0, undefined, '_attribute']],
 	192: [
-		['path', 0],
-		['input', 1]
+		['path', 0, undefined, '_path'],
+		['input', 1, undefined, '_input']
 	],
-	195: [['declarations', 0]],
+	195: [['declarations', 0, undefined, '_declarations']],
 	197: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['typeParameters', 2],
-		['whereClause', 3],
-		['body', 4]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['whereClause', 3, undefined, '_where_clause'],
+		['body', 4, undefined, '_body']
 	],
 	198: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['typeParameters', 2],
-		['whereClause', 3],
-		['body', 4]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['whereClause', 3, undefined, '_where_clause'],
+		['body', 4, undefined, '_body']
 	],
-	199: [['elements', 0]],
+	199: [['elements', 0, undefined, '_elements']],
 	200: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['body', 2],
-		['value', 3]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['body', 2, undefined, '_body'],
+		['value', 3, undefined, '_value']
 	],
-	201: [['elements', 0]],
+	201: [['elements', 0, undefined, '_elements']],
 	202: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['type', 2]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['type', 2, undefined, '_type']
 	],
-	203: [['attributes', 0]],
+	203: [['attributes', 0, undefined, '_attributes']],
 	204: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['alias', 2]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['alias', 2, undefined, '_alias']
 	],
 	205: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['type', 2],
-		['value', 3]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['type', 2, undefined, '_type'],
+		['value', 3, undefined, '_value']
 	],
 	206: [
-		['visibilityModifier', 0],
-		['ref', 1, 'ref'],
-		['mutable', 2, 'mut'],
-		['name', 3],
-		['type', 4],
-		['value', 5]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['ref', 1, 'ref', '_ref'],
+		['mutable', 2, 'mut', '_mutable'],
+		['name', 3, undefined, '_name'],
+		['type', 4, undefined, '_type'],
+		['value', 5, undefined, '_value']
 	],
 	207: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['typeParameters', 2],
-		['whereClause', 3],
-		['type', 4],
-		['trailingWhereClause', 5]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['whereClause', 3, undefined, '_where_clause'],
+		['type', 4, undefined, '_type'],
+		['trailingWhereClause', 5, undefined, '_trailing_where_clause']
 	],
 	208: [
-		['visibilityModifier', 0],
-		['functionModifiers', 1],
-		['name', 2],
-		['typeParameters', 3],
-		['parameters', 4],
-		['returnType', 5],
-		['whereClause', 6],
-		['body', 7]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['functionModifiers', 1, undefined, '_function_modifiers'],
+		['name', 2, undefined, '_name'],
+		['typeParameters', 3, undefined, '_type_parameters'],
+		['parameters', 4, undefined, '_parameters'],
+		['returnType', 5, undefined, '_return_type'],
+		['whereClause', 6, undefined, '_where_clause'],
+		['body', 7, undefined, '_body']
 	],
 	209: [
-		['visibilityModifier', 0],
-		['functionModifiers', 1],
-		['name', 2],
-		['typeParameters', 3],
-		['parameters', 4],
-		['returnType', 5],
-		['whereClause', 6]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['functionModifiers', 1, undefined, '_function_modifiers'],
+		['name', 2, undefined, '_name'],
+		['typeParameters', 3, undefined, '_type_parameters'],
+		['parameters', 4, undefined, '_parameters'],
+		['returnType', 5, undefined, '_return_type'],
+		['whereClause', 6, undefined, '_where_clause']
 	],
-	210: [['modifiers', 0]],
-	211: [['wherePredicates', 0]],
+	210: [['modifiers', 0, undefined, '_modifier']],
+	211: [['wherePredicates', 0, undefined, '_where_predicates']],
 	212: [
-		['left', 0],
-		['bounds', 1]
+		['left', 0, undefined, '_left'],
+		['bounds', 1, undefined, '_bounds']
 	],
 	214: [
-		['visibilityModifier', 0],
-		['unsafe', 1, 'unsafe'],
-		['name', 2],
-		['typeParameters', 3],
-		['bounds', 4],
-		['whereClause', 5],
-		['body', 6]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['unsafe', 1, 'unsafe', '_unsafe'],
+		['name', 2, undefined, '_name'],
+		['typeParameters', 3, undefined, '_type_parameters'],
+		['bounds', 4, undefined, '_bounds'],
+		['whereClause', 5, undefined, '_where_clause'],
+		['body', 6, undefined, '_body']
 	],
 	215: [
-		['name', 0],
-		['typeParameters', 1],
-		['bounds', 2],
-		['whereClause', 3]
+		['name', 0, undefined, '_name'],
+		['typeParameters', 1, undefined, '_type_parameters'],
+		['bounds', 2, undefined, '_bounds'],
+		['whereClause', 3, undefined, '_where_clause']
 	],
-	216: [['bounds', 0]],
+	216: [['bounds', 0, undefined, '_bounds']],
 	217: [
-		['typeParameters', 0],
-		['type', 1]
+		['typeParameters', 0, undefined, '_type_parameters'],
+		['type', 1, undefined, '_type']
 	],
-	218: [['type', 0]],
-	219: [['elements', 0]],
+	218: [['type', 0, undefined, '_type']],
+	219: [['elements', 0, undefined, '_elements']],
 	220: [
-		['name', 0],
-		['type', 1],
-		['value', 2]
+		['name', 0, undefined, '_name'],
+		['type', 1, undefined, '_type'],
+		['value', 2, undefined, '_value']
 	],
 	221: [
-		['name', 0],
-		['bounds', 1],
-		['defaultType', 2]
+		['name', 0, undefined, '_name'],
+		['bounds', 1, undefined, '_bounds'],
+		['defaultType', 2, undefined, '_default_type']
 	],
 	222: [
-		['name', 0],
-		['bounds', 1]
+		['name', 0, undefined, '_name'],
+		['bounds', 1, undefined, '_bounds']
 	],
 	223: [
-		['mutable', 0, 'mut'],
-		['pattern', 1],
-		['type', 2],
-		['value', 3],
-		['alternative', 4]
+		['mutable', 0, 'mut', '_mutable'],
+		['pattern', 1, undefined, '_pattern'],
+		['type', 2, undefined, '_type'],
+		['value', 3, undefined, '_value'],
+		['alternative', 4, undefined, '_alternative']
 	],
 	224: [
-		['visibilityModifier', 0],
-		['argument', 1]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['argument', 1, undefined, '_argument']
 	],
 	226: [
-		['path', 0],
-		['list', 1]
+		['path', 0, undefined, '_path'],
+		['list', 1, undefined, '_list']
 	],
-	227: [['useClauses', 0]],
+	227: [['useClauses', 0, undefined, '_use_clauses']],
 	228: [
-		['path', 0],
-		['alias', 1]
+		['path', 0, undefined, '_path'],
+		['alias', 1, undefined, '_alias']
 	],
-	229: [['useWildcardGroup', 0]],
-	230: [['elements', 0]],
+	229: [['useWildcardGroup', 0, undefined, '_use_wildcard_group']],
+	230: [['elements', 0, undefined, '_elements']],
 	231: [
-		['reference', 0, '&'],
-		['lifetime', 1],
-		['mutable', 2, 'mut']
+		['reference', 0, '&', '_reference'],
+		['lifetime', 1, undefined, '_lifetime'],
+		['mutable', 2, 'mut', '_mutable']
 	],
 	232: [
-		['mutable', 0, 'mut'],
-		['pattern', 1]
+		['mutable', 0, 'mut', '_mutable'],
+		['pattern', 1, undefined, '_pattern']
 	],
 	233: [
-		['mutable', 0, 'mut'],
-		['name', 1],
-		['type', 2]
+		['mutable', 0, 'mut', '_mutable'],
+		['name', 1, undefined, '_name'],
+		['type', 2, undefined, '_type']
 	],
-	234: [['abi', 0]],
-	235: [['content', 0]],
-	237: [['type', 0]],
+	234: [['abi', 0, undefined, '_abi']],
+	235: [['content', 0, undefined, '_content']],
+	237: [['type', 0, undefined, '_type']],
 	238: [
-		['type', 0],
-		['alias', 1]
+		['type', 0, undefined, '_type'],
+		['alias', 1, undefined, '_alias']
 	],
-	239: [['name', 0]],
+	239: [['name', 0, undefined, '_name']],
 	240: [
-		['element', 0],
-		['length', 1]
+		['element', 0, undefined, '_element'],
+		['length', 1, undefined, '_length']
 	],
-	241: [['lifetimes', 0]],
+	241: [['lifetimes', 0, undefined, '_lifetimes']],
 	242: [
-		['forLifetimes', 0],
-		['content', 1],
-		['parameters', 2],
-		['returnType', 3]
+		['forLifetimes', 0, undefined, '_for_lifetimes'],
+		['content', 1, undefined, '_content'],
+		['parameters', 2, undefined, '_parameters'],
+		['returnType', 3, undefined, '_return_type']
 	],
-	243: [['types', 0]],
+	243: [['types', 0, undefined, '_types']],
 	245: [
-		['function', 0],
-		['typeArguments', 1]
+		['function', 0, undefined, '_function'],
+		['typeArguments', 1, undefined, '_type_arguments']
 	],
 	246: [
-		['type', 0],
-		['typeArguments', 1]
+		['type', 0, undefined, '_type'],
+		['typeArguments', 1, undefined, '_type_arguments']
 	],
 	247: [
-		['type', 0],
-		['typeArguments', 1]
+		['type', 0, undefined, '_type'],
+		['typeArguments', 1, undefined, '_type_arguments']
 	],
 	248: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
-	249: [['bounds', 0]],
-	250: [['elements', 0]],
+	249: [['bounds', 0, undefined, '_bounds']],
+	250: [['elements', 0, undefined, '_elements']],
 	251: [
-		['name', 0],
-		['typeArguments', 1],
-		['type', 2]
+		['name', 0, undefined, '_name'],
+		['typeArguments', 1, undefined, '_type_arguments'],
+		['type', 2, undefined, '_type']
 	],
 	252: [
-		['lifetime', 0],
-		['mutable', 1, 'mut'],
-		['type', 2]
+		['lifetime', 0, undefined, '_lifetime'],
+		['mutable', 1, 'mut', '_mutable'],
+		['type', 2, undefined, '_type']
 	],
 	255: [
-		['typeParameters', 0],
-		['trait', 1]
+		['typeParameters', 0, undefined, '_type_parameters'],
+		['trait', 1, undefined, '_trait']
 	],
-	256: [['trait', 0]],
+	256: [['trait', 0, undefined, '_trait']],
 	259: [
-		['macro', 0],
-		['arguments', 1]
+		['macro', 0, undefined, '_macro'],
+		['arguments', 1, undefined, '_arguments']
 	],
 	263: [
-		['path', 0],
-		['name', 1]
+		['path', 0, undefined, '_path'],
+		['name', 1, undefined, '_name']
 	],
 	264: [
-		['path', 0],
-		['name', 1]
+		['path', 0, undefined, '_path'],
+		['name', 1, undefined, '_name']
 	],
 	265: [
-		['path', 0],
-		['name', 1]
+		['path', 0, undefined, '_path'],
+		['name', 1, undefined, '_name']
 	],
 	267: [
-		['operator', 0],
-		['operand', 1]
+		['operator', 0, undefined, '_operator'],
+		['operand', 1, undefined, '_operand']
 	],
-	268: [['value', 0]],
+	268: [['value', 0, undefined, '_value']],
 	270: [
-		['left', 0],
-		['operator', 1],
-		['right', 2]
+		['left', 0, undefined, '_left'],
+		['operator', 1, undefined, '_operator'],
+		['right', 2, undefined, '_right']
 	],
 	271: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	272: [
-		['left', 0],
-		['operator', 1],
-		['right', 2]
+		['left', 0, undefined, '_left'],
+		['operator', 1, undefined, '_operator'],
+		['right', 2, undefined, '_right']
 	],
 	273: [
-		['value', 0],
-		['type', 1]
+		['value', 0, undefined, '_value'],
+		['type', 1, undefined, '_type']
 	],
-	274: [['expression', 0]],
-	275: [['expression', 0]],
+	274: [['expression', 0, undefined, '_expression']],
+	275: [['expression', 0, undefined, '_expression']],
 	276: [
-		['function', 0],
-		['arguments', 1]
+		['function', 0, undefined, '_function'],
+		['arguments', 1, undefined, '_arguments']
 	],
-	277: [['elements', 0]],
-	279: [['expression', 0]],
+	277: [['elements', 0, undefined, '_elements']],
+	279: [['expression', 0, undefined, '_expression']],
 	280: [
-		['attributes', 0],
-		['expressions', 1]
+		['attributes', 0, undefined, '_attributes'],
+		['expressions', 1, undefined, '_expressions']
 	],
 	282: [
-		['name', 0],
-		['body', 1]
+		['name', 0, undefined, '_name'],
+		['body', 1, undefined, '_body']
 	],
-	283: [['initializers', 0]],
+	283: [['initializers', 0, undefined, '_initializers']],
 	284: [
-		['attributes', 0],
-		['name', 1]
+		['attributes', 0, undefined, '_attributes'],
+		['name', 1, undefined, '_name']
 	],
 	285: [
-		['attributeItems', 0],
-		['field', 1],
-		['value', 2]
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['field', 1, undefined, '_field'],
+		['value', 2, undefined, '_value']
 	],
-	286: [['value', 0]],
+	286: [['value', 0, undefined, '_value']],
 	287: [
-		['condition', 0],
-		['consequence', 1],
-		['alternative', 2]
+		['condition', 0, undefined, '_condition'],
+		['consequence', 1, undefined, '_consequence'],
+		['alternative', 2, undefined, '_alternative']
 	],
 	288: [
-		['pattern', 0],
-		['value', 1]
+		['pattern', 0, undefined, '_pattern'],
+		['value', 1, undefined, '_value']
 	],
 	289: [
-		['left', 0],
-		['rights', 1]
+		['left', 0, undefined, '_left'],
+		['rights', 1, undefined, '_right']
 	],
-	291: [['body', 0]],
+	291: [['body', 0, undefined, '_body']],
 	292: [
-		['value', 0],
-		['body', 1]
+		['value', 0, undefined, '_value'],
+		['body', 1, undefined, '_body']
 	],
-	293: [['matchBlockArms', 0]],
+	293: [['matchBlockArms', 0, undefined, '_match_block_arms']],
 	295: [
-		['attributes', 0],
-		['pattern', 1],
-		['value', 2],
-		['trailingComma', 3]
+		['attributes', 0, undefined, '_attributes'],
+		['pattern', 1, undefined, '_pattern'],
+		['value', 2, undefined, '_value'],
+		['trailingComma', 3, undefined, '_trailing_comma']
 	],
 	296: [
-		['pattern', 0],
-		['condition', 1]
+		['pattern', 0, undefined, '_pattern'],
+		['condition', 1, undefined, '_condition']
 	],
 	297: [
-		['label', 0],
-		['condition', 1],
-		['body', 2]
+		['label', 0, undefined, '_label'],
+		['condition', 1, undefined, '_condition'],
+		['body', 2, undefined, '_body']
 	],
 	298: [
-		['label', 0],
-		['body', 1]
+		['label', 0, undefined, '_label'],
+		['body', 1, undefined, '_body']
 	],
 	299: [
-		['label', 0],
-		['pattern', 1],
-		['value', 2],
-		['body', 3]
+		['label', 0, undefined, '_label'],
+		['pattern', 1, undefined, '_pattern'],
+		['value', 2, undefined, '_value'],
+		['body', 3, undefined, '_body']
 	],
-	300: [['body', 0]],
-	302: [['parameters', 0]],
-	303: [['name', 0]],
+	300: [['body', 0, undefined, '_body']],
+	302: [['parameters', 0, undefined, '_parameters']],
+	303: [['name', 0, undefined, '_name']],
 	304: [
-		['label', 0],
-		['expression', 1]
+		['label', 0, undefined, '_label'],
+		['expression', 1, undefined, '_expression']
 	],
-	305: [['label', 0]],
+	305: [['label', 0, undefined, '_label']],
 	306: [
-		['object', 0],
-		['index', 1]
+		['object', 0, undefined, '_object'],
+		['index', 1, undefined, '_index']
 	],
-	307: [['expression', 0]],
+	307: [['expression', 0, undefined, '_expression']],
 	308: [
-		['value', 0],
-		['field', 1]
+		['value', 0, undefined, '_value'],
+		['field', 1, undefined, '_field']
 	],
-	309: [['body', 0]],
+	309: [['body', 0, undefined, '_body']],
 	310: [
-		['move', 0, 'move'],
-		['body', 1]
+		['move', 0, 'move', '_move'],
+		['body', 1, undefined, '_body']
 	],
 	311: [
-		['move', 0, 'move'],
-		['body', 1]
+		['move', 0, 'move', '_move'],
+		['body', 1, undefined, '_body']
 	],
-	312: [['body', 0]],
+	312: [['body', 0, undefined, '_body']],
 	313: [
-		['label', 0],
-		['statements', 1],
-		['trailingExpression', 2]
+		['label', 0, undefined, '_label'],
+		['statements', 1, undefined, '_statements'],
+		['trailingExpression', 2, undefined, '_trailing_expression']
 	],
 	315: [
-		['name', 0],
-		['typeArguments', 1]
+		['name', 0, undefined, '_name'],
+		['typeArguments', 1, undefined, '_type_arguments']
 	],
-	316: [['elements', 0]],
-	317: [['patterns', 0]],
+	316: [['elements', 0, undefined, '_elements']],
+	317: [['patterns', 0, undefined, '_patterns']],
 	318: [
-		['type', 0],
-		['patterns', 1]
+		['type', 0, undefined, '_type'],
+		['patterns', 1, undefined, '_patterns']
 	],
 	319: [
-		['type', 0],
-		['fields', 1]
+		['type', 0, undefined, '_type'],
+		['fields', 1, undefined, '_fields']
 	],
-	322: [['pattern', 0]],
-	324: [['pattern', 0]],
+	322: [['pattern', 0, undefined, '_pattern']],
+	324: [['pattern', 0, undefined, '_pattern']],
 	325: [
-		['name', 0],
-		['pattern', 1]
+		['name', 0, undefined, '_name'],
+		['pattern', 1, undefined, '_pattern']
 	],
 	326: [
-		['mutable', 0, 'mut'],
-		['pattern', 1]
+		['mutable', 0, 'mut', '_mutable'],
+		['pattern', 1, undefined, '_pattern']
 	],
-	330: [['value', 0]],
+	330: [['value', 0, undefined, '_value']],
 	332: [
-		['stringOpen', 0],
-		['elements', 1]
+		['stringOpen', 0, undefined, '_string_open'],
+		['elements', 1, undefined, '_elements']
 	],
 	333: [
-		['rawStringLiteralStart', 0],
-		['stringContent', 1],
-		['rawStringLiteralEnd', 2]
+		['rawStringLiteralStart', 0, undefined, '_raw_string_literal_start'],
+		['stringContent', 1, undefined, '_string_content'],
+		['rawStringLiteralEnd', 2, undefined, '_raw_string_literal_end']
 	],
-	337: [['content', 0]],
-	340: [['content', 0]],
-	342: [['items', 0]],
-	343: [['items', 0]],
-	344: [['items', 0]],
-	345: [['items', 0]],
-	346: [['items', 0]],
-	347: [['items', 0]],
-	348: [['items', 0]],
-	349: [['items', 0]],
-	350: [['items', 0]],
-	351: [['items', 0]],
-	352: [['items', 0]],
-	353: [['items', 0]],
-	354: [['items', 0]],
-	355: [['items', 0]],
-	356: [['items', 0]],
-	357: [['items', 0]],
-	358: [['items', 0]],
-	359: [['items', 0]],
-	360: [['path', 0]],
+	337: [['content', 0, undefined, '_content']],
+	340: [['content', 0, undefined, '_content']],
+	342: [['items', 0, undefined, '_item']],
+	343: [['items', 0, undefined, '_item']],
+	344: [['items', 0, undefined, '_item']],
+	345: [['items', 0, undefined, '_item']],
+	346: [['items', 0, undefined, '_item']],
+	347: [['items', 0, undefined, '_item']],
+	348: [['items', 0, undefined, '_item']],
+	349: [['items', 0, undefined, '_item']],
+	350: [['items', 0, undefined, '_item']],
+	351: [['items', 0, undefined, '_item']],
+	352: [['items', 0, undefined, '_item']],
+	353: [['items', 0, undefined, '_item']],
+	354: [['items', 0, undefined, '_item']],
+	355: [['items', 0, undefined, '_item']],
+	356: [['items', 0, undefined, '_item']],
+	357: [['items', 0, undefined, '_item']],
+	358: [['items', 0, undefined, '_item']],
+	359: [['items', 0, undefined, '_item']],
+	360: [['path', 0, undefined, '_path']],
 	366: [
-		['attributes', 0],
-		['element', 1],
-		['length', 2]
+		['attributes', 0, undefined, '_attributes'],
+		['element', 1, undefined, '_element'],
+		['length', 2, undefined, '_length']
 	],
 	367: [
-		['attributes', 0],
-		['elements', 1]
+		['attributes', 0, undefined, '_attributes'],
+		['elements', 1, undefined, '_elements']
 	],
 	368: [
-		['value', 0],
-		['arguments', 1]
+		['value', 0, undefined, '_value'],
+		['arguments', 1, undefined, '_arguments']
 	],
 	369: [
-		['static', 0, 'static'],
-		['async', 1, 'async'],
-		['move', 2, 'move'],
-		['parameters', 3],
-		['returnType', 4],
-		['body', 5]
+		['static', 0, 'static', '_static'],
+		['async', 1, 'async', '_async'],
+		['move', 2, 'move', '_move'],
+		['parameters', 3, undefined, '_parameters'],
+		['returnType', 4, undefined, '_return_type'],
+		['body', 5, undefined, '_body']
 	],
 	370: [
-		['static', 0, 'static'],
-		['async', 1, 'async'],
-		['move', 2, 'move'],
-		['parameters', 3],
-		['body', 4]
+		['static', 0, 'static', '_static'],
+		['async', 1, 'async', '_async'],
+		['move', 2, 'move', '_move'],
+		['parameters', 3, undefined, '_parameters'],
+		['body', 4, undefined, '_body']
 	],
-	371: [['value', 0]],
-	372: [['value', 0]],
-	373: [['value', 0]],
-	374: [['value', 0]],
-	375: [['trait', 0]],
-	376: [['trait', 0]],
+	371: [['value', 0, undefined, '_value']],
+	372: [['value', 0, undefined, '_value']],
+	373: [['value', 0, undefined, '_value']],
+	374: [['value', 0, undefined, '_value']],
+	375: [['trait', 0, undefined, '_trait']],
+	376: [['trait', 0, undefined, '_trait']],
 	377: [
-		['unsafe', 0, 'unsafe'],
-		['typeParameters', 1],
-		['traitClause', 2],
-		['type', 3],
-		['whereClause', 4],
-		['body', 5]
+		['unsafe', 0, 'unsafe', '_unsafe'],
+		['typeParameters', 1, undefined, '_type_parameters'],
+		['traitClause', 2, undefined, '_trait_clause'],
+		['type', 3, undefined, '_type'],
+		['whereClause', 4, undefined, '_where_clause'],
+		['body', 5, undefined, '_body']
 	],
 	378: [
-		['unsafe', 0, 'unsafe'],
-		['typeParameters', 1],
-		['traitClause', 2],
-		['type', 3],
-		['whereClause', 4]
+		['unsafe', 0, 'unsafe', '_unsafe'],
+		['typeParameters', 1, undefined, '_type_parameters'],
+		['traitClause', 2, undefined, '_trait_clause'],
+		['type', 3, undefined, '_type'],
+		['whereClause', 4, undefined, '_where_clause']
 	],
-	379: [['path', 0]],
-	380: [['content', 0]],
-	381: [['visibilityModifierPubScope', 0]],
-	382: [['trait', 0]],
-	383: [['functionModifiers', 0]],
+	379: [['path', 0, undefined, '_path']],
+	380: [['content', 0, undefined, '_content']],
+	381: [['visibilityModifierPubScope', 0, undefined, '_visibility_modifier_pub_scope']],
+	382: [['trait', 0, undefined, '_trait']],
+	383: [['functionModifiers', 0, undefined, '_function_modifiers']],
 	384: [
-		['visibilityModifier', 0],
-		['name', 1]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name']
 	],
 	385: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['body', 2]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['body', 2, undefined, '_body']
 	],
 	386: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
-	387: [['right', 0]],
-	388: [['type', 0]],
-	389: [['type', 0]],
+	387: [['right', 0, undefined, '_right']],
+	388: [['type', 0, undefined, '_type']],
+	389: [['type', 0, undefined, '_type']],
 	390: [
-		['start', 0],
-		['operator', 1],
-		['end', 2]
+		['start', 0, undefined, '_start'],
+		['operator', 1, undefined, '_operator'],
+		['end', 2, undefined, '_end']
 	],
-	391: [['start', 0]],
-	392: [['end', 0]],
-	393: [['rangeExpressionBare', 0]],
-	394: [['expression', 0]],
+	391: [['start', 0, undefined, '_start']],
+	392: [['end', 0, undefined, '_end']],
+	393: [['rangeExpressionBare', 0, undefined, '_range_expression_bare']],
+	394: [['expression', 0, undefined, '_expression']],
 	395: [
-		['unsafe', 0, 'unsafe'],
-		['externModifier', 1]
+		['unsafe', 0, 'unsafe', '_unsafe'],
+		['externModifier', 1, undefined, '_extern_modifier']
 	],
 	396: [
-		['unsafe', 0, 'unsafe'],
-		['externModifier', 1],
-		['body', 2]
+		['unsafe', 0, 'unsafe', '_unsafe'],
+		['externModifier', 1, undefined, '_extern_modifier'],
+		['body', 2, undefined, '_body']
 	],
 	397: [
-		['attributes', 0],
-		['pattern', 1],
-		['value', 2]
+		['attributes', 0, undefined, '_attributes'],
+		['pattern', 1, undefined, '_pattern'],
+		['value', 2, undefined, '_value']
 	],
 	398: [
-		['attributes', 0],
-		['pattern', 1],
-		['value', 2]
+		['attributes', 0, undefined, '_attributes'],
+		['pattern', 1, undefined, '_pattern'],
+		['value', 2, undefined, '_value']
 	],
-	400: [['doc', 0]],
-	401: [['doc', 0]],
-	402: [['doc', 0]],
-	403: [['doc', 0]],
-	405: [['tokenPatterns', 0]],
-	406: [['tokenPatterns', 0]],
-	407: [['tokenPatterns', 0]],
-	408: [['tokens', 0]],
-	409: [['tokens', 0]],
-	410: [['tokens', 0]],
-	411: [['delimTokens', 0]],
-	412: [['delimTokens', 0]],
-	413: [['delimTokens', 0]],
+	400: [['doc', 0, undefined, '_doc']],
+	401: [['doc', 0, undefined, '_doc']],
+	402: [['doc', 0, undefined, '_doc']],
+	403: [['doc', 0, undefined, '_doc']],
+	405: [['tokenPatterns', 0, undefined, '_token_patterns']],
+	406: [['tokenPatterns', 0, undefined, '_token_patterns']],
+	407: [['tokenPatterns', 0, undefined, '_token_patterns']],
+	408: [['tokens', 0, undefined, '_tokens']],
+	409: [['tokens', 0, undefined, '_tokens']],
+	410: [['tokens', 0, undefined, '_tokens']],
+	411: [['delimTokens', 0, undefined, '_delim_tokens']],
+	412: [['delimTokens', 0, undefined, '_delim_tokens']],
+	413: [['delimTokens', 0, undefined, '_delim_tokens']],
 	414: [
-		['ref', 0, 'ref'],
-		['mutable', 1, 'mut'],
-		['name', 2]
+		['ref', 0, 'ref', '_ref'],
+		['mutable', 1, 'mut', '_mutable'],
+		['name', 2, undefined, '_name']
 	],
 	415: [
-		['ref', 0, 'ref'],
-		['mutable', 1, 'mut'],
-		['name', 2],
-		['pattern', 3]
+		['ref', 0, 'ref', '_ref'],
+		['mutable', 1, 'mut', '_mutable'],
+		['name', 2, undefined, '_name'],
+		['pattern', 3, undefined, '_pattern']
 	],
 	416: [
-		['name', 0],
-		['macroRules', 1]
+		['name', 0, undefined, '_name'],
+		['macroRules', 1, undefined, '_macro_rules']
 	],
 	417: [
-		['name', 0],
-		['macroRules', 1]
+		['name', 0, undefined, '_name'],
+		['macroRules', 1, undefined, '_macro_rules']
 	],
 	418: [
-		['name', 0],
-		['macroRules', 1]
+		['name', 0, undefined, '_name'],
+		['macroRules', 1, undefined, '_macro_rules']
 	],
 	419: [
-		['content', 0],
-		['right', 1]
+		['content', 0, undefined, '_content'],
+		['right', 1, undefined, '_right']
 	],
 	420: [
-		['content', 0],
-		['right', 1]
+		['content', 0, undefined, '_content'],
+		['right', 1, undefined, '_right']
 	],
 	422: [
-		['left', 0],
-		['content', 1]
+		['left', 0, undefined, '_left'],
+		['content', 1, undefined, '_content']
 	],
 	423: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['typeParameters', 2],
-		['whereClause', 3],
-		['body', 4]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['whereClause', 3, undefined, '_where_clause'],
+		['body', 4, undefined, '_body']
 	],
 	424: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['typeParameters', 2],
-		['body', 3],
-		['whereClause', 4]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['body', 3, undefined, '_body'],
+		['whereClause', 4, undefined, '_where_clause']
 	],
 	425: [
-		['visibilityModifier', 0],
-		['name', 1],
-		['typeParameters', 2]
+		['visibilityModifier', 0, undefined, '_visibility_modifier'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters']
 	],
 	427: [
-		['attributeItems', 0],
-		['fieldDeclaration', 1]
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['fieldDeclaration', 1, undefined, '_field_declaration']
 	],
 	428: [
-		['attributeItems', 0],
-		['enumVariant', 1]
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['enumVariant', 1, undefined, '_enum_variant']
 	],
 	429: [
-		['attributeItem', 0],
-		['content', 1]
+		['attributeItem', 0, undefined, '_attribute_item'],
+		['content', 1, undefined, '_content']
 	],
 	430: [
-		['attributeItems', 0],
-		['content', 1]
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['content', 1, undefined, '_content']
 	],
 	431: [
-		['attributeItems', 0],
-		['expression', 1]
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['expression', 1, undefined, '_expression']
 	],
 	432: [
-		['attributeItems', 0],
-		['visibilityModifier', 1],
-		['type', 2]
+		['attributeItems', 0, undefined, '_attribute_item'],
+		['visibilityModifier', 1, undefined, '_visibility_modifier'],
+		['type', 2, undefined, '_type']
 	],
 	433: [
-		['content', 0],
-		['traitBounds', 1]
+		['content', 0, undefined, '_content'],
+		['traitBounds', 1, undefined, '_trait_bounds']
 	],
 	434: [
-		['arms', 0],
-		['lastArm', 1]
+		['arms', 0, undefined, '_arms'],
+		['lastArm', 1, undefined, '_last_arm']
 	],
-	465: [['content', 0]],
-	466: [['content', 0]],
-	468: [['content', 0]],
-	469: [['content', 0]]
+	465: [['content', 0, undefined, '_content']],
+	466: [['content', 0, undefined, '_content']],
+	468: [['content', 0, undefined, '_content']],
+	469: [['content', 0, undefined, '_content']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({

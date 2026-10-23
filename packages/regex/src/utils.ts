@@ -22,80 +22,80 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
-	37: [['content', 0]],
-	51: [['content', 0]],
-	52: [['terms', 0]],
-	53: [['termGroups', 0]],
-	55: [['content', 0]],
+	37: [['content', 0, undefined, '_content']],
+	51: [['content', 0, undefined, '_content']],
+	52: [['terms', 0, undefined, '_terms']],
+	53: [['termGroups', 0, undefined, '_term_group']],
+	55: [['content', 0, undefined, '_content']],
 	56: [
-		['content', 0],
-		['pattern', 1]
+		['content', 0, undefined, '_content'],
+		['pattern', 1, undefined, '_pattern']
 	],
 	57: [
-		['content', 0],
-		['pattern', 1]
+		['content', 0, undefined, '_content'],
+		['pattern', 1, undefined, '_pattern']
 	],
 	58: [
-		['negation', 0, '^'],
-		['leading', 1, '-'],
-		['classAtoms', 2],
-		['trailing', 3, '-']
+		['negation', 0, '^', '_negation'],
+		['leading', 1, '-', '_leading'],
+		['classAtoms', 2, undefined, '_class_atoms'],
+		['trailing', 3, '-', '_trailing']
 	],
-	59: [['posixClassName', 0]],
+	59: [['posixClassName', 0, undefined, '_posix_class_name']],
 	61: [
-		['start', 0],
-		['end', 1]
+		['start', 0, undefined, '_start'],
+		['end', 1, undefined, '_end']
 	],
-	62: [['pattern', 0]],
+	62: [['pattern', 0, undefined, '_pattern']],
 	63: [
-		['content', 0],
-		['groupName', 1],
-		['pattern', 2]
+		['content', 0, undefined, '_content'],
+		['groupName', 1, undefined, '_group_name'],
+		['pattern', 2, undefined, '_pattern']
 	],
-	64: [['pattern', 0]],
-	67: [['lazy', 0, '?']],
-	68: [['lazy', 0, '?']],
-	69: [['lazy', 0, '?']],
+	64: [['pattern', 0, undefined, '_pattern']],
+	67: [['lazy', 0, '?', '_lazy']],
+	68: [['lazy', 0, '?', '_lazy']],
+	69: [['lazy', 0, '?', '_lazy']],
 	70: [
-		['content', 0],
-		['lazy', 1, '?']
+		['content', 0, undefined, '_content'],
+		['lazy', 1, '?', '_lazy']
 	],
-	71: [['groupName', 0]],
-	72: [['groupName', 0]],
-	73: [['content', 0]],
+	71: [['groupName', 0, undefined, '_group_name']],
+	72: [['groupName', 0, undefined, '_group_name']],
+	73: [['content', 0, undefined, '_content']],
 	75: [
-		['unicodePropertyValueExpressionGroup', 0],
-		['unicodePropertyValue', 1]
+		['unicodePropertyValueExpressionGroup', 0, undefined, '_unicode_property_value_expression_group'],
+		['unicodePropertyValue', 1, undefined, '_unicode_property_value']
 	],
 	77: [
-		['content', 0],
-		['quantifier', 1]
+		['content', 0, undefined, '_content'],
+		['quantifier', 1, undefined, '_quantifier']
 	],
-	78: [['decimalDigits', 0]],
+	78: [['decimalDigits', 0, undefined, '_decimal_digits']],
 	79: [
-		['decimalDigits', 0],
-		['countQuantifierGroup', 1]
+		['decimalDigits', 0, undefined, '_decimal_digits'],
+		['countQuantifierGroup', 1, undefined, '_count_quantifier_group']
 	],
 	80: [
-		['characterClassEscapeText2', 0],
-		['unicodePropertyValueExpression', 1]
+		['characterClassEscapeText2', 0, undefined, '_character_class_escape_text2'],
+		['unicodePropertyValueExpression', 1, undefined, '_unicode_property_value_expression']
 	],
-	81: [['unicodePropertyName', 0]],
+	81: [['unicodePropertyName', 0, undefined, '_unicode_property_name']],
 	83: [
-		['enabled', 0],
-		['pattern', 1]
+		['enabled', 0, undefined, '_enabled'],
+		['pattern', 1, undefined, '_pattern']
 	],
 	84: [
-		['enabled', 0],
-		['disabled', 1],
-		['pattern', 2]
+		['enabled', 0, undefined, '_enabled'],
+		['disabled', 1, undefined, '_disabled'],
+		['pattern', 2, undefined, '_pattern']
 	],
 	85: [
-		['disabled', 0],
-		['pattern', 1]
+		['disabled', 0, undefined, '_disabled'],
+		['pattern', 1, undefined, '_pattern']
 	],
-	89: [['content', 0]],
-	90: [['content', 0]]
+	89: [['content', 0, undefined, '_content']],
+	90: [['content', 0, undefined, '_content']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({

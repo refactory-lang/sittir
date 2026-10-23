@@ -2,7 +2,7 @@ import type { StructureRow } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
 import { innerRegions, whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { classifyFactoryShape, compareOrdinal, keywordPresenceValue, registeredSlots, wireRoutesOf, type WireRoutes } from './shared.ts';
-import { AssembledSupertype, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, storageKeyOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
 import { BLANK_KIND_ID } from '../compiler/model/site-preferences.ts';
@@ -83,7 +83,7 @@ function emitTriviaFacts(
 	return ['export const triviaFacts = Object.freeze({', facts.join(',\n'), '} satisfies TriviaFacts<TSKindId>);'];
 }
 
-type QuerySlotRow = readonly [accessor: string, slot: number, keyword?: string];
+type QuerySlotRow = readonly [accessor: string, slot: number, keyword: string | undefined, storageKey: string];
 
 const RECORDER_FLAG_KEY = 'is';
 
@@ -101,8 +101,7 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 				throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} is read as \`${RECORDER_FLAG_KEY}\`, which a where condition reserves for flags`);
 			const number = numbers.get(slot.storageName);
 			if (number === undefined) throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} has no field in its node, so a query cannot number it`);
-			const keyword = keywordPresenceValue(slot, nodeMap);
-			return keyword === undefined ? [slot.propertyName, number] : [slot.propertyName, number, keyword];
+			return [slot.propertyName, number, keywordPresenceValue(slot, nodeMap), storageKeyOf(slot.storageName)];
 		});
 		const claimed = rows.get(node.kindId);
 		if (claimed !== undefined && JSON.stringify(claimed) !== JSON.stringify(row)) {
@@ -119,7 +118,7 @@ function emitStructure(structure: ReadonlyMap<number, StructureRow>): string[] {
 }
 
 function emitQuerySlots(rows: ReadonlyMap<number, readonly QuerySlotRow[]>): string[] {
-	const entries = [...rows].map(([kindId, row]) => `    ${kindId}: ${JSON.stringify(row)}`);
+	const entries = [...rows].map(([kindId, row]) => `    ${kindId}: [${row.map((entry) => `[${entry.map((part) => (part === undefined ? 'undefined' : JSON.stringify(part))).join(', ')}]`).join(', ')}]`);
 	return ['export const querySlots: QuerySlots = Object.freeze({', entries.join(',\n'), '});'];
 }
 

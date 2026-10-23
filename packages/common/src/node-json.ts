@@ -1,7 +1,7 @@
 import type { NodeJSON, NodeJSONFacts, NodeJSONValue } from '@sittir/types';
-import { nodeText } from './node-data.ts';
+import { nodeText, setUnitSides, unitSidesOf, type UnitSidesData } from './node-data.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
-import { isNode } from './utils.ts';
+import { hydrateTriviaEntry, isNode } from './utils.ts';
 
 type Members = { readonly [member: string]: unknown };
 
@@ -10,6 +10,10 @@ const COMMENT_SIDES = [
 	['trailing', 'trailingComments'],
 	['inner', 'innerComments']
 ] as const;
+
+const UNIT_SIDES = COMMENT_SIDES.slice(0, 2);
+
+type UnitSides = ReadonlyMap<number, UnitSidesData>;
 
 /**
  * A node's JSON (`NodeMethods.toJSON`).
@@ -26,27 +30,53 @@ export function nodeJSON(node: object, facts: NodeJSONFacts): NodeJSON {
 		const text = nodeText(node);
 		if (text !== undefined) json.$text = text;
 	}
-	for (const [accessor] of facts.slots[members.$type] ?? []) {
+	const units = unitSidesBySlot(node);
+	for (const [accessor, , , storageKey] of facts.slots[members.$type] ?? []) {
 		const read = members[accessor];
-		const value = valueJSON(typeof read === 'function' ? (read as () => unknown).call(node) : undefined, facts);
+		const value = valueJSON(typeof read === 'function' ? (read as () => unknown).call(node) : undefined, facts, units.get(storageKey));
 		if (value !== undefined) json[accessor] = value;
 	}
 	const trivia = members.$trivia as Readonly<Record<string, (() => readonly unknown[]) | undefined>> | undefined;
 	for (const [side, key] of COMMENT_SIDES) {
-		const comments = (trivia?.[side]?.() ?? []).filter((entry) => !facts.layout.has(typeof entry === 'number' ? entry : (entry as Members & { readonly $type: number }).$type));
-		if (comments.length > 0) json[key] = comments.map((entry) => valueJSON(entry, facts) as NodeJSON);
+		const comments = commentsJSON(trivia?.[side]?.() ?? [], facts);
+		if (comments.length > 0) json[key] = comments;
 	}
 	return json as NodeJSON;
 }
 
-function valueJSON(value: unknown, facts: NodeJSONFacts): NodeJSONValue | undefined {
+function unitSidesBySlot(node: object): ReadonlyMap<string, UnitSides> {
+	const bySlot = new Map<string, Map<number, UnitSidesData>>();
+	for (const unit of (unitSidesOf(node) ?? []) as readonly UnitSidesData[]) {
+		let items = bySlot.get(unit.slot);
+		if (items === undefined) bySlot.set(unit.slot, (items = new Map()));
+		items.set(unit.item, unit);
+	}
+	return bySlot;
+}
+
+function commentsJSON(entries: readonly unknown[], facts: NodeJSONFacts): NodeJSON[] {
+	return entries
+		.filter((entry) => !facts.layout.has(typeof entry === 'number' ? entry : (entry as Members & { readonly $type: number }).$type))
+		.map((entry) => valueJSON(hydrateTriviaEntry(entry), facts) as NodeJSON);
+}
+
+function unitJSON(kindId: number, sides: UnitSidesData | undefined, facts: NodeJSONFacts): NodeJSON {
+	const json: Record<string, NodeJSONValue> = { $type: kindName(kindId, facts) };
+	for (const [side, key] of UNIT_SIDES) {
+		const comments = commentsJSON(sides?.[side] ?? [], facts);
+		if (comments.length > 0) json[key] = comments;
+	}
+	return json as NodeJSON;
+}
+
+function valueJSON(value: unknown, facts: NodeJSONFacts, units?: UnitSides, item = 0): NodeJSONValue | undefined {
 	if (value === undefined || value === false) return undefined;
 	if (value === true || typeof value === 'string') return value;
 	if (value === facts.blank) return null;
-	if (typeof value === 'number') return { $type: kindName(value, facts) };
+	if (typeof value === 'number') return unitJSON(value, units?.get(item), facts);
 	if (isNode(value)) return nodeJSON(value, facts);
 	if (typeof value === 'object' && value !== null && Symbol.iterator in value) {
-		return [...(value as Iterable<unknown>)].map((item) => (item === null ? null : ((valueJSON(item, facts) as NodeJSON | null | undefined) ?? null)));
+		return [...(value as Iterable<unknown>)].map((entry, index) => (entry === null ? null : ((valueJSON(entry, facts, units, index) as NodeJSON | null | undefined) ?? null)));
 	}
 	throw new TypeError(`toJSON: a slot holds a node, a list, a kind id, a keyword's presence or a string, not ${String(value)}`);
 }
@@ -93,7 +123,8 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 	if (name === ERROR_KIND_NAME) throw new Error(`${path}: an ERROR node cannot be built`);
 	const kindId = kindIdOf(name, facts);
 	if (kindId === undefined) throw new Error(`${path}: unknown kind '${name}'`);
-	const accessors = new Set((facts.slots[kindId] ?? []).map(([accessor]) => accessor));
+	const storageKeys = new Map((facts.slots[kindId] ?? []).map(([accessor, , , storageKey]) => [accessor, storageKey]));
+	const accessors = new Set(storageKeys.keys());
 	for (const key of Object.keys(object)) {
 		if (!NODE_KEYS.has(key) && !accessors.has(key)) throw new Error(`${path}: ${name} has no slot '${key}'`);
 	}
@@ -110,13 +141,15 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		const optionNames = new Set(facts.options[kindId] ?? []);
 		const slots: Record<string, unknown> = {};
 		const options: Record<string, unknown> = {};
+		const units: UnitSidesData[] = [];
 		for (const accessor of accessors) {
 			if (!(accessor in object)) continue;
 			const member = object[accessor];
 			const at = `${path}.${accessor}`;
+			const slot = storageKeys.get(accessor)!;
 			const value = Array.isArray(member)
-				? member.map((item, index) => (item === null ? undefined : revive(item, `${at}[${index}]`, hooks)))
-				: revive(member, at, hooks);
+				? member.map((item, index) => (item === null ? undefined : reviveItem(item, `${at}[${index}]`, hooks, slot, index, units)))
+				: reviveItem(member, at, hooks, slot, 0, units);
 			if (optionNames.has(accessor)) options[accessor] = value;
 			else slots[accessor] = value;
 		}
@@ -124,6 +157,7 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		const items = (Object.values(slots)[0] ?? []) as unknown[];
 		const args = facts.spread.has(kindId) ? (hasOptions ? [options, ...items] : items) : hasOptions ? [slots, options] : [slots];
 		node = buildAt(path, hooks, name, args);
+		if (units.length > 0) setUnitSides(node as object, units);
 	}
 	for (const [side, key] of COMMENT_SIDES) {
 		const comments = object[key];
@@ -132,6 +166,19 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		node = (node as Revived).$trivia[side]!(...entries);
 	}
 	return hooks.settle(node);
+}
+
+function reviveItem(value: unknown, path: string, hooks: ReviveHooks, slot: string, item: number, units: UnitSidesData[]): unknown {
+	const revived = revive(value, path, hooks);
+	if (typeof revived !== 'number' || value === null || typeof value !== 'object') return revived;
+	const object = value as Record<string, unknown>;
+	const sides: Record<string, unknown[]> = {};
+	for (const [side, key] of UNIT_SIDES) {
+		const comments = object[key];
+		if (Array.isArray(comments) && comments.length > 0) sides[side] = comments.map((entry, index) => revive(entry, `${path}.${key}[${index}]`, hooks));
+	}
+	if (Object.keys(sides).length > 0) units.push({ slot, item, ...sides });
+	return revived;
 }
 
 function contentText(envelope: Record<string, unknown>, accessors: ReadonlySet<string>, contentKind: number, facts: NodeJSONFacts): string | undefined {

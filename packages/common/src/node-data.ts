@@ -332,9 +332,14 @@ export function slotSeparatorOf(node: object): number | undefined {
 }
 
 /** One unit child's sides as a tree gives them (`NodeLayout.units`): its slot's wire key and its item there. */
-interface UnitSidesData {
+export interface UnitSidesData extends TriviaSides<unknown> {
 	readonly slot: string;
 	readonly item: number;
+}
+
+export function setUnitSides(node: object, units: readonly UnitSidesData[]): void {
+	const record = node as { $_layout?: NodeDataLayout };
+	record.$_layout = { ...record.$_layout, units };
 }
 
 /**

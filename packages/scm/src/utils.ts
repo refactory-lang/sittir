@@ -36,73 +36,73 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
-	1: [['content', 0]],
-	11: [['content', 0]],
-	33: [['definitions', 0]],
-	39: [['name', 0]],
-	40: [['stringContent', 0]],
-	41: [['stringContent', 0]],
-	42: [['contents', 0]],
-	43: [['elements', 0]],
+	1: [['content', 0, undefined, '_content']],
+	11: [['content', 0, undefined, '_content']],
+	33: [['definitions', 0, undefined, '_definitions']],
+	39: [['name', 0, undefined, '_name']],
+	40: [['stringContent', 0, undefined, '_string_content']],
+	41: [['stringContent', 0, undefined, '_string_content']],
+	42: [['contents', 0, undefined, '_content']],
+	43: [['elements', 0, undefined, '_elements']],
 	44: [
-		['definitions', 0],
-		['elements', 1]
+		['definitions', 0, undefined, '_definitions'],
+		['elements', 1, undefined, '_elements']
 	],
 	45: [
-		['groupingGroups', 0],
-		['elements', 1]
+		['groupingGroups', 0, undefined, '_grouping_group'],
+		['elements', 1, undefined, '_elements']
 	],
 	46: [
-		['name', 0],
-		['elements', 1]
+		['name', 0, undefined, '_name'],
+		['elements', 1, undefined, '_elements']
 	],
 	47: [
-		['name', 0],
-		['elements', 1]
+		['name', 0, undefined, '_name'],
+		['elements', 1, undefined, '_elements']
 	],
 	50: [
-		['name', 0],
-		['definition', 1]
+		['name', 0, undefined, '_name'],
+		['definition', 1, undefined, '_definition']
 	],
-	51: [['identifier', 0]],
+	51: [['identifier', 0, undefined, '_identifier']],
 	52: [
-		['prefix', 0],
-		['name', 1],
-		['type', 2],
-		['parameters', 3]
+		['prefix', 0, undefined, '_prefix'],
+		['name', 1, undefined, '_name'],
+		['type', 2, undefined, '_type'],
+		['parameters', 3, undefined, '_parameters']
 	],
-	54: [['quantifier', 0]],
+	54: [['quantifier', 0, undefined, '_quantifier']],
 	56: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	57: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	58: [
-		['groupExpression', 0],
-		['anchor', 1, '.']
+		['groupExpression', 0, undefined, '_group_expression'],
+		['anchor', 1, '.', '_anchor']
 	],
 	61: [
-		['name', 0],
-		['namedNodeGroup', 1],
-		['elements', 2]
+		['name', 0, undefined, '_name'],
+		['namedNodeGroup', 1, undefined, '_named_node_group'],
+		['elements', 2, undefined, '_elements']
 	],
 	62: [
-		['supertype', 0],
-		['name', 1],
-		['namedNodeGroup', 2],
-		['elements', 3]
+		['supertype', 0, undefined, '_supertype'],
+		['name', 1, undefined, '_name'],
+		['namedNodeGroup', 2, undefined, '_named_node_group'],
+		['elements', 3, undefined, '_elements']
 	],
 	63: [
-		['anchor', 0, '.'],
-		['namedNodeExpressions', 1]
+		['anchor', 0, '.', '_anchor'],
+		['namedNodeExpressions', 1, undefined, '_named_node_expressions']
 	],
 	64: [
-		['anchor', 0, '.'],
-		['namedNodeExpressions', 1],
-		['last', 2]
+		['anchor', 0, '.', '_anchor'],
+		['namedNodeExpressions', 1, undefined, '_named_node_expressions'],
+		['last', 2, undefined, '_last']
 	]
 });
 

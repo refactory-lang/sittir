@@ -320,6 +320,47 @@ describe('an empty node keeps its inner comment through JSON', () => {
 	});
 });
 
+describe('a comment on a token stored as its kind id survives JSON', () => {
+	it.each(['let a = /* keep */true;', 'let a = true /* keep */;', 'function f() { /* keep */; }'])('%s', (source) => {
+		const root = ts.parse(source);
+		expect(String(root)).toContain('/* keep */');
+		const revived = JSON.parse(JSON.stringify(root), ts.reviver) as object;
+		expect(String(revived)).toContain('/* keep */');
+		expect(JSON.stringify(revived)).toBe(JSON.stringify(root));
+	});
+
+	it('writes both sides on one unit, Babel-style', () => {
+		const root = ts.parse('function f() { /* a */; /* b */; }');
+		const block = find(json(root), 'statement_block') as { statements: Json[] };
+		expect(block.statements[0]).toMatchObject({
+			$type: 'empty_statement',
+			leadingComments: [{ $type: 'comment_block' }],
+			trailingComments: [{ $type: 'comment_block' }]
+		});
+		const revived = String(JSON.parse(JSON.stringify(root), ts.reviver));
+		expect(revived).toContain('/* a */');
+		expect(revived).toContain('/* b */');
+	});
+
+	it('keeps a list item’s comments on that item', () => {
+		const root = ts.parse('function f() {\n  ;\n  /* k */\n  ;\n}\n');
+		const block = find(json(root), 'statement_block') as { statements: Json[] };
+		expect(block.statements[0]).not.toHaveProperty('leadingComments');
+		expect(block.statements[1]).toHaveProperty('leadingComments');
+		const revived = JSON.parse(JSON.stringify(root), ts.reviver) as object;
+		expect(JSON.stringify(revived)).toBe(JSON.stringify(root));
+		expect(String(revived)).toContain('/* k */');
+	});
+
+	it('keeps it on a rebuilt node', () => {
+		const declarators = (ts.parse('let a = /* keep */true;').statements()[0] as unknown as { declarators(): Iterable<{ $with: Record<string, (value: unknown) => object> }> }).declarators();
+		const [first] = [...declarators];
+		const rebuilt = first!.$with.name!(ts.build.identifier('b'));
+		expect(String(rebuilt)).toContain('/* keep */');
+		expect(String(JSON.parse(JSON.stringify(rebuilt), ts.reviver))).toContain('/* keep */');
+	});
+});
+
 describe('a rebuilt node reads each side from where that side lives', () => {
 	type Rebuildable = { readonly $trivia: Record<'leading' | 'trailing', (...items: unknown[]) => unknown>; readonly $with: Record<string, (value: unknown) => Rebuildable> };
 	const comments = (text: string): number => (text.match(/\/\/ [lt]\b/g) ?? []).length;

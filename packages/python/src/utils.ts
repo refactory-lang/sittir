@@ -56,415 +56,415 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
-	73: [['content', 0]],
+	73: [['content', 0, undefined, '_content']],
 	90: [
-		['prefix', 0],
-		['content', 1]
+		['prefix', 0, undefined, '_prefix'],
+		['content', 1, undefined, '_content']
 	],
 	91: [
-		['prefix', 0],
-		['content', 1]
+		['prefix', 0, undefined, '_prefix'],
+		['content', 1, undefined, '_content']
 	],
 	92: [
-		['prefix', 0],
-		['content', 1]
+		['prefix', 0, undefined, '_prefix'],
+		['content', 1, undefined, '_content']
 	],
 	96: [
-		['integer', 0],
-		['fraction', 1],
-		['marker', 2],
-		['sign', 3],
-		['exponent', 4],
-		['imaginary', 5]
+		['integer', 0, undefined, '_integer'],
+		['fraction', 1, undefined, '_fraction'],
+		['marker', 2, undefined, '_marker'],
+		['sign', 3, undefined, '_sign'],
+		['exponent', 4, undefined, '_exponent'],
+		['imaginary', 5, undefined, '_imaginary']
 	],
 	97: [
-		['integer', 0],
-		['fraction', 1],
-		['marker', 2],
-		['sign', 3],
-		['exponent', 4],
-		['imaginary', 5]
+		['integer', 0, undefined, '_integer'],
+		['fraction', 1, undefined, '_fraction'],
+		['marker', 2, undefined, '_marker'],
+		['sign', 3, undefined, '_sign'],
+		['exponent', 4, undefined, '_exponent'],
+		['imaginary', 5, undefined, '_imaginary']
 	],
 	98: [
-		['integer', 0],
-		['marker', 1],
-		['sign', 2],
-		['exponent', 3],
-		['imaginary', 4]
+		['integer', 0, undefined, '_integer'],
+		['marker', 1, undefined, '_marker'],
+		['sign', 2, undefined, '_sign'],
+		['exponent', 3, undefined, '_exponent'],
+		['imaginary', 4, undefined, '_imaginary']
 	],
-	99: [['content', 0]],
-	100: [['content', 0]],
-	101: [['content', 0]],
-	102: [['content', 0]],
-	103: [['content', 0]],
-	104: [['content', 0]],
-	105: [['content', 0]],
-	127: [['statements', 0]],
-	129: [['elements', 0]],
-	130: [['names', 0]],
+	99: [['content', 0, undefined, '_content']],
+	100: [['content', 0, undefined, '_content']],
+	101: [['content', 0, undefined, '_content']],
+	102: [['content', 0, undefined, '_content']],
+	103: [['content', 0, undefined, '_content']],
+	104: [['content', 0, undefined, '_content']],
+	105: [['content', 0, undefined, '_content']],
+	127: [['statements', 0, undefined, '_statements']],
+	129: [['elements', 0, undefined, '_elements']],
+	130: [['names', 0, undefined, '_names']],
 	132: [
-		['prefix', 0],
-		['name', 1]
+		['prefix', 0, undefined, '_prefix'],
+		['name', 1, undefined, '_name']
 	],
-	133: [['content', 0]],
+	133: [['content', 0, undefined, '_content']],
 	134: [
-		['moduleName', 0],
-		['content', 1]
+		['moduleName', 0, undefined, '_module_name'],
+		['content', 1, undefined, '_content']
 	],
-	135: [['names', 0]],
+	135: [['names', 0, undefined, '_name']],
 	136: [
-		['name', 0],
-		['alias', 1]
+		['name', 0, undefined, '_name'],
+		['alias', 1, undefined, '_alias']
 	],
-	138: [['content', 0]],
-	139: [['expression', 0]],
-	140: [['expressions', 0]],
-	141: [['content', 0]],
+	138: [['content', 0, undefined, '_content']],
+	139: [['expression', 0, undefined, '_expression']],
+	140: [['expressions', 0, undefined, '_expression']],
+	141: [['content', 0, undefined, '_content']],
 	142: [
-		['name', 0],
-		['value', 1]
+		['name', 0, undefined, '_name'],
+		['value', 1, undefined, '_value']
 	],
-	143: [['identifier', 0]],
-	144: [['expressions', 0]],
-	145: [['expressions', 0]],
+	143: [['identifier', 0, undefined, '_identifier']],
+	144: [['expressions', 0, undefined, '_expressions']],
+	145: [['expressions', 0, undefined, '_expressions']],
 	146: [
-		['expressions', 0],
-		['cause', 1]
+		['expressions', 0, undefined, '_expressions'],
+		['cause', 1, undefined, '_cause']
 	],
 	150: [
-		['condition', 0],
-		['consequence', 1],
-		['alternatives', 2]
+		['condition', 0, undefined, '_condition'],
+		['consequence', 1, undefined, '_consequence'],
+		['alternatives', 2, undefined, '_alternative']
 	],
 	151: [
-		['condition', 0],
-		['consequence', 1]
+		['condition', 0, undefined, '_condition'],
+		['consequence', 1, undefined, '_consequence']
 	],
-	152: [['body', 0]],
+	152: [['body', 0, undefined, '_body']],
 	153: [
-		['subjects', 0],
-		['body', 1]
+		['subjects', 0, undefined, '_subjects'],
+		['body', 1, undefined, '_body']
 	],
-	154: [['content', 0]],
+	154: [['content', 0, undefined, '_content']],
 	155: [
-		['casePatterns', 0],
-		['guard', 1],
-		['consequence', 2]
+		['casePatterns', 0, undefined, '_case_patterns'],
+		['guard', 1, undefined, '_guard'],
+		['consequence', 2, undefined, '_consequence']
 	],
 	156: [
-		['async', 0, 'async'],
-		['left', 1],
-		['right', 2],
-		['body', 3],
-		['alternative', 4]
+		['async', 0, 'async', '_async'],
+		['left', 1, undefined, '_left'],
+		['right', 2, undefined, '_right'],
+		['body', 3, undefined, '_body'],
+		['alternative', 4, undefined, '_alternative']
 	],
 	157: [
-		['condition', 0],
-		['body', 1],
-		['alternative', 2]
+		['condition', 0, undefined, '_condition'],
+		['body', 1, undefined, '_body'],
+		['alternative', 2, undefined, '_alternative']
 	],
 	158: [
-		['body', 0],
-		['exceptClauses', 1],
-		['elseClause', 2],
-		['finallyClause', 3]
+		['body', 0, undefined, '_body'],
+		['exceptClauses', 1, undefined, '_except_clauses'],
+		['elseClause', 2, undefined, '_else_clause'],
+		['finallyClause', 3, undefined, '_finally_clause']
 	],
 	159: [
-		['group', 0, '*'],
-		['exception', 1],
-		['body', 2]
+		['group', 0, '*', '_group'],
+		['exception', 1, undefined, '_exception'],
+		['body', 2, undefined, '_body']
 	],
-	160: [['block', 0]],
+	160: [['block', 0, undefined, '_block']],
 	161: [
-		['async', 0, 'async'],
-		['withClause', 1],
-		['body', 2]
+		['async', 0, 'async', '_async'],
+		['withClause', 1, undefined, '_with_clause'],
+		['body', 2, undefined, '_body']
 	],
-	163: [['value', 0]],
+	163: [['value', 0, undefined, '_value']],
 	164: [
-		['async', 0, 'async'],
-		['name', 1],
-		['typeParameters', 2],
-		['parameters', 3],
-		['returnType', 4],
-		['body', 5]
+		['async', 0, 'async', '_async'],
+		['name', 1, undefined, '_name'],
+		['typeParameters', 2, undefined, '_type_parameters'],
+		['parameters', 3, undefined, '_parameters'],
+		['returnType', 4, undefined, '_return_type'],
+		['body', 5, undefined, '_body']
 	],
-	165: [['elements', 0]],
-	166: [['parametersElements', 0]],
-	167: [['expression', 0]],
-	168: [['expression', 0]],
-	169: [['names', 0]],
-	170: [['names', 0]],
+	165: [['elements', 0, undefined, '_elements']],
+	166: [['parametersElements', 0, undefined, '_parameters_elements']],
+	167: [['expression', 0, undefined, '_expression']],
+	168: [['expression', 0, undefined, '_expression']],
+	169: [['names', 0, undefined, '_names']],
+	170: [['names', 0, undefined, '_names']],
 	171: [
-		['code', 0],
-		['inClauses', 1]
+		['code', 0, undefined, '_code'],
+		['inClauses', 1, undefined, '_in_clause']
 	],
 	172: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	173: [
-		['name', 0],
-		['typeParameters', 1],
-		['superclasses', 2],
-		['body', 3]
+		['name', 0, undefined, '_name'],
+		['typeParameters', 1, undefined, '_type_parameters'],
+		['superclasses', 2, undefined, '_superclasses'],
+		['body', 3, undefined, '_body']
 	],
-	174: [['types', 0]],
-	175: [['content', 0]],
-	176: [['arguments', 0]],
+	174: [['types', 0, undefined, '_types']],
+	175: [['content', 0, undefined, '_content']],
+	176: [['arguments', 0, undefined, '_arguments']],
 	177: [
-		['decorators', 0],
-		['definition', 1]
+		['decorators', 0, undefined, '_decorator'],
+		['definition', 1, undefined, '_definition']
 	],
-	178: [['expression', 0]],
-	179: [['statements', 0]],
-	180: [['items', 0]],
-	181: [['names', 0]],
-	182: [['content', 0]],
-	183: [['content', 0]],
+	178: [['expression', 0, undefined, '_expression']],
+	179: [['statements', 0, undefined, '_statements']],
+	180: [['items', 0, undefined, '_item']],
+	181: [['names', 0, undefined, '_names']],
+	182: [['content', 0, undefined, '_content']],
+	183: [['content', 0, undefined, '_content']],
 	184: [
-		['casePattern', 0],
-		['identifier', 1]
+		['casePattern', 0, undefined, '_case_pattern'],
+		['identifier', 1, undefined, '_identifier']
 	],
-	185: [['patterns', 0]],
-	186: [['elements', 0]],
+	185: [['patterns', 0, undefined, '_patterns']],
+	186: [['elements', 0, undefined, '_elements']],
 	187: [
-		['key', 0],
-		['value', 1]
+		['key', 0, undefined, '_key'],
+		['value', 1, undefined, '_value']
 	],
 	188: [
-		['name', 0],
-		['value', 1]
+		['name', 0, undefined, '_name'],
+		['value', 1, undefined, '_value']
 	],
 	189: [
-		['operator', 0],
-		['name', 1]
+		['operator', 0, undefined, '_operator'],
+		['name', 1, undefined, '_name']
 	],
 	190: [
-		['name', 0],
-		['arguments', 1]
+		['name', 0, undefined, '_name'],
+		['arguments', 1, undefined, '_arguments']
 	],
 	191: [
-		['sign', 0, '-'],
-		['real', 1],
-		['operator', 2],
-		['imaginary', 3]
+		['sign', 0, '-', '_sign'],
+		['real', 1, undefined, '_real'],
+		['operator', 2, undefined, '_operator'],
+		['imaginary', 3, undefined, '_imaginary']
 	],
-	192: [['items', 0]],
-	193: [['items', 0]],
-	196: [['elements', 0]],
-	197: [['patterns', 0]],
+	192: [['items', 0, undefined, '_item']],
+	193: [['items', 0, undefined, '_item']],
+	196: [['elements', 0, undefined, '_elements']],
+	197: [['patterns', 0, undefined, '_patterns']],
 	198: [
-		['name', 0],
-		['value', 1]
+		['name', 0, undefined, '_name'],
+		['value', 1, undefined, '_value']
 	],
 	199: [
-		['name', 0],
-		['type', 1],
-		['value', 2]
+		['name', 0, undefined, '_name'],
+		['type', 1, undefined, '_type'],
+		['value', 2, undefined, '_value']
 	],
-	200: [['target', 0]],
-	201: [['target', 0]],
+	200: [['target', 0, undefined, '_target']],
+	201: [['target', 0, undefined, '_target']],
 	202: [
-		['expression', 0],
-		['alias', 1]
+		['expression', 0, undefined, '_expression'],
+		['alias', 1, undefined, '_alias']
 	],
-	206: [['argument', 0]],
+	206: [['argument', 0, undefined, '_argument']],
 	207: [
-		['left', 0],
-		['operator', 1],
-		['right', 2]
+		['left', 0, undefined, '_left'],
+		['operator', 1, undefined, '_operator'],
+		['right', 2, undefined, '_right']
 	],
 	208: [
-		['left', 0],
-		['operator', 1],
-		['right', 2]
+		['left', 0, undefined, '_left'],
+		['operator', 1, undefined, '_operator'],
+		['right', 2, undefined, '_right']
 	],
 	209: [
-		['operator', 0],
-		['argument', 1]
+		['operator', 0, undefined, '_operator'],
+		['argument', 1, undefined, '_argument']
 	],
 	212: [
-		['left', 0],
-		['comparators', 1]
+		['left', 0, undefined, '_left'],
+		['comparators', 1, undefined, '_comparators']
 	],
 	213: [
-		['parameters', 0],
-		['body', 1]
+		['parameters', 0, undefined, '_parameters'],
+		['body', 1, undefined, '_body']
 	],
 	214: [
-		['parameters', 0],
-		['body', 1]
+		['parameters', 0, undefined, '_parameters'],
+		['body', 1, undefined, '_body']
 	],
 	216: [
-		['left', 0],
-		['operator', 1],
-		['right', 2]
+		['left', 0, undefined, '_left'],
+		['operator', 1, undefined, '_operator'],
+		['right', 2, undefined, '_right']
 	],
-	217: [['items', 0]],
-	219: [['content', 0]],
+	217: [['items', 0, undefined, '_item']],
+	219: [['content', 0, undefined, '_content']],
 	220: [
-		['object', 0],
-		['attribute', 1]
+		['object', 0, undefined, '_object'],
+		['attribute', 1, undefined, '_attribute']
 	],
 	221: [
-		['value', 0],
-		['subscripts', 1]
+		['value', 0, undefined, '_value'],
+		['subscripts', 1, undefined, '_subscripts']
 	],
 	222: [
-		['start', 0],
-		['stop', 1],
-		['step', 2]
+		['start', 0, undefined, '_start'],
+		['stop', 1, undefined, '_stop'],
+		['step', 2, undefined, '_step']
 	],
 	223: [
-		['function', 0],
-		['arguments', 1]
+		['function', 0, undefined, '_function'],
+		['arguments', 1, undefined, '_arguments']
 	],
 	224: [
-		['name', 0],
-		['type', 1]
+		['name', 0, undefined, '_name'],
+		['type', 1, undefined, '_type']
 	],
-	225: [['content', 0]],
+	225: [['content', 0, undefined, '_content']],
 	226: [
-		['operator', 0],
-		['name', 1]
+		['operator', 0, undefined, '_operator'],
+		['name', 1, undefined, '_name']
 	],
 	227: [
-		['name', 0],
-		['typeParameter', 1]
+		['name', 0, undefined, '_name'],
+		['typeParameter', 1, undefined, '_type_parameter']
 	],
 	228: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	229: [
-		['baseType', 0],
-		['constraint', 1]
+		['baseType', 0, undefined, '_base_type'],
+		['constraint', 1, undefined, '_constraint']
 	],
 	230: [
-		['baseType', 0],
-		['name', 1]
+		['baseType', 0, undefined, '_base_type'],
+		['name', 1, undefined, '_name']
 	],
 	231: [
-		['name', 0],
-		['value', 1]
+		['name', 0, undefined, '_name'],
+		['value', 1, undefined, '_value']
 	],
-	232: [['collectionElements', 0]],
-	233: [['collectionElements', 0]],
-	234: [['elements', 0]],
-	235: [['elements', 0]],
+	232: [['collectionElements', 0, undefined, '_collection_elements']],
+	233: [['collectionElements', 0, undefined, '_collection_elements']],
+	234: [['elements', 0, undefined, '_elements']],
+	235: [['elements', 0, undefined, '_elements']],
 	236: [
-		['key', 0],
-		['value', 1]
+		['key', 0, undefined, '_key'],
+		['value', 1, undefined, '_value']
 	],
 	237: [
-		['body', 0],
-		['clauses', 1]
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
 	],
 	238: [
-		['body', 0],
-		['clauses', 1]
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
 	],
 	239: [
-		['body', 0],
-		['clauses', 1]
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
 	],
 	240: [
-		['body', 0],
-		['clauses', 1]
+		['body', 0, undefined, '_body'],
+		['clauses', 1, undefined, '_clauses']
 	],
-	241: [['expression', 0]],
-	242: [['items', 0]],
+	241: [['expression', 0, undefined, '_expression']],
+	242: [['items', 0, undefined, '_item']],
 	243: [
-		['async', 0, 'async'],
-		['left', 1],
-		['rights', 2],
-		['trailingComma', 3]
+		['async', 0, 'async', '_async'],
+		['left', 1, undefined, '_left'],
+		['rights', 2, undefined, '_right'],
+		['trailingComma', 3, undefined, '_trailing_comma']
 	],
-	244: [['condition', 0]],
+	244: [['condition', 0, undefined, '_condition']],
 	245: [
-		['body', 0],
-		['condition', 1],
-		['alternative', 2]
+		['body', 0, undefined, '_body'],
+		['condition', 1, undefined, '_condition'],
+		['alternative', 2, undefined, '_alternative']
 	],
-	246: [['strings', 0]],
+	246: [['strings', 0, undefined, '_string']],
 	247: [
-		['stringStart', 0],
-		['contents', 1],
-		['stringEnd', 2]
+		['stringStart', 0, undefined, '_string_start'],
+		['contents', 1, undefined, '_content'],
+		['stringEnd', 2, undefined, '_string_end']
 	],
-	248: [['elements', 0]],
+	248: [['elements', 0, undefined, '_elements']],
 	249: [
-		['expression', 0],
-		['debug', 1, '='],
-		['typeConversion', 2],
-		['formatSpecifier', 3]
+		['expression', 0, undefined, '_expression'],
+		['debug', 1, '=', '_debug'],
+		['typeConversion', 2, undefined, '_type_conversion'],
+		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
-	253: [['elements', 0]],
-	256: [['expression', 0]],
-	259: [['items', 0]],
-	260: [['subjects', 0]],
-	261: [['items', 0]],
-	262: [['items', 0]],
-	263: [['items', 0]],
-	264: [['items', 0]],
-	265: [['items', 0]],
-	266: [['items', 0]],
-	267: [['subscripts', 0]],
-	268: [['items', 0]],
-	269: [['expression', 0]],
-	270: [['items', 0]],
-	271: [['items', 0]],
+	253: [['elements', 0, undefined, '_elements']],
+	256: [['expression', 0, undefined, '_expression']],
+	259: [['items', 0, undefined, '_item']],
+	260: [['subjects', 0, undefined, '_subject']],
+	261: [['items', 0, undefined, '_item']],
+	262: [['items', 0, undefined, '_item']],
+	263: [['items', 0, undefined, '_item']],
+	264: [['items', 0, undefined, '_item']],
+	265: [['items', 0, undefined, '_item']],
+	266: [['items', 0, undefined, '_item']],
+	267: [['subscripts', 0, undefined, '_subscript']],
+	268: [['items', 0, undefined, '_item']],
+	269: [['expression', 0, undefined, '_expression']],
+	270: [['items', 0, undefined, '_item']],
+	271: [['items', 0, undefined, '_item']],
 	272: [
-		['value', 0],
-		['alias', 1]
+		['value', 0, undefined, '_value'],
+		['alias', 1, undefined, '_alias']
 	],
-	273: [['elements', 0]],
-	274: [['elements', 0]],
-	275: [['items', 0]],
-	276: [['items', 0]],
+	273: [['elements', 0, undefined, '_elements']],
+	274: [['elements', 0, undefined, '_elements']],
+	275: [['items', 0, undefined, '_item']],
+	276: [['items', 0, undefined, '_item']],
 	277: [
-		['chevron', 0],
-		['printChevronArguments', 1]
+		['chevron', 0, undefined, '_chevron'],
+		['printChevronArguments', 1, undefined, '_print_chevron_arguments']
 	],
-	278: [['printArguments', 0]],
-	280: [['importList', 0]],
-	281: [['contents', 0]],
+	278: [['printArguments', 0, undefined, '_print_arguments']],
+	280: [['importList', 0, undefined, '_import_list']],
+	281: [['contents', 0, undefined, '_content']],
 	283: [
-		['sign', 0, '-'],
-		['value', 1]
+		['sign', 0, '-', '_sign'],
+		['value', 1, undefined, '_value']
 	],
-	284: [['values', 0]],
-	285: [['content', 0]],
+	284: [['values', 0, undefined, '_value']],
+	285: [['content', 0, undefined, '_content']],
 	286: [
-		['left', 0],
-		['right', 1]
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	287: [
-		['left', 0],
-		['type', 1]
+		['left', 0, undefined, '_left'],
+		['type', 1, undefined, '_type']
 	],
 	288: [
-		['left', 0],
-		['type', 1],
-		['right', 2]
+		['left', 0, undefined, '_left'],
+		['type', 1, undefined, '_type'],
+		['right', 2, undefined, '_right']
 	],
-	289: [['items', 0]],
-	290: [['items', 0]],
-	291: [['withItems', 0]],
-	292: [['alternatives', 0]],
-	293: [['newline', 0]],
-	294: [['elements', 0]],
-	295: [['block', 0]],
-	296: [['newline', 0]],
+	289: [['items', 0, undefined, '_item']],
+	290: [['items', 0, undefined, '_item']],
+	291: [['withItems', 0, undefined, '_with_items']],
+	292: [['alternatives', 0, undefined, '_alternative']],
+	293: [['newline', 0, undefined, '_newline']],
+	294: [['elements', 0, undefined, '_elements']],
+	295: [['block', 0, undefined, '_block']],
+	296: [['newline', 0, undefined, '_newline']],
 	297: [
-		['operators', 0],
-		['primaryExpression', 1]
+		['operators', 0, undefined, '_operators'],
+		['primaryExpression', 1, undefined, '_primary_expression']
 	],
-	298: [['expression', 0]],
-	334: [['content', 0]],
-	335: [['content', 0]],
-	336: [['content', 0]]
+	298: [['expression', 0, undefined, '_expression']],
+	334: [['content', 0, undefined, '_content']],
+	335: [['content', 0, undefined, '_content']],
+	336: [['content', 0, undefined, '_content']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({
