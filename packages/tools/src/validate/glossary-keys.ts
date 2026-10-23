@@ -12,7 +12,7 @@ export const GLOSSARY_TREES: readonly string[] = [
 export const GLOSSARY_DIR = 'docs/glossary';
 export const DEFAULT_CEILINGS = 'packages/tools/glossary-key-ceilings.json';
 
-export const VALID_CLASSES = ['ok-bare-unique', 'ok-owner-qualified'] as const;
+export const VALID_CLASSES = ['ok-bare-unique', 'ok-owner-qualified', 'ok-module'] as const;
 export const BROKEN_CLASSES = [
 	'ambiguous',
 	'no-declaration',
@@ -326,6 +326,7 @@ export function classifyKey(
 	const qualifier = key.slice(split + 2);
 	if (!inGlossaryTrees(file)) return { class: 'out-of-scope-file' };
 	if (!existsSync(join(root, file))) return { class: 'file-missing' };
+	if (qualifier === 'module') return { class: 'ok-module' };
 	const segments = qualifier.split('::');
 	const name = segments[segments.length - 1]!;
 	if (name === '<unknown>') return { class: 'placeholder' };
@@ -458,7 +459,7 @@ export async function run(opts: GlossaryKeysOptions = {}): Promise<number> {
 		if (opts.table) {
 			console.log('');
 			for (const entry of measurement.keys)
-				if (entry.class !== 'ok-bare-unique' && entry.class !== 'ok-owner-qualified')
+				if (!(VALID_CLASSES as readonly string[]).includes(entry.class))
 					console.log(`${entry.class}\t${entry.key}\t${entry.where}`);
 		}
 		if (opts.undocumented) {

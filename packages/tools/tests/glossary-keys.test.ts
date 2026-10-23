@@ -125,6 +125,11 @@ describe('classifyKey', () => {
 		expect(classOf(`${FILE}::Box::nested`)).toBe('wrong-owner');
 	});
 
+	it('accepts the file-level module key for an existing file', () => {
+		expect(classOf(`${FILE}::module`)).toBe('ok-module');
+		expect(classOf('packages/common/src/gone.ts::module')).toBe('file-missing');
+	});
+
 	it('names each way a key is broken', () => {
 		expect(classOf(`${FILE}::open`)).toBe('ambiguous');
 		expect(classOf(`${FILE}::vanished`)).toBe('no-declaration');
