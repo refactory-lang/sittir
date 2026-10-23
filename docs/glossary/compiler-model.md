@@ -364,7 +364,7 @@ underscore in the type name but not in the key (`_identifier` has type name
 `_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
 type-name renames resolve that as a naming event.
 
-### `packages/codegen/src/compiler/model/node-map.ts::kindEntry`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::kindEntry`
 
 ```text
 /**
@@ -555,7 +555,7 @@ Distinct from `hidden`, which means "has no factory".
 /** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::isUnnamed`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::isUnnamed`
 
 ```text
 /**
@@ -569,19 +569,19 @@ Distinct from `hidden`, which means "has no factory".
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::arity`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::arity`
 
 ```text
 /** Multiplicity: 'many' when any value has array/nonEmptyArray multiplicity, 'one' otherwise. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::storageKey`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::storageKey`
 
 ```text
 /** Canonical `_<storageName>` storage key (single source of truth for the `_` prefix convention). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::with`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::with`
 
 ```text
 /** Return a new instance with the given fields overridden; naming recomputed. */
@@ -1151,13 +1151,13 @@ flatten and simplify joins use.
 /** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::subtypes`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::subtypes`
 
 ```text
 /** Resolved concrete kind names in this supertype union. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::subtypeParseNames`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::subtypeParseNames`
 
 ```text
 /** Storage→parse name pairs for aliased subtype arms — see
@@ -1311,7 +1311,7 @@ literals are lexeme fragments and take no kind.
 /** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampArmFieldNamesAsParseName`
+### `packages/codegen/src/compiler/model/node-map.ts::DeriveCtx::stampArmFieldNamesAsParseName`
 
 ```text
 /**
