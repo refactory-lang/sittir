@@ -513,3 +513,7 @@ The shape a node takes as JSON. `$type` is its kind name; `$text` is a leaf's te
 ### `packages/types/src/engine-api.ts::NodeJSONFacts`
 
 Engine plumbing for the JSON writer and reviver, not part of the caller's surface. Each grammar's codegen emits one set of facts (its kind names, slots, layout and leaf kinds, text envelopes, units, blank value, spread kinds and registered options), and the writer and reviver read them instead of deriving the same facts from the grammar at run time.
+
+### `packages/types/src/engine-api.ts::StructureRow`
+
+One kind's structure facts, as the generated types prove them, keyed by slot storage key. The two checks read different fields. On a built node, `verifyStructure` checks `required` (the slot holds a value), `nonEmpty` (the list holds an item) and `nodeOnly` (the slot holds a built node, never bare text). On a builder's input, `checkInput` checks `config` (the keys the kind declares) and `lists` (each list's `holes` and `arrival`). A kind with nothing to check has no row.
