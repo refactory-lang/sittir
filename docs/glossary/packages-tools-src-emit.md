@@ -522,16 +522,6 @@ A spread builder given a leading options object (a plain object, never a printed
 
 The printing counterpart of a grammar's `ir` bindings: every kind's `strict`, plus one entry per mount name its seats declare, and under each the mounted kind's own arm mounts (`mountArmPrinters`), printing `ir.<parent>.<mount>….strict(…)`. A mount prints the built kind with the id stamped on the kind's printing entry (`PrintingEntry.kindId`), never one looked up by the map key, which may be a hidden kind's public name. Handing this to `buildFactoryNodeFromReference` as the surface makes the printer take the same seat projection the validators take, so the emitted spelling is the one `ir-storage` builds rather than a second derivation of it.
 
-### `packages/tools/src/emit/factory-source.ts::variantFormsOf`
-
-```text
-/**
- * The variant form each child kind is declared under, keyed by node kind and
- * by its public name. `childKind` is keyed by parse kind, which drops a hidden
- * kind's leading underscore.
- */
-```
-
 ### `packages/tools/src/emit/factory-source.ts::irPathResolver`
 
 ```text
@@ -641,3 +631,27 @@ A printed builder call standing in for the node it builds: its `source` text, th
 ### `packages/tools/src/emit/factory-source.ts::kindIdOf`
 
 A kind's parser id through `ModelFacts.kindIdOfName`, throwing `emit-factory-source: <kind> has no parser id` when it has none. Every kind the printer builds is one the parser issues, so a missing id is a broken table, reported where it is found rather than printed as an untyped node.
+
+### `packages/tools/src/emit/factory-source.ts::EmitFactorySourceOptions`
+
+The options the factory-source emitter takes.
+
+### `packages/tools/src/emit/factory-source.ts::EngineBinding`
+
+The binding of one engine to its native entry.
+
+### `packages/tools/src/emit/factory-source.ts::ModelFacts::forwardsArguments`
+
+The kinds whose factory forwards its arguments.
+
+### `packages/tools/src/emit/factory-source.ts::Printed::$_layout`
+
+The layout trivia the printed node carries.
+
+### `packages/tools/src/emit/factory-source.ts::Printed::$named`
+
+Always `true`: a printed node is a named node.
+
+### `packages/tools/src/emit/factory-source.ts::Printed::$type`
+
+The printed node's kind id.

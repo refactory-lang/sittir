@@ -6,6 +6,11 @@ export interface Identifier<G extends GrammarContext<G>> {
 	readonly $kind: 'identifier';
 }
 
+export interface IdentifierSynonyms {
+	readonly receiver: 'self' | 'this';
+	readonly super: 'base';
+}
+
 export namespace Identifier {
 	export interface Crate<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r

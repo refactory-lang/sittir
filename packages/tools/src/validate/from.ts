@@ -11,7 +11,7 @@
 
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan, sourceSpans } from '@sittir/common';
-import { nodeText, spanOf } from '@sittir/common/utils';
+import { nodeText, slotSeparatorOf, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
@@ -99,7 +99,7 @@ function findUndefined(node: AnyUntypedNode, path = ''): string[] {
  * access can't distinguish `{a: undefined}` from `{}`, so the structural
  * comparison shouldn't either.
  */
-export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode): string[] {
+export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode, read: object = a): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
 
@@ -111,6 +111,7 @@ export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode): string[] {
 	};
 
 	const bKeys = new Set(extractSlotKeys(b));
+	if (slotSeparatorOf(read) === (b as unknown as Record<string, unknown>)['_separator']) bKeys.delete('separator');
 	const aKeysMatchingB = extractSlotKeys(a).filter((k) => bKeys.has(k));
 
 	// One-way check: fields factory declared that from() didn't fill in.
@@ -413,7 +414,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						// options)` — factories without options ignore the extra argument.
 						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
 							config,
-							separatedListFactoryOptions(readStorage)
+							separatedListFactoryOptions(readStorage, factorySlots[readKind])
 						);
 					}
 				} else if (shape === 'constant') {
@@ -432,7 +433,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					// classifyFactoryShape's separatedList case).
 					const config = configOf();
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-					const options = separatedListFactoryOptions(readStorage);
+					const options = separatedListFactoryOptions(readStorage, factorySlots[readKind]);
 					const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
 					factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 				} else {
@@ -479,7 +480,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 
-			const diffs = structuralDiff(fromStorage, materialize(factoryResult, accessorOf));
+			const diffs = structuralDiff(fromStorage, materialize(factoryResult, accessorOf), readData as object);
 			if (diffs.length > 0) {
 				divergentCount++;
 				errors.push({

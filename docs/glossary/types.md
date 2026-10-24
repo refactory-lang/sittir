@@ -775,21 +775,6 @@ tree-sitter's end-of-input rule, in every phase's union. It matches no text, tak
  */
 ```
 
-### `packages/codegen/src/types/rule.ts::SeparatorFlankMode`
-
-```text
-/**
- * A separator flank's (`leading`/`trailing`) presence state: `'mandatory'`
- * — always present, no per-instance variability, compile-time renderable
- * exactly like `'none'` (absence, i.e. the field itself is `undefined`) —
- * or `'optional'`, the only state with genuine per-instance variability
- * requiring runtime capture. `'mandatory'` and `'none'` are identical from
- * a wire/storage and construct-surface point of view (neither needs a
- * runtime field or factory option) — they differ only at render time
- * (always-emit vs. never-emit).
- */
-```
-
 ### `packages/codegen/src/types/rule.ts::separator`
 
 ```text
@@ -851,18 +836,6 @@ tree-sitter's end-of-input rule, in every phase's union. It matches no text, tak
 // ---------------------------------------------------------------------------
 // Named patterns
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/types/rule.ts::blockBearer`
-
-```text
-/**
-			 * True if the field's value is rendered as an indented block — its
-			 * content resolves (through symbol refs) to a subtree containing an
-			 * `indent` Rule node. The template walker prefixes `\n  ` to the
-			 * field slot so `class X:$BODY` renders as `class X:\n  $BODY`.
-			 * Set by Link's `annotateBlockBearerFields` pass.
-			 */
 ```
 
 ### `packages/codegen/src/types/rule.ts::_needsContent`

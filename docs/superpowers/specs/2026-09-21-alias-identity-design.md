@@ -401,3 +401,116 @@ diagnostics in `2026-09-22-unsupported-shape-diagnostics-design.md`.
   the parity fixtures show the envelope with its storage node as content.
 - `display-union-mixed` fires on a unit fixture and is silent on all three
   grammars.
+
+## Amendment 2026-10-24 — an alias envelope is flat on the low-level surface
+
+**Status:** approved ruling, 2026-10-24. Where this section and A.2
+disagree, this section wins.
+
+### A.6 An alias envelope is its storage's shape under its own kind id
+
+The bindings spec's §9 says an alias kind's builder "builds the aliased
+rule's node under the alias's kind id"; A.2 gave every display one
+`content` slot instead. This section settles it for the low-level surface.
+Three classes of alias site are told apart by structure, never by a list:
+
+- **A hidden-nonterminal envelope** (`AssembledEnvelope`, a hidden
+  nonterminal the parser materializes under an alias: typescript
+  `lhs_expression`, rust `let_chain` and `block_comment_content`, python
+  `simple_statements` and `simple_pattern`) is unchanged. Its slots are the
+  hidden rule's body. Python's `as_pattern_target`, which materializes the
+  hidden supertype `expression` (node-types: no fields, one required
+  child), is a wrapper in the parse tree and keeps its one slot too.
+- **A word display** is an alias whose storage is the grammar's `word`
+  rule, with any keyword tokens relaxed to it (the relaxed-keywords spec's
+  Recognition). It is the relaxed word, not an envelope, and this section
+  does not change it: it keeps today's spelling, with no `ir` key; the slot
+  that holds it takes `identifier`, built or text, and each slot checks its
+  own stamped word set. A built relaxed name is a plain identifier, and the
+  reader maps a relaxed keyword token at a relaxation site back to the
+  display, so built and read agree by stamped kind. The word displays are
+  rust `field_identifier`, `shorthand_field_identifier` and
+  `type_identifier`, and typescript `property_identifier`,
+  `shorthand_property_identifier`, `shorthand_property_identifier_pattern`,
+  `statement_identifier` and `type_identifier`.
+- **An alias envelope** is every other alias (`AssembledAlias`), and it is
+  flat.
+
+**The rule.** On every low-level surface an alias envelope is its storage's
+shape under the display's kind id. It has no `content` member, slot, wire
+key, record word or builder parameter. Its storage is a model fact link
+resolves once (a display → storage table) and the emitters consume at
+codegen. Every alias envelope in the three grammars and regex has one
+storage, so the table maps each display to one kind.
+
+**Identity (A.2's paragraph kept).** `$type` is the display's type id, as
+the native read already stamps it. The storage keeps its identity inside:
+the native node struct is the storage's, and spacing sites and options
+addresses stay keyed by the storage kind, reached through the table. The
+storage is internal: no public reader names it.
+
+**Building.** Every alias envelope has an `ir` key, and its builder takes
+its storage's parameters. A slot that holds the display admits only the
+display: a storage node is never re-kinded implicitly, since re-kinding a
+built node is a clone and a clone is explicit. This replaces "an alias has
+a raw factory but no `ir` key".
+
+#### By storage shape
+
+**1. A visible nonterminal, which the parser renames.** Python
+`method_declaration` over `function_definition`, `format_expression` over
+`interpolation`, and `names` over `_import_list` (node-types: field `name`,
+repeated); rust `method_declaration` over `function_item` and
+`signature_method_declaration` over `function_signature_item`; typescript
+`interface_body` over `object_type`.
+
+| surface | flat |
+| --- | --- |
+| readers | the storage's: `method.name()`, `.parameters()`, `.body()`; no `content()` |
+| builder | `ir.methodDeclaration` takes the storage builder's parameters and returns a node whose `$type` is the display id |
+| `$with` | the storage's setters; each returns the display kind |
+| `is` | `is.methodDeclaration(n)` narrows to the flat node; `is.functionItem(n)` is false on it, since `$type` differs |
+| node JSON | `{ "$type": "method_declaration", "name": …, "parameters": …, "body": … }`; the reviver builds through the display's builder |
+| native | the storage's struct (`FunctionItemNode`), with the display id in its `#[node(kind = …)]` list; the read stamps the display id and reads the storage's slots from the same parser node |
+| record | the storage's layout, with the display id in the kind word: one record per parsed node instead of an envelope and its content |
+
+**2. One terminal that is not the word.** Rust `crate_visibility_modifier`
+over `crate`; typescript `this_type` over `this`; regex `lazy` over `?` and
+`unicode_property_name` over the `unicode_property` pattern leaf.
+
+| surface | flat |
+| --- | --- |
+| readers | a leaf: `$text` only (a leaf has no slots) |
+| builder | the leaf builder: a string narrowed by the storage's pattern, or no argument where the text is fixed |
+| `$with` | none |
+| `is` | narrows to the display leaf |
+| node JSON | `{ "$type": "this_type", "$text": "this" }` |
+| native | a leaf of the display kind; its storage token comes from the table |
+| record | the leaf layout with the display id; no content word |
+
+No alias in the four grammars has several terminal storages other than a
+word display's relaxed keywords, so no third shape is modelled.
+
+#### What stays internal, and what goes
+
+- The content step stays in the compiler model: `AssembledAlias` keeps its
+  storage reference, and the emitters derive the display's members,
+  template, struct, record and guard from it. Bindings routes through an
+  alias envelope start at the storage's slots, with no content step.
+- For an alias envelope, the content step's surfaces go: the
+  `__aliasContent__` brand and `<Alias>.Types`, `_content` and `content()`,
+  admission of the storage's node at the display's slots
+  (`aliasContentAdmission`, `admitAliasContent`), the content accessor's
+  hydration role (`contentRole`), alias-content trivia ownership
+  (`envelopeKindOf`), the `display, content = content` native node form,
+  and the validator's display → storage redirect. Word displays keep what
+  serves them.
+
+#### Acceptance
+
+- Each alias envelope's interface, builder, JSON, native struct and record
+  carry its storage's members and no `content`, and `ir` has a key for it.
+- A built alias envelope and a read one are byte-identical per validation
+  entry.
+- Every word display's rows are unchanged, and a slot that holds one still
+  takes `identifier`.

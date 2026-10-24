@@ -254,86 +254,6 @@ so a kind both sources list keeps the parser's order.
 /** Byte offset where the rendered fragment begins in `text`. */
 ```
 
-### `packages/tools/src/validate/common.ts::applyWrapperTemplate`
-
-```text
-/**
- * Apply a wrapper template to `rendered` and compute the byte offset at which
- * the rendered fragment begins inside the resulting string.
- *
- * @param rendered - The rendered fragment to splice into the wrapper.
- * @param wrapper - A function that takes the fragment and returns a full
- *   parse-valid program snippet.
- * @returns A `WrapForReparseResult` with `text` (the spliced program) and
- *   `offset` (byte position of `rendered` inside `text`).
- */
-```
-
-### `packages/tools/src/validate/common.ts::selectAndApplySupertypeWrapper`
-
-```text
-/**
- * Select the highest-priority wrapper reachable from `kind` via BFS over the
- * supertype graph and apply it.
- *
- * @remarks
- * Priority order: expression > type > declaration > statement > pattern (and
- * their `_`-prefixed siblings). Some kinds (python `attribute`, `subscript`)
- * are subtypes of BOTH `primary_expression` → `expression` AND `pattern`. A
- * pattern wrapper reparses an expression-shaped rendering as `dotted_name` /
- * other pattern kinds, not the original — so prefer the expression wrapper.
- * The ordering matches how tree-sitter grammars overload syntax: a construct
- * appears as an expression first, a pattern only in match-arm contexts, which
- * is the more restricted interpretation.
- *
- * Python's `attribute` has supertype `primary_expression` which isn't in the
- * wrapper map, but `primary_expression` itself is a subtype of `expression`
- * which IS mapped. BFS up through supertype chains so any mapped ancestor
- * produces a valid wrapping context.
- *
- * @param kind - The concrete grammar kind being wrapped.
- * @param wrappers - The grammar's wrapper map.
- * @param kindToSupertypes - BFS graph: kind → list of direct supertypes.
- * @param rendered - The rendered fragment to splice.
- * @returns A `WrapForReparseResult`, or `null` if no mapped ancestor exists.
- */
-```
-
-#### body
-
-```text
-// Declaration/statement-flavored wrappers come before expression/type/
-// pattern ones: a kind can be reachable via BOTH (e.g. typescript's
-// `internal_module`, which upstream tree-sitter-typescript lists under
-// both `declaration` and `expression`) without the two positions being
-// parse-equivalent. Statement-position content can carry positional
-// tokens (e.g. an ASI-driven `automatic_semicolon`) that the external
-// scanner only emits in statement context — wrapping the same bytes as
-// an expression VALUE (`let _ = ${r};`) silently drops them even though
-// the reparse itself succeeds without error. The declaration/statement
-// wrappers are identity (`(r) => r`) and exactly reproduce the
-// original top-level position, so they're strictly safer to prefer
-// whenever reachable.
-```
-
-#### body
-
-```text
-// Reachable but not in priority list — take the first one.
-```
-
-### `packages/tools/src/validate/common.ts::VARIANT_ADOPTION_GATED_WRAPPERS`
-
-```text
-/**
- * Kind names whose direct `REPARSE_WRAPPERS[grammar]` entry should only
- * fire when variant() adoption is in effect for that kind. Otherwise
- * the wrapper is skipped so the baseline `{% if variant %}`
- * fall-through (a parent-template shape that only works under variant()
- * adoption) doesn't expose the kind to reparse where it'd render empty.
- */
-```
-
 ### `packages/tools/src/validate/common.ts::wrapForReparse`
 
 #### body
@@ -1709,3 +1629,27 @@ The ceilings an `--update` run writes: each count's ceiling lowered to the curre
 ### `packages/tools/src/validate/glossary-keys.ts::run`
 
 The `sittir tool glossary-keys` entry point. It measures the repo, reads the ceilings file, and prints the result in the requested form. With `update`, it writes the lowered ceilings and creates the file when absent. Otherwise it fails when any count exceeds its ceiling, or when a ceiling is not a non-negative integer, which is refused rather than compared as NaN.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::forwardsArguments`
+
+The kinds whose factory forwards its arguments, as loaded from the node model.
+
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$_layout`
+
+The layout of a node read for validation.
+
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$named`
+
+Whether the node read is a named node.
+
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$text`
+
+The node's text, or a thunk that produces it.
+
+### `packages/tools/src/validate/common.ts::TypedNode`
+
+A node with a kind id and its slots.
+
+### `packages/tools/src/validate/common.ts::TypedNode::$type`
+
+The node's kind id.

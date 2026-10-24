@@ -120,16 +120,6 @@ takes, shared by the loose resolver's kind tags.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::hasAnyChild`
-
-```text
-/**
- * Cheap existence predicate: does this rule's tree contain any symbol
- * reference (visible OR hidden)? Hidden symbols dispatch to concrete
- * subtypes at parse time, so they DO contribute children.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
 The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
@@ -210,15 +200,6 @@ The fields-side walk over the simplified rule, as `computeSimplifiedRules` produ
  * function only ever sees post-Normalize separators, never the `link`-phase
  * `RepeatRule.separator` — which shares this same nested shape).
  * Returns undefined when the separator is absent, non-literal, or empty.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::stampSeparatorOnValues`
-
-```text
-/**
- * Stamp separator onto array/nonEmptyArray multiplicity values.
- * Single-value slots are left unchanged — separator is meaningless for them.
  */
 ```
 
@@ -386,7 +367,7 @@ type-name renames resolve that as a naming event.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::kindId`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::kindId`
 
 ```text
 /**
@@ -395,11 +376,11 @@ type-name renames resolve that as a naming event.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::parameterless`
 
 True when this kind requires no user-supplied argument to construct. Keywords and single-literal tokens return `true`; pattern tokens and lists return `false`. A compound is parameterless when every slot fills itself (`fillsItself`): each is required, single, and holds one value that is either a literal or a reference to a parameterless kind. A compound with no slots qualifies vacuously. A kind that has a slot it merely does not require is not parameterless — an optional fixed-text slot is a presence choice — which is what `argumentOptional` answers instead.
 
-### `packages/codegen/src/compiler/model/node-map.ts::argumentOptional`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::argumentOptional`
 
 ```text
 /**
@@ -463,7 +444,7 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::stampExpression`
 
 ```text
 /**
@@ -483,7 +464,7 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::ruleMetadata`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::ruleMetadata`
 
 ```text
 /**
@@ -497,7 +478,7 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::hidden`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::hidden`
 
 Whether the kind is not a named node, as the grammar says at construction: a
 literal that is not `named`, a supertype, a synthetic keyword. It is stored,
@@ -525,7 +506,7 @@ the user-facing polymorph parent. The parser-hidden part has three cases:
 
 Distinct from `hidden`, which means "has no factory".
 
-### `packages/codegen/src/compiler/model/node-map.ts::rawFactoryName`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::rawFactoryName`
 
 ```text
 /**
@@ -549,7 +530,7 @@ Distinct from `hidden`, which means "has no factory".
 	 *  bag shape accepted by `from()` for programmatic construction. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::fromFunctionName`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::fromFunctionName`
 
 ```text
 /** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
@@ -1039,25 +1020,25 @@ True when a slot's sole required value needs no input: a literal terminal, or a 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::pattern`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern::pattern`
 
 ```text
 /** The leaf's regex pattern value when the rule is a PatternRule<'link'>; undefined otherwise. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::text`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::text`
 
 ```text
 /** The literal text this keyword produces (read from the StringRule<'link'>). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::parameterless`
 
 ```text
 /** Keywords are always parameterless — they produce a fixed single text value. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::stampExpression`
 
 ```text
 /** Field-context stamp: JSON literal with `as const`. */
@@ -1074,7 +1055,7 @@ True when a slot's sole required value needs no input: a literal terminal, or a 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::stampExpression`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation::stampExpression`
 
 ```text
 /**
@@ -1083,7 +1064,7 @@ True when a slot's sole required value needs no input: a literal terminal, or a 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::text`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation::text`
 
 ```text
 /**
@@ -1123,7 +1104,7 @@ True when a slot's sole required value needs no input: a literal terminal, or a 
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::values`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum::values`
 
 ```text
 /** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
@@ -1335,7 +1316,7 @@ literals are lexeme fragments and take no kind.
 // ============================================================================
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::sourceRuleIds`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit::sourceRuleIds`
 
 ```text
 /**
@@ -1344,7 +1325,7 @@ literals are lexeme fragments and take no kind.
 	 */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::metadata`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit::metadata`
 
 ```text
 /** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
@@ -1413,23 +1394,6 @@ The regex source the kind's whole text must match: the pattern composed from the
 ```text
 /** An envelope whose sole slot is a separated list: the element values,
  *  the separator rule, and the leading/trailing delimiter facts. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
-
-```text
-/**
- * A slot-content entry that references a grammar node kind. After
- * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
- * before that pass (or for unresolvable dead-kind references) it holds
- * an `UnresolvedRef`.
- *
- * Per-value `separator` / `trailing` / `leading` replace the prior per-slot
- * `AssembledNonterminal.hasTrailing` / `hasLeading` flags. Only meaningful
- * when this value's `multiplicity` is `'array'` or `'nonEmptyArray'`.
- * Populated by the unified `deriveSlots` walk — undefined on values from
- * non-repeat positions.
- */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::RESERVED_ACCESSOR_NAMES`
@@ -4528,10 +4492,6 @@ Whether an `options:` declaration registered this slot as a spelling site: a slo
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::configSlots`
 
 The slots a caller supplies, which is every slot except the ones registered as an option. The sole-slot classification reads this list, so a node with one real slot and one registered spelling takes that value directly.
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::registerSpellingSite`
-
-Stamps the slot a declared spelling site names with its default arm and marks it registered. A spelling site has no kind ids, so it never joins the native option table.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::optionDefaultArm`
 

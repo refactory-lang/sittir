@@ -118,7 +118,8 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			optional: member.optional(),
 			type: annotation === undefined ? 'any' : text(annotation),
 			flag: isNode(annotation) && annotation.$type === K.TypeIdentifier && text(annotation) === FLAG,
-			references: typed === undefined ? [] : references(typed, source)
+			references: typed === undefined ? [] : references(typed, source),
+			literals: annotation === undefined ? [] : (stringLiterals(annotation, source) ?? [])
 		});
 	}
 	const heritage = declaration.extendsTypeClause();
@@ -145,6 +146,22 @@ function vocabularyReference(heritage: ExtendsTypeClause.Parsed, source: Source,
 }
 
 type PropertySignatureType = NonNullable<ReturnType<PropertySignature.Parsed['type']>>;
+
+type Annotation = ReturnType<PropertySignatureType['type']>;
+
+function stringLiterals(type: Annotation, source: Source): string[] | undefined {
+	const { K, text } = source;
+	if (!isNode(type)) return undefined;
+	if (type.$type === K.UnionType) {
+		const left = type.left();
+		const lefts = left === undefined ? [] : stringLiterals(left, source);
+		const rights = stringLiterals(type.right(), source);
+		return lefts === undefined || rights === undefined ? undefined : [...lefts, ...rights];
+	}
+	if (type.$type !== K.LiteralType) return undefined;
+	const literal = type.content();
+	return isNode(literal) && (literal.$type === K.StringSingle || literal.$type === K.StringDouble) ? [text(literal).slice(1, -1)] : undefined;
+}
 
 type HeritageType = ReturnType<ExtendsTypeClause.Parsed['types']>[number];
 

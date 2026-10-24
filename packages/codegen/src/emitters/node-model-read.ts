@@ -15,6 +15,7 @@ export interface WrittenSlot {
 	readonly nonEmpty?: boolean;
 	readonly registered?: boolean;
 	readonly optionDefault?: number | string;
+	readonly separator?: { readonly default?: number };
 	readonly values?: readonly WrittenValue[];
 }
 
@@ -38,6 +39,7 @@ export function factorySlotMetaOf(slot: WrittenSlot): FactorySlotMeta {
 		multiple: slot.multiple === true,
 		nonEmpty: slot.nonEmpty === true,
 		...(slot.registered === undefined ? {} : { registered: slot.registered }),
-		...(slot.optionDefault === undefined ? {} : { optionDefault: slot.optionDefault })
+		...(slot.optionDefault === undefined ? {} : { optionDefault: slot.optionDefault }),
+		...(slot.separator === undefined ? {} : { separator: slot.separator })
 	};
 }

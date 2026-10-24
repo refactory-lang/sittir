@@ -63,3 +63,12 @@ function expectTrue<_T extends true>(): void {}
 export function aliasContentNamesBuiltForms(): void {
 	expectTrue<Equals<T.TypeIdentifier.Types, T.Identifier.Bound>>();
 }
+
+export function optionsAndValueKeepTheirPlaces(): void {
+	const statement = ts.build.expressionStatement.strict(ts.build.identifier('x'));
+	// @ts-expect-error the static block takes its body first; a terminator object is not a StatementBlock
+	ts.build.classStaticBlock.strict({ terminator: ts.kinds.AutomaticSemicolon }, statement);
+	// @ts-expect-error a statement is not the static block's options
+	ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement), statement);
+	ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement), { terminator: ts.kinds.AutomaticSemicolon });
+}

@@ -2,12 +2,13 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { armIdOf } from './render-options-rs.ts';
-import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
+import { AssembledList, deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	placedAlias,
 	collectAliasSourceKinds,
 	forwardedTargetKind,
+	forwardsTargetArguments,
 	resolveFactoryFieldNames,
 	isAuthoredCompound,
 	registeredSlots
@@ -25,11 +26,13 @@ export interface FactorySlotMeta {
 	readonly nonEmpty: boolean;
 	readonly registered?: boolean;
 	readonly optionDefault?: number | string;
+	readonly separator?: { readonly default?: number };
 }
 
 export interface FactoryMapData {
 	readonly factoryShapes: Readonly<Record<string, FactoryShape>>;
 	readonly forwardsTo: Readonly<Record<string, string>>;
+	readonly forwardsArguments: ReadonlySet<string>;
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
 	readonly factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
@@ -41,11 +44,13 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const forwardsTo: Record<string, string> = {};
+	const forwardsArguments = new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
 		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
+		if (shape === 'forwarded' && forwardsTargetArguments(node, nodeMap)) forwardsArguments.add(kind);
 	}
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
@@ -76,12 +81,20 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 				registered.has(field) ? { registered: true, ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
 			);
 		}
+		const itemSlot = node instanceof AssembledList && node.separatorRule !== undefined ? node.slots.find((slot) => deriveSlotCardinality(slot).multiple) : undefined;
+		if (itemSlot !== undefined) {
+			const declared = (node as AssembledList).resolvedSeparatorArm;
+			slots[itemSlot.name] = {
+				...slots[itemSlot.name]!,
+				separator: declared === undefined ? {} : { default: armIdOf(kindEntries, { value: declared }, `${kind}.${itemSlot.name}`) }
+			};
+		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
 
 	const polymorphVariants = collectVariantAdoptedBranches(nodeMap, aliasSet);
 
-	return { factoryShapes, forwardsTo, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
+	return { factoryShapes, forwardsTo, forwardsArguments, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
 }
 
 function collectVariantAdoptedBranches(

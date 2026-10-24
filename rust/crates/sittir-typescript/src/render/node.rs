@@ -3201,6 +3201,24 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
         }
     }
 
+    fn sides(&self) -> Option<&::sittir_core::trivia::NodeTrivia<Self>> {
+        match self {
+            TriviaNode::CommentLine(t) => t.layout.as_deref()?.trivia.as_ref(),
+            TriviaNode::CommentBlock(t) => t.layout.as_deref()?.trivia.as_ref(),
+            TriviaNode::HtmlComment(t) => t.layout.as_deref()?.trivia.as_ref(),
+            _ => None,
+        }
+    }
+
+    fn sides_mut(&mut self) -> Option<&mut ::sittir_core::trivia::NodeTrivia<Self>> {
+        match self {
+            TriviaNode::CommentLine(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            TriviaNode::CommentBlock(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            TriviaNode::HtmlComment(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            _ => None,
+        }
+    }
+
     fn depth(&self) -> i32 {
         match self {
             TriviaNode::Indent => 1,
@@ -36861,13 +36879,13 @@ pub struct ObjectTypeContentNode {
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = [kind::COMMA, kind::SEMI], word = 2, width = 2, run = 5, seated)]
+    #[slot(field = field::ITEM, separator = [kind::COMMA, kind::SEMI, kind::_AUTOMATIC_SEMICOLON], word = 2, width = 2, run = 5, seated)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ObjectTypeContentItemNodeSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(leading = 0, trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
     #[wire(key = "_separator")]
-    #[separator_kind(candidates = [kind::COMMA, kind::SEMI])]
+    #[separator_kind(candidates = [kind::COMMA, kind::SEMI, kind::_AUTOMATIC_SEMICOLON])]
     pub separator_kind: Option<KindId>,
     #[wire(key = "_item_separator_space_before")]
     #[space(slot = 2, side = before, site = options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_BEFORE)]
@@ -36939,7 +36957,7 @@ fn prepare_object_type_content<N: ObjectTypeContentPrepare + ?Sized>(node: &mut 
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_OBJECT_TYPE_CONTENT_ITEM, ctx);
-    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(399), &[::sittir_core::types::KindId(15), ::sittir_core::types::KindId(22)], ctx.options.delimiter_at(options::DELIM_OBJECT_TYPE_CONTENT_ITEM), ctx);
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_deref(), ::sittir_core::types::KindId(399), &[::sittir_core::types::KindId(15), ::sittir_core::types::KindId(22), ::sittir_core::types::KindId(173)], ctx.options.delimiter_at(options::DELIM_OBJECT_TYPE_CONTENT_ITEM), ctx);
     ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     let chosen = ::sittir_core::prepare::Setting::chosen(&parts.separator_kind, overlay);
     if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.item, overlay, ObjectTypeContentNode::separator_kind_of, ctx).filter(|_| !chosen) {
@@ -53145,7 +53163,7 @@ fn render_ambient_declaration_module<N: AmbientDeclarationModuleFields + ?Sized>
 }
 
 fn render_object_type_content<N: ObjectTypeContentFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(15) => ",", KindId(22) => ";", _ => ";" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(15) => ",", KindId(22) => ";", KindId(173) => "\n", _ => ";" };
     let item = ListView {
         items: node.item(),
         template: "{}",
