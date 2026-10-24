@@ -322,7 +322,14 @@ describe('a kind edge over a choice of tokens', () => {
 });
 
 describe('an address shared by an alias-site family', () => {
-	function aliasFamily(declared: boolean) {
+	const seated: Partial<SitePreference> = {
+		address: 'statements_class_definition_after',
+		label: 'class_definition_after',
+		spacing: { at: 'seam', token: 'class_definition', side: 'after' },
+		seat: { kind: 'class_definition', display: 'class_definition' }
+	};
+
+	function aliasFamily(declared: boolean, extra: Partial<SitePreference> = {}) {
 		const sites: SitePreference[] = ['first_block', 'second_block'].map((kind) => ({
 			kind,
 			slot: 'statements',
@@ -330,7 +337,8 @@ describe('an address shared by an alias-site family', () => {
 			label: 'empty_separator_space',
 			arms: SPACING,
 			defaultArm: 'newline',
-			source: 'spacing'
+			source: 'spacing',
+			...extra
 		}));
 		const { nodeMap, generatedIdTables } = displayFamilyNodeMap(
 			[...sites, ...SPACING.map((arm) => ({ kind: arm.kind }))],
@@ -351,6 +359,19 @@ describe('an address shared by an alias-site family', () => {
 
 	it('is still refused for a coincidental duplicate, when no display union names the sites', () => {
 		const { plan, addresses, kindEntries } = aliasFamily(false);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
+	});
+
+	it("is accepted when its sites seat one kind under members of one display union, and lists each member's site", () => {
+		const { plan, addresses, kindEntries } = aliasFamily(true, seated);
+		const leaf = renderOptionsRs(plan, addresses, kindEntries)
+			.split('\n')
+			.find((line) => line.includes('AddressNode::Spacing { key: "after"'));
+		expect(leaf?.match(/SiteRef \{ site: (\w+)/g)).toEqual(['SiteRef { site: SITE_FIRST_BLOCK_STATEMENTS_CLASS_DEFINITION_AFTER', 'SiteRef { site: SITE_SECOND_BLOCK_STATEMENTS_CLASS_DEFINITION_AFTER']);
+	});
+
+	it('is still refused for sites that seat one kind when no display union names their holders', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(false, seated);
 		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
 	});
 });

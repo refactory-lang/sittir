@@ -306,17 +306,36 @@ export function planRenderOptions(
 
 const q = (s: string): string => JSON.stringify(s);
 
-type IndexedSite = SitePath & { readonly spacing?: SpacingSite; readonly displayUnion?: readonly DisplayUnionMember[] };
+interface SiteLevel {
+	readonly storage: string;
+	readonly display: string;
+	readonly kindId: number | undefined;
+	readonly union: readonly DisplayUnionMember[];
+}
+type IndexedSite = SitePath & { readonly spacing?: SpacingSite; readonly levels?: readonly [SiteLevel, SiteLevel | undefined] };
 type SiteIndex = ReadonlyMap<string, readonly IndexedSite[]>;
 
 function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 	const index = new Map<string, IndexedSite[]>();
+	const levelOf = (storage: string, display: string, kindId: number | undefined): SiteLevel => ({
+		storage,
+		display,
+		kindId,
+		union: plan.displayUnions?.get(display) ?? []
+	});
 	for (const p of plan.sitePaths) {
 		const spacing = p.site === 'spacing' ? plan.spacingSites[p.index] : undefined;
 		const indexed: IndexedSite =
 			spacing === undefined
 				? p
-				: { ...p, spacing, displayUnion: plan.displayUnions?.get(spacing.seat?.display ?? spacing.display) };
+				: {
+						...p,
+						spacing,
+						levels: [
+							levelOf(spacing.source, spacing.display, spacing.kindId),
+							spacing.seat === undefined ? undefined : levelOf(spacing.seat.kind, spacing.seat.display, spacing.seat.kindId)
+						]
+					};
 		const key = formatPreferencePath(p.segments);
 		const bucket = index.get(key);
 		if (bucket === undefined) index.set(key, [indexed]);
@@ -325,41 +344,34 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 	return index;
 }
 
+function levelHolds(levels: readonly (SiteLevel | undefined)[]): boolean {
+	const [head] = levels;
+	if (levels.every((level) => level?.storage === head?.storage)) return true;
+	return levels.every(
+		(level) =>
+			level !== undefined &&
+			level.display === head?.display &&
+			level.kindId !== undefined &&
+			level.union.some((member) => !member.literal && member.storage === level.storage)
+	);
+}
+
 function isAliasSiteFamily(sites: readonly IndexedSite[]): boolean {
 	const first = sites[0]?.spacing;
-	const family = sites[0]?.displayUnion;
-	if (first === undefined || family === undefined) return false;
-	const sameSite = (site: IndexedSite): boolean => {
-		const spacing = site.spacing;
-		if (
-			spacing === undefined ||
-			site.displayUnion !== family ||
-			!family.some((member) => !member.literal && member.storage === (spacing.seat?.kind ?? spacing.source)) ||
-			spacing.defaultId !== first.defaultId ||
-			JSON.stringify(spacing.allowedIds) !== JSON.stringify(first.allowedIds)
-		)
-			return false;
-		if (first.seat === undefined)
-			return (
-				spacing.seat === undefined &&
-				spacing.display === first.display &&
-				spacing.kindId !== undefined &&
-				spacing.slot === first.slot &&
-				spacing.label === first.label
-			);
-		return (
-			spacing.seat !== undefined &&
-			spacing.source === first.source &&
+	if (first === undefined) return false;
+	const agrees = sites.every(
+		({ spacing }) =>
+			spacing !== undefined &&
 			spacing.slot === first.slot &&
-			spacing.seat.display === first.seat.display &&
 			spacing.label === first.label &&
-			spacing.seat.kindId !== undefined
-		);
-	};
+			spacing.defaultId === first.defaultId &&
+			JSON.stringify(spacing.allowedIds) === JSON.stringify(first.allowedIds)
+	);
 	return (
-		sites.every(sameSite) &&
-		new Set(sites.map((site) => (first.seat === undefined ? site.spacing?.kindId : site.spacing?.seat?.kindId)))
-			.size === sites.length
+		agrees &&
+		levelHolds(sites.map((site) => site.levels?.[0])) &&
+		levelHolds(sites.map((site) => site.levels?.[1])) &&
+		new Set(sites.map((site) => site.levels?.map((level) => level?.kindId).join(' '))).size === sites.length
 	);
 }
 
@@ -368,7 +380,7 @@ function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
 		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
 		if (bucket.length !== 1 && (bucket.length === 0 || !isAliasSiteFamily(bucket))) {
 			throw new Error(
-				`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}: ${JSON.stringify(bucket.map(({ spacing, displayUnion }) => ({ source: spacing?.source, seat: spacing?.seat, displayUnion })))}`
+				`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}: ${JSON.stringify(bucket.map(({ spacing }) => ({ source: spacing?.source, kindId: spacing?.kindId, seat: spacing?.seat })))}`
 			);
 		}
 		return bucket;
