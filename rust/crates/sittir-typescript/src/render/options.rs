@@ -2488,7 +2488,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("object_type_content", "item_property_signature_after", "property_signature_after", &[KindId(180), KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
     ("object_type_content", "object_type_content_end", "object_type_content_end", &[KindId(180), KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
     ("object_type_content", "object_type_content_start", "object_type_content_start", &[KindId(180), KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
-    ("object_type_content", "item_separator", "separator", &[KindId(15), KindId(22)]),
+    ("object_type_content", "item_separator", "separator", &[KindId(15), KindId(22), KindId(173)]),
     ("object_type_content", "item_separator_space_before", "object_type_content_separator_space_before", &[KindId(180), KindId(181), KindId(182), KindId(183), KindId(184), KindId(185)]),
     ("object_type_content", "item_separator_space_after", "object_type_content_separator_space_after", &[KindId(180), KindId(181), KindId(182), KindId(183), KindId(184), KindId(185)]),
     ("object_type_content", "object_type_content_before", "object_type_content_before", &[KindId(180), KindId(181), KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),

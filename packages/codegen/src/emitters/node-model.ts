@@ -56,6 +56,7 @@ interface SerializedSlot {
 	storage: string;
 	registered?: true;
 	optionDefault?: number | string;
+	separator?: { default?: number };
 	values: SerializedValue[];
 }
 
@@ -306,6 +307,7 @@ function serializeSlot(
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		...(meta?.registered === true ? { registered: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
+		...(meta?.separator === undefined ? {} : { separator: meta.separator }),
 		values: slot.values.map((v) =>
 			serializeValue(v, spelledSeat(parent.kind, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind)), wires))
 		)

@@ -13902,6 +13902,19 @@
                     "annotations": {
                       "variantOf": "object_type_content"
                     }
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_automatic_semicolon",
+                      "annotations": {
+                        "variant": "automatic_semicolon",
+                        "variantOf": "object_type_content"
+                      }
+                    },
+                    "named": true,
+                    "value": "automatic_semicolon"
                   }
                 ]
               },
@@ -13963,6 +13976,19 @@
                   "annotations": {
                     "variantOf": "object_type_content"
                   }
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_automatic_semicolon",
+                    "annotations": {
+                      "variant": "automatic_semicolon",
+                      "variantOf": "object_type_content"
+                    }
+                  },
+                  "named": true,
+                  "value": "automatic_semicolon"
                 }
               ]
             },
