@@ -2,7 +2,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { armIdOf } from './render-options-rs.ts';
-import { deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
+import { AssembledList, deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	placedAlias,
@@ -26,6 +26,7 @@ export interface FactorySlotMeta {
 	readonly nonEmpty: boolean;
 	readonly registered?: boolean;
 	readonly optionDefault?: number | string;
+	readonly separator?: { readonly default?: number };
 }
 
 export interface FactoryMapData {
@@ -79,6 +80,14 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 				deriveSlotCardinality(field),
 				registered.has(field) ? { registered: true, ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
 			);
+		}
+		const itemSlot = node instanceof AssembledList && node.separatorRule !== undefined ? node.slots.find((slot) => deriveSlotCardinality(slot).multiple) : undefined;
+		if (itemSlot !== undefined) {
+			const declared = (node as AssembledList).resolvedSeparatorArm;
+			slots[itemSlot.name] = {
+				...slots[itemSlot.name]!,
+				separator: declared === undefined ? {} : { default: armIdOf(kindEntries, { value: declared }, `${kind}.${itemSlot.name}`) }
+			};
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}

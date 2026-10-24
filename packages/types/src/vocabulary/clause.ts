@@ -5,6 +5,16 @@ export interface Clause<G extends GrammarContext<G>> {
 	readonly $kind: 'clause';
 }
 
+export interface ClauseSynonyms {
+	readonly bounds: 'constraint';
+	readonly case: 'arm';
+	readonly catch: 'except' | 'rescue';
+	readonly else_if: 'elif' | 'elsif' | 'elseif';
+	readonly finally: 'ensure';
+	readonly resource: 'using';
+	readonly wildcard: 'glob';
+}
+
 export namespace Clause {
 	export interface Case<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		readonly $kind: 'clause.case';

@@ -1608,3 +1608,27 @@ The ceilings an `--update` run writes: each count's ceiling lowered to the curre
 ### `packages/tools/src/validate/glossary-keys.ts::run`
 
 The `sittir tool glossary-keys` entry point. It measures the repo, reads the ceilings file, and prints the result in the requested form. With `update`, it writes the lowered ceilings and creates the file when absent. Otherwise it fails when any count exceeds its ceiling, or when a ceiling is not a non-negative integer, which is refused rather than compared as NaN.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::forwardsArguments`
+
+The kinds whose factory forwards its arguments, as loaded from the node model.
+
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$_layout`
+
+The layout of a node read for validation.
+
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$named`
+
+Whether the node read is a named node.
+
+### `packages/tools/src/validate/common.ts::ReadNodeLike::$text`
+
+The node's text, or a thunk that produces it.
+
+### `packages/tools/src/validate/common.ts::TypedNode`
+
+A node with a kind id and its slots.
+
+### `packages/tools/src/validate/common.ts::TypedNode::$type`
+
+The node's kind id.

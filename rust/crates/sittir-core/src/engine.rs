@@ -297,7 +297,8 @@ pub fn node_at_span(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Optio
     search(tree.root_node(), span, kind)
 }
 
-/// The last child that is not an extra of the list spanning `start..end`: of
+/// The last child that is neither an extra nor a zero-width token (which spells no
+/// delimiter) of the list spanning `start..end`: of
 /// the node the read stamped `kind` at that span (`node_at_span`), or, for a
 /// list the tree holds no node of its own for, of the node holding the list's
 /// children, among the children that lie within the span. That node is the
@@ -315,7 +316,7 @@ pub fn last_list_child(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Op
     let mut cursor = holder.walk();
     let last = holder
         .children(&mut cursor)
-        .filter(|child| !child.is_extra() && Span::of(child).start >= span.start && Span::of(child).end <= span.end)
+        .filter(|child| !child.is_extra() && !Span::of(child).range().is_empty() && Span::of(child).start >= span.start && Span::of(child).end <= span.end)
         .last();
     last
 }

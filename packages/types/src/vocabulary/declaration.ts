@@ -5,6 +5,20 @@ export interface Declaration<G extends GrammarContext<G>> {
 	readonly $kind: 'declaration';
 }
 
+export interface DeclarationSynonyms {
+	readonly constructor: 'initializer' | 'init';
+	readonly enum_member: 'variant' | 'enumerator';
+	readonly extension: 'impl';
+	readonly foreign: 'extern';
+	readonly index: 'indexer';
+	readonly internal: 'crate';
+	readonly module: 'mod';
+	readonly receiver: 'self' | 'this';
+	readonly special: 'dunder' | 'magic';
+	readonly struct: 'record';
+	readonly type_alias: 'typedef' | 'typealias';
+}
+
 export namespace Declaration {
 	export interface Constant<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by pr

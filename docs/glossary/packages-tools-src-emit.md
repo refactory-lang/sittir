@@ -631,3 +631,27 @@ A printed builder call standing in for the node it builds: its `source` text, th
 ### `packages/tools/src/emit/factory-source.ts::kindIdOf`
 
 A kind's parser id through `ModelFacts.kindIdOfName`, throwing `emit-factory-source: <kind> has no parser id` when it has none. Every kind the printer builds is one the parser issues, so a missing id is a broken table, reported where it is found rather than printed as an untyped node.
+
+### `packages/tools/src/emit/factory-source.ts::EmitFactorySourceOptions`
+
+The options the factory-source emitter takes.
+
+### `packages/tools/src/emit/factory-source.ts::EngineBinding`
+
+The binding of one engine to its native entry.
+
+### `packages/tools/src/emit/factory-source.ts::ModelFacts::forwardsArguments`
+
+The kinds whose factory forwards its arguments.
+
+### `packages/tools/src/emit/factory-source.ts::Printed::$_layout`
+
+The layout trivia the printed node carries.
+
+### `packages/tools/src/emit/factory-source.ts::Printed::$named`
+
+Always `true`: a printed node is a named node.
+
+### `packages/tools/src/emit/factory-source.ts::Printed::$type`
+
+The printed node's kind id.

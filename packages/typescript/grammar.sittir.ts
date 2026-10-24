@@ -816,7 +816,8 @@ export default grammar(enrich(base), wire({
 		),
 
 		object_type_content: vocabulary(($) => {
-			const SEP = () => choice(',', ';');
+			const LEAD = () => choice(',', ';');
+			const SEP = () => choice(',', ';', $._automatic_semicolon);
 			const member = choice(
 				$.export_statement,
 				$.property_signature,
@@ -825,7 +826,7 @@ export default grammar(enrich(base), wire({
 				$.index_signature,
 				$.method_signature
 			);
-			return seq(optional(SEP()), field('item', member), repeat(seq(SEP(), field('item', member))), optional(SEP()));
+			return seq(optional(LEAD()), field('item', member), repeat(seq(SEP(), field('item', member))), optional(SEP()));
 		})
 	},
 	renderAs: (_$) => ({

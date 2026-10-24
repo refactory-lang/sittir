@@ -6497,6 +6497,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "automatic_semicolon",
+          "named": true
+        }
+      ]
     }
   },
   {

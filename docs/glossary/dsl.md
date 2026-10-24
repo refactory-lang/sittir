@@ -8827,3 +8827,383 @@ True for an optional sequence of exactly two members: a string token, then an op
 ### `packages/codegen/src/dsl/enrich.ts::notedHiddenListRef`
 
 Promotes a reference to a hidden separated-list rule and records the rewrite as a `hidden-list-reference` shape under the parent kind, when the promotion changed the member.
+
+### `packages/codegen/src/dsl/layer.ts::LayerConfig::contexts`
+
+The contexts the layer declares (`ContextsConfig`).
+
+### `packages/codegen/src/dsl/layer.ts::LayerConfig::generated`
+
+Set `true` when the layer is generated, not authored.
+
+### `packages/codegen/src/dsl/layer.ts::LayerConfig::name`
+
+The layer's name.
+
+### `packages/codegen/src/dsl/layer.ts::LayerConfig::resolutions`
+
+The conflict resolutions the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::base`
+
+The base grammar result the layer applies to.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::config`
+
+The layer's config.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::conflictsAuthored`
+
+Whether the layer authored its conflict sets itself.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::depth`
+
+The layer's depth in the layer stack.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::inherited`
+
+The record of the layer this one inherits from, if any.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::protectedNames`
+
+Rule names the layer must not rename.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::resolutions`
+
+The conflict resolutions in effect for the layer.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::rules`
+
+The rules the layer produces.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::stageBases`
+
+The raw, enriched and inherited bases of the layer's stages.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::symbols`
+
+The symbols the layer's grammar exposes.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::upstream`
+
+The upstream grammar the layer extends.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx::wire`
+
+The wire context the layer's pass runs in.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::conflicts`
+
+The conflict sets the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::externals`
+
+The externals the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::extras`
+
+The extras the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::inline`
+
+The inline kinds the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::precedences`
+
+The precedence lists the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::reserved`
+
+The reserved word sets the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::supertypes`
+
+The supertype kinds the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists::word`
+
+The word rule the layer declares.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOptions::externals`
+
+The layer's externals callback, which runs the layer pass.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOptions::name`
+
+The layer's name.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOptions::rules`
+
+The layer's rule callbacks, read after the pass.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOutput::bodies`
+
+The rule bodies the pass produced.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOutput::lists`
+
+The lists the pass produced.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOutput::name`
+
+The layer's name.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOutput::record`
+
+The layer record the pass produced.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOutput::wire`
+
+The wire context after the pass.
+
+### `packages/codegen/src/dsl/layer.ts::OwnRecordFacts::roles`
+
+The external role of each declared external.
+
+### `packages/codegen/src/dsl/layer.ts::OwnRecordFacts::supertypes`
+
+The supertype names the layer's own record declares.
+
+### `packages/codegen/src/dsl/layer.ts::OwnRecordFacts::unmatchedGroups`
+
+The group names the layer declared that matched no rule.
+
+### `packages/codegen/src/dsl/layer.ts::PendingBase::grammar`
+
+The grammar of a pending base: its name, its externals, and the keys still pending.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerFixpoint::checked`
+
+The grammar after the fixpoint, checked against enrich.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerFixpoint::diagnostics`
+
+The diagnostics the fixpoint raised.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::automaticVariants`
+
+The automatic variants the layer derived.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::deadMints`
+
+The names of rules minted but unused, which the layer dropped.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::depth`
+
+The layer's depth.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::derivationRecords`
+
+The derivation records the layer kept.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::diagnostics`
+
+The diagnostics the layer raised.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::effects`
+
+The effects the layer applied.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::fixpoint`
+
+A thunk that produces the layer's fixpoint.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::generated`
+
+Whether the layer is generated.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::liftNames`
+
+The lift names the layer declares, by rule.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::projections`
+
+The projections the layer records.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::records`
+
+The layer's records.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::resolutions`
+
+The conflict resolutions the layer applies.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::stageBases`
+
+The stage bases the layer was built from.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::synthesized`
+
+The rules the layer synthesized, with the position each was added at.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::textTokens`
+
+The text-token names the layer minted.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord::upstream`
+
+The upstream grammar the layer extends.
+
+### `packages/codegen/src/dsl/layer-record.ts::StageBases::enriched`
+
+The grammar after enrich.
+
+### `packages/codegen/src/dsl/layer-record.ts::StageBases::inherited`
+
+The inherited layer record, if any.
+
+### `packages/codegen/src/dsl/layer-record.ts::StageBases::name`
+
+The stage's name.
+
+### `packages/codegen/src/dsl/layer-record.ts::StageBases::raw`
+
+The grammar before enrich.
+
+### `packages/codegen/src/dsl/layer-record.ts::SynthesizedRules::after`
+
+The index of the rule the synthesized names follow.
+
+### `packages/codegen/src/dsl/layer-record.ts::SynthesizedRules::names`
+
+The synthesized rule names.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES_KEY`
+
+The grammar property under which enrich stores the shapes it rewrote.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeCode`
+
+The union of the shape codes, the keys of `ENRICH_SHAPES`.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShape::code`
+
+The shape code, a key of `ENRICH_SHAPES`.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShape::ruleName`
+
+The name of the rule that held the shape.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::alias-over-choice`
+
+A shape the `alias distribution` pass rewrites: an alias over a choice, which tree-sitter applies to every arm.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::aliased-hidden-body`
+
+A shape the `hidden alias lift` pass rewrites: a hidden rule whose whole body is an alias over non-symbol content.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::aliased-literal-choice`
+
+A shape the `literal-alias storage` pass rewrites: an alias over a choice of literals with no storage rule.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::element-choice-supertype`
+
+A shape the `clause hoist` pass rewrites: a repeated choice whose arms fill one slot.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::exclusive-field-choice`
+
+A shape the `exclusive field-choice distribution` pass rewrites: a choice of differently fielded alternatives inside a sequence.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::field-routed-choice-arm`
+
+A shape the `clause hoist` pass rewrites: a choice arm routed to a field of the enclosing list.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::hidden-list-reference`
+
+A shape the `clause hoist` pass rewrites: a reference to a hidden separated-list rule.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::inline-field-enum`
+
+A shape the `field-enum synthesis` pass rewrites: a field holding a choice of literals.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::inline-list-run`
+
+A shape the `clause hoist` pass rewrites: a separated list written inline in a sequence.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::inline-text-token`
+
+A shape the `text-token mint` pass rewrites: an inline pattern or token with no rule of its own.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::leaf-enum-token`
+
+A shape the `leaf-enum distribution` pass rewrites: a token over a choice of plain strings.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::lone-optional-token`
+
+A shape the `clause hoist` pass rewrites: an optional sequence of one token and an optional field, whose token no slot records.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::missing-layout-supertype`
+
+A shape the `whitespace` pass rewrites: a grammar with no layout supertype.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::multi-slot-repeat-element`
+
+A shape the `clause hoist` pass rewrites: a repeat whose element has several slots.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::nested-list-head`
+
+A shape the `list-body flattening` pass rewrites: a separated list whose head element and repeat are nested instead of one sequence.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::optional-sequence-inline`
+
+A shape the `clause hoist` pass rewrites: an optional sequence with one slot.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::optional-sequence-visible`
+
+A shape the `clause hoist` pass rewrites: an optional sequence with several slots.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::overloaded-display`
+
+A shape the `display unaliasing` pass rewrites: one display name over storages of different parser classes.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::owner-prefixed-list-slot`
+
+A shape the `owner-prefixed list field` pass rewrites: a hoisted list kind named after its owner, outside a field.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::permutation-arm-keyword`
+
+A shape the `clause hoist` pass rewrites: a permutation arm led by a bare keyword.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::shared-optional-choice`
+
+A shape the `shared-optional factoring` pass rewrites: a choice whose every member is optional.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::structured-choice-arm`
+
+A shape the `clause hoist` pass rewrites: a choice arm with structure of its own.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::token-form-choice`
+
+A shape the `token-form hoist` pass rewrites: a token body with a form alternation inside it.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::trailing-list-separator`
+
+A shape the `clause hoist` pass rewrites: a separated list followed by its own separator in the enclosing sequence.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unfielded-choice-arm`
+
+A shape the `automatic variants` pass rewrites: a choice arm that is not labeled as a variant.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unfielded-elided-list`
+
+A shape the `elided-list field` pass rewrites: an elided separated list outside one field.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unfielded-node-choice`
+
+A shape the `node-choice field wrap` pass rewrites: a choice of node kinds with no field name.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unfielded-optional-keyword`
+
+A shape the `optional-keyword promotion` pass rewrites: an optional keyword that names no slot.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unfielded-repeat-union`
+
+A shape the `repeat-union field promotion` pass rewrites: a repeat of a hidden union with no field name.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unfielded-symbol-slot`
+
+A shape the `symbol-to-field` pass rewrites: a node kind in a sequence with no field name.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unlabeled-choice-arm`
+
+A shape the `automatic variants` pass rewrites: a choice arm that is not labeled as a variant.
