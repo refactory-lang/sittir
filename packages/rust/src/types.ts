@@ -21471,17 +21471,17 @@ export namespace LastMatchArm {
 		config:
 			| WithoutGroup<
 					OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
-					OmitEach<NonNullable<T.MatchPattern.Config>, 'match' | '$type'>
+					OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>
 			  >
 			| (OmitEach<NonNullable<OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'match'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'match' | '$type'>>)),
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>)),
 		options?: T.LastMatchArm.Options
 	];
 	export type LooseArgs = [
 		config:
-			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'match' | '$type'>>
+			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
 			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'match'> &
-					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'match' | '$type'>>)),
+					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>)),
 		options?: T.LastMatchArm.Options
 	];
 	export type Kind = TSKindId.LastMatchArm;
@@ -24843,15 +24843,15 @@ export namespace MatchArmWithComma {
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmWithComma>;
 	export type BuildArgs = [
 		config:
-			| WithoutGroup<ConfigOf<T.MatchArmWithComma>, OmitEach<NonNullable<T.MatchPattern.Config>, 'match' | '$type'>>
+			| WithoutGroup<ConfigOf<T.MatchArmWithComma>, OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
 			| (OmitEach<NonNullable<ConfigOf<T.MatchArmWithComma>>, 'match'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'match' | '$type'>>))
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>))
 	];
 	export type LooseArgs = [
 		config:
-			| WithoutGroup<T.MatchArmWithComma.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'match' | '$type'>>
+			| WithoutGroup<T.MatchArmWithComma.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
 			| (OmitEach<NonNullable<T.MatchArmWithComma.Loose>, 'match'> &
-					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'match' | '$type'>>))
+					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>))
 	];
 	export type Kind = TSKindId.MatchArmWithComma;
 }
@@ -24880,15 +24880,15 @@ export namespace MatchArmBlockEnding {
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmBlockEnding>;
 	export type BuildArgs = [
 		config:
-			| WithoutGroup<ConfigOf<T.MatchArmBlockEnding>, OmitEach<NonNullable<T.MatchPattern.Config>, 'match' | '$type'>>
+			| WithoutGroup<ConfigOf<T.MatchArmBlockEnding>, OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
 			| (OmitEach<NonNullable<ConfigOf<T.MatchArmBlockEnding>>, 'match'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'match' | '$type'>>))
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>))
 	];
 	export type LooseArgs = [
 		config:
-			| WithoutGroup<T.MatchArmBlockEnding.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'match' | '$type'>>
+			| WithoutGroup<T.MatchArmBlockEnding.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
 			| (OmitEach<NonNullable<T.MatchArmBlockEnding.Loose>, 'match'> &
-					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'match' | '$type'>>))
+					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>))
 	];
 	export type Kind = TSKindId.MatchArmBlockEnding;
 }
@@ -26017,23 +26017,23 @@ export namespace ParametersElementsReceiver {
 		config:
 			| WithoutGroup<
 					ConfigOf<T.ParametersElementsReceiver>,
-					OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>
+					OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>
 			  >
 			| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> &
 					(
 						| T.AttributedParameterReceiver.BuildArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>>
 					))
 			| (OmitEach<
 					NonNullable<
 						| WithoutGroup<
 								ConfigOf<T.ParametersElementsReceiver>,
-								OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>
+								OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>
 						  >
 						| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> &
 								(
 									| T.AttributedParameterReceiver.BuildArgs[0]
-									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>>
+									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>>
 								))
 					>,
 					'parametersElementsReceiverGroup'
@@ -26043,23 +26043,23 @@ export namespace ParametersElementsReceiver {
 		config:
 			| WithoutGroup<
 					T.ParametersElementsReceiver.Loose,
-					OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>
+					OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>
 			  >
 			| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> &
 					(
 						| T.AttributedParameterReceiver.LooseArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>>
 					))
 			| (OmitEach<
 					NonNullable<
 						| WithoutGroup<
 								T.ParametersElementsReceiver.Loose,
-								OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>
+								OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>
 						  >
 						| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> &
 								(
 									| T.AttributedParameterReceiver.LooseArgs[0]
-									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>>
+									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>>
 								))
 					>,
 					'parametersElementsReceiverGroup'

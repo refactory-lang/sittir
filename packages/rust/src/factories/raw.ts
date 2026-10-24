@@ -32,7 +32,6 @@ import {
 	defineListIndices,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	storedElements,
 	elementsWith,
 	rebuilt,
@@ -2873,7 +2872,6 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 						{
 							slot: 'useWildcardGroup',
 							stored: '_use_wildcard_group',
-							kind: TSKindId.UseWildcardGroup as const,
 							make: buildUseWildcardGroup,
 							keys: [{ name: 'path', rest: false }]
 						},
@@ -2887,7 +2885,6 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 		useWildcardGroup: () => hydrateStoredSlot(node, '_use_wildcard_group'),
 		path:
 			_use_wildcard_group === undefined ? undefined : () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
-		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5073,7 +5070,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -5092,7 +5088,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -5110,7 +5105,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 		arms: _match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
 		lastArm:
 			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
-		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5170,7 +5164,6 @@ export function buildLastMatchArm(
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -5189,7 +5182,6 @@ export function buildLastMatchArm(
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -5209,7 +5201,6 @@ export function buildLastMatchArm(
 		trailingComma: () => _trailing_comma,
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { match: readGroup_match },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9948,7 +9939,6 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -9967,7 +9957,6 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -9986,7 +9975,6 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		value: () => hydrateStoredSlot(node, '_value'),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { match: readGroup_match },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -10050,7 +10038,6 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -10069,7 +10056,6 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -10088,7 +10074,6 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		value: () => hydrateStoredSlot(node, '_value'),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { match: readGroup_match },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -11800,7 +11785,6 @@ export function buildParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -11820,7 +11804,6 @@ export function buildParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -11840,7 +11823,6 @@ export function buildParametersElementsReceiver(
 		attributeItem:
 			_receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
 		content: _receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
-		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

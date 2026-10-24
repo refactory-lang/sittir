@@ -15,7 +15,6 @@ import {
 	listSlotWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -2016,7 +2015,6 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 						{
 							slot: 'useWildcardGroup',
 							stored: '_use_wildcard_group',
-							kind: TSKindId.UseWildcardGroup as const,
 							make: RAW.buildUseWildcardGroup,
 							keys: [{ name: 'path', rest: false }]
 						},
@@ -2032,7 +2030,6 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 			data._use_wildcard_group === undefined
 				? undefined
 				: () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
-		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3885,7 +3882,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: RAW.buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -3905,7 +3901,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: RAW.buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -3926,7 +3921,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 			data._match_block_arms === undefined
 				? undefined
 				: () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
-		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3977,7 +3971,6 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -3996,7 +3989,6 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -4012,7 +4004,6 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		},
 		pattern: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { match: readGroup_match },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7336,7 +7327,6 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -7356,7 +7346,6 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -7373,7 +7362,6 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 		},
 		pattern: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { match: readGroup_match },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7430,7 +7418,6 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -7450,7 +7437,6 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						{
 							slot: 'match',
 							stored: '_match',
-							kind: TSKindId.MatchPattern as const,
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -7467,7 +7453,6 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 		},
 		pattern: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { match: readGroup_match },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -8780,7 +8765,6 @@ export function wrapParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: RAW.buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -8800,7 +8784,6 @@ export function wrapParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: RAW.buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -8818,7 +8801,6 @@ export function wrapParametersElementsReceiver(
 		attributeItem:
 			data._receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
 		content: data._receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
-		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

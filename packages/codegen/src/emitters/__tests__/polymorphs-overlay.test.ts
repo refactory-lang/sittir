@@ -275,7 +275,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
 		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');
 		expect(out).toContain('function clause$seated(...args: T.Clause.BuildArgs): ReturnType<typeof F.buildClause> {');
-		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
+		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '$type'>`;
 		const { buildArgs } = seatedRows(nodeMap, 'clause');
 		expect(buildArgs).toContain(`WithoutGroup<`);
 		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);

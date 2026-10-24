@@ -13373,23 +13373,20 @@ export namespace Slice {
 	export type LooseConfig = LooseConfigFor<TSKindId.Slice>;
 	export type BuildArgs = [
 		config?:
-			| WithoutGroup<
-					Partial<ConfigOf<T.Slice>>,
-					OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, 'step' | '$type'>
-			  >
+			| WithoutGroup<Partial<ConfigOf<T.Slice>>, OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
 			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice>>>, 'step'> &
 					(
 						| { expression: T.SliceGroup.BuildArgs[0] }
-						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, 'step' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
 					))
 	];
 	export type LooseArgs = [
 		config?:
-			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, 'step' | '$type'>>
+			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
 			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> &
 					(
 						| { expression: T.SliceGroup.LooseArgs[0] }
-						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, 'step' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
 					))
 	];
 	export type Kind = TSKindId.Slice;

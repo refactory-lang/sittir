@@ -323,7 +323,7 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 	}
 	const seats = found.map(({ fields, ...seat }) => {
 		const taken = new Set([
-			...node.slots.filter((other) => other !== seat.slot).map((other) => other.propertyName),
+			...node.slots.map((other) => other.propertyName),
 			...found.filter((other) => other.slot !== seat.slot).flatMap((other) => other.fields)
 		]);
 		return { ...seat, keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.propertyName, field) : field, field })) };
@@ -332,7 +332,7 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 	for (const seat of seats) {
 		for (const { key, field } of seat.keys) {
 			const holder = claimed.get(key);
-			if (holder !== undefined || node.slots.some((slot) => slot !== seat.slot && slot.propertyName === key)) {
+			if (holder !== undefined || node.slots.some((slot) => slot.propertyName === key)) {
 				throw new Error(
 					`flattenSeatsOf: '${node.kind}' seats '${seat.group.kind}' in '${seat.slot.propertyName}', and the group's key '${field}' collides with ${holder === undefined ? 'another slot of the parent' : `a key of '${holder.group.kind}'`} even as '${key}'`
 				);

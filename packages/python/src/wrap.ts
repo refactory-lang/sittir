@@ -16,7 +16,6 @@ import {
 	elementsWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -2763,13 +2762,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 			expression: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
-						{
-							slot: 'step',
-							stored: '_step',
-							kind: TSKindId.SliceGroup as const,
-							make: RAW.buildSliceGroup,
-							keys: [{ name: 'expression', rest: false }]
-						},
+						{ slot: 'step', stored: '_step', make: RAW.buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
 						'expression',
 						args,
 						(v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree),
@@ -2778,7 +2771,6 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 				)
 		},
 		expression: data._step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
-		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

@@ -480,6 +480,39 @@ describe('flattenSeatsOf prefixes a group key that collides with the parent', ()
 	});
 });
 
+describe('flattenSeatsOf prefixes a group key that spells its own seat', () => {
+	it('names the key after its seat, as for any other slot of the parent', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'arm' }] },
+			arm: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'pattern', content: { type: SYMBOL, name: 'arm_pattern' } },
+					{ type: STRING, value: '=>' },
+					{ type: FIELD, name: 'value', content: { type: PATTERN, value: '[0-9]+' } }
+				]
+			},
+			arm_pattern: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'pattern', content: { type: PATTERN, value: '[a-z]+' } },
+					{
+						type: OPTIONAL,
+						content: { type: SEQ, members: [{ type: STRING, value: 'if' }, { type: FIELD, name: 'condition', content: { type: PATTERN, value: '[a-z]+' } }] }
+					}
+				],
+				annotations: { hoisted: true }
+			}
+		});
+		const [seat] = flattenSeatsOf(nodeMap.nodes.get('arm')!, nodeMap) as [ReturnType<typeof flattenSeatsOf>[number]];
+		expect(seat.slot.propertyName).toBe('pattern');
+		expect(seat.keys).toEqual([
+			{ key: 'patternPattern', field: 'pattern' },
+			{ key: 'condition', field: 'condition' }
+		]);
+	});
+});
+
 describe('flattenSeatsOf flattens every group a node seats', () => {
 	it('prefixes a key two groups share, in each group, after its own seat', () => {
 		const group = (name: string, key: string): Rule<'evaluate'> => ({

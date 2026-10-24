@@ -34,7 +34,6 @@ import {
 	elementsWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	rebuilt,
 	renderText,
 	nodeJSON,
@@ -3467,13 +3466,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 			expression: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
-						{
-							slot: 'step',
-							stored: '_step',
-							kind: TSKindId.SliceGroup as const,
-							make: buildSliceGroup,
-							keys: [{ name: 'expression', rest: false }]
-						},
+						{ slot: 'step', stored: '_step', make: buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
 						'expression',
 						args,
 						(value?: Admit<T.SliceGroup>) => buildSlice({ ...config, step: value }),
@@ -3485,7 +3478,6 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		stop: () => hydrateStoredSlot(node, '_stop'),
 		step: () => hydrateStoredSlot(node, '_step'),
 		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
-		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

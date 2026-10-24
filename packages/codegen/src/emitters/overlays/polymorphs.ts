@@ -802,7 +802,7 @@ function flattenShape(
 		? `(${JSON.stringify(Object.fromEntries(keys.map(({ key, field }) => [key, field])))} as Record<string, string>)[key]!`
 		: 'key';
 	const flattened = (p: string, c: string, config: string): string => {
-		const groupKeys = `OmitEach<NonNullable<${groupConfig(config)}>, '${k}' | '$type'>`;
+		const groupKeys = `OmitEach<NonNullable<${groupConfig(config)}>, '$type'>`;
 		return `WithoutGroup<${p}, ${groupKeys}> | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(`${c}[0]`)} | NoneOf<${groupKeys}>))`;
 	};
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
