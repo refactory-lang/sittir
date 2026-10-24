@@ -616,7 +616,7 @@ The regen's wasm step: sittir's `parser.wasm` from the sources `generate` just w
 /** Suppress the post-regen emit-diff report (--no-emit-diff). */
 ```
 
-### `packages/codegen/src/run-codegen.ts::allowDiagnostics`
+### `packages/codegen/src/run-codegen.ts::CodegenOptions::allowDiagnostics`
 
 ```text
 /** List of diagnostic messages to allow (passed from CLI allowlist). */

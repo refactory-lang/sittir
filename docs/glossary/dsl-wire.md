@@ -2274,3 +2274,7 @@ Renames a map key in place: the value takes the new key's position when that key
 ### `packages/codegen/src/dsl/wire/keyword-names.ts::renameMember`
 
 Renames a set member in place, by the same rule as `renameEntry`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::get#1`
+
+The proxy trap of `layerSymbols`. A non-string key returns undefined. A name the layer admits, or any name when no set was given, returns its symbol. A name outside the set returns a `ReferenceError` that carries the symbol, instead of throwing.

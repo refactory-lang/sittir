@@ -53,7 +53,7 @@ parents.
 	 */
 ```
 
-### `packages/codegen/src/compiler/assemble.ts::nodes`
+### `packages/codegen/src/compiler/assemble.ts::AssembleCtx::nodes`
 
 ```text
 /** Live node-map accumulator built during assemble(); post-passes read peers from it. */
@@ -4337,7 +4337,7 @@ collector parameter.
  */
 ```
 
-### `packages/codegen/src/compiler/ctx.ts::wordMatcher`
+### `packages/codegen/src/compiler/ctx.ts::BaseCtx::wordMatcher`
 
 ```text
 /**
@@ -4756,7 +4756,7 @@ The symbol's position in the grammar's lexical precedence order (`collectLexical
 /** Parser-origin metadata; absent when the kind has no parser symbol. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::externalRoles`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::externalRoles`
 
 ```text
 /**
@@ -4772,7 +4772,7 @@ The symbol's position in the grammar's lexical precedence order (`collectLexical
 
 The normalized and simplified grammars carry the same map through unchanged, as they carry `leafTextPatterns`, so assemble can stamp each declared role on its kind (`stampExternalRoles`). A role reference link inlines becomes an `indent`/`dedent`/`newline` rule; a reference that stays a symbol, such as python's aliased `_newline` after a simple statement, keeps the role only on the kind's node.
 
-### `packages/codegen/src/compiler/types.ts::refineForms`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::refineForms`
 
 ```text
 /**
@@ -5003,7 +5003,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::topLevelAliasBodies`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::topLevelAliasBodies`
 
 ```text
 /**
@@ -5023,7 +5023,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::parentAliasedKinds`
 
 ```text
 /**
@@ -5046,7 +5046,7 @@ The automatic-variant record of the wire run that evaluated the grammar, the top
 stage's own, so link can tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
 grammar no wire ran over; then no label is automatic.
 
-### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::visibleAliasTargets`
 
 ```text
 /**
@@ -5065,7 +5065,7 @@ grammar no wire ran over; then no label is automatic.
 ```
 
 
-### `packages/codegen/src/compiler/types.ts::variantChildren`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::variantChildren`
 
 ```text
 /** `{parent -> childTargetName[]}` for every variant-adoption parent, stamped
@@ -5090,7 +5090,7 @@ grammar no wire ran over; then no label is automatic.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::wordMatcher`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::wordMatcher`
 
 ```text
 /**
@@ -5163,31 +5163,31 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/types.ts::rules`
+### `packages/codegen/src/compiler/types.ts::NormalizedGrammar::rules`
 
 ```text
 /** The normalize-phase rules — wrapper-free, attribute-stamped. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::wordMatcher`
+### `packages/codegen/src/compiler/types.ts::NormalizedGrammar::wordMatcher`
 
 ```text
 /** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
+### `packages/codegen/src/compiler/types.ts::NormalizedGrammar::parentAliasedKinds`
 
 ```text
 /** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
+### `packages/codegen/src/compiler/types.ts::NormalizedGrammar::visibleAliasTargets`
 
 ```text
 /** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::rules`
+### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::rules`
 
 ```text
 /**
@@ -5203,7 +5203,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::normalizedRules`
+### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::normalizedRules`
 
 ```text
 /**
@@ -5220,7 +5220,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::wordMatcher`
+### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::wordMatcher`
 
 ```text
 /** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
@@ -5301,7 +5301,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::normalizedRules`
+### `packages/codegen/src/compiler/types.ts::NodeMap::normalizedRules`
 
 ```text
 /**
@@ -5317,7 +5317,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::word`
+### `packages/codegen/src/compiler/types.ts::NodeMap::word`
 
 ```text
 /**
@@ -5331,7 +5331,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::wordMatcher`
+### `packages/codegen/src/compiler/types.ts::NodeMap::wordMatcher`
 
 ```text
 /**
@@ -5344,7 +5344,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::externals`
+### `packages/codegen/src/compiler/types.ts::NodeMap::externals`
 
 ```text
 /**
@@ -5357,7 +5357,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::refineForms`
+### `packages/codegen/src/compiler/types.ts::NodeMap::refineForms`
 
 ```text
 /**

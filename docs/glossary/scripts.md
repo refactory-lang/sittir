@@ -355,7 +355,7 @@ True when the binary is not what a build from the current native inputs wrote.
 
 Why the binary is stale, or that it was built from the current native inputs.
 
-### `packages/codegen/src/scripts/native-binary-freshness.ts::profile`
+### `packages/codegen/src/scripts/native-binary-freshness.ts::HostBinaryFreshness::profile`
 
 The profile of the build that wrote this binary, when the build stamp names it.
 

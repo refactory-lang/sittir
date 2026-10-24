@@ -104,3 +104,7 @@ compilation and reference checks. A failed load is evicted so a retry can recove
 `loadSourceLanguage` loads the temporary source parser's bytes through the canonical
 web-tree-sitter initializer. Both inventory checks use this source stage because
 bindings.scm names fields and kinds before grammar.bindings applies its edits.
+
+### `packages/tools/src/inventory/bindings.ts::loadSourceLanguage`
+
+Loads the tree-sitter language of a grammar's source parser: it builds the parser for the grammar's package and loads it through web-tree-sitter.

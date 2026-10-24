@@ -841,3 +841,7 @@ Whether a value is a `rename` placeholder.
 ### `packages/codegen/src/dsl/primitives/rename.ts::rename`
 
 A rename entry: `kind: { '.': rename(to) }` renames the kind to `to` in the layer it sits in (`verbs/rename.ts::applyRename`). It applies only at `.`, the kind itself.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copy#2`
+
+The `copy(source, path)` primitive. It names the source, mints a wire copy of it for the part at `path` (the whole rule by default), and returns a reference to the copy: a copy reference for the whole rule, a bare reference for a part. When the layer mints no copy, it returns the plain symbol. The copy's name comes from `copyNameOf`, which drops the leading underscores of its context as well as of its source, so a copy made in a hidden rule has no double underscore.
