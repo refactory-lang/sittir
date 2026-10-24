@@ -545,7 +545,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		);
 		expect(nodeRs).toContain('render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))');
 		expect(nodeRs).toContain('    render_record_as(root, trees, built, store, ctx, false)\n');
-		expect(nodeRs).toContain('    render_record_as(root, trees, built, store, ctx, true)\n');
+		expect(nodeRs).toContain('        Some(at) if kind::STAMPED_TRIVIA_KINDS.contains(&at) => render_record_as(root, trees, built, store, ctx, true),\n');
 		expect(nodeRs).toContain('render_root(ctx, None, |_| entry || ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))');
 	});
 

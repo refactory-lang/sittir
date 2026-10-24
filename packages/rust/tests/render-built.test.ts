@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
-import { treeOf } from '@sittir/common/utils';
+import { recordOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
 
@@ -47,6 +47,18 @@ describe('a built arena rendered natively', () => {
 		expect(() => native.builtTriviaSide(0, 'leading')).toThrow(/record address 0/);
 		expect(() => native.writeBuiltTriviaSide(0, 'leading', [], [], [])).toThrow(/record address 0/);
 		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
+	});
+
+	it('refuses a side entry written as a record of a kind no side holds by record, at the native write', async () => {
+		const records = await arena.createEngine();
+		useRecordConstruction(records, await import('../src/factories/records.ts'));
+		const b = records.build;
+		const x = b.expressionStatement(b.identifier('x'));
+		const z = b.expressionStatement(b.identifier('z'));
+		expect(recordOf(z)).toBeTypeOf('number');
+		expect(() => writeTrivia(x, { leading: [z as never] })).toThrow(/trivia entry kind/);
+		expect(records.render(x).toString()).toBe('x;');
+		records.dispose();
 	});
 
 	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {

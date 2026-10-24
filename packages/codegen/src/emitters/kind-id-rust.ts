@@ -5,7 +5,7 @@ import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
-import { layoutMemberKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
+import { layoutMemberKindIds, listKindIds, rootKindIds, stampedTriviaRecordKindIds, unitKindIds } from './wrap.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -110,7 +110,10 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`};`);
 	lines.push('');
 	lines.push(`/// The grammar's root kinds: a render whose root is one of them is a document.`);
-	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${rootKindIds(nodeMap).map((id) => `KindId(${id})`).join(', ')}];`);
+	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${kindIds(rootKindIds(nodeMap))}];`);
+	lines.push('');
+	lines.push(`/// The trivia kinds a side entry holds as a built record, which its write stamps with the text it renders: the stamped trivia kinds that are compounds. A built leaf crosses as its text.`);
+	lines.push(`pub const STAMPED_TRIVIA_KINDS: &[KindId] = &[${kindIds(stampedTriviaRecordKindIds(nodeMap))}];`);
 
 	const table = relaxationTable(nodeMap, entries);
 	lines.push('');

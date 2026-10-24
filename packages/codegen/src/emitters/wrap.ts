@@ -1,5 +1,5 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
-import { continuationTriviaKinds, emptyForms, layoutTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, emptyForms, layoutTriviaKinds, stampedTriviaRecordKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
@@ -53,6 +53,10 @@ export function layoutMemberKindIds(nodeMap: NodeMap): number[] {
 
 export function layoutTriviaKindIds(nodeMap: NodeMap): number[] {
 	return kindIdsOf(nodeMap, layoutTriviaKinds(nodeMap));
+}
+
+export function stampedTriviaRecordKindIds(nodeMap: NodeMap): number[] {
+	return kindIdsOf(nodeMap, stampedTriviaRecordKinds(nodeMap));
 }
 
 function kindIdsOf(nodeMap: NodeMap, kinds: readonly string[]): number[] {

@@ -256,6 +256,10 @@ export function stampedTriviaKinds(nodeMap: NodeMap): string[] {
 	return [...triviaKinds(nodeMap)].filter((kind) => !layout.has(kind) && nodeMap.nodes.has(kind) && !(nodeMap.nodes.get(kind) instanceof AssembledSupertype)).sort();
 }
 
+export function stampedTriviaRecordKinds(nodeMap: NodeMap): string[] {
+	return stampedTriviaKinds(nodeMap).filter((kind) => nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound);
+}
+
 export function stampedTriviaOptions(nodeMap: NodeMap, sites: readonly SitePreference[]): StampedTriviaOption[] {
 	return stampedTriviaKinds(nodeMap).flatMap((kind) => {
 		const within = heldKindsClosure(nodeMap, kind);

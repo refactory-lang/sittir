@@ -5663,7 +5663,8 @@ pub fn render_record(
 
 /// Render the built record `root` names as the text of a trivia entry
 /// (`sittir_core::arena::RecordGrammar::render_entry`): as `render_record`
-/// renders it, its end holding no line break.
+/// renders it, its end holding no line break. Refuses a record of a kind
+/// no side entry holds as a record (`kind::STAMPED_TRIVIA_KINDS`).
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
     trees: &mut dyn ::sittir_core::arena::RecordTrees,
@@ -5671,7 +5672,10 @@ pub fn render_entry_record(
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
-    render_record_as(root, trees, built, store, ctx, true)
+    match root.cell.kind() {
+        Some(at) if kind::STAMPED_TRIVIA_KINDS.contains(&at) => render_record_as(root, trees, built, store, ctx, true),
+        at => Err(::sittir_core::render::RenderError::Record(::sittir_core::arena::ArenaError::Malformed { what: "trivia entry kind", word: at.map_or(0, |at| u32::from(at.0)) })),
+    }
 }
 
 fn render_record_as(

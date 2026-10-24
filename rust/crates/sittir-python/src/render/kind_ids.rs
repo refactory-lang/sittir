@@ -363,6 +363,9 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
 /// The grammar's root kinds: a render whose root is one of them is a document.
 pub const ROOT_KINDS: &[KindId] = &[KindId(127)];
 
+/// The trivia kinds a side entry holds as a built record, which its write stamps with the text it renders: the stamped trivia kinds that are compounds. A built leaf crosses as its text.
+pub const STAMPED_TRIVIA_KINDS: &[KindId] = &[KindId(73)];
+
 /// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
 pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(67), KindId(38), KindId(68), KindId(69), KindId(22)];
 

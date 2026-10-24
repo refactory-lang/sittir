@@ -4,7 +4,18 @@ import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, stampedTriviaKinds, stampedTriviaOptions, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import {
+	defaultTriviaForm,
+	lexicalExtrasRun,
+	lineBreakTerminated,
+	lineTerminated,
+	stampedTriviaKinds,
+	stampedTriviaOptions,
+	stampedTriviaRecordKinds,
+	triviaKinds,
+	whitespaceTrivia,
+	whitespaceTriviaKinds
+} from '../trivia.ts';
 import type { SitePreference } from '../site-preferences.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
@@ -209,6 +220,13 @@ describe('trivia model facts', () => {
 		expect(stampedTriviaKinds(await nodeMapOf('python'))).toEqual(['comment']);
 		expect(stampedTriviaKinds(await nodeMapOf('typescript'))).toEqual(['comment_block', 'comment_line', 'html_comment']);
 		expect(stampedTriviaKinds(await nodeMapOf('scm'))).toEqual(['comment']);
+	});
+
+	it('crosses a stamped comment kind into a side as its record only when it is a compound; a leaf crosses as its text', async () => {
+		expect(stampedTriviaRecordKinds(await nodeMapOf('rust'))).toEqual(['block_comment', 'line_comment']);
+		expect(stampedTriviaRecordKinds(await nodeMapOf('python'))).toEqual(['comment']);
+		expect(stampedTriviaRecordKinds(await nodeMapOf('typescript'))).toEqual(['comment_block', 'comment_line']);
+		expect(stampedTriviaRecordKinds(await nodeMapOf('scm'))).toEqual(['comment']);
 	});
 
 	it("names an option site inside a stamped comment kind, the kinds it holds included, but never the kind's own edges", async () => {
