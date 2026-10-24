@@ -8,6 +8,7 @@ import {
 	placedAlias,
 	collectAliasSourceKinds,
 	forwardedTargetKind,
+	forwardsTargetArguments,
 	resolveFactoryFieldNames,
 	isAuthoredCompound,
 	registeredSlots
@@ -30,6 +31,7 @@ export interface FactorySlotMeta {
 export interface FactoryMapData {
 	readonly factoryShapes: Readonly<Record<string, FactoryShape>>;
 	readonly forwardsTo: Readonly<Record<string, string>>;
+	readonly forwardsArguments: ReadonlySet<string>;
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
 	readonly factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
@@ -41,11 +43,13 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const forwardsTo: Record<string, string> = {};
+	const forwardsArguments = new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
 		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
+		if (shape === 'forwarded' && forwardsTargetArguments(node, nodeMap)) forwardsArguments.add(kind);
 	}
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
@@ -81,7 +85,7 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 
 	const polymorphVariants = collectVariantAdoptedBranches(nodeMap, aliasSet);
 
-	return { factoryShapes, forwardsTo, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
+	return { factoryShapes, forwardsTo, forwardsArguments, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
 }
 
 function collectVariantAdoptedBranches(

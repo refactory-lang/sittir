@@ -253,15 +253,6 @@ it. A parent referenced under an alias of its own is listed, and
 `dropFlattenedParentAliases` drops those aliases once the grammar is
 evaluated.
 
-### `packages/codegen/src/dsl/wire/wire.ts::recordEvaluatedBodies`
-
-The last wrapper applied to every rule fn: after the rule evaluates, it
-keeps the rule's final tree in `context.evaluatedBodies`, keyed by rule
-name. It wraps outside pattern replacement and the visible-externals
-rewrite, so it records the tree those passes produce. Wire gives every base
-rule a rule fn, so the bodies cover the whole grammar.
-`wrapSupertypesCallback` reads them.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsPrecedenceRankedRule`
 
 Whether `name` is a rule the grammar's `precedences` table ranks by symbol (tree-sitter-javascript ranks `$.arrow_function`, `$.await_expression`, …). The whole-arm hoist leaves such a parent in its per-arm form: its reduction would move into hidden variant rules the table does not rank, and adding those rules to the table beside their parent does not restore the resolution.
@@ -568,31 +559,6 @@ The callback's `$` is installed and restored the same way (`WireContext.currentD
  * UPPERCASE discriminants, so the explicit `SYMBOL` here matches either path.
  * Eagerly evaluated bodies are only compared structurally — they don't enter
  * the grammar itself.
- */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::isComplexBodyRt`
-
-```text
-/**
- * Returns true when a RuntimeRule body is complex enough to be a meaningful
- * structural pattern. Excludes trivial single-terminal bodies.
- *
- * Mirrors the `isComplexBody` check in evaluate.ts but operates on
- * RuntimeRule (unknown shape) rather than the typed sittir Rule<'evaluate'>
- * — both runtimes agree on UPPERCASE discriminants, so `typeEq` here is a
- * plain equality check (kept for the typed narrowing it gives callers).
- *
- * Exclusions:
- * - Single STRING / string literal → would match every identical literal
- * - Single SYMBOL reference → would match every reference to that rule
- * - Single PATTERN → would match every regex of the same value
- * - REPEAT/REPEAT1 wrapping a trivial STRING or SYMBOL (e.g. `repeat('x')`)
- *
- * Included:
- * - SEQ with ≥2 members (`_wildcard_pattern: ($) => '_'` is a STRING, excluded)
- * - CHOICE with ≥2 members
- * - REPEAT/REPEAT1 wrapping a non-trivial content node
  */
 ```
 
@@ -2274,7 +2240,3 @@ Renames a map key in place: the value takes the new key's position when that key
 ### `packages/codegen/src/dsl/wire/keyword-names.ts::renameMember`
 
 Renames a set member in place, by the same rule as `renameEntry`.
-
-### `packages/codegen/src/dsl/wire/wire.ts::get#1`
-
-The proxy trap of `layerSymbols`. A non-string key returns undefined. A name the layer admits, or any name when no set was given, returns its symbol. A name outside the set returns a `ReferenceError` that carries the symbol, instead of throwing.

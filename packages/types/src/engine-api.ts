@@ -238,8 +238,14 @@ export interface StructureRow {
 	readonly required?: readonly (readonly [storageKey: string, slot: string])[];
 	/** `[storageKey, label]`: the list holds at least one item. */
 	readonly nonEmpty?: readonly (readonly [storageKey: string, label: string])[];
-	/** `[storageKey, label, expected, kinds]`: the slot holds a built node, never bare text; when `kinds` is given, a built node of one of those kinds (membership, so a supertype admits its members). */
+	/** `[storageKey, label, expected, kinds]`: the slot holds a built node, a coordinate or a kind id, never bare text or any other value; when `kinds` is given, a built node of one of those kinds (membership, so a supertype admits its members). */
 	readonly nodeOnly?: readonly (readonly [storageKey: string, label: string, expected: string, kinds?: readonly number[]])[];
+	/** `[storageKey, label]`: the slot holds a boolean, or nothing. */
+	readonly booleans?: readonly (readonly [storageKey: string, label: string])[];
+	/** `[storageKey, label, kinds]`: the slot holds the kind id of one of `kinds`, or nothing. */
+	readonly kindIds?: readonly (readonly [storageKey: string, label: string, kinds: readonly number[]])[];
+	/** `[storageKey, label, texts]`: the slot holds one of `texts`, or nothing. */
+	readonly texts?: readonly (readonly [storageKey: string, label: string, texts: readonly string[]])[];
 	/** The config keys the kind declares; only a kind whose builder takes a config first has it. */
 	readonly config?: readonly string[];
 	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */

@@ -23490,7 +23490,7 @@ impl ::sittir_core::render::Render for TokenKeywordsEnum {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum _RangeExpressionBareNode {
-    #[kind(kind::_RANGE_EXPRESSION_BARE, kind::DOT_DOT)]
+    #[kind(kind::DOT_DOT, kind::_RANGE_EXPRESSION_BARE)]
     _RangeExpressionBare,
 }
 
@@ -23518,7 +23518,7 @@ impl ::sittir_core::render::Render for _RangeExpressionBareNode {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum ImplItemUnsafeMarkerNode {
-    #[kind(kind::_IMPL_ITEM_UNSAFE_MARKER, kind::UNSAFE_KEYWORD)]
+    #[kind(kind::UNSAFE_KEYWORD, kind::_IMPL_ITEM_UNSAFE_MARKER)]
     ImplItemUnsafeMarker,
 }
 
