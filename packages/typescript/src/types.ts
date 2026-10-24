@@ -1255,7 +1255,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
 export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
 	[15, ','],
-	[22, ';']
+	[22, ';'],
+	[173, '_automatic_semicolon']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -7308,7 +7309,7 @@ export interface ObjectType {
 				| T.IndexSignature
 				| T.MethodSignature,
 				{
-					separator?: TSKindId.Comma | TSKindId.Semi;
+					separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 				}
 			>;
@@ -8165,7 +8166,7 @@ export interface ObjectTypeContent {
 			false,
 			true
 		>;
-		readonly separator: SlotHint<TSKindId.Comma | TSKindId.Semi>;
+		readonly separator: SlotHint<TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both, true>;
 		readonly $listView: ListViewHint<
 			| T.ExportStatement
@@ -8175,7 +8176,7 @@ export interface ObjectTypeContent {
 			| T.IndexSignature
 			| T.MethodSignature,
 			{
-				separator?: TSKindId.Comma | TSKindId.Semi;
+				separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 				delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 			}
 		>;
@@ -13206,7 +13207,7 @@ export namespace ObjectTypeContent {
 				readonly separator?: {
 					readonly after?: WhitespaceKindId;
 					readonly before?: WhitespaceKindId;
-					readonly kind?: TSKindId.Comma | TSKindId.Semi;
+					readonly kind?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 				};
 				readonly start?: LayoutKindId;
 			};
@@ -23361,7 +23362,7 @@ export namespace ObjectTypeContent {
 		  ]
 		| [
 				options: ListOptions<{
-					separator?: TSKindId.Comma | TSKindId.Semi;
+					separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 				}>,
 				element: Admit<
@@ -23413,7 +23414,7 @@ export namespace ObjectTypeContent {
 		  ]
 		| [
 				options: ListOptions<{
-					separator?: TSKindId.Comma | TSKindId.Semi;
+					separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 				}>,
 				element:

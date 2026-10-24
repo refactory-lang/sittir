@@ -27395,13 +27395,13 @@ pub struct ObjectTypeContentNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = [kind::COMMA, kind::SEMI], word = 2, width = 2, run = 5)]
+    #[slot(field = field::ITEM, separator = [kind::COMMA, kind::SEMI, kind::_AUTOMATIC_SEMICOLON], word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ObjectTypeContentItemNodeSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(leading = 0, trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
     #[wire(key = "_separator")]
-    #[separator_kind(candidates = [kind::COMMA, kind::SEMI])]
+    #[separator_kind(candidates = [kind::COMMA, kind::SEMI, kind::_AUTOMATIC_SEMICOLON])]
     pub separator_kind: Option<KindId>,
     #[wire(key = "_item_separator_space_before")]
     pub item_separator_space_before: Option<KindId>,
@@ -27435,7 +27435,7 @@ impl ::sittir_core::prepare::Prepare for ObjectTypeContentNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_OBJECT_TYPE_CONTENT_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(399), &[::sittir_core::types::KindId(15), ::sittir_core::types::KindId(22)], ctx.options.delimiter_at(options::DELIM_OBJECT_TYPE_CONTENT_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(399), &[::sittir_core::types::KindId(15), ::sittir_core::types::KindId(22), ::sittir_core::types::KindId(173)], ctx.options.delimiter_at(options::DELIM_OBJECT_TYPE_CONTENT_ITEM), ctx));
         ::sittir_core::prepare::fill_slot_separators(&mut self.layout, "_item", self.item.iter().map(Some), self.separator_kind.is_some(), Self::separator_kind_of, ctx);
         if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, "_item").and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {
             self.separator_kind.get_or_insert(kind);
@@ -41803,7 +41803,7 @@ fn render_ambient_declaration_module(node: &AmbientDeclarationModuleNode, w: &mu
 }
 
 fn render_object_type_content(node: &ObjectTypeContentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(15) => ",", KindId(22) => ";", _ => ";" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(15) => ",", KindId(22) => ";", KindId(173) => "_automatic_semicolon", _ => ";" };
     let item = ListView {
         items: &node.item,
         template: "{}",
