@@ -734,20 +734,26 @@ export function kindVocabs(model: SlotModel, reads: ClaimReads): ReadonlyMap<str
 	return vocabOf;
 }
 
-const pathsOfReads = (model: SlotModel, reads: ClaimReads, pick: (member: NamedMemberFact, kind: string, at: readonly ClaimRead[]) => readonly ClaimRead[]) =>
-	(member: NamedMemberFact): string[] => [...new Set([...reads].flatMap(([kind, at]) => (captureReaches(model, member, kind) ? pick(member, kind, at).map((read) => read.vocab) : [])))];
+type ReadPick = (member: NamedMemberFact, kind: string, at: readonly ClaimRead[]) => readonly ClaimRead[];
+
+const pathsOfReads = (model: SlotModel, reads: ClaimReads, pick: ReadPick) =>
+	(member: NamedMemberFact): string[] => [
+		...new Set([...reads].flatMap(([kind, at]) => (modelNode(model, kind) !== undefined && captureReaches(model, member, kind) ? pick(member, kind, at).map((read) => read.vocab) : [])))
+	];
+
+const attachedReads = (model: SlotModel): ReadPick => (member, kind, at) => {
+	if (modelNode(model, kind)?.modelType === 'list') return [];
+	const path = isDeep(member) ? deepRouteOf(model, kind, member).path : undefined;
+	return at.filter((read) => attaches(member, inheritedClaims(read, at)) && guaranteedBy(model, { kind, children: claimChildTests(model, kind, read.claim) }).holds(path));
+};
 
 export function capturePaths(model: SlotModel, reads: ClaimReads): (member: NamedMemberFact) => string[] {
-	return pathsOfReads(model, reads, (_member, _kind, at) => at);
+	const attached = attachedReads(model);
+	return pathsOfReads(model, reads, (member, kind, at) => (member.route === 'rename' ? at : attached(member, kind, at)));
 }
 
 export function memberTargets(model: SlotModel, reads: ClaimReads): (member: NamedMemberFact) => string[] {
-	return pathsOfReads(model, reads, (member, kind, at) => {
-		const type = modelNode(model, kind)?.modelType;
-		if (type === undefined || type === 'list') return [];
-		const path = isDeep(member) ? deepRouteOf(model, kind, member).path : undefined;
-		return at.filter((read) => attaches(member, inheritedClaims(read, at)) && guaranteedBy(model, { kind, children: claimChildTests(model, kind, read.claim) }).holds(path));
-	});
+	return pathsOfReads(model, reads, attachedReads(model));
 }
 
 export function envelopeTargets(model: SlotModel, container: ContainerFact, vocabOf: ReadonlyMap<string, string>): string[] {

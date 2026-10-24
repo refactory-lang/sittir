@@ -1174,6 +1174,36 @@ describe('flag captures', () => {
 		expect(await of('mut')).toEqual(canonical);
 	});
 
+	it("reads a claim's own deep capture only where the claim attaches it, not at another claim of the kind", async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('holder', [slot('item', ['outer'])]),
+				node('outer', [slot('parts', ['part'])]),
+				node('part', [slot('static', [], { required: false, storage: 'boolean', terminals: ['static'] }), slot('name', ['identifier'])])
+			].map((n) => [n.kind, n])
+		);
+		const scoped: Vocabulary = {
+			...vocabulary({ 'declaration.function': { shared: true }, 'declaration.parameter': { static: false } }),
+			synonyms: { levels: new Map(), flags: new Map([['shared', ['static']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(outer parts: (part "static" @${name})) @declaration.function`, '(holder item: (outer) @declaration.parameter)'].join('\n')), scoped, model),
+					scoped,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('outer');
+		const canonical = await of('shared');
+		expect(canonical?.find((entry) => entry.vocab === 'declaration.function')?.members.filter((r) => r.name === 'shared')).toMatchObject([{ route: 'presence', flag: true }]);
+		expect(await of('static')).toEqual(canonical);
+	});
+
 	it('refuses a capture whose word is a member at one path its owner is claimed under and a flag synonym at another', async () => {
 		const synonymous: Vocabulary = {
 			...vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mut: false } }),
