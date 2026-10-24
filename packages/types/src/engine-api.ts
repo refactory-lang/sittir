@@ -334,13 +334,23 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
 
-/** The empty form a language's `empty` map pairs with exactly `N`, each member of a union `N` looked up on its own. */
+type ExactEmptyForm<Entries, N> = Entries extends { readonly node: infer Node; readonly empty: infer Empty }
+	? (<X>() => X extends N ? 1 : 2) extends <X>() => X extends Node ? 1 : 2
+		? Empty
+		: never
+	: never;
+
+/**
+ * The empty form a language's `empty` map pairs with exactly `N`; for an `N` the map does not name, such as a form
+ * intersected with a narrowing, the empty forms of the entries whose node `N` narrows. Each member of a union `N` is
+ * looked up on its own.
+ */
 export type EmptyFormOf<Entries, N> = N extends unknown
-	? Entries extends { readonly node: infer Node; readonly empty: infer Empty }
-		? (<X>() => X extends N ? 1 : 2) extends <X>() => X extends Node ? 1 : 2
+	? [ExactEmptyForm<Entries, N>] extends [never]
+		? Extract<Entries, { readonly node: N }> extends { readonly empty: infer Empty }
 			? Empty
 			: never
-		: never
+		: ExactEmptyForm<Entries, N>
 	: never;
 
 export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'>

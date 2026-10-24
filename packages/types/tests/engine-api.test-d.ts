@@ -140,6 +140,11 @@ declare const parsedFake: ParsedFake;
 if (guardEngine.isEmptyNode(parsedFake)) parsedFake satisfies EmptyParsedFake;
 declare const eitherFake: FakeNode | ParsedFake;
 if (guardEngine.isEmptyNode(eitherFake)) eitherFake satisfies EmptyFake | EmptyParsedFake;
+declare const narrowedFake: ParsedFake & { readonly $type: 1 };
+if (guardEngine.isEmptyNode(narrowedFake)) {
+	const emptyParsed: true = narrowedFake.emptyParsed;
+	void emptyParsed;
+}
 
 declare const noEmptyForm: NoEmptyForm;
 // @ts-expect-error a kind the language's empty map does not name has no empty form
