@@ -1778,7 +1778,7 @@ export const structure: StructureTable = Object.freeze({
 			['_match', 'LastMatchArm.match', 'a built MatchPattern', [296]],
 			['_value', 'LastMatchArm.value', 'a built Expression', [258]]
 		],
-		kindIds: [['_trailing_comma', 'LastMatchArm.trailingComma', [130]]],
+		kindIds: [['_trailing_comma', 'LastMatchArm.trailingComma', [0, 130]]],
 		config: ['attributes', 'match', 'value', 'trailingComma'],
 		lists: [['attributes', false, 'key']]
 	},

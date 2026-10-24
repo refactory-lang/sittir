@@ -1142,7 +1142,7 @@ export const structure: StructureTable = Object.freeze({
 	209: {
 		kind: 'statement_block',
 		nodeOnly: [['_statements', 'StatementBlock.statements', 'a built Statement', [203]]],
-		kindIds: [['_terminator', 'StatementBlock.terminator', [173]]],
+		kindIds: [['_terminator', 'StatementBlock.terminator', [0, 173]]],
 		lists: [['statements', false, 1]]
 	},
 	210: {
@@ -1229,7 +1229,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'DoStatement.body', 'a built Statement', [203]],
 			['_condition', 'DoStatement.condition', 'a built ParenthesizedExpression', [232]]
 		],
-		kindIds: [['_terminator', 'DoStatement.terminator', [22, 173]]],
+		kindIds: [['_terminator', 'DoStatement.terminator', [0, 22, 173]]],
 		config: ['body', 'condition', 'terminator']
 	},
 	218: {
@@ -1433,7 +1433,7 @@ export const structure: StructureTable = Object.freeze({
 			['_heritage', 'ClassDeclaration.heritage', 'a built ClassHeritage', [245]],
 			['_body', 'ClassDeclaration.body', 'a built ClassBody', [286]]
 		],
-		kindIds: [['_terminator', 'ClassDeclaration.terminator', [173]]],
+		kindIds: [['_terminator', 'ClassDeclaration.terminator', [0, 173]]],
 		config: ['decorators', 'name', 'typeParameters', 'heritage', 'body', 'terminator'],
 		lists: [['decorators', false, 'key']]
 	},
@@ -1485,7 +1485,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'FunctionDeclaration.body', 'a built StatementBlock', [209]]
 		],
 		booleans: [['_async', 'FunctionDeclaration.async']],
-		kindIds: [['_terminator', 'FunctionDeclaration.terminator', [173]]],
+		kindIds: [['_terminator', 'FunctionDeclaration.terminator', [0, 173]]],
 		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body', 'terminator']
 	},
 	248: {
@@ -1529,7 +1529,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'GeneratorFunctionDeclaration.body', 'a built StatementBlock', [209]]
 		],
 		booleans: [['_async', 'GeneratorFunctionDeclaration.async']],
-		kindIds: [['_terminator', 'GeneratorFunctionDeclaration.terminator', [173]]],
+		kindIds: [['_terminator', 'GeneratorFunctionDeclaration.terminator', [0, 173]]],
 		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body', 'terminator']
 	},
 	250: {
@@ -1752,7 +1752,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'class_static_block',
 		required: [['_body', 'body']],
 		nodeOnly: [['_body', 'ClassStaticBlock.body', 'a built StatementBlock', [209]]],
-		kindIds: [['_terminator', 'ClassStaticBlock.terminator', [173]]]
+		kindIds: [['_terminator', 'ClassStaticBlock.terminator', [0, 173]]]
 	},
 	290: {
 		kind: 'rest_pattern',
@@ -2589,7 +2589,7 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'AmbientDeclarationModule.name', 'a built PropertyIdentifier', [495]],
 			['_type', 'AmbientDeclarationModule.type', 'a built Type', [337]]
 		],
-		kindIds: [['_terminator', 'AmbientDeclarationModule.terminator', [22, 173]]],
+		kindIds: [['_terminator', 'AmbientDeclarationModule.terminator', [0, 22, 173]]],
 		config: ['name', 'type', 'terminator']
 	},
 	399: {
@@ -2633,7 +2633,7 @@ export const structure: StructureTable = Object.freeze({
 			['_decorator', 'ClassBodyMemberMethod.decorators', 'a built Decorator', [283]],
 			['_method_definition', 'ClassBodyMemberMethod.methodDefinition', 'a built MethodDefinition', [291]]
 		],
-		kindIds: [['_terminator', 'ClassBodyMemberMethod.terminator', [22, 173]]],
+		kindIds: [['_terminator', 'ClassBodyMemberMethod.terminator', [0, 22, 173]]],
 		config: ['decorators', 'methodDefinition', 'terminator'],
 		lists: [['decorators', false, 'key']]
 	},
@@ -2988,7 +2988,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		kindIds: [
 			['_kind', 'ForHeaderLetConstKind.kind', [53, 67]],
-			['_terminator', 'ForHeaderLetConstKind.terminator', [173]],
+			['_terminator', 'ForHeaderLetConstKind.terminator', [0, 173]],
 			['_operator', 'ForHeaderLetConstKind.operator', [71, 150]]
 		],
 		config: ['kind', 'left', 'terminator', 'operator', 'right']

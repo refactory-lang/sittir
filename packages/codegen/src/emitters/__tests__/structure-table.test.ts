@@ -7,6 +7,7 @@ import { grammarPackage } from '../../grammars.ts';
 import { emitClientUtils } from '../client-utils.ts';
 import { compoundStructureRow, listStructureRow } from '../factories.ts';
 import { collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
+import { BLANK_KIND_ID } from '../../compiler/model/site-preferences.ts';
 
 describe('the structure table: what a built node of each kind must hold', () => {
 	let nodeMap: NodeMap;
@@ -49,7 +50,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 				['_right', 'ForInClause.rights', 'a built Expression / LambdaWithinForInClause', ids('expression', 'lambda_within_for_in_clause')]
 			],
 			booleans: [['_async', 'ForInClause.async']],
-			kindIds: [['_trailing_comma', 'ForInClause.trailingComma', ids('comma')]],
+			kindIds: [['_trailing_comma', 'ForInClause.trailingComma', [BLANK_KIND_ID, ...ids('comma')]]],
 			config: ['async', 'left', 'rights', 'trailingComma'],
 			lists: [['rights', false, 'key']]
 		});

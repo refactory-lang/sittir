@@ -78,12 +78,16 @@ describe('verifyStructure', () => {
 		expect(() => verify(built(LITERAL))).not.toThrow();
 		expect(() => verify(built(LITERAL, { _terminator: () => SEMI }))).toThrow('Literal.terminator: takes a kind id of 6 / 7, not a function');
 		expect(() => verify(built(LITERAL, { _terminator: OTHER }))).toThrow('Literal.terminator: takes a kind id of 6 / 7, not kind id 4');
-		expect(() => verify(built(LITERAL, { _terminator: ';' }))).toThrow("Literal.terminator: takes a kind id of 6 / 7, not the string ';'");
+		expect(() => verify(built(LITERAL, { _terminator: ';' }))).toThrow(
+			'Literal.terminator: a strict factory takes a built node, not a string; expected a kind id, or use .coerce'
+		);
 	});
 
 	it('holds a boolean slot to a boolean, or nothing', () => {
 		expect(() => verify(built(LITERAL, { _signed: true }))).not.toThrow();
-		expect(() => verify(built(LITERAL, { _signed: 'signed' }))).toThrow("Literal.signed: takes a boolean, not the string 'signed'");
+		expect(() => verify(built(LITERAL, { _signed: 'signed' }))).toThrow(
+			'Literal.signed: a strict factory takes a built node, not a string; expected a boolean, or use .coerce'
+		);
 		expect(() => verify(built(LITERAL, { _signed: () => true }))).toThrow('Literal.signed: takes a boolean, not a function');
 	});
 

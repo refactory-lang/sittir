@@ -1414,7 +1414,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'ForInClause.rights', 'a built Expression / LambdaWithinForInClause', [204, 214]]
 		],
 		booleans: [['_async', 'ForInClause.async']],
-		kindIds: [['_trailing_comma', 'ForInClause.trailingComma', [6]]],
+		kindIds: [['_trailing_comma', 'ForInClause.trailingComma', [0, 6]]],
 		config: ['async', 'left', 'rights', 'trailingComma'],
 		lists: [['rights', false, 'key']]
 	},

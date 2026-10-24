@@ -9,7 +9,7 @@ import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
-import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID, hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
 	interiorSlotGuards,
 	numberInputType,
@@ -346,13 +346,12 @@ function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string 
 
 function storedKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] {
 	const info = resolveFieldStorageInfo(f, nodeMap);
-	return info.enumKinds
-		.map((kind) => {
-			const id = info.enumKindsById.get(kind) ?? nodeMap.nodes.get(kind)?.kindId;
-			if (id === undefined) throw new Error(`${f.propertyName}: kind ${kind} stores no kind id`);
-			return id;
-		})
-		.sort((a, b) => a - b);
+	const ids = info.enumKinds.map((kind) => {
+		const id = info.enumKindsById.get(kind) ?? nodeMap.nodes.get(kind)?.kindId;
+		if (id === undefined) throw new Error(`${f.propertyName}: kind ${kind} stores no kind id`);
+		return id;
+	});
+	return (hasBlankArm(f) ? [BLANK_KIND_ID, ...ids] : ids).sort((a, b) => a - b);
 }
 
 function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {

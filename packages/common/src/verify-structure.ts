@@ -67,18 +67,29 @@ function checkRow(node: Record<string, unknown>, row: StructureRow, membership: 
 		if (!Array.isArray(items) || items.length === 0) throw new Error(`${label}: requires at least one element`);
 	}
 	for (const [storage, label, expected, kinds] of row.nodeOnly ?? []) {
-		const value = rejectBareText(node[storage], label, expected);
+		const value = rejectNonNode(rejectBareText(node[storage], label, expected), label, expected);
 		if (kinds !== undefined) rejectForeignKind(value, label, expected, kinds, membership);
 	}
 	for (const [storage, label] of row.booleans ?? []) {
-		requireScalar(node[storage], label, 'a boolean', (value) => typeof value === 'boolean');
+		requireScalar(rejectBareText(node[storage], label, 'a boolean'), label, 'a boolean', (value) => typeof value === 'boolean');
 	}
 	for (const [storage, label, kinds] of row.kindIds ?? []) {
-		requireScalar(node[storage], label, `a kind id of ${kinds.join(' / ')}`, (value) => typeof value === 'number' && kinds.includes(value));
+		requireScalar(rejectBareText(node[storage], label, 'a kind id'), label, `a kind id of ${kinds.join(' / ')}`, (value) => typeof value === 'number' && kinds.includes(value));
 	}
 	for (const [storage, label, texts] of row.texts ?? []) {
 		requireScalar(node[storage], label, `one of ${texts.map((text) => `'${text}'`).join(' / ')}`, (value) => typeof value === 'string' && texts.includes(value));
 	}
+}
+
+function rejectNonNode(value: unknown, label: string, expected: string): unknown {
+	if (Array.isArray(value)) {
+		for (const item of value) rejectNonNode(item, label, expected);
+		return value;
+	}
+	if (typeof value === 'function' || typeof value === 'boolean' || typeof value === 'symbol') {
+		throw new Error(`${label}: a strict factory takes a built node, not a ${typeof value}; expected ${expected}, or use .coerce`);
+	}
+	return value;
 }
 
 function requireScalar(value: unknown, label: string, expected: string, holds: (value: unknown) => boolean): void {
