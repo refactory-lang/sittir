@@ -117,3 +117,7 @@ The user's, on 2026-10-24:
 1. **Splits cover the plan's five only:** typescript's `constructor` and `never`, python's `__init__`, rust's `true` and `false`. Rust's primitive types and typescript's other predefined types stay read tests on their kinds. `boolean_literal` still empties, since both its literals are among the five.
 2. **Typescript's `constructor` splits, as the plan rules,** at the measured cost: +385 states and +347 KB of `parser.c`. Its claim gains the class body as context, and the builder contexts' `Visibility` stopgap at every method's parameters goes away with it.
 3. **Supertype copies are hidden copies with no builders.** `_statement_class_definition` and `_method_definition_class_body_member_method` appear only in node-types' supertype list.
+
+Ruling 1 was replaced the same day, once the census showed that 28 of the 30 fixed-text claims already name a keyword token's kind id:
+
+1. **Only a claim on word-token text splits.** A fixed-text claim on a keyword token already is its token's kind, so it stays as it is and adds no builder: typescript's `never`, rust's `true` and `false`, the 17 primitive types and the 8 other predefined types. The splits are typescript's `constructor` (ruling 2's cost stands) and python's `__init__`, whose parser cost is measured before it lands. The rule is the bindings spec's §9 bullet "A claim on a word's text is a kind of its own"; no marker is written in `bindings.scm`.
