@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedMember, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { envelopeTargets, kindVocabs, memberTargets, readsByKind } from './routes.ts';
+import { envelopeTargets, formsOf, kindVocabs, memberTargets, readsByKind } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { runPinned } from './read.ts';
 
@@ -278,10 +278,14 @@ const flagResolved = (vocabulary: Vocabulary, claims: readonly ClaimFact[]): Cla
 	});
 
 function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
-	if (paths.some((path) => vocabulary.members(path).has(camel(name)))) return name;
-	const flags = [...new Set(paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name)))];
+	const member = paths.find((path) => vocabulary.members(path).has(camel(name)));
+	const spelled = paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name).map((flag) => [path, flag] as const));
+	const flags = [...new Set(spelled.map(([, flag]) => flag))];
+	const [first] = spelled;
+	if (member !== undefined && first !== undefined)
+		throw new Error(`bindings: ${owner}'s capture @${name} is a member at ${member} and spells the flag ${first[1]} at ${first[0]}; one name names one thing`);
 	if (flags.length > 1) throw new Error(`bindings: ${owner}'s capture @${name} spells the flags ${flags.join(' and ')}; a synonym spells one flag`);
-	return flags[0] ?? name;
+	return member !== undefined ? name : (flags[0] ?? name);
 }
 
 export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
@@ -291,15 +295,15 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
 	const reads = readsByKind(model, flagResolved(vocabulary, claims));
-	const pathsOfMember = memberTargets(model, reads);
 	const vocabs = kindVocabs(model, reads);
+	const ownerPaths = (owner: string): string[] => [...new Set(formsOf(model, owner).flatMap((form) => (reads.get(form) ?? []).map((read) => read.vocab)))];
 	return {
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
 		members: facts.members.map((member) => {
 			if (!isNamedMember(member)) return member;
-			const name = canonicalCapture(vocabulary, pathsOfMember(member), member.name, member.owner);
+			const name = canonicalCapture(vocabulary, ownerPaths(member.owner), member.name, member.owner);
 			return name === member.name ? member : { ...member, name };
 		}),
 		containers: facts.containers.map((container) => {

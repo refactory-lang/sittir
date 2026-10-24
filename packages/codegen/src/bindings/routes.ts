@@ -383,8 +383,10 @@ const holdsOnlyText = (slot: ModelSlot): boolean => slot.storage !== 'boolean' &
 
 type DeepMember = Extract<MemberFact, { readonly route: 'presence' | 'nested' }>;
 
-function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): MemberRoute {
-	const chain = viaPath(input.model, kind, member.via);
+const isDeep = (member: MemberFact): member is DeepMember => member.route === 'presence' || member.route === 'nested';
+
+function deepRouteOf(model: SlotModel, kind: string, member: DeepMember): MemberRoute {
+	const chain = viaPath(model, kind, member.via);
 	if (member.route === 'presence') {
 		const leaf = chain?.at.slots.find((s) => s.terminals.includes(member.token));
 		const spelled = member.flag === true && member.via.length === 0 && chain !== undefined && leaf === undefined;
@@ -398,8 +400,8 @@ function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): Mem
 			...(spelled ? { spelled: true } : {})
 		};
 	}
-	const parent = modelNode(input.model, member.parent);
-	const slot = parent ? slotFor(input.model, parent.slots, member) : undefined;
+	const parent = modelNode(model, member.parent);
+	const slot = parent ? slotFor(model, parent.slots, member) : undefined;
 	return {
 		route: 'nested',
 		name: camel(member.name),
@@ -408,7 +410,7 @@ function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): Mem
 		selector: member,
 		slot,
 		multiple: member.multiple,
-		path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(input.model, parent.kind, member))] : undefined,
+		path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(model, parent.kind, member))] : undefined,
 		...flagOf(member)
 	};
 }
@@ -420,7 +422,7 @@ interface Guaranteed {
 
 const stepKey = (step: SlotStep): string => `${step.owner} ${step.slot} ${step.anchor ?? ''}`;
 
-function guaranteedBy(model: SlotModel, entry: ReadEntry): Guaranteed {
+function guaranteedBy(model: SlotModel, entry: { readonly kind: string; readonly children: readonly ChildTest[] }): Guaranteed {
 	const one = new Set<string>();
 	const many = new Set<string>();
 	for (const child of entry.children) {
@@ -517,7 +519,7 @@ function membersOf(
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const shaping = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename' && m.route !== 'dropped');
 	const deep = shaping.filter((m) => attaches(m, inherited));
-	const paths = new Map(shaping.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? [[m, deepRouteOf(input, kind, m)] as const] : [])));
+	const paths = new Map(shaping.flatMap((m) => (isDeep(m) ? [[m, deepRouteOf(input.model, kind, m)] as const] : [])));
 	const counted = new Set([...paths.values()].flatMap((route) => route.path?.filter((step) => step.owner === kind && step.anchor === 'only').map((step) => step.slot) ?? []));
 	const reached = new Map([...paths].filter(([, route]) => guaranteed.holds(route.path)));
 	const via = new Set([...reached.keys()].flatMap((m) => m.via.flatMap((step) => step.kind ?? [])));
@@ -590,7 +592,7 @@ function membersOf(
 			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined, ...flagOf(member) });
 			continue;
 		}
-		const route = member.route === 'presence' || member.route === 'nested' ? reached.get(member) : undefined;
+		const route = isDeep(member) ? reached.get(member) : undefined;
 		if (route !== undefined) routes.push(route);
 	}
 	return routes;
@@ -736,7 +738,10 @@ export function memberTargets(model: SlotModel, reads: ClaimReads): (member: Nam
 	const targets = (member: NamedMemberFact, kind: string, at: readonly ClaimRead[]): string[] => {
 		const type = modelNode(model, kind)?.modelType;
 		if (type === undefined || type === 'list' || !captureReaches(model, member, kind)) return [];
-		return at.filter((read) => attaches(member, inheritedClaims(read, at))).map((read) => read.vocab);
+		const path = isDeep(member) ? deepRouteOf(model, kind, member).path : undefined;
+		return at
+			.filter((read) => attaches(member, inheritedClaims(read, at)) && guaranteedBy(model, { kind, children: claimChildTests(model, kind, read.claim) }).holds(path))
+			.map((read) => read.vocab);
 	};
 	return (member) => [...new Set([...reads].flatMap(([kind, at]) => targets(member, kind, at)))];
 }

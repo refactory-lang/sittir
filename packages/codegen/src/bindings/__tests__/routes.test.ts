@@ -1109,6 +1109,50 @@ describe('flag captures', () => {
 		expect(await of('mut')).toEqual(canonical);
 	});
 
+	it('resolves an anchored capture against the paths whose claims guarantee its anchor', async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('outer', [slot('parts', ['part'], { multiple: true })]),
+				node('part', [slot('static', [], { required: false, storage: 'boolean', terminals: ['static'] }), slot('name', ['identifier'])])
+			].map((n) => [n.kind, n])
+		);
+		const anchored: Vocabulary = {
+			...vocabulary({ 'expression.container': { shared: false }, 'declaration.function': { shared: true } }),
+			synonyms: { levels: new Map(), flags: new Map([['shared', ['static']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(
+						await readBindings(['(outer) @expression.container', '(outer . parts: (part) .) @declaration.function', `(outer . parts: (part "static" @${name}) .)`].join('\n')),
+						anchored,
+						model
+					),
+					anchored,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('outer');
+		const canonical = await of('shared');
+		const routesAt = (path: string) => canonical?.find((entry) => entry.vocab === path)?.members.filter((r) => r.name === 'shared');
+		expect(routesAt('declaration.function')).toMatchObject([{ route: 'presence', name: 'shared', flag: true }]);
+		expect(routesAt('expression.container')).toEqual([]);
+		expect(await of('static')).toEqual(canonical);
+	});
+
+	it('refuses a capture whose word is a member at one path its owner is claimed under and a flag synonym at another', async () => {
+		const synonymous: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mut: false } }),
+			synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) }
+		};
+		const bindings = await readBindings(['(param) @declaration.parameter', '((param) @declaration.variable (#eq? @declaration.variable "x"))', '(param (mutable_specifier) @mut)'].join('\n'));
+		expect(() => canonicalFacts(bindings, synonymous, FLAGGED_MODEL)).toThrow(/param's capture @mut is a member at declaration\.variable and spells the flag mutable at declaration\.parameter/);
+	});
+
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {
 		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_mut (mutable_specifier) @exclusive)'].join('\n'), 'ref_expr_mut');
 		expect(members?.find((r) => r.name === 'exclusive')).toEqual({ route: 'kind', name: 'exclusive', kind: 'mutable_specifier', path: undefined, flag: true, spelled: true });
