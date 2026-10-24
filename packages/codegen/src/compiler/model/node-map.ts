@@ -458,9 +458,9 @@ export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
 }
 
-function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledNonterminal[] {
-	const kindName = ctx?.kindName;
-	let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
+function _deriveSlotsInternal(rule: SimplifiedRule, ctx: DeriveCtx): AssembledNonterminal[] {
+	const kindName = ctx.kindName;
+	let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx.diagnostics));
 	const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 	if (unionChoiceIds.size > 0) {
 		const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
@@ -468,7 +468,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 			(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
 		);
 		if (colliding.length > 0) {
-			ctx?.diagnostics?.assembleWarnings.record({
+			ctx.diagnostics?.assembleWarnings.record({
 				code: 'union-slot-content-collision',
 				ownerKind: kindName,
 				message:
@@ -479,7 +479,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 			});
 			const prev = setUnionSlotRouting(false);
 			try {
-				slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx?.diagnostics));
+				slots = mergeSlotsByName(collectSlots(rule, kindName, ctx, undefined, undefined, ctx.diagnostics));
 			} finally {
 				setUnionSlotRouting(prev);
 				drainSynthesizedUnionChoiceIds();
@@ -529,7 +529,7 @@ export interface ParseKindCollisionContext {
 }
 
 export interface DeriveCtx {
-	readonly kindEntries?: readonly GeneratedKindEntry[];
+	readonly kindEntries: readonly GeneratedKindEntry[];
 	readonly kindName?: string;
 	readonly collision?: ParseKindCollisionContext;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
@@ -584,7 +584,7 @@ function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: Kinde
 		const stampedStorageKindId = isNodeRef(value) ? value.storageKindId : value.resolvedKindId;
 		const storageKindId =
 			stampedStorageKindId ??
-			(storageKind !== undefined && ctx.kindEntries !== undefined
+			(storageKind !== undefined
 				? findEntryForKindName(ctx.kindEntries, storageKind)?.id
 				: undefined);
 		return {
@@ -684,7 +684,7 @@ export function stampListFactsOnValues(values: NodeOrTerminal[], ctx: ListSlotFa
 	});
 }
 
-export function deriveSlots(rule: SimplifiedRule, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
+export function deriveSlots(rule: SimplifiedRule, ctx: DeriveCtx): readonly AssembledNonterminal[] {
 	return _deriveSlotsInternal(rule, ctx);
 }
 
@@ -703,8 +703,8 @@ export interface ArmFacts {
 	readonly flattened?: true;
 }
 
-function literalArmDisplayOf(resolvedKind: string, ctx: DeriveCtx | undefined): string {
-	const entry = ctx?.kindEntries === undefined ? undefined : findOwnKindEntry(ctx.kindEntries, resolvedKind);
+function literalArmDisplayOf(resolvedKind: string, ctx: DeriveCtx): string {
+	const entry = findOwnKindEntry(ctx.kindEntries, resolvedKind);
 	return entry?.keyword === true && entry.literalText !== undefined
 		? entry.literalText
 		: undisplayedKindAddress(resolvedKind);
@@ -712,7 +712,7 @@ function literalArmDisplayOf(resolvedKind: string, ctx: DeriveCtx | undefined): 
 
 export function armFactsOf(
 	arm: { readonly annotations?: RuleAnnotations; readonly resolvedKind?: string },
-	ctx: DeriveCtx | undefined
+	ctx: DeriveCtx
 ): ArmFacts {
 	const { annotations, resolvedKind } = arm;
 	if (annotations === undefined) return {};
@@ -722,7 +722,7 @@ export function armFactsOf(
 			: armNameOf(
 					annotations.variantOf,
 					literalArmDisplayOf(resolvedKind, ctx),
-					ctx?.simplifiedRules?.[annotations.variantOf]?.type === SUPERTYPE
+					ctx.simplifiedRules?.[annotations.variantOf]?.type === SUPERTYPE
 				);
 	const variant = annotations.variant ?? literalName;
 	return {
@@ -735,11 +735,11 @@ export function armFactsOf(
 
 function aliasEnvelopeValueOf(
 	ref: { readonly aliasedTo?: string; readonly aliasedToId?: number },
-	ctx: DeriveCtx | undefined,
+	ctx: DeriveCtx,
 	multiplicity: Multiplicity
 ): NodeOrTerminal | undefined {
-	if (ctx?.simplifiedRules === undefined) return undefined;
-	const display = aliasEnvelopeOf(ref, { simplifiedRules: ctx.simplifiedRules, kindEntries: ctx.kindEntries ?? [] });
+	if (ctx.simplifiedRules === undefined) return undefined;
+	const display = aliasEnvelopeOf(ref, { simplifiedRules: ctx.simplifiedRules, kindEntries: ctx.kindEntries });
 	if (display === undefined) return undefined;
 	return {
 		node: { kind: 'unresolved-ref', name: display },
@@ -752,10 +752,10 @@ function aliasEnvelopeValueOf(
 
 export function deriveValuesForRule(
 	rule: RenderRule,
-	ctx: DeriveCtx | undefined,
+	ctx: DeriveCtx,
 	multiplicity: Multiplicity
 ): NodeOrTerminal[] {
-	const inner: DeriveCtx | undefined = rule.tokenized === true && ctx?.lexical !== true ? { ...ctx, lexical: true } : ctx;
+	const inner: DeriveCtx = rule.tokenized === true && ctx.lexical !== true ? { ...ctx, lexical: true } : ctx;
 	switch (rule.type) {
 		case SYMBOL: {
 			const armFacts = armFactsOf(
@@ -776,7 +776,7 @@ export function deriveValuesForRule(
 						}
 					];
 				}
-				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
+				const entry = findEntryForLiteralText(ctx.kindEntries, rule.literal);
 				return [
 					{
 						value: rule.literal,
@@ -803,9 +803,9 @@ export function deriveValuesForRule(
 					}
 				];
 			}
-			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
+			const entry = findEntryForKindName(ctx.kindEntries, rule.name);
 			const parseEntry =
-				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
+				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx.kindEntries, rule.aliasedTo);
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
@@ -833,7 +833,7 @@ export function deriveValuesForRule(
 						multiplicity
 					};
 				}
-				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
+				const entry = findEntryForKindName(ctx.kindEntries, name);
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -849,7 +849,7 @@ export function deriveValuesForRule(
 				return [{ pattern: rule.value, ...armFactsOf(rule, ctx), multiplicity }];
 			}
 			if (rule.resolvedKindId !== undefined) {
-				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
+				const entry = findKindEntryById({ entries: ctx.kindEntries, id: rule.resolvedKindId });
 				const rk = entry?.kind;
 				return [
 					{
@@ -863,7 +863,7 @@ export function deriveValuesForRule(
 					}
 				];
 			}
-			const entry = ctx?.lexical === true ? undefined : findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
+			const entry = ctx.lexical === true ? undefined : findEntryForLiteralText(ctx.kindEntries, rule.value);
 			const rk = entry?.kind;
 			return [
 				{
@@ -884,8 +884,8 @@ export function deriveValuesForRule(
 					const text = literalTextOf(m) ?? '';
 					const symName = isLinkSymbol(m) ? m.name : undefined;
 					const entry =
-						(text && inner?.lexical !== true ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined) ??
-						(symName !== undefined ? findEntryForKindName(ctx?.kindEntries ?? [], symName) : undefined);
+						(text && inner?.lexical !== true ? findEntryForLiteralText(ctx.kindEntries, text) : undefined) ??
+						(symName !== undefined ? findEntryForKindName(ctx.kindEntries, symName) : undefined);
 					const rk = entry?.kind ?? symName;
 					return {
 						value: text,
@@ -908,7 +908,7 @@ export function deriveValuesForRule(
 							? 'optional'
 							: multiplicity
 					: multiplicity;
-			if (!ctx?.stampArmFieldNamesAsParseName) {
+			if (!ctx.stampArmFieldNamesAsParseName) {
 				return nonBlank.flatMap((m) => deriveValuesForRule(m, inner, armMult));
 			}
 			return nonBlank.flatMap((m) => {
@@ -1010,17 +1010,17 @@ export type ModelType =
 	| 'list';
 
 export interface KindFacts {
-	readonly kindEntries?: readonly GeneratedKindEntry[];
+	readonly kindEntries: readonly GeneratedKindEntry[];
 	readonly supertypeArms?: ReadonlySet<string>;
 	readonly provenance?: KindProvenance;
 }
 
 function provenanceOf(
 	kind: string,
-	ctx: KindFacts | undefined
+	ctx: KindFacts
 ): { readonly renamedFrom?: string; readonly splitFrom?: string; readonly variantOf?: string } {
 	const own = (map: Readonly<Record<string, string>> | undefined): string | undefined => (map !== undefined && Object.hasOwn(map, kind) ? map[kind] : undefined);
-	return { renamedFrom: own(ctx?.provenance?.renamedFrom), splitFrom: own(ctx?.provenance?.splitFrom), variantOf: own(ctx?.provenance?.variantOf) };
+	return { renamedFrom: own(ctx.provenance?.renamedFrom), splitFrom: own(ctx.provenance?.splitFrom), variantOf: own(ctx.provenance?.variantOf) };
 }
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
@@ -1101,7 +1101,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	constructor(
 		kind: string,
 		rule: R,
-		opts?: KindFacts & {
+		opts: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
@@ -1111,17 +1111,17 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	) {
 		this.kind = kind;
 		this.rule = rule;
-		this.wordMatcher = opts?.wordMatcher;
+		this.wordMatcher = opts.wordMatcher;
 		const derived = nameNode(kind);
 		this.typeName = derived.typeName;
-		this.hidden = opts?.hidden === true;
-		this.factoryName = this.hidden ? undefined : (opts?.factoryName ?? derived.factoryName);
-		this.irKey = opts?.irKey ?? derived.irKey;
-		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
+		this.hidden = opts.hidden === true;
+		this.factoryName = this.hidden ? undefined : (opts.factoryName ?? derived.factoryName);
+		this.irKey = opts.irKey ?? derived.irKey;
+		this.kindEntry = findOwnKindEntry(opts.kindEntries, kind);
 		this.seated = seatedOf(rule.annotations, this.kindEntry);
-		this.ownSurface = !this.seated || opts?.supertypeArms?.has(kind) === true;
+		this.ownSurface = !this.seated || opts.supertypeArms?.has(kind) === true;
 		({ renamedFrom: this.renamedFrom, splitFrom: this.splitFrom, variantOf: this.variantOf } = provenanceOf(kind, opts));
-		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
+		this.display = stampDisplay(kind, this.kindEntry, opts.kindEntries, opts.rowless ?? 'phantom');
 	}
 
 	get surfaceHidden(): boolean {
@@ -1683,26 +1683,26 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		kind: string,
 		simplifiedRule: SimplifiedRule,
 		renderRule: RenderRule,
-		opts?: CompoundOpts,
+		opts: CompoundOpts,
 		rule: R = renderRule as R
 	) {
-		const seated = seatedOf(renderRule.annotations, findOwnKindEntry(opts?.kindEntries ?? [], kind));
+		const seated = seatedOf(renderRule.annotations, findOwnKindEntry(opts.kindEntries, kind));
 		const factoryName =
-			opts?.factoryName ?? (seated && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
+			opts.factoryName ?? (seated && kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
 		super(kind, rule, { ...opts, factoryName });
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
-		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		if (opts?.slots !== undefined) {
+		this.variantChildKinds = opts.variantChildKinds ?? [];
+		if (opts.slots !== undefined) {
 			this._slots = Object.freeze([...opts.slots]);
 		} else {
 			const ctx: KindedDeriveCtx = {
 				kindName: kind,
-				kindEntries: opts?.kindEntries,
-				collision: opts?.parseKindCollisionContext,
-				visibleAliasTargets: opts?.visibleAliasTargets,
-				simplifiedRules: opts?.simplifiedRules,
-				diagnostics: opts?.assembleDiagnostics
+				kindEntries: opts.kindEntries,
+				collision: opts.parseKindCollisionContext,
+				visibleAliasTargets: opts.visibleAliasTargets,
+				simplifiedRules: opts.simplifiedRules,
+				diagnostics: opts.assembleDiagnostics
 			};
 			const slots = [...deriveSlots(simplifiedRule, ctx)];
 			let resolvedSlots = resolveParseKindCollisions(slots, ctx);
@@ -1920,9 +1920,9 @@ export class AssembledAlias extends AssembledEnvelope<RenderRule, 'alias'> {
 	override readonly modelType = 'alias' as const;
 	readonly aliasTypeId: number;
 
-	constructor(kind: string, simplifiedRule: SimplifiedRule, renderRule: RenderRule, opts?: CompoundOpts) {
+	constructor(kind: string, simplifiedRule: SimplifiedRule, renderRule: RenderRule, opts: CompoundOpts) {
 		super(kind, simplifiedRule, renderRule, opts);
-		if (opts?.aliasTypeId === undefined) {
+		if (opts.aliasTypeId === undefined) {
 			throw new Error(
 				`AssembledAlias: '${kind}' has no alias type id — its display has no alias row in the kind catalog`
 			);
@@ -2041,7 +2041,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: KindFacts & {
+		opts: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
 			wordMatcher?: RegExp;
@@ -2049,7 +2049,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 		}
 	) {
 		super(kind, rule, opts);
-		this.#textPattern = opts?.textPattern;
+		this.#textPattern = opts.textPattern;
 	}
 
 	readonly #textPattern: string | undefined;
@@ -2076,7 +2076,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	constructor(
 		kind: string,
 		rule: StringRule,
-		opts?: KindFacts & {
+		opts: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
 			hidden?: boolean;
@@ -2085,9 +2085,9 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 		super(kind, rule, opts);
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
-			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
+			this.resolvedKind = findKindEntryById({ entries: opts.kindEntries, id: rule.resolvedKindId })?.kind;
 		} else {
-			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
+			const entry = findEntryForLiteralText(opts.kindEntries, rule.value);
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -2119,14 +2119,14 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	constructor(
 		kind: string,
 		rule: StringRule,
-		opts?: KindFacts & { hidden?: boolean }
+		opts: KindFacts & { hidden?: boolean }
 	) {
-		super(kind, rule, { ...opts, hidden: opts?.hidden ?? true });
+		super(kind, rule, { ...opts, hidden: opts.hidden ?? true });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
-			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
+			this.resolvedKind = findKindEntryById({ entries: opts.kindEntries, id: rule.resolvedKindId })?.kind;
 		} else {
-			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
+			const entry = findEntryForLiteralText(opts.kindEntries, rule.value);
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -2169,7 +2169,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	constructor(
 		kind: string,
 		rule: ChoiceRule,
-		opts?: KindFacts & {
+		opts: KindFacts & {
 			factoryName?: string;
 			irKey?: string;
 		}
@@ -2183,8 +2183,8 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 			const text = literalTextOf(member);
 			if (text === undefined) continue;
 			const entry =
-				findEntryForLiteralText(opts?.kindEntries ?? [], text) ??
-				(isLinkSymbol(member) ? findEntryForKindName(opts?.kindEntries ?? [], member.name) : undefined);
+				findEntryForLiteralText(opts.kindEntries, text) ??
+				(isLinkSymbol(member) ? findEntryForKindName(opts.kindEntries, member.name) : undefined);
 			if (entry === undefined) continue;
 			resolved.push(entry.kind);
 			resolvedIds.push(entry.id);
@@ -2251,7 +2251,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		kind: string,
 		rule: SupertypeRule | ChoiceRule,
 		subtypes: readonly SubtypeRef[],
-		opts?: KindFacts
+		opts: KindFacts
 	) {
 		super(kind, rule, { ...opts, hidden: true, rowless: 'supertype' });
 		this.#subtypes = subtypes.map(
@@ -2336,7 +2336,7 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 	constructor(
 		kind: string,
 		rule: SeparatedListElementRule,
-		ctx: DeriveCtx | undefined,
+		ctx: DeriveCtx,
 		opts: KindFacts & {
 			separatorRule: RenderRule | undefined;
 			simplifiedRule: SimplifiedRule;
@@ -2352,8 +2352,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			{
 				...compound,
 				factoryName: nameNode(kind).factoryName,
-				assembleDiagnostics: ctx?.diagnostics,
-				simplifiedRules: ctx?.simplifiedRules
+				assembleDiagnostics: ctx.diagnostics,
+				simplifiedRules: ctx.simplifiedRules
 			},
 			rule
 		);

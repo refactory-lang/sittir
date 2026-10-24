@@ -86,7 +86,7 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, kindCatalogOf, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
+import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collectGeneratedKindEntries, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -99,7 +99,7 @@ import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
 
 export interface LinkOptions {
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly generatedIdTables: GeneratedIdTables;
 	readonly diagnostics?: DiagnosticSink;
 }
 
@@ -117,7 +117,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 			externalRoles: Map<string, ExternalRole>;
 			inline?: readonly string[];
 			hiddenNamedArmChoices: ReadonlySet<string>;
-			kindEntries?: readonly GeneratedKindEntry[];
+			kindEntries: readonly GeneratedKindEntry[];
 		}
 	) {
 		super(init);
@@ -125,7 +125,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.externalRoles = init.externalRoles;
 		this.inline = init.inline;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
-		this.kindEntries = init.kindEntries ?? [];
+		this.kindEntries = init.kindEntries;
 		this.root = rootRuleName(init.grammar.rules);
 	}
 
@@ -144,9 +144,9 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	}
 }
 
-export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
-	const generatedIdTables = stampVisibleExternals(ctx?.generatedIdTables, evaluated);
-	const kindEntries = kindCatalogOf(generatedIdTables, evaluated);
+export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
+	const generatedIdTables = stampVisibleExternals(ctx.generatedIdTables, evaluated);
+	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
 	const raw = stampParserVisibility(spliceTextLeaves(collapseRenamedRules(evaluated, catalogCtx), catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
@@ -176,7 +176,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const rawRules: Record<string, Rule<'evaluate'>> = Object.fromEntries(
 		Object.entries(raw.rules).filter(([name]) => name in rules)
 	);
-	inlineReferences(rules, linkCtx);
+	inlineReferences(rules);
 
 	for (const name of Object.keys(rules)) {
 		rules[name] = liftSeparators(rules[name]!, linkCtx);
@@ -253,7 +253,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	);
 	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
-	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline), reachableFromRoot);
+	reportKindIdStampMisses(stampMisses, ctx.diagnostics, new Set(raw.inline), reachableFromRoot);
 	reportAuxTokens(evaluated.rules, linkCtx);
 
 	stampLinkMintedVisibility(rules, linkCtx);
@@ -466,7 +466,7 @@ export function canonicalizeRuleLiterals(
 				syntactic,
 				aliasBodies
 			);
-			if (!syntactic || kindEntries.length === 0 || !rule.named || rule.kindId !== undefined) {
+			if (!syntactic || !rule.named || rule.kindId !== undefined) {
 				return { ...rule, content };
 			}
 			const entry = findEntryForKindName(kindEntries, rule.value);
@@ -477,11 +477,9 @@ export function canonicalizeRuleLiterals(
 			return { ...rule, content, kindId: entry.parseId ?? entry.id };
 		}
 		case SYMBOL:
-			return !syntactic || kindEntries.length === 0
-				? rule
-				: stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodies });
+			return !syntactic ? rule : stampSymbolRefKindIds(rule, { kindEntries, misses, aliasBodies });
 		case SUPERTYPE:
-			return !syntactic || kindEntries.length === 0
+			return !syntactic
 				? rule
 				: {
 						...rule,
@@ -507,7 +505,6 @@ export function canonicalizeRuleLiterals(
 					);
 				}
 			}
-			if (kindEntries.length === 0) return rule;
 			const aliased = stampAliasTargetId(rule, { kindEntries, misses, aliasBodies });
 			if (parsedAs !== undefined) return aliased;
 			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
@@ -518,7 +515,7 @@ export function canonicalizeRuleLiterals(
 			return { ...aliased, resolvedKindId: literalEntry.id };
 		}
 		case PATTERN: {
-			if (!syntactic || kindEntries.length === 0) return rule;
+			if (!syntactic) return rule;
 			const patternEntry = findEntryForPatternValue(kindEntries, rule.value);
 			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}
@@ -540,12 +537,10 @@ function reportAuxTokens(rules: Readonly<Record<string, Rule<'evaluate'>>>, ctx:
 
 export function reportKindIdStampMisses(
 	stampMisses: KindIdStampMisses,
-	kindEntries: readonly GeneratedKindEntry[],
 	diagnostics: DiagnosticSink | undefined,
 	inlineKinds: ReadonlySet<string>,
 	reachableFromRoot: ReadonlySet<string>
 ): void {
-	if (kindEntries.length === 0) return;
 	if (stampMisses.aliasTargets.size > 0) {
 		throw new Error(
 			`link: alias target(s) [${[...stampMisses.aliasTargets].sort().join(', ')}] resolved no named parser kindId; the parser never mints the aliased node`
@@ -764,7 +759,7 @@ function assertPredictedKinds(ctx: LinkCtx): void {
 export function collapseRenamedRules(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const renames = collapseRenames(raw, ctx);
 	const collapsed = renameRules(raw, renames);
-	if (ctx.kindEntries.length > 0 && raw.predictedKinds !== undefined && 'entries' in raw.predictedKinds) {
+	if (raw.predictedKinds !== undefined && 'entries' in raw.predictedKinds) {
 		assertPredictedKindEntries(raw.predictedKinds.entries, ctx.kindEntries);
 	}
 	return collapsed;
@@ -792,8 +787,10 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		if (rule.type === SYMBOL) return renames.has(rule.name) ? { ...rule, name: rename(rule.name) } : rule;
 		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL) {
 			const content = rule.content.name;
-			if (targets.has(rename(content)) && rule.value === rename(content))
-				return { ...rule.content, name: rename(content) };
+			if (targets.has(rename(content)) && rule.value === rename(content)) {
+				const annotations = rule.annotations === undefined ? rule.content.annotations : { ...rule.content.annotations, ...rule.annotations };
+				return { ...rule.content, name: rename(content), ...(annotations === undefined ? {} : { annotations }) };
+			}
 		}
 		return rule;
 	};
@@ -1044,11 +1041,10 @@ function splicedRuleNames(rules: Readonly<Record<string, Rule<'link'>>>): Readon
 	return out;
 }
 
-function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
+function inlineReferences(rules: Record<string, Rule<'link'>>): void {
 	const cyclic = cyclicInlineTargets(rules);
-	const externals = new Set(ruleListParts(ctx.grammar.externals).names);
 	const inlineOne = (r: Rule<'link'>): Rule<'link'> => {
-		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name) || externals.has(r.name)) return r;
+		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name)) return r;
 		const body = rules[r.name];
 		if (body === undefined) return r;
 		const { hidden: _sourceKindHidden, ...spliced } = body;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from './../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from './../normalize.ts';
 import { assemble, AssembleCtx } from './../assemble.ts';
 import { AssembledSupertype } from './../model/node-map.ts';
@@ -15,7 +15,7 @@ const upstreamWith = (shown: string) => ({
 
 const modelOf = async (shown: string) => {
 	const raw = await evaluateTempGrammar(upstreamWith(shown), config);
-	const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+	const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(raw))));
 	const parent = nodeMap.nodes.get('parent');
 	return { raw, parent };
 };

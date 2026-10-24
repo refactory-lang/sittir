@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { emitKindIdRust, relaxedKeywordIds } from '../kind-id-rust.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -10,16 +10,15 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
-
 async function emittedKindIds(grammar: GrammarName) {
 	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });
 	const nodeMap = assemble(
-		AssembleCtx.from(normalizeGrammar(linked), generatedIdTables)
+		AssembleCtx.from({ ...normalizeGrammar(linked), generatedIdTables: generatedIdTables })
 	);
-	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const entries = collectKindEntries(nodeMap, generatedIdTables);
 	const idOf = (kind: string): number => {
 		const id = entries.find((entry) => entry.kind === kind)?.id;
 		if (id === undefined) throw new Error(`no kind entry for ${kind}`);

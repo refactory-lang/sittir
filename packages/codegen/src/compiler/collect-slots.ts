@@ -238,7 +238,7 @@ function withSlotReservedWordsets(rule: SimplifiedRule): RuleMetadata | undefine
 function buildSlot(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
-	deriveCtx: SlotDeriveCtx | undefined,
+	deriveCtx: SlotDeriveCtx,
 	inherited: Multiplicity,
 	inheritedSeparator: RuleBase<'normalize'>['separator'],
 	sanctionedUnion = false,
@@ -313,13 +313,13 @@ function buildSlot(
 
 export function collectSlots(
 	rule: SimplifiedRule,
-	kindForName?: string,
-	deriveCtx?: SlotDeriveCtx,
+	kindForName: string | undefined,
+	deriveCtx: SlotDeriveCtx,
 	inherited: Multiplicity = 'single',
 	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined,
 	diagnostics?: AssembleDiagnosticsCollector
 ): AssembledNonterminal[] {
-	if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN && deriveCtx?.lexical !== true) {
+	if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN && deriveCtx.lexical !== true) {
 		return collectSlots(rule, kindForName, { ...deriveCtx, lexical: true }, inherited, inheritedSeparator, diagnostics);
 	}
 	if (rule.type === SEQ) {
@@ -362,7 +362,7 @@ function recordUnclassifiableShape(
 function resolveMember(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
-	deriveCtx: SlotDeriveCtx | undefined,
+	deriveCtx: SlotDeriveCtx,
 	inherited: Multiplicity,
 	inheritedSeparator: RuleBase<'normalize'>['separator'],
 	diagnostics?: AssembleDiagnosticsCollector

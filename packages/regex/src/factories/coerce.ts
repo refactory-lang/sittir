@@ -879,7 +879,7 @@ export function resolveCharacterClass_classAtoms(
 		_resolveKindEnumItems(value, [TSKindId.BslashDash], (_v) =>
 			_resolveMany<
 				| T.ClassCharacter
-				| '\\-'
+				| TSKindId.BslashDash
 				| T.CharacterClassEscape
 				| T.ControlEscape
 				| T.ControlLetterEscape
@@ -949,7 +949,7 @@ export function coerceToPosixClassName(input: T.PosixClassName.Loose): ReturnTyp
 export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']): Admit<T.ClassRange['_start']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.Dash], () =>
-			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | '-'>(value, _K5, _K6)
+			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(value, _K5, _K6)
 		),
 		[['-', TSKindId.Dash] as const]
 	);
@@ -958,7 +958,7 @@ export function resolveClassRange_start(value: T.ClassRange.LooseConfig['start']
 export function resolveClassRange_end(value: T.ClassRange.LooseConfig['end']): Admit<T.ClassRange['_end']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.Dash], () =>
-			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | '-'>(value, _K5, _K6)
+			_resolveOne<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(value, _K5, _K6)
 		),
 		[['-', TSKindId.Dash] as const]
 	);
@@ -1353,15 +1353,15 @@ export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content
 			],
 			() =>
 				_resolveOne<
-					| '^'
-					| '$'
-					| '\\b'
-					| '\\B'
+					| TSKindId.StartAssertion
+					| TSKindId.EndAssertion
+					| TSKindId.BoundaryAssertion
+					| TSKindId.NonBoundaryAssertion
 					| T.LookaroundAssertion
 					| T.PatternCharacter
 					| T.CharacterClass
 					| T.PosixCharacterClass
-					| '.'
+					| TSKindId.AnyCharacter
 					| T.DecimalEscape
 					| T.CharacterClassEscape
 					| T.ControlEscape

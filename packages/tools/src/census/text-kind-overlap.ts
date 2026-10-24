@@ -37,10 +37,9 @@ async function corpusTextsByKind(grammar: string): Promise<Map<string, Set<strin
 export async function textKindOverlapCensus(grammar: string): Promise<TextKindOverlapCensus> {
 	const nodeMap = await buildNodeMap(grammar);
 	const tables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
-	if (tables === undefined) throw new Error(`text-kind-overlap: no generated id tables for grammar '${grammar}'; run gen first`);
-	const { collectKindEntries, collectCatalogKinds } = await load('kindDiscriminant');
+	const { collectKindEntries } = await load('kindDiscriminant');
 	const { leafTextChecks, slotResolverKinds, textCheckAccepts } = await load('from');
-	const kindEntries = collectKindEntries(collectCatalogKinds(tables), nodeMap, tables);
+	const kindEntries = collectKindEntries(nodeMap, tables);
 	const checks = leafTextChecks(nodeMap, kindEntries);
 	const corpus = await corpusTextsByKind(grammar);
 

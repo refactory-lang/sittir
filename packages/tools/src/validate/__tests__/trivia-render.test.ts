@@ -44,7 +44,7 @@ describe('read trivia layout, rendered detached', () => {
 
 	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
 		const engine = await loadNativeEngine('rust');
-		const readNode = (await readNodeOf('rust'))!;
+		const readNode = await readNodeOf('rust');
 		const source = 'fn f() { x = a + /* x */ b; }';
 		const data = materializeDetached(readNode(readNativeTree(engine, source).tree), await loadSlotAccessorOf('rust')) as never as {
 			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
@@ -102,7 +102,7 @@ describe('in-line spacing the options do not write is a deviation, rendered deta
 
 	it('keeps the layout of a token tree item whose neighbour is a bare token, read live', async () => {
 		const engine = await loadNativeEngine('rust');
-		const readNode = (await readNodeOf('rust'))!;
+		const readNode = await readNodeOf('rust');
 		const native = await nativeLanguageEngineOf('rust');
 		const source = "foo!($/';()*()+.);\n";
 		const { tree } = readNativeTree(engine, source);

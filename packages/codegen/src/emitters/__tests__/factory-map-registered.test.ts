@@ -1,7 +1,8 @@
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { describe, expect, it } from 'vitest';
 import type { RenderRule } from '../../types/rule.ts';
 import { AssembledBranch, AssembledNonterminal, type AssembledNode, type NodeOrTerminal } from '../../compiler/model/node-map.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { buildFactoryMap } from '../factory-map.ts';
 
 const rule = { type: 'SEQ', members: [] } as unknown as RenderRule;
@@ -13,16 +14,21 @@ const slot = (fieldName: string, values: readonly NodeOrTerminal[], registered: 
 };
 
 describe('buildFactoryMap — FactorySlotMeta.registered', () => {
-	const nodes = new Map<string, AssembledNode>([
-		['statement', new AssembledBranch('statement', rule, rule, { slots: [slot('terminator', [text(';'), text(':')], true)] })],
-		[
-			'hex',
-			new AssembledBranch('hex', rule, rule, {
-				slots: [slot('prefix', [text('0x'), text('0X')], true), slot('content', [text('1')], false)]
-			})
-		]
-	]);
-	const { factorySlots } = buildFactoryMap(makeNodeMapWith(nodes));
+	const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) =>
+		makeNodeMapWith(
+			new Map<string, AssembledNode>([
+				['statement', new AssembledBranch('statement', rule, rule, { kindEntries, slots: [slot('terminator', [text(';'), text(':')], true)] })],
+				[
+					'hex',
+					new AssembledBranch('hex', rule, rule, {
+						kindEntries,
+						slots: [slot('prefix', [text('0x'), text('0X')], true), slot('content', [text('1')], false)]
+					})
+				]
+			])
+		)
+	);
+	const { factorySlots } = buildFactoryMap(nodeMap, collectKindEntries(nodeMap, generatedIdTables));
 
 	it('a compound whose every slot is registered exports none of them as registered', () => {
 		expect(factorySlots.statement!.terminator!.registered).toBeUndefined();
@@ -44,21 +50,29 @@ describe('buildFactoryMap — FactorySlotMeta.optionDefault', () => {
 	const spellingSlot = slot('prefix', [text('0x'), text('0X')], true);
 	spellingSlot.registeredOption = 'spelling';
 	spellingSlot.optionDefaultArm = '0x';
-	const nodes = new Map<string, AssembledNode>([
-		['hex', new AssembledBranch('hex', rule, rule, { slots: [spellingSlot, slot('content', [text('1')], false)] })],
-		['semi_stmt', new AssembledBranch('semi_stmt', rule, rule, { slots: [choiceSlot(';', 'semi'), slot('content', [text('1')], false)] })],
-		['blank_stmt', new AssembledBranch('blank_stmt', rule, rule, { slots: [choiceSlot('blank', undefined), slot('content', [text('1')], false)] })]
-	]);
-	const kindEntries = [{ kind: 'semi', member: 'Semi', id: 42 }];
-	const { factorySlots } = buildFactoryMap(makeNodeMapWith(nodes), kindEntries);
+	const { nodeMap, generatedIdTables } = withGeneratedIdTables(
+		(kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['hex', new AssembledBranch('hex', rule, rule, { kindEntries, slots: [spellingSlot, slot('content', [text('1')], false)] })],
+					['semi_stmt', new AssembledBranch('semi_stmt', rule, rule, { kindEntries, slots: [choiceSlot(';', 'semi'), slot('content', [text('1')], false)] })],
+					['blank_stmt', new AssembledBranch('blank_stmt', rule, rule, { kindEntries, slots: [choiceSlot('blank', undefined), slot('content', [text('1')], false)] })]
+				])
+			),
+		{ semi: ';' }
+	);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
+	const semiId = kindEntries.find((entry) => entry.kind === 'semi')!.id;
+	const { factorySlots } = buildFactoryMap(nodeMap, kindEntries);
 
 	it('a spelling default is its text, a choice default its arm kind id, the blank arm id 0', () => {
 		expect(factorySlots.hex!.prefix!.optionDefault).toBe('0x');
-		expect(factorySlots.semi_stmt!.terminator!.optionDefault).toBe(42);
+		expect(factorySlots.semi_stmt!.terminator!.optionDefault).toBe(semiId);
 		expect(factorySlots.blank_stmt!.terminator!.optionDefault).toBe(0);
 	});
 
-	it('without kind entries a choice default is left out', () => {
-		expect(buildFactoryMap(makeNodeMapWith(nodes)).factorySlots.semi_stmt!.terminator!.optionDefault).toBeUndefined();
+	it('a choice default whose arm kind has no id is refused', () => {
+		const noSemi = kindEntries.filter((entry) => entry.kind !== 'semi');
+		expect(() => buildFactoryMap(nodeMap, noSemi)).toThrow(/semi_stmt\.terminator names kind 'semi', which has no kind id/);
 	});
 });

@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -10,7 +11,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import {kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 /**
@@ -47,12 +48,13 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 4, lexicalRank: 4, kind: 'integer_literal', member: 'IntegerLiteral' },
 	{ id: 5, lexicalRank: 5, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
 ];
+const ID_TABLES = kindIdTablesOf(KIND_ENTRIES);
 
-function makeNodeMap() {
+function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'arguments_elements',
-		new AssembledList('arguments_elements', LIST_RULE, undefined, {
+		new AssembledList('arguments_elements', LIST_RULE, { kindEntries }, {
 			separatorRule: undefined,
 			simplifiedRule: ELEMENT_SIMPLIFIED_RULE,
 			renderRule: ELEMENT_RENDER_RULE,
@@ -64,9 +66,9 @@ function makeNodeMap() {
 		name: 'argumentsElements',
 		content: { type: SYMBOL, name: 'arguments_elements' }
 	});
-	nodes.set('arguments', new AssembledBranch('arguments', envelopeRule, envelopeRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('integer_literal', new AssembledPattern('integer_literal', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('arguments', new AssembledBranch('arguments', envelopeRule, envelopeRule, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('integer_literal', new AssembledPattern('integer_literal', { type: PATTERN, value: '[0-9]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -77,7 +79,7 @@ function coercerOf(emitted: string, name: string): string {
 }
 
 describe('a separated list coercer resolves its elements through the content slot', () => {
-	const emitted = emitFrom({ grammar: 'synth', nodeMap: makeNodeMap(), kindEntries: KIND_ENTRIES });
+	const emitted = emitFrom({ grammar: 'synth', nodeMap: withIdTables((kindEntries) => makeNodeMap(kindEntries), ID_TABLES).nodeMap, generatedIdTables: ID_TABLES });
 	const coercer = coercerOf(emitted, 'coerceToArgumentsElements');
 
 	it('never spreads the fresh input raw into the strict factory', () => {

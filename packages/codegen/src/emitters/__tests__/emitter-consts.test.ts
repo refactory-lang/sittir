@@ -1,3 +1,4 @@
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { describe, it, expect } from 'vitest';
 import { emitConsts } from '../consts.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -43,13 +44,13 @@ function field(
 describe('emitConsts', () => {
 	it('emits no kind lists, value lists or id tables', () => {
 		const nodeMap = makeNodeMap([
-			['function_item', new AssembledBranch('function_item', { type: SYMBOL, name: 'x' }, { type: SYMBOL, name: 'x' }, { slots: [] })],
-			['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
-			['fn', new AssembledKeyword('fn', { type: STRING, value: 'fn' })],
-			['+', new AssembledPunctuation('+', { type: STRING, value: '+' })],
+			['function_item', withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('function_item', { type: SYMBOL, name: 'x' }, { type: SYMBOL, name: 'x' }, { kindEntries, slots: [] }))],
+			['identifier', withGeneratedIdTablesNode((kindEntries) => new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }))],
+			['fn', withGeneratedIdTablesNode((kindEntries) => new AssembledKeyword('fn', { type: STRING, value: 'fn' }, { kindEntries }))],
+			['+', withGeneratedIdTablesNode((kindEntries) => new AssembledPunctuation('+', { type: STRING, value: '+' }, { kindEntries }))],
 			[
 				'visibility',
-				new AssembledEnum('visibility', { type: CHOICE, members: [{ type: STRING, value: 'pub' }, { type: STRING, value: 'crate' }] })
+				withGeneratedIdTablesNode((kindEntries) => new AssembledEnum('visibility', { type: CHOICE, members: [{ type: STRING, value: 'pub' }, { type: STRING, value: 'crate' }] }, { kindEntries }))
 			]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
@@ -62,12 +63,12 @@ describe('emitConsts', () => {
 			{ value: 'unsafe', multiplicity: 'nonEmptyArray' },
 			{ value: 'const', multiplicity: 'nonEmptyArray' }
 		]);
-		const node = new AssembledBranch(
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch(
 			'function_item',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slots: [modifiers] }
-		);
+			{ kindEntries, slots: [modifiers] }
+		));
 		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('export enum Modifiers {');
@@ -83,23 +84,23 @@ describe('emitConsts', () => {
 			{ value: 'async', multiplicity: 'array' },
 			{ value: 'unsafe', multiplicity: 'array' }
 		]);
-		const node = new AssembledBranch(
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch(
 			'function_item',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slots: [modifiers] }
-		);
+			{ kindEntries, slots: [modifiers] }
+		));
 		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('None = 0,');
 	});
 
 	it('disambiguates bitflag const names when two kinds share a field name', () => {
-		const classNode = new AssembledBranch(
+		const classNode = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch(
 			'class_declaration',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{
+			{ kindEntries,
 				slots: [
 					field('modifiers', [
 						{ value: 'public', multiplicity: 'nonEmptyArray' },
@@ -107,12 +108,12 @@ describe('emitConsts', () => {
 					])
 				]
 			}
-		);
-		const methodNode = new AssembledBranch(
+		));
+		const methodNode = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch(
 			'method_definition',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{
+			{ kindEntries,
 				slots: [
 					field('modifiers', [
 						{ value: 'async', multiplicity: 'nonEmptyArray' },
@@ -120,7 +121,7 @@ describe('emitConsts', () => {
 					])
 				]
 			}
-		);
+		));
 		const nodeMap = makeNodeMap([
 			['class_declaration', classNode],
 			['method_definition', methodNode]
@@ -137,12 +138,12 @@ describe('emitConsts', () => {
 			{ value: 'pub', multiplicity: 'nonEmptyArray' },
 			{ value: 'pub(crate)', multiplicity: 'nonEmptyArray' }
 		]);
-		const node = new AssembledBranch(
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch(
 			'visibility_modifier',
 			{ type: SYMBOL, name: 'x' },
 			{ type: SYMBOL, name: 'x' },
-			{ slots: [visibility] }
-		);
+			{ kindEntries, slots: [visibility] }
+		));
 		const nodeMap = makeNodeMap([['visibility_modifier', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('Pub = 1 << 0,');

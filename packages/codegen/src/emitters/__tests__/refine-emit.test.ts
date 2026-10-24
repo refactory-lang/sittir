@@ -13,12 +13,11 @@
 
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
-import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
-import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { LinkedGrammar, RawGrammar, RefineForm } from '../../compiler/types.ts';
-import { link } from '../../compiler/link.ts';
+import { linkPredicted, rawIdTablesOf, withFixtureLexicalRanks } from '../../__tests__/helpers/linked.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
@@ -28,7 +27,6 @@ import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
 import { emitRefinesOverlay } from '../overlays/refines.ts';
-import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms
@@ -225,12 +223,12 @@ describe('link-refine — validateRefineForms', () => {
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': 1, 'closing:': 1 } }
 		]);
-		expect(() => link(raw)).not.toThrow();
+		expect(() => linkPredicted(raw)).not.toThrow();
 	});
 
 	const refineRecords = (forms: RefineForm[]) => {
 		const diagnostics = new DiagnosticSink();
-		const linked = link(makeRefineRaw(forms), { diagnostics });
+		const linked = linkPredicted(makeRefineRaw(forms), { diagnostics });
 		return { linked, messages: diagnostics.all().filter((d) => d.code === 'refine-config-invalid').map((d) => d.message) };
 	};
 
@@ -265,7 +263,7 @@ describe('link-refine — validateRefineForms', () => {
 describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () => {
 	it('resolves field-traversal paths to the choice', () => {
 		const raw = makeRefineRaw([]);
-		const rule = link(raw).rules.iface_body!;
+		const rule = linkPredicted(raw).rules.iface_body!;
 		const res = resolveRefinePath('iface_body', 'curly', 'opening:', rule);
 		expect(res.fieldName).toBe('opening');
 		expect(res.choice.type).toBe('CHOICE');
@@ -278,7 +276,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': '{', 'closing:': '}' }
 		};
 		const raw = makeRefineRaw([form]);
-		const rule = link(raw).rules.iface_body!;
+		const rule = linkPredicted(raw).rules.iface_body!;
 		const narrowed = narrowedFieldLiteralsForForm(rule, form);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '{' },
@@ -292,7 +290,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': 1, 'closing:': 1 }
 		};
 		const raw = makeRefineRaw([form]);
-		const rule = link(raw).rules.iface_body!;
+		const rule = linkPredicted(raw).rules.iface_body!;
 		const narrowed = narrowedFieldLiteralsForForm(rule, form);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '{|' },
@@ -307,7 +305,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 		};
 		const raw = makeStringRefineRaw([form]);
 		let linked: LinkedGrammar | undefined;
-		expect(() => (linked = link(raw))).not.toThrow();
+		expect(() => (linked = linkPredicted(raw))).not.toThrow();
 		const narrowed = narrowedFieldLiteralsForForm(linked!.rules.string!, form);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '"' },
@@ -321,7 +319,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': 1, 'closing:': 1 }
 		};
 		const raw = makeRefineSymbolRaw([form], true);
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const narrowed = narrowedFieldLiteralsForForm(linked.rules.iface_body!, form, linked.rules);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '{|' },
@@ -339,58 +337,17 @@ function runPipeline(forms: RefineForm[]) {
 }
 
 function runPipelineRaw(raw: RawGrammar) {
-	const linked = link(raw);
+	const linked = linkPredicted(raw);
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(AssembleCtx.from(normalized));
-	const generatedIdTables = makeGeneratedIdTables();
+	const generatedIdTables = normalized.generatedIdTables;
 	stampIrSurface(nodeMap, generatedIdTables);
 	return {
 		nodeMap,
+		generatedIdTables,
 		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
-		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
+		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap, generatedIdTables }),
 		irSrc: emitIr({ grammar: 'synth', nodeMap })
-	};
-}
-
-function makeGeneratedIdTables(): GeneratedIdTables {
-	return {
-		kindIds: {
-			[ERROR_KIND_NAME]: ERROR_KIND_ROW,
-			iface_body: {
-				id: 11,
-				parser: {
-					cSymbol: 'sym_iface_body',
-					parserName: 'iface_body',
-					anon: false,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			},
-			iface_body_curly: {
-				id: 17,
-				parser: {
-					cSymbol: 'sym_iface_body_curly',
-					parserName: 'iface_body_curly',
-					anon: false,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			},
-			iface_body_flow: {
-				id: 23,
-				parser: {
-					cSymbol: 'sym_iface_body_flow',
-					parserName: 'iface_body_flow',
-					anon: false,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			}
-		},
-		sourceArtifact: 'parser.wasm'
 	};
 }
 
@@ -434,10 +391,10 @@ describe('types emitter — per-form namespace sugar', () => {
 		const raw = makeRefineRaw([]);
 		// Drop the refineForms map entry to simulate the no-refine path.
 		const noRefine: RawGrammar = { ...raw, refineForms: undefined };
-		const linked = link(noRefine);
+		const linked = linkPredicted(noRefine);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
-		const generatedIdTables = makeGeneratedIdTables();
+		const generatedIdTables = normalized.generatedIdTables;
 		stampIrSurface(nodeMap, generatedIdTables);
 		const src = emitTypes({
 			grammar: 'synth',
@@ -468,12 +425,8 @@ describe('factories emitter — per-form factory emission', () => {
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		// Curly factory stamps '{' / '}' via _<name> storage.
-		expect(factoriesSrc).toMatch(/buildIfaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/);
-		// Flow factory stamps '{|' / '|}' via _<name> storage.
-		expect(factoriesSrc).toMatch(
-			/buildIfaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/
-		);
+		expect(factoriesSrc).toMatch(/buildIfaceBodyCurly[\s\S]*_opening = TSKindId\.Lbrace as const;[\s\S]*_closing = TSKindId\.Rbrace as const;/);
+		expect(factoriesSrc).toMatch(/buildIfaceBodyFlow[\s\S]*_opening = TSKindId\.LbracePipe as const;[\s\S]*_closing = TSKindId\.PipeRbrace as const;/);
 	});
 
 	it('does not emit a $variant tag (UntypedNode round-trips through readUntypedNode)', () => {
@@ -486,27 +439,22 @@ describe('factories emitter — per-form factory emission', () => {
 
 	it('types the per-form factory parameter with the narrowed Config', () => {
 		const { factoriesSrc } = runPipeline([{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }]);
-		// Per-form Config lives under the parent namespace as a sub-namespace
-		// (`T.IfaceBody.Curly.Config`), not as a flat alias. See
-		// emitRefineFormSubNamespaces in emitters/types.ts.
-		// `_config` when the form narrows every field (nothing is read off
-		// the config parameter — renameUnusedConfigParam fires).
-		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(_config\??: T\.IfaceBody\.Curly\.Config\)/);
+		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)[^\n]*\n\s*currentHandle\(\)\?\.admit\(TSKindId\.IfaceBody, \[config\], \[\]\);/);
 	});
 
-	it('emitAll keeps refine form factories in the real generation path', () => {
-		const raw = makeRefineRaw([
-			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
-			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
-		]);
-		const linked = link(raw);
-		const normalized = normalizeGrammar(linked);
+	it('emitAll keeps refine form factories in the real generation path', async () => {
+		const body = "seq(field('opening', choice('{', '{|')), field('closing', choice('}', '|}')))";
+		const raw = await evaluateTempGrammar(
+			{ extras: '/\\s/', rules: `source: ($) => repeat($.iface_body), iface_body: ($) => ${body}` },
+			`rules: { iface_body: ($) => refine(${body}, { curly: { 'opening:': '{', 'closing:': '}' }, flow: { 'opening:': '{|', 'closing:': '|}' } }) }`
+		);
+		const normalized = normalizeGrammar(linkPredicted(raw, { generatedIdTables: withFixtureLexicalRanks(rawIdTablesOf(raw)) }));
 		const nodeMap = assemble(AssembleCtx.from(normalized));
-		stampIrSurface(nodeMap);
-		const { factories } = emitAll({ grammar: 'synth', nodeMap });
+		stampIrSurface(nodeMap, normalized.generatedIdTables);
+		const { factories } = emitAll({ generatedIdTables: normalized.generatedIdTables, grammar: 'synth', nodeMap });
 		expect(factories).toMatch(/export function buildIfaceBodyCurly\(/);
 		expect(factories).toMatch(/export function buildIfaceBodyFlow\(/);
-	});
+	}, 60_000);
 });
 
 describe('ir emitter — bundle composition', () => {
@@ -521,11 +469,11 @@ describe('ir emitter — bundle composition', () => {
 
 describe('refines overlay — attaches per-form factories on the parent builder', () => {
 	it('refines overlay attaches each form factory on the parent builder', () => {
-		const { nodeMap } = runPipeline([
+		const { nodeMap, generatedIdTables } = runPipeline([
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		const text = emitRefinesOverlay({ nodeMap });
+		const text = emitRefinesOverlay({ nodeMap, generatedIdTables });
 		expect(text).toContain("import * as B from '../bundle.js';");
 		expect(text).toContain("import * as F from '../raw.js';");
 		expect(text).toContain('export const ifaceBody = Object.freeze({');

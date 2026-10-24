@@ -1,3 +1,4 @@
+import { kindIdTablesOf } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { flattenRules } from '../flatten.ts';
@@ -38,6 +39,7 @@ export function makeNormalized(
 		}
 	}
 	return {
+		generatedIdTables: kindIdTablesOf([]),
 		name: 'test',
 		fileTypes: [],
 		normalizedRules,

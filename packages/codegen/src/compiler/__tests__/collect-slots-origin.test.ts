@@ -8,6 +8,7 @@
  * was asserted via the now-deleted `origin === 'kind'` shim; `isUnnamed` is the
  * structural signal that replaced it.)
  */
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { describe, it, expect } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { AssembledBranch } from '../model/node-map.ts';
@@ -39,7 +40,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		// a choice of symbol refs with multiplicity:array, nonterminal:true
 		const rule = makeContentChoice('array');
 
-		const slots = collectSlots(rule, 'argument_list');
+		const slots = collectSlots(rule, 'argument_list', { kindEntries: [] });
 		expect(slots).toHaveLength(1);
 		const slot = slots[0]!;
 		expect(slot.name).toBe('content');
@@ -55,7 +56,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 			members: [choice]
 		} as unknown as Rule;
 
-		const slots = collectSlots(seq, 'test_kind');
+		const slots = collectSlots(seq, 'test_kind', { kindEntries: [] });
 		expect(slots).toHaveLength(1);
 		const slot = slots[0]!;
 		expect(slot.name).toBe('content');
@@ -75,7 +76,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 			members: [arm1, arm2]
 		} as unknown as Rule;
 
-		const slots = collectSlots(structuralChoice, 'test_kind');
+		const slots = collectSlots(structuralChoice, 'test_kind', { kindEntries: [] });
 		const contentSlot = slots.find((s) => s.name === 'content');
 		expect(contentSlot).toBeDefined();
 		expect(contentSlot?.isUnnamed).toBe(true);
@@ -88,7 +89,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		const simplifiedRule = makeContentChoice('array');
 		const renderRule = simplifiedRule as ReturnType<typeof flatten>;
 
-		const branch = new AssembledBranch('argument_list', simplifiedRule, renderRule, {});
+		const branch = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('argument_list', simplifiedRule, renderRule, { kindEntries }));
 
 		const contentSlot = branch.slots.find((slot) => slot.name === 'content');
 		expect(contentSlot).toBeDefined();

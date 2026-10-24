@@ -26,7 +26,7 @@ import {
 } from '@sittir/codegen/bindings';
 import { printFlagsModule } from './flags.ts';
 import { REPO_ROOT, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
-import { compileNodeMap, evaluateGrammar, invoke, load, type GrammarDiagnostic } from '../codegen-surface.ts';
+import { compileGrammarOf, evaluateGrammar, invoke, load, type GrammarDiagnostic } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
 export { VOCABULARY_DIR };
@@ -89,7 +89,8 @@ export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, R
 export async function bindingsModule(grammar: GrammarName): Promise<BindingsModule> {
 	const base = await evaluateGrammar(grammar, { unbound: true });
 	const layer = await invoke('evaluatePackage', 'evaluatePackageLayer', await invoke('grammars', 'grammarPackage', grammar), { unbound: true });
-	const model = await invoke('nodeModel', 'buildNodeModel', await compileNodeMap(grammar, { unbound: true }));
+	const unbound = await compileGrammarOf(grammar, { unbound: true });
+	const model = await invoke('nodeModel', 'buildNodeModel', unbound.nodeMap, unbound.generatedIdTables);
 	const input = await grammarInput(grammar, base, model);
 	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
 	const { bindings, report, diagnostics } = deriveGrammarBindings({

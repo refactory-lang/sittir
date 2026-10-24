@@ -1,9 +1,10 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 
 /**
@@ -25,7 +26,7 @@ function clauseRule(negative: boolean): SeqRule<'link'> {
 	};
 }
 
-function makeImplNodeMap(declareDefault: boolean) {
+function makeImplNodeMap(declareDefault: boolean, kindEntries: readonly GeneratedKindEntry[]) {
 	const positiveArm = declareDefault
 		? ({ type: SYMBOL, name: '_impl_positive', annotations: { default: true } } as const)
 		: ({ type: SYMBOL, name: '_impl_positive' } as const);
@@ -46,15 +47,15 @@ function makeImplNodeMap(declareDefault: boolean) {
 
 	const nodes = new Map<string, AssembledNode>();
 	const implRender = flatten(implRule);
-	nodes.set('impl', new AssembledBranch('impl', implRender, implRender));
+	nodes.set('impl', new AssembledBranch('impl', implRender, implRender, { kindEntries }));
 	for (const [kind, negative] of [
 		['_impl_positive', false],
 		['_impl_negative', true]
 	] as const) {
 		const render = flatten(clauseRule(negative));
-		nodes.set(kind, new AssembledBranch(kind, { ...render, annotations: { hoisted: true } }, { ...render, annotations: { hoisted: true } }));
+		nodes.set(kind, new AssembledBranch(kind, { ...render, annotations: { hoisted: true } }, { ...render, annotations: { hoisted: true } }, { kindEntries }));
 	}
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z_:]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z_:]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -68,13 +69,13 @@ function clauseResolverCall(src: string): string {
 
 describe('arm.default reaches the emitted resolver as a hoist target', () => {
 	it('passes the declared arm as the resolver call default', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(true) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeImplNodeMap(true, kindEntries))});
 
 		expect(clauseResolverCall(src)).toContain('"_impl_positive")');
 	});
 
 	it('emits a three-argument call when no arm is declared', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(false) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeImplNodeMap(false, kindEntries))});
 
 		const call = clauseResolverCall(src);
 		expect(call).not.toContain('"_impl_positive")');
@@ -82,7 +83,7 @@ describe('arm.default reaches the emitted resolver as a hoist target', () => {
 	});
 
 	it('never nominates an arm the author did not declare', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(true) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeImplNodeMap(true, kindEntries))});
 
 		expect(clauseResolverCall(src)).not.toContain('"_impl_negative")');
 	});
@@ -90,7 +91,7 @@ describe('arm.default reaches the emitted resolver as a hoist target', () => {
 	it('makes both arms string-capable through the bare-input closure', () => {
 		// Each arm forwards to a `trait` slot admitting the `identifier` pattern,
 		// so a bare string can reach either — which is why the default is needed.
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(true) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeImplNodeMap(true, kindEntries))});
 
 		const set = src.split('\n').find((l) => l.includes('_STRING_CAPABLE_BRANCHES')) ?? '';
 		expect(set).toContain('"_impl_positive"');
@@ -98,7 +99,7 @@ describe('arm.default reaches the emitted resolver as a hoist target', () => {
 	});
 
 	it('hoists a bare, kindless value into the default inline — no shared arm-picking helper exists', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(true) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeImplNodeMap(true, kindEntries))});
 
 		expect(src).not.toContain('function _pickArm(');
 		expect(src).toContain('typeof v === "object" && !Array.isArray(v)');
@@ -106,7 +107,7 @@ describe('arm.default reaches the emitted resolver as a hoist target', () => {
 	});
 
 	it('emits a clear ambiguity error when no default is declared', () => {
-		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(false) });
+		const src = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeImplNodeMap(false, kindEntries))});
 
 		expect(src).toContain('declare the arm (defaultArm())');
 	});

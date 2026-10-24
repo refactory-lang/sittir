@@ -2574,7 +2574,7 @@ export function resolveNamespaceExport_moduleExportName(
 	return _keywordOr(value, [['default', TSKindId.DefaultKeyword] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.DefaultKeyword], () =>
-				_resolveOne<T.Identifier | T.String | 'default'>(value, _K3, _super_string, 'string_double')
+				_resolveOne<T.Identifier | T.String | TSKindId.DefaultKeyword>(value, _K3, _super_string, 'string_double')
 			),
 			[['default', TSKindId.DefaultKeyword] as const]
 		)
@@ -2597,7 +2597,7 @@ export function coerceToNamespaceExport(input: T.NamespaceExport.Loose): ReturnT
 						configFieldOr(input, 'moduleExportName', () => input),
 						[TSKindId.DefaultKeyword],
 						() =>
-							_resolveOne<T.Identifier | T.String | 'default'>(
+							_resolveOne<T.Identifier | T.String | TSKindId.DefaultKeyword>(
 								configFieldOr(input, 'moduleExportName', () => input),
 								_K3,
 								_super_string,
@@ -2654,7 +2654,7 @@ export function resolveExportSpecifier_name(
 	return _keywordOr(value, [['default', TSKindId.DefaultKeyword] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.DefaultKeyword], () =>
-				_resolveOne<T.Identifier | T.String | 'default'>(value, _K3, _super_string, 'string_double')
+				_resolveOne<T.Identifier | T.String | TSKindId.DefaultKeyword>(value, _K3, _super_string, 'string_double')
 			),
 			[['default', TSKindId.DefaultKeyword] as const]
 		)
@@ -2667,7 +2667,7 @@ export function resolveExportSpecifier_alias(
 	return _keywordOr(value, [['default', TSKindId.DefaultKeyword] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.DefaultKeyword], () =>
-				_resolveOne<T.Identifier | T.String | 'default'>(value, _K3, _super_string, 'string_double')
+				_resolveOne<T.Identifier | T.String | TSKindId.DefaultKeyword>(value, _K3, _super_string, 'string_double')
 			),
 			[['default', TSKindId.DefaultKeyword] as const]
 		)
@@ -2891,7 +2891,7 @@ export function coerceToVariableDeclaration(
 		const kept = { terminator: held['_terminator'], ...options };
 		return (F.buildVariableDeclaration as (...args: unknown[]) => ReturnType<typeof F.buildVariableDeclaration>)(
 			kept,
-			...(_resolveMany<T.VariableDeclarator | '\n' | ';'>(
+			...(_resolveMany<T.VariableDeclarator | TSKindId.AutomaticSemicolon | TSKindId.Semi>(
 				children,
 				_K2,
 				_super_variable_declarator
@@ -2908,7 +2908,11 @@ export function coerceToVariableDeclaration(
 	})();
 	return (F.buildVariableDeclaration as (...args: unknown[]) => ReturnType<typeof F.buildVariableDeclaration>)(
 		options,
-		...(_resolveMany<T.VariableDeclarator | '\n' | ';'>(_elems, _K2, _super_variable_declarator) as readonly unknown[])
+		...(_resolveMany<T.VariableDeclarator | TSKindId.AutomaticSemicolon | TSKindId.Semi>(
+			_elems,
+			_K2,
+			_super_variable_declarator
+		) as readonly unknown[])
 	);
 }
 
@@ -2953,7 +2957,9 @@ export function resolveUsingDeclaration_kind(
 	value: T.UsingDeclaration.LooseConfig['kind']
 ): Admit<T.UsingDeclaration['_kind']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'using' | 'await using'>(value, 'using_declaration_arm')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm>(value, 'using_declaration_arm')
+		),
 		[['using', TSKindId.UsingKeyword] as const, ['await using', TSKindId.UsingDeclarationArm] as const]
 	);
 }
@@ -3011,7 +3017,7 @@ export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): Re
 	return (F.buildStatementBlock as (...args: unknown[]) => ReturnType<typeof F.buildStatementBlock>)(
 		options,
 		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Statement | '\n'>(_v, _K0, _K1)),
+			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Statement | TSKindId.AutomaticSemicolon>(_v, _K0, _K1)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as readonly unknown[])
 	);
@@ -3111,11 +3117,9 @@ export function resolveForStatement_initializer(
 ): Admit<T.ForStatement['_initializer']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.EmptyStatement], () =>
-			_resolveOne<T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | ';'>(
-				value,
-				_K8,
-				_K9
-			)
+			_resolveOne<
+				T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+			>(value, _K8, _K9)
 		),
 		[[';', TSKindId.EmptyStatement] as const]
 	);
@@ -3126,7 +3130,7 @@ export function resolveForStatement_condition(
 ): Admit<T.ForStatement['_condition']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.EmptyStatement], () =>
-			_resolveOne<T.Expression | T.SequenceExpression | ';'>(value, _K8, _K7)
+			_resolveOne<T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(value, _K8, _K7)
 		),
 		[[';', TSKindId.EmptyStatement] as const]
 	);
@@ -3373,7 +3377,9 @@ export function resolveDebuggerStatement_terminator(
 	value: T.DebuggerStatement.LooseConfig['terminator']
 ): Admit<T.DebuggerStatement['_terminator']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n' | ';'>(value, '_automatic_semicolon')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<TSKindId.AutomaticSemicolon | TSKindId.Semi>(value, '_automatic_semicolon')
+		),
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 }
@@ -3391,7 +3397,7 @@ export function coerceToDebuggerStatement(
 			_resolveKindEnumScalar(
 				configFieldOr(input, 'terminator', () => input),
 				() =>
-					_resolveOneLeaf<'\n' | ';'>(
+					_resolveOneLeaf<TSKindId.AutomaticSemicolon | TSKindId.Semi>(
 						configFieldOr(input, 'terminator', () => input),
 						'_automatic_semicolon'
 					)
@@ -4331,7 +4337,7 @@ export function resolveMemberExpression_object(
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Import], () =>
-				_resolveOne<T.Expression | T.PrimaryExpression | 'import'>(value, _K24, _K14)
+				_resolveOne<T.Expression | T.PrimaryExpression | TSKindId.Import>(value, _K24, _K14)
 			),
 			[['import', TSKindId.Import] as const]
 		)
@@ -4342,7 +4348,9 @@ export function resolveMemberExpression_optionalChain(
 	value: T.MemberExpression.LooseConfig['optionalChain']
 ): Admit<T.MemberExpression['_optional_chain']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'.' | '?.'>(value, 'optional_chain')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<TSKindId.Dot | TSKindId.OptionalChain>(value, 'optional_chain')
+		),
 		[['.', TSKindId.Dot] as const, ['?.', TSKindId.OptionalChain] as const]
 	);
 }
@@ -4416,7 +4424,7 @@ export function resolveLhsExpression_content(
 				_resolveOne<
 					| T.MemberExpression
 					| T.SubscriptExpression
-					| 'undefined'
+					| TSKindId.Undefined
 					| T.Identifier
 					| T.ObjectPattern
 					| T.ArrayPattern
@@ -4446,7 +4454,7 @@ export function coerceToLhsExpression(input: T.LhsExpression.Loose): ReturnType<
 							_resolveOne<
 								| T.MemberExpression
 								| T.SubscriptExpression
-								| 'undefined'
+								| TSKindId.Undefined
 								| T.Identifier
 								| T.ObjectPattern
 								| T.ArrayPattern
@@ -5078,7 +5086,7 @@ export function resolveDecoratorMemberExpression_object(
 	return _keywordOr(value, [['super', TSKindId.Super] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Super], () =>
-				_resolveOne<T.Identifier | 'super' | T.DecoratorMemberExpression>(value, _K32, _K33)
+				_resolveOne<T.Identifier | TSKindId.Super | T.DecoratorMemberExpression>(value, _K32, _K33)
 			),
 			[['super', TSKindId.Super] as const]
 		)
@@ -5228,7 +5236,7 @@ export function resolveRestPattern_lhsExpression(
 				_resolveOne<
 					| T.MemberExpression
 					| T.SubscriptExpression
-					| 'undefined'
+					| TSKindId.Undefined
 					| T.Identifier
 					| T.ObjectPattern
 					| T.ArrayPattern
@@ -5258,7 +5266,7 @@ export function coerceToRestPattern(input: T.RestPattern.Loose): ReturnType<type
 							_resolveOne<
 								| T.MemberExpression
 								| T.SubscriptExpression
-								| 'undefined'
+								| TSKindId.Undefined
 								| T.Identifier
 								| T.ObjectPattern
 								| T.ArrayPattern
@@ -5511,7 +5519,9 @@ export function resolveAsExpression_expression(
 export function resolveAsExpression_type(value: T.AsExpression.LooseConfig['type']): Admit<T.AsExpression['_type']> {
 	return _keywordOr(value, [['const', TSKindId.ConstKeyword] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.ConstKeyword], () => _resolveOne<'const' | T.Type>(value, _K40, _K41)),
+			_resolveKindEnum(value, [TSKindId.ConstKeyword], () =>
+				_resolveOne<TSKindId.ConstKeyword | T.Type>(value, _K40, _K41)
+			),
 			[['const', TSKindId.ConstKeyword] as const]
 		)
 	);
@@ -6109,7 +6119,10 @@ export function resolveRequiredParameter_accessibilityModifier(
 ): Admit<T.RequiredParameter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -6183,7 +6196,10 @@ export function resolveOptionalParameter_accessibilityModifier(
 ): Admit<T.OptionalParameter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -6210,7 +6226,9 @@ export function resolveOptionalParameter_name(
 ): Admit<T.OptionalParameter['_name']> {
 	return _keywordOr(value, [['this', TSKindId.This] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.This], () => _resolveOne<T.Pattern | 'this'>(value, _K45, _super_pattern)),
+			_resolveKindEnum(value, [TSKindId.This], () =>
+				_resolveOne<T.Pattern | TSKindId.This>(value, _K45, _super_pattern)
+			),
 			[['this', TSKindId.This] as const]
 		)
 	);
@@ -6390,11 +6408,9 @@ export function resolveTypeQueryMemberExpressionInTypeAnnotation_object(
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Import], () =>
-				_resolveOne<'import' | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation>(
-					value,
-					_K46,
-					_K47
-				)
+				_resolveOne<
+					TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation
+				>(value, _K46, _K47)
 			),
 			[['import', TSKindId.Import] as const]
 		)
@@ -6430,7 +6446,7 @@ export function resolveTypeQueryCallExpressionInTypeAnnotation_function(
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Import], () =>
-				_resolveOne<'import' | T.TypeQueryMemberExpressionInTypeAnnotation>(value, _K46, _K48)
+				_resolveOne<TSKindId.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(value, _K46, _K48)
 			),
 			[['import', TSKindId.Import] as const]
 		)
@@ -6464,7 +6480,7 @@ export function resolveAsserts_value(value: T.Asserts.LooseConfig['value']): Adm
 	return _keywordOr(value, [['this', TSKindId.This] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.This], () =>
-				_resolveOne<T.TypePredicate | T.Identifier | 'this'>(value, _K49, _K50)
+				_resolveOne<T.TypePredicate | T.Identifier | TSKindId.This>(value, _K49, _K50)
 			),
 			[['this', TSKindId.This] as const]
 		)
@@ -6486,7 +6502,7 @@ export function coerceToAsserts(input: T.Asserts.Loose): ReturnType<typeof F.bui
 						configFieldOr(input, 'value', () => input),
 						[TSKindId.This],
 						() =>
-							_resolveOne<T.TypePredicate | T.Identifier | 'this'>(
+							_resolveOne<T.TypePredicate | T.Identifier | TSKindId.This>(
 								configFieldOr(input, 'value', () => input),
 								_K49,
 								_K50
@@ -6865,17 +6881,17 @@ export function resolveTypePredicate_name(value: T.TypePredicate.LooseConfig['na
 					() =>
 						_resolveOne<
 							| T.Identifier
-							| 'this'
-							| 'any'
-							| 'number'
-							| 'boolean'
-							| 'string'
-							| 'symbol'
-							| 'unique symbol'
-							| 'void'
-							| 'unknown'
-							| 'never'
-							| 'object'
+							| TSKindId.This
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.Unique
+							| TSKindId.VoidKeyword
+							| TSKindId.UnknownKeyword
+							| TSKindId.NeverKeyword
+							| TSKindId.ObjectKeyword
 						>(value, _K55, _K2)
 				),
 				[
@@ -6945,7 +6961,7 @@ export function resolveTypeQueryMemberExpression_object(
 			_resolveKindEnum(value, [TSKindId.This], () =>
 				_resolveOne<
 					| T.Identifier
-					| 'this'
+					| TSKindId.This
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
@@ -6995,7 +7011,7 @@ export function resolveTypeQuerySubscriptExpression_object(
 			_resolveKindEnum(value, [TSKindId.This], () =>
 				_resolveOne<
 					| T.Identifier
-					| 'this'
+					| TSKindId.This
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
@@ -7046,16 +7062,16 @@ export function resolveTypeQuerySubscriptExpression_index(
 					],
 					() =>
 						_resolveOne<
-							| 'any'
-							| 'number'
-							| 'boolean'
-							| 'string'
-							| 'symbol'
-							| 'unique symbol'
-							| 'void'
-							| 'unknown'
-							| 'never'
-							| 'object'
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.Unique
+							| TSKindId.VoidKeyword
+							| TSKindId.UnknownKeyword
+							| TSKindId.NeverKeyword
+							| TSKindId.ObjectKeyword
 							| T.String
 							| T.Number
 						>(value, _K57, _K58, 'string_double')
@@ -7098,7 +7114,7 @@ export function resolveTypeQueryCallExpression_function(
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Import], () =>
-				_resolveOne<'import' | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
+				_resolveOne<TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
 					value,
 					_K59,
 					_K60
@@ -7136,7 +7152,7 @@ export function resolveTypeQueryInstantiationExpression_function(
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Import], () =>
-				_resolveOne<'import' | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
+				_resolveOne<TSKindId.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
 					value,
 					_K59,
 					_K60
@@ -7180,7 +7196,7 @@ export function resolveTypeQuery_expression(
 					| T.TypeQueryCallExpression
 					| T.TypeQueryInstantiationExpression
 					| T.Identifier
-					| 'this'
+					| TSKindId.This
 				>(value, _K49, _K61)
 			),
 			[['this', TSKindId.This] as const]
@@ -7209,7 +7225,7 @@ export function coerceToTypeQuery(input: T.TypeQuery.Loose): ReturnType<typeof F
 								| T.TypeQueryCallExpression
 								| T.TypeQueryInstantiationExpression
 								| T.Identifier
-								| 'this'
+								| TSKindId.This
 							>(
 								configFieldOr(input, 'expression', () => input),
 								_K49,
@@ -7332,12 +7348,15 @@ export function resolveLiteralType_content(
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.True, TSKindId.False, TSKindId.Null, TSKindId.Undefined], () =>
-					_resolveOne<T.LiteralTypeNegativeNumber | T.Number | T.String | 'true' | 'false' | 'null' | 'undefined'>(
-						value,
-						_K63,
-						_K64,
-						'string_double'
-					)
+					_resolveOne<
+						| T.LiteralTypeNegativeNumber
+						| T.Number
+						| T.String
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.Null
+						| TSKindId.Undefined
+					>(value, _K63, _K64, 'string_double')
 				),
 				[
 					['true', TSKindId.True] as const,
@@ -7369,7 +7388,15 @@ export function coerceToLiteralType(input: T.LiteralType.Loose): ReturnType<type
 						configFieldOr(input, 'content', () => input),
 						[TSKindId.True, TSKindId.False, TSKindId.Null, TSKindId.Undefined],
 						() =>
-							_resolveOne<T.LiteralTypeNegativeNumber | T.Number | T.String | 'true' | 'false' | 'null' | 'undefined'>(
+							_resolveOne<
+								| T.LiteralTypeNegativeNumber
+								| T.Number
+								| T.String
+								| TSKindId.True
+								| TSKindId.False
+								| TSKindId.Null
+								| TSKindId.Undefined
+							>(
 								configFieldOr(input, 'content', () => input),
 								_K63,
 								_K64,
@@ -7543,7 +7570,10 @@ export function resolvePropertySignature_accessibilityModifier(
 ): Admit<T.PropertySignature['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -9072,7 +9102,12 @@ export function resolveClassBodyMemberMethodSig_terminator(
 	value: T.ClassBodyMemberMethodSig.LooseConfig['terminator']
 ): Admit<T.ClassBodyMemberMethodSig['_terminator']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n' | ','>(value, '_function_signature_automatic_semicolon')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma>(
+				value,
+				'_function_signature_automatic_semicolon'
+			)
+		),
 		[['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const, [',', TSKindId.Comma] as const]
 	);
 }
@@ -9338,7 +9373,7 @@ export function resolveImportSpecifierAs_name(
 	return _keywordOr(value, [['default', TSKindId.DefaultKeyword] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.DefaultKeyword], () =>
-				_resolveOne<T.Identifier | T.String | 'default'>(value, _K3, _super_string, 'string_double')
+				_resolveOne<T.Identifier | T.String | TSKindId.DefaultKeyword>(value, _K3, _super_string, 'string_double')
 			),
 			[['default', TSKindId.DefaultKeyword] as const]
 		)
@@ -9430,7 +9465,7 @@ export function resolveCallExpressionCall_function(
 ): Admit<T.CallExpressionCall['_function']> {
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.Import], () => _resolveOne<T.Expression | 'import'>(value, _K24, _K14)),
+			_resolveKindEnum(value, [TSKindId.Import], () => _resolveOne<T.Expression | TSKindId.Import>(value, _K24, _K14)),
 			[['import', TSKindId.Import] as const]
 		)
 	);
@@ -10160,7 +10195,9 @@ export function resolveForHeaderUsingKind_kind(
 	value: T.ForHeaderUsingKind.LooseConfig['kind']
 ): Admit<T.ForHeaderUsingKind['_kind']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'using' | 'await using'>(value, 'using_declaration_arm')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<TSKindId.UsingKeyword | TSKindId.UsingDeclarationArm>(value, 'using_declaration_arm')
+		),
 		[['using', TSKindId.UsingKeyword] as const, ['await using', TSKindId.UsingDeclarationArm] as const]
 	);
 }
@@ -10281,7 +10318,10 @@ export function resolveSetterParameter_accessibilityModifier(
 ): Admit<T.SetterParameter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10308,7 +10348,7 @@ export function resolveSetterParameter_pattern(
 ): Admit<T.SetterParameter['_pattern']> {
 	return _keywordOr(value, [['this', TSKindId.This] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.This], () => _resolveOne<T.LhsExpression | 'this'>(value, _K45, _K81)),
+			_resolveKindEnum(value, [TSKindId.This], () => _resolveOne<T.LhsExpression | TSKindId.This>(value, _K45, _K81)),
 			[['this', TSKindId.This] as const]
 		)
 	);
@@ -10342,7 +10382,10 @@ export function resolveMethodDefinitionPlain_accessibilityModifier(
 ): Admit<T.MethodDefinitionPlain['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10453,7 +10496,10 @@ export function resolveMethodDefinitionGetter_accessibilityModifier(
 ): Admit<T.MethodDefinitionGetter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10522,7 +10568,10 @@ export function resolveMethodDefinitionSetter_accessibilityModifier(
 ): Admit<T.MethodDefinitionSetter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10591,7 +10640,10 @@ export function resolveMethodSignaturePlain_accessibilityModifier(
 ): Admit<T.MethodSignaturePlain['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10695,7 +10747,10 @@ export function resolveMethodSignatureGetter_accessibilityModifier(
 ): Admit<T.MethodSignatureGetter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10757,7 +10812,10 @@ export function resolveMethodSignatureSetter_accessibilityModifier(
 ): Admit<T.MethodSignatureSetter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10819,7 +10877,10 @@ export function resolveAbstractMethodSignaturePlain_accessibilityModifier(
 ): Admit<T.AbstractMethodSignaturePlain['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10902,7 +10963,10 @@ export function resolveAbstractMethodSignatureGetter_accessibilityModifier(
 ): Admit<T.AbstractMethodSignatureGetter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -10957,7 +11021,10 @@ export function resolveAbstractMethodSignatureSetter_accessibilityModifier(
 ): Admit<T.AbstractMethodSignatureSetter['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -11024,7 +11091,10 @@ export function resolvePublicFieldDefinitionPlain_accessibilityModifier(
 ): Admit<T.PublicFieldDefinitionPlain['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -11128,7 +11198,10 @@ export function resolvePublicFieldDefinitionAccessor_accessibilityModifier(
 ): Admit<T.PublicFieldDefinitionAccessor['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,
@@ -11280,7 +11353,10 @@ export function resolveReceiverParameterDeclaration_accessibilityModifier(
 ): Admit<T.ReceiverParameterDeclaration['_accessibility_modifier']> {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<'public' | 'private' | 'protected'>(value, 'accessibility_modifier')
+			_resolveOneLeaf<TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword>(
+				value,
+				'accessibility_modifier'
+			)
 		),
 		[
 			['public', TSKindId.PublicKeyword] as const,

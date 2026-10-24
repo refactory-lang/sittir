@@ -3,8 +3,7 @@ import { inlinesAtReference, type SymbolSource } from '../rule-patterns.ts';
 import {
 	assertPredictedKindEntries,
 	catalogRenames,
-	kindCatalogOf,
-	predictedKindsOf,
+	collectGeneratedKindEntries,
 	predictKindCatalog,
 	predictedSymbolSourceOf,
 	type GeneratedKindEntry
@@ -125,15 +124,9 @@ describe('predictKindCatalog supertype rows', () => {
 	});
 });
 
-describe('kindCatalogOf', () => {
-	const rules = { source: seq(sym('item'), str(';')), item: seq(str('i'), sym('word')), word: str('w') };
-	const predictedKinds = predictedKindsOf(grammarOf(rules));
-
-	it('without parser tables, is the predicted rows, ids included', () => {
-		expect(kindCatalogOf(undefined, { predictedKinds })).toEqual('entries' in predictedKinds ? predictedKinds.entries : []);
-	});
-	it('with parser tables, is the parser rows', () => {
-		const entries = kindCatalogOf({ kindIds: { item: 7 }, sourceArtifact: 'test' }, { predictedKinds });
+describe('collectGeneratedKindEntries', () => {
+	it('is the rows of the tables it is given', () => {
+		const entries = collectGeneratedKindEntries({ kindIds: { item: 7 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' });
 		expect(entries).toEqual([expect.objectContaining({ kind: 'item', id: 7 })]);
 	});
 });

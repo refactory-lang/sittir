@@ -16,7 +16,7 @@ export type BuiltFromText =
 	| { readonly form: 'stored'; readonly kind: string; readonly node: AssembledPattern; readonly pattern: RegExp; readonly guard: LeafGuard }
 	| { readonly form: 'alias'; readonly kind: string; readonly node: AssembledAlias; readonly leaf: AliasLeaf; readonly pattern: RegExp; readonly guard: LeafGuard };
 
-export function builtFromText(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): BuiltFromText[] {
+export function builtFromText(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): BuiltFromText[] {
 	const kinds: BuiltFromText[] = [];
 	const referenced = referencedKinds(nodeMap);
 	for (const [kind, node] of nodeMap.nodes) {
@@ -47,6 +47,6 @@ export function builtFromText(nodeMap: NodeMap, kindEntries: readonly KindEnumEn
 	return kinds;
 }
 
-export function storedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): Extract<BuiltFromText, { form: 'stored' }>[] {
+export function storedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): Extract<BuiltFromText, { form: 'stored' }>[] {
 	return builtFromText(nodeMap, kindEntries).filter((entry): entry is Extract<BuiltFromText, { form: 'stored' }> => entry.form === 'stored');
 }

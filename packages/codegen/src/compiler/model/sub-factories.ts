@@ -362,7 +362,7 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 export function emittedElementsSeats(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): readonly FlattenSeat[] {
 	return elementsSeatOf(node, nodeMap).filter(
 		(seat) => classifyFactoryEmission(seat.group.kind, seat.group, { nodeMap, kindEntries }) === 'emit'

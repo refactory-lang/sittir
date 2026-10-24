@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { soleSlotFacts } from '../../emitters/shared.ts';
@@ -12,7 +12,7 @@ let nodeMap: NodeMap;
 
 beforeAll(async () => {
 	const raw = await evaluatePackage(grammarPackage('rust'), { base: true });
-	const linked = link(raw);
+	const linked = linkPredicted(raw);
 	const normalized = normalizeGrammar(linked);
 	nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record

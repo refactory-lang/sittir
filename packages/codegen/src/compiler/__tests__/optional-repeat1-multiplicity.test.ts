@@ -11,7 +11,7 @@ import type { Rule } from '../../types/rule.ts';
 // Pre-process raw rules through flatten so deriveSlotsRaw receives
 // canonical (wrapper-free) input.
 function deriveChildren(rule: Rule<'link'>) {
-	return deriveSlots(flatten(rule)).filter((s) => s.isUnnamed);
+	return deriveSlots(flatten(rule), { kindEntries: [] }).filter((s) => s.isUnnamed);
 }
 
 /**

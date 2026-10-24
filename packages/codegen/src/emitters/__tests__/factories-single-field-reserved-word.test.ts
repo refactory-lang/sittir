@@ -14,15 +14,16 @@
  * than escaped.
  */
 
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { FIELD, SEQ, SYMBOL, PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
-function makeReservedWordSingleFieldNodeMap() {
+function makeReservedWordSingleFieldNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	// A single-field branch whose sole field is named `arguments` — a JS
 	// reserved word — mirroring python's `argument_list` shape once its
 	// predicate list is hoisted into a single-slot visible group.
@@ -32,16 +33,16 @@ function makeReservedWordSingleFieldNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const parentRender = flatten(parentRule);
-	nodes.set('call', new AssembledBranch('call', parentRender, parentRender));
-	nodes.set('expr', new AssembledPattern('expr', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('call', new AssembledBranch('call', parentRender, parentRender, { kindEntries }));
+	nodes.set('expr', new AssembledPattern('expr', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	const nodeMap = makeNodeMapWith(nodes);
 	return nodeMap;
 }
 
 describe('factories emitter — single-field factory direct-value parameter', () => {
 	it('spells the parameter `value`, never the slot name', () => {
-		const nodeMap = makeReservedWordSingleFieldNodeMap();
-		const emitted = emitFactories({ grammar: 'test', nodeMap });
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeReservedWordSingleFieldNodeMap(kindEntries));
+		const emitted = emitFactories({ generatedIdTables, grammar: 'test', nodeMap });
 
 		// `call`'s sole slot holds a pattern leaf, which a strict builder
 		// does not build from text: there is no forwarding wrapper, and the

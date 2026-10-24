@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { evaluate } from '../../dsl/evaluate.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, FactoryInlineUnnestableError } from '../assemble.ts';
 import { assertCompilation } from '../compile.ts';
@@ -23,9 +23,9 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 	try {
 		const diagnostics = new DiagnosticSink();
 		const raw = await evaluate(entry, NO_FILE_TYPES);
-		const linked = link(raw, { diagnostics });
+		const linked = linkPredicted(raw, { diagnostics });
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
+		const nodeMap = assemble(AssembleCtx.from(normalized, diagnostics));
 		assertCompilation({
 			grammar: 'fi',
 			package: grammarPackage('fi'),
@@ -33,6 +33,7 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 			linked,
 			normalized,
 			nodeMap,
+			generatedIdTables: linked.generatedIdTables,
 			diagnostics,
 			slotGroupingDiagnostics: [],
 			grammarDiagnostics: [],
@@ -69,7 +70,7 @@ describe('factoryInline', () => {
 		try {
 			const raw = await evaluate(entry, NO_FILE_TYPES);
 			expect(raw.factoryInline).toEqual(['in_path']);
-			expect(link(raw).factoryInline).toEqual(new Set(['in_path']));
+			expect(linkPredicted(raw).factoryInline).toEqual(new Set(['in_path']));
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

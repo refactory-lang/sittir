@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 
@@ -23,7 +23,7 @@ const kRule = (body: string) => `source: ($) => repeat($.k), k: ($) => seq('k', 
 
 const run = async (body: string) => {
 	const raw = await evaluateTempGrammar({ extras: '', rules: kRule(body) }, '');
-	const normalized = normalizeGrammar(link(raw));
+	const normalized = normalizeGrammar(linkPredicted(raw));
 	const map = assemble(AssembleCtx.from(normalized));
 	const node = map.nodes.get('k') as unknown as { variantChildKinds?: unknown } | undefined;
 	return {

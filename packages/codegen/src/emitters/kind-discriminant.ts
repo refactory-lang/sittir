@@ -34,16 +34,10 @@ export function collectCatalogKinds(generatedIdTables: GeneratedIdTables): reado
 	return [...toIdMap(generatedIdTables.kindIds).keys()];
 }
 
-export function collectKindEntries(
-	allKinds: readonly string[],
-	nodeMap: NodeMap,
-	generatedIdTables: GeneratedIdTables
-): KindEnumEntry[] {
-	const fullCatalog = toCatalogMap(generatedIdTables.kindIds);
+export function collectKindEntries(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): KindEnumEntry[] {
 	const rows: Omit<KindEnumEntry, 'member'>[] = [];
-	for (const kind of allKinds) {
-		const row = fullCatalog.get(kind);
-		if (row === undefined || row.id === undefined) continue;
+	for (const [kind, row] of toCatalogMap(generatedIdTables.kindIds)) {
+		if (row.id === undefined) continue;
 		const literalRule = row.parser?.literalRule || undefined;
 		const symbolName = symbolNameIsNotable(row.parser?.symbolName, kind, literalRule) ? row.parser?.symbolName : undefined;
 		const literalText = row.parser?.literalText;
@@ -80,29 +74,22 @@ export function findKindEntryForLiteral(
 	return findEntryForLiteralText(kindEntries, literalText);
 }
 
-export function hasCatalogEntry(kindEntries: readonly KindEnumEntry[] | undefined, kind: string): boolean {
-	if (!kindEntries) return false;
+export function hasCatalogEntry(kindEntries: readonly KindEnumEntry[], kind: string): boolean {
 	return findKindEntry(kindEntries, kind) !== undefined;
 }
 
-export function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	return kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined;
+export function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[]): boolean {
+	return findOwnKindEntry(kindEntries, kind) !== undefined;
 }
 
-export function fixedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): (readonly [kind: string, text: string])[] {
+export function fixedTextKinds(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): (readonly [kind: string, text: string])[] {
 	return [...nodeMap.nodes].flatMap(([kind, node]) => {
 		const text = kindIdText(node);
 		return text !== undefined && hasKindId(kind, kindEntries) ? [[kind, text] as const] : [];
 	});
 }
 
-export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
-	if (!kindEntries) {
-		throw new Error(
-			`kindDiscriminantExpr: kindEntries is required (KindID runtime migration, 2026-04-30). ` +
-				`Pass loadGeneratedIdTables(...) into the emitter so TSKindId can be emitted from real metadata.`
-		);
-	}
+export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
 	const entry = findKindEntry(kindEntries, kind);
 	if (!entry) {
 		throw new Error(
@@ -146,7 +133,6 @@ interface CatalogRow {
 }
 
 function toCatalogMap(ids: GeneratedIdTables['kindIds']): Map<string, CatalogRow> {
-	if (!ids) return new Map();
 	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
 	const result = new Map<string, CatalogRow>();
 	for (const [name, value] of entries) {

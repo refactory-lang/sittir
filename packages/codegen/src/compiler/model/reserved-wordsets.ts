@@ -13,7 +13,7 @@ export function holdsWord(slot: AssembledNonterminal, nodeMap: NodeMap): boolean
 	);
 }
 
-export function stampReservedWordsets(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): void {
+export function stampReservedWordsets(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): void {
 	const placedUnder = new Map<string, Set<string>>();
 	for (const node of nodeMap.nodes.values()) {
 		if (node instanceof AssembledAlias) continue;
@@ -35,7 +35,7 @@ export function stampReservedWordsets(nodeMap: NodeMap, kindEntries: readonly Ki
 	}
 	const leafIds = [...holderIds].sort();
 	const relaxed = new Set(nodeMap.relaxedLiterals ?? []);
-	nodeMap.wordLeafReserved = reservedWordsAdmittedIn(nodeMap.reserved, leafIds, kindEntries ?? []).filter((text) => !relaxed.has(text));
+	nodeMap.wordLeafReserved = reservedWordsAdmittedIn(nodeMap.reserved, leafIds, kindEntries).filter((text) => !relaxed.has(text));
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
 			slot.checksReserved =

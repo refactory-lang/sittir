@@ -10,6 +10,7 @@
  *   of the hardcoded `false`/literal every other list-shaped slot still uses.
  */
 
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import { emittedTemplates } from './support/emitted-templates.ts';
 import { slot } from '../render-body.ts';
@@ -19,14 +20,13 @@ import { preference } from '../../dsl/primitives/preference.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
-	AssembledSupertype,
 	AssembledList,
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
 import type { SeqRule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { layoutNodes, makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { emitRenderModule } from '../render-module.ts';
 
@@ -37,19 +37,19 @@ import { emitRenderModule } from '../render-module.ts';
 const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 
-function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }) {
+function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }, kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, { kindEntries }, {
 			separatorRule: opts.separatorRule,
 			kindEntries: collectGeneratedKindEntries(GENERATED_ID_TABLES),
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
 		})
 	);
-	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('_layout', new AssembledSupertype('_layout', { type: 'SUPERTYPE', name: '_layout', subtypes: [] } as never, []));
+	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	for (const [kind, node] of layoutNodes(kindEntries)) nodes.set(kind, node);
 	return makeNodeMapWith(nodes);
 }
 
@@ -62,7 +62,7 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
  * fields on other modelTypes (the exact mis-scoping class PR-T's original,
  * reverted Task 4 attempt had).
  */
-function makeBranchWithListFieldNodeMap() {
+function makeBranchWithListFieldNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -78,13 +78,13 @@ function makeBranchWithListFieldNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const parentRender = flatten(parentRule);
-	nodes.set('branch_with_list_field', new AssembledBranch('branch_with_list_field', parentRender, parentRender));
-	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('_layout', new AssembledSupertype('_layout', { type: 'SUPERTYPE', name: '_layout', subtypes: [] } as never, []));
+	nodes.set('branch_with_list_field', new AssembledBranch('branch_with_list_field', parentRender, parentRender, { kindEntries }));
+	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	for (const [kind, node] of layoutNodes(kindEntries)) nodes.set(kind, node);
 	return makeNodeMapWith(nodes);
 }
 
-const GENERATED_ID_TABLES: GeneratedIdTables = {
+const GENERATED_ID_TABLES: GeneratedIdTables = { folds: new Map(),
 	kindIds: {
 		branch_with_list_field: 5,
 		member_list: 1,
@@ -133,7 +133,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
 
 		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
@@ -149,7 +149,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
@@ -163,7 +163,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' } }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).nodeRs.contents;
 
 		expect(emitted).not.toContain('pub separator_kind:');
@@ -186,7 +186,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
@@ -215,7 +215,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({ member_list: slot('member') }), nodeMap, GENERATED_ID_TABLES, {
 			renderRules: { rules: {} },
 			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
@@ -232,7 +232,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, leading: 'mandatory', trailing: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
@@ -253,7 +253,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' } }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
@@ -274,7 +274,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
@@ -293,7 +293,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ member_list: slot('member') }),
@@ -306,7 +306,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 	});
 
 	it("leaves a plain branch kind's list-shaped field hardcoded leading:false/trailing:false and a plain literal separator (guard scoping)", () => {
-		const nodeMap = makeBranchWithListFieldNodeMap();
+		const nodeMap = withGeneratedIdTables((kindEntries) => makeBranchWithListFieldNodeMap(kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ branch_with_list_field: slot('items') }),

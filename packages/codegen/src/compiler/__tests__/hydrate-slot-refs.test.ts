@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { evaluate } from '../../dsl/evaluate.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from '../assemble.ts';
 import { predictionRecords } from '../diagnostics/grammar-diagnostics.ts';
@@ -39,19 +39,19 @@ describe('dangling internal refs', () => {
 		expect(predictionRecords(raw)).toEqual([
 			expect.objectContaining({ code: 'dangling-internal-ref', canProceed: false, details: { targetName: 'ghost' } })
 		]);
-		expect(() => link(raw)).toThrow(/no predicted symbol table/);
+		expect(() => linkPredicted(raw)).toThrow(/no id tables can be predicted/);
 	});
 
 	it('hydrate throws on a reference to a kind absent from the node map, naming it', async () => {
 		const raw = await evaluateSource(containerGrammar('$.visible, $.other'));
-		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(raw))));
 		nodeMap.nodes.delete('other');
 		expect(() => hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), grammar: 'dr' })).toThrow(/'other'/);
 	});
 
 	it('hydrate throws on a variant whose owner is absent from the node map, naming the owner', async () => {
 		const raw = await evaluateSource(containerGrammar('$.visible, $.other'));
-		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(raw))));
 		const container = nodeMap.nodes.get('_container') as AssembledSupertype;
 		Object.assign(container.subtypes[0]!, { variant: 'seen', variantOf: 'ghost' });
 		expect(() => hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), grammar: 'dr' })).toThrow(/'ghost'/);
@@ -61,7 +61,7 @@ describe('dangling internal refs', () => {
 
 	it('hydrate skips a kind assemble dropped with a shape record', async () => {
 		const raw = await evaluateSource(containerGrammar('$.visible, $.other'));
-		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(raw))));
 		nodeMap.nodes.delete('other');
 		expect(() =>
 			hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), reportedAbsentNames: new Set(['other']), grammar: 'dr' })
