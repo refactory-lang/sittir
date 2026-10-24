@@ -12,7 +12,7 @@
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan, sourceSpans } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
-import { nodeText, spanOf } from '@sittir/common/utils';
+import { nodeText, slotSeparatorOf, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
@@ -108,6 +108,7 @@ export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode): string[] {
 	};
 
 	const bKeys = new Set(extractSlotKeys(b));
+	if (slotSeparatorOf(a) === (b as unknown as Record<string, unknown>)['_separator']) bKeys.delete('separator');
 	const aKeysMatchingB = extractSlotKeys(a).filter((k) => bKeys.has(k));
 
 	// One-way check: fields factory declared that from() didn't fill in.
