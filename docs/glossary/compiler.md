@@ -4756,7 +4756,7 @@ The symbol's position in the grammar's lexical precedence order (`collectLexical
 /** Parser-origin metadata; absent when the kind has no parser symbol. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::externalRoles`
+### `packages/codegen/src/compiler/types.ts::RawGrammar::externalRoles`
 
 ```text
 /**
@@ -5003,7 +5003,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::topLevelAliasBodies`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::topLevelAliasBodies`
 
 ```text
 /**
@@ -5023,7 +5023,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::parentAliasedKinds`
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::parentAliasedKinds`
 
 ```text
 /**
