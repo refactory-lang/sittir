@@ -1,3 +1,5 @@
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { describe, it, expect } from 'vitest';
 import { AssembledBranch } from '../../compiler/model/node-map.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -40,25 +42,25 @@ describe('assertUnambiguous', () => {
 });
 
 describe('interiorOf', () => {
-	const lexed = (rule: object): AssembledBranch => {
+	const lexed = (rule: object, kindEntries: readonly GeneratedKindEntry[]): AssembledBranch => {
 		const flat = { ...(flatten(rule as never) as object), lexed: true } as never;
-		return new AssembledBranch('shape', flat, flat);
+		return new AssembledBranch('shape', flat, flat, { kindEntries });
 	};
 
 	it('fails closed, naming the kind, when a lexed kind is not a sequence', () => {
-		const node = lexed({ type: CHOICE, members: [{ type: STRING, value: 'a' }, { type: STRING, value: 'b' }] });
+		const node = withGeneratedIdTablesNode((kindEntries) => lexed({ type: CHOICE, members: [{ type: STRING, value: 'a' }, { type: STRING, value: 'b' }] }, kindEntries));
 		expect(() => interiorOf(node)).toThrow(/'shape' is a lexed kind but its render rule is a CHOICE/);
 	});
 
 	it('fails closed, naming the kind and the member, when a member is neither template text nor a slot', () => {
-		const node = lexed({
+		const node = withGeneratedIdTablesNode((kindEntries) => lexed({
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '#' },
 				{ type: FIELD, name: 'content', content: { type: PATTERN, value: '[a-z]+' } },
 				{ type: PATTERN, value: '[0-9]' }
 			]
-		});
+		}, kindEntries));
 		expect(() => interiorOf(node)).toThrow(/'shape' is a lexed kind but member of type PATTERN is neither template text nor a slot/);
 	});
 });

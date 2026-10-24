@@ -6,23 +6,22 @@ import {
 	loadNodeModel,
 	loadScopedFactoryMap,
 	loadSlotAccessorOf,
+	loadStorageKindNameFromId,
 	materialize,
 	readNodeOf,
 	walkWrappedTree,
 	type TypedNode
 } from '../src/validate/common.ts';
-import { importGrammarModule, requireGrammarModule } from '../src/grammar-internals.ts';
+import { requireGrammarModule } from '../src/grammar-internals.ts';
 
 async function irBuild(grammar: string, source: string, rootKind: string) {
-	const types = await importGrammarModule(grammar, 'types.ts');
-	if (types === undefined) throw new Error(`${grammar} has no types module`);
-	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id);
+	const kindNameFromId = await loadStorageKindNameFromId(grammar);
 	const model = await loadNodeModel(grammar);
 	const factoryMap = await loadScopedFactoryMap(grammar, (await requireGrammarModule(grammar, 'factories/raw.ts'))._factoryMap);
 	const surface = await loadIrSurface(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const readNode = await readNodeOf(grammar);
-	if (surface === undefined || readNode === null) throw new Error(`${grammar} has no ir surface or wrap module`);
+	if (surface === undefined) throw new Error(`${grammar} has no ir surface`);
 	const tree = await buildReadHandle(grammar, source);
 	const artifacts = { factoryMap, factoryShapes: model.factoryShapes, fieldAliasMap: model.fieldAliasMap, factoryFields: model.factoryFields, factorySlots: model.factorySlots, surface };
 	const built = buildFactoryNodeFromReference(materialize(readNode(tree), accessorOf), rootKind, artifacts, { kindNameFromId, tree, placeText: true });

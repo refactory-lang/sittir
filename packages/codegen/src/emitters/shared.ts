@@ -650,11 +650,7 @@ export function kindEnumAltIdPairs(
 	return out;
 }
 
-export function resolveFieldStorageInfo(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap,
-	_kindEntries?: readonly KindEnumEntry[]
-): FieldStorageInfo {
+export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	field.storageInfo ??= classifyFieldStorageInfo(field, nodeMap);
 	return field.storageInfo;
 }
@@ -948,10 +944,10 @@ export function fixedTextEntryOf(
 export function kindEnumTextEntries(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): KindEnumTextEntry[] {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-	if ((storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') || !kindEntries) return [];
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	if (storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') return [];
 	const byText: KindEnumTextEntry[] = [];
 	for (const value of f.values) {
 		const fixed = fixedTextEntryOf(value, nodeMap, kindEntries);
@@ -982,12 +978,12 @@ export function kindEnumTextEntries(
 export function emptyDefaultOf(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	factoryNs = ''
 ): string | null {
 	if (!isRequired(field) || !slotFilledWhenOmitted(field, nodeMap)) return null;
 	const sole = field.values[0]!;
-	const fixed = kindEntries === undefined ? undefined : fixedTextEntryOf(sole, nodeMap, kindEntries);
+	const fixed = fixedTextEntryOf(sole, nodeMap, kindEntries);
 	if (fixed !== undefined) return `${fixed.discriminant} as const`;
 	if (!isNodeRef(sole) || sole.storageKindId === undefined) return null;
 	const target = nodeMap.nodeByKindId.get(sole.storageKindId);
@@ -997,7 +993,7 @@ export function emptyDefaultOf(
 export function assertOmittedSlotsFilled(
 	node: { readonly kind: string; readonly configSlots: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): void {
 	for (const slot of node.configSlots) {
 		if (isRequired(slot) && slotFilledWhenOmitted(slot, nodeMap) && emptyDefaultOf(slot, nodeMap, kindEntries) === null) {
@@ -1055,7 +1051,7 @@ export function classifyFactoryShape(
 }
 
 export interface ParserSymbolDispatchContext {
-	kindEntries?: readonly KindEnumEntry[];
+	kindEntries: readonly KindEnumEntry[];
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 }
@@ -1064,7 +1060,7 @@ export type ParserSymbolEmission = 'emit' | 'skip-inline-kind' | 'skip-synthesiz
 
 export function classifyParserSymbolEmission(kind: string, context: ParserSymbolDispatchContext): ParserSymbolEmission {
 	const { kindEntries, inlineKinds, synthesizedKinds } = context;
-	if (!kindEntries || hasCatalogEntry(kindEntries, kind)) return 'emit';
+	if (hasCatalogEntry(kindEntries, kind)) return 'emit';
 	if (inlineKinds?.includes(kind)) return 'skip-inline-kind';
 	if (synthesizedKinds?.has(kind)) return 'skip-synthesized-kind';
 	return 'skip-missing-parser-symbol';
@@ -1098,8 +1094,7 @@ export type FactoryEmission =
 	| 'skip-hidden-keyword-literal'
 	| 'skip-no-factory-name';
 
-export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	if (!kindEntries) return JSON.stringify(node.kind);
+export function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[]): string {
 	const members: string[] = [];
 	for (const value of node.values) {
 		const rec = node.resolvedByText.get(value);
@@ -1165,7 +1160,7 @@ export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: 
 
 export interface FromDispatchContext {
 	nodeMap: NodeMap;
-	kindEntries?: readonly KindEnumEntry[];
+	kindEntries: readonly KindEnumEntry[];
 }
 
 export type FromEmission =
@@ -1205,13 +1200,13 @@ export function isWrapChildrenKind(
 	kind: string,
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): boolean {
 	const compound = node instanceof AbstractAssembledCompound;
 	if (!compound && !(node instanceof AssembledList)) return false;
 	if (!node.rawFactoryName) return false;
 	if (node.surfaceHidden && !node.userFacing) return false;
-	if (!kindEntries || !hasCatalogEntry(kindEntries, kind)) return false;
+	if (!hasCatalogEntry(kindEntries, kind)) return false;
 	return node instanceof AssembledList || classifyChildFactorySurface(node, nodeMap) !== null;
 }
 

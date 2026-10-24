@@ -2713,21 +2713,21 @@ export function resolveTokenBindingPattern_type(
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () =>
 			_resolveOneLeaf<
-				| 'block'
-				| 'expr'
-				| 'expr_2021'
-				| 'ident'
-				| 'item'
-				| 'lifetime'
-				| 'literal'
-				| 'meta'
-				| 'pat'
-				| 'pat_param'
-				| 'path'
-				| 'stmt'
-				| 'tt'
-				| 'ty'
-				| 'vis'
+				| TSKindId.BlockKeyword
+				| TSKindId.ExprKeyword
+				| TSKindId.Expr2021Keyword
+				| TSKindId.IdentKeyword
+				| TSKindId.ItemKeyword
+				| TSKindId.LifetimeKeyword
+				| TSKindId.LiteralKeyword
+				| TSKindId.MetaKeyword
+				| TSKindId.PatKeyword
+				| TSKindId.PatParamKeyword
+				| TSKindId.PathKeyword
+				| TSKindId.StmtKeyword
+				| TSKindId.TtKeyword
+				| TSKindId.TyKeyword
+				| TSKindId.VisKeyword
 			>(value, 'fragment_specifier')
 		),
 		[
@@ -3000,100 +3000,100 @@ export function resolveNonSpecialToken_content(
 						_resolveOne<
 							| T.Literal
 							| T.Identifier
-							| 'mut'
-							| 'self'
-							| 'super'
-							| 'crate'
-							| 'u8'
-							| 'i8'
-							| 'u16'
-							| 'i16'
-							| 'u32'
-							| 'i32'
-							| 'u64'
-							| 'i64'
-							| 'u128'
-							| 'i128'
-							| 'isize'
-							| 'usize'
-							| 'f32'
-							| 'f64'
-							| 'bool'
-							| 'str'
-							| 'char'
-							| '+'
-							| '-'
-							| '*'
-							| '/'
-							| '%'
-							| '^'
-							| '!'
-							| '&'
-							| '|'
-							| '&&'
-							| '||'
-							| '<<'
-							| '>>'
-							| '+='
-							| '-='
-							| '*='
-							| '/='
-							| '%='
-							| '^='
-							| '&='
-							| '|='
-							| '<<='
-							| '>>='
-							| '='
-							| '=='
-							| '!='
-							| '>'
-							| '<'
-							| '>='
-							| '<='
-							| '@'
-							| '_'
-							| '.'
-							| '..'
-							| '...'
-							| '..='
-							| ','
-							| ';'
-							| ':'
-							| '::'
-							| '->'
-							| '=>'
-							| '#'
-							| '?'
-							| "'"
-							| 'as'
-							| 'async'
-							| 'await'
-							| 'break'
-							| 'const'
-							| 'continue'
-							| 'default'
-							| 'enum'
-							| 'fn'
-							| 'for'
-							| 'gen'
-							| 'if'
-							| 'impl'
-							| 'let'
-							| 'loop'
-							| 'match'
-							| 'mod'
-							| 'pub'
-							| 'return'
-							| 'static'
-							| 'struct'
-							| 'trait'
-							| 'type'
-							| 'union'
-							| 'unsafe'
-							| 'use'
-							| 'where'
-							| 'while'
+							| TSKindId.MutableSpecifier
+							| TSKindId.Self
+							| TSKindId.Super
+							| TSKindId.Crate
+							| TSKindId.U8Keyword
+							| TSKindId.I8Keyword
+							| TSKindId.U16Keyword
+							| TSKindId.I16Keyword
+							| TSKindId.U32Keyword
+							| TSKindId.I32Keyword
+							| TSKindId.U64Keyword
+							| TSKindId.I64Keyword
+							| TSKindId.U128Keyword
+							| TSKindId.I128Keyword
+							| TSKindId.IsizeKeyword
+							| TSKindId.UsizeKeyword
+							| TSKindId.F32Keyword
+							| TSKindId.F64Keyword
+							| TSKindId.BoolKeyword
+							| TSKindId.StrKeyword
+							| TSKindId.CharKeyword
+							| TSKindId.Plus
+							| TSKindId.Dash
+							| TSKindId.Star
+							| TSKindId.Slash
+							| TSKindId.Percent
+							| TSKindId.Caret
+							| TSKindId.Bang
+							| TSKindId.Amp
+							| TSKindId.Pipe
+							| TSKindId.AmpAmp
+							| TSKindId.PipePipe
+							| TSKindId.LtLt
+							| TSKindId.GtGt
+							| TSKindId.PlusEq
+							| TSKindId.DashEq
+							| TSKindId.StarEq
+							| TSKindId.SlashEq
+							| TSKindId.PercentEq
+							| TSKindId.CaretEq
+							| TSKindId.AmpEq
+							| TSKindId.PipeEq
+							| TSKindId.LtLtEq
+							| TSKindId.GtGtEq
+							| TSKindId.Eq
+							| TSKindId.EqEq
+							| TSKindId.BangEq
+							| TSKindId.Gt
+							| TSKindId.Lt
+							| TSKindId.GtEq
+							| TSKindId.LtEq
+							| TSKindId.At
+							| TSKindId.Underscore
+							| TSKindId.Dot
+							| TSKindId.DotDot
+							| TSKindId.DotDotDot
+							| TSKindId.DotDotEq
+							| TSKindId.Comma
+							| TSKindId.Semi
+							| TSKindId.Colon
+							| TSKindId.ColonColon
+							| TSKindId.DashGt
+							| TSKindId.EqGt
+							| TSKindId.Pound
+							| TSKindId.Qmark
+							| TSKindId.Squote
+							| TSKindId.AsKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
+							| TSKindId.BreakKeyword
+							| TSKindId.ConstKeyword
+							| TSKindId.ContinueKeyword
+							| TSKindId.DefaultKeyword
+							| TSKindId.EnumKeyword
+							| TSKindId.FnKeyword
+							| TSKindId.ForKeyword
+							| TSKindId.GenKeyword
+							| TSKindId.IfKeyword
+							| TSKindId.ImplKeyword
+							| TSKindId.LetKeyword
+							| TSKindId.LoopKeyword
+							| TSKindId.MatchKeyword
+							| TSKindId.ModKeyword
+							| TSKindId.PubKeyword
+							| TSKindId.ReturnKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.StructKeyword
+							| TSKindId.TraitKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.UnionKeyword
+							| TSKindId.UnsafeKeyword
+							| TSKindId.UseKeyword
+							| TSKindId.WhereKeyword
+							| TSKindId.WhileKeyword
 						>(value, _K6, _K7)
 				),
 				[
@@ -3361,100 +3361,100 @@ export function coerceToNonSpecialToken(input: T.NonSpecialToken.Loose): ReturnT
 							_resolveOne<
 								| T.Literal
 								| T.Identifier
-								| 'mut'
-								| 'self'
-								| 'super'
-								| 'crate'
-								| 'u8'
-								| 'i8'
-								| 'u16'
-								| 'i16'
-								| 'u32'
-								| 'i32'
-								| 'u64'
-								| 'i64'
-								| 'u128'
-								| 'i128'
-								| 'isize'
-								| 'usize'
-								| 'f32'
-								| 'f64'
-								| 'bool'
-								| 'str'
-								| 'char'
-								| '+'
-								| '-'
-								| '*'
-								| '/'
-								| '%'
-								| '^'
-								| '!'
-								| '&'
-								| '|'
-								| '&&'
-								| '||'
-								| '<<'
-								| '>>'
-								| '+='
-								| '-='
-								| '*='
-								| '/='
-								| '%='
-								| '^='
-								| '&='
-								| '|='
-								| '<<='
-								| '>>='
-								| '='
-								| '=='
-								| '!='
-								| '>'
-								| '<'
-								| '>='
-								| '<='
-								| '@'
-								| '_'
-								| '.'
-								| '..'
-								| '...'
-								| '..='
-								| ','
-								| ';'
-								| ':'
-								| '::'
-								| '->'
-								| '=>'
-								| '#'
-								| '?'
-								| "'"
-								| 'as'
-								| 'async'
-								| 'await'
-								| 'break'
-								| 'const'
-								| 'continue'
-								| 'default'
-								| 'enum'
-								| 'fn'
-								| 'for'
-								| 'gen'
-								| 'if'
-								| 'impl'
-								| 'let'
-								| 'loop'
-								| 'match'
-								| 'mod'
-								| 'pub'
-								| 'return'
-								| 'static'
-								| 'struct'
-								| 'trait'
-								| 'type'
-								| 'union'
-								| 'unsafe'
-								| 'use'
-								| 'where'
-								| 'while'
+								| TSKindId.MutableSpecifier
+								| TSKindId.Self
+								| TSKindId.Super
+								| TSKindId.Crate
+								| TSKindId.U8Keyword
+								| TSKindId.I8Keyword
+								| TSKindId.U16Keyword
+								| TSKindId.I16Keyword
+								| TSKindId.U32Keyword
+								| TSKindId.I32Keyword
+								| TSKindId.U64Keyword
+								| TSKindId.I64Keyword
+								| TSKindId.U128Keyword
+								| TSKindId.I128Keyword
+								| TSKindId.IsizeKeyword
+								| TSKindId.UsizeKeyword
+								| TSKindId.F32Keyword
+								| TSKindId.F64Keyword
+								| TSKindId.BoolKeyword
+								| TSKindId.StrKeyword
+								| TSKindId.CharKeyword
+								| TSKindId.Plus
+								| TSKindId.Dash
+								| TSKindId.Star
+								| TSKindId.Slash
+								| TSKindId.Percent
+								| TSKindId.Caret
+								| TSKindId.Bang
+								| TSKindId.Amp
+								| TSKindId.Pipe
+								| TSKindId.AmpAmp
+								| TSKindId.PipePipe
+								| TSKindId.LtLt
+								| TSKindId.GtGt
+								| TSKindId.PlusEq
+								| TSKindId.DashEq
+								| TSKindId.StarEq
+								| TSKindId.SlashEq
+								| TSKindId.PercentEq
+								| TSKindId.CaretEq
+								| TSKindId.AmpEq
+								| TSKindId.PipeEq
+								| TSKindId.LtLtEq
+								| TSKindId.GtGtEq
+								| TSKindId.Eq
+								| TSKindId.EqEq
+								| TSKindId.BangEq
+								| TSKindId.Gt
+								| TSKindId.Lt
+								| TSKindId.GtEq
+								| TSKindId.LtEq
+								| TSKindId.At
+								| TSKindId.Underscore
+								| TSKindId.Dot
+								| TSKindId.DotDot
+								| TSKindId.DotDotDot
+								| TSKindId.DotDotEq
+								| TSKindId.Comma
+								| TSKindId.Semi
+								| TSKindId.Colon
+								| TSKindId.ColonColon
+								| TSKindId.DashGt
+								| TSKindId.EqGt
+								| TSKindId.Pound
+								| TSKindId.Qmark
+								| TSKindId.Squote
+								| TSKindId.AsKeyword
+								| TSKindId.AsyncKeyword
+								| TSKindId.AwaitKeyword
+								| TSKindId.BreakKeyword
+								| TSKindId.ConstKeyword
+								| TSKindId.ContinueKeyword
+								| TSKindId.DefaultKeyword
+								| TSKindId.EnumKeyword
+								| TSKindId.FnKeyword
+								| TSKindId.ForKeyword
+								| TSKindId.GenKeyword
+								| TSKindId.IfKeyword
+								| TSKindId.ImplKeyword
+								| TSKindId.LetKeyword
+								| TSKindId.LoopKeyword
+								| TSKindId.MatchKeyword
+								| TSKindId.ModKeyword
+								| TSKindId.PubKeyword
+								| TSKindId.ReturnKeyword
+								| TSKindId.StaticKeyword
+								| TSKindId.StructKeyword
+								| TSKindId.TraitKeyword
+								| TSKindId.TypeKeyword
+								| TSKindId.UnionKeyword
+								| TSKindId.UnsafeKeyword
+								| TSKindId.UseKeyword
+								| TSKindId.WhereKeyword
+								| TSKindId.WhileKeyword
 							>(
 								configFieldOr(input, 'content', () => input),
 								_K6,
@@ -3610,7 +3610,9 @@ export function resolveAttribute_path(value: T.Attribute.LooseConfig['path']): A
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
+					_resolveOne<
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+					>(value, _K8, _K9)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -4258,11 +4260,18 @@ export function coerceToFunctionModifiers(
 								_e,
 								[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword],
 								() =>
-									_resolveOneBranch<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(
-										_e,
-										'extern_modifier',
-										[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword]
-									)
+									_resolveOneBranch<
+										| TSKindId.AsyncKeyword
+										| TSKindId.DefaultKeyword
+										| TSKindId.ConstKeyword
+										| TSKindId.UnsafeKeyword
+										| T.ExternModifier
+									>(_e, 'extern_modifier', [
+										TSKindId.AsyncKeyword,
+										TSKindId.DefaultKeyword,
+										TSKindId.ConstKeyword,
+										TSKindId.UnsafeKeyword
+									])
 							),
 							[
 								['async', TSKindId.AsyncKeyword] as const,
@@ -4298,7 +4307,13 @@ export function coerceToFunctionModifiers(
 							_e,
 							[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword],
 							() =>
-								_resolveOneBranch<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(_e, 'extern_modifier', [
+								_resolveOneBranch<
+									| TSKindId.AsyncKeyword
+									| TSKindId.DefaultKeyword
+									| TSKindId.ConstKeyword
+									| TSKindId.UnsafeKeyword
+									| T.ExternModifier
+								>(_e, 'extern_modifier', [
 									TSKindId.AsyncKeyword,
 									TSKindId.DefaultKeyword,
 									TSKindId.ConstKeyword,
@@ -4403,23 +4418,23 @@ export function resolveWherePredicate_left(
 							| T.TupleType
 							| T.ArrayType
 							| T.HigherRankedTraitBound
-							| 'u8'
-							| 'i8'
-							| 'u16'
-							| 'i16'
-							| 'u32'
-							| 'i32'
-							| 'u64'
-							| 'i64'
-							| 'u128'
-							| 'i128'
-							| 'isize'
-							| 'usize'
-							| 'f32'
-							| 'f64'
-							| 'bool'
-							| 'str'
-							| 'char'
+							| TSKindId.U8Keyword
+							| TSKindId.I8Keyword
+							| TSKindId.U16Keyword
+							| TSKindId.I16Keyword
+							| TSKindId.U32Keyword
+							| TSKindId.I32Keyword
+							| TSKindId.U64Keyword
+							| TSKindId.I64Keyword
+							| TSKindId.U128Keyword
+							| TSKindId.I128Keyword
+							| TSKindId.IsizeKeyword
+							| TSKindId.UsizeKeyword
+							| TSKindId.F32Keyword
+							| TSKindId.F64Keyword
+							| TSKindId.BoolKeyword
+							| TSKindId.StrKeyword
+							| TSKindId.CharKeyword
 						>(value, _K18, _K19)
 				),
 				[
@@ -4850,10 +4865,10 @@ export function resolveUseDeclaration_argument(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| 'self'
+						| TSKindId.Self
 						| T.Metavariable
-						| 'super'
-						| 'crate'
+						| TSKindId.Super
+						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
 						| T.UseAsClause
@@ -4887,7 +4902,9 @@ export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['pa
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
+					_resolveOne<
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+					>(value, _K8, _K9)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -4946,7 +4963,9 @@ export function resolveUseAsClause_name(value: T.UseAsClause.LooseConfig['name']
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
+					_resolveOne<
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+					>(value, _K8, _K9)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -5663,10 +5682,10 @@ export function resolveScopedIdentifier_path(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| 'self'
+						| TSKindId.Self
 						| T.Metavariable
-						| 'super'
-						| 'crate'
+						| TSKindId.Super
+						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
 						| T.BracketedType
@@ -5683,7 +5702,7 @@ export function resolveScopedIdentifier_name(
 ): Admit<T.ScopedIdentifier['_name']> {
 	return _keywordOr(value, [['super', TSKindId.Super] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.Super], () => _resolveOne<T.Identifier | 'super'>(value, _K38, _K2)),
+			_resolveKindEnum(value, [TSKindId.Super], () => _resolveOne<T.Identifier | TSKindId.Super>(value, _K38, _K2)),
 			[['super', TSKindId.Super] as const]
 		)
 	);
@@ -5712,7 +5731,13 @@ export function resolveScopedTypeIdentifierInExpressionPosition_path(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish
+						| TSKindId.Self
+						| T.Metavariable
+						| TSKindId.Super
+						| TSKindId.Crate
+						| T.Identifier
+						| T.ScopedIdentifier
+						| T.GenericTypeWithTurbofish
 					>(value, _K8, _K39)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -5753,10 +5778,10 @@ export function resolveScopedTypeIdentifier_path(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| 'self'
+						| TSKindId.Self
 						| T.Metavariable
-						| 'super'
-						| 'crate'
+						| TSKindId.Super
+						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
 						| T.GenericTypeWithTurbofish
@@ -6133,7 +6158,7 @@ export function resolveCallExpression_function(
 					| T.YieldExpression
 					| T.Literal
 					| T.Identifier
-					| 'self'
+					| TSKindId.Self
 					| T.ScopedIdentifier
 					| T.GenericFunction
 					| T.AwaitExpression
@@ -6141,7 +6166,7 @@ export function resolveCallExpression_function(
 					| T.ArrayExpression
 					| T.TupleExpression
 					| T.MacroInvocation
-					| '()'
+					| TSKindId.UnitExpression
 					| T.BreakExpression
 					| T.ContinueExpression
 					| T.IndexExpression
@@ -8695,7 +8720,9 @@ export function resolveUseWildcardGroup_path(
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
+					_resolveOne<
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+					>(value, _K8, _K9)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -8718,7 +8745,9 @@ export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): Retu
 						configFieldOr(input, 'path', () => input),
 						[TSKindId.Self, TSKindId.Super, TSKindId.Crate],
 						() =>
-							_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(
+							_resolveOne<
+								TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+							>(
 								configFieldOr(input, 'path', () => input),
 								_K8,
 								_K9
@@ -9317,7 +9346,9 @@ export function resolveClosureExpressionExpr_body(
 ): Admit<T.ClosureExpressionExpr['_body']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.Underscore], () => _resolveOne<T.Expression | '_'>(value, _K12, _K13)),
+			_resolveKindEnum(value, [TSKindId.Underscore], () =>
+				_resolveOne<T.Expression | TSKindId.Underscore>(value, _K12, _K13)
+			),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);
@@ -9633,7 +9664,9 @@ export function resolveVisibilityModifierPubScopeInPath_path(
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
+					_resolveOne<
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+					>(value, _K8, _K9)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -9658,7 +9691,9 @@ export function coerceToVisibilityModifierPubScopeInPath(
 						configFieldOr(input, 'path', () => input),
 						[TSKindId.Self, TSKindId.Super, TSKindId.Crate],
 						() =>
-							_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(
+							_resolveOne<
+								TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+							>(
 								configFieldOr(input, 'path', () => input),
 								_K8,
 								_K9
@@ -9679,7 +9714,11 @@ export function resolveVisibilityModifierPubScope_content(
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubScopeInPath>(value, _K66, _K67)
+					_resolveOne<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+						value,
+						_K66,
+						_K67
+					)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
@@ -9704,7 +9743,7 @@ export function coerceToVisibilityModifierPubScope(
 						configFieldOr(input, 'content', () => input),
 						[TSKindId.Self, TSKindId.Super, TSKindId.Crate],
 						() =>
-							_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubScopeInPath>(
+							_resolveOne<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 								configFieldOr(input, 'content', () => input),
 								_K66,
 								_K67
@@ -10078,7 +10117,7 @@ export function resolveRangeExpressionBare_rangeExpressionBare(
 	value: T.RangeExpressionBare.LooseConfig['rangeExpressionBare'] | undefined
 ): Admit<T.RangeExpressionBare['_range_expression_bare']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'..'>(value, _K2, _K2)),
+		_resolveKindEnumScalar(value, () => _resolveOne<TSKindId.DotDot>(value, _K2, _K2)),
 		[['..', TSKindId.DotDot] as const]
 	);
 }
@@ -10096,7 +10135,7 @@ export function coerceToRangeExpressionBare(
 			_resolveKindEnumScalar(
 				configFieldOr(input, 'rangeExpressionBare', () => input),
 				() =>
-					_resolveOne<'..'>(
+					_resolveOne<TSKindId.DotDot>(
 						configFieldOr(input, 'rangeExpressionBare', () => input),
 						_K2,
 						_K2
@@ -10562,7 +10601,7 @@ export function coerceToDelimTokenTreeParen(
 	return F.buildDelimTokenTreeParen(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_v, _K2, _K68)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K68)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
@@ -10588,7 +10627,7 @@ export function coerceToDelimTokenTreeBracket(
 	return F.buildDelimTokenTreeBracket(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_v, _K2, _K68)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K68)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
@@ -10614,7 +10653,7 @@ export function coerceToDelimTokenTreeBrace(
 	return F.buildDelimTokenTreeBrace(
 		...(listStorage(
 			_resolveKindEnumItems(_elems, [TSKindId.Dollar], (_v) =>
-				_resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_v, _K2, _K68)
+				_resolveMany<T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree>(_v, _K2, _K68)
 			),
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
@@ -10799,7 +10838,13 @@ export function resolveRangePatternPrefix_right(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						T.LiteralPattern | 'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier
+						| T.LiteralPattern
+						| TSKindId.Self
+						| T.Metavariable
+						| TSKindId.Super
+						| TSKindId.Crate
+						| T.Identifier
+						| T.ScopedIdentifier
 					>(value, _K69, _K70)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -10841,7 +10886,13 @@ export function resolveRangePatternWithLeftWithRight_right(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						T.LiteralPattern | 'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier
+						| T.LiteralPattern
+						| TSKindId.Self
+						| T.Metavariable
+						| TSKindId.Super
+						| TSKindId.Crate
+						| T.Identifier
+						| T.ScopedIdentifier
 					>(value, _K69, _K70)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -10880,7 +10931,13 @@ export function resolveRangePatternWithLeft_left(
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						T.LiteralPattern | 'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier
+						| T.LiteralPattern
+						| TSKindId.Self
+						| T.Metavariable
+						| TSKindId.Super
+						| TSKindId.Crate
+						| T.Identifier
+						| T.ScopedIdentifier
 					>(value, _K69, _K70)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -10893,7 +10950,7 @@ export function resolveRangePatternWithLeft_content(
 ): Admit<T.RangePatternWithLeft['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.RangePatternWithLeftBare], () =>
-			_resolveOne<T.RangePatternWithLeftWithRight | '..'>(value, _K71, _K72)
+			_resolveOne<T.RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare>(value, _K71, _K72)
 		),
 		[['..', TSKindId.RangePatternWithLeftBare] as const]
 	);
@@ -11108,7 +11165,7 @@ export function resolveAttributedParameter_content(
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Underscore], () =>
-				_resolveOne<T.Parameter | T.VariadicParameter | '_' | T.Type>(value, _K14, _K73)
+				_resolveOne<T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type>(value, _K14, _K73)
 			),
 			[['_', TSKindId.Underscore] as const]
 		)
@@ -11554,7 +11611,7 @@ export function resolveCrateVisibilityModifier_content(
 	value: T.CrateVisibilityModifier.LooseConfig['content'] | undefined
 ): Admit<T.CrateVisibilityModifier['_content']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'crate'>(value, 'crate')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<TSKindId.Crate>(value, 'crate')),
 		[['crate', TSKindId.Crate] as const]
 	);
 }
@@ -11572,7 +11629,7 @@ export function coerceToCrateVisibilityModifier(
 			_resolveKindEnumScalar(
 				configFieldOr(input, 'content', () => input),
 				() =>
-					_resolveOneLeaf<'crate'>(
+					_resolveOneLeaf<TSKindId.Crate>(
 						configFieldOr(input, 'content', () => input),
 						'crate'
 					)

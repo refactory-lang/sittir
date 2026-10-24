@@ -3,13 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { allGrammars, grammarPackage, REPO_ROOT } from '../../grammars.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { compileGrammar } from '../compile.ts';
-import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { delimitedLeafVerdicts, type LeafSafety } from '../model/delimited.ts';
 
 const SAFETY_COLUMNS: readonly LeafSafety[] = ['guard-excludes-closer', 'reserved-word', 'regular-token', 'unguarded'];
 
 async function censusOf(grammar: string): Promise<Record<LeafSafety, number>> {
-	const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) });
+	const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar) });
 	const verdicts = delimitedLeafVerdicts(nodeMap.nodes, nodeMap.wordMatcher, {
 		word: nodeMap.word,
 		reserved: nodeMap.reserved,

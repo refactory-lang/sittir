@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
+import { predictedIdTablesOf } from '../../codegen/src/dsl/symbol-table.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
 import { diagnoseEvaluated, run } from '../src/inspect/grammar-diagnostics.ts';
 
@@ -18,7 +19,8 @@ describe('tool grammar-diagnostics runs the gate generation runs', () => {
 	afterEach(() => vi.restoreAllMocks());
 
 	it('reports the rule-cause records that block the fixture and exits 1', async () => {
-		expect(await diagnoseEvaluated('rule_cause', await evaluate(RULE_CAUSE_FIXTURE, NO_FILE_TYPES))).toBe(1);
+		const evaluated = await evaluate(RULE_CAUSE_FIXTURE, NO_FILE_TYPES);
+		expect(await diagnoseEvaluated('rule_cause', evaluated, predictedIdTablesOf(evaluated))).toBe(1);
 		expect(stdout.join('')).toMatch(/rule-cause-missing/);
 		expect(stdout.join('')).not.toMatch(/No grammar diagnostics/);
 		expect(stderr.join('')).toMatch(/rule_cause: generation is blocked by \d+ diagnostic\(s\): .*rule-cause-missing/);

@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { collectKindEntries, collectCatalogKinds, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
+import { collectKindEntries, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
@@ -77,7 +77,7 @@ export function relaxationTable(nodeMap: NodeMap, entries: readonly KindEnumEntr
 
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
-	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const entries = collectKindEntries(nodeMap, generatedIdTables);
 
 	const lines: string[] = [
 		`// @generated from packages/${grammar}/.sittir/src/parser.c — do not hand-edit.`,

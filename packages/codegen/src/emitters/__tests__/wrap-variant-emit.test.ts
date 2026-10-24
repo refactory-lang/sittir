@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { FIELD, PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
@@ -8,23 +9,23 @@ import {
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { kindIdTablesOf, makeNodeMapWith, withGeneratedIdTables, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
-function makeHiddenGroupNodeMap() {
+function makeHiddenGroupNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const helperRender = flatten(helperRule);
-	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } }));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } }, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 function makeNoFactoryHiddenGroupNodeMap() {
-	const nodeMap = makeHiddenGroupNodeMap();
+	const nodeMap = withGeneratedIdTables((kindEntries) => makeHiddenGroupNodeMap(kindEntries)).nodeMap;
 	const helper = nodeMap.nodes.get('_assignment_eq');
 	if (!helper || !(helper instanceof AbstractAssembledCompound) || !helper.seated)
 		throw new Error('Missing hidden helper group');
@@ -32,7 +33,7 @@ function makeNoFactoryHiddenGroupNodeMap() {
 	return nodeMap;
 }
 
-function makeTransparentHiddenGroupNodeMap() {
+function makeTransparentHiddenGroupNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
@@ -41,19 +42,19 @@ function makeTransparentHiddenGroupNodeMap() {
 	const helperRender = flatten(helperRule);
 	nodes.set(
 		'_export_statement_default',
-		new AssembledBranch('_export_statement_default', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } })
+		new AssembledBranch('_export_statement_default', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } }, { kindEntries })
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 describe('wrap emitter — polymorph variant stamping', () => {
 	it('emits wrap accessors and dispatch for hidden helper groups', () => {
-		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeHiddenGroupNodeMap() });
+		const wrapSrc = emitWrap({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeHiddenGroupNodeMap(kindEntries))});
 
-		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
+		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.AssignmentEq.Parsed {');
 		expect(wrapSrc).toContain('right() { return hydrateSlot<');
-		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
+		expect(wrapSrc).toContain('[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),');
 		// A hidden helper visible only through its own alias name is MERGED
 		// into that alias symbol by tree-sitter — one id serves both
 		// spellings, and the native read's KIND_NAMES lookup already yields
@@ -66,8 +67,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 	it('keeps hidden alias-source helper wraps even without parser-symbol ids', () => {
 		const wrapSrc = emitWrap({
 			grammar: 'synth',
-			nodeMap: makeHiddenGroupNodeMap(),
-			kindEntries: [{ kind: 'identifier', member: 'Identifier', id: 1 }]
+			...withIdTables(makeHiddenGroupNodeMap, kindIdTablesOf([{ kind: 'identifier', id: 1 }]))
 		});
 
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
@@ -81,38 +81,37 @@ describe('wrap emitter — polymorph variant stamping', () => {
 	});
 
 	it('emits no wrap for a hoisted helper without a factory surface, like any other compound', () => {
-		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeNoFactoryHiddenGroupNodeMap() });
+		const wrapSrc = emitWrap({ grammar: 'synth', ...withGeneratedIdTables(makeNoFactoryHiddenGroupNodeMap) });
 
 		expect(wrapSrc).not.toContain('export function wrapAssignmentEq(');
 	});
 
 	it('flattens transparent hidden helper groups to their single wrapped child', () => {
-		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeTransparentHiddenGroupNodeMap() });
+		const wrapSrc = emitWrap({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeTransparentHiddenGroupNodeMap(kindEntries))});
 
 		expect(wrapSrc).toContain(
-			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle): T.ExportStatementDefault.Parsed {'
 		);
 		expect(wrapSrc).toContain('return hydrateSlot<T.Identifier>(');
 		expect(wrapSrc).toContain(
-			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
+			'[TSKindId.ExportStatementDefault]: (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),'
 		);
 		expect(wrapSrc).not.toContain(
-			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {\n  return withMethods({'
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle): T.ExportStatementDefault.Parsed {\n  return withMethods({'
 		);
 	});
 
 	it('keeps synthesized canonical alias-source helpers on the wrap surface', () => {
 		const wrapSrc = emitWrap({
-			grammar: 'synth',
-			nodeMap: makeTransparentHiddenGroupNodeMap(),
+			grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeTransparentHiddenGroupNodeMap(kindEntries)),
 			synthesizedKinds: new Set(['_export_statement_default'])
 		});
 
 		expect(wrapSrc).toContain(
-			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle): T.ExportStatementDefault.Parsed {'
 		);
 		expect(wrapSrc).toContain(
-			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
+			'[TSKindId.ExportStatementDefault]: (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),'
 		);
 	});
 

@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { compileGrammar } from '../compile.ts';
-import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { AssembledSupertype, concreteKindsOf } from '../model/node-map.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
@@ -17,7 +16,7 @@ describe('a token-form supertype nested under another supertype arm', () => {
 	] as const)(
 		'%s %s is a supertype whose concrete kinds are its arms',
 		async (grammar, kind, arms) => {
-			const compilation = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) });
+			const compilation = await compileGrammar({ package: grammarPackage(grammar) });
 			const node = compilation.nodeMap.nodes.get(kind);
 			expect(node).toBeInstanceOf(AssembledSupertype);
 			expect(node?.annotations?.hoisted).toBeUndefined();

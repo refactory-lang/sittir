@@ -30,7 +30,7 @@ function anonEntry(id: number, text: string): GeneratedIdEntry {
 function aliasEntry(id: number, name: string): GeneratedIdEntry {
 	return { id, parser: { cSymbol: `alias_sym_${id}`, parserName: name, symbolName: name, anon: false, aux: false, alias: false, hidden: false } };
 }
-const idTables: GeneratedIdTables = {
+const idTables: GeneratedIdTables = { fieldIds: new Map(), folds: new Map(),
 	kindIds: { for: anonEntry(5, 'for'), while: anonEntry(6, 'while'), property_name: aliasEntry(7, 'property_name'), statement_name: aliasEntry(8, 'statement_name') },
 	sourceArtifact: 'test'
 };

@@ -30,8 +30,8 @@ function listNodeMap(separatorRule: RenderRule | undefined) {
 		separator: { value: separatorRule ?? { type: STRING, value: ',' }, trailing: 'optional' }
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('member_list', new AssembledList('member_list', rule, undefined, { separatorRule, simplifiedRule: SIMPLIFIED, renderRule: RENDER }));
-	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('member_list', new AssembledList('member_list', rule, { kindEntries }, { kindEntries, separatorRule, simplifiedRule: SIMPLIFIED, renderRule: RENDER }));
+	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 

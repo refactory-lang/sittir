@@ -6,7 +6,7 @@ import { generate } from '../../codegen/src/compiler/generate.ts';
 import { AssembledEnum } from '../../codegen/src/compiler/model/node-map.ts';
 import { armIsForm, armRoutesOf, buildsHost, flattenedVariantParents, formRoutesOf, seatedFormKinds, type FormRoute } from '../../codegen/src/compiler/model/ir-surface.ts';
 import { findOwnKindEntry } from '../../codegen/src/dsl/symbol-table.ts';
-import { collectCatalogKinds, collectKindEntries } from '../../codegen/src/emitters/kind-discriminant.ts';
+import { collectKindEntries } from '../../codegen/src/emitters/kind-discriminant.ts';
 import { isDeclaredSupertype } from '../../codegen/src/emitters/shared.ts';
 
 type Guard = (node: unknown) => boolean;
@@ -59,7 +59,7 @@ async function censusOf(grammar: string): Promise<Census> {
 		generatedIdTables: unknown;
 	};
 	const nodeMap = out.nodeMap;
-	const entries = collectKindEntries(collectCatalogKinds(out.generatedIdTables as never), nodeMap, out.generatedIdTables as never);
+	const entries = collectKindEntries(nodeMap, out.generatedIdTables as never);
 	const is = ((await import(`../../${grammar}/src/is.ts`)) as { is: Tree }).is;
 	const ir = ((await import(`../../${grammar}/src/ir.ts`)) as { ir: Tree }).ir;
 	const seated = seatedFormKinds(nodeMap);

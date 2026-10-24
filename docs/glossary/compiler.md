@@ -1632,6 +1632,7 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 Before it evaluates a package with its grammar bindings (`dsl/evaluate-package.ts::readsGrammarBindings`), it refuses stale ones (`bindings/module.ts::assertPackageBindingsFresh`), so
 nothing the compile evaluates or generates uses grammar bindings derived from other sources than the ones on disk.
 The config's `evaluation` options pass through to `evaluatePackage` unchanged.
+The compile resolves its own id tables from what it evaluated (`evaluationIdTables`); a config's `generatedIdTables` overrides that only for a package that borrows another's parser, as the bootstrap's probe package does.
 With `unbound` it evaluates the package without its grammar bindings: the
 base grammar's compilation, whose model the grammar bindings are derived against. With `base` it evaluates the upstream grammar alone, as it does for a package with no `grammar.sittir.ts`. None of these reads the grammar bindings, so none is checked.
 
@@ -1737,9 +1738,13 @@ and folds both stages into `diagnosticRecords`. A stage's records are `stages.ra
 `deriveDiagnosticRecords` over the stages and the compiled grammar; empty when the grammar evaluated no stages.
 The override census and the patch-site labels read it.
 
+### `packages/codegen/src/compiler/compile.ts::evaluationIdTables`
+
+The id tables an evaluation of a package compiles with: the parser's (`loadPackageIdTables`) when the evaluation reads the grammar bindings tree-sitter generated its parser from (`dsl/evaluate-package.ts::readsGrammarBindings`), else the ones the evaluated grammar predicts (`dsl/symbol-table.ts::predictedIdTablesOf`), since the parser's describe a different grammar. `compileGrammar` and the tools that link or probe an evaluation themselves read it, so the choice is made in one place.
+
 ### `packages/codegen/src/compiler/compile.ts::CompileGrammarConfig`
 
-`compileGrammar`'s config: the package, the generated id tables to link against, the diagnostic codes allowed through the gate, and how the package is evaluated (`evaluation`, which `dsl/evaluate-package.ts::evaluatePackage` takes unchanged: `unbound` to compile layer 1, `checkGeneratedLayers` to gate a generated top layer's fixpoint check).
+`compileGrammar`'s config: the package, an id-table override (absent, the evaluation's own: `evaluationIdTables`), the diagnostic codes allowed through the gate, and how the package is evaluated (`evaluation`, which `dsl/evaluate-package.ts::evaluatePackage` takes unchanged: `unbound` to compile layer 1, `checkGeneratedLayers` to gate a generated top layer's fixpoint check).
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar::ruleCauses`
 
@@ -2058,10 +2063,9 @@ symbols.
 ### `packages/codegen/src/compiler/generated-metadata.ts::loadPackageIdTables`
 
 A grammar package's generated id tables: the committed `.sittir/src/parser.c`, with its
-`grammar.json`; `undefined` before the grammar's first generate. The parser.c
-tables are the only source: they carry the full symbol catalog (C names,
+`grammar.json`. The parser.c tables are the only source for a generated grammar: they carry the full symbol catalog (C names,
 visibility, named/anonymous split, supertypes), which a loaded language does
-not expose. The location never depends on the working directory, so a
+not expose. A package with no parser.c yet is refused with a `missing-parser-tables` grammar diagnostic (`fromMissingParserTables`) naming the path and the command that writes it; no caller can allow it, because no compile runs without tables. The location never depends on the working directory, so a
 test or tool run from any package reads the same tables.
 
 ### `packages/codegen/src/compiler/inline-sets.ts::danglingInlineNames`

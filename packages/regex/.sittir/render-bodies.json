@@ -694,9 +694,6 @@
 			"name": "content"
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "slot",
 			"name": "group_name"
 		},

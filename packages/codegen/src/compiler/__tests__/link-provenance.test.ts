@@ -2,7 +2,7 @@ import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rul
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { collectReferences } from '../rule-catalog.ts';
 
 function raw(rules: Record<string, Rule<'evaluate'>>, extra: Partial<RawGrammar> = {}): RawGrammar {
@@ -29,7 +29,7 @@ const word = (text: string): Rule<'evaluate'> => ({ type: STRING, value: text })
 
 describe('link carries each kind\'s provenance', () => {
 	it('keeps the renamed and split kinds grammar bindings produced', () => {
-		const linked = link(
+		const linked = linkPredicted(
 			raw(
 				{
 					root: { type: SEQ, members: [{ type: SYMBOL, name: 'binding' }, { type: SYMBOL, name: 'method' }] },
@@ -51,13 +51,13 @@ describe('link carries each kind\'s provenance', () => {
 			pointer_const: word('*const'),
 			mutable: word('mut')
 		};
-		const linked = link(raw(rules, { references: collectReferences(rules, { ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() } }) }));
+		const linked = linkPredicted(raw(rules, { references: collectReferences(rules, { ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() } }) }));
 
 		expect(linked.provenance?.variantOf).toEqual({ pointer_const: 'pointer' });
 	});
 
 	it('carries no provenance for a grammar without grammar bindings', () => {
-		const linked = link(raw({ root: word('x') }));
+		const linked = linkPredicted(raw({ root: word('x') }));
 
 		expect(linked.provenance).toEqual({});
 	});

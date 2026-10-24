@@ -40,8 +40,8 @@ function makeNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('parameter', new AssembledBranch('parameter', flatten(rule), flatten(rule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('parameter', new AssembledBranch('parameter', flatten(rule), flatten(rule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	nodes.set(
 		'_primitive_type',
 		new AssembledEnum(
@@ -56,7 +56,7 @@ function makeNodeMap() {
 			{ kindEntries }
 		)
 	);
-	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: 'identifier' }, { name: '_primitive_type' }]));
+	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: 'identifier' }, { name: '_primitive_type' }], { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -101,7 +101,7 @@ describe('an enum leaf is kind-id-stored', () => {
 			members: [{ type: FIELD, name: 'type', content: { type: SYMBOL, name: '_primitive_type' } }]
 		};
 		const nodeMap = makeNodeMap();
-		nodeMap.nodes.set('typed', new AssembledBranch('typed', flatten(rule), flatten(rule)));
+		nodeMap.nodes.set('typed', new AssembledBranch('typed', flatten(rule), flatten(rule), { kindEntries }));
 		const slot = nodeMap.nodes.get('typed')!.slots.find((s) => s.name === 'type')!;
 		expect(fieldTypeComponents(slot, nodeMap)).toEqual([
 			{

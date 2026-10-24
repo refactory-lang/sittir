@@ -47,9 +47,36 @@ export type LeafStringMap = {
 	[TSKindId.BoundaryAssertion]: '\\b';
 	[TSKindId.NonBoundaryAssertion]: '\\B';
 	[TSKindId.Negation]: '^';
+	[TSKindId.Tight]: '';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
+	[TSKindId.Caret]: '^';
+	[TSKindId.LparenQmark]: '(?';
+	[TSKindId.Eq]: '=';
+	[TSKindId.Bang]: '!';
+	[TSKindId.Rparen]: ')';
+	[TSKindId.LparenQmarkLt]: '(?<';
+	[TSKindId.Lbrack]: '[';
+	[TSKindId.Dash]: '-';
+	[TSKindId.BslashDash]: '\\-';
+	[TSKindId.Rbrack]: ']';
+	[TSKindId.LbrackColon]: '[:';
+	[TSKindId.ColonRbrack]: ':]';
+	[TSKindId.Lparen]: '(';
+	[TSKindId.LparenQmarkPLt]: '(?P<';
+	[TSKindId.Gt]: '>';
+	[TSKindId.LparenQmarkColon]: '(?:';
+	[TSKindId.Star]: '*';
+	[TSKindId.Qmark]: '?';
+	[TSKindId.Plus]: '+';
+	[TSKindId.Lbrace]: '{';
+	[TSKindId.Rbrace]: '}';
+	[TSKindId.Bslashk]: '\\k';
+	[TSKindId.Lt]: '<';
+	[TSKindId.LparenQmarkPEq]: '(?P=';
+	[TSKindId.Comma]: ',';
+	[TSKindId.Colon]: ':';
 };
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([

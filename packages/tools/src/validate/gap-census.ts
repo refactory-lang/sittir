@@ -261,8 +261,7 @@ const UNMEASURED: Omit<EntryMeasure, 'status'> = { gaps: 0, commented: 0, skippe
 export async function createGapMeter(grammar: string): Promise<GapMeter> {
 	const engine = await loadNativeEngine(grammar);
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const nameOf = await loadKindNameFromId(grammar);
-	const kindName = (id: number): string => nameOf?.(id) ?? String(id);
+	const kindName = await loadKindNameFromId(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);

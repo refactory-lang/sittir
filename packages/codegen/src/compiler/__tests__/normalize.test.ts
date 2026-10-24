@@ -1,3 +1,4 @@
+import { kindIdTablesOf } from '../../__tests__/helpers/node-map-fixtures.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -38,6 +39,7 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 		externalRoles: new Map<string, ExternalRole>(),
 		word: null,
 		references: [],
+		generatedIdTables: kindIdTablesOf([]),
 		...overrides
 	};
 }
@@ -160,7 +162,7 @@ describe('Normalize — normalizeGrammar()', () => {
 		expect(parentRule.type).not.toBe('SYMBOL');
 		// The unfolded shape misclassified as 'branch' (a bare SYMBOL ref);
 		// once folded, `parent`'s all-text repeated body classifies as 'pattern'.
-		expect(classifyNode('parent', parentRule)).toBe('pattern');
+		expect(classifyNode('parent', parentRule, { kindEntries: [] })).toBe('pattern');
 	});
 });
 

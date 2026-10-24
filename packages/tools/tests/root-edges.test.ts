@@ -11,7 +11,7 @@ const engine = await loadNativeEngine('rust');
 const native = await nativeLanguageEngineOf('rust');
 const isLeafKind = await loadIsLeafKind('rust');
 const accessorOf = await loadSlotAccessorOf('rust');
-const readNode = (await readNodeOf('rust'))!;
+const readNode = await readNodeOf('rust');
 
 function detachedInput(source: string): { readonly input: AnyUntypedNode; readonly options: Readonly<Record<string, unknown>> } {
 	const { tree } = readNativeTree(engine, source);

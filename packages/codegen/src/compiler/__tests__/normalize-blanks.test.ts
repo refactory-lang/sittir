@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar, blanksDropped } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { Rule } from '../../types/rule.ts';
@@ -25,7 +25,7 @@ const shape = (value: unknown): unknown => {
 	return value;
 };
 
-const normalized = async (rules: string) => normalizeGrammar(link(await evaluateTempGrammar({ extras: '', rules }, '')));
+const normalized = async (rules: string) => normalizeGrammar(linkPredicted(await evaluateTempGrammar({ extras: '', rules }, '')));
 
 describe('blanksDropped drops every blank member of a SEQ (item 1)', () => {
 	it('drops CHOICE[], BLANK and SEQ[] members of a SEQ', () => {

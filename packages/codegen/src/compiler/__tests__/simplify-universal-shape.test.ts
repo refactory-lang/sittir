@@ -18,6 +18,7 @@
  *     burn-in confirms the invariant holds across real grammars).
  */
 
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
@@ -86,7 +87,7 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'name' }
 			]
 		};
-		const node = new AssembledBranch('function_decl', body, body);
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('function_decl', body, body, { kindEntries }));
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -98,7 +99,7 @@ describe('assertUniversalShape', () => {
 				{ type: STRING, value: 'static' }
 			]
 		};
-		const node = new AssembledBranch('_modifiers', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } });
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('_modifiers', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } }, { kindEntries }));
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -106,7 +107,7 @@ describe('assertUniversalShape', () => {
 		// A branch body that is just a single leaf is valid — it would have
 		// been flattened by canonicalizeSeqOfLeaves from seq([X]) -> X.
 		const body: RenderRule = { type: SYMBOL, name: 'X' };
-		const node = new AssembledBranch('_passthrough', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } });
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('_passthrough', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } }, { kindEntries }));
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -123,7 +124,7 @@ describe('assertUniversalShape', () => {
 				}
 			]
 		};
-		const node = new AssembledBranch('_choice_wrap', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } });
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('_choice_wrap', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } }, { kindEntries }));
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
@@ -135,15 +136,15 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'b' }
 			]
 		};
-		const node = new AssembledBranch('_choice_kind', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } });
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledBranch('_choice_kind', { ...body, annotations: { hoisted: true } }, { ...body, annotations: { hoisted: true } }, { kindEntries }));
 		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation/);
 	});
 
 	it('no-ops for non-branch / non-group nodes (e.g. pattern leaves)', () => {
-		const leaf = new AssembledPattern('identifier', {
+		const leaf = withGeneratedIdTablesNode((kindEntries) => new AssembledPattern('identifier', {
 			type: PATTERN,
 			value: '[a-z]+'
-		});
+		}, { kindEntries }));
 		expect(() => assertUniversalShape(leaf)).not.toThrow();
 	});
 });

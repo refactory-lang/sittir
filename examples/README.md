@@ -23,7 +23,7 @@ The numbers are stable identifiers, not a required reading order. The cross-lang
 
 ## Generated reconstructions
 
-`*.generated.ts` files are emitted by `pnpm run gen:examples`. The dogfood files reconstruct real source targets; the keyword-opener, list-seat, and trivia files cover emitter fixtures. Each target has strict and loose versions.
+`*.generated.ts` files are emitted by `pnpm run gen:examples`. They reconstruct real source targets, each in a strict and a loose version.
 
 Do not edit these outputs. Change their source target or the factory-source emitter and regenerate.
 

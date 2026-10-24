@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { emitTypesModules } from '../../emitters/types.ts';
 import type { RawGrammar } from '../types.ts';
@@ -39,7 +39,7 @@ function makeMinimalFixture(): {
 			word: null,
 			references: []
 		},
-		generatedIdTables: {
+		generatedIdTables: { fieldIds: new Map(), folds: new Map(),
 			kindIds: {
 				[ERROR_KIND_NAME]: ERROR_KIND_ROW,
 				call_expression: {
@@ -73,7 +73,7 @@ function makeMinimalFixture(): {
 describe('KindId emission', () => {
 	it('emits numeric runtime discriminants and lookup helpers', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		stampIrSurface(nodeMap, generatedIdTables);

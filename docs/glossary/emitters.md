@@ -2485,23 +2485,9 @@ assemble mints a node for it.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::collectKindEntries`
 
-```text
-/**
- * Collect catalog entries that should appear in `TSKindId`. Skips
- * kinds whose parser symbol is absent (`TSGrammar`-only-without-
- * `TSInternals` per the design).
- *
- * Pass `collectCatalogKinds(generatedIdTables)` for the runtime-
- * dispatch surfaces (TSKindId, kindIdFromName, AnyNode,
- * kind_ids.rs); pass `collectAllKinds(nodeMap)` only for emitter
- * surfaces that intentionally restrict to user-facing rule names
- * (`is.kind()` guards — see `is.ts`).
- */
-```
+The `TSKindId` rows of the id tables' kind catalog: every catalog row with an id, in catalog order, sorted by id at the end. It is the one derivation every emitter and the `ir` surface read their kind entries through, given the tables they are handed; no emitter takes the entries in as a separate input.
 
-```text
-// member → first kind that claimed it
-```
+A row's member is named from its model kind (`modelKindOfEntry`, so a renamed row and an alias row take their tree name). The rows are collected first, because a row's model kind depends on the whole list. Two kinds that name one member are a codegen error.
 
 #### body
 
@@ -5140,7 +5126,9 @@ seam census and `emitListSlot` see exactly the separator the grammar wrote.
 A template-emission dry run over the node map before the emitters
 dispatch, so every `staticSeamBefore` stamp on the spaced rules is written
 before any other emitter reads them; `emitAll` runs it right after it
-builds the spaced rules, since the stamps land on those rules.
+builds the spaced rules, since the stamps land on those rules. It reads the
+same kind entries as the emission it precedes, so the literal merge pairs
+its seams are decided from are the catalog's.
 
 ### `packages/codegen/src/emitters/templates.ts::stringifyRule`
 
@@ -10148,7 +10136,7 @@ Only the factory, wrap, template and render-module emitters take the
 
 ### `packages/codegen/src/emitters/emit.ts::classifyRenderModuleEmission`
 
-Whether `emitAll` emits the render module: only when asked to, for a grammar sittir knows, and with the parser's kind-id tables. A request without the tables is an error naming the grammar, not a skipped module: every node decodes by kind id, so the parser is generated first, as `gen` and the bootstrap do.
+Whether `emitAll` emits the render module: only when asked to and for a grammar sittir knows. The parser's id tables are always present, because `emitAll` requires them.
 
 ### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig`
 
@@ -12333,7 +12321,7 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
 
 ### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
 
-The unit kinds (`unitKindIds`) whose kind the parser names, read from the kind catalog's `anon` stamp: an empty statement's `;`, `true`, `self`, not a `$` or `{`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_bare`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
 
 ### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
 

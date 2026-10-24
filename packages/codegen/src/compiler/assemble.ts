@@ -79,8 +79,8 @@ import { stampSupertypeClosures } from './supertype-closure.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 export class AssembleCtx extends BaseCtx<'simplify'> {
-	readonly kindEntries?: readonly GeneratedKindEntry[];
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly generatedIdTables: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
 	readonly leafTextPatterns: ReadonlyMap<string, string>;
 	readonly assembleDiagnostics = new AssembleDiagnosticsCollector();
@@ -88,15 +88,14 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 
 	constructor(
 		init: BaseCtxInit<'simplify'> & {
-			generatedIdTables?: GeneratedIdTables;
-			kindEntries?: readonly GeneratedKindEntry[];
+			generatedIdTables: GeneratedIdTables;
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
 			leafTextPatterns?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
 	) {
 		super(init);
-		this.kindEntries = init.kindEntries;
+		this.kindEntries = collectGeneratedKindEntries(init.generatedIdTables);
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
 		this.leafTextPatterns = init.leafTextPatterns ?? new Map();
@@ -115,18 +114,12 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		return this._nodes;
 	}
 
-	static from(
-		normalized: SimplifiedGrammar,
-		generatedIdTables?: GeneratedIdTables,
-		diagnostics: DiagnosticSink = new DiagnosticSink(),
-		kindEntries?: readonly GeneratedKindEntry[]
-	): AssembleCtx {
+	static from(normalized: SimplifiedGrammar, diagnostics: DiagnosticSink = new DiagnosticSink()): AssembleCtx {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
-			generatedIdTables,
-			kindEntries,
+			generatedIdTables: normalized.generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
 			leafTextPatterns: normalized.leafTextPatterns
 		});
@@ -144,7 +137,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const normalized = ctx.grammar;
 	const wordMatcherRegex = normalized.wordMatcher;
 	const nodes = ctx.nodes;
-	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
+	const kindEntries = ctx.kindEntries;
 	const supertypeArms = supertypeArmsOf(supertypeKindsOf(normalized), normalized.normalizedRules);
 	const facts: KindFacts = { kindEntries, supertypeArms, provenance: normalized.provenance };
 	const assembleDiagnostics = ctx.assembleDiagnostics;
@@ -1066,22 +1059,22 @@ type ModelType = AssembledNode['modelType'];
 export function classifyNode(
 	kind: string,
 	rule: SimplifiedRule,
-	opts?: {
+	opts: {
 		variantParents?: ReadonlySet<string>;
 		parentAliasedKinds?: ReadonlySet<string>;
 		wordMatcher?: RegExp;
 		renderRule?: RenderRule;
 		seated?: boolean;
 		simplifiedRules?: Readonly<Record<string, SimplifiedRule>>;
-		kindEntries?: readonly GeneratedKindEntry[];
+		kindEntries: readonly GeneratedKindEntry[];
 	}
 ): ModelType | undefined {
 	const compoundCtx: CompoundModelTypeCtx = {
-		simplifiedRules: opts?.simplifiedRules ?? {},
-		kindEntries: opts?.kindEntries ?? [],
-		variantParents: opts?.variantParents
+		simplifiedRules: opts.simplifiedRules ?? {},
+		kindEntries: opts.kindEntries,
+		variantParents: opts.variantParents
 	};
-	if (opts?.seated && !isAllTextShape(rule)) {
+	if (opts.seated && !isAllTextShape(rule)) {
 		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
 		return compoundModelTypeFor(kind, rule, compoundCtx);
 	}
@@ -1093,12 +1086,12 @@ export function classifyNode(
 			case PATTERN:
 				return 'pattern';
 			case STRING:
-				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'punctuation';
+				return matchesWordShape(rule.value, opts.wordMatcher) ? 'keyword' : 'punctuation';
 		}
 	}
 	if (isSeparatedListShape(rule)) return 'list';
 	if (hasSlotBearingContent(rule)) return compoundModelTypeFor(kind, rule, compoundCtx);
-	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelTypeFor(kind, rule, compoundCtx);
+	if (opts.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelTypeFor(kind, rule, compoundCtx);
 	return classifyTerminalFallback(rule);
 }
 

@@ -1,9 +1,11 @@
+import { collectKindEntries } from '../kind-discriminant.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { FIELD, PATTERN, SEQ, STRING, SYMBOL, CHOICE } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import { classifyFromEmission } from '../shared.ts';
 import { bundleEntries } from '../overlays/module.ts';
@@ -25,7 +27,7 @@ function clauseRule(negative: boolean): SeqRule<'link'> {
 	};
 }
 
-function makeImplNodeMap() {
+function makeImplNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const implRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -46,30 +48,30 @@ function makeImplNodeMap() {
 
 	const nodes = new Map<string, AssembledNode>();
 	const implRender = flatten(implRule);
-	nodes.set('impl', new AssembledBranch('impl', implRender, implRender));
+	nodes.set('impl', new AssembledBranch('impl', implRender, implRender, { kindEntries }));
 	for (const [kind, negative] of [
 		['_impl_positive', false],
 		['_impl_negative', true]
 	] as const) {
 		const render = flatten(clauseRule(negative));
-		nodes.set(kind, new AssembledBranch(kind, { ...render, annotations: { hoisted: true } }, { ...render, annotations: { hoisted: true } }));
+		nodes.set(kind, new AssembledBranch(kind, { ...render, annotations: { hoisted: true } }, { ...render, annotations: { hoisted: true } }, { kindEntries }));
 	}
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z_:]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z_:]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 describe('from() for a hoisted form', () => {
 	it('classifies the form as emitted', () => {
-		const nodeMap = makeImplNodeMap();
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeImplNodeMap(kindEntries));
 		const node = nodeMap.nodes.get('_impl_positive')!;
 
-		expect(classifyFromEmission('_impl_positive', node, { nodeMap })).toBe('emit');
+		expect(classifyFromEmission('_impl_positive', node, { kindEntries: collectKindEntries(nodeMap, generatedIdTables), nodeMap })).toBe('emit');
 	});
 
 	it('emits the form its own coercer and a _fromMap row', () => {
-		const nodeMap = makeImplNodeMap();
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeImplNodeMap(kindEntries));
 		const fromFn = nodeMap.nodes.get('_impl_positive')!.fromFunctionName;
-		const src = emitFrom({ grammar: 'synth', nodeMap });
+		const src = emitFrom({ generatedIdTables, grammar: 'synth', nodeMap });
 
 		expect(fromFn).toBeDefined();
 		expect(src).toContain(`export function ${fromFn}`);
@@ -77,9 +79,9 @@ describe('from() for a hoisted form', () => {
 	});
 
 	it('keeps the form off the top-level bundle', () => {
-		const nodeMap = makeImplNodeMap();
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeImplNodeMap);
 
-		const keys = bundleEntries(nodeMap).map((e) => e.node.kind);
+		const keys = bundleEntries(nodeMap, generatedIdTables).map((e) => e.node.kind);
 
 		expect(keys).toContain('impl');
 		expect(keys).not.toContain('_impl_positive');

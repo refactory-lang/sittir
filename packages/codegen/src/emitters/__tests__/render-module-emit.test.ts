@@ -16,7 +16,7 @@ import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-com
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
-import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
+import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { link } from '../../compiler/link.ts';
@@ -42,7 +42,6 @@ import {
 	nodeArgs,
 	type ReadFactsCtx
 } from '../node-projection.ts';
-
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -105,10 +104,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, generatedIdTables)
+		AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables })
 	);
 
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const rulesConfig = {
 		nodeMap,
 		kindEntries,
@@ -116,10 +115,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 	};
 	const prepass = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, prepass);
+	stampStaticSpacing(nodeMap, grammar, prepass, kindEntries);
 	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
-	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced)).seamed;
-	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
+	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
 

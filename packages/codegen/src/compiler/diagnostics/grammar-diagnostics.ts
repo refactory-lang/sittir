@@ -14,8 +14,9 @@ import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms
 import { boundNameOf } from '../../dsl/bind.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
-	kindCatalogOf,
+	collectGeneratedKindEntries,
 	predictedEntriesOf,
+	predictedIdTablesOf,
 	renameAwareSymbolSource,
 	reservedWordset,
 	type GeneratedIdTables,
@@ -119,6 +120,18 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 export interface DroppedTokens {
 	readonly kind: string;
 	readonly tokens: readonly string[];
+}
+
+export function fromMissingParserTables(grammar: string, parserCPath: string): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'missing-parser-tables',
+		severity: 'error',
+		grammar,
+		message: `no parser at ${parserCPath} to read the kind-id and field-id tables from. Run \`sittir gen --grammar ${grammar} --ts-generate\` (or a full \`gen --all\` without --skip-ts-chain) to write it`,
+		canProceed: false,
+		details: { parserCPath }
+	};
 }
 
 export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): GrammarDiagnostic {
@@ -390,7 +403,7 @@ export function unexpectableExpectEntries(
 
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
-	generatedIdTables?: GeneratedIdTables;
+	generatedIdTables: GeneratedIdTables;
 }): {
 	raw: RawGrammar;
 	linked: LinkedGrammar;
@@ -406,7 +419,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		generatedIdTables: input.generatedIdTables,
 		diagnostics: compilerDiagnostics
 	});
-	const kindEntries = kindCatalogOf(linked.generatedIdTables, input.rawGrammar);
+	const kindEntries = collectGeneratedKindEntries(linked.generatedIdTables);
 	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const inlineKinds = buildInlinableKinds(new Set(rawGrammar.inline), linked);
 	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
@@ -419,14 +432,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			slotGroupingCollector
 		})
 	);
-	const nodeMap = assemble(
-		AssembleCtx.from(
-			normalized,
-			linked.generatedIdTables,
-			compilerDiagnostics,
-			kindEntries
-		)
-	);
+	const nodeMap = assemble(AssembleCtx.from(normalized, compilerDiagnostics));
 	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: rawGrammar.name,
@@ -545,7 +551,7 @@ export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 export function diagnoseStage(raw: RawGrammar): { diagnostics: GrammarDiagnostic[]; ruleCatalog?: RuleCatalog } {
 	const records = evaluateRecords(raw);
 	if (predictionFailed(raw)) return { diagnostics: records };
-	const { diagnostics, raw: collapsed } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+	const { diagnostics, raw: collapsed } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw, generatedIdTables: predictedIdTablesOf(raw) });
 	return { diagnostics: [...records, ...diagnostics], ruleCatalog: collapsed.ruleCatalog };
 }
 

@@ -44,6 +44,7 @@
 		"probe:node-shape": "tsx packages/tools/src/scripts/node-shape.ts",
 		"type-check:required-slots": "tsx packages/tools/src/scripts/required-slot-census.ts",
 		"type-check:generated-examples": "tsc -p examples/tsconfig.generated.json --noEmit",
+		"type-check:emit-fixtures": "tsc -p packages/tools/tests/emit/__generated__/tsconfig.json --noEmit",
 		"gen:examples": "tsx packages/tools/src/scripts/gen-examples.ts",
 		"changeset": "changeset",
 		"changeset:version": "changeset version",
