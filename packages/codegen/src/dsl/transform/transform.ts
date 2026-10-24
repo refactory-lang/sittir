@@ -63,6 +63,7 @@ import {
 	wireQueueRename,
 	wireRefuse,
 	wireAliasTargetIssue,
+	wireAliasSite,
 	wireGetLiftBody,
 	wireElementSlotOf,
 	wireLiftRenamedTo,
@@ -911,7 +912,8 @@ function aliasInPlace(member: RuntimeRule, name: string): RuntimeRule {
 }
 
 export function recordAlias(from: string, to: string): void {
-	wireRecordBindingEffect({ kind: 'alias', from, to });
+	const site = wireAliasSite();
+	wireRecordBindingEffect({ kind: 'alias', from, to, ...(site === undefined ? {} : { site }) });
 	refuseAliasTarget(from, to);
 }
 

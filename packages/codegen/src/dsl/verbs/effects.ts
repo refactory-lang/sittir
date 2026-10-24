@@ -43,7 +43,19 @@ export interface AliasEffect {
 	readonly kind: 'alias';
 	readonly from: string;
 	readonly to: string;
+	readonly scope?: string;
 }
+
+export interface AliasSite {
+	readonly copies: readonly string[];
+	readonly owner?: string;
+}
+
+export interface RecordedAlias extends Omit<AliasEffect, 'scope'> {
+	readonly site?: AliasSite;
+}
+
+export type RecordedBindingEffect = SegmentEffect | RecordedAlias;
 
 export interface RenameEffect {
 	readonly kind: 'rename';
@@ -144,15 +156,40 @@ function renamePath(path: string, rename: (name: string) => string, kindHead: bo
 	return [kindHead ? rename(head) : renameSegment(head, rename, fields), ...rest.map((s) => renameSegment(s, rename, fields))].join('/');
 }
 
-function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>, labelHeads = true): unknown {
-	if (!isRecord(record) || isPreference(record)) return record;
+function renamedEntries(record: GrammarRecord, keyOf: (key: string) => string, valueOf: (key: string, value: unknown) => unknown): GrammarRecord {
 	const out: GrammarRecord = {};
 	for (const [key, value] of Object.entries(record)) {
-		const to = renamePath(key, rename, kindHead, fields);
+		const to = keyOf(key);
 		if (to in out) throw new Error(`bind: options '${key}' renames to '${to}', which the options already name`);
-		out[to] = renameOptionPaths(value, rename, key === LABELS_KEY && labelHeads, fields, labelHeads);
+		out[to] = valueOf(key, value);
 	}
 	return out;
+}
+
+function renameOptionPaths(record: unknown, rename: (name: string) => string, kindHead: boolean, fields: ReadonlySet<string>, labelHeads = true): unknown {
+	if (!isRecord(record) || isPreference(record)) return record;
+	return renamedEntries(
+		record,
+		(key) => renamePath(key, rename, kindHead, fields),
+		(key, value) => renameOptionPaths(value, rename, key === LABELS_KEY && labelHeads, fields, labelHeads)
+	);
+}
+
+function renameOptionPathsWithin(options: unknown, scope: string, rename: (name: string) => string, fields: ReadonlySet<string>): unknown {
+	if (!isRecord(options)) return options;
+	return renamedEntries(
+		options,
+		(key) => key,
+		(key, value) =>
+			key === scope ? renameOptionPaths(value, rename, false, fields, false)
+			: key === LABELS_KEY && isRecord(value) ? renamedEntries(value, (path) => (path.split('/')[0] === scope ? renamePath(path, rename, false, fields) : path), (_path, target) => target)
+			: value
+	);
+}
+
+export function scopedAlias({ site, ...alias }: RecordedAlias, copies: ReadonlyMap<string, CopyEffect>): AliasEffect {
+	const scope = site?.copies.map((copy) => copies.get(copy)?.display).find((display) => display !== undefined) ?? site?.owner;
+	return scope === undefined ? alias : { ...alias, scope };
 }
 
 interface SegmentRewrite {
@@ -271,11 +308,11 @@ function ownerOptions(options: GrammarRecord, owner: string): GrammarRecord {
 	};
 }
 
-export function inheritSplitOptions(grammar: GrammarRecord, splitFrom: Readonly<Record<string, string>>): unknown {
+export function inheritSplitOptions(grammar: GrammarRecord, heirs: Readonly<Record<string, string>>): unknown {
 	if (!isRecord(grammar.options)) return grammar.options;
 	const out = { ...grammar.options };
 	const fields = fieldNames(grammar.rules);
-	for (const [to, from] of Object.entries(splitFrom)) {
+	for (const [to, from] of Object.entries(heirs)) {
 		const projected = renameOptionPaths(ownerOptions(grammar.options, from), (name) => name === from ? to : name, true, fields);
 		if (!isRecord(projected)) continue;
 		for (const [key, value] of Object.entries(projected)) {
@@ -303,6 +340,16 @@ export function effectsForOwners<E extends { readonly kind: string }>(grammar: G
 }
 
 const inheritsOptions = (origin: CopyOrigin): boolean => origin.kind === 'path' || origin.kind === 'copy';
+
+function optionHeirsOf(effects: readonly Effect[]): Record<string, string> {
+	const heirs: Record<string, string> = {};
+	for (const effect of effects) {
+		if (effect.kind !== 'copy' || !inheritsOptions(effect.origin)) continue;
+		const address = effect.display ?? effect.copy;
+		if (address !== effect.source) heirs[address] = effect.source;
+	}
+	return heirs;
+}
 
 function splitFromOf(effects: readonly Effect[]): Record<string, string> {
 	const splitFrom: Record<string, string> = {};
@@ -370,21 +417,24 @@ export function renameMapOf(effects: readonly Effect[]): ReadonlyMap<string, str
 
 export function rewriteInherited(records: LayerRecords, ctx: EffectCtx): LayerRecords {
 	const segments: SegmentEffect[] = [];
-	const aliases = new Map<string, string>();
+	const aliases = new Map<string | undefined, Map<string, string>>();
 	const renames = renameMapOf(ctx.effects);
 	for (const effect of ctx.effects) {
 		if (effect.kind === 'segment') segments.push(effect);
-		else if (effect.kind === 'alias') aliases.set(effect.from, effect.to);
+		else if (effect.kind === 'alias') aliases.set(effect.scope, (aliases.get(effect.scope) ?? new Map<string, string>()).set(effect.from, effect.to));
 	}
-	const splitFrom = splitFromOf(ctx.effects);
+	const heirs = optionHeirsOf(ctx.effects);
 	const fields = fieldNames(ctx.rules);
 	let out: GrammarRecord = { ...records };
 	if (out.options !== undefined) {
 		if (segments.length > 0) out.options = rewriteOwnedSegments(out.options, segments);
-		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields, false);
+		const everywhere = aliases.get(undefined);
+		if (everywhere !== undefined) out.options = renameOptionPaths(out.options, (name) => everywhere.get(name) ?? name, false, fields, false);
+		if (Object.keys(heirs).length > 0) out.options = inheritSplitOptions({ options: out.options, rules: ctx.rules }, heirs);
+		for (const [scope, within] of aliases)
+			if (scope !== undefined) out.options = renameOptionPathsWithin(out.options, scope, (name) => within.get(name) ?? name, fields);
 	}
 	if (renames.size > 0) out = renameRecords(out, (name) => renames.get(name) ?? name, fields);
-	if (out.options !== undefined && Object.keys(splitFrom).length > 0) out.options = inheritSplitOptions({ options: out.options, rules: ctx.rules }, splitFrom);
 	return out as LayerRecords;
 }
 

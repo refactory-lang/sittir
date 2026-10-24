@@ -547,13 +547,34 @@ describe('a copy path names its copies by the spelling of the path', () => {
 });
 
 describe('the source keeps its labels after a copy is named', () => {
-	it('keeps the source labels and inherits the copy label under the copy name, without projection', async () => {
+	it('keeps the source labels and inherits the copy label under the name the copy is shown as, without projection', async () => {
 		const base = await evaluateClean({ extras: '', rules: S1_RULES }, S1_OPTIONS, { bindings: '' });
 		const raw = await evaluateClean({ extras: '', rules: S1_RULES }, S1_OPTIONS, {
 			bindings: "edits: { owner: { '(body)': ($) => alias(copy('body'), $.context_body) } }"
 		});
 		const options = raw.options as Record<string, unknown>;
-		expect(options._labels).toMatchObject({ 'body/"{"/after': 'body/before', '_body_owner/"{"/after': 'body/before' });
+		expect(options._labels).toEqual({ 'body/"{"/after': 'body/before', 'context_body/"{"/after': 'body/before' });
 		expect(options.body).toEqual((base.options as Record<string, unknown>).body);
+	}, 60_000);
+});
+
+const SITED_RULES = "owner: ($) => choice($.body, $.other), other: ($) => seq('<', $.item, '>'), body: ($) => seq('{', repeat($.item), '}'), item: () => /x/";
+const SITED_OPTIONS = `options: { body: { 'items:/(item)/after': preference('space') }, other: { '(item)/before': preference('space') } }`;
+
+describe('an alias inside a copy renames option paths only where the copy is shown', () => {
+	it('scopes the alias to the shown copy and the copy display to its owner, and leaves the source and other owners as they were', async () => {
+		const base = await evaluateClean({ extras: '', rules: SITED_RULES }, SITED_OPTIONS, { bindings: '' });
+		const raw = await evaluateClean({ extras: '', rules: SITED_RULES }, SITED_OPTIONS, {
+			bindings: "edits: { owner: { '(body as context_body)/(item)': alias('entry') } }"
+		});
+		const before = base.options as Record<string, unknown>;
+		const options = raw.options as Record<string, unknown>;
+		expect(options.body).toEqual(before.body);
+		expect(options.other).toEqual(before.other);
+		expect(Object.keys(options.context_body as object)).toEqual(['items:/(entry)/after']);
+		expect(raw.bindingEffects).toEqual([
+			{ kind: 'alias', from: 'item', to: 'entry', scope: 'context_body' },
+			{ kind: 'alias', from: 'body', to: 'context_body', scope: 'owner' }
+		]);
 	}, 60_000);
 });

@@ -1,4 +1,4 @@
-import type { BindingEffect, CopyEffect, Lead } from '../verbs/effects.ts';
+import type { AliasSite, CopyEffect, Lead, RecordedBindingEffect } from '../verbs/effects.ts';
 import { copyNameOf, VerbRefusal } from '../verbs/copy.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
@@ -96,7 +96,7 @@ export interface WireContext {
 	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
 	readonly undeclaredRules: ReadonlySet<string>;
 	readonly patchSites: Map<string, PatchSite>;
-	readonly bindingEffects: BindingEffect[];
+	readonly bindingEffects: RecordedBindingEffect[];
 	extraRuleNames: ReadonlySet<string>;
 	precedenceRankedNames: ReadonlySet<string>;
 	lists?: WireLists;
@@ -113,7 +113,7 @@ export interface WireContext {
 	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
 	activeEntryPath: string | null;
-	copyDepth: number;
+	editing: string[];
 	readonly entering: Set<string>;
 	readonly copies: Map<string, CopyEffect>;
 	readonly copyReferences: WeakMap<object, string>;
@@ -176,7 +176,7 @@ export const WIRE_ENTRY_ROLES = {
 	elementSupertypes: 'outside',
 	activePatchSites: 'scoped',
 	activeEntryPath: 'scoped',
-	copyDepth: 'scoped',
+	editing: 'scoped',
 	entering: 'scoped',
 	copies: 'undone',
 	copyReferences: 'unreached',
@@ -314,7 +314,7 @@ export function wireRecordPatchSite(site: PatchSite): void {
 	currentContext?.patchSites.set(patchSiteKey(site), site);
 }
 
-export function wireRecordBindingEffect(effect: BindingEffect): void {
+export function wireRecordBindingEffect(effect: RecordedBindingEffect): void {
 	currentContext?.bindingEffects.push(effect);
 }
 
@@ -469,7 +469,7 @@ export function wireCopy(request: WireCopyRequest, edit: (body: RuntimeRule) => 
 			admitted: undefined,
 			origin: request.via === 'path' && context.activeEntryPath !== null ? { kind: 'path', owner, path: context.activeEntryPath } : { kind: 'copy', owner }
 		});
-	context.deposits.set(name, insideCopy(context, () => edit(body)));
+	context.deposits.set(name, insideCopy(context, name, () => edit(body)));
 	context.entry?.edited.add(name);
 	return name;
 }
@@ -479,23 +479,23 @@ export function wireEnteringRule<T>(rule: string, fn: () => T): T | undefined {
 	if (context === null || context.entering.has(rule)) return undefined;
 	context.entering.add(rule);
 	try {
-		return insideCopy(context, fn);
+		return insideCopy(context, rule, fn);
 	} finally {
 		context.entering.delete(rule);
 	}
 }
 
-function insideCopy<T>(context: WireContext, fn: () => T): T {
-	context.copyDepth++;
+function insideCopy<T>(context: WireContext, name: string, fn: () => T): T {
+	context.editing.push(name);
 	try {
 		return fn();
 	} finally {
-		context.copyDepth--;
+		context.editing.pop();
 	}
 }
 
 export function wireIsInsideCopy(): boolean {
-	return (currentContext?.copyDepth ?? 0) > 0;
+	return (currentContext?.editing.length ?? 0) > 0;
 }
 
 export function wireCopyBody(request: WireCopyRequest): RuntimeRule | undefined {
@@ -530,7 +530,7 @@ export function wireNoteCopyReference<R>(rule: R, copy: string): R {
 export function wireEditCopy(copy: string, edit: (body: RuntimeRule) => RuntimeRule): void {
 	const context = currentContext;
 	const body = context?.deposits.get(copy);
-	if (context && body !== undefined) context.deposits.set(copy, insideCopy(context, () => edit(body)));
+	if (context && body !== undefined) context.deposits.set(copy, insideCopy(context, copy, () => edit(body)));
 }
 
 function sourceBodyOf(context: WireContext, source: string): RuntimeRule | undefined {
@@ -555,18 +555,18 @@ function evaluateLayerRule(context: WireContext, name: string, $: unknown, previ
 	const evaluate = context.pendingRules.get(name);
 	if (evaluate === undefined) return undefined;
 	context.pendingRules.delete(name);
-	const { entry, applyingEntries, activePatchSites, activeEntryPath, copyDepth } = context;
+	const { entry, applyingEntries, activePatchSites, activeEntryPath, editing } = context;
 	context.entry = null;
 	context.applyingEntries = false;
 	context.activePatchSites = [];
 	context.activeEntryPath = null;
-	context.copyDepth = 0;
+	context.editing = [];
 	try {
 		const body = (evaluate as (d: unknown, p: unknown) => unknown)($, previous);
 		context.layerBodies.set(name, body);
 		return body;
 	} finally {
-		Object.assign(context, { entry, applyingEntries, activePatchSites, activeEntryPath, copyDepth });
+		Object.assign(context, { entry, applyingEntries, activePatchSites, activeEntryPath, editing });
 	}
 }
 
@@ -740,6 +740,16 @@ export function wireIsBaseSupertype(name: string): boolean {
 	return currentContext?.baseSupertypeNames.has(name) ?? false;
 }
 
+export function wireIsShown(name: string): boolean {
+	return !isParserHiddenName(name) && !wireIsBaseSupertype(name);
+}
+
+export function wireAliasSite(): AliasSite | undefined {
+	const owner = currentContext?.currentRuleKind;
+	if (owner === null || owner === undefined) return undefined;
+	return { copies: currentContext!.editing.toReversed(), ...(wireIsShown(owner) ? { owner } : {}) };
+}
+
 export function withWireContext<T>(
 	ruleKind: string | null,
 	fn: (ctx: WireContext) => T,
@@ -780,7 +790,7 @@ export function withWireContext<T>(
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		activeEntryPath: null,
-		copyDepth: 0,
+		editing: [],
 		entering: new Set(),
 		layerBodies: new Map(),
 		pendingRules: new Map(),
@@ -1008,7 +1018,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		activeEntryPath: null,
-		copyDepth: 0,
+		editing: [],
 		entering: new Set(),
 		layerBodies: new Map(),
 		pendingRules: new Map(),

@@ -23,7 +23,7 @@ import { RuleWalker } from './rule-walker.ts';
 import type { DisplayFamilies } from './rule-transforms.ts';
 import { baseRulesOf, VERIFIED_TREE_SITTER } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
-import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, renameMapOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
+import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, renameMapOf, rewriteInherited, scopedAlias, type Effect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
 import { applyRenames, renamedLists, vacatedNames, type ListRename } from './verbs/rename.ts';
 import { applyNarrows } from './verbs/narrow.ts';
@@ -465,7 +465,7 @@ function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<La
 }
 
 function resolvedEffects(view: GrammarRecord, wire: WireContext): readonly Effect[] {
-	const own = wire.bindingEffects.filter((effect): effect is SegmentEffect | AliasEffect => effect.kind === 'segment' || effect.kind === 'alias');
+	const own = wire.bindingEffects.map((effect) => (effect.kind === 'alias' ? scopedAlias(effect, wire.copies) : effect));
 	return effectsForOwners(view, [...own, ...wire.copies.values()]) as readonly Effect[];
 }
 

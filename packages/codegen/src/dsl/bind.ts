@@ -171,6 +171,6 @@ export function boundNameOf(
 	aliases: readonly Extract<BindingEffect, { kind: 'alias' }>[] = []
 ): (name: string) => string {
 	const bound = new Map(Object.entries(renamedFrom ?? {}).map(([to, from]) => [from, to]));
-	for (const { from, to } of aliases) bound.set(from, to);
+	for (const { from, to, scope } of aliases) if (scope === undefined) bound.set(from, to);
 	return (name) => bound.get(name) ?? name;
 }

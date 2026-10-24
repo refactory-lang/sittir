@@ -1,11 +1,10 @@
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { nativeRuleFn } from '../enrich.ts';
-import { isParserHiddenName } from '../rule-patterns.ts';
 import { recordAlias } from '../transform/transform.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { VerbRefusal } from '../verbs/copy.ts';
-import { wireCopy, wireCopyDeposit, wireCopyOf, wireCopyReference, wireEditCopy, wireEntryShown, wireIsBaseSupertype, wireNoteCopyDisplay, wireNoteCopyReference } from '../wire/wire.ts';
+import { wireCopy, wireCopyDeposit, wireCopyOf, wireCopyReference, wireEditCopy, wireEntryShown, wireIsShown, wireNoteCopyDisplay, wireNoteCopyReference } from '../wire/wire.ts';
 
 const walker = new RuleWalker<AnyRule>();
 
@@ -16,7 +15,7 @@ const nativeAlias = (content: unknown, value: unknown): RuntimeRule => nativeRul
 const nameOf = (rule: unknown): string => (typeof rule === 'string' ? rule : (nativeAlias(symbol('_'), rule) as unknown as { readonly value: string }).value);
 
 export function copyReference(copy: string, source: string, shown?: string): RuntimeRule {
-	const display = shown ?? (isParserHiddenName(source) || wireIsBaseSupertype(source) ? undefined : source);
+	const display = shown ?? (wireIsShown(source) ? source : undefined);
 	if (display === undefined) return bareReference(copy);
 	const reference = nativeAlias(symbol(copy), symbol(display));
 	if (shown !== undefined && shown !== source) recordAlias(source, shown);
