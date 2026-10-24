@@ -25,7 +25,6 @@ import {
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
 	collectKindEntries,
-	collectCatalogKinds,
 	kindDiscriminantExpr,
 	findKindEntry,
 	findKindEntryForLiteral,
@@ -126,27 +125,26 @@ export interface EmitFactoriesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	strict?: boolean;
-	generatedIdTables?: GeneratedIdTables;
-	kindEntries?: readonly KindEnumEntry[];
+	generatedIdTables: GeneratedIdTables;
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
 	triviaKinds?: readonly string[];
 	reparseHosts?: ReparseHostsConfig;
 }
 
-function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
+function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string[] {
 	const imports = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
 			const coercion = slotStorageCoercion(slot, nodeMap, kindEntries, slot.registeredOption === 'choice');
 			if (coercion !== undefined) imports.add(coercion.helper);
-			if (isListStorage(slot, nodeMap, kindEntries)) imports.add('listStorage');
+			if (isListStorage(slot, nodeMap)) imports.add('listStorage');
 			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
-			if (kindEntries !== undefined && slotUnreservedAliases(slot, nodeMap).length > 0) imports.add('rejectReservedText');
-			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
+			if (slotUnreservedAliases(slot, nodeMap).length > 0) imports.add('rejectReservedText');
+			if (slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
-		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
+		if (node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
 	}
 	for (const [kind, node] of nodeMap.nodes) {
@@ -156,11 +154,10 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 	return [...imports].sort();
 }
 
-function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	if (!kindEntries) return false;
+function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
-			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap);
 			if (storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') continue;
 			if (kindEnumTextMapExpr(slot, nodeMap, kindEntries).includes('kindIdFromName(')) return true;
 		}
@@ -221,7 +218,7 @@ function delimitedHost(
 
 function buildDelimitedConsts(
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	hosts: ReparseHostsConfig | undefined,
 	triviaKinds: ReadonlySet<string>,
 	leafReConsts: Map<string, string>,
@@ -267,13 +264,13 @@ function delimitedCheckLine(
 
 function buildLeafReConsts(
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	lines: string[]
 ): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
 	const relaxed = new Set(nodeMap.relaxedLiterals ?? []);
-	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words.filter((text) => !relaxed.has(text));
+	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries).words.filter((text) => !relaxed.has(text));
 	if (word?.rawFactoryName && reserved.length > 0) {
 		const listName = `_reservedWordList_${word.rawFactoryName}`;
 		const constName = `_reservedWords_${word.rawFactoryName}`;
@@ -287,7 +284,7 @@ function buildLeafReConsts(
 	if (word?.rawFactoryName) {
 		for (const ids of checkedSlotWordsets(nodeMap)) {
 			if (ids.length === 1 && ids[0] === GLOBAL_WORDSET) continue;
-			const words = reservedWordsAdmittedIn(nodeMap.reserved, ids, kindEntries ?? []);
+			const words = reservedWordsAdmittedIn(nodeMap.reserved, ids, kindEntries);
 			lines.push(`const ${wordsetConstName(ids, nodeMap)}: ReadonlySet<string> = new Set<string>(${JSON.stringify(words)});`);
 		}
 	}
@@ -323,8 +320,8 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 	return [...leaves];
 }
 
-function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string | undefined {
-	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+	const kind = resolveFieldStorageInfo(f, nodeMap).kind;
 	if (kind === 'boolean') return 'a boolean';
 	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
 }
@@ -338,14 +335,14 @@ function keywordTextRejection(
 	f: AssembledNonterminal,
 	expr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
 	const keywords = seatedKeywordTexts(f, nodeMap, kindEntries);
-	const word = kindEntries === undefined || !nodeMap.word ? undefined : kindDiscriminantExpr(nodeMap.word, nodeMap, kindEntries);
+	const word = !nodeMap.word ? undefined : kindDiscriminantExpr(nodeMap.word, nodeMap, kindEntries);
 	const keywordChecked =
 		keywords.length === 0 ? expr : `rejectKeywordText(${expr}, '${typeName}.${f.propertyName}', ${word!}, ${JSON.stringify(keywords)})`;
-	if (word === undefined || kindEntries === undefined || slotUnreservedAliases(f, nodeMap).length === 0) return keywordChecked;
+	if (word === undefined || slotUnreservedAliases(f, nodeMap).length === 0) return keywordChecked;
 	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.propertyName}', ${word}, ${wordsetConstName(f.reservedWordsets, nodeMap)})`;
 }
 
@@ -372,9 +369,9 @@ function checkedSlotWordsets(nodeMap: NodeMap): string[][] {
 export function seatedKeywordTexts(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	if (kindEntries === undefined || !textLeaves(f, nodeMap).some((leaf) => leaf.kind === nodeMap.word)) return [];
+	if (!textLeaves(f, nodeMap).some((leaf) => leaf.kind === nodeMap.word)) return [];
 	return keywordArmTextEntries(f, nodeMap, kindEntries).map((entry) => entry.text);
 }
 
@@ -393,9 +390,8 @@ export function strictNodeExpectation(f: AssembledNonterminal, nodeMap: NodeMap)
 function factoryTypeDiscriminant(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
-	if (!kindEntries) return `'${kind}' as const`;
 	if (!hasCatalogEntry(kindEntries, kind)) {
 		throw new Error(
 			`factoryTypeDiscriminant: kind '${kind}' has no parser symbol (TSGrammar-only). ` +
@@ -407,7 +403,7 @@ function factoryTypeDiscriminant(
 
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
@@ -415,7 +411,7 @@ function buildFactoryMapEntries(
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
 		if (isHiddenPresenceMarker(node)) continue;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		if (!hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
@@ -462,7 +458,7 @@ export namespace factory {
 		node: AssembledNode,
 		nodeMap: NodeMap,
 		leafReConsts: Map<string, string>,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		kindEntries: readonly KindEnumEntry[]
 	): void {
 		if (!node.rawFactoryName) return;
 		let result: string | undefined;
@@ -509,7 +505,7 @@ export namespace factory {
 		output: string[],
 		node: FieldCarryingNode,
 		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined,
+		kindEntries: readonly KindEnumEntry[],
 		leafReConsts: Map<string, string> = new Map()
 	): void {
 		if (!(node instanceof AssembledAlias) || !placedAlias(node, nodeMap)) {
@@ -525,7 +521,7 @@ export namespace factory {
 		output: string[],
 		node: AssembledList,
 		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		kindEntries: readonly KindEnumEntry[]
 	): void {
 		const result = emitSeparatedListFactory(node, nodeMap, kindEntries);
 		if (result) output.push(result);
@@ -563,7 +559,7 @@ function emitPlacedAliasFactory(
 	alias: AssembledAlias,
 	core: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const unreserved = unreservedWordFactory(alias, nodeMap)!;
 	const arms = alias.slots.length === 1 ? keywordArmTextEntries(alias.slots[0]!, nodeMap, kindEntries) : [];
@@ -584,7 +580,7 @@ function emitUnreservedWordFactory(
 	unreserved: UnreservedWordFactory,
 	nodeMap: NodeMap,
 	leafReConsts: Map<string, string>,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const { leaf } = unreserved;
 	const consts = new Map(leafReConsts);
@@ -612,7 +608,7 @@ type FieldCarryingNode = AuthoredCompound;
 export function childElementType(
 	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const parts = new Set<string>();
 	for (const c of node.children) {
@@ -659,7 +655,7 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 export function kindEnumTextMapExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	return textMapExpr(kindEnumTextEntries(f, nodeMap, kindEntries));
 }
@@ -667,7 +663,7 @@ export function kindEnumTextMapExpr(
 export function kindEnumMemberDiscriminants(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string[] {
 	return kindEnumTextEntries(f, nodeMap, kindEntries).map(({ discriminant }) => discriminant);
 }
@@ -675,7 +671,7 @@ export function kindEnumMemberDiscriminants(
 export function keywordArmTextMapExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	return textMapExpr(keywordArmTextEntries(f, nodeMap, kindEntries));
 }
@@ -683,7 +679,7 @@ export function keywordArmTextMapExpr(
 function keywordArmTextEntries(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): KindEnumTextEntry[] {
 	return kindEnumTextEntries(f, nodeMap, kindEntries).filter((entry) => entry.keyword);
 }
@@ -697,7 +693,7 @@ function slotStorageFromValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
 	return admittedSlotInput(f, storedSlotValueExpr(f, valueExpr, nodeMap, kindEntries, typeName), nodeMap, kindEntries, typeName);
@@ -707,7 +703,7 @@ function admittedSlotInput(
 	f: AssembledNonterminal,
 	expr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
 	const admitted = keywordTextRejection(f, expr, nodeMap, kindEntries, typeName);
@@ -741,10 +737,9 @@ function aliasContentAdmission(
 	f: AssembledNonterminal,
 	expr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	storedType: string
 ): string {
-	if (kindEntries === undefined) return expr;
 	const aliases = slotAliases(f, nodeMap);
 	if (aliases.length === 0) return expr;
 	const direct = new Set(slotStoredIds(f, nodeMap, kindEntries));
@@ -782,9 +777,9 @@ export function storageCallExpr(
 export function slotStorageCoercion(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	textInput: boolean,
-	storageInfo: FieldStorageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries)
+	storageInfo: FieldStorageInfo = resolveFieldStorageInfo(f, nodeMap)
 ): SlotStorageCoercion | undefined {
 	switch (storageInfo.kind) {
 		case 'boolean':
@@ -793,7 +788,6 @@ export function slotStorageCoercion(
 			return { helper: 'coerceBitflagStorage', args: `, ${bitflagTextsExpr(storageInfo.texts)}`, typed: false };
 		case 'kindEnum':
 		case 'mixedEnum':
-			if (!kindEntries) return undefined;
 			if (!textInput) return { helper: 'kindIdStorage', args: '', typed: true };
 			return {
 				helper: storageInfo.kind === 'kindEnum' ? 'coerceKindEnumStorage' : 'coerceMixedEnumStorage',
@@ -805,8 +799,8 @@ export function slotStorageCoercion(
 	}
 }
 
-function isListStorage(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+function isListStorage(f: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	const kind = resolveFieldStorageInfo(f, nodeMap).kind;
 	return isMultiple(f) && kind !== 'boolean' && kind !== 'bitflag';
 }
 
@@ -814,7 +808,7 @@ function storedSlotValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	typeName: string,
 	textInput = false
 ): string {
@@ -822,7 +816,7 @@ function storedSlotValueExpr(
 	return storageCallExpr(
 		valueExpr,
 		slotStorageCoercion(f, nodeMap, kindEntries, textInput),
-		isListStorage(f, nodeMap, kindEntries),
+		isListStorage(f, nodeMap),
 		stored,
 		hasOptionalElements(f)
 	);
@@ -832,10 +826,10 @@ function narrowedStorageExpr(
 	f: AssembledNonterminal,
 	literal: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
-	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	const kind = resolveFieldStorageInfo(f, nodeMap).kind;
 	if (kind === 'boolean') return 'true as const';
 	if (kind === 'kindEnum' || kind === 'mixedEnum') {
 		const entry = kindEnumTextEntries(f, nodeMap, kindEntries).find((candidate) => candidate.text === literal);
@@ -849,7 +843,7 @@ function slotStorageExpr(
 	f: AssembledNonterminal,
 	configAccess: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
 	return slotStorageFromValueExpr(f, defaultedValueExpr(f, `${configAccess}.${f.propertyName}`, nodeMap, kindEntries), nodeMap, kindEntries, typeName);
@@ -859,7 +853,7 @@ function defaultedValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	if (isMultiple(f)) return isNonEmpty(f) ? valueExpr : `(${valueExpr} ?? [])`;
 	const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries);
@@ -923,12 +917,12 @@ export function restSetterType(
 	f: AssembledNonterminal,
 	configType: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	if (!isMultiple(f)) return undefined;
 	const elemType = withHoles(
 		f,
-		resolveFieldStorageInfo(f, nodeMap, kindEntries).kind === 'verbatim'
+		resolveFieldStorageInfo(f, nodeMap).kind === 'verbatim'
 			? constructionFieldElementType(f, nodeMap, kindEntries)
 			: `NonNullable<NonNullable<${configType}>['${f.propertyName}']>[number]`
 	);
@@ -940,7 +934,7 @@ export function slotSetter(
 	f: AssembledNonterminal,
 	configType: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): SlotSetter {
 	const restType = restSetterType(f, configType, nodeMap, kindEntries);
 	if (restType !== undefined) return { name: f.propertyName, input: restType, optional: !isRequired(f), rest: true };
@@ -952,7 +946,7 @@ function fieldCarryingBuiltTypeSurface(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): BuiltTypeSurface {
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
@@ -1018,7 +1012,7 @@ function rowParamOf(
 	node: FieldCarryingNode,
 	surface: FactorySurface,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): RowParam {
 	const { param } = surface;
 	const strictType = param.rowStrictType ?? param.strictType;
@@ -1037,7 +1031,7 @@ function leafBuiltTypeSurface(
 	params: string,
 	textType: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): BuiltTypeSurface {
 	return {
 		mainType: undefined,
@@ -1056,7 +1050,7 @@ function leafBuiltTypeSurface(
 export function builtTypeSurfaceOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): BuiltTypeSurface | undefined {
 	if (node instanceof AssembledList) return listBuiltTypeSurface(node, nodeMap, kindEntries);
 	if (isSlotBearingCompound(node)) return fieldCarryingBuiltTypeSurface(node, node.slots, nodeMap, kindEntries);
@@ -1071,7 +1065,7 @@ export function builtTypeSurfaceOf(
 export function constructionChildElementType(
 	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const base = childElementType(node, nodeMap, kindEntries);
 	const aliasTypes = aliasContentTypes(node.children, nodeMap);
@@ -1082,7 +1076,7 @@ export function constructionChildElementType(
 export function constructionFieldElementType(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const type = withAliasContentTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
 	const shape = numericSlotShape(f);
@@ -1092,7 +1086,7 @@ export function constructionFieldElementType(
 export function fieldElementType(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
@@ -1231,8 +1225,8 @@ function ledByOptions(optionsType: string, declared: RefusingParams): RefusingPa
 }
 
 
-function coercedChildElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
-	const elementType = childElementType({ children: [slot] }, nodeMap);
+function coercedChildElementType(slot: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
+	const elementType = childElementType({ children: [slot] }, nodeMap, kindEntries);
 	return resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType;
 }
 
@@ -1253,7 +1247,7 @@ function registeredSlotSource(
 	slot: AssembledNonterminal,
 	hasConfig: boolean,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	if (slot.registeredOption === 'choice') {
 		return storedSlotValueExpr(slot, blankFromInput(hasBlankArm(slot), `options?.${slot.propertyName}`), nodeMap, kindEntries, node.typeName, true);
@@ -1272,7 +1266,7 @@ export function omitRegistered(type: string, node: { readonly slots: readonly As
 	return keys.length === 0 ? type : `OmitEach<${type}, ${keys.join(' | ')}>`;
 }
 
-export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string | undefined {
+export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | undefined {
 	const registered = registeredSlots(node);
 	if (registered.length === 0) return undefined;
 	return `{ ${registered.map((slot) => `readonly ${slot.propertyName}?: ${constructionFieldElementType(slot, nodeMap, kindEntries)}${hasBlankArm(slot) ? ' | null' : ''}`).join('; ')} }`;
@@ -1281,7 +1275,7 @@ export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterm
 function resolveFactorySurface(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): FactorySurface {
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
@@ -1305,7 +1299,7 @@ function resolveFactorySurface(
 function resolveConfigFactorySurface(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[]
 ): FactorySurface {
 	const spreadFacts =
 		isAuthoredCompound(node) && factoryTakesSpreadChildren(node, nodeMap) ? soleSlotFacts(node, nodeMap) : null;
@@ -1313,7 +1307,7 @@ function resolveConfigFactorySurface(
 	if (spreadFacts) {
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const looseElement = [...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
+			const looseElement = [...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
 			const param = refusingWhole(
 				{
@@ -1418,7 +1412,7 @@ function resolveConfigFactorySurface(
 		configParam,
 		configType,
 		numericSlots === undefined ? undefined : { typeParam: `const C extends ${strictType}`, type: `C & NumericConfig<C, ${numericSlots}> & ${refuseUndeclared('C', strictType)}` },
-		node.configSlots.filter((slot) => storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries)))
+		node.configSlots.filter((slot) => storesNodes(resolveFieldStorageInfo(slot, nodeMap)))
 	);
 	const param: FactoryParam = generic === undefined ? configParam : { ...configParam, generic };
 	return {
@@ -1436,12 +1430,12 @@ function resolveConfigFactorySurface(
 export function forwardedConstructorTarget(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | null {
 	if (resolveFactorySurface(node, nodeMap, kindEntries).directParamType === undefined) return null;
 	const target = forwardedTargetKind(node, nodeMap);
 	if (target === null) return null;
-	if (kindEntries !== undefined && !hasCatalogEntry(kindEntries, target)) return null;
+	if (!hasCatalogEntry(kindEntries, target)) return null;
 	if (nodeMap.nodes.get(constructorTargetKind(target, nodeMap, kindEntries))?.modelType === 'pattern') return null;
 	const targetNode = nodeMap.nodes.get(target);
 	const seatedGroup =
@@ -1462,7 +1456,7 @@ function forwardedConstruction(
 	node: FieldCarryingNode,
 	surface: FactorySurface,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): ForwardedConstruction | null {
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return null;
@@ -1492,7 +1486,7 @@ function forwardedConstruction(
 function restForwardTarget(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | null {
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return null;
@@ -1504,12 +1498,12 @@ function restForwardTarget(
 export function listSpreadTarget(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | null {
 	return registeredSlots(node).length > 0 ? null : restForwardTarget(node, nodeMap, kindEntries);
 }
 
-export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
+export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || !isSlotBearingCompound(node) || node instanceof AssembledList) return kind;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
@@ -1517,7 +1511,7 @@ export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntrie
 	return target === null ? kind : constructorTargetKind(target, nodeMap, kindEntries);
 }
 
-function chainParamOptional(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): boolean {
+function chainParamOptional(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || !isSlotBearingCompound(node) || node instanceof AssembledList) return false;
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
@@ -1530,7 +1524,7 @@ function chainParamOptional(kind: string, nodeMap: NodeMap, kindEntries?: readon
 export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ):
 	| {
 			params: string;
@@ -1603,7 +1597,7 @@ function emittedSlots(
 export function compoundStructureRow(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): StructureRow | undefined {
 	const { spreadFacts, leadingOptions } = resolveFactorySurface(node, nodeMap, kindEntries);
 	const registered = new Set(registeredSlots(node));
@@ -1613,7 +1607,7 @@ export function compoundStructureRow(
 		.filter((f) => needsNonEmptyHoist(f, nodeMap))
 		.map((f) => [f.storageKey, `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`] as const);
 	const nodeOnly = stored.flatMap((f) => {
-		const expected = bareTextExpectation(f, nodeMap, kindEntries);
+		const expected = bareTextExpectation(f, nodeMap);
 		return expected === undefined ? [] : [[f.storageKey, bareTextLabel(f, node.typeName), expected] as const];
 	});
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
@@ -1625,7 +1619,7 @@ export function compoundStructureRow(
 export function structureRowOfKind(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): StructureRow | undefined {
 	const node = nodeMap.nodes.get(kind);
 	if (node instanceof AssembledList) return listStructureRow(node);
@@ -1635,7 +1629,7 @@ export function structureRowOfKind(
 export function admitStatement(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	args: string,
 	declared?: readonly string[]
 ): string[] {
@@ -1673,7 +1667,7 @@ function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined,
+	kindEntries: readonly KindEnumEntry[],
 	leafReConsts: ReadonlyMap<string, string> = new Map()
 ): string {
 	const exportName = node.rawFactoryName!;
@@ -1809,7 +1803,7 @@ function emitFieldCarryingFactory(
 	lines.push(
 		...nodeMemberLines({
 			setters: seatedSetters(setters, plan),
-			accessors: slotsToEmit.filter((f) => !spelled.has(f.propertyName)).map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap, kindEntries)),
+			accessors: slotsToEmit.filter((f) => !spelled.has(f.propertyName)).map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			extra: [...(view?.members ?? []), ...groups.members],
 			inner: innerPositionsOf(typeKind, nodeMap)
 		})
@@ -1906,9 +1900,9 @@ export function slotStoresKindIds(info: FieldStorageInfo | undefined): boolean {
 export function valueKindIdExpr(
 	storage: TextValueStorage,
 	slotInfo: FieldStorageInfo | undefined,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
-	if (storage.via !== 'kindId' || kindEntries === undefined || !slotStoresKindIds(slotInfo)) return undefined;
+	if (storage.via !== 'kindId' || !slotStoresKindIds(slotInfo)) return undefined;
 	const entry =
 		storage.kindId !== undefined
 			? kindEntries.find((e) => e.id === storage.kindId)
@@ -1919,13 +1913,13 @@ export function valueKindIdExpr(
 export function valueStorageExpr(
 	storage: TextValueStorage,
 	slotInfo: FieldStorageInfo | undefined,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
 	return valueKindIdExpr(storage, slotInfo, kindEntries) ?? `'${escForSource(storage.text)}'`;
 }
 
-export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	const entry = kindEntries === undefined ? undefined : findKindEntryForLiteral(kindEntries, text);
+export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEntry[]): string {
+	const entry = findKindEntryForLiteral(kindEntries, text);
 	return entry === undefined ? `'${escForSource(text)}'` : `TSKindId.${entry.member}`;
 }
 
@@ -1943,7 +1937,7 @@ function emitRefineFormFactory(
 	form: RefineFormInfo,
 	info: RefineKindInfo,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
 	const baseFn = node.rawFactoryName;
@@ -1966,7 +1960,7 @@ function emitRefineFormFactory(
 		{ label: 'config', optional: opt === '?', rest: false, strictType: formConfigType, looseType: formConfigType },
 		formConfigType,
 		undefined,
-		slots.filter((slot) => !narrowed.has(slot.name) && storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries)))
+		slots.filter((slot) => !narrowed.has(slot.name) && storesNodes(resolveFieldStorageInfo(slot, nodeMap)))
 	);
 	if (formGeneric !== undefined) lines.push(`export function ${formFn}${formGeneric.typeParams}(${formGeneric.params}${optionsParam}): ${formBuiltName};`);
 	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}${optionsParam}): ${formBuiltName} {`);
@@ -2018,7 +2012,7 @@ function emitRefineFormFactory(
 	lines.push(
 		...nodeMemberLines({
 			setters: formSetters,
-			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap, kindEntries)),
+			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			inner: innerPositionsOf(node.kind, nodeMap)
 		})
 	);
@@ -2033,7 +2027,7 @@ export function refineFormBuiltTypeSurfaceOf(
 	form: RefineFormInfo,
 	info: RefineKindInfo,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): BuiltTypeSurface | undefined {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList || !node.rawFactoryName) return undefined;
 	const narrowed = new Set(form.narrowedFields.map((n) => n.fieldName));
@@ -2114,7 +2108,7 @@ export function listOptionStorageMembers(surface: Parameters<typeof listOptionKe
 export function listOptionDefaults(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): readonly { readonly key: string; readonly default: string }[] {
 	const parts = listOptionParts(node, nodeMap, kindEntries);
 	return [
@@ -2134,7 +2128,7 @@ export function listHasOptions(node: AssembledList): boolean {
 function listOptionParts(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ) {
 	const hasSeparatorKindOption = node.separatorRule !== undefined;
 	const candidateKindNames = hasSeparatorKindOption
@@ -2163,7 +2157,7 @@ function listOptionParts(
 export function listOptionsType(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	return listOptionParts(node, nodeMap, kindEntries).optionsType;
 }
@@ -2199,7 +2193,7 @@ export interface GroupSeatHint {
 export function groupSeatHints(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): readonly GroupSeatHint[] {
 	if (!isSlotBearingCompound(node)) return [];
 	return flattenSeatsOf(node, nodeMap).flatMap((seat) => {
@@ -2234,7 +2228,7 @@ export function groupSeatHints(
 function groupSeatRuntimeSpecs(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	factoryScope = ''
 ): readonly string[] {
 	return groupSeatHints(node, nodeMap, kindEntries).map((hint) => {
@@ -2292,7 +2286,7 @@ export interface ListViewFacts {
 export function listViewHint(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): ListViewFacts | undefined {
 	const target = listViewTarget(node, nodeMap);
 	if (target === undefined) return undefined;
@@ -2331,20 +2325,20 @@ export interface ListViewPlan {
 export function listViewPlanOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): ListViewPlan | undefined {
 	const target = listViewTarget(node, nodeMap);
 	return target === undefined ? undefined : viewPlanOfTarget(target, nodeMap, kindEntries);
 }
 
-export function listSelfViewPlan(list: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ListViewPlan {
+export function listSelfViewPlan(list: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): ListViewPlan {
 	return viewPlanOfTarget({ list }, nodeMap, kindEntries);
 }
 
 function viewPlanOfTarget(
 	target: { readonly owner?: AssembledNonterminal; readonly list: AssembledList },
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): ListViewPlan {
 	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
 	const elements = canonicalSeparatedListField(target.list);
@@ -2377,7 +2371,7 @@ function listSlotTargets(
 export function listSlotHints(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): readonly (ListViewFacts & { readonly slot: string; readonly kind: string; readonly config: string })[] {
 	return listSlotTargets(node, nodeMap).map(({ slot, kind }) => ({
 		...listViewHint(kind, nodeMap, kindEntries)!,
@@ -2390,7 +2384,7 @@ export function listSlotHints(
 function listSlotSpecs(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	factoryScope: string
 ): readonly { readonly slot: string; readonly spec: string }[] {
 	return listSlotTargets(node, nodeMap).map(({ slot, kind }) => ({
@@ -2409,7 +2403,7 @@ export interface SeatPlan {
 export function seatPlanOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	factoryScope = ''
 ): SeatPlan {
 	const specs = groupSeatRuntimeSpecs(node, nodeMap, kindEntries, factoryScope);
@@ -2425,14 +2419,13 @@ function storedAccessor(
 	name: string,
 	read: string,
 	slot: AssembledNonterminal,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	nodeMap: NodeMap
 ): StoredAccessor {
-	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries))) return { name, read };
+	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap))) return { name, read };
 	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one' };
 }
 
-export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly string[] {
+export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): readonly string[] {
 	const names = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
@@ -2450,7 +2443,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 export function separatedListSurface(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): {
 	readonly elemType: string;
 	readonly storageElemType: string;
@@ -2519,7 +2512,7 @@ export function separatedListSurface(
 function listBuiltTypeSurface(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): BuiltTypeSurface {
 	const canonical = node.slots.length > 1 ? undefined : canonicalSeparatedListField(node);
 	const contentAccessorName = canonical?.propertyName ?? 'content';
@@ -2547,7 +2540,7 @@ function listBuiltTypeSurface(
 export function declaredSeparatorDefault(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	const declared = node.resolvedSeparatorArm;
 	return declared === undefined ? undefined : kindDiscriminantExpr(declared, nodeMap, kindEntries);
@@ -2573,7 +2566,7 @@ export function leadingOptionsSplit(options: LeadingOptions, restName: string, r
 function emitSeparatedListFactory(
 	node: AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
 	const fn = node.rawFactoryName;
@@ -2646,7 +2639,7 @@ function emitSeparatedListFactory(
 		lines.push(
 			...nodeMemberLines({
 				setters: seatedSetters(setters, plan),
-				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap, kindEntries)],
+				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 				extra: view.members,
 				inner: innerPositionsOf(node.kind, nodeMap)
 			})
@@ -2667,7 +2660,7 @@ interface TextFactoryNode {
 
 function emitKindIdFactory(
 	node: TextFactoryNode,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): string {
 	const fn = node.rawFactoryName!;
@@ -2678,23 +2671,23 @@ function emitKindIdFactory(
 function kindDiscriminantType(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string {
-	return kindEntries === undefined ? JSON.stringify(kind) : kindDiscriminantExpr(kind, nodeMap, kindEntries);
+	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
 function emitTextFactory(
 	node: TextFactoryNode,
 	params: string,
 	textExpr: string,
-	guard?: string,
-	kindEntries?: readonly KindEnumEntry[],
-	nodeMap?: NodeMap,
+	guard: string | undefined,
+	kindEntries: readonly KindEnumEntry[],
+	nodeMap: NodeMap,
 	typeParams: string = '',
 	publicSignature?: string
 ): string {
 	const fn = node.rawFactoryName!;
-	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
+	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const body: string[] = publicSignature === undefined ? [] : [publicSignature];
 	body.push(`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`);
 	if (guard) body.push(`  ${guard}`);
@@ -2721,7 +2714,7 @@ interface MapEntry {
 
 export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
-	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #kindEntries: readonly KindEnumEntry[];
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #leafReConsts: Map<string, string>;
@@ -2731,22 +2724,16 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #structure = new Map<number, StructureRow>();
 
 	constructor(config: EmitFactoriesConfig) {
-		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
-		const kindEntries =
-			providedKindEntries ??
-			(generatedIdTables
-				? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-				: undefined);
+		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds } = config;
+		const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
 
 		lines.push(`import type * as T from '../types-internal.js';`);
 		lines.push(`import { jsonFacts } from '../utils.js';`);
 		lines.push(DELIMITER_IMPORT);
-		if (kindEntries) {
-			lines.push(`import { TSKindId } from '../kinds.js';`);
-			if (collectUsesKindIdFromName(nodeMap, kindEntries)) lines.push(`import { kindIdFromName } from '../types.js';`);
-		}
+		lines.push(`import { TSKindId } from '../kinds.js';`);
+		if (collectUsesKindIdFromName(nodeMap, kindEntries)) lines.push(`import { kindIdFromName } from '../types.js';`);
 		const usesElementWrap = [...nodeMap.nodes.values()].some(
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
 		);

@@ -28,7 +28,7 @@ for (const nodeStorage of ['object', 'arena'] as const) {
 		it('keeps that coordinate under another parent and through its envelope’s $with', () => {
 			const { name, content, declaration } = read();
 			const envelope = coordinateType(name);
-			expect(coordinateType(declaration.$with.pattern(content).pattern())).toBe(envelope);
+			expect(coordinateType(declaration.$with.name(content).name())).toBe(envelope);
 			expect(coordinateType(name.$with.content(content).content())).toBe(envelope);
 		});
 	});

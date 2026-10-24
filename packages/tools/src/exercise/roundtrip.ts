@@ -84,7 +84,7 @@ export async function loadFactoryArtifacts(grammar: GrammarName): Promise<Factor
 	const common = await loadCommon();
 	const model = await common.loadNodeModel(grammar);
 	return {
-		factoryMap: await common.loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {}),
+		factoryMap: await common.loadScopedFactoryMap(grammar, factoryModule._factoryMap),
 		factoryShapes: model.factoryShapes,
 		fieldAliasMap: model.fieldAliasMap,
 		factoryFields: model.factoryFields,
@@ -97,7 +97,7 @@ function normalize(text: string): string {
 	return text.replace(/\s+/g, ' ').trim();
 }
 
-type KindNameFromId = ((id: number) => string | undefined) | undefined;
+type KindNameFromId = (id: number) => string;
 
 function findFirstOfKind(
 	root: unknown,
@@ -109,7 +109,7 @@ function findFirstOfKind(
 	let found: ParsedNode | undefined;
 	common.walkWrappedTree(root, accessorOf, (node) => {
 		if (found !== undefined || node.$named === false) return;
-		if (typeof node.$type === 'number' && kindNameFromId?.(node.$type) === kind) found = node;
+		if (typeof node.$type === 'number' && kindNameFromId(node.$type) === kind) found = node;
 	});
 	return found;
 }

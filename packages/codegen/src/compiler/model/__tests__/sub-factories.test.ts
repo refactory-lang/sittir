@@ -1,12 +1,9 @@
+import { assemblePredicted } from '../../../__tests__/helpers/linked.ts';
+import type { NodeMapWithIdTables } from '../../../__tests__/helpers/node-map-fixtures.ts';
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { stampIrSurface } from '../ir-surface.ts';
 import type { Rule } from '../../../types/rule.ts';
 import type { RawGrammar } from '../../types.ts';
-import { link } from '../../link.ts';
-import { normalizeGrammar } from '../../normalize.ts';
-import { assemble, AssembleCtx } from '../../assemble.ts';
-import type { NodeMap } from '../../types.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,
@@ -25,7 +22,7 @@ function nodeArmOf(entries: readonly SubFactory[], name: string): NodeArm {
 
 const label = (variantOf: string, variant: string) => ({ annotations: { variant, variantOf } });
 
-function commentNodeMap(): NodeMap {
+function commentNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		comment: {
 			type: CHOICE,
@@ -39,7 +36,7 @@ function commentNodeMap(): NodeMap {
 	});
 }
 
-function logicNodeMap(labelled: boolean): NodeMap {
+function logicNodeMap(labelled: boolean): NodeMapWithIdTables {
 	const op = (value: string): Rule<'evaluate'> => ({ type: STRING, value, ...(labelled ? label('logic', value) : {}) });
 	return buildNodeMap({
 		logic: {
@@ -54,7 +51,7 @@ function logicNodeMap(labelled: boolean): NodeMap {
 	});
 }
 
-function nestingNodeMap(): NodeMap {
+function nestingNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		grandparent: {
 			type: CHOICE,
@@ -89,7 +86,7 @@ function nestingNodeMap(): NodeMap {
 	});
 }
 
-function ambiguousNodeMap(): NodeMap {
+function ambiguousNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		twice: {
 			type: CHOICE,
@@ -103,7 +100,7 @@ function ambiguousNodeMap(): NodeMap {
 	});
 }
 
-function collideNodeMap(): NodeMap {
+function collideNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		collide_parent: {
 			type: SEQ,
@@ -130,7 +127,7 @@ function collideNodeMap(): NodeMap {
 	});
 }
 
-function supertypeNodeMap(): NodeMap {
+function supertypeNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap(
 		{
 			root: { type: SEQ, members: [{ type: SYMBOL, name: 'holder' }, { type: SYMBOL, name: 'fielded' }] },
@@ -163,7 +160,7 @@ function supertypeNodeMap(): NodeMap {
 	);
 }
 
-function inlineNodeMap(): NodeMap {
+function inlineNodeMap(): NodeMapWithIdTables {
 	const inlinedEnd = (): Rule<'evaluate'> => ({
 		type: CHOICE,
 		members: [
@@ -183,7 +180,7 @@ function inlineNodeMap(): NodeMap {
 function buildNodeMap(
 	rules: Record<string, Rule<'evaluate'>>,
 	lists: { readonly supertypes?: readonly string[]; readonly inline?: readonly string[] } = {}
-): NodeMap {
+): NodeMapWithIdTables {
 	const raw: RawGrammar = {
 		name: 'synth',
 		fileTypes: [],
@@ -200,16 +197,12 @@ function buildNodeMap(
 		word: null,
 		references: []
 	};
-	const linked = link(raw);
-	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(AssembleCtx.from(normalized));
-	stampIrSurface(nodeMap);
-	return nodeMap;
+	return assemblePredicted(raw);
 }
 
 describe('sub-factories — subFactoriesOf', () => {
 	it('a labelled choice yields one arm per label, named by the label', () => {
-		const nodeMap = commentNodeMap();
+		const { nodeMap } = commentNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('comment')!, nodeMap);
 		expect(set.entries.map((e) => e.name).sort()).toEqual(['doc', 'plain']);
 		expect(set.entries.every((e) => e.residual.length === 0)).toBe(true);
@@ -217,7 +210,7 @@ describe('sub-factories — subFactoriesOf', () => {
 	});
 
 	it('labelled literals are value arms carrying the residual slots', () => {
-		const nodeMap = logicNodeMap(true);
+		const { nodeMap } = logicNodeMap(true);
 		const set = subFactoriesOf(nodeMap.nodes.get('logic')!, nodeMap);
 		expect(set.entries.map((e) => [e.name, e.arm.via])).toEqual([
 			['and', 'value'],
@@ -228,12 +221,12 @@ describe('sub-factories — subFactoriesOf', () => {
 	});
 
 	it('an unlabelled choice yields no arms', () => {
-		const nodeMap = logicNodeMap(false);
+		const { nodeMap } = logicNodeMap(false);
 		expect(subFactoriesOf(nodeMap.nodes.get('logic')!, nodeMap).entries).toEqual([]);
 	});
 
 	it("a child's own arms nest under its host and never flatten onto the parent", () => {
-		const nodeMap = nestingNodeMap();
+		const { nodeMap } = nestingNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('grandparent')!, nodeMap);
 		expect(set.entries.map((e) => [e.name, e.depth])).toEqual([
 			['parent', 0],
@@ -247,14 +240,14 @@ describe('sub-factories — subFactoriesOf', () => {
 	});
 
 	it('two arms with one label are ambiguous and neither is kept', () => {
-		const nodeMap = ambiguousNodeMap();
+		const { nodeMap } = ambiguousNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('twice')!, nodeMap);
 		expect(set.entries).toEqual([]);
 		expect(set.diagnostics).toEqual([{ parent: 'twice', name: 'same', reason: 'ambiguous', claimants: ['first', 'second'] }]);
 	});
 
 	it('a config-shaped arm whose key is also a residual slot is seated as a tuple, with the shared key reported', () => {
-		const nodeMap = collideNodeMap();
+		const { nodeMap } = collideNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('collide_parent')!, nodeMap);
 		expect(set.entries.map((e) => [e.name, e.merges])).toEqual([
 			['shapeA', false],
@@ -266,26 +259,26 @@ describe('sub-factories — subFactoriesOf', () => {
 	});
 
 	it('a config-shaped arm with no shared key merges its keys into the parent config', () => {
-		const nodeMap = nestingNodeMap();
+		const { nodeMap } = nestingNodeMap();
 		const set = subFactoriesOf(nodeMap.nodes.get('parent')!, nodeMap);
 		expect(set.entries.find((e) => e.name === 'leafB')!.merges).toBe(true);
 	});
 
 	it("a labelled supertype value mounts its labelled members; an inlined member is never the parent's arm", () => {
-		const nodeMap = supertypeNodeMap();
+		const { nodeMap } = supertypeNodeMap();
 		const held = subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap);
 		expect(held.entries.map((e) => e.name).sort()).toEqual(['circle', 'other', 'square']);
 		expect(subFactoriesOf(nodeMap.nodes.get('fielded')!, nodeMap).entries).toEqual([]);
 	});
 
 	it("an inline rule's labels are arms only in the host's unnamed slot", () => {
-		const nodeMap = inlineNodeMap();
+		const { nodeMap } = inlineNodeMap();
 		expect(subFactoriesOf(nodeMap.nodes.get('statement')!, nodeMap).entries).toEqual([]);
 		expect(subFactoriesOf(nodeMap.nodes.get('bare')!, nodeMap).entries.map((e) => e.name).sort()).toEqual(['newline', 'semi']);
 	});
 });
 
-export function twoChoiceSlotsNodeMap(): NodeMap {
+export function twoChoiceSlotsNodeMap(): NodeMapWithIdTables {
 	const rules: Record<string, Rule<'evaluate'>> = {
 		root: { type: SEQ, members: [{ type: STRING, value: 'for' }, { type: SYMBOL, name: 'header' }] },
 		header: {
@@ -334,7 +327,7 @@ export function twoChoiceSlotsNodeMap(): NodeMap {
 
 describe('hoisted arms in a parent with two choice slots', () => {
 	it('mounts every hoisted arm under its variant name, seated on its own slot', () => {
-		const nodeMap = twoChoiceSlotsNodeMap();
+		const { nodeMap } = twoChoiceSlotsNodeMap();
 		const header = nodeMap.nodes.get('header')!;
 		const set = subFactoriesOf(header, nodeMap);
 		const names = set.entries.map((e) => e.name);
@@ -350,7 +343,7 @@ describe('hoisted arms in a parent with two choice slots', () => {
 	});
 });
 
-export function clauseNodeMap(): NodeMap {
+export function clauseNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		root: { type: SEQ, members: [{ type: STRING, value: 'try' }, { type: SYMBOL, name: 'clause' }] },
 		clause: {
@@ -376,7 +369,7 @@ export function clauseNodeMap(): NodeMap {
 
 describe('flattenSeatsOf', () => {
 	it('finds the single hoisted config-shaped group in an optional seat', () => {
-		const nodeMap = clauseNodeMap();
+		const { nodeMap } = clauseNodeMap();
 		const [seat, ...more] = flattenSeatsOf(nodeMap.nodes.get('clause')!, nodeMap);
 		expect(more).toEqual([]);
 		expect(seat?.group.kind).toBe('clause_group');
@@ -384,12 +377,12 @@ describe('flattenSeatsOf', () => {
 		expect(subFactoriesOf(nodeMap.nodes.get('clause')!, nodeMap).entries).toEqual([]);
 	});
 	it('returns nothing for a choice of arms', () => {
-		const nodeMap = twoChoiceSlotsNodeMap();
+		const { nodeMap } = twoChoiceSlotsNodeMap();
 		expect(flattenSeatsOf(nodeMap.nodes.get('header')!, nodeMap)).toEqual([]);
 	});
 });
 
-export function comparisonNodeMap(): NodeMap {
+export function comparisonNodeMap(): NodeMapWithIdTables {
 	return buildNodeMap({
 		root: { type: SEQ, members: [{ type: STRING, value: 'cmp' }, { type: SYMBOL, name: 'comparison' }] },
 		comparison: {
@@ -416,20 +409,20 @@ export function comparisonNodeMap(): NodeMap {
 
 describe('elementsSeatOf', () => {
 	it('finds a repeated hoisted config-shaped group', () => {
-		const nodeMap = comparisonNodeMap();
+		const { nodeMap } = comparisonNodeMap();
 		const seats = elementsSeatOf(nodeMap.nodes.get('comparison')!, nodeMap);
 		expect(seats.map((s) => [s.slot.name, s.group.kind])).toEqual([['comparators', 'comparison_comparator']]);
 		expect(flattenSeatsOf(nodeMap.nodes.get('comparison')!, nodeMap)).toEqual([]);
 	});
 	it('returns nothing for a single-valued seat', () => {
-		const nodeMap = clauseNodeMap();
+		const { nodeMap } = clauseNodeMap();
 		expect(elementsSeatOf(nodeMap.nodes.get('clause')!, nodeMap)).toEqual([]);
 	});
 });
 
 describe('flattenSeatsOf on a direct-shaped group', () => {
 	it('names the one key of the group so the flatten calls it positionally', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'slice' }] },
 			slice: {
 				type: SEQ,
@@ -452,7 +445,7 @@ describe('flattenSeatsOf on a direct-shaped group', () => {
 
 describe('flattenSeatsOf prefixes a group key that collides with the parent', () => {
 	it('names the colliding key after its seat, and keeps the others as they are', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'binary' }] },
 			binary: {
 				type: SEQ,
@@ -492,7 +485,7 @@ describe('flattenSeatsOf flattens every group a node seats', () => {
 			],
 			annotations: { hoisted: true }
 		});
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'range' }] },
 			range: {
 				type: SEQ,
@@ -521,7 +514,7 @@ describe('flattenSeatsOf flattens every group a node seats', () => {
 
 describe('a hoisted token the factories do not emit mounts as a value arm', () => {
 	it('carries the token text instead of a builder reference', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'pointer' }] },
 			pointer: {
 				type: SEQ,
@@ -553,7 +546,7 @@ describe('a hoisted token the factories do not emit mounts as a value arm', () =
 
 describe('flattenSeatsOf flattens two groups whose keys do not collide', () => {
 	it('flattens both, each key as it is', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'clause' }] },
 			clause: {
 				type: SEQ,
@@ -582,7 +575,7 @@ describe('flattenSeatsOf flattens two groups whose keys do not collide', () => {
 });
 
 describe('tupleSeatOf seats a forwarded group by where it forwards', () => {
-	function forwardedSeatMap(target: 'elements' | 'config'): NodeMap {
+	function forwardedSeatMap(target: 'elements' | 'config'): NodeMapWithIdTables {
 		const inner: Rule<'evaluate'> =
 			target === 'elements'
 				? {
@@ -616,12 +609,12 @@ describe('tupleSeatOf seats a forwarded group by where it forwards', () => {
 	}
 
 	it('seats a forwarded group whose forward target is a separated list', () => {
-		const nodeMap = forwardedSeatMap('elements');
+		const { nodeMap } = forwardedSeatMap('elements');
 		expect(tupleSeatOf(nodeMap.nodes.get('root')!, nodeMap).map((seat) => seat.group.kind)).toEqual(['group']);
 	});
 
 	it('does not seat a forwarded group whose forward target is a config-shaped kind', () => {
-		const nodeMap = forwardedSeatMap('config');
+		const { nodeMap } = forwardedSeatMap('config');
 		expect(tupleSeatOf(nodeMap.nodes.get('root')!, nodeMap)).toEqual([]);
 	});
 });

@@ -1,4 +1,23 @@
-import { expect, it, vi } from 'vitest';
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, expect, it, vi } from 'vitest';
+import { BOOTSTRAP_DIR_ENV, bootstrapDir, readPin } from '../../bootstrap/bootstrap.ts';
+
+// The memo answers repeat reads from the bootstrap store, which persists across runs. Each test process
+// gets a store of its own that holds the real pinned build through symlinks and no read entries.
+const REAL_PINNED = bootstrapDir();
+const STORE = mkdtempSync(join(tmpdir(), 'read-isolation-'));
+const PINNED = join(STORE, readPin());
+mkdirSync(PINNED);
+for (const entry of readdirSync(REAL_PINNED)) if (entry !== 'reads') symlinkSync(join(REAL_PINNED, entry), join(PINNED, entry));
+const PRIOR_STORE = process.env[BOOTSTRAP_DIR_ENV];
+process.env[BOOTSTRAP_DIR_ENV] = STORE;
+afterAll(() => {
+	if (PRIOR_STORE === undefined) delete process.env[BOOTSTRAP_DIR_ENV];
+	else process.env[BOOTSTRAP_DIR_ENV] = PRIOR_STORE;
+	rmSync(STORE, { recursive: true, force: true });
+});
 
 vi.mock('@sittir/common', async (importOriginal) => {
 	const common = await importOriginal<typeof import('@sittir/common')>();

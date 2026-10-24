@@ -6,22 +6,24 @@ differs from upstream `tree-sitter-regex`.
 
 ---
 
-### `sittirGrammar(base, …)` (`packages/regex/grammar.sittir.ts:10`)
+### `grammar(enrich(base), wire({…}))` (`packages/regex/grammar.sittir.ts:12`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is one layer in the stock
+shape. `grammar` is the runtime's own; `enrich(base)` is the pending base and
+`wire({…})` the options. The runtime hands the pending base's externals to the
+options' `externals` callback, where the layer pass enriches the upstream base
+with the config's authored inputs (its `groups:` patterns visible, so enrich
+declines any group a pattern covers), completes the pending base and
+evaluates the config against it. The two halves meet only there, so the base
+wire sees and the base tree-sitter compiles cannot drift apart.
 
-### `class_range` (`packages/regex/grammar.sittir.ts:19`)
+### `class_range` (`packages/regex/grammar.sittir.ts:17`)
 
 Upstream `class_range` is `seq(bound, '-', bound)` with both bounds drawn from
 the same choice, so the two bounds would share one unnamed slot. `start` and
 `end` give each bound its own addressable slot.
 
-### `term` (`packages/regex/grammar.sittir.ts:20`)
+### `term` (`packages/regex/grammar.sittir.ts:18`)
 
 Upstream `term` is `repeat1(seq(atom, optional(quantifier)))`. The patch
 names the quantifier position `quantifier`.
@@ -36,7 +38,7 @@ against upstream, such as `(term (pattern_character) (zero_or_more))`, has
 to go through `term_group` here:
 `(term (term_group (pattern_character) quantifier: (zero_or_more)))`.
 
-### `inline_flags_group` (`packages/regex/grammar.sittir.ts:21`)
+### `inline_flags_group` (`packages/regex/grammar.sittir.ts:19`)
 
 Upstream spells the flag section as `choice(flags, seq(flags, '-', flags),
 seq('-', flags))`: enable only, toggle (enable then disable), or disable

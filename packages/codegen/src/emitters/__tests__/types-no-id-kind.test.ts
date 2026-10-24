@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { emitTypes } from '../types.ts';
-import { makeMinimalNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeMinimalNodeMap, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 describe('a grammar emitted without kind id tables', () => {
-	const src = emitTypes({ grammar: 'synth', nodeMap: makeMinimalNodeMap() });
+	const src = emitTypes({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries))});
 
 	it('stamps no string where a namespace takes a numeric kind id', () => {
 		const stamps = [...src.matchAll(/(?:LeafNs|KeywordNs)<[^\n]*>\s*\{\}/g)].map((m) => m[0]);

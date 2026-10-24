@@ -77,7 +77,7 @@
 import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,
-	loadCanonicalKindNameFromId,
+	loadStorageKindNameFromId,
 	loadWebTreeSitter,
 	loadNativeEngine,
 	readNativeTree,
@@ -351,11 +351,11 @@ async function computeValidatorWrapDiag(
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	// Parity with the validator: candidates key by the CANONICAL catalog
 	// name of the wire `$type`, so the replayed wrapper selection must too.
-	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
+	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const targetKind = targetNode.type;
 	const dType = (untypedNode as { $type?: unknown } | undefined)?.$type;
 	const renderedKind =
-		typeof dType === 'number' && canonicalKindNameFromId ? (canonicalKindNameFromId(dType) ?? targetKind) : targetKind;
+		typeof dType === 'number' ? (canonicalKindNameFromId(dType) ?? targetKind) : targetKind;
 
 	await loadReparseHosts(grammar);
 	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
@@ -814,7 +814,6 @@ async function readProbeLanes(
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	let coordinate: NodeCoordinate | undefined;
 	if (!isRoot) {
-		if (readNode === null) throw new Error('probe-kind: the grammar has no read');
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		const found = findWrappedNode(readNode(handle), accessorOf, targetKind ?? targetNode.type, kindNameFromId, spanOfNode(sourceSpans(source), targetNode));
 		coordinate = found === undefined ? undefined : coordinateOf(found);
@@ -823,7 +822,7 @@ async function readProbeLanes(
 	const read = (depth?: number): unknown => (coordinate === undefined ? handle.read!(0, depth) : readUntyped(handle, coordinate, depth));
 	const shallow = stripBigInts(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
-	const deepTyped = readNode ? readNode(handle, coordinate) : undefined;
+	const deepTyped = readNode(handle, coordinate);
 	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, accessorOf, onAccessorThrow);
 	return { shallow, deep, deepTyped, deepUntypedNode };
 }

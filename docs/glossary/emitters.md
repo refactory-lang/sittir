@@ -427,6 +427,11 @@ descends into its content slot finds an arm for whichever reaches.
 
 Whether a kind gets a top-level factory, and the skip reason when it does not. A presence marker (`isHiddenPresenceMarker`) is skipped as a hidden keyword literal; `buildFactoryMapEntries` skips the same kinds, and both read that one model predicate.
 
+Hidden punctuation with an explicitly assigned builder, including layout arms
+stamped by assemble, passes the surface gate. Ordinary punctuation without a
+builder remains omitted. IR and factory emission therefore honor the same
+model-level builder decision.
+
 ### `packages/codegen/src/emitters/factories.ts::buildFactoryMapEntries`
 
 ```text
@@ -661,7 +666,7 @@ The structure row a kind's own builder and coercer are held to: a separated list
 
 ### `packages/codegen/src/emitters/factories.ts::admitStatement`
 
-The generated line that hands a call's input to the current engine handle: `currentHandle()?.admit(<the kind's id>, <args>);`, or nothing when the kind's row has neither `config` nor `lists`. The raw builder emits it first, over `[config]` for a config-first kind and over its rest arguments (`children`, or `args` after a leading options argument) for a spread kind; a separated list's builder over `elements`. The loose coercer of the same kind emits it over `[input]` or its rest `input`. Each of these functions knows its own kind and exactly what it reads, which a proxy over the builder table does not: a form or variant builder returns the same kind but takes keys of its own, and would be refused against the kind's row. A variant or form builder builds through the kind's own raw builder, so what it passes on is checked there, against the kind's config.
+The generated line that hands a call's input to the current engine handle: `currentHandle()?.admit(<the kind's id>, <args>);`, or nothing when the kind's row has neither `config` nor `lists`. The raw builder emits it first, over `[config]` for a config-first kind and over its rest arguments (`children`, or `args` after a leading options argument) for a spread kind; a separated list's builder over `elements`. The loose coercer of the same kind emits it over `[input]` or its rest `input`. Each of these functions knows its own kind and exactly what it reads, which a proxy over the builder table does not: a form or variant builder returns the same kind but takes keys of its own, and would be refused against the kind's row. A variant builder builds through the kind's own raw builder, so what it passes on is checked there, against the kind's config. A refine form is the exception: it writes a node of the parent kind with its own narrowed config, so it emits its own call over `[config]`, with `declared` set to the slots it does not narrow, since the parent's row would refuse its valid keys (`emitRefineFormFactory`).
 
 ### `packages/codegen/src/emitters/factories.ts::listStructureRow`
 
@@ -2381,23 +2386,9 @@ assemble mints a node for it.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::collectKindEntries`
 
-```text
-/**
- * Collect catalog entries that should appear in `TSKindId`. Skips
- * kinds whose parser symbol is absent (`TSGrammar`-only-without-
- * `TSInternals` per the design).
- *
- * Pass `collectCatalogKinds(generatedIdTables)` for the runtime-
- * dispatch surfaces (TSKindId, kindIdFromName, AnyNode,
- * kind_ids.rs); pass `collectAllKinds(nodeMap)` only for emitter
- * surfaces that intentionally restrict to user-facing rule names
- * (`is.kind()` guards — see `is.ts`).
- */
-```
+The `TSKindId` rows of the id tables' kind catalog: every catalog row with an id, in catalog order, sorted by id at the end. It is the one derivation every emitter and the `ir` surface read their kind entries through, given the tables they are handed; no emitter takes the entries in as a separate input.
 
-```text
-// member → first kind that claimed it
-```
+A row's member is named from its model kind (`modelKindOfEntry`, so a renamed row and an alias row take their tree name). The rows are collected first, because a row's model kind depends on the whole list. Two kinds that name one member are a codegen error.
 
 #### body
 
@@ -5134,7 +5125,9 @@ seam census and `emitListSlot` see exactly the separator the grammar wrote.
 A template-emission dry run over the node map before the emitters
 dispatch, so every `staticSeamBefore` stamp on the spaced rules is written
 before any other emitter reads them; `emitAll` runs it right after it
-builds the spaced rules, since the stamps land on those rules.
+builds the spaced rules, since the stamps land on those rules. It reads the
+same kind entries as the emission it precedes, so the literal merge pairs
+its seams are decided from are the catalog's.
 
 ### `packages/codegen/src/emitters/templates.ts::stringifyRule`
 
@@ -6824,7 +6817,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 	 */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::inlineKinds`
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig::inlineKinds`
 
 ```text
 /**
@@ -6834,7 +6827,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 	 */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::synthesizedKinds`
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig::synthesizedKinds`
 
 ```text
 /**
@@ -6946,7 +6939,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 
 The kind ids a supertype's or an enum kind's guard admits, its row in `_members` and, as kind-id types, its entry in `KindMembers`: the kinds `membershipKindsOf` gives for it, each by its kind id, once. Empty on the legacy path without id tables, whose guards compare names.
 
-### `packages/codegen/src/emitters/kind-discriminant.ts::parseId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry::parseId`
 
 ```text
 /**
@@ -6989,7 +6982,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
  */
 ```
 
-### `packages/codegen/src/emitters/kind-discriminant.ts::parseId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::CatalogRow::parseId`
 
 ```text
 /** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
@@ -7040,7 +7033,7 @@ The kind the parser shows at the value's site: the alias target where one applie
 	 */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::text`
+### `packages/codegen/src/emitters/node-model.ts::SerializedLeaf::text`
 
 ```text
 /**
@@ -7408,11 +7401,11 @@ A slot the template names with this set is reported as a `HelperSlotRead` (`help
 /** Real facts about a container-shape branch's single unnamed child slot. */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::isWordChar`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::isWordChar`
 
 The grammar's word-class test for a single char (`wordCharPredicate`), used for compile-time static seam spaces; dynamic seams belong to the runtime SpacingWriter with the same class.
 
-### `packages/codegen/src/emitters/templates.ts::rules`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::rules`
 
 ```text
 /**
@@ -7423,7 +7416,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::visitingHelpers`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::visitingHelpers`
 
 ```text
 /**
@@ -7520,7 +7513,7 @@ seat the child into a config or tuple take the value arguments only.
 `EmitWrapConfig.generatedIdTables`: the parser-symbol id tables (from `loadGeneratedIdTables`). When the config passes no `kindEntries`, the emitter derives its kind catalog from them; with a catalog, every wrap function stamps `$type: TSKindId.X` (`typeStampLines`) and `wrapNode` dispatches by numeric id. Without one (synthetic test grammars) dispatch is by kind name.
 
 
-### `packages/codegen/src/emitters/wrap.ts::inlineKinds`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::inlineKinds`
 
 ```text
 /**
@@ -7530,7 +7523,7 @@ seat the child into a config or tuple take the value arguments only.
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::synthesizedKinds`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::synthesizedKinds`
 
 ```text
 /**
@@ -9282,14 +9275,6 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 #### body
 
 ```text
-// emitOne returns undefined for modelTypes that don't get templates
-// (supertype / pattern / keyword / token / enum); emit an empty body
-// to preserve file presence.
-```
-
-#### body
-
-```text
 // Slot-preservation gate: assert every declared slot appears at least
 // once in the emitted body. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
 ```
@@ -9356,6 +9341,14 @@ the edge of what the seam sits beside.
 // isSlotBearingCompound's doc comment, shared.ts.
 ```
 
+
+#### body
+
+```text
+// emitOne returns undefined for modelTypes that don't get templates
+// (supertype / pattern / keyword / token / enum); emit an empty body
+// to preserve file presence.
+```
 ### `packages/codegen/src/emitters/templates.ts::emitBranchTemplate`
 
 ```text
@@ -10145,7 +10138,7 @@ Only the factory, wrap, template and render-module emitters take the
 
 ### `packages/codegen/src/emitters/emit.ts::classifyRenderModuleEmission`
 
-Whether `emitAll` emits the render module: only when asked to, for a grammar sittir knows, and with the parser's kind-id tables. A request without the tables is an error naming the grammar, not a skipped module: every node decodes by kind id, so the parser is generated first, as `gen` and the bootstrap do.
+Whether `emitAll` emits the render module: only when asked to and for a grammar sittir knows. The parser's id tables are always present, because `emitAll` requires them.
 
 ### `packages/codegen/src/emitters/engine.ts::EmitEngineConfig`
 
@@ -12372,7 +12365,7 @@ A separated list's `$with` setters for its options, one per `listOptionKeys` key
 
 ### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
 
-The unit kinds (`unitKindIds`) whose kind the parser names, read from the kind catalog's `anon` stamp: an empty statement's `;`, `true`, `self`, not a `$` or `{`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_bare`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
 
 ### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
 
@@ -13786,7 +13779,7 @@ field filter, so they cannot disagree on which sites live in the base.
 ### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
 
 Whether a spacing site keeps a field on its node: only list facts do —
-the separator row and a list's gap sites (`before`, `after`, `gap`), which
+the separator row and a list's separator gap sites (a `separator` address), which
 the reader's gap classifier stamps per node. A token seam and a list flank
 have no per-node value; the body reads them from the resolved options with
 `w.site_at`, and a kind edge lives in the node's base `edges`.
@@ -14330,7 +14323,7 @@ node field, an `Option<u16>` named by the site key.
 ### `packages/codegen/src/emitters/render-module.ts::kindEdgeSidesOf`
 
 A kind's own edge sites among its synthesized sites, by field name to side:
-the seams `isKindEdge` accepts, their side read from the parsed seam label.
+the seams `isKindEdge` accepts, their side read from their seam address.
 
 ### `packages/codegen/src/emitters/render-module.ts::edgeArmSlotsOf`
 
@@ -15558,3 +15551,11 @@ Each kind id that has registered slots, mapped to the slot property names its bu
 ### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
 
 The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.
+
+### `packages/typescript/grammar.sittir.ts::AccessorPositions`
+
+The positions, within a method form's edit paths, of the slots an accessor arm writes: the `override` slot, the `dropped` slots that an accessor blanks, the `kind` slot that names `get` or `set`, the `optional` slot, and the `signature` slot. `accessorArms` takes them as data, so the same arm builder serves each method form.
+
+### `packages/typescript/grammar.sittir.ts::accessorArms`
+
+Builds the three variants of an accessor-capable method form: `plain`, `getter` and `setter`. Plain keeps the original, with `override` set and the `*` and optional slots filled. The getter and setter blank the dropped and optional slots, name their accessor kind, and replace the signature with the matching accessor signature rule. Why: the ECMAScript accessor productions take no `?`, `*`, `async` or type parameters, and a setter takes exactly one parameter, so each accessor is a separate arm of the form.

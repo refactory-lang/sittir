@@ -7,7 +7,7 @@ import { findWrappedNode, loadCorpusEntries, loadKindNameFromId, loadSlotAccesso
 async function finder(grammar: string, nodeStorage: 'object' | 'arena') {
 	const engine = await createEngine(await languageByName(grammar), { nodeStorage });
 	const accessorOf = await loadSlotAccessorOf(grammar);
-	const kindNameFromId = (await loadKindNameFromId(grammar))!;
+	const kindNameFromId = await loadKindNameFromId(grammar);
 	return { engine, accessorOf, kindNameFromId };
 }
 

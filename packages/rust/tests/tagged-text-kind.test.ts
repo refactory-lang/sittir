@@ -8,9 +8,9 @@ import { createEngine } from '@sittir/common';
 const rs = await createEngine(rust);
 
 const value = (expression: object): string =>
-	String(rs.build.letDeclaration({ pattern: 'x', value: expression } as never));
+	String(rs.build.letDeclaration({ name: 'x', value: expression } as never));
 const typed = (type: object): string =>
-	String(rs.build.letDeclaration({ pattern: 'x', type } as never));
+	String(rs.build.letDeclaration({ name: 'x', type } as never));
 
 describe('a kind tag in either input shape', () => {
 	it('an affixed token: its content, or its config', () => {

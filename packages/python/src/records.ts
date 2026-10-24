@@ -23,7 +23,7 @@ export const records = {
 	ChevronNode: { words: 7, expression: { word: 2, width: 5 } },
 	AssertStatementNode: { words: 4, expression: { word: 2, width: 2, run: 5 } },
 	ExpressionStatementNode: { words: 7, content: { word: 2, width: 5 } },
-	NamedExpressionNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
+	NamedExpressionNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	NamedExpressionLhsNode: { words: 7, identifier: { word: 2, width: 5 } },
 	ReturnStatementNode: { words: 7, expressions: { word: 2, width: 5 } },
 	DeleteStatementNode: { words: 7, expressions: { word: 2, width: 5 } },
@@ -60,9 +60,9 @@ export const records = {
 	TryStatementNode: {
 		words: 42,
 		body: { word: 2, width: 10, inline: 8 },
-		except_clauses: { word: 12, width: 2, run: 5 },
-		else_clause: { word: 14, width: 14, inline: 12 },
-		finally_clause: { word: 28, width: 14, inline: 12 }
+		handlers: { word: 12, width: 2, run: 5 },
+		alternative: { word: 14, width: 14, inline: 12 },
+		finalizer: { word: 28, width: 14, inline: 12 }
 	},
 	ExceptClauseNode: {
 		words: 31,
@@ -70,7 +70,7 @@ export const records = {
 		exception: { word: 3, width: 18, inline: 16 },
 		body: { word: 21, width: 10, inline: 8 }
 	},
-	FinallyClauseNode: { words: 12, block: { word: 2, width: 10, inline: 8 } },
+	FinallyClauseNode: { words: 12, body: { word: 2, width: 10, inline: 8 } },
 	WithStatementNode: {
 		words: 23,
 		async_: { word: 2, bit: 0 },
@@ -99,7 +99,7 @@ export const records = {
 		words: 37,
 		name: { word: 2, width: 5 },
 		type_parameters: { word: 7, width: 10, inline: 8 },
-		superclasses: { word: 17, width: 10, inline: 8 },
+		bases: { word: 17, width: 10, inline: 8 },
 		body: { word: 27, width: 10, inline: 8 }
 	},
 	TypeParameterNode: { words: 8, types: { word: 2, width: 6, inline: 4 } },
@@ -133,16 +133,16 @@ export const records = {
 	ParametersElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	PatternsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	TuplePatternNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
-	ListPatternNode: { words: 8, patterns: { word: 2, width: 6, inline: 4 } },
-	DefaultParameterNode: { words: 17, name: { word: 2, width: 10, inline: 8 }, value: { word: 12, width: 5 } },
+	ListPatternNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
+	DefaultParameterNode: { words: 17, name: { word: 2, width: 10, inline: 8 }, default: { word: 12, width: 5 } },
 	TypedDefaultParameterNode: {
 		words: 17,
 		name: { word: 2, width: 5 },
 		type_: { word: 7, width: 5 },
-		value: { word: 12, width: 5 }
+		default: { word: 12, width: 5 }
 	},
-	ListSplatPatternNode: { words: 7, target: { word: 2, width: 5 } },
-	DictionarySplatPatternNode: { words: 7, target: { word: 2, width: 5 } },
+	ListSplatPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
+	DictionarySplatPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
 	AsPatternNode: { words: 12, expression: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
 	NotOperatorNode: { words: 7, argument: { word: 2, width: 5 } },
 	BooleanOperatorNode: {
@@ -173,8 +173,8 @@ export const records = {
 	},
 	PatternListNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	YieldNode: { words: 7, content: { word: 2, width: 5 } },
-	AttributeNode: { words: 12, object: { word: 2, width: 5 }, attribute: { word: 7, width: 5 } },
-	SubscriptNode: { words: 13, value: { word: 2, width: 5 }, subscripts: { word: 7, width: 6, inline: 4 } },
+	AttributeNode: { words: 12, object: { word: 2, width: 5 }, property: { word: 7, width: 5 } },
+	SubscriptNode: { words: 13, object: { word: 2, width: 5 }, subscripts: { word: 7, width: 6, inline: 4 } },
 	SliceNode: {
 		words: 21,
 		start: { word: 2, width: 5 },
@@ -184,14 +184,14 @@ export const records = {
 	CallNode: { words: 12, function: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
 	TypedParameterNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	TypeNode: { words: 7, content: { word: 2, width: 5 } },
-	SplatTypeNode: { words: 12, operator: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	SplatTypeNode: { words: 12, operator: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	GenericTypeNode: { words: 17, name: { word: 2, width: 5 }, type_parameter: { word: 7, width: 10, inline: 8 } },
 	UnionTypeNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	ConstrainedTypeNode: { words: 12, base_type: { word: 2, width: 5 }, constraint: { word: 7, width: 5 } },
 	MemberTypeNode: { words: 12, base_type: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	KeywordArgumentNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	ListNode: { words: 8, collection_elements: { word: 2, width: 6, inline: 4 } },
-	SetNode: { words: 8, collection_elements: { word: 2, width: 6, inline: 4 } },
+	ListNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
+	SetNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
 	TupleNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
 	DictionaryNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
 	PairNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
@@ -211,7 +211,7 @@ export const records = {
 	IfClauseNode: { words: 7, condition: { word: 2, width: 5 } },
 	ConditionalExpressionNode: {
 		words: 17,
-		body: { word: 2, width: 5 },
+		consequence: { word: 2, width: 5 },
 		condition: { word: 7, width: 5 },
 		alternative: { word: 12, width: 5 }
 	},
@@ -305,13 +305,13 @@ export const records = {
 	SimplePatternNegativeNode: { words: 31, sign: { word: 2, bit: 0 }, value: { word: 3, width: 28, inline: 26 } },
 	ExceptClauseExceptionListNode: { words: 4, value: { word: 2, width: 2, run: 5 } },
 	ExceptClauseExceptionNode: { words: 16, content: { word: 2, width: 14, inline: 12 } },
-	AssignmentEqNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	AssignmentTypeNode: { words: 12, left: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
+	AssignmentEqNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
+	AssignmentTypeNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	AssignmentTypedNode: {
 		words: 17,
-		left: { word: 2, width: 5 },
+		name: { word: 2, width: 5 },
 		type_: { word: 7, width: 5 },
-		right: { word: 12, width: 5 }
+		value: { word: 12, width: 5 }
 	},
 	ExpressionStatementTupleNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	WithClauseBareNode: { words: 4, item: { word: 2, width: 2, run: 5 } },

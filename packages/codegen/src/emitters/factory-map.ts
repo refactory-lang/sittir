@@ -36,7 +36,7 @@ export interface FactoryMapData {
 	readonly polymorphVariants: PolymorphVariantMap;
 }
 
-export function buildFactoryMap(nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): FactoryMapData {
+export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
 
 	const factoryShapes: Record<string, FactoryShape> = {};
@@ -122,12 +122,11 @@ function createFactorySlotMeta(
 
 function optionDefaultOf(
 	slot: AssembledNonterminal,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	at: string
 ): Pick<FactorySlotMeta, 'optionDefault'> {
 	const value = slot.optionDefaultArm;
 	if (value === undefined) return {};
 	if (slot.registeredOption === 'spelling') return { optionDefault: value };
-	if (kindEntries === undefined) return {};
 	return { optionDefault: armIdOf(kindEntries, { value, kind: slot.optionDefaultKind }, at) };
 }

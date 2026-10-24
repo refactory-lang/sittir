@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
@@ -10,29 +11,33 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel, printNodeModel } from '../node-model.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeNodeMapWith, withGeneratedIdTables, type NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
 describe('node-model emitter', () => {
 	it('serializes the canonical display family without deriving aliases again', () => {
-		const nodeMap = makeNodeMapWith(new Map());
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(() => makeNodeMapWith(new Map()));
 		const family = [
 			{ storage: 'string_content', literal: false },
 			{ storage: 'raw_string_literal_content', literal: false }
 		];
 		const withFamily = { ...nodeMap, displayUnions: new Map([['string_content', family]]) };
-		expect(buildNodeModel(withFamily)).toHaveProperty('displayUnions', { string_content: family });
+		expect(buildNodeModel(withFamily, generatedIdTables)).toHaveProperty('displayUnions', { string_content: family });
 	});
 	it('serializes a list\'s item slot beside its element kinds', () => {
 		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
 		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
-		const nodes = new Map<string, AssembledNode>([
-			['member_list', new AssembledList('member_list', rule, undefined, { separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
-			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
-		]);
-		const list = buildNodeModel(makeNodeMapWith(nodes)).nodes.find((node) => node.kind === 'member_list');
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['member_list', new AssembledList('member_list', rule, { kindEntries }, { kindEntries, separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
+					['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
+				])
+			)
+		);
+		const list = buildNodeModel(nodeMap, generatedIdTables).nodes.find((node) => node.kind === 'member_list');
 		expect(list).toMatchObject({ modelType: 'list', elementKinds: ['member'], slots: [{ multiple: true, values: [{ parseKind: 'member' }] }] });
 	});
 
@@ -40,11 +45,15 @@ describe('node-model emitter', () => {
 		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
 		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
-		const nodes = new Map<string, AssembledNode>([
-			['member_list', new AssembledList('member_list', rule, undefined, { separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
-			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
-		]);
-		const model = buildNodeModel(makeNodeMapWith(nodes));
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['member_list', new AssembledList('member_list', rule, { kindEntries }, { kindEntries, separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
+					['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
+				])
+			)
+		);
+		const model = buildNodeModel(nodeMap, generatedIdTables);
 		for (const key of ['factorySlots', 'supertypes', 'nodeCount', 'word', 'externals', 'extras']) expect(model).not.toHaveProperty(key);
 		for (const node of model.nodes)
 			for (const key of ['factoryName', 'hidden', 'annotations', 'isParameterless', 'stampExpression', 'interior', 'transparent', 'hasNonterminalSeparator'])
@@ -57,24 +66,30 @@ describe('node-model emitter', () => {
 		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };
 		const simplified: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 		const render: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
-		const nodes = new Map<string, AssembledNode>([
-			['member_list', new AssembledList('member_list', rule, undefined, { separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
-			['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' })]
-		]);
-		const list = buildNodeModel(makeNodeMapWith(nodes)).nodes.find((node) => node.kind === 'member_list') as { slots: { values: object[] }[] };
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['member_list', new AssembledList('member_list', rule, { kindEntries }, { kindEntries, separatorRule: undefined, simplifiedRule: simplified, renderRule: render })],
+					['member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
+				])
+			)
+		);
+		const list = buildNodeModel(nodeMap, generatedIdTables).nodes.find((node) => node.kind === 'member_list') as { slots: { values: object[] }[] };
 		const value = list.slots[0]!.values[0]!;
 		expect(value).toMatchObject({ parseKind: 'member' });
 		expect(value).not.toHaveProperty('name');
 	});
 
 	it('records the grammar root kind', () => {
-		expect(buildNodeModel({ ...makeNodeMapWith(new Map()), root: 'program' }).root).toBe('program');
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables(() => makeNodeMapWith(new Map()));
+		expect(buildNodeModel({ ...nodeMap, root: 'program' }, generatedIdTables).root).toBe('program');
 	});
 
 	it('serializes the kind each renamed or split kind came from', () => {
 		const provenance = { renamedFrom: { binding: 'let_item' }, splitFrom: { method: 'function' } };
-		const pattern = (kind: string) => new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { provenance });
-		const model = buildNodeModel(makeNodeMapWith(new Map([['binding', pattern('binding')], ['method', pattern('method')], ['plain', pattern('plain')]])));
+		const pattern = (kind: string, kindEntries: readonly GeneratedKindEntry[]) => new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { kindEntries, provenance });
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeNodeMapWith(new Map([['binding', pattern('binding', kindEntries)], ['method', pattern('method', kindEntries)], ['plain', pattern('plain', kindEntries)]])));
+		const model = buildNodeModel(nodeMap, generatedIdTables);
 		const byKind = new Map(model.nodes.map((node) => [node.kind, node]));
 		expect(byKind.get('binding')).toMatchObject({ renamedFrom: 'let_item' });
 		expect(byKind.get('method')).toMatchObject({ splitFrom: 'function' });
@@ -85,8 +100,9 @@ describe('node-model emitter', () => {
 
 	it('serializes the kind an owned variant is a form of', () => {
 		const provenance = { variantOf: { struct_unit: 'struct' } };
-		const pattern = (kind: string) => new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { provenance });
-		const model = buildNodeModel(makeNodeMapWith(new Map([['struct_unit', pattern('struct_unit')], ['plain', pattern('plain')]])));
+		const pattern = (kind: string, kindEntries: readonly GeneratedKindEntry[]) => new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { kindEntries, provenance });
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeNodeMapWith(new Map([['struct_unit', pattern('struct_unit', kindEntries)], ['plain', pattern('plain', kindEntries)]])));
+		const model = buildNodeModel(nodeMap, generatedIdTables);
 		const byKind = new Map(model.nodes.map((node) => [node.kind, node]));
 		expect(byKind.get('struct_unit')).toMatchObject({ variantOf: 'struct' });
 		expect(byKind.get('plain')).not.toHaveProperty('variantOf');
@@ -97,11 +113,12 @@ describe('node-model emitter', () => {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 		};
-		const nodes = new Map<string, AssembledNode>();
 		const render = flatten(rule);
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => {
+		const nodes = new Map<string, AssembledNode>();
 		nodes.set(
 			'alias_host',
-			new AssembledBranch('alias_host', render, render, {
+			new AssembledBranch('alias_host', render, render, { kindEntries,
 				slots: Object.freeze([
 					new AssembledNonterminal({
 						fieldName: 'value',
@@ -123,10 +140,11 @@ describe('node-model emitter', () => {
 				])
 			})
 		);
-		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-		const nodeMap = makeNodeMapWith(nodes);
+		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+		return makeNodeMapWith(nodes);
+		});
 
-		const model = buildNodeModel(nodeMap);
+		const model = buildNodeModel(nodeMap, generatedIdTables);
 		const branch = model.nodes.find((node) => node.kind === 'alias_host');
 		if (!branch || branch.modelType !== 'branch') throw new Error('expected alias_host branch');
 		const field = branch.slots[0];
@@ -136,7 +154,7 @@ describe('node-model emitter', () => {
 		expect(field).not.toHaveProperty('aliasSources');
 		expect(value).toMatchObject({ kind: 'node-ref', name: 'identifier', parseKind: 'decorator' });
 
-		const serialized = emitNodeModel({ grammar: 'synth', nodeMap });
+		const serialized = emitNodeModel({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(serialized).toContain('"parseKind":"decorator"');
 		expect(serialized).not.toContain('aliasSources');
 		expect(serialized).not.toContain('storageKindId');
@@ -145,23 +163,25 @@ describe('node-model emitter', () => {
 	});
 });
 
+const nodeModelArgs = ({ nodeMap, generatedIdTables }: NodeMapWithIdTables) => [nodeMap, generatedIdTables] as const;
+
 describe('seats', () => {
 	it('serializes the seat of every hoisted slot value', () => {
-		const model = buildNodeModel(twoChoiceSlotsNodeMap());
+		const model = buildNodeModel(...nodeModelArgs(twoChoiceSlotsNodeMap()));
 		const header = model.nodes.find((n) => n.kind === 'header')!;
 		const content = (header as { slots: { name: string; values: { seat?: unknown }[] }[] }).slots.find((s) => s.name === 'content')!;
 		expect(content.values.map((v) => v.seat)).toEqual([
 			{ kind: 'header_lhs', shape: 'arm', mount: 'lhs', seated: true },
 			{ kind: 'header_kind', shape: 'arm', mount: 'kind', seated: true }
 		]);
-		const clause = buildNodeModel(clauseNodeMap()).nodes.find((n) => n.kind === 'clause')! as {
+		const clause = buildNodeModel(...nodeModelArgs(clauseNodeMap())).nodes.find((n) => n.kind === 'clause')! as {
 			slots: { values: { seat?: unknown }[] }[];
 		};
 		expect(clause.slots.flatMap((s) => s.values).find((v) => v.seat)?.seat).toEqual({
 			kind: 'clause_group',
 			shape: 'flatten'
 		});
-		const comparison = buildNodeModel(comparisonNodeMap()).nodes.find((n) => n.kind === 'comparison')! as {
+		const comparison = buildNodeModel(...nodeModelArgs(comparisonNodeMap())).nodes.find((n) => n.kind === 'comparison')! as {
 			slots: { name: string; values: { seat?: unknown }[] }[];
 		};
 		expect(comparison.slots.find((s) => s.name === 'comparators')!.values[0]!.seat).toEqual({
@@ -173,11 +193,15 @@ describe('seats', () => {
 
 describe('printNodeModel', () => {
 	it('prints each node on its own line', () => {
-		const nodes = new Map<string, AssembledNode>([
-			['alpha', new AssembledPattern('alpha', { type: PATTERN, value: '[a-z]+' })],
-			['beta', new AssembledPattern('beta', { type: PATTERN, value: '[0-9]+' })]
-		]);
-		const model = buildNodeModel(makeNodeMapWith(nodes));
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['alpha', new AssembledPattern('alpha', { type: PATTERN, value: '[a-z]+' }, { kindEntries })],
+					['beta', new AssembledPattern('beta', { type: PATTERN, value: '[0-9]+' }, { kindEntries })]
+				])
+			)
+		);
+		const model = buildNodeModel(nodeMap, generatedIdTables);
 		const lines = printNodeModel(model).split('\n').map((line) => line.trim().replace(/,$/, ''));
 		for (const node of model.nodes) expect(lines).toContain(JSON.stringify(node));
 	});

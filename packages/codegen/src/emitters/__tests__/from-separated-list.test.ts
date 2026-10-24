@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -8,7 +9,7 @@ import {
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
 import type { SimplifiedRule, RenderRule } from '../../types/rule.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import {kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
@@ -19,17 +20,17 @@ import type { KindEnumEntry } from '../kind-discriminant.ts';
 const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
 const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
-function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }) {
+function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }, kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
-		new AssembledList('member_list', rule, undefined, {
+		new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: opts.separatorRule,
 			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
 			renderRule: MEMBER_ELEMENT_RENDER_RULE
 		})
 	);
-	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -39,9 +40,10 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 3, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true },
 	{ id: 4, kind: 'semi', member: 'Semi', symbolName: ';', literalText: ';', anon: true }
 ];
+const ID_TABLES = kindIdTablesOf(KIND_ENTRIES);
 
 function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
-	return emitFrom({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
+	return emitFrom({ grammar: 'test', nodeMap, generatedIdTables: ID_TABLES });
 }
 
 function looseRow(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
@@ -60,7 +62,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
 		expect(emitted).toContain('export function coerceToMemberList(...input');
 		expect(emitted).toContain(
@@ -86,7 +88,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries), ID_TABLES).nodeMap);
 
 		expect(emitted).toContain('withOptions(_rest[0], options)');
 		expect(emitted).not.toMatch(/_separator|_delimiter/);
@@ -100,7 +102,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
 		expect(emitted).toContain('function _wrapWithChildren(');
 		expect(emitted).not.toContain('return F.buildMemberList(children[0]');
@@ -118,7 +120,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap;
 		const row = looseRow(nodeMap);
 
 		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
@@ -133,7 +135,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const nodeMap = withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap;
 
 		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
 		expect(looseRow(nodeMap)).toMatch(/^\[\.\.\.elements: [^]*?\] \| \[options: ListOptions<\{ delimiter\?: [^}]*\}>, \.\.\.elements: /);
@@ -153,7 +155,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
-		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const nodeMap = withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: sepChoice }, kindEntries), ID_TABLES).nodeMap;
 		const row = looseRow(nodeMap);
 
 		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
@@ -168,7 +170,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity,
 			separator: { value: { type: STRING, value: ',' } }
 		});
-		expect(looseRow(makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }))).toMatch(/^\[element: /);
-		expect(looseRow(makeMemberNodeMap(rule('array'), { separatorRule: undefined }))).toMatch(/^\[\.\.\.elements: /);
+		expect(looseRow(withIdTables((kindEntries) => makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap)).toMatch(/^\[element: /);
+		expect(looseRow(withIdTables((kindEntries) => makeMemberNodeMap(rule('array'), { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap)).toMatch(/^\[\.\.\.elements: /);
 	});
 });

@@ -1,3 +1,5 @@
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { withPredictedKinds, diagnosePredicted } from '../../__tests__/helpers/linked.ts';
 import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
@@ -11,7 +13,7 @@ import {
 import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { AssembledEnum } from '../model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
@@ -34,10 +36,6 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], 
 		word: null,
 		references: []
 	};
-}
-
-function withPredictedKinds(raw: RawGrammar): RawGrammar {
-	return { ...raw, predictedKinds: predictedKindsOf(raw) };
 }
 
 function collisionGrammar(): RawGrammar {
@@ -70,7 +68,7 @@ describe('grammar diagnostics preflight', () => {
 				meta_property: { type: 'CHOICE', members: [seq('new', '.', 'target'), seq('import', '.', 'meta')] }
 			})
 		);
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		const result = diagnosePredicted(rawGrammar);
 		expect(result.diagnostics).toContainEqual(
 			expect.objectContaining({ code: 'single-literal-choice', ownerKind: 'meta_property', canProceed: false })
 		);
@@ -80,7 +78,7 @@ describe('grammar diagnostics preflight', () => {
 
 	it('an AssembledEnum with fewer than two values is unreachable past the record, so its constructor still refuses one', () => {
 		const tail = (head: string, last: string) => ({ type: SEQ, members: [head, '.', last].map((value) => ({ type: STRING, value })) });
-		expect(() => new AssembledEnum('meta_property', { type: CHOICE, members: [tail('new', 'target'), tail('import', 'meta')] })).toThrow(
+		expect(() => withGeneratedIdTablesNode((kindEntries) => new AssembledEnum('meta_property', { type: CHOICE, members: [tail('new', 'target'), tail('import', 'meta')] }, { kindEntries }))).toThrow(
 			/assemble records single-literal-choice before constructing one/
 		);
 	});
@@ -100,7 +98,7 @@ describe('grammar diagnostics preflight', () => {
 			}),
 			groups: { program: { '1': 'inner', '7': 'missing' } }
 		});
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		const result = diagnosePredicted(rawGrammar);
 		expect(result.diagnostics).toContainEqual(
 			expect.objectContaining({
 				code: 'groups-config-invalid',
@@ -132,7 +130,7 @@ describe('grammar diagnostics preflight', () => {
 	});
 
 	it('keeps aliased arms injective by their storage ids under the predicted catalog, and trips display-union-mixed because the fixture skips the enrich pass that resolves a display over both a terminal and a nonterminal', () => {
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
+		const result = diagnosePredicted(collisionGrammar());
 
 		expect(result.nodeMap.parseKindCollisions).toEqual([]);
 		expect(result.diagnostics).toEqual([
@@ -146,8 +144,7 @@ describe('grammar diagnostics preflight', () => {
 	});
 
 	it('keeps identical-structure collisions auto-merged without diagnostics', () => {
-		const result = collectGrammarDiagnosticsForGrammar({
-			rawGrammar: buildRawGrammar({
+		const result = diagnosePredicted(buildRawGrammar({
 				host: structuralBuilder.choice(
 					structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
 					{ type: 'SYMBOL', name: 'shared' },
@@ -156,8 +153,7 @@ describe('grammar diagnostics preflight', () => {
 				left: { type: 'PATTERN', value: '[a-z]+' },
 				shared: { type: 'PATTERN', value: '[a-z]+' },
 				right: { type: 'PATTERN', value: '[a-z]+' }
-			})
-		});
+			}));
 
 		const host = result.nodeMap.nodes.get('host');
 		const slot = (host as { slots: readonly { values: readonly unknown[] }[] }).slots[0];
@@ -213,7 +209,7 @@ describe('grammar diagnostics preflight', () => {
 	});
 
 	it("files a display union's members by the predicted catalog, so an enrich-skipping fixture over a terminal and a nonterminal trips the mixed-display guard", () => {
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar: collisionGrammar() });
+		const result = diagnosePredicted(collisionGrammar());
 		expect(result.diagnostics).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({
@@ -227,8 +223,7 @@ describe('grammar diagnostics preflight', () => {
 	});
 
 	it('content-collision now blocks (canProceed: false)', () => {
-		const result = collectGrammarDiagnosticsForGrammar({
-			rawGrammar: buildRawGrammar({
+		const result = diagnosePredicted(buildRawGrammar({
 				// unnamed seq of two unnamed multi-kind choices — both resolve to the
 				// generic `content` storage name (same shape as content-collision.test.ts's
 				// '_class_body_member shape' fixture).
@@ -243,8 +238,7 @@ describe('grammar diagnostics preflight', () => {
 				b: { type: 'PATTERN', value: 'b' },
 				c: { type: 'PATTERN', value: 'c' },
 				d: { type: 'PATTERN', value: 'd' }
-			})
-		});
+			}));
 		expect(result.diagnostics).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ code: 'content-collision', ownerKind: 'host', canProceed: false })
@@ -261,8 +255,7 @@ describe('grammar diagnostics preflight', () => {
 		// pipeline (something canonicalizes adjacent identical seq members before
 		// the collision check runs), so this fixture uses the shape confirmed to
 		// actually exercise the real assemble-time collision path.
-		const result = collectGrammarDiagnosticsForGrammar({
-			rawGrammar: buildRawGrammar({
+		const result = diagnosePredicted(buildRawGrammar({
 				host: {
 					type: 'CHOICE',
 					members: [
@@ -278,8 +271,7 @@ describe('grammar diagnostics preflight', () => {
 				},
 				op: { type: 'STRING', value: '+' },
 				identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
-			})
-		});
+			}));
 		expect(result.diagnostics).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ code: 'storagename-collision', ownerKind: 'host', canProceed: false })
@@ -292,7 +284,7 @@ describe('grammar diagnostics preflight', () => {
 			host: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'tok' }] },
 			tok: { type: 'PATTERN', value: '(?<name>[a-z]+)\\d+' }
 		});
-		const { diagnostics } = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		const { diagnostics } = diagnosePredicted(rawGrammar);
 		expect(diagnostics).toEqual(
 			expect.arrayContaining([expect.objectContaining({ code: 'token-interior-unstructurable', ownerKind: 'tok', canProceed: false })])
 		);
@@ -310,7 +302,7 @@ describe('grammar diagnostics preflight', () => {
 			foo: { type: 'PATTERN', value: 'f' },
 			Foo: { type: 'PATTERN', value: 'F' }
 		});
-		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
+		const result = diagnosePredicted(rawGrammar);
 		expect(result.nodeMap.namingEvents).toEqual([expect.objectContaining({ kind: 'foo', from: 'Foo', to: 'Foo2' })]);
 		expect(result.diagnostics.map((d) => d.code)).not.toContain('typename-collision');
 	});
@@ -338,7 +330,7 @@ describe('grammar diagnostics preflight', () => {
 			['inline_only_kind'],
 			['inline_only_kind']
 		);
-		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, sourceArtifact: 'test' };
+		const generatedIdTables: GeneratedIdTables = { kindIds: { known: 1 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' };
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables });
 		expect(result.compilerDiagnostics.all().map((d) => d.code)).toEqual(
 			expect.arrayContaining(['kindid-inline-excluded-symbols', 'kindid-unclassified-symbols'])
@@ -536,7 +528,7 @@ describe('unsupported shapes block unless floor-listed for their own code', () =
 
 describe('the grammar root must be a non-terminal', () => {
 	const rootRecords = (rules: Record<string, unknown>) =>
-		collectGrammarDiagnosticsForGrammar({ rawGrammar: withPredictedKinds(buildRawGrammar(rules)) }).diagnostics.filter(
+		diagnosePredicted(withPredictedKinds(buildRawGrammar(rules))).diagnostics.filter(
 			(d) => d.code === 'grammar-root-terminal'
 		);
 

@@ -263,12 +263,13 @@ const fn3 = e.parameters.add(q); // also from fn
 
 ## 9. Gaps and trivia after an edit
 
-An edit changes structure, never byte ranges, and rendering lays out every gap by one rule (#589):
+An edit changes structure, never byte ranges. A gap of a rebuilt list renders by one order:
 
-1. **A gap between two items that were adjacent in the source keeps its source bytes.** That covers a line-break run or same-line spacing, and an edited item as well as an untouched one. Adjacency is the neighbour rule's test: the same tree token, and the rebuilt predecessor is the source sibling, by span.
-2. **Every other gap is canonical.** It takes the seat of the kind before it, or a render option when the caller sets one. Nothing is inferred for a gap the source never had.
+1. **A gap whose items kept their source neighbours keeps its own layout.** Each run of it that the source spells apart from the read options is its own stored entry, an outlier included, and the rest render the read options, which wrote the source there. That covers an edited item as well as an untouched one. An edge whose neighbour changed drops its edge runs (`trivia::on_changed_edge`).
+2. **Any other gap takes the list's stored layout** where the slot stores one: the class most of the source list's separator gaps take on each side of the separator, and the separator most of them hold (render options spec, Read side).
+3. **Else it takes the seat of the kind before it**, resolved from the options, as a built list's gap does.
 
-So `insert` gives the inserted item canonical gaps on both sides. `removeAt(i)` leaves a canonical gap between the new neighbours, since they were not adjacent. `move` makes the gaps around the moved item canonical, and `replaceAt` with a built item does the same. A removed item takes the syntax it owns with it: its separator and the trivia #371's derivation gives it, since every extra has exactly one owner. The line-break whitespace a read records comes from the same derivation (#371). There is no majority vote over a list's gaps.
+So `insert` gives the inserted item the list's spacing on both sides: a comma list spelled `a,b,c` stays tight. `removeAt(i)` leaves the new neighbours a gap of that spacing, since they were not adjacent. `move` and `replaceAt` with a built item do the same around the item. An unseparated repeat stores no slot layout, so a statement appended to a block takes the seat's gap while the block's other gaps keep theirs. A removed item takes the syntax it owns with it: its separator and the trivia assigned to its sides, since every extra has exactly one owner.
 
 ## 10. Ownership
 

@@ -1,5 +1,6 @@
 import { beforeAll, describe, it, expect } from 'vitest';
 import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
@@ -89,7 +90,7 @@ describe('Evaluate — TypeScript grammar.js', () => {
 describe('Full pipeline — evaluate → link → normalize → assemble', () => {
 	it('processes Python through all 4 phases', () => {
 		const raw = upstream.python!;
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 
@@ -107,7 +108,7 @@ describe('Full pipeline — evaluate → link → normalize → assemble', () =>
 
 	it('processes Rust through all 4 phases', () => {
 		const raw = upstream.rust!;
-		const linked = link(raw);
+		const linked = linkPredicted(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 

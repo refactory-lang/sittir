@@ -37,8 +37,8 @@ function isWalkNode(value: unknown): value is WalkNode {
 	);
 }
 
-function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
-	return kindNameFromId?.(node.$type) ?? String(node.$type);
+function resolveKindName(node: WalkNode, kindNameFromId: (id: number) => string): string {
+	return kindNameFromId(node.$type);
 }
 
 export function collectChildren(node: WalkNode, accessorOf: SlotAccessorOf): unknown[] {
@@ -77,10 +77,6 @@ export async function run(opts: WalkOptions): Promise<number> {
 
 	const common = await loadCommon();
 	const readNode = await common.readNodeOf(grammar);
-	if (readNode === null) {
-		process.stderr.write(`walk: no wrap module available for grammar '${grammar}'\n`);
-		return 1;
-	}
 
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
 	const accessorOf = await common.loadSlotAccessorOf(grammar);

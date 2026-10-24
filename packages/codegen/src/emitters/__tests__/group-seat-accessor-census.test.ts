@@ -1,8 +1,8 @@
+import { collectKindEntries, type KindEnumEntry } from '../kind-discriminant.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
-import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { elementConfigsOf, groupSeatHints, listSlotHints } from '../factories.ts';
 
@@ -41,11 +41,13 @@ const flatStamps = (source: string): ReadonlyMap<string, readonly string[]> =>
 
 const GRAMMARS = ['rust', 'python', 'typescript'] as const;
 const nodeMaps: Record<string, Awaited<ReturnType<typeof compileGrammar>>['nodeMap']> = {};
+const kindEntriesOf: Record<string, readonly KindEnumEntry[]> = {};
 
 for (const grammar of GRAMMARS) {
 	beforeAll(async () => {
-		const generatedIdTables = await loadGeneratedIdTables(grammar);
-		nodeMaps[grammar] = (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables })).nodeMap;
+		const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage(grammar) });
+		nodeMaps[grammar] = nodeMap;
+		kindEntriesOf[grammar] = collectKindEntries(nodeMap, generatedIdTables);
 	}, FULL_PIPELINE_TIMEOUT);
 }
 
@@ -54,7 +56,7 @@ describe('a group seat flattens exactly the group fields its config surface name
 		it(`${grammar}: the seats the model finds are the interfaces stamped $flat and the nodes that seat one`, () => {
 			const nodeMap = nodeMaps[grammar]!;
 			const seated = [...nodeMap.nodes.values()].flatMap((node) => {
-				const hints = groupSeatHints(node, nodeMap, undefined);
+				const hints = groupSeatHints(node, nodeMap, kindEntriesOf[grammar]!);
 				return hints.length === 0 ? [] : [{ node, hints }];
 			});
 			expect(seated.length).toBeGreaterThan(0);
@@ -110,7 +112,7 @@ describe('an elements seat sets the element config objects its config surface ta
 			const nodeMap = nodeMaps[grammar]!;
 			const types = typeSources(grammar).replace(/\s+/g, '');
 			const carried = [...nodeMap.nodes.values()]
-				.flatMap((node) => listSlotHints(node, nodeMap, undefined))
+				.flatMap((node) => listSlotHints(node, nodeMap, kindEntriesOf[grammar]!))
 				.filter((hint) => hint.config !== 'never');
 			const stamped = [...types.matchAll(/ListSlotHint<[^;]*?,(T\.\w+\.Config)>;/g)];
 			expect(stamped).toHaveLength(carried.length);

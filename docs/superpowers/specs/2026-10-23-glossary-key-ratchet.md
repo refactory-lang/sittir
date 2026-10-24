@@ -51,10 +51,11 @@ every level of nesting. The enumerator reports, for each file in scope:
 5. members of a type literal (`type T = { … }`, including generic aliases), at any
    depth, keyed `Alias::member` and `Alias::member::nested`.
 
-Undocumented declarations are the exported subset of the above: exported top-level
-declarations, plus members of exported classes, interfaces, enums, const objects, and
-type literals. Non-exported declarations and members of non-exported owners are not
-counted.
+Undocumented declarations are depth two only: exported top-level declarations, plus their
+direct members, meaning members of exported classes, interfaces, enums, const objects, type
+literals and namespaces. Deeper nested properties (`A::prop::inner`) are not counted as
+undocumented, though an entry for one is a valid key. Non-exported declarations and members of
+non-exported owners are not counted.
 
 Undocumented = enumerated exported declarations minus keys that resolve to them under the
 rule above.
@@ -117,6 +118,28 @@ Doctor's counts on the same day, for the cross-check: no-symbol 576, `name#N` 7,
 10, multi-entry 58, fenced 4, malformed 3. Doctor follows the graph's spelling, which
 differs from this rule for interface and type-literal properties and for some abstract
 class members. Those differences are Infigraph's to fix.
+
+## Resolved enumeration questions
+
+These settle the cases the rule above leaves open. Implement builds to them.
+
+- `constructor` is a class member. It is enumerated, keyed `Owner::constructor`, and on an
+  exported class it counts as undocumented.
+- TypeScript `private` and `#private` members are not enumerated as undocumented, for the same
+  reason as members of non-exported owners. `protected` members count.
+- Namespace members (`namespace N { export … }`) are enumerated as `N::member`, and exported
+  when the namespace is.
+- Type literals are followed through unions, intersections and parentheses. A property whose
+  own type is a type literal nests: `A::prop::inner`.
+- An object-literal const is followed through `as const`, `satisfies` and parentheses only.
+  `Object.freeze(...)` is not followed.
+- A key names exactly one declaration in its file, as the rule above states: the bare name when
+  that name is declared once in the file (a top-level declaration, or a member of exactly one
+  owner), otherwise the full path (`Namespace::Owner::member`). A bare name that is a unique
+  member is valid, so a heading `file::tilt` where `tilt` is only `Box::tilt` is
+  `ok-bare-unique`. Suffix matching (`Owner::member` matching `Outer::Owner::member`) is not
+  used: one owner name can occur under several namespaces in one file, and a suffix would make
+  such a key ambiguous.
 
 ## Ceilings file
 

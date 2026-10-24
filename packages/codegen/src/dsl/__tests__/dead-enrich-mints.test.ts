@@ -1,102 +1,44 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
-import type { Rule } from '../../types/rule.ts';
-import { ENRICH_RULE_ORIGINS_KEY, type GrammarResult } from '../enrich.ts';
-import type { EnrichRuleOrigin } from '../enrich-ctx.ts';
-import { blankDeadEnrichMints, DEAD_ENRICH_MINTS_KEY, getDeadEnrichMints } from '../wire/dead-mints.ts';
-import { isBlank } from '../rule-patterns.ts';
-import type { WiredOpts } from '../wire/wire.ts';
-import { grammarPackage } from '../../grammars.ts';
-import { packageEntryPath } from '../resolve-grammar.ts';
+import { describe, expect, it } from 'vitest';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { evaluateDsl } from '../evaluate.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage, topLayerPath } from '../../grammars.ts';
+import { isBlank } from '../rule-patterns.ts';
 
-const symbol = (name: string): Rule => ({ type: SYMBOL, name }) as Rule;
-const literal = (value: string): Rule => ({ type: STRING, value }) as Rule;
+const UNREACHED = { extras: '', rules: "holder: $ => $.pair, pair: $ => choice(seq('a', $.word), seq('b', $.word, $.word))" };
 
-function enrichedWithMints(names: readonly string[]): unknown {
-	const origins = new Map<string, EnrichRuleOrigin>(names.map((name) => [name, { kind: 'visible-subsequence' }]));
-	return Object.defineProperty({}, ENRICH_RULE_ORIGINS_KEY, { value: origins, enumerable: false });
-}
+describe('the enrich mints a layer leaves unreachable', () => {
+	it('are blank where enrich put them, named in orphanedSyntheticGroups, and dropped from inline', async () => {
+		const raw = await evaluateTempGrammar(UNREACHED, 'inline: ($) => [$.pair_arm]');
+		expect(raw.orphanedSyntheticGroups).toEqual(['pair_arm']);
+		expect(isBlank(raw.rules.pair_arm)).toBe(true);
+		expect(Object.keys(raw.rules).indexOf('pair_arm')).toBe(Object.keys(raw.rules).indexOf('pair') + 1);
+		expect(raw.inline).not.toContain('pair_arm');
+	}, 120_000);
 
-function sampleGrammar(): GrammarResult['grammar'] {
-	return {
-		name: 'sample',
-		rules: {
-			source_file: { type: SEQ, members: [symbol('a'), symbol('live_arm')] } as Rule,
-			a: literal('a'),
-			live_arm: literal('live'),
-			dead_arm: { type: SEQ, members: [symbol('_dead_helper')] } as Rule,
-			_dead_helper: literal('helper'),
-			word_mint: { type: PATTERN, value: '[a-z]+' } as Rule,
-			ext_mint: literal('ext'),
-			super_mint: literal('super')
-		},
-		extras: [{ type: PATTERN, value: '\\s' }],
-		externals: [symbol('ext_mint')],
-		supertypes: ['super_mint'],
-		word: 'word_mint',
-		inline: ['dead_arm', 'a'],
-		conflicts: [['source_file', 'dead_arm'], ['a']]
-	};
-}
+	it('keep a mint the layer renders', async () => {
+		const raw = await evaluateTempGrammar(UNREACHED, 'renderAs: (_$) => ({ pair_arm: /x/ })');
+		expect(raw.orphanedSyntheticGroups).toBeUndefined();
+		expect(isBlank(raw.rules.pair_arm)).toBe(false);
+	}, 120_000);
 
-describe('blankDeadEnrichMints', () => {
-	let savedBlank: unknown;
-	beforeAll(() => {
-		savedBlank = (globalThis as Record<string, unknown>).blank;
-		(globalThis as Record<string, unknown>).blank = () => ({ type: 'BLANK' });
-	});
-	afterAll(() => {
-		if (savedBlank === undefined) delete (globalThis as Record<string, unknown>).blank;
-		else (globalThis as Record<string, unknown>).blank = savedBlank;
-	});
-
-	it('blanks the unreachable mints and drops them from inline and conflicts, keeping the rule order', () => {
-		const grammar = sampleGrammar();
-		const deadBody = grammar.rules['dead_arm'];
-		const order = Object.keys(grammar.rules);
-		blankDeadEnrichMints(grammar, enrichedWithMints(['live_arm', 'dead_arm', 'word_mint', 'ext_mint', 'super_mint']), { name: 'sample', rules: {} });
-		expect([...getDeadEnrichMints(grammar)]).toEqual(['dead_arm']);
-		expect(grammar.rules['dead_arm']).toEqual({ type: 'BLANK' });
-		expect(deadBody).toEqual({ type: SEQ, members: [symbol('_dead_helper')] });
-		expect(grammar.rules['_dead_helper']).toEqual(literal('helper'));
-		expect(Object.keys(grammar.rules)).toEqual(order);
-		expect(grammar.inline).toEqual(['a']);
-		expect(grammar.conflicts).toEqual([['a']]);
-		expect(grammar.supertypes).toEqual(['super_mint']);
-	});
-
-	it('keeps a mint that wire protects', () => {
-		const grammar = sampleGrammar();
-		const opts = { name: 'sample', rules: {}, __wireContext__: { deposits: new Map([['dead_arm', literal('deposit')]]) } } as unknown as WiredOpts;
-		blankDeadEnrichMints(grammar, enrichedWithMints(['dead_arm']), opts);
-		expect(getDeadEnrichMints(grammar).size).toBe(0);
-		expect(grammar.rules['dead_arm']).toEqual({ type: SEQ, members: [symbol('_dead_helper')] });
-	});
-
-	it('keeps the dead set out of the serialized grammar', () => {
-		const grammar = sampleGrammar();
-		blankDeadEnrichMints(grammar, enrichedWithMints(['dead_arm']), { name: 'sample', rules: {} });
-		expect(getDeadEnrichMints(grammar).size).toBe(1);
-		expect(JSON.stringify({ ...grammar })).not.toContain(DEAD_ENRICH_MINTS_KEY);
-	});
+	it('stay blank in the layer above', async () => {
+		const raw = await evaluateTempGrammar(UNREACHED, '', { bindings: '' });
+		expect(raw.orphanedSyntheticGroups).toEqual(['pair_arm']);
+		expect(isBlank(raw.rules.pair_arm)).toBe(true);
+	}, 120_000);
 });
 
 describe('dead enrich mints in the in-repo grammars', () => {
 	for (const name of ['python', 'rust', 'typescript', 'scm', 'regex']) {
-		it(`${name}: every dead mint is blank and named by no list; grammar.json carries no dead-set key`, async () => {
-			const pkg = grammarPackage(name);
-			const evaluated = await evaluateDsl(packageEntryPath(pkg));
+		it(`${name}: every dead mint is blank and named by no list`, async () => {
+			const evaluated = await evaluateDsl(topLayerPath(grammarPackage(name)));
 			for (const dead of evaluated.orphanedSyntheticGroups ?? []) {
 				expect(isBlank(evaluated.rules[dead]), dead).toBe(true);
 				expect(evaluated.inline).not.toContain(dead);
 				expect(evaluated.supertypes).not.toContain(dead);
 				expect(evaluated.conflicts.flat()).not.toContain(dead);
 			}
-			expect(readFileSync(join(pkg.dir, '.sittir', 'src', 'grammar.json'), 'utf8')).not.toContain(DEAD_ENRICH_MINTS_KEY);
 		}, 120_000);
 
 		it(`${name}: every arm label names a rule the final grammar keeps`, async () => {

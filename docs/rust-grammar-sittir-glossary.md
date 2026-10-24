@@ -25,34 +25,41 @@ a reference directive fails with TS2688 under this `rootDir`.
 ordinary lexical scoping with sittir's own `AuthoringRule`-typed re-exports of
 the SAME runtime-injected functions: `const`-declared ambient globals don't
 merge as overloads across files the way `declare function` does. `grammar()`
-is not called here at all; `sittirGrammar` calls it.
+is the ambient global this file's default export calls, as tree-sitter's
+own grammars do.
 
-### `sittirGrammar(base, …)` (`packages/rust/grammar.sittir.ts:30`)
+### `grammar(enrich(base), wire({…}))` (`packages/rust/grammar.sittir.ts:29`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is rust's layer 1, the
+authored layer. `enrich(base)` is the layer's base half: the upstream grammar,
+pending until the layer pass completes it. `wire({…})` is its options half:
+tree-sitter's `grammar()`, or sittir's own when sittir evaluates the file,
+calls the options' `externals` entry first, and there the layer pass enriches
+the base with the config's authored `groups:` patterns visible, so enrich
+declines any group a pattern covers, and wires the config over that enriched
+base. The base wire sees and the base tree-sitter compiles are the one
+completed object, so they cannot drift apart.
 
-Type inference: `B` infers from `base` (typed by `./base.ts`), and the config
-literal is contextually typed against `WireConfig<EnrichedGrammar<B>>`, so
-every rule, transform and groups callback's `$` is a typed
-`ShapedSymbols` and each `previous`/`original` is the precise per-rule
-post-enrich shape, with no `WireConfig` annotation anywhere. `vocabulary()` and
+The generated layer above this one, `grammar.bindings.ts`, imports this file;
+nothing here imports it, so layer 1 evaluates without the grammar bindings.
+
+Type inference: `B` infers from `base` (typed by `./base.ts`) through
+`enrich(base)`, and `wire`'s config literal is contextually typed from
+`grammar()`'s options parameter, so every rule, transform and groups
+callback's `$` is a typed `ShapedSymbols` and each `previous`/`original` is the
+precise per-rule post-enrich shape, with no `WireConfig` annotation anywhere. `vocabulary()` and
 `reauthored()` callbacks get the same shaped `$`. The payload stays inline:
 hoisting it into a separate `const config = {…}` would leave its callback
 params implicitly `any`, since the literal has no contextual type at its
 declaration site.
 
-No type argument: `patches` and `options` infer on their own, which is what
-lets every written path key be judged against the rule shapes (`PatchesCheck`)
+No type argument: `edits` and `options` infer on their own, which is what
+lets every written path key be judged against the rule shapes (`EditsCheck`)
 and every option address and binding for syntax and resolution
 (`OptionsCheck`). An explicit type argument would disable inference for the
 parameters after it and check nothing.
 
-### `patches` — `variant()` arms in the `identifier '::' …` position (`packages/rust/grammar.sittir.ts`)
+### `edits` — `variant()` arms in the `identifier '::' …` position (`packages/rust/grammar.sittir.ts`)
 
 Widened choice-arm mints that land in Rust's `identifier '::' …` position hit
 one of the grammar's most heavily hand-tuned ambiguities: turbofish generics vs
@@ -154,7 +161,7 @@ hidden `_*` rule, the kind never appears at runtime, and the node-side
 slot stays permanently empty.
 
 Two positions are covered entirely by this mechanism and therefore have no
-`patches:` entry of their own: call arguments (synthesized as the visible
+`edits:` entry of their own: call arguments (synthesized as the visible
 `attributed_argument` kind, mirroring `attributed_parameter`) and
 `type_parameters` (via `attributed_type_parameter`, whose `metavariable`
 overlap with `_type` is a derived conflict).
@@ -569,7 +576,7 @@ context that accepts a turbofish.
 				// actual qualifier text instead of hardcoding "const".
 ```
 
-### `raw_string_literal` (`packages/rust/grammar.sittir.ts`, `patches`)
+### `raw_string_literal` (`packages/rust/grammar.sittir.ts`, `edits`)
 
 Two patch sets: `alias()` placeholders on positions 0 and 2, then fields on
 all three. The delimiters are HIDDEN external-scanner tokens
@@ -580,7 +587,7 @@ each token in place as a named kind (`raw_string_literal_start` / `_end`) so
 the real text survives as a captured slot; wire mints no hidden rule for them
 because the names are base externals (`baseExternalNames`).
 
-### `range_expression` (`packages/rust/grammar.sittir.ts`, `patches`)
+### `range_expression` (`packages/rust/grammar.sittir.ts`, `edits`)
 
 `range_expression` is a flattened parent: its four arms are the variant
 kinds `range_expression_binary`, `_postfix`, `_prefix` and `_bare`, and the
@@ -682,7 +689,7 @@ The names are the ones enrich derives: the list kind is `expressions`, the
 plural of the element's name, which no other rust list proposes; its item field
 is `item`, as in every list kind, and the owner's slot is `expressions`.
 
-One `patches:` entry is authored: `tuple_expression: { 1: field('attributes') }`
+One `edits:` entry is authored: `tuple_expression: { 1: field('attributes') }`
 fields the attribute repeat, which the
 `tuple_expression/attributes:/separator` option site names.
 
@@ -849,7 +856,7 @@ to the type system.
 				// shift at `, • '`, not end the group).
 ```
 
-### `_pattern` (`packages/rust/grammar.sittir.ts`, `patches`)
+### `_pattern` (`packages/rust/grammar.sittir.ts`, `edits`)
 
 `_pattern: { '-1': alias('wildcard_pattern') }`. The wildcard `_` is a bare
 literal alternative (the last arm) of the `_pattern` supertype choice. At
@@ -883,9 +890,9 @@ STRING — see `function_modifiers` / `visibility_modifier`.
 				// fielded marker rule (see `impl_item` above for the variant split).
 ```
 
-### `_let_chain` (`packages/rust/grammar.sittir.ts`, `patches`)
+### `_let_chain` (`packages/rust/grammar.sittir.ts`, `edits`)
 
-The base rule is unchanged; `patches:` fields both operands of every arm
+The base rule is unchanged; `edits:` fields both operands of every arm
 (`'<arm>/0': field('left')`, `'<arm>/2': field('right')`). Enrich leaves the
 arms in place because the choice is a self-referential fold (see
 `selfReferentialFoldOf`), so the patch paths address upstream's five arms.
@@ -964,5 +971,5 @@ Shape floors (the compiler has no model for these shapes yet; each blocks
 without its entry):
 
 - `unclassifiable-shape` on `_let_chain`: a choice with structured arms beside
-  leaves. Resolve with `rule(name, body)` in `patches:` naming the structured
+  leaves. Resolve with `rule(name, body)` in `edits:` naming the structured
   arm as its own rule.

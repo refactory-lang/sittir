@@ -21,14 +21,14 @@ export const triviaFacts = Object.freeze({
 		'comment'
 	]),
 	innerKinds: INNER_SITES,
-	rebuildWrappers: new Set<number>([54, 58, 61, 62, 63, 64]),
+	rebuildWrappers: new Set<number>([54, 56, 57, 58, 61, 62, 63, 64]),
 	listKinds: new Set<number>([]),
 	layout: new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]),
 	innerRegions: new Map<number, readonly string[]>([
 		[33, ['_definitions']],
 		[46, ['_name']]
 	]),
-	namedUnits: new Set<number>([25, 26, 27, 28, 29, 30, 31, 32, 60]),
+	namedUnits: new Set<number>([60]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s+))+)$/u,
 		kindIdByText: Object.freeze({ '': 25, ' ': 26, '\t': 27, '\n': 28, '\n\n': 29, '\n\n\n': 30 })

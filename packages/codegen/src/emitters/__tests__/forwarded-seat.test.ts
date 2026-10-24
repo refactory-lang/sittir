@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { compileGrammar } from '../../compiler/compile.ts';
-import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { buildNodeModel } from '../node-model.ts';
 import { valueNameOf } from '../node-model-read.ts';
 
 describe('a hoisted group whose builder forwards to another kind\'s builder', () => {
 	it('is seated on its parent as forwarded, wherever the parent takes it', async () => {
-		const { nodeMap } = await compileGrammar({ package: grammarPackage('regex'), generatedIdTables: await loadGeneratedIdTables('regex') });
-		const model = buildNodeModel(nodeMap);
+		const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage('regex') });
+		const model = buildNodeModel(nodeMap, generatedIdTables);
 		const seatsOf = (group: string): unknown[] =>
 			model.nodes.flatMap((node) =>
 				'slots' in node ? node.slots.flatMap((slot) => slot.values.filter((value) => valueNameOf(value) === group).map((value) => value.seat)) : []

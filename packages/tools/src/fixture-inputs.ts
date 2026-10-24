@@ -1,5 +1,4 @@
-import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
@@ -17,19 +16,14 @@ function corpusFiles(root: string, grammar: string): string[] {
 		.map((entry) => relative(root, join(entry.parentPath, entry.name)));
 }
 
-function contentHashes(root: string, files: readonly string[]): Record<string, string> {
-	const present = [...new Set(files)].filter((rel) => existsSync(join(root, rel))).sort();
-	return Object.fromEntries(present.map((rel) => [rel, createHash('sha256').update(readFileSync(join(root, rel))).digest('hex')]));
-}
-
 export async function fixtureSources(root: string, grammar: string): Promise<Record<string, string>> {
-	const { moduleClosure } = await load('moduleClosure');
+	const [{ moduleClosure }, { contentHashes }] = await Promise.all([load('moduleClosure'), load('contentHash')]);
 	const extractor = moduleClosure(root, [EXTRACTOR, ...codegenModuleFiles().map((file) => relative(REPO_ROOT, file))]);
 	return contentHashes(root, [...corpusFiles(root, grammar), ...extractor, LOCKFILE]);
 }
 
 export async function fixtureOutputs(root: string, grammar: string): Promise<Record<string, string>> {
-	const paths = await load('renderModulePaths');
+	const [paths, { contentHashes }] = await Promise.all([load('renderModulePaths'), load('contentHash')]);
 	return contentHashes(root, [paths.renderModuleFixturesPath(grammar), paths.renderModuleLeftOutPath(grammar)]);
 }
 

@@ -207,7 +207,7 @@ function seatCount(set: PolymorphWireSet): number {
 export interface PolymorphWires {
 	readonly order: readonly string[];
 	readonly byKind: ReadonlyMap<string, PolymorphWireSet>;
-	readonly kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly kindEntries: readonly KindEnumEntry[];
 	readonly isEmitted: (kind: string) => boolean;
 	readonly coerceEmitted: CoerceEmitted;
 	readonly keyByKind: ReadonlyMap<string, string>;
@@ -1045,7 +1045,7 @@ function entryRowsByIrPath(
 	return new Map([...out].sort(([a], [b]) => compareOrdinal(a, b)));
 }
 
-export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables; wires?: PolymorphWires }): PolymorphsOverlay {
+export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTables: GeneratedIdTables; wires?: PolymorphWires }): PolymorphsOverlay {
 	const { nodeMap, generatedIdTables } = config;
 	const wires = config.wires ?? collectPolymorphWires(nodeMap);
 	const rowKindByPath = new Map<string, string>();

@@ -146,9 +146,7 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	);
 
 	const { assemble, AssembleCtx } = await load('assemble');
-	const { loadGeneratedIdTables } = await load('generatedMetadata');
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
-	const ctx = AssembleCtx.from(normalized, generatedIdTables);
+	const ctx = AssembleCtx.from(normalized);
 	const nodeMap = assemble(ctx);
 
 	const nodeModel = await loadNodeModel(grammar);

@@ -1,0 +1,19 @@
+diff --git a/packages/codegen/src/dsl/sittir-grammar.ts b/packages/codegen/src/dsl/sittir-grammar.ts
+index caf7c9dfc..51edca191 100644
+--- a/packages/codegen/src/dsl/sittir-grammar.ts
++++ b/packages/codegen/src/dsl/sittir-grammar.ts
+@@ -115,6 +115,14 @@ export function sittirGrammar<
+ 		checkBindingPatches(bindingBase, bindings.patches);
+ 		const bindingOpts = wireBindings(result.grammar.name, bindingBase, markedBindingPatches(bindings.patches ?? {}));
+ 		result = completeLayer(bindingBase, bindingOpts, result, bindings);
++		if (process.env.SITTIR_PROBE_TOP_FIXPOINT === '1') {
++			const before = baseRulesOf<unknown>(result) ?? {};
++			const after = baseRulesOf<unknown>(enrich(withEnrichSidecarsOf(result, bindingBase))) ?? {};
++			const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter(
++				(name) => JSON.stringify(before[name]) !== JSON.stringify(after[name])
++			);
++			process.stderr.write(`[top-fixpoint] ${result.grammar.name}: ${changed.length === 0 ? 'fixpoint' : changed.sort().map((name) => `${name} ${name in before ? (name in after ? 'changed' : 'removed') : 'added'}`).join(', ')}\n`);
++		}
+ 		if (opts.__wireContext__ !== undefined) {
+ 			for (const [name, entry] of bindingOpts.__wireContext__?.liftNames ?? [])
+ 				opts.__wireContext__.liftNames.set(name, entry);

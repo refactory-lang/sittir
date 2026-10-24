@@ -7,7 +7,7 @@ const ts = await createEngine(typescript);
 const catchOf = (source: string) => {
 	const statement = ts.parse(source).statements()[0]!;
 	if (!ts.is.tryStatement(statement)) throw new Error('not a try');
-	const handler = statement.handler();
+	const handler = statement.handlers();
 	if (handler === undefined) throw new Error('no handler');
 	return handler;
 };

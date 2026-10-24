@@ -15,7 +15,7 @@ import type {
 	ScmAPI,
 	String as QueryString
 } from '@sittir/scm';
-import type { LeadMatch } from '../dsl/bind.ts';
+import type { LeadMatch } from '../dsl/verbs/effects.ts';
 import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import {
 	type Anchor,

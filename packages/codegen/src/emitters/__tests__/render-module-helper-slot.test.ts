@@ -16,12 +16,12 @@ function helperSlotNodeMap() {
 		type: SEQ,
 		members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 	};
-	return withGeneratedIdTables(() =>
+	return withGeneratedIdTables((kindEntries) =>
 		makeNodeMapWith(
 			new Map<string, AssembledNode>([
-				['holder_parent', new AssembledBranch('holder_parent', flatten(parent), flatten(parent))],
-				['_holder', new AssembledBranch('_holder', flatten(helper), flatten(helper))],
-				['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
+				['holder_parent', new AssembledBranch('holder_parent', flatten(parent), flatten(parent), { kindEntries })],
+				['_holder', new AssembledBranch('_holder', flatten(helper), flatten(helper), { kindEntries })],
+				['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
 			])
 		)
 	);

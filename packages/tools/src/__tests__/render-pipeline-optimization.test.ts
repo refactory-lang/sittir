@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../../codegen/src/dsl/symbol-table.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -18,7 +19,7 @@ import { nativeCrateRelDir, stableGrammars } from '../../../codegen/src/grammars
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
-function makeMinimalNodeMap(): NodeMap {
+function makeMinimalNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	// FIELD wrappers don't survive normalize/simplify — post-wrapper-deletion,
 	// `fieldName` is stamped directly onto the leaf instead (see RuleBase's
 	// NormalizedPhase branch, types/rule.ts).
@@ -31,9 +32,9 @@ function makeMinimalNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: '_identifier', fieldName: 'name' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern | AssembledKeyword>([
-		['function_item', new AssembledBranch('function_item', nameSimplifiedRule, nameRenderRule)],
-		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
-		['kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' })]
+		['function_item', new AssembledBranch('function_item', nameSimplifiedRule, nameRenderRule, { kindEntries })],
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })],
+		['kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }, { kindEntries })]
 	]);
 	return {
 		grammar: 'rust',
@@ -45,15 +46,15 @@ function makeMinimalNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makeRequiredChildrenNodeMap(): NodeMap {
+function makeRequiredChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	// No wrapper nodes here, so the wrapper-deleted view is structurally
 	// identical — still needs its own phase-branded declaration (nominal
 	// __simplifiedRule/__renderRule markers, not just structural shape).
 	const parentSimplifiedRule: SimplifiedRule = { type: SEQ, members: [{ type: SYMBOL, name: 'identifier' }] };
 	const parentRenderRule: RenderRule = { type: SEQ, members: [{ type: SYMBOL, name: 'identifier' }] };
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['required_child_parent', new AssembledBranch('required_child_parent', parentSimplifiedRule, parentRenderRule)],
-		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
+		['required_child_parent', new AssembledBranch('required_child_parent', parentSimplifiedRule, parentRenderRule, { kindEntries })],
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
 	]);
 	return {
 		grammar: 'rust',
@@ -65,7 +66,7 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makeOptionalChildrenNodeMap(): NodeMap {
+function makeOptionalChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	// OPTIONAL wrappers don't survive normalize/simplify — the leaf carries
 	// `multiplicity: 'optional'` directly instead.
 	const parentSimplifiedRule: SimplifiedRule = {
@@ -77,8 +78,8 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'optional' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['optional_child_parent', new AssembledBranch('optional_child_parent', parentSimplifiedRule, parentRenderRule)],
-		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
+		['optional_child_parent', new AssembledBranch('optional_child_parent', parentSimplifiedRule, parentRenderRule, { kindEntries })],
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
 	]);
 	return {
 		grammar: 'rust',
@@ -90,7 +91,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makeRepeatedChildrenNodeMap(): NodeMap {
+function makeRepeatedChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	// REPEAT1 wrappers don't survive normalize/simplify — the leaf carries
 	// `multiplicity: 'nonEmptyArray'` directly instead.
 	const parentSimplifiedRule: SimplifiedRule = {
@@ -102,8 +103,8 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'nonEmptyArray' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentSimplifiedRule, parentRenderRule)],
-		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
+		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentSimplifiedRule, parentRenderRule, { kindEntries })],
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
 	]);
 	return {
 		grammar: 'rust',
@@ -115,7 +116,7 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
+function makeOptionalRepeatedChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	// REPEAT wrappers don't survive normalize/simplify — the leaf carries
 	// `multiplicity: 'array'` directly instead.
 	const parentSimplifiedRule: SimplifiedRule = {
@@ -129,9 +130,9 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
 		[
 			'optional_repeated_child_parent',
-			new AssembledBranch('optional_repeated_child_parent', parentSimplifiedRule, parentRenderRule)
+			new AssembledBranch('optional_repeated_child_parent', parentSimplifiedRule, parentRenderRule, { kindEntries })
 		],
-		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
 	]);
 	return {
 		grammar: 'rust',
@@ -143,12 +144,12 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makeTokenOnlyChildrenNodeMap(): NodeMap {
+function makeTokenOnlyChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentSimplifiedRule: SimplifiedRule = { type: SEQ, members: [{ type: SYMBOL, name: 'kw_j' }] };
 	const parentRenderRule: RenderRule = { type: SEQ, members: [{ type: SYMBOL, name: 'kw_j' }] };
 	const nodes = new Map<string, AssembledBranch | AssembledKeyword>([
-		['token_child_parent', new AssembledBranch('token_child_parent', parentSimplifiedRule, parentRenderRule)],
-		['kw_j', new AssembledKeyword('kw_j', { type: STRING, value: 'jjjj' })]
+		['token_child_parent', new AssembledBranch('token_child_parent', parentSimplifiedRule, parentRenderRule, { kindEntries })],
+		['kw_j', new AssembledKeyword('kw_j', { type: STRING, value: 'jjjj' }, { kindEntries })]
 	]);
 	return {
 		grammar: 'rust',
@@ -160,7 +161,7 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
+function makeChoiceParentSingularChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	// Formerly an AssembledPolymorph fixture — the retired class merged its
 	// forms into a single singular unnamed children slot, which a plain
 	// branch over a choice of the two leaf kinds reproduces directly.
@@ -179,9 +180,9 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['expression', new AssembledBranch('expression', parentSimplifiedRule, parentRenderRule)],
-		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
-		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' })]
+		['expression', new AssembledBranch('expression', parentSimplifiedRule, parentRenderRule, { kindEntries })],
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries })],
+		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }, { kindEntries })]
 	]);
 	return makeNodeMapWith(nodes);
 }
@@ -364,7 +365,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		// Phase D: render_dispatch uses numeric KindId matching (Phase C migration).
 		// Supply a minimal generatedIdTables so the emitter emits a numeric arm.
-		const generatedIdTables: GeneratedIdTables = {
+		const generatedIdTables: GeneratedIdTables = { folds: new Map(),
 			kindIds: {
 				function_item: {
 					id: 42,
@@ -404,7 +405,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			sourceArtifact: 'parser.wasm'
 		};
 
-		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
+		const emitted = emitRenderModule('rust', files, withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries)).nodeMap, generatedIdTables);
 
 		expect(emitted.nodeRs.contents).toContain(
 			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables, reason = "One template serves every grammar: a grammar need not use every emitted item, import or binding, and type names follow tree-sitter kind spellings")]'
@@ -440,7 +441,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 	});
 
 	it('routes unnamed children through the shared slot accessor path', () => {
-		const generatedIdTables: GeneratedIdTables = {
+		const generatedIdTables: GeneratedIdTables = { fieldIds: new Map(), folds: new Map(),
 			kindIds: {
 				required_child_parent: {
 					id: 7,
@@ -471,7 +472,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ required_child_parent: slot('identifier') }),
-			makeRequiredChildrenNodeMap(),
+			withGeneratedIdTables((kindEntries) => makeRequiredChildrenNodeMap(kindEntries)).nodeMap,
 			generatedIdTables
 		);
 

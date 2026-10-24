@@ -25,7 +25,7 @@ import { nodeText, placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
-import { importGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
+import { requireGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -51,7 +51,9 @@ import {
 	tableSides,
 	type ReadNodeLike,
 	loadScopedFactoryMap,
-	loadNativeEngine
+	loadNativeEngine,
+	loadStorageKindNameFromId,
+	FAILED_RUN
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
 import {
@@ -364,90 +366,33 @@ function carriesSource(value: unknown): boolean {
 	return Object.values(value).some(carriesSource);
 }
 
-async function loadFactoryKindNameFromId(grammar: string): Promise<{
-	kindNameFromId: ((id: number) => string | undefined) | undefined;
-	importFailure: { message: string } | null;
-}> {
-	try {
-		const kindNames = (await importGrammarModule(grammar, 'types.ts'))?.KIND_NAMES;
-		return { kindNameFromId: kindNames ? (id: number) => kindNames.get(id) : undefined, importFailure: null };
-	} catch (error) {
-		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/types.ts: ${error instanceof Error ? error.message : error}`;
-		console.error(message);
-		return { kindNameFromId: undefined, importFailure: { message } };
-	}
+interface FactoryArtifacts {
+	readonly factoryMap: Record<string, FactoryEntry>;
+	readonly factoryShapes: Record<string, FactoryShape>;
+	readonly fieldAliasMap: Record<string, Record<string, string>>;
+	readonly factoryFields: Record<string, readonly string[]>;
+	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+	readonly kindNameFromId: (id: number) => string | undefined;
+	readonly readNode: Awaited<ReturnType<typeof readNodeOf>>;
 }
 
-async function loadFactoryModuleForGrammar(grammar: string): Promise<{
-	factoryMap: Record<string, FactoryEntry>;
-	factoryShapes: Record<string, FactoryShape>;
-	fieldAliasMap: Record<string, Record<string, string>>;
-	factoryFields: Record<string, readonly string[]>;
-	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-	kindNameFromId: ((id: number) => string | undefined) | undefined;
-	importFailure: { message: string } | null;
-}> {
-	let factoryMap: Record<string, FactoryEntry> = {};
-	let factoryShapes: Record<string, FactoryShape> = {};
-	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let factoryFields: Record<string, readonly string[]> = {};
-	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
-	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
+async function loadFactoryModuleForGrammar(grammar: string): Promise<FactoryArtifacts | { readonly importFailure: string }> {
 	try {
-		const factoryModule = await importGrammarModule(grammar, 'factories/raw.ts');
-		if (!factoryModule) {
-			return {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				kindNameFromId,
-				importFailure: null
-			};
-		}
-		factoryMap = await loadScopedFactoryMap(grammar, factoryModule._factoryMap ?? {});
-		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
-		// data, loaded separately from the factory functions.
-		const mapData = await loadNodeModel(grammar);
-		factoryShapes = mapData.factoryShapes;
-		fieldAliasMap = mapData.fieldAliasMap;
-		factoryFields = mapData.factoryFields;
-		factorySlots = mapData.factorySlots;
-		const identity = await loadFactoryKindNameFromId(grammar);
-		kindNameFromId = identity.kindNameFromId;
-		if (identity.importFailure) {
-			return {
-				factoryMap,
-				factoryShapes,
-				fieldAliasMap,
-				factoryFields,
-				factorySlots,
-				kindNameFromId,
-				importFailure: identity.importFailure
-			};
-		}
+		const factoryModule = await requireGrammarModule(grammar, 'factories/raw.ts');
+		const { factoryShapes, fieldAliasMap, factoryFields, factorySlots } = await loadNodeModel(grammar);
 		return {
-			factoryMap,
+			factoryMap: await loadScopedFactoryMap(grammar, factoryModule._factoryMap),
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
 			factorySlots,
-			kindNameFromId,
-			importFailure: null
+			kindNameFromId: await loadStorageKindNameFromId(grammar),
+			readNode: await readNodeOf(grammar)
 		};
 	} catch (e) {
-		const message = `[validate-factory-roundtrip] failed to load ${grammar} src/factories/raw.ts: ${(e as Error)?.message ?? e}`;
-		console.error(message);
-		return {
-			factoryMap,
-			factoryShapes,
-			fieldAliasMap,
-			factoryFields,
-			factorySlots,
-			kindNameFromId,
-			importFailure: { message }
-		};
+		const importFailure = `[validate-factory-roundtrip] failed to load ${grammar} factory artifacts: ${e instanceof Error ? e.message : e}`;
+		console.error(importFailure);
+		return { importFailure };
 	}
 }
 
@@ -466,31 +411,18 @@ function initKindEntryDeduplicator(): Set<string> {
 	return new Set<string>();
 }
 
-/**
- * Record a factory-module load failure as a sentinel error entry. Without
- * this entry, an empty `factoryMap` silently skips every kind, making the
- * reported "factory pass" count reflect an all-skip run rather than a real
- * failure signal.
- *
- * @param importFailure - The load-failure descriptor, or `null` if loading succeeded.
- * @param errors - Mutable error list to append to.
- */
-function recordFactoryModuleLoadFailure(
-	importFailure: { message: string } | null,
-	errors: {
-		kind: string;
-		entry?: string;
-		message: string;
-		input?: string;
-		rendered?: string;
-	}[]
-): void {
-	if (importFailure) {
-		errors.push({
-			kind: '(factory-module-load)',
-			message: importFailure.message
-		});
-	}
+function failedRun(grammar: string, errors: FactoryStorageResult['errors']): FactoryStorageResult {
+	return {
+		grammar,
+		...FAILED_RUN,
+		casesByKind: {},
+		astMatchPass: 0,
+		errors,
+		astMismatches: [],
+		skips: [],
+		excluded: [],
+		render: emptyBuiltRender()
+	};
 }
 
 function buildFactoryUntypedNode(
@@ -550,10 +482,10 @@ export async function validateFactoryStorage(
 	loadRawEntries(grammar);
 	const ruleKinds = deriveRuleKinds(grammar);
 
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, importFailure } =
-		await loadFactoryModuleForGrammar(grammar);
+	const loaded = await loadFactoryModuleForGrammar(grammar);
+	if ('importFailure' in loaded) return failedRun(grammar, [{ kind: '(factory-module-load)', message: loaded.importFailure }]);
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, readNode } = loaded;
 
-	const readNode = await readNodeOf(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(
@@ -588,63 +520,20 @@ export async function validateFactoryStorage(
 	const skips: ValidatorSkip[] = [];
 	const excluded: ValidatorSkip[] = [];
 
-	recordFactoryModuleLoadFailure(importFailure, errors);
-	if (options.surface === 'ir' && surface === undefined) {
-		errors.push({ kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` });
-	}
-	if (importFailure || (options.surface === 'ir' && surface === undefined)) {
-		return {
-			grammar,
-			total: 0,
-			casesByKind: {},
-			pass: 0,
-			fail: 0,
-			skip: 0,
-			astMatchPass: 0,
-			errors,
-			astMismatches: [],
-			skips: [],
-			excluded: [],
-			render: emptyBuiltRender()
-		};
-	}
+	if (options.surface === 'ir' && surface === undefined)
+		return failedRun(grammar, [...errors, { kind: '(ir-surface-load)', message: `[validate-factory-roundtrip] no ir module for '${grammar}'` }]);
 
-	// This validator's storage comparison only has meaning against the
-	// wrapped NATIVE read path (readNode + handle.read). Without it,
-	// every candidate below would be silently rejected and the run would
-	// report a misleading "0/0 pass" instead of a real failure. Probe
-	// availability up front and fail loudly instead of skipping.
 	let readPathFailure: string | undefined;
-	if (!readNode) {
-		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
-	} else {
-		try {
-			const probeHandle = await buildReadHandle(grammar, '');
-			if (!probeHandle.read) {
-				readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
-			}
-		} catch (e) {
-			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
+	try {
+		const probeHandle = await buildReadHandle(grammar, '');
+		if (!probeHandle.read) {
+			readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
 		}
+	} catch (e) {
+		readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
 	}
-	if (readPathFailure || !readNode) {
-		const message = `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}`;
-		errors.push({ kind: '(read-tree-unavailable)', message });
-		return {
-			grammar,
-			total: 0,
-			casesByKind: {},
-			pass: 0,
-			fail: 1,
-			skip: 0,
-			astMatchPass: 0,
-			errors,
-			astMismatches: [],
-			skips: [],
-			excluded: [],
-			render: emptyBuiltRender()
-		};
-	}
+	if (readPathFailure !== undefined)
+		return failedRun(grammar, [...errors, { kind: '(read-tree-unavailable)', message: `[validate-factory-roundtrip] ${readPathFailure}` }]);
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
@@ -668,7 +557,7 @@ export async function validateFactoryStorage(
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
 			if (w.$named === false) return;
-			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+			const sourceKind = kindNameFromId(w.$type);
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = spanOf(w);
@@ -735,7 +624,7 @@ export async function validateFactoryStorage(
 					...(rendered === undefined ? {} : { rendered })
 				});
 				const buildInner = (node: Record<string, unknown>): unknown => {
-					const innerKind = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+					const innerKind = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
 					if (innerKind === undefined) return null;
 					const innerSurface = surface?.entries[innerKind] === undefined ? undefined : surface;
 					return buildFactoryNodeFromReference(
@@ -750,7 +639,7 @@ export async function validateFactoryStorage(
 				try {
 					builtTree = measureRoundtrip(options.profile, 'build', () => {
 						const takesText = (node: Record<string, unknown>): boolean => {
-							const name = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+							const name = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
 							return name !== undefined && factoryShapes[name] === 'placed';
 						};
 						const root = referenceData as unknown as Record<string, unknown>;

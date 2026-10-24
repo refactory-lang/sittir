@@ -1,10 +1,12 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameOf } from '../dsl/bind.ts';
+import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
 import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
+import { projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
 import { type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
@@ -97,6 +99,9 @@ export function layoutSlots(options: OptionsConfig, kinds: ReadonlySet<string>):
 }
 
 export interface EvaluatedGrammarFacts {
+	readonly rules?: Readonly<Record<string, unknown>>;
+	readonly supertypes?: readonly string[];
+	readonly bindingEffects?: readonly BindingEffect[];
 	readonly textTokens?: readonly string[];
 	readonly options?: OptionsConfig;
 }
@@ -110,9 +115,25 @@ export async function grammarInput(
 ): Promise<GrammarInput | undefined> {
 	if (!existsSync(scmPath)) return undefined;
 	const model = slotModelOf(record);
+	const effects = raw.bindingEffects ?? [];
+	const facts = bindFacts(
+		await readBindings(readFileSync(scmPath, 'utf8')),
+		boundNameOf(renamedFromOf(record), effects.filter((effect) => effect.kind === 'alias')),
+		boundFieldNameOf(
+			effects.filter((effect) => effect.kind === 'segment'),
+			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
+		)
+	);
 	return {
 		grammar,
-		bindings: resolveFlags(bindFacts(await readBindings(readFileSync(scmPath, 'utf8')), boundNameOf(renamedFromOf(record))), vocabulary ?? (await readVocabulary(VOCABULARY_DIR)), model),
+		bindings: resolveFlags(
+			projectLeadFacts(
+				facts,
+				effects.filter((effect) => effect.kind === 'lead')
+			),
+			vocabulary ?? (await readVocabulary(VOCABULARY_DIR)),
+			model
+		),
 		model,
 		textTokens: new Set(raw.textTokens ?? []),
 		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys()))

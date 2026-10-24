@@ -15,7 +15,7 @@ describe('repeat slot cardinality', () => {
 				{ type: 'SYMBOL', name: 'if_clause', nonterminal: true }
 			]
 		};
-		const slots = collectSlots(rule, 'comprehension_clauses');
+		const slots = collectSlots(rule, 'comprehension_clauses', { kindEntries: [] });
 		expect(slots).toHaveLength(1);
 		expect(isRequired(slots[0]!)).toBe(true);
 		expect(isNonEmpty(slots[0]!)).toBe(true);
@@ -30,7 +30,7 @@ describe('repeat slot cardinality', () => {
 			multiplicity: 'array',
 			nonterminal: true
 		};
-		const slots = collectSlots(rule, 'module');
+		const slots = collectSlots(rule, 'module', { kindEntries: [] });
 		expect(slots).toHaveLength(1);
 		expect(isRequired(slots[0]!)).toBe(false);
 		expect(isNonEmpty(slots[0]!)).toBe(false);

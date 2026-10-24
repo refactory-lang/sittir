@@ -204,15 +204,37 @@ Text held by a verbatim slot with no kind is printed as the bare string: a lexed
 
 ### `packages/tools/src/emit/dogfood-targets.ts::DOGFOOD_TARGETS`
 
-The one table of dogfood rebuild targets: for each, the grammar, the
-repo-relative source file, the `examples/` file stem, the export-name base, the
+The guide's dogfood rebuild targets: real source files rebuilt through the
+factory-source emitter and written to `examples/`. Each row gives the grammar,
+the repo-relative source file, the file stem, the export-name base, the
 surfaces to print (`strict`, `loose`) and the committed render fixture under
-`packages/tools/tests/emit/__fixtures__/`. Everything that iterates the
-rebuilds reads this table: `pnpm run gen:examples`
-(`packages/tools/src/scripts/gen-examples.ts`), the freshness test
-(`generated-examples.test.ts`) and the render-bytes test
-(`dogfood-render-bytes.test.ts`). A new target is one row here and nothing
-else.
+`packages/tools/tests/emit/__fixtures__/`.
+
+### `packages/tools/src/emit/dogfood-targets.ts::EMITTER_FIXTURE_TARGETS`
+
+The emitter regression fixtures, in the same row shape as `DOGFOOD_TARGETS`:
+small sources under `packages/tools/tests/emit/__fixtures__/` that pin what the
+factory-source emitter prints for a shape the guide doesn't teach (keyword
+openers, list-seat configs, trivia). They are written to
+`packages/tools/tests/emit/__generated__/`, never to `examples/`.
+
+### `packages/tools/src/emit/dogfood-targets.ts::RebuildSet`
+
+One output directory of generated rebuilds: the directory, the root script
+that type-checks its files, the ceiling of type errors per file, and the
+targets written there.
+
+### `packages/tools/src/emit/dogfood-targets.ts::REBUILD_SETS`
+
+The two rebuild sets: `DOGFOOD_TARGETS` in `examples/` (type-checked by
+`type-check:generated-examples`), and `EMITTER_FIXTURE_TARGETS` in
+`packages/tools/tests/emit/__generated__/` (type-checked by
+`type-check:emit-fixtures`). Each set's ceiling sits in its own directory.
+Everything that iterates the rebuilds reads this table: `pnpm run gen:examples`
+(`packages/tools/src/scripts/gen-examples.ts`), the freshness and ceiling test
+(`generated-examples.test.ts`), which also holds each directory to exactly its
+own rebuilds, and the render-bytes test (`dogfood-render-bytes.test.ts`). A new
+target is one row in its set's table and nothing else.
 
 A target may carry `renderOptions`, typed as its own grammar's render options
 (`LanguageApis[G]['options']`): `DogfoodTarget` is a union keyed on `grammar`,
@@ -239,11 +261,12 @@ A `DogfoodTarget` without its `surfaces`, plus the one `surface` it prints and
 the derived `exportName` and `file`. It is distributed over the target union,
 so each rebuild keeps its grammar's option type.
 
-### `packages/tools/src/emit/dogfood-targets.ts::DOGFOOD_REBUILDS`
+### `packages/tools/src/emit/dogfood-targets.ts::GENERATED_REBUILDS`
 
-`DOGFOOD_TARGETS` expanded one row per surface, with the derived export name
-(`rebuild<Name>Generated` for strict, `rebuild<Name>Loose` for loose) and the
-derived file (`examples/<stem>.generated.ts`, `examples/<stem>-loose.generated.ts`).
+Every target of `REBUILD_SETS` expanded one row per surface, with the derived
+export name (`rebuild<Name>Generated` for strict, `rebuild<Name>Loose` for
+loose) and the derived file in its set's directory (`<dir>/<stem>.generated.ts`,
+`<dir>/<stem>-loose.generated.ts`).
 The spelling rule lives here alone; a consumer never rebuilds a name.
 
 ### `packages/tools/src/emit/factory-source.ts::hoistSeatElement`
@@ -499,21 +522,6 @@ A spread builder given a leading options object (a plain object, never a printed
 
 The printing counterpart of a grammar's `ir` bindings: every kind's `strict`, plus one entry per mount name its seats declare, and under each the mounted kind's own arm mounts (`mountArmPrinters`), printing `ir.<parent>.<mount>….strict(…)`. A mount prints the built kind with the id stamped on the kind's printing entry (`PrintingEntry.kindId`), never one looked up by the map key, which may be a hidden kind's public name. Handing this to `buildFactoryNodeFromReference` as the surface makes the printer take the same seat projection the validators take, so the emitted spelling is the one `ir-storage` builds rather than a second derivation of it.
 
-### `packages/tools/src/emit/factory-source.ts::absorbedKindsOf`
-
-```text
-/**
- * A hoisted child whose OWN surface is a rest-parameter one (`spread`, or a
- * separated list's `elements`) and that its parent takes POSITIONALLY is
- * absorbed: its arguments splice straight into the parent's call, because the
- * parent's own factory already offers those rest parameters. A parent with
- * named keys takes the same child as a tuple on its slot, which is the tuple
- * seat. Every other hoisted child prints its own call, and so does one that
- * seats children of its own: those arrive as the child's configs, which only
- * the child's own builder knows how to take.
- */
-```
-
 ### `packages/tools/src/emit/factory-source.ts::variantFormsOf`
 
 ```text
@@ -618,7 +626,7 @@ The factory map handed to the dispatch holds, for a `constant`-shaped kind, the 
 
 The arguments an owner prints in place of its list's call: an owner is a kind that forwards to a list (`forwardsTo`), and its factory takes the list's own arguments, so `owner(list(a, b))` is spelled `owner(a, b)`. One case keeps the list's call: the list carries trivia of its own, which the owner's call would have nowhere to hold. Seat config elements and an options bag go to the owner as they would to the list.
 
-The owner route is tried before the absorbed-list form, so a hoisted list with no seats is also spelled through its owner's arguments, options included.
+The `forwardsTo` fact is the only test: a list is spread into a call only when its owner forwards to that exact child, so a hoisted list with no seats is spelled through its owner's arguments, options included, and a direct choice that holds a list keeps the list's own call.
 
 On the loose surface a slot whose kind is the owner keeps the owner's call (`PrintedFacts.ownsList`) where `loosenValue` would otherwise drop the owner as a single-slot wrapper and leave the list's call.
 

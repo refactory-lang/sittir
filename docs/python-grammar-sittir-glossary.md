@@ -12,14 +12,20 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `sittirGrammar(base, …)` (`packages/python/grammar.sittir.ts:27`)
+### `grammar(enrich(base), wire({…}))` (`packages/python/grammar.sittir.ts:38`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is python's layer 1, the
+authored layer. `enrich(base)` is the layer's base half: the upstream grammar,
+pending until the layer pass completes it. `wire({…})` is its options half:
+tree-sitter's `grammar()`, or sittir's own when sittir evaluates the file,
+calls the options' `externals` entry first, and there the layer pass enriches
+the base with the config's authored `groups:` patterns visible, so enrich
+declines any group a pattern covers, and wires the config over that enriched
+base. The base wire sees and the base tree-sitter compiles are the one
+completed object, so they cannot drift apart.
+
+The generated layer above this one, `grammar.bindings.ts`, imports this file;
+nothing here imports it, so layer 1 evaluates without the grammar bindings.
 
 ### `externals` (`packages/python/grammar.sittir.ts:20`)
 
@@ -479,7 +485,7 @@ one splat and is now a parenthesized expression.
 				// the base grammar's arms verbatim (including precedence).
 ```
 
-### `case_pattern` (`packages/python/grammar.sittir.ts`, `patches`)
+### `case_pattern` (`packages/python/grammar.sittir.ts`, `edits`)
 
 ```text
 				// Case-context as-pattern split — same two-rules-one-parse-kind class
@@ -497,7 +503,7 @@ one splat and is now a parenthesized expression.
 				// stripped name `as_pattern` is taken by the expression-context kind.
 ```
 
-### `format_specifier` (`packages/python/grammar.sittir.ts`, `patches`)
+### `format_specifier` (`packages/python/grammar.sittir.ts`, `edits`)
 
 `format_specifier: [{ '1/0/0': token.immediate(prec(1, /[^{}\n]+/)) }, { '1/0': field('elements') }]`.
 The base rule is `seq(':', repeat(choice(token(prec(1, /[^{}\n]+/)), alias(interpolation, format_expression))))`.
@@ -506,7 +512,7 @@ and to neighbouring interpolations. The second fields the repeated choice as
 `elements`; it comes second so the first set's path still reaches the text arm
 beneath it.
 
-### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `patches`)
+### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `edits`)
 
 ```text
 				// Comprehension-clause visibility (hidden-repeat-helper class): the
@@ -717,7 +723,7 @@ shrinks.
 
 ### `tuple_pattern` (`packages/python/grammar.sittir.ts`)
 
-The `semantic-gap` override uses `transform(original, …)` to replace only the optional middle of the upstream sequence. A singleton pattern requires its comma and builds as `(x,)`. The parser rejects `(x) = y`, per the maintainer's #550 decision; it still accepts empty and multi-element tuple patterns. The upstream witness records that `(x) = y` binds the whole value, rather than unpacking a tuple. Tuple expressions reuse the same element construction in `_tuple_elements`, with their existing separate `parenthesized_expression` kind.
+The `semantic-gap` override uses `edit(original, …)` to replace only the optional middle of the upstream sequence. A singleton pattern requires its comma and builds as `(x,)`. The parser rejects `(x) = y`, per the maintainer's #550 decision; it still accepts empty and multi-element tuple patterns. The upstream witness records that `(x) = y` binds the whole value, rather than unpacking a tuple. Tuple expressions reuse the same element construction in `_tuple_elements`, with their existing separate `parenthesized_expression` kind.
 
 ### `tupleElements` (`packages/python/grammar.sittir.ts`)
 

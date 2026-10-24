@@ -337,9 +337,14 @@ function flattenSeqMembers(members: unknown[]): unknown[] {
 	return out;
 }
 
+export function throughEnrichedField(rule: unknown): unknown {
+	const r = rule as { type?: unknown; content?: unknown; metadata?: { fieldSource?: string } } | null | undefined;
+	return typeof r?.type === 'string' && isFieldType(r.type) && r.metadata?.fieldSource === 'enriched' ? r.content : rule;
+}
+
 function seqHasTopLevelRepeat(members: unknown[]): boolean {
 	for (const m of flattenSeqMembers(members)) {
-		const core = unwrapPrec(m);
+		const core = unwrapPrec(throughEnrichedField(unwrapPrec(m)));
 		if (!core || typeof core !== 'object') continue;
 		const ct = (core as Record<string, unknown>).type;
 		if (typeof ct === 'string' && isRepeatLike(ct)) return true;
@@ -386,7 +391,7 @@ function seqHasGenuineSeparatorVariability(members: unknown[], symbols: SymbolSo
 	const flat = flattenSeqMembers(members);
 	const repeatMembers: RuntimeRule[] = [];
 	for (const m of flat) {
-		const core = unwrapPrec(m);
+		const core = unwrapPrec(throughEnrichedField(unwrapPrec(m)));
 		if (!core || typeof core !== 'object') continue;
 		const ct = (core as Record<string, unknown>).type;
 		if (typeof ct !== 'string' || !isRepeatLike(ct)) continue;
@@ -639,6 +644,89 @@ function resolveRuleLiteral(body: unknown): string | null {
 export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
+
+export type GrammarRecord = Record<string, unknown>;
+
+export const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+export function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) symbolNames(r, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') out.add(rule.name);
+		for (const value of Object.values(rule)) symbolNames(value, out);
+	}
+	return out;
+}
+
+export function countSymbols(rule: unknown, sites: Map<string, number> = new Map()): Map<string, number> {
+	if (Array.isArray(rule)) for (const r of rule) countSymbols(r, sites);
+	else if (isRecord(rule)) {
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') sites.set(rule.name, (sites.get(rule.name) ?? 0) + 1);
+		for (const value of Object.values(rule)) countSymbols(value, sites);
+	}
+	return sites;
+}
+
+export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) fieldNames(r, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'FIELD' && typeof rule.name === 'string') out.add(rule.name);
+		for (const value of Object.values(rule)) fieldNames(value, out);
+	}
+	return out;
+}
+
+export const listEntryName = (entry: unknown): string | undefined =>
+	typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined;
+
+export function listedNames(list: unknown): ReadonlySet<string> {
+	return new Set((Array.isArray(list) ? list : []).flatMap((entry) => listEntryName(entry) ?? []));
+}
+
+export function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
+	return listedNames(grammar.supertypes);
+}
+
+export function transparentReach(rules: GrammarRecord, from: string, stop: ReadonlySet<string>): Set<string> {
+	const out = new Set<string>([from]);
+	const queue = [from];
+	while (queue.length > 0) {
+		for (const ref of symbolNames(rules[queue.pop()!])) {
+			if (isParserHiddenName(ref) && ref in rules && !stop.has(ref) && !out.has(ref)) {
+				out.add(ref);
+				queue.push(ref);
+			}
+		}
+	}
+	return out;
+}
+
+export const OPAQUE_RULES: ReadonlySet<unknown> = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN']);
+
+export function replaceSymbols(rule: unknown, replace: (name: string) => string): unknown {
+	if (Array.isArray(rule)) return rule.map((r) => replaceSymbols(r, replace));
+	if (!isRecord(rule)) return rule;
+	if (rule.type === 'SYMBOL' && typeof rule.name === 'string') return { ...rule, name: replace(rule.name) };
+	const out: GrammarRecord = {};
+	for (const [key, value] of Object.entries(rule)) out[key] = replaceSymbols(value, replace);
+	return out;
+}
+
+export function refRule(ref: unknown): string | undefined {
+	const node = unwrapPrec(ref);
+	if (!isRecord(node)) return undefined;
+	if (node.type === 'SYMBOL' && typeof node.name === 'string') return node.name;
+	return node.type === 'ALIAS' ? refRule(node.content) : undefined;
+}
+
+export function refKind(ref: unknown): string | undefined {
+	const node = unwrapPrec(ref);
+	if (!isRecord(node)) return undefined;
+	if (node.type === 'ALIAS' && node.named === true && typeof node.value === 'string') return node.value;
+	return node.type === 'SYMBOL' && typeof node.name === 'string' && !isParserHiddenName(node.name) ? node.name : undefined;
+}
+
+export const aliasOf = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', content: { type: 'SYMBOL', name }, named: true, value });
 
 export interface SymbolSource {
 	readonly rules: Readonly<Record<string, AnyRule>>;

@@ -3,7 +3,6 @@ import { createEngine, hostTemplateFor, applyHost } from '@sittir/common';
 import { spanOf } from '@sittir/common/utils';
 import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
-import { loadGeneratedIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { grammarPackage } from '@sittir/codegen/grammars';
 import { AbstractAssembledCompound, AssembledPattern, AssembledSupertype } from '../../codegen/src/compiler/model/node-map.ts';
 import { patternDfa, shortestAccepted } from '../../codegen/src/compiler/model/pattern-automaton.ts';
@@ -12,7 +11,7 @@ const pascal = (kind: string) => kind.replace(/(^|_)([a-z])/g, (_m, _s, c: strin
 
 describe.each(['python', 'rust', 'typescript'])('%s: every delimited kind, written with its sample delimiters, parses in its host', (grammar) => {
 	it('shows the kind spanning the whole sample', async () => {
-		const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) });
+		const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar) });
 		const engine: any = await createEngine((await import(`@sittir/${grammar}`)).default);
 		const { REPARSE_HOSTS } = await requireGrammarModule(grammar, 'reparse-hosts.ts');
 		const supertypes = new Map<string, string[]>();

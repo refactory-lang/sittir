@@ -4,15 +4,13 @@ import { AssembledList } from '../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../shared.ts';
 import { collectRefineKindInfos, refineFormFactoryName } from '../refine-emit.ts';
 import { refineFormBuiltTypeSurfaceOf } from '../factories.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { bundleEntries, bundleExpr, overlayFrame, overlayImportPath } from './module.ts';
 
-export function emitRefinesOverlay(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }): string {
-	const kindEntries = config.generatedIdTables
-		? collectKindEntries(collectCatalogKinds(config.generatedIdTables), config.nodeMap, config.generatedIdTables)
-		: undefined;
-	const keyByKind = new Map(bundleEntries(config.nodeMap).map((e) => [e.node.kind, e.exportName]));
+export function emitRefinesOverlay(config: { nodeMap: NodeMap; generatedIdTables: GeneratedIdTables }): string {
+	const kindEntries = collectKindEntries(config.nodeMap, config.generatedIdTables);
+	const keyByKind = new Map(bundleEntries(config.nodeMap, config.generatedIdTables).map((e) => [e.node.kind, e.exportName]));
 	const lines: string[] = [];
 	for (const info of collectRefineKindInfos(config.nodeMap) ?? []) {
 		const node = info.node;

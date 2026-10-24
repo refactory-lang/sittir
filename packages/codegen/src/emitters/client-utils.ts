@@ -15,7 +15,7 @@ export interface EmitClientUtilsConfig {
 	nodeMap: NodeMap;
 	triviaKinds?: string[];
 	structure?: ReadonlyMap<number, StructureRow>;
-	kindEntries?: readonly KindEnumEntry[];
+	kindEntries: readonly KindEnumEntry[];
 }
 
 export function emitClientUtils(config: EmitClientUtilsConfig): string {
@@ -140,7 +140,7 @@ export function buildTriviaNodeType(triviaTypeNames: readonly string[]): string 
 	return triviaTypeNames.length > 0 ? triviaTypeNames.join(' | ') : 'AnyUntypedNode';
 }
 
-function textEnvelopeContents(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): ReadonlyMap<number, number> {
+function textEnvelopeContents(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): ReadonlyMap<number, number> {
 	const rows: [number, number][] = [];
 	for (const entry of builtFromText(nodeMap, kindEntries)) {
 		if (entry.form !== 'alias' || entry.node.kindId === undefined) continue;

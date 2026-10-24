@@ -75,7 +75,7 @@ describe('the terminator preference fills only an unset slot', () => {
 });
 
 describe('a class method defaults to no terminator', () => {
-	const method = () => ts.build.methodDefinition({ name: 'foo', parameters: ts.build.formalParameters(), body: ts.build.statementBlock() });
+	const method = () => ts.build.methodDefinitionPlain({ name: 'foo', parameters: ts.build.formalParameters(), body: ts.build.statementBlock() });
 
 	it('a method built without a terminator renders bare; a chosen `;` renders', () => {
 		expect(ts.build.classBody(ts.build.classBodyMember.method({ methodDefinition: method() })).$render()).toBe('{\n  foo() {}\n}');

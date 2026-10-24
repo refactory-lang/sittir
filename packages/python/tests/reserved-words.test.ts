@@ -28,8 +28,8 @@ function findParsed(node: unknown, kind: number): Record<string, unknown> | unde
 }
 
 function readName(text: string): { $type: number; $text?: string } {
-	const named = findParsed(py.parse(text), py.kinds.NamedExpression) as { name(): unknown } | undefined;
-	const name = named?.name();
+	const named = findParsed(py.parse(text), py.kinds.NamedExpression) as { left(): unknown } | undefined;
+	const name = named?.left();
 	return typeof name === 'number' ? { $type: name } : (name as { $type: number; $text?: string });
 }
 
@@ -58,16 +58,16 @@ describe('the grammar reserved wordset', () => {
 
 describe('a relaxed keyword at a slot the grammar relaxes it in', () => {
 	it.each(['print', 'exec', 'match', 'type'])('loose %j builds the identifier the parser reads', (word) => {
-		const built = py.build.namedExpression({ name: word, value: py.build.integer('1') });
+		const built = py.build.namedExpression({ left: word, right: py.build.integer('1') });
 		const text = `(${built.$render().toString()})`;
 		expect(text).toBe(`(${word} := 1)`);
-		expect((built._name as unknown as { $type: number; $text: string }).$type).toBe(py.kinds.Identifier);
-		expect((built._name as unknown as { $text(): string }).$text()).toBe(word);
+		expect(built.left().$type).toBe(py.kinds.Identifier);
+		expect(built.left().$text()).toBe(word);
 		expect(readName(text).$type).toBe(py.kinds.Identifier);
 	});
 
 	it('accepts an identifier spelled as the relaxed keyword', () => {
-		const built = py.build.namedExpression({ name: py.build.identifier('print'), value: py.build.integer('1') });
+		const built = py.build.namedExpression({ left: py.build.identifier('print'), right: py.build.integer('1') });
 		expect(built.$render().toString()).toBe('print := 1');
 	});
 

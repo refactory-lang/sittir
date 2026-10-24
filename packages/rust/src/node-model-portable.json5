@@ -478,11 +478,11 @@
         {
           "name": "content",
           "route": "slot",
-          "slot": "attribute",
+          "slot": "content",
           "path": [
             {
               "owner": "attribute_item",
-              "slot": "attribute"
+              "slot": "content"
             }
           ]
         }
@@ -852,7 +852,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -933,13 +933,22 @@
       "container": {
         "kinds": [
           "parameter",
-          "self_parameter",
           "variadic_parameter",
           "_type"
         ],
         "terminals": [
           "_"
         ],
+        "list": false
+      }
+    },
+    "attributed_parameter_receiver": {
+      "container": {
+        "kinds": [
+          "receiver_parameter_declaration",
+          "self_parameter"
+        ],
+        "terminals": [],
         "list": false
       }
     },
@@ -3045,7 +3054,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -3170,11 +3179,11 @@
         {
           "name": "default",
           "route": "slot",
-          "slot": "value",
+          "slot": "default",
           "path": [
             {
               "owner": "const_parameter",
-              "slot": "value"
+              "slot": "default"
             }
           ]
         }
@@ -3778,7 +3787,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -4810,7 +4819,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -4916,7 +4925,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -5009,7 +5018,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -5757,7 +5766,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -6265,7 +6274,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -6375,22 +6384,22 @@
         {
           "name": "object",
           "route": "slot",
-          "slot": "value",
+          "slot": "object",
           "path": [
             {
               "owner": "field_expression",
-              "slot": "value"
+              "slot": "object"
             }
           ]
         },
         {
           "name": "property",
           "route": "slot",
-          "slot": "field",
+          "slot": "property",
           "path": [
             {
               "owner": "field_expression",
-              "slot": "field"
+              "slot": "property"
             }
           ]
         }
@@ -6431,11 +6440,11 @@
         {
           "name": "attributes",
           "route": "slot",
-          "slot": "attribute_item",
+          "slot": "attributes",
           "path": [
             {
               "owner": "field_initializer",
-              "slot": "attribute_item"
+              "slot": "attributes"
             }
           ]
         },
@@ -6655,22 +6664,22 @@
         {
           "name": "left",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "left",
           "path": [
             {
               "owner": "for_expression",
-              "slot": "pattern"
+              "slot": "left"
             }
           ]
         },
         {
           "name": "right",
           "route": "slot",
-          "slot": "value",
+          "slot": "right",
           "path": [
             {
               "owner": "for_expression",
-              "slot": "value"
+              "slot": "right"
             }
           ]
         },
@@ -6871,36 +6880,19 @@
                 {
                   "slots": {
                     "349": 0
-                  },
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "slots": {
-                  "429": 1
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 4
                   }
                 }
               ],
               "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "slots": {
-                  "230": 0
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    231
+                  ],
+                  "slots": {
+                    "429": 1
+                  }
                 }
               }
             }
@@ -6922,6 +6914,25 @@
                   "slots": {
                     "208": 4
                   }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  437
+                ],
+                "slots": {
+                  "230": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "208": 4
+                  }
                 },
                 {
                   "slots": {
@@ -6930,20 +6941,17 @@
                 },
                 {
                   "slots": {
-                    "349": 0
+                    "437": 0
                   }
                 }
               ],
               "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "slots": {
-                    "429": 1
-                  }
+                "op": "is",
+                "types": [
+                  231
+                ],
+                "slots": {
+                  "436": 1
                 }
               }
             }
@@ -7556,7 +7564,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -7642,7 +7650,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -7988,7 +7996,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -8025,17 +8033,6 @@
             {
               "owner": "function_item",
               "slot": "type_parameters"
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_item",
-              "slot": "parameters"
             }
           ]
         },
@@ -8190,6 +8187,201 @@
             {
               "owner": "function_modifiers",
               "slot": "modifier"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "parameters_elements_receiver_group"
+            },
+            {
+              "owner": "parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         },
@@ -8659,7 +8851,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -9005,7 +9197,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -9057,17 +9249,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_signature_item",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -9086,6 +9267,166 @@
             {
               "owner": "function_signature_item",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "parameters_elements_receiver_group"
+            },
+            {
+              "owner": "parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         },
@@ -9185,17 +9526,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_type",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -9203,6 +9533,96 @@
             {
               "owner": "function_type",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "parameters_elements_receiver_group"
+            },
+            {
+              "owner": "parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
             }
           ]
         },
@@ -9959,11 +10379,11 @@
         {
           "name": "content",
           "route": "slot",
-          "slot": "attribute",
+          "slot": "content",
           "path": [
             {
               "owner": "inner_attribute_item",
-              "slot": "attribute"
+              "slot": "content"
             }
           ]
         }
@@ -10378,11 +10798,11 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "name",
           "path": [
             {
               "owner": "let_declaration",
-              "slot": "pattern"
+              "slot": "name"
             }
           ]
         },
@@ -10840,11 +11260,11 @@
         {
           "name": "function",
           "route": "slot",
-          "slot": "macro",
+          "slot": "function",
           "path": [
             {
               "owner": "macro_invocation",
-              "slot": "macro"
+              "slot": "function"
             }
           ]
         },
@@ -11037,11 +11457,11 @@
         {
           "name": "subject",
           "route": "slot",
-          "slot": "value",
+          "slot": "subject",
           "path": [
             {
               "owner": "match_expression",
-              "slot": "value"
+              "slot": "subject"
             }
           ]
         },
@@ -11463,7 +11883,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -11859,7 +12279,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -12162,6 +12582,27 @@
       "vocab": "declaration.parameter",
       "read": [
         {
+          "vocab": "declaration.parameter.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "233": 1
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
@@ -12206,15 +12647,6 @@
         }
       ]
     },
-    "parameters": {
-      "container": {
-        "kinds": [
-          "parameters_elements"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
     "parameters_elements": {
       "container": {
         "kinds": [
@@ -12222,6 +12654,15 @@
         ],
         "terminals": [],
         "list": true
+      }
+    },
+    "parameters_elements_receiver_group": {
+      "container": {
+        "kinds": [
+          "parameters_elements"
+        ],
+        "terminals": [],
+        "list": false
       }
     },
     "parenthesized_expression": {
@@ -12992,6 +13433,50 @@
       ],
       "members": []
     },
+    "receiver_parameter_declaration": {
+      "vocab": "declaration.parameter",
+      "read": [
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.parameter.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "mutable",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "mutable"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
     "ref_pattern": {
       "vocab": "pattern.reference",
       "read": [
@@ -13247,7 +13732,7 @@
           "path": [
             {
               "owner": "reference_pattern",
-              "slot": "mutable"
+              "slot": "exclusive"
             }
           ],
           "flag": true
@@ -13295,7 +13780,7 @@
           "path": [
             {
               "owner": "reference_type",
-              "slot": "mutable"
+              "slot": "exclusive"
             }
           ],
           "flag": true
@@ -13648,11 +14133,11 @@
         {
           "name": "field",
           "route": "slot",
-          "slot": "name",
+          "slot": "field",
           "path": [
             {
               "owner": "shorthand_field_initializer",
-              "slot": "name"
+              "slot": "field"
             }
           ]
         }
@@ -13682,11 +14167,11 @@
         {
           "name": "elements",
           "route": "slot",
-          "slot": "patterns",
+          "slot": "elements",
           "path": [
             {
               "owner": "slice_pattern",
-              "slot": "patterns"
+              "slot": "elements"
             }
           ]
         }
@@ -14054,7 +14539,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -14125,7 +14610,7 @@
           "path": [
             {
               "owner": "static_item",
-              "slot": "ref"
+              "slot": "by_reference"
             }
           ],
           "flag": true
@@ -14643,7 +15128,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -15072,7 +15557,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -15508,7 +15993,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -16393,7 +16878,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -16605,11 +17090,11 @@
         {
           "name": "argument",
           "route": "slot",
-          "slot": "value",
+          "slot": "argument",
           "path": [
             {
               "owner": "try_expression",
-              "slot": "value"
+              "slot": "argument"
             }
           ]
         }
@@ -16661,11 +17146,11 @@
         {
           "name": "elements",
           "route": "slot",
-          "slot": "expressions",
+          "slot": "elements",
           "path": [
             {
               "owner": "tuple_expression",
-              "slot": "expressions"
+              "slot": "elements"
             }
           ]
         }
@@ -16942,11 +17427,11 @@
         {
           "name": "expression",
           "route": "slot",
-          "slot": "value",
+          "slot": "expression",
           "path": [
             {
               "owner": "type_cast_expression",
-              "slot": "value"
+              "slot": "expression"
             }
           ]
         },
@@ -16977,7 +17462,7 @@
               "via": [
                 {
                   "slots": {
-                    "469": 0
+                    "473": 0
                   }
                 }
               ],
@@ -17336,7 +17821,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -17390,11 +17875,11 @@
         {
           "name": "value",
           "route": "slot",
-          "slot": "type",
+          "slot": "value",
           "path": [
             {
               "owner": "type_item",
-              "slot": "type"
+              "slot": "value"
             }
           ]
         },
@@ -17472,11 +17957,11 @@
         {
           "name": "default",
           "route": "slot",
-          "slot": "default_type",
+          "slot": "default",
           "path": [
             {
               "owner": "type_parameter",
-              "slot": "default_type"
+              "slot": "default"
             }
           ]
         },
@@ -17724,11 +18209,11 @@
         {
           "name": "argument",
           "route": "slot",
-          "slot": "operand",
+          "slot": "argument",
           "path": [
             {
               "owner": "unary_expression",
-              "slot": "operand"
+              "slot": "argument"
             }
           ]
         }
@@ -18064,7 +18549,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -18236,11 +18721,11 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "path",
+          "slot": "name",
           "path": [
             {
               "owner": "use_as_clause",
-              "slot": "path"
+              "slot": "name"
             }
           ]
         },
@@ -18647,7 +19132,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  465
+                  469
                 ],
                 "slots": {
                   "235": 0
@@ -19328,13 +19813,13 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 157,
+        "kinds": 158,
         "refinements": 12
       },
       {
         "depth": 3,
         "paths": 109,
-        "kinds": 118,
+        "kinds": 120,
         "refinements": 81
       },
       {

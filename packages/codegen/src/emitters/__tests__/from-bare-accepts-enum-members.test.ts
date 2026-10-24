@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -5,7 +6,7 @@ import { AssembledBranch, AssembledEnum, AssembledPattern, AssembledSupertype } 
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { bareAcceptClosure } from '../from.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
@@ -40,7 +41,7 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 5, kind: 'predefined_type', member: 'PredefinedType' }
 ];
 
-function makeNodeMap() {
+function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const wrapperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -56,8 +57,8 @@ function makeNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('type_annotation', new AssembledBranch('type_annotation', flatten(wrapperRule), flatten(wrapperRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('type_annotation', new AssembledBranch('type_annotation', flatten(wrapperRule), flatten(wrapperRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	nodes.set(
 		'predefined_type',
 		new AssembledEnum(
@@ -69,15 +70,15 @@ function makeNodeMap() {
 					{ type: STRING, value: 'number' }
 				]
 			},
-			{ kindEntries: KIND_ENTRIES }
+			{ kindEntries }
 		)
 	);
-	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: 'identifier' }, { name: 'predefined_type' }]));
+	nodes.set('_type', new AssembledSupertype('_type', typeRule, [{ name: 'identifier' }, { name: 'predefined_type' }], { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 describe('a wrapper over an enum-bearing slot accepts the enum members bare (rule 5)', () => {
-	const nodeMap = makeNodeMap();
+	const { nodeMap, generatedIdTables } = withIdTables(makeNodeMap, kindIdTablesOf(KIND_ENTRIES));
 
 	it('the closure names the enum and each of its member kinds', () => {
 		const accepted = bareAcceptClosure(nodeMap, KIND_ENTRIES).get('type_annotation');
@@ -88,12 +89,12 @@ describe('a wrapper over an enum-bearing slot accepts the enum members bare (rul
 	});
 
 	it('the emitted _BARE_ACCEPTS row carries the member ids', () => {
-		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(emitted).toContain('"type_annotation": new Set([1,2,3,5])');
 	});
 
 	it("the _ENUMS_OF_MEMBER table names each member id's enums, so a member id is admitted where one of them is", () => {
-		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(emitted).toContain('const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {');
 		expect(emitted).toContain('  1: ["predefined_type"],');
 		expect(emitted).toContain('  2: ["predefined_type"],');
@@ -101,7 +102,7 @@ describe('a wrapper over an enum-bearing slot accepts the enum members bare (rul
 	});
 
 	it('a number at a kind-enum slot is the discriminant only when it is a kind id the slot stores', () => {
-		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(emitted).toContain('return typeof v === "number" && stored.includes(v) ? (v as T) : resolve();');
 	});
 });

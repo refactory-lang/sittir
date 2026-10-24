@@ -1,10 +1,10 @@
 {
 	"grammars": {
-		"python": {"digest":"9f30a6f3b4841d38944676a05ab9a1642227870b7b73225cca006cd0654253ab","counts":{"conflict-resolution":{"info":11},"conflict-unnecessary-upstream":{"info":2},"conflict-dynamic-precedence-authored":{"info":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
+		"python": {"digest":"88311d24e1fca162138bf34feca061519603fc727ad8ed9d0264448f227787ce","counts":{"conflict-resolution":{"info":11},"conflict-unnecessary-upstream":{"info":2},"conflict-dynamic-precedence-authored":{"info":1}},"blocking":{"rule-reauthored-without-cause":{"error":4},"patch-without-cause":{"error":4}}},
 		"regex": {"digest":"d5827129060789840ec92799e6f10a5f883d7877e2bca483b3f47e06ae12b2f7","counts":{"conflict-resolution":{"info":2}},"blocking":{}},
-		"rust": {"digest":"a7329baf8ab55036c6bc7e6e62645a1601f147aee90b4236ff9c6c7421eb7285","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
-		"scm": {"digest":"fd0013108b1bb5961109c46536c1c94125106973d5263fb9250d1595a7cee33f","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
-		"typescript": {"digest":"8bd6a0e23af135e9077dcd0a548fa6015c2639263d9b1a380acf03a19152d0c3","counts":{"conflict-resolution":{"info":67},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
+		"rust": {"digest":"a372b16c795a24537bbf5fbdb5686be8c4781d20ea52e37ce6a30bcf47594fd3","counts":{"conflict-resolution":{"info":9},"conflict-unnecessary-upstream":{"info":3}},"blocking":{"rule-reauthored-without-cause":{"error":3},"unclassifiable-shape":{"error":1}}},
+		"scm": {"digest":"57f8d34d368f69844ffc80a90b96e70f992169bb0cf4cd2978acab6eec81e965","counts":{},"blocking":{"unclassifiable-shape":{"error":1}}},
+		"typescript": {"digest":"773019219636df6c08ff62d967677d0bb65a37bac5d5de0cc547abdafd5c24a3","counts":{"conflict-resolution":{"info":74},"conflict-unnecessary-upstream":{"info":9}},"blocking":{"rule-reauthored-without-cause":{"error":1},"unclassifiable-shape":{"error":2},"union-slot-mixed-row":{"error":1}}}
 	},
 	"rows": [
 		{"source":"validator","grammar":"python","backend":"native","kind":"factory: _simple_statements","count":6,"entries":["Complex case patterns on complex numbers","Control-flow statements","Literals","Maybe sequence pattern right hand side precedence validation","Raise statements","Return statements"],"stage":"built-render-parse-excluded","code":"built-render-parse-excluded","severity":"info","message":"hidden-kind","label":"factory: _simple_statements"},

@@ -398,6 +398,18 @@ The external roles that mark a zero-width layout sentinel (`indent`, `dedent`), 
 
 One blocking `hidden-terminal-nonliteral` record per `hiddenTerminalNonliteralSites` site, naming the owner and the hidden terminal (`details.target`). It runs on every stage's grammar. The override layer claims each enriched-stage record: a `visibleExternals:` entry that gives the external a visible node (rust `_block_comment_content`, typescript `_automatic_semicolon`), a rewrite that removes the bare reference, or a layout role. The final grammar must have none.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofInTokenDiagnostics`
+
+One blocking `eof-in-token` record per rule that holds `eof()` anywhere under a `token()` or `token.immediate()`, naming the rule as `ownerKind`. A lexical token cannot match the end of input. tree-sitter's DSL forbids the shape, and the record refuses it at evaluate (`evaluateRecords`) instead of leaving it to the parser generator.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastDiagnostics`
+
+One blocking `eof-not-last` record per site the prediction stamps (`dsl/symbol-table.ts::EofNotLast`), naming the authored rule as `ownerKind`. A production that continues past the end of the input is one tree-sitter drops, while the model, which reads `eof()` as blank, would still build it, so its nodes would never reparse. The details carry the site's `kind`, `ending` and `repetition`.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofNotLastMessage`
+
+The message of an `eof-not-last` record: the followed rule that always ends input, the repetition whose item ends at `eof()`, or the production that continues after `eof()`.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
 One blocking `field-optional-delimiter` record per authored-compound slot
@@ -443,8 +455,8 @@ diagnostics. The caller guarantees the prediction built (the gate, or `diagnoseS
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::SURFACED_COMPILER_CODES`
 
-The compiler-diagnostic codes the grammar diagnostics report as their own: the invalid config records
-(`groups-config-invalid`, `refine-config-invalid`) and the token-interior pass's `token-interior-unstructurable`
+The compiler-diagnostic codes the grammar diagnostics report as their own: the invalid refine config record
+(`refine-config-invalid`) and the token-interior pass's `token-interior-unstructurable`
 (a token whose interior the grammar addresses but the pass cannot structure), so they reach the generation gate. The kind-id stamp reports (`kindid-*`) stay compiler warnings
 and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
@@ -788,7 +800,7 @@ Why a conflict derivation stopped without converging, as `transpile/derive-confl
 
 ### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictRecords`
 
-The evaluate-time conflict records of a grammar built by `sittirGrammar`, from its derivation records:
+The evaluate-time conflict records of a grammar a layer pass built, from its derivation records:
 
 - one informational `conflict-resolution` per resolution the grammar imported, base then bound, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
 - one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal, base or bound: the reshaped grammar never reports it;
@@ -865,3 +877,7 @@ Prints diagnostics by severity: info goes to stdout, and warning, error and fail
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::eofDiagnostics`
 
 One blocking record per rule `dsl/eof-placement.ts::eofPlacements` refuses, naming the rule as `ownerKind`, with `details` holding the rule (`kind`), the start rule (`start`) and both placements. A rule with an `eof()` in a token gets `eof-in-token`, the more specific mistake: a lexical token cannot match the end of input, and tree-sitter's DSL forbids the shape, so the record refuses it at evaluate (`evaluateRecords`) rather than leaving it to the parser generator. Any other refused rule gets `eof-not-last`: an `eof()` is legal only last in the start rule, where it changes nothing because the start rule always runs to the end of the input. Neither code can be expected (`UNEXPECTABLE_CODES`).
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromMissingParserTables`
+
+The `missing-parser-tables` record: a generated grammar's package has no parser.c to read its id tables from. It names the path and the `gen` command that writes it. It cannot proceed, and `loadPackageIdTables` throws it directly rather than through the gate, so no `--allow-diagnostic` can waive it.

@@ -6,7 +6,7 @@ import type { Rule } from '../../types/rule.ts';
 describe('deriveValuesForRule — arm facts on STRING/PATTERN arms', () => {
 	it('a STRING arm annotated { default: true } yields a value with default: true', () => {
 		const rule: Rule = { type: STRING, value: ';', annotations: { default: true } };
-		const [v] = deriveValuesForRule(rule, undefined, 'single');
+		const [v] = deriveValuesForRule(rule, { kindEntries: [] }, 'single');
 		expect(v).toMatchObject({ value: ';', default: true });
 	});
 
@@ -18,7 +18,7 @@ describe('deriveValuesForRule — arm facts on STRING/PATTERN arms', () => {
 				{ type: STRING, value: ';', annotations: { default: true } }
 			]
 		};
-		const values = deriveValuesForRule(rule, undefined, 'single');
+		const values = deriveValuesForRule(rule, { kindEntries: [] }, 'single');
 		expect(values.map((v) => [v.value, v.default])).toEqual([
 			['type', undefined],
 			[';', true]
@@ -27,7 +27,7 @@ describe('deriveValuesForRule — arm facts on STRING/PATTERN arms', () => {
 
 	it('a STRING arm with no annotations yields a value with no default fact', () => {
 		const rule: Rule = { type: STRING, value: ';' };
-		const [v] = deriveValuesForRule(rule, undefined, 'single');
+		const [v] = deriveValuesForRule(rule, { kindEntries: [] }, 'single');
 		expect(v?.default).toBeUndefined();
 	});
 });

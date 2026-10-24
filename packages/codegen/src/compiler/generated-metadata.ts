@@ -4,8 +4,11 @@ import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
 import { grammarPackage, REPO_ROOT, sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type * as TS from 'web-tree-sitter';
+import { fromMissingParserTables, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import {
+	deriveFieldRuntimeName,
 	joinIdNames,
+	collectLexicalRanks,
 	kindTableOfSymbolTable,
 	type CEnumEntry,
 	type ParserSymbolFacts,
@@ -14,9 +17,12 @@ import {
 	type ParserSymbolTable
 } from '../dsl/symbol-table.ts';
 
-export async function loadPackageIdTables(pkg: GrammarPackage): Promise<GeneratedIdTables | undefined> {
+export async function loadPackageIdTables(pkg: GrammarPackage): Promise<GeneratedIdTables> {
 	const parserCPath = join(sittirDirOf(pkg), 'src', 'parser.c');
-	if (!existsSync(parserCPath)) return undefined;
+	if (!existsSync(parserCPath)) {
+		const missing = fromMissingParserTables(pkg.name, relative(REPO_ROOT, parserCPath));
+		throw new GrammarDiagnosticError([missing], [missing]);
+	}
 	const grammarJsonPath = join(dirname(parserCPath), 'grammar.json');
 	const grammarJson = existsSync(grammarJsonPath) ? JSON.parse(readFileSync(grammarJsonPath, 'utf8')) : undefined;
 	return deriveGeneratedIdTablesFromParserCSource(readFileSync(parserCPath, 'utf8'), relative(REPO_ROOT, parserCPath), grammarJson);
@@ -32,7 +38,7 @@ export function foldedSymbols(parserC: string): ReadonlyMap<string, string> {
 	return folds;
 }
 
-export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
+export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables> {
 	return loadPackageIdTables(grammarPackage(grammar));
 }
 
@@ -63,7 +69,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 		if (rawId !== undefined && publicId !== undefined) folds.set(publicId, [...(folds.get(publicId) ?? []), rawId]);
 	}
 	return {
-		kindIds: collisionFreeIds(kindTableOfSymbolTable(table, grammarJson), sourceArtifact),
+		kindIds: collisionFreeIds(kindTableOfSymbolTable(table, grammarJson, collectLexicalRanks(grammarJson)), sourceArtifact),
 		fieldIds: collisionFreeIds(joinIdNames(fieldIds, fieldNames, deriveFieldRuntimeName), sourceArtifact),
 		folds,
 		sourceArtifact
@@ -217,10 +223,6 @@ function collectNameTable(parser: CParser, source: string, marker: string): Map<
 	});
 
 	return result;
-}
-
-function deriveFieldRuntimeName(cName: string): string {
-	return cName.startsWith('field_') ? cName.slice('field_'.length) : cName;
 }
 
 function walkCNodes(node: CNode, visit: (node: CNode) => void): void {

@@ -67,7 +67,9 @@ describe('a read node carries the whitespace before it that differs from the rea
 	it('reads the trivia of an aliased node of a deep read', () => {
 		const item = rs.parse('fn f(\n    x: Foo,\n) {}\n', { depth: Infinity }).statements()[0];
 		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
-		const parameter = item.parameters().elements()?.items()[0]?.content();
+		const list = item.parameters().elements();
+		if (list === undefined || !rs.is.parametersElements(list)) throw new Error('not an ordinary list');
+		const parameter = list.items()[0]?.content();
 		if (parameter === undefined || !rs.is.parameter(parameter)) throw new Error('expected a parameter');
 		const type = parameter.type();
 		if (typeof type === 'number' || type.$type !== rs.kinds.TypeIdentifier) throw new Error('expected a type identifier');

@@ -1,8 +1,8 @@
+import { diagnosePredicted } from '../../__tests__/helpers/linked.ts';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../__tests__/helpers/sittir-grammar.ts';
-import { collectGrammarDiagnosticsForGrammar } from '../diagnostics/grammar-diagnostics.ts';
 import { toScreamingSnakeCase } from '../model/casing.ts';
 import type { RawGrammar } from '../types.ts';
 
@@ -32,7 +32,7 @@ describe('bootstrapping an upstream grammar predicts a catalog with one key per 
 
 	it('keywords that differ only by case keep distinct derived names, the collapsed type name renamed as a naming event', async () => {
 		const raw = await evaluateSittirGrammar(resolve(__dirname, '../../__tests__/fixtures/keyword-case-grammar.js'), 'keyword_case');
-		const { nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+		const { nodeMap } = diagnosePredicted(raw);
 		const names = ['_alignof_keyword', '_Alignof_keyword'].map((kind) => {
 			const node = nodeMap.nodes.get(kind)!;
 			return { typeName: node.typeName, irKey: node.irKey, rustConst: toScreamingSnakeCase(node.typeName, kind) };

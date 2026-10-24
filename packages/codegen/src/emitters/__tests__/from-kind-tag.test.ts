@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
-import { makeMinimalNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { makeMinimalNodeMap, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 describe('a `$type` tag is a kind id', () => {
-	const emitted = emitFrom({ grammar: 'synth', nodeMap: makeMinimalNodeMap() });
+	const emitted = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeMinimalNodeMap(kindEntries))});
 
 	it('emits one resolver that reads a numeric tag and throws on anything else, naming the candidates', () => {
 		expect(emitted).toContain('function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {');
