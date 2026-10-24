@@ -6831,7 +6831,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 	 */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::inlineKinds`
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig::inlineKinds`
 
 ```text
 /**
@@ -6841,7 +6841,7 @@ Emits the wrap function for a `'list'`-classified kind. The list's own view (`li
 	 */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::synthesizedKinds`
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig::synthesizedKinds`
 
 ```text
 /**
@@ -6953,7 +6953,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 
 The kind ids a supertype's or an enum kind's guard admits, its row in `_members` and, as kind-id types, its entry in `KindMembers`: the kinds `membershipKindsOf` gives for it, each by its kind id, once. Empty on the legacy path without id tables, whose guards compare names.
 
-### `packages/codegen/src/emitters/kind-discriminant.ts::parseId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry::parseId`
 
 ```text
 /**
@@ -6996,7 +6996,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
  */
 ```
 
-### `packages/codegen/src/emitters/kind-discriminant.ts::parseId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::CatalogRow::parseId`
 
 ```text
 /** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
@@ -7047,7 +7047,7 @@ The kind the parser shows at the value's site: the alias target where one applie
 	 */
 ```
 
-### `packages/codegen/src/emitters/node-model.ts::text`
+### `packages/codegen/src/emitters/node-model.ts::SerializedLeaf::text`
 
 ```text
 /**
@@ -7413,11 +7413,11 @@ other; `elementKinds` stays the kinds the items admit.
 /** Real facts about a container-shape branch's single unnamed child slot. */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::isWordChar`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::isWordChar`
 
 The grammar's word-class test for a single char (`wordCharPredicate`), used for compile-time static seam spaces; dynamic seams belong to the runtime SpacingWriter with the same class.
 
-### `packages/codegen/src/emitters/templates.ts::rules`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::rules`
 
 ```text
 /**
@@ -7428,7 +7428,7 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 */
 ```
 
-### `packages/codegen/src/emitters/templates.ts::visitingHelpers`
+### `packages/codegen/src/emitters/templates.ts::EmitCtx::visitingHelpers`
 
 ```text
 /**
@@ -7525,7 +7525,7 @@ seat the child into a config or tuple take the value arguments only.
 `EmitWrapConfig.generatedIdTables`: the parser-symbol id tables (from `loadGeneratedIdTables`). When the config passes no `kindEntries`, the emitter derives its kind catalog from them; with a catalog, every wrap function stamps `$type: TSKindId.X` (`typeStampLines`) and `wrapNode` dispatches by numeric id. Without one (synthetic test grammars) dispatch is by kind name.
 
 
-### `packages/codegen/src/emitters/wrap.ts::inlineKinds`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::inlineKinds`
 
 ```text
 /**
@@ -7535,7 +7535,7 @@ seat the child into a config or tuple take the value arguments only.
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::synthesizedKinds`
+### `packages/codegen/src/emitters/wrap.ts::EmitWrapConfig::synthesizedKinds`
 
 ```text
 /**
