@@ -5,6 +5,11 @@ export interface Element<G extends GrammarContext<G>> {
 	readonly $kind: 'element';
 }
 
+export interface ElementSynonyms {
+	readonly map: 'dictionary' | 'dict';
+	readonly spread: 'splat' | 'unpack';
+}
+
 export namespace Element {
 	export interface Comparator<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by p

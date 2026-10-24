@@ -5,6 +5,13 @@ export interface Literal<G extends GrammarContext<G>> {
 	readonly $kind: 'literal';
 }
 
+export interface LiteralSynonyms {
+	readonly character: 'char' | 'rune';
+	readonly interpolated: 'f' | 'template';
+	readonly multiline: 'triple';
+	readonly null: 'none' | 'nil';
+}
+
 export namespace Literal {
 	export interface Boolean<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
 		// claimed by r

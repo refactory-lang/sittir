@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -384,6 +384,7 @@ describe("keptKinds over a flag capture", () => {
 	const KEPT_VOCABULARY: Vocabulary = {
 		kinds: new Map([["declaration.function", { name: "declaration.function", own: new Map([["marked", { optional: true, flag: true }]]), parent: undefined, refines: undefined }]]),
 		flags: new Set(["marked"]),
+		synonyms: { levels: new Map(), flags: new Map() },
 		members: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map())
 	};
 	const kept = async (bindings: string): Promise<GrammarInput> => ({
@@ -959,7 +960,7 @@ describe('flag captures', () => {
 	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
 		const kinds = new Map(Object.entries(own).map(([path, members]) => [path, { name: path, own: new Map(Object.entries(members).map(([n, flag]) => [n, member(flag)])), parent: undefined, refines: undefined }]));
-		return { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), members: (path) => kinds.get(path)?.own ?? new Map() };
+		return { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, members: (path) => kinds.get(path)?.own ?? new Map() };
 	};
 	const VOCABULARY = vocabulary({
 		'declaration.method': { generator: true },
@@ -1016,6 +1017,256 @@ describe('flag captures', () => {
 	it('marks a flag captured on a form of a claimed supertype as the supertype\'s flag', async () => {
 		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_raw "raw" @raw)'].join('\n'), 'ref_expr_raw');
 		expect(members?.find((r) => r.name === 'raw')).toEqual({ route: 'presence', name: 'raw', via: [], token: 'raw', path: undefined, flag: true, spelled: true });
+	});
+
+	it('routes a flag spelled by its synonym as the canonical flag, on whichever side of a supertype the capture and the claim sit', async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('binding', [], { modelType: 'supertype' }),
+				node('binding_plain', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })], { variantOf: 'binding' })
+			].map((n) => [n.kind, n])
+		);
+		const synonymous: Vocabulary = { ...VOCABULARY, synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) } };
+		const routed = async (bindings: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(canonicalFacts(await readBindings(bindings), synonymous, model), synonymous, model),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).members.get('binding_plain');
+		for (const [claim, capture] of [
+			['(binding)', '(binding_plain (mutable_specifier) @NAME)'],
+			['(binding_plain)', '(binding (mutable_specifier) @NAME)']
+		] as const) {
+			const of = (name: string) => routed([`${claim} @declaration.parameter`, capture.replace('NAME', name)].join('\n'));
+			const canonical = await of('mutable');
+			expect(canonical?.find((r) => r.name === 'mutable'), claim).toMatchObject({ name: 'mutable', flag: true });
+			expect(await of('mut'), claim).toEqual(canonical);
+		}
+	});
+
+	it('gives a capture on a supertype only the paths of forms that hold what it selects', async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('binding', [], { modelType: 'supertype' }),
+				node('binding_data', [slot('value', ['identifier'])], { variantOf: 'binding' }),
+				node('binding_flag', [slot('pattern', ['identifier'])], { variantOf: 'binding' })
+			].map((n) => [n.kind, n])
+		);
+		const both = vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mutable: false } });
+		const bindings = await readBindings(['(binding_flag) @declaration.parameter', '(binding_data) @declaration.variable', '(binding value: (_) @mutable)'].join('\n'));
+		const routes = resolveRoutes({ grammar: 'g', bindings: resolveFlags(canonicalFacts(bindings, both, model), both, model), model, textTokens: new Set(), layoutSlots: [] });
+		const data = routes.members.get('binding_data')?.find((r) => r.name === 'mutable');
+		expect(data).toMatchObject({ route: 'slot', name: 'mutable' });
+		expect(data).not.toHaveProperty('flag');
+	});
+
+	it('routes a flag spelled by its synonym as the canonical flag through a wildcard claim', async () => {
+		const model = new Map([...FLAGGED_MODEL.values(), node('holder', [slot('item', ['param'])])].map((n) => [n.kind, n]));
+		const synonymous: Vocabulary = { ...VOCABULARY, synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) } };
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(canonicalFacts(await readBindings(['(holder item: (_) @declaration.parameter)', `(param (mutable_specifier) @${name})`].join('\n')), synonymous, model), synonymous, model),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).members.get('param');
+		const canonical = await of('mutable');
+		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
+		expect(await of('mut')).toEqual(canonical);
+	});
+
+	it("resolves a capture on a supertype's claim against the paths its forms' claims refine it to", async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('binding', [], { modelType: 'supertype' }),
+				node('binding_plain', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })], { variantOf: 'binding' })
+			].map((n) => [n.kind, n])
+		);
+		const refined: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': {}, 'declaration.parameter.special': { mutable: true } }),
+			synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(binding (mutable_specifier) @${name}) @declaration.parameter`, '(binding_plain) @declaration.parameter.special'].join('\n')), refined, model),
+					refined,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).members.get('binding_plain');
+		const canonical = await of('mutable');
+		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
+		expect(await of('mut')).toEqual(canonical);
+	});
+
+	it('resolves an anchored capture against the paths whose claims guarantee its anchor', async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('outer', [slot('parts', ['part'], { multiple: true })]),
+				node('part', [slot('static', [], { required: false, storage: 'boolean', terminals: ['static'] }), slot('name', ['identifier'])])
+			].map((n) => [n.kind, n])
+		);
+		const anchored: Vocabulary = {
+			...vocabulary({ 'expression.container': { shared: false }, 'declaration.function': { shared: true } }),
+			synonyms: { levels: new Map(), flags: new Map([['shared', ['static']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(
+						await readBindings(['(outer) @expression.container', '(outer . parts: (part) .) @declaration.function', `(outer . parts: (part "static" @${name}) .)`].join('\n')),
+						anchored,
+						model
+					),
+					anchored,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('outer');
+		const canonical = await of('shared');
+		const routesAt = (path: string) => canonical?.find((entry) => entry.vocab === path)?.members.filter((r) => r.name === 'shared');
+		expect(routesAt('declaration.function')).toMatchObject([{ route: 'presence', name: 'shared', flag: true }]);
+		expect(routesAt('expression.container')).toEqual([]);
+		expect(await of('static')).toEqual(canonical);
+	});
+
+	it("reads a capture's word only at the forms that can take it, so a sibling form's member does not refuse it", async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('binding', [], { modelType: 'supertype' }),
+				node('binding_flag', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })], { variantOf: 'binding' }),
+				node('binding_data', [slot('value', ['identifier'])], { variantOf: 'binding' })
+			].map((n) => [n.kind, n])
+		);
+		const disjoint: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mut: false } }),
+			synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings(['(binding_flag) @declaration.parameter', '(binding_data) @declaration.variable', `(binding (mutable_specifier) @${name})`].join('\n')), disjoint, model),
+					disjoint,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).members;
+		const canonical = await of('mutable');
+		expect(canonical.get('binding_flag')?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
+		expect(await of('mut')).toEqual(canonical);
+	});
+
+	it("reads a claim's own deep capture only where the claim attaches it, not at another claim of the kind", async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('holder', [slot('item', ['outer'])]),
+				node('outer', [slot('parts', ['part'])]),
+				node('part', [slot('static', [], { required: false, storage: 'boolean', terminals: ['static'] }), slot('name', ['identifier'])])
+			].map((n) => [n.kind, n])
+		);
+		const scoped: Vocabulary = {
+			...vocabulary({ 'declaration.function': { shared: true }, 'declaration.parameter': { static: false } }),
+			synonyms: { levels: new Map(), flags: new Map([['shared', ['static']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(outer parts: (part "static" @${name})) @declaration.function`, '(holder item: (outer) @declaration.parameter)'].join('\n')), scoped, model),
+					scoped,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('outer');
+		const canonical = await of('shared');
+		expect(canonical?.find((entry) => entry.vocab === 'declaration.function')?.members.filter((r) => r.name === 'shared')).toMatchObject([{ route: 'presence', flag: true }]);
+		expect(await of('static')).toEqual(canonical);
+	});
+
+	it('reads a rename that spells a flag where it attaches only there, since a flag capture renames no slot', async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('holder', [slot('item', ['entry'])]),
+				node('entry', [slot('storage_class', ['storage_class'], { required: false }), slot('name', ['identifier'])]),
+				node('storage_class', [], { modelType: 'keyword', text: 'static' })
+			].map((n) => [n.kind, n])
+		);
+		const scoped: Vocabulary = {
+			...vocabulary({ 'declaration.method': { static: true }, 'declaration.parameter': { shared: false } }),
+			synonyms: { levels: new Map(), flags: new Map([['static', ['shared']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(entry (storage_class) @${name}) @declaration.method`, '(holder item: (entry) @declaration.parameter)'].join('\n')), scoped, model),
+					scoped,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('entry');
+		const canonical = await of('static');
+		expect(canonical?.find((entry) => entry.vocab === 'declaration.method')?.members.filter((r) => r.name === 'static')).toMatchObject([{ flag: true }]);
+		expect(await of('shared')).toEqual(canonical);
+	});
+
+	it("keeps a second capture on a node pointed at the first capture's canonical name", async () => {
+		const model = new Map(
+			[...FLAGGED_MODEL.values(), node('holder', [slot('item', ['entry'])]), node('entry', [slot('value', ['identifier'])])].map((n) => [n.kind, n])
+		);
+		const dual: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': { default: false, optional: true }, 'declaration.method': { default: true } }),
+			synonyms: { levels: new Map(), flags: new Map([['default', ['provided']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(entry value: (identifier) @${name} @optional) @declaration.parameter`, '(holder item: (entry) @declaration.method)'].join('\n')), dual, model),
+					dual,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('entry');
+		const canonical = await of('default');
+		const optional = canonical?.find((entry) => entry.vocab === 'declaration.parameter')?.members.find((r) => r.name === 'optional');
+		expect(optional).toMatchObject({ route: 'kind', path: [{ owner: 'entry', slot: 'value' }] });
+		expect(await of('provided')).toEqual(canonical);
+	});
+
+	it('refuses a capture whose word is a member at one path its owner is claimed under and a flag synonym at another', async () => {
+		const synonymous: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mut: false } }),
+			synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) }
+		};
+		const bindings = await readBindings(['(param) @declaration.parameter', '((param) @declaration.variable (#eq? @declaration.variable "x"))', '(param (mutable_specifier) @mut)'].join('\n'));
+		expect(() => canonicalFacts(bindings, synonymous, FLAGGED_MODEL)).toThrow(/param's capture @mut is a member at declaration\.variable and spells the flag mutable at declaration\.parameter/);
 	});
 
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {

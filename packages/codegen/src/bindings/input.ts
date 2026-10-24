@@ -9,7 +9,7 @@ import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotMode
 import { readBindings } from './read.ts';
 import { projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
-import { type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
+import { canonicalFacts, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
 export interface NodeModelValue {
 	readonly kind?: string;
@@ -124,14 +124,19 @@ export async function grammarInput(
 			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
 		)
 	);
+	const known = vocabulary ?? (await readVocabulary(VOCABULARY_DIR));
 	return {
 		grammar,
 		bindings: resolveFlags(
-			projectLeadFacts(
-				facts,
-				effects.filter((effect) => effect.kind === 'lead')
+			canonicalFacts(
+				projectLeadFacts(
+					facts,
+					effects.filter((effect) => effect.kind === 'lead')
+				),
+				known,
+				model
 			),
-			vocabulary ?? (await readVocabulary(VOCABULARY_DIR)),
+			known,
 			model
 		),
 		model,
