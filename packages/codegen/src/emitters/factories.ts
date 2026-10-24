@@ -279,18 +279,27 @@ function buildLeafReConsts(
 	const leafReserved = reservedWordsAdmittedIn(nodeMap.reserved, wordHolderWordsetIds(nodeMap), kindEntries ?? []).filter(
 		(text) => !relaxed.has(text)
 	);
-	if (word?.rawFactoryName && reserved.length > 0) {
-		const listName = `_reservedWordList_${word.rawFactoryName}`;
-		const constName = `_reservedWords_${word.rawFactoryName}`;
+	if (word?.rawFactoryName) {
+		const globalConst = `_reservedWords_${word.rawFactoryName}`;
 		const typeName = `_ReservedWord_${word.rawFactoryName}`;
-		const leafConst = leafReserved.length === reserved.length ? constName : `_reservedLeafWords_${word.rawFactoryName}`;
-		if (leafReserved.length > 0) leafReConsts.set(reservedGuardKey(word.kind), leafConst);
-		leafReConsts.set(reservedTypeKey(word.kind), typeName);
-		lines.push(`const ${listName} = ${JSON.stringify(reserved)} as const;`);
-		lines.push(`type ${typeName} = (typeof ${listName})[number];`);
-		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
-		if (leafConst !== constName && leafReserved.length > 0) {
-			lines.push(`const ${leafConst}: ReadonlySet<string> = new Set<string>(${JSON.stringify(leafReserved)});`);
+		const sameAsGlobal = leafReserved.length === reserved.length && leafReserved.every((text) => reserved.includes(text));
+		const globalChecked = checkedSlotWordsets(nodeMap).some((ids) => ids.length === 1 && ids[0] === GLOBAL_WORDSET);
+		const emitGuard = (listName: string, constName: string, words: readonly string[]): void => {
+			leafReConsts.set(reservedGuardKey(word.kind), constName);
+			leafReConsts.set(reservedTypeKey(word.kind), typeName);
+			lines.push(`const ${listName} = ${JSON.stringify(words)} as const;`);
+			lines.push(`type ${typeName} = (typeof ${listName})[number];`);
+			lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
+		};
+		if (leafReserved.length > 0 && sameAsGlobal) {
+			emitGuard(`_reservedWordList_${word.rawFactoryName}`, globalConst, reserved);
+		} else {
+			if (reserved.length > 0 || globalChecked) {
+				lines.push(`const ${globalConst}: ReadonlySet<string> = new Set<string>(${JSON.stringify(reserved)});`);
+			}
+			if (leafReserved.length > 0) {
+				emitGuard(`_reservedLeafWordList_${word.rawFactoryName}`, `_reservedLeafWords_${word.rawFactoryName}`, leafReserved);
+			}
 		}
 	}
 	if (word?.rawFactoryName) {

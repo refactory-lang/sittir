@@ -58,7 +58,7 @@ import {
 	unaffixed
 } from '@sittir/common/utils';
 
-const _reservedWordList_buildIdentifier = [
+const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set<string>([
 	'break',
 	'case',
 	'catch',
@@ -92,9 +92,7 @@ const _reservedWordList_buildIdentifier = [
 	'void',
 	'while',
 	'with'
-] as const;
-type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
-const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
+]);
 const _reservedWordset_properties: ReadonlySet<string> = new Set<string>([]);
 export const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
 export const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
@@ -3426,9 +3424,7 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 	return stampBuilt(node) as unknown as T.RegexFlags.Bound;
 }
 
-export function buildIdentifier<const W extends string>(
-	text: W extends _ReservedWord_buildIdentifier ? never : W
-): T.Identifier.Bound {
+export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (typeof text !== 'string') throw new Error(`identifier: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text))
