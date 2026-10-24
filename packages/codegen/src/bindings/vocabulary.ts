@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
-import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { captureReaches, claimReads, envelopeTargets, kindVocabs } from './routes.ts';
+import { type BindingFacts, type ClaimFact, isNamedMember, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { envelopeTargets, kindVocabs, memberTargets, readsByKind } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { runPinned } from './read.ts';
 
@@ -271,17 +271,6 @@ export function canonicalPaths(vocabulary: Vocabulary): (path: string) => string
 	};
 }
 
-const memberPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((member: NamedMemberFact) => string[]) => {
-	const readsOf = claimReads(model, claims);
-	return (member) => [
-		...new Set(
-			claims
-				.filter((claim, index) => (member.claims === undefined || member.claims.includes(index)) && readsOf(claim).some(([, read]) => captureReaches(model, member, read.kind)))
-				.map((claim) => claim.vocab)
-		)
-	];
-};
-
 const flagResolved = (vocabulary: Vocabulary, claims: readonly ClaimFact[]): ClaimFact[] =>
 	claims.map((claim) => {
 		const segment = flagSegment(vocabulary, claim.vocab);
@@ -301,9 +290,9 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const vocab = canonical(claim.vocab);
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
-	const resolved = flagResolved(vocabulary, claims);
-	const pathsOfMember = memberPaths(model, resolved);
-	const vocabs = kindVocabs(model, resolved);
+	const reads = readsByKind(model, flagResolved(vocabulary, claims));
+	const pathsOfMember = memberTargets(model, reads);
+	const vocabs = kindVocabs(model, reads);
 	return {
 		...facts,
 		claims,
@@ -329,7 +318,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = flagResolved(vocabulary, facts.claims);
 	const flagsOf = (path: string): ReadonlySet<string> => new Set([...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])));
-	const pathsOf = memberPaths(model, claims);
+	const pathsOf = memberTargets(model, readsByKind(model, claims));
 	return {
 		...facts,
 		claims,

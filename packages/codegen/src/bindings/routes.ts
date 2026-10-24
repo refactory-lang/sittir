@@ -321,8 +321,10 @@ function childTestsOf(model: SlotModel, kind: string, fact: ChildFact, facts: re
 const claimChildTests = (model: SlotModel, kind: string, claim: ClaimFact): ChildTest[] =>
 	modelNode(model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(model, kind, child, claim.children));
 
-const inheritedClaims = (entry: ReadEntry, entries: readonly ReadEntry[]): ReadonlySet<number> =>
+const inheritedClaims = (entry: { readonly vocab: string }, entries: readonly { readonly vocab: string; readonly index: number }[]): ReadonlySet<number> =>
 	new Set(entries.filter((other) => entry.vocab === other.vocab || entry.vocab.startsWith(`${other.vocab}.`)).map((other) => other.index));
+
+const attaches = (member: MemberFact, inherited: ReadonlySet<number>): boolean => member.claims === undefined || member.claims.some((index) => inherited.has(index));
 
 const testCount = ({ claim }: ReadEntry): number =>
 	Object.keys(claim.fieldLiterals).length + claim.tokens.length + claim.children.length + claim.predicates.length + claim.within.length;
@@ -514,13 +516,13 @@ function membersOf(
 	};
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const shaping = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename' && m.route !== 'dropped');
-	const deep = shaping.filter((m) => m.claims === undefined || m.claims.some((index) => inherited.has(index)));
+	const deep = shaping.filter((m) => attaches(m, inherited));
 	const paths = new Map(shaping.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? [[m, deepRouteOf(input, kind, m)] as const] : [])));
 	const counted = new Set([...paths.values()].flatMap((route) => route.path?.filter((step) => step.owner === kind && step.anchor === 'only').map((step) => step.slot) ?? []));
 	const reached = new Map([...paths].filter(([, route]) => guaranteed.holds(route.path)));
 	const via = new Set([...reached.keys()].flatMap((m) => m.via.flatMap((step) => step.kind ?? [])));
 	const captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[] = input.bindings.members.flatMap((m) =>
-		m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && captureReaches(input.model, m, kind) ? [m] : []
+		m.route === 'rename' && attaches(m, inherited) && captureReaches(input.model, m, kind) ? [m] : []
 	);
 	const flags = captures.filter((m) => m.flag === true);
 	const spelledFlags: MemberRoute[] = [];
@@ -689,40 +691,54 @@ function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly R
 	return [...members.filter((member: EnumMember) => ownTextAdmits(claim, member.text)).map((member) => ({ kind: member.kind, spelled: decides })), ...shown];
 }
 
-export function claimReads(model: SlotModel, claims: readonly ClaimFact[]): (claim: ClaimFact) => readonly (readonly [string, ReadKind])[] {
-	const claimsOwn = new Set(claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
-	return (claim) => {
-		const owner = claim.kind;
-		if (owner === null) return [];
-		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
-		return forms.flatMap((form) => readKinds(model, form, claim).map((read) => [form, read] as const));
-	};
+interface ClaimRead {
+	readonly form: string;
+	readonly claimed: string;
+	readonly vocab: string;
+	readonly claim: ClaimFact;
+	readonly index: number;
+	readonly spelled: boolean;
 }
 
-export function kindVocabs(model: SlotModel, claims: readonly ClaimFact[]): ReadonlyMap<string, string> {
-	const readsOf = claimReads(model, claims);
-	const reads = new Map<string, { readonly vocab: string; readonly own: boolean; readonly top: boolean; readonly plain: boolean }[]>();
-	for (const claim of claims) {
+type ClaimReads = ReadonlyMap<string, readonly ClaimRead[]>;
+
+export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): ClaimReads {
+	const claimsOwn = new Set(claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
+	const reads = new Map<string, ClaimRead[]>();
+	claims.forEach((claim, index) => {
 		const owner = claim.kind;
-		if (owner === null) continue;
-		for (const [form, { kind }] of readsOf(claim)) {
-			const plain =
-				claim.toplevel &&
-				claim.predicates.length === 0 &&
-				pinnedLiterals(model, modelNode(model, kind)?.slots ?? [], claim).length === 0 &&
-				claimChildTests(model, kind, claim).length === 0;
-			const read = { vocab: claim.vocab, own: owner === WILDCARD || form === owner, top: claim.toplevel, plain };
-			(reads.get(kind) ?? reads.set(kind, []).get(kind))?.push(read);
-		}
-	}
+		if (owner === null) return;
+		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
+		for (const form of forms)
+			for (const { kind, spelled } of readKinds(model, form, claim)) {
+				const read = { form, claimed: owner === WILDCARD ? form : owner, vocab: claim.vocab, claim, index, spelled };
+				(reads.get(kind) ?? reads.set(kind, []).get(kind))?.push(read);
+			}
+	});
+	return reads;
+}
+
+export function kindVocabs(model: SlotModel, reads: ClaimReads): ReadonlyMap<string, string> {
 	const vocabOf = new Map<string, string>();
-	for (const [kind, all] of reads) {
-		const top = all.filter((read) => read.top);
-		const own = top.filter((read) => read.own);
-		const vocab = own.find((read) => read.plain)?.vocab ?? top.find((read) => read.plain)?.vocab ?? refinedParent(kind, own.length > 0 ? own : top);
+	for (const [kind, at] of reads) {
+		const slots = modelNode(model, kind)?.slots ?? [];
+		const plain = ({ claim }: ClaimRead): boolean =>
+			claim.predicates.length === 0 && pinnedLiterals(model, slots, claim).length === 0 && claimChildTests(model, kind, claim).length === 0;
+		const top = at.filter((read) => read.claim.toplevel);
+		const own = top.filter((read) => read.form === read.claimed);
+		const vocab = own.find(plain)?.vocab ?? top.find(plain)?.vocab ?? refinedParent(kind, own.length > 0 ? own : top);
 		if (vocab !== undefined) vocabOf.set(kind, vocab);
 	}
 	return vocabOf;
+}
+
+export function memberTargets(model: SlotModel, reads: ClaimReads): (member: NamedMemberFact) => string[] {
+	const targets = (member: NamedMemberFact, kind: string, at: readonly ClaimRead[]): string[] => {
+		const type = modelNode(model, kind)?.modelType;
+		if (type === undefined || type === 'list' || !captureReaches(model, member, kind)) return [];
+		return at.filter((read) => attaches(member, inheritedClaims(read, at))).map((read) => read.vocab);
+	};
+	return (member) => [...new Set([...reads].flatMap(([kind, at]) => targets(member, kind, at)))];
 }
 
 export function envelopeTargets(model: SlotModel, container: ContainerFact, vocabOf: ReadonlyMap<string, string>): string[] {
@@ -748,7 +764,7 @@ export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: 
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
-	const readsOf = claimReads(input.model, input.bindings.claims);
+	const reads = readsByKind(input.model, input.bindings.claims);
 
 	const slotNames = new Map<string, Map<string, string | null>>();
 	for (const member of input.bindings.members) {
@@ -765,29 +781,28 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 
 	const readEntries = new Map<string, ReadEntry[]>();
 	const inherited = new Set<ReadEntry>();
-	input.bindings.claims.forEach((claim, index) => {
-		const owner = claim.kind;
-		if (owner === null) return;
-		for (const [form, { kind, spelled }] of readsOf(claim)) {
-			const claimed = owner === WILDCARD ? form : owner;
-			const entry: ReadEntry = {
-				kind,
-				claimed,
-				vocab: claim.vocab,
-				claim,
-				index,
-				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
-				children: claimChildTests(input.model, kind, claim),
-				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab)),
-				members: [],
-				...(spelled ? { spelled: true as const } : {})
-			};
-			if (form !== claimed) inherited.add(entry);
-			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);
-		}
-	});
+	for (const [kind, at] of reads)
+		readEntries.set(
+			kind,
+			at.map(({ form, claimed, vocab, claim, index, spelled }) => {
+				const entry: ReadEntry = {
+					kind,
+					claimed,
+					vocab,
+					claim,
+					index,
+					pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
+					children: claimChildTests(input.model, kind, claim),
+					template: input.bindings.templates.find((t) => t.vocabs.includes(vocab)),
+					members: [],
+					...(spelled ? { spelled: true as const } : {})
+				};
+				if (form !== claimed) inherited.add(entry);
+				return entry;
+			})
+		);
 
-	const vocabOf = kindVocabs(input.model, input.bindings.claims);
+	const vocabOf = kindVocabs(input.model, reads);
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
 	for (const entries of readEntries.values())
 		entries.sort((a, b) => specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);

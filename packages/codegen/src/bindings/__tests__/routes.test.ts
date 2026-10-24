@@ -1080,6 +1080,35 @@ describe('flag captures', () => {
 		expect(await of('mut')).toEqual(canonical);
 	});
 
+	it("resolves a capture on a supertype's claim against the paths its forms' claims refine it to", async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('binding', [], { modelType: 'supertype' }),
+				node('binding_plain', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })], { variantOf: 'binding' })
+			].map((n) => [n.kind, n])
+		);
+		const refined: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': {}, 'declaration.parameter.special': { mutable: true } }),
+			synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(binding (mutable_specifier) @${name}) @declaration.parameter`, '(binding_plain) @declaration.parameter.special'].join('\n')), refined, model),
+					refined,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).members.get('binding_plain');
+		const canonical = await of('mutable');
+		expect(canonical?.find((r) => r.name === 'mutable')).toMatchObject({ name: 'mutable', flag: true });
+		expect(await of('mut')).toEqual(canonical);
+	});
+
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {
 		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_mut (mutable_specifier) @exclusive)'].join('\n'), 'ref_expr_mut');
 		expect(members?.find((r) => r.name === 'exclusive')).toEqual({ route: 'kind', name: 'exclusive', kind: 'mutable_specifier', path: undefined, flag: true, spelled: true });

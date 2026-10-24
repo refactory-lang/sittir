@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { type BindingFacts, type ClaimFact, type MemberFact, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
+import { type BindingFacts, type ClaimFact, type MemberFact, type ModelNode, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
 
 const vocabularyIn = async (...lines: readonly string[]) => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
@@ -339,11 +339,13 @@ describe('canonicalFacts', () => {
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
 			unclaimed: []
 		};
-		const canonical = canonicalFacts(facts, vocabulary, new Map());
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, shownAs: [] };
+		const model = new Map([['parameter', parameter]]);
+		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);
 		expect(canonical.templates.map((t) => t.vocabs)).toEqual([['declaration.parameter.receiver']]);
 		expect(canonical.members.map((m) => (m.route === 'dropped' ? null : m.name))).toEqual(['mutable', 'name', 'other']);
-		const resolved = resolveFlags(canonical, vocabulary, new Map());
+		const resolved = resolveFlags(canonical, vocabulary, model);
 		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
 			['declaration.parameter.receiver', undefined],
 			['declaration.parameter', 'mutable']
