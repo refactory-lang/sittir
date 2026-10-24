@@ -75,7 +75,5 @@ export const records = {
 		disabled: { word: 7, width: 5 },
 		pattern: { word: 12, width: 5 }
 	},
-	InlineFlagsGroupDisableNode: { words: 12, disabled: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	LazyNode: { words: 7, content: { word: 2, width: 5 } },
-	UnicodePropertyNameNode: { words: 7, content: { word: 2, width: 5 } }
+	InlineFlagsGroupDisableNode: { words: 12, disabled: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } }
 } as const;

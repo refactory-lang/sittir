@@ -38,6 +38,8 @@ export interface NodeModelNode {
 	readonly text?: string;
 	readonly pattern?: string;
 	readonly variantOf?: string;
+	readonly splitFrom?: string;
+	readonly aliasStorage?: string;
 }
 
 export interface NodeModelRecord {
@@ -79,6 +81,8 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			text: n.text ?? null,
 			pattern: n.pattern ?? null,
 			variantOf: n.variantOf ?? null,
+			splitFrom: n.splitFrom ?? null,
+			aliasStorage: n.aliasStorage ?? null,
 			shownAs: shown.get(n.kind) ?? []
 		});
 	}

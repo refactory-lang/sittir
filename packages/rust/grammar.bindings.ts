@@ -1,9 +1,9 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import sittir from './grammar.sittir.ts';
-import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "8ceb6abb914a2728ffbf887c023e1a3f62712923d362f47bd1dacc63d6f10a5d";
+export const hash = "78ef66dce867e459dd1b4c10f259d25d44530c39f26cdafeffd18a8293d971d3";
 
 export const renames = {
 	source_file: "file",
@@ -161,7 +161,9 @@ export default grammar(
 			use_list: { "1/0": field("use_clauses") },
 			use_wildcard: { "0/0": field("use_wildcard_group") },
 			where_clause: { "1/0": field("where_predicates") },
-			parameters_elements: { ".": lead("attributed_parameter", "receiver", match("attributed_parameter", [match("self_parameter"), match("parameter", { "name": [match("self")] }, "receiver_parameter_declaration")])) }
+			parameters_elements: { ".": lead("attributed_parameter", "receiver", match("attributed_parameter", [match("self_parameter"), match("parameter", { "name": [match("self")] }, "receiver_parameter_declaration")])) },
+			trait_item: { "body:/(declaration_list as trait_interface_declaration_body)/declarations:/(function_signature_item)": alias("signature_method_declaration"), "body:/(declaration_list as trait_interface_declaration_body)/declarations:/(function_item)": alias("method_declaration") },
+			impl_item_body: { "body:/(declaration_list as extension_declaration_body)/declarations:/(function_item)": alias("method_declaration") }
 		}
 	})
 );

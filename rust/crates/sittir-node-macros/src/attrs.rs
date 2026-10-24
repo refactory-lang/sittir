@@ -16,6 +16,9 @@ pub struct KindAttrs {
     pub min_depth: Option<u32>,
     pub layout: Vec<TokenGroup>,
     pub folded: Vec<Path>,
+    /// On a struct: the display ids its kind is also shown as, which its
+    /// `$type` field holds when the node shows one of them.
+    pub displays: Vec<Path>,
     pub wraps_hidden: bool,
     /// `text`, or `text = "…"`: a leaf read as its text, with the fixed text
     /// it reads as when its span is empty or its tokens do not tile it.
@@ -155,6 +158,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "min_depth" => out.min_depth = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
                 "layout" => out.layout = token_groups(meta.value()?)?,
                 "folded" => out.folded = paths(meta.value()?)?,
+                "displays" => out.displays = paths(meta.value()?)?,
                 "wraps_hidden" => out.wraps_hidden = true,
                 "text" => out.text = Some(if meta.input.peek(Token![=]) { Some(meta.value()?.parse()?) } else { None }),
                 "interior" => out.interior = Some(meta.value()?.parse()?),

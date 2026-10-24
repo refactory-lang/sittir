@@ -292,6 +292,10 @@ export function createRuleId(ownerKind: string, ctx: { readonly path: readonly R
 	return ctx.path.length === 0 ? `${owner}root` : `${owner}${ctx.path.map(formatPathSegment).join('/')}`;
 }
 
+export function reownedRuleId(id: RuleId, owner: string): RuleId {
+	return `${RULE_ID_SCHEME}${encodeURIComponent(owner)}:${ruleIdPath(id)}`;
+}
+
 export function ruleIdPath(id: RuleId): string {
 	return id.slice(id.indexOf(':', RULE_ID_SCHEME.length) + 1);
 }

@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, envelopeTargets, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, envelopeTargets, formsOf, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -56,7 +56,7 @@ function wildcardUnrouted(
 function wildcardContainers(inputs: readonly GrammarInput[], routesOf: (grammar: string) => GrammarRoutes | undefined): string[] {
 	const out: string[] = [];
 	for (const input of inputs) {
-		const declared = new Set(input.bindings.containers.map((c) => c.kind));
+		const declared = new Set(input.bindings.containers.flatMap((c) => formsOf(input.model, c.kind)));
 		for (const [kind, entries] of routesOf(input.grammar)?.readEntries ?? []) {
 			const lands = modelNode(input.model, kind)?.modelType === 'list' ? 'list' : declared.has(kind) ? 'container' : undefined;
 			if (lands === undefined) continue;
@@ -281,6 +281,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		if (direct !== undefined) return scalarOf([direct]);
 		if (unclaimedOf.get(g)?.has(k)) return scalarOf([]);
 		const node = modelNode(input.model, k);
+		if (node?.aliasStorage != null && !context.includes(node.kind)) return resolveKind(input, node.aliasStorage, [...context, node.kind]);
 		if (input.textTokens.has(k) && node?.pattern != null) return scalarOf([`text:${node.pattern}`]);
 		if (node?.modelType === 'enum') return scalarOf(node.enumMembers.map((m) => `text:${m.text}`));
 		if (isFixedText(node)) return scalarOf([`literal:${k}`]);
@@ -417,7 +418,15 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 					);
 				else if (unexplained) uncaptured.push(`${at} drops ${slot.name} without a #set! reason`);
 			}
-			const kept = new Set([slotFor(input.model, slots, container.element), ...container.captures.map(slotOf), ...dropped]);
+			const kept = new Set(
+				input.bindings.containers
+					.filter((other) => formsOf(input.model, other.kind).includes(container.kind))
+					.flatMap((other) => [
+						slotFor(input.model, slots, other.element),
+						...other.captures.map(slotOf),
+						...other.dropped.map((selector) => slotFor(input.model, slots, selector))
+					])
+			);
 			for (const slot of slots)
 				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
 					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
@@ -430,7 +439,10 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			for (const capture of container.captures) {
 				let kinds: string[];
 				let multiple = false;
-				if (capture.token !== null) kinds = ['boolean'];
+				const flagged = [...targets].filter((t) => input.bindings.flagsByPath?.get(t)?.has(camel(capture.name)) === true);
+				if (flagged.length > 0 && flagged.length < targets.size)
+					throw new Error(`bindings: ${container.kind}'s capture @${capture.name} is a flag at ${flagged.join(', ')} and data at ${[...targets].filter((t) => !flagged.includes(t)).join(', ')}; one name names one thing`);
+				if (capture.token !== null || flagged.length > 0) kinds = ['boolean'];
 				else {
 					const slot = slotOf(capture);
 					if (slot) {

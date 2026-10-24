@@ -131,7 +131,7 @@ export interface TemplateFact {
 	readonly holes: readonly string[];
 }
 
-export type PatternReference = { readonly kind: 'field' | 'node' | 'token'; readonly name: string };
+export type PatternReference = { readonly kind: 'node'; readonly name: string; readonly at: number } | { readonly kind: 'field' | 'token'; readonly name: string };
 
 export interface BindingPattern extends PatternOrigin {
 	readonly references: readonly PatternReference[];
@@ -178,6 +178,8 @@ export interface ModelNode {
 	readonly text: string | null;
 	readonly pattern: string | null;
 	readonly variantOf: string | null;
+	readonly splitFrom: string | null;
+	readonly aliasStorage: string | null;
 	readonly shownAs: readonly string[];
 }
 
@@ -388,6 +390,7 @@ function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldName
 		...(claim.match === undefined ? {} : { match: bindMatch(claim.match, rename, fieldNameOf) }),
 		kind: placed.kind,
 		field: claim.field === null || unplaced ? null : bindField(claim.within[0] ?? null, claim.field, fieldNameOf),
+		toplevel: claim.toplevel || unplaced,
 		within: unplaced ? [] : placed.within,
 		fieldLiterals: Object.fromEntries(
 			Object.entries(claim.fieldLiterals).map(([name, value]) => [bindField(claim.kind, name, fieldNameOf), value])

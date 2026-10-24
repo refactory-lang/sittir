@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -22,6 +22,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	text: null,
 	pattern: null,
 	variantOf: null,
+	splitFrom: null,
+	aliasStorage: null,
 	shownAs: [],
 	...extra
 });
@@ -443,11 +445,52 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
 		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
+		const input = { ...(await grammar('(field_name) @identifier.field')), model };
+		expect(resolveRoutes(input).members.get('field_name')).toEqual([]);
+	});
+
+	it('gives a container capture only to the kind its element pattern names, and to every kind its element slot holds under a wildcard', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('fn_x', node('fn_x'));
+		model.set('cls_x', node('cls_x'));
+		model.set('holder_x', node('holder_x', [slot('mark', [], { terminals: ['@'] }), slot('definition', ['fn_x', 'cls_x'])]));
+		const vocabOf = new Map([
+			['fn_x', 'declaration.method'],
+			['cls_x', 'declaration.class']
+		]);
+		const [named, wildcard] = (await readBindings('(holder_x "@" @static definition: (fn_x) @element)\n(holder_x "@" @static definition: (_) @element)')).containers;
+		expect(envelopeTargets(model, named!, vocabOf)).toEqual(['declaration.method']);
+		expect(envelopeTargets(model, wildcard!, vocabOf)).toEqual(['declaration.method', 'declaration.class']);
+	});
+
+	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
-		const input = { ...(await grammar('(field_name) @identifier.field\n(wrapped) @expression.wrapped')), model };
-		const routes = resolveRoutes(input);
-		expect(routes.members.get('field_name')).toEqual([]);
-		expect(routes.members.get('wrapped')?.map((m) => m.name)).toEqual(['content']);
+		const input = { ...(await grammar('(wrapped left: (_) @lhs) @expression.wrapped')), model };
+		const members = resolveRoutes(input).members.get('wrapped') ?? [];
+		expect(members.map((m) => [m.name, m.path])).toEqual([
+			[
+				'lhs',
+				[
+					{ owner: 'wrapped', slot: 'content' },
+					{ owner: 'binary', slot: 'left' }
+				]
+			],
+			[
+				'operator',
+				[
+					{ owner: 'wrapped', slot: 'content' },
+					{ owner: 'binary', slot: 'operator' }
+				]
+			],
+			[
+				'right',
+				[
+					{ owner: 'wrapped', slot: 'content' },
+					{ owner: 'binary', slot: 'right' }
+				]
+			]
+		]);
 	});
 
 	it("reads a claim pattern on an alias envelope of a structured kind in the stored kind's slots, through its content", async () => {

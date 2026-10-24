@@ -60,6 +60,52 @@
     ]
   },
   {
+    "type": "_statement_class_definition",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "class_definition",
+        "named": true
+      },
+      {
+        "type": "decorated_definition_class_declaration",
+        "named": true
+      },
+      {
+        "type": "for_statement",
+        "named": true
+      },
+      {
+        "type": "if_statement",
+        "named": true
+      },
+      {
+        "type": "match_statement",
+        "named": true
+      },
+      {
+        "type": "method_declaration",
+        "named": true
+      },
+      {
+        "type": "simple_statements",
+        "named": true
+      },
+      {
+        "type": "try_statement",
+        "named": true
+      },
+      {
+        "type": "while_statement",
+        "named": true
+      },
+      {
+        "type": "with_statement",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "assignment",
     "named": true,
     "subtypes": [
@@ -959,6 +1005,32 @@
     }
   },
   {
+    "type": "block_class_declaration",
+    "named": true,
+    "fields": {
+      "statements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_statement_class_definition",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "dedent",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "boolean_operator",
     "named": true,
     "fields": {
@@ -1202,7 +1274,7 @@
         "required": true,
         "types": [
           {
-            "type": "suite_block",
+            "type": "suite_block_class_declaration",
             "named": true
           },
           {
@@ -1557,6 +1629,36 @@
           },
           {
             "type": "function_definition",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "decorator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "decorated_definition_class_declaration",
+    "named": true,
+    "fields": {
+      "definition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "class_definition",
+            "named": true
+          },
+          {
+            "type": "method_declaration",
             "named": true
           }
         ]
@@ -3100,6 +3202,80 @@
     }
   },
   {
+    "type": "method_declaration",
+    "named": true,
+    "fields": {
+      "async": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "async",
+            "named": false
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "suite_block",
+            "named": true
+          },
+          {
+            "type": "suite_empty",
+            "named": true
+          },
+          {
+            "type": "suite_inline",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameter",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "module",
     "named": true,
     "root": true,
@@ -4026,6 +4202,25 @@
       "types": [
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "indent",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "suite_block_class_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block_class_declaration",
           "named": true
         },
         {

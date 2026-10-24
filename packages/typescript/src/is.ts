@@ -224,7 +224,6 @@ export interface KindMembers {
 		| TSKindId.FlowMaybeType
 		| TSKindId.TypeQuery
 		| TSKindId.IndexTypeQuery
-		| TSKindId.This
 		| TSKindId.ExistentialType
 		| TSKindId.LiteralType
 		| TSKindId.LookupType
@@ -260,7 +259,6 @@ export interface KindMembers {
 		| TSKindId.FlowMaybeType
 		| TSKindId.TypeQuery
 		| TSKindId.IndexTypeQuery
-		| TSKindId.This
 		| TSKindId.ExistentialType
 		| TSKindId.LiteralType
 		| TSKindId.LookupType
@@ -1568,6 +1566,7 @@ export interface IsGuards {
 	errorRecovery<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorRecovery };
+	thisType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ThisType>;
 }
 
 const _supertype_exportStatement_ids = new Set<number>([429, 430, 402, 401]);
@@ -1603,12 +1602,12 @@ const _supertype_publicFieldDefinition_ids = new Set<number>([460, 461]);
 const _supertype_methodSignature_ids = new Set<number>([454, 455, 456]);
 const _supertype_abstractMethodSignature_ids = new Set<number>([457, 458, 459]);
 const _supertype_type_ids = new Set<number>([
-	500, 499, 364, 40, 41, 42, 43, 44, 143, 77, 144, 145, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
-	348, 346, 380, 379, 381, 378, 343, 347, 333, 334
+	500, 499, 364, 40, 41, 42, 43, 44, 143, 77, 144, 145, 46, 317, 349, 367, 376, 377, 363, 356, 357, 362, 360, 358, 348,
+	346, 380, 379, 381, 378, 343, 347, 333, 334
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	500, 499, 364, 40, 41, 42, 43, 44, 143, 77, 144, 145, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
-	348, 346, 380, 379
+	500, 499, 364, 40, 41, 42, 43, 44, 143, 77, 144, 145, 46, 317, 349, 367, 376, 377, 363, 356, 357, 362, 360, 358, 348,
+	346, 380, 379
 ]);
 const _supertype_indexSignature_ids = new Set<number>([410, 411]);
 const _supertype_classBodyMember_ids = new Set<number>([407, 408, 288, 409, 406]);
@@ -1965,6 +1964,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FunctionSignatureAutomaticSemicolon_guard = _mg(TSKindId.FunctionSignatureAutomaticSemicolon);
 	const _kind_TernaryQmark_guard = _g(TSKindId.TernaryQmark);
 	const _kind_ErrorRecovery_guard = _g(TSKindId.ErrorRecovery);
+	const _kind_ThisType_guard = _mg(TSKindId.ThisType);
 	const _form_AmbientDeclaration_guard = _vg(_g(TSKindId.AmbientDeclaration), {
 		global: _at(_kind_AmbientDeclaration_guard, 'content', _kind_AmbientDeclarationGlobal_guard),
 		module: _kind_AmbientDeclarationModule_guard
@@ -2473,7 +2473,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		automaticSemicolon: _kind_AutomaticSemicolon_guard,
 		functionSignatureAutomaticSemicolon: _kind_FunctionSignatureAutomaticSemicolon_guard,
 		ternaryQmark: _kind_TernaryQmark_guard,
-		errorRecovery: _kind_ErrorRecovery_guard
+		errorRecovery: _kind_ErrorRecovery_guard,
+		thisType: _kind_ThisType_guard
 	}) as unknown as IsGuards;
 }
 

@@ -314,7 +314,12 @@ export const records = {
 	StringFragmentNode: { words: 2 },
 	EscapeInterpolationNode: { words: 2 },
 	StringEndNode: { words: 2 },
-	NamesNode: { words: 7, content: { word: 2, width: 5 } },
-	AsPatternTargetNode: { words: 7, content: { word: 2, width: 5 } },
-	FormatExpressionNode: { words: 7, content: { word: 2, width: 5 } }
+	BlockClassDeclarationNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
+	SuiteBlockClassDeclarationNode: { words: 7, block_class_declaration: { word: 2, width: 5 } },
+	DecoratedDefinitionClassDeclarationNode: {
+		words: 9,
+		decorator: { word: 2, width: 2, run: 5 },
+		definition: { word: 4, width: 5 }
+	},
+	AsPatternTargetNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

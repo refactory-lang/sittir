@@ -298,7 +298,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[339, '_simple_statements'],
+	[345, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -353,7 +353,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[338, '_simple_pattern'],
+	[344, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -469,45 +469,51 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[296, 'suite_empty'],
 	[297, 'comparison_operator_comparator'],
 	[298, 'yield_from_clause'],
-	[299, 'module_repeat1'],
-	[300, 'import_prefix_repeat1'],
-	[301, '_import_list_repeat1'],
-	[302, 'assert_statement_repeat1'],
-	[303, 'if_statement_repeat1'],
-	[304, 'try_statement_repeat1'],
-	[305, 'global_statement_repeat1'],
-	[306, 'decorated_definition_repeat1'],
-	[307, 'expression_list_repeat1'],
-	[308, 'dotted_name_repeat1'],
-	[309, 'union_pattern_repeat1'],
-	[310, '_parameters_repeat1'],
-	[311, '_patterns_repeat1'],
-	[312, 'comparison_operator_repeat1'],
-	[313, '_collection_elements_repeat1'],
-	[314, 'for_in_clause_repeat1'],
-	[315, 'concatenated_string_repeat1'],
-	[316, 'string_repeat1'],
-	[317, 'string_content_repeat1'],
-	[318, 'format_specifier_repeat1'],
-	[319, 'simple_statements_elements_repeat1'],
-	[320, 'subjects_repeat1'],
-	[321, 'case_patterns_repeat1'],
-	[322, 'with_clause_with_items_repeat1'],
-	[323, '_exec_statement_optional1_repeat1'],
-	[324, 'types_repeat1'],
-	[325, 'argument_list_elements_repeat1'],
-	[326, 'dict_pattern_elements_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_tuple_pattern_elements_repeat1'],
-	[330, '_tuple_elements_repeat1'],
-	[331, 'comprehension_clauses_repeat1'],
-	[332, 'except_clause_exception_list_repeat1'],
-	[333, 'with_clause_bare_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[299, '_statement_class_definition'],
+	[300, 'block_class_declaration'],
+	[301, 'suite_block_class_declaration'],
+	[302, 'decorated_definition_class_declaration'],
+	[303, 'module_repeat1'],
+	[304, 'import_prefix_repeat1'],
+	[305, '_import_list_repeat1'],
+	[306, 'assert_statement_repeat1'],
+	[307, 'if_statement_repeat1'],
+	[308, 'try_statement_repeat1'],
+	[309, 'global_statement_repeat1'],
+	[310, 'decorated_definition_repeat1'],
+	[311, 'expression_list_repeat1'],
+	[312, 'dotted_name_repeat1'],
+	[313, 'union_pattern_repeat1'],
+	[314, '_parameters_repeat1'],
+	[315, '_patterns_repeat1'],
+	[316, 'comparison_operator_repeat1'],
+	[317, '_collection_elements_repeat1'],
+	[318, 'for_in_clause_repeat1'],
+	[319, 'concatenated_string_repeat1'],
+	[320, 'string_repeat1'],
+	[321, 'string_content_repeat1'],
+	[322, 'format_specifier_repeat1'],
+	[323, 'simple_statements_elements_repeat1'],
+	[324, 'subjects_repeat1'],
+	[325, 'case_patterns_repeat1'],
+	[326, 'with_clause_with_items_repeat1'],
+	[327, '_exec_statement_optional1_repeat1'],
+	[328, 'types_repeat1'],
+	[329, 'argument_list_elements_repeat1'],
+	[330, 'dict_pattern_elements_repeat1'],
+	[331, 'subscripts_repeat1'],
+	[332, 'dictionary_elements_repeat1'],
+	[333, '_tuple_pattern_elements_repeat1'],
+	[334, '_tuple_elements_repeat1'],
+	[335, 'comprehension_clauses_repeat1'],
+	[336, 'except_clause_exception_list_repeat1'],
+	[337, 'with_clause_bare_repeat1'],
+	[338, 'match_block_block_repeat1'],
+	[339, '_block_class_definition_repeat1'],
+	[340, 'as_pattern_target'],
+	[341, 'format_expression'],
+	[342, 'method_declaration'],
+	[343, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -642,7 +648,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[339, 'simple_statements'],
+	[345, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -697,7 +703,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[338, 'simple_pattern'],
+	[344, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -813,45 +819,51 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[296, 'suite_empty'],
 	[297, 'comparison_operator_comparator'],
 	[298, 'yield_from_clause'],
-	[299, 'module_repeat1'],
-	[300, 'import_prefix_repeat1'],
-	[301, '_import_list_repeat1'],
-	[302, 'assert_statement_repeat1'],
-	[303, 'if_statement_repeat1'],
-	[304, 'try_statement_repeat1'],
-	[305, 'global_statement_repeat1'],
-	[306, 'decorated_definition_repeat1'],
-	[307, 'expression_list_repeat1'],
-	[308, 'dotted_name_repeat1'],
-	[309, 'union_pattern_repeat1'],
-	[310, '_parameters_repeat1'],
-	[311, '_patterns_repeat1'],
-	[312, 'comparison_operator_repeat1'],
-	[313, '_collection_elements_repeat1'],
-	[314, 'for_in_clause_repeat1'],
-	[315, 'concatenated_string_repeat1'],
-	[316, 'string_repeat1'],
-	[317, 'string_content_repeat1'],
-	[318, 'format_specifier_repeat1'],
-	[319, 'simple_statements_elements_repeat1'],
-	[320, 'subjects_repeat1'],
-	[321, 'case_patterns_repeat1'],
-	[322, 'with_clause_with_items_repeat1'],
-	[323, '_exec_statement_optional1_repeat1'],
-	[324, 'types_repeat1'],
-	[325, 'argument_list_elements_repeat1'],
-	[326, 'dict_pattern_elements_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_tuple_pattern_elements_repeat1'],
-	[330, '_tuple_elements_repeat1'],
-	[331, 'comprehension_clauses_repeat1'],
-	[332, 'except_clause_exception_list_repeat1'],
-	[333, 'with_clause_bare_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[299, '_statement_class_definition'],
+	[300, 'block_class_declaration'],
+	[301, 'suite_block_class_declaration'],
+	[302, 'decorated_definition_class_declaration'],
+	[303, 'module_repeat1'],
+	[304, 'import_prefix_repeat1'],
+	[305, '_import_list_repeat1'],
+	[306, 'assert_statement_repeat1'],
+	[307, 'if_statement_repeat1'],
+	[308, 'try_statement_repeat1'],
+	[309, 'global_statement_repeat1'],
+	[310, 'decorated_definition_repeat1'],
+	[311, 'expression_list_repeat1'],
+	[312, 'dotted_name_repeat1'],
+	[313, 'union_pattern_repeat1'],
+	[314, '_parameters_repeat1'],
+	[315, '_patterns_repeat1'],
+	[316, 'comparison_operator_repeat1'],
+	[317, '_collection_elements_repeat1'],
+	[318, 'for_in_clause_repeat1'],
+	[319, 'concatenated_string_repeat1'],
+	[320, 'string_repeat1'],
+	[321, 'string_content_repeat1'],
+	[322, 'format_specifier_repeat1'],
+	[323, 'simple_statements_elements_repeat1'],
+	[324, 'subjects_repeat1'],
+	[325, 'case_patterns_repeat1'],
+	[326, 'with_clause_with_items_repeat1'],
+	[327, '_exec_statement_optional1_repeat1'],
+	[328, 'types_repeat1'],
+	[329, 'argument_list_elements_repeat1'],
+	[330, 'dict_pattern_elements_repeat1'],
+	[331, 'subscripts_repeat1'],
+	[332, 'dictionary_elements_repeat1'],
+	[333, '_tuple_pattern_elements_repeat1'],
+	[334, '_tuple_elements_repeat1'],
+	[335, 'comprehension_clauses_repeat1'],
+	[336, 'except_clause_exception_list_repeat1'],
+	[337, 'with_clause_bare_repeat1'],
+	[338, 'match_block_block_repeat1'],
+	[339, '_block_class_definition_repeat1'],
+	[340, 'as_pattern_target'],
+	[341, 'format_expression'],
+	[342, 'method_declaration'],
+	[343, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1456,6 +1468,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComparisonOperatorComparator;
 		case 'yield_from_clause':
 			return TSKindId.YieldFromClause;
+		case '_statement_class_definition':
+			return TSKindId.StatementClassDefinition;
+		case 'block_class_declaration':
+			return TSKindId.BlockClassDeclaration;
+		case 'suite_block_class_declaration':
+			return TSKindId.SuiteBlockClassDeclaration;
+		case 'decorated_definition_class_declaration':
+			return TSKindId.DecoratedDefinitionClassDeclaration;
 		case 'module_repeat1':
 			return TSKindId.ModuleRepeat1;
 		case 'import_prefix_repeat1':
@@ -1528,10 +1548,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseBareRepeat1;
 		case 'match_block_block_repeat1':
 			return TSKindId.MatchBlockBlockRepeat1;
+		case '_block_class_definition_repeat1':
+			return TSKindId._BlockClassDefinitionRepeat1;
 		case 'as_pattern_target':
 			return TSKindId.AsPatternTarget;
 		case 'format_expression':
 			return TSKindId.FormatExpression;
+		case 'method_declaration':
+			return TSKindId.MethodDeclaration;
 		case 'names':
 			return TSKindId.Names;
 		case 'ERROR':
@@ -1940,6 +1964,38 @@ export enum LayoutKind {
 	DoubleBlankline = '_double_blankline'
 }
 
+export enum CompoundStatementClassDefinitionKind {
+	IfStatement = 'if_statement',
+	ForStatement = 'for_statement',
+	WhileStatement = 'while_statement',
+	TryStatement = 'try_statement',
+	WithStatement = 'with_statement',
+	MethodDeclaration = 'method_declaration',
+	ClassDefinition = 'class_definition',
+	DecoratedDefinitionClassDeclaration = 'decorated_definition_class_declaration',
+	MatchStatement = 'match_statement'
+}
+
+export enum StatementClassDefinitionKind {
+	SimpleStatements = '_simple_statements',
+	CompoundStatementClassDefinition = '_compound_statement_class_definition',
+	IfStatement = 'if_statement',
+	ForStatement = 'for_statement',
+	WhileStatement = 'while_statement',
+	TryStatement = 'try_statement',
+	WithStatement = 'with_statement',
+	MethodDeclaration = 'method_declaration',
+	ClassDefinition = 'class_definition',
+	DecoratedDefinitionClassDeclaration = 'decorated_definition_class_declaration',
+	MatchStatement = 'match_statement'
+}
+
+export enum SuiteClassDefinitionKind {
+	SuiteInline = 'suite_inline',
+	SuiteBlockClassDeclaration = 'suite_block_class_declaration',
+	SuiteEmpty = 'suite_empty'
+}
+
 // Node types — concrete interfaces
 export interface Module {
 	readonly $type: TSKindId.Module;
@@ -1979,10 +2035,17 @@ export interface ImportStatement {
 		readonly _names: 'names';
 	};
 	readonly __looseHints__?: {
-		readonly names: readonly ImportList[];
+		readonly names: readonly (DottedName | AliasedImport)[];
 	};
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Names | T.Names.Types>;
+		readonly names: SlotHint<T.Names>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+		readonly $listSlots: {
+			readonly names: ListSlotHint<T.DottedName | T.AliasedImport, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	readonly names: () => Names;
 }
@@ -2703,7 +2766,7 @@ export interface ClassDefinition {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _bases?: ArgumentList;
-	readonly _body: Suite;
+	readonly _body: SuiteClassDefinition;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type_parameters: 'typeParameters';
@@ -2718,7 +2781,7 @@ export interface ClassDefinition {
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameters: SlotHint<T.TypeParameter, true>;
 		readonly bases: SlotHint<T.ArgumentList, true>;
-		readonly body: SlotHint<T.Suite>;
+		readonly body: SlotHint<T.SuiteClassDefinition>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 			readonly bases: ListSlotHint<
@@ -2730,7 +2793,7 @@ export interface ClassDefinition {
 	readonly name: () => Identifier;
 	readonly typeParameters: () => TypeParameter | undefined;
 	readonly bases: () => ArgumentList | undefined;
-	readonly body: () => Suite;
+	readonly body: () => SuiteClassDefinition;
 }
 
 export interface TypeParameter {
@@ -4420,11 +4483,7 @@ export interface FormatSpecifier {
 		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
-			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
-			false,
-			true
-		>;
+		readonly elements: SlotHint<(T.FormatSpecifierText | T.FormatExpression)[], false, true>;
 	};
 	readonly elements: () => readonly (FormatSpecifierText | FormatExpression)[];
 }
@@ -5363,26 +5422,64 @@ export interface YieldFromClause {
 	readonly expression: () => Expression;
 }
 
-export interface Names {
-	readonly $type: TSKindId.Names;
-	readonly _content: ImportList;
+export interface BlockClassDeclaration {
+	readonly $type: TSKindId.BlockClassDeclaration;
+	readonly _statements: readonly StatementClassDefinition[];
 	readonly __slotNames__?: {
-		readonly _content: 'content';
-	};
-	readonly __looseHints__?: {
-		readonly content: readonly (DottedName | AliasedImport)[];
+		readonly _statements: 'statements';
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.ImportList>;
-		readonly $listSlots: {
-			readonly content: ListSlotHint<
-				T.DottedName | T.AliasedImport,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
-		};
+		readonly statements: SlotHint<T.StatementClassDefinition[], false, true>;
 	};
-	readonly __aliasContent__?: Names.Types;
-	readonly content: () => ImportList;
+	readonly statements: () => readonly StatementClassDefinition[];
+}
+
+export interface SuiteBlockClassDeclaration {
+	readonly $type: TSKindId.SuiteBlockClassDeclaration;
+	readonly _block_class_declaration: BlockClassDeclaration;
+	readonly __slotNames__?: {
+		readonly _block_class_declaration: 'blockClassDeclaration';
+	};
+	readonly __looseHints__?: {
+		readonly block_class_declaration: readonly StatementClassDefinition[];
+	};
+	readonly __slotHints__?: {
+		readonly blockClassDeclaration: SlotHint<T.BlockClassDeclaration>;
+	};
+	readonly blockClassDeclaration: () => BlockClassDeclaration;
+}
+
+export interface DecoratedDefinitionClassDeclaration {
+	readonly $type: TSKindId.DecoratedDefinitionClassDeclaration;
+	readonly _decorator: NonEmptyArray<Decorator>;
+	readonly _definition: ClassDefinition | MethodDeclaration;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _definition: 'definition';
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
+		readonly definition: SlotHint<T.ClassDefinition | T.MethodDeclaration>;
+	};
+	readonly decorators: () => NonEmptyArray<Decorator>;
+	readonly definition: () => ClassDefinition | MethodDeclaration;
+}
+
+export interface Names {
+	readonly $type: TSKindId.Names;
+	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
+	readonly __slotNames__?: {
+		readonly _name: 'names';
+	};
+	readonly __slotHints__?: {
+		readonly names: SlotHint<NonEmptyArray<T.DottedName | T.AliasedImport>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+	};
+	readonly names: () => NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface AsPatternTarget {
@@ -5405,15 +5502,82 @@ export interface AsPatternTarget {
 
 export interface FormatExpression {
 	readonly $type: TSKindId.FormatExpression;
-	readonly _content: Interpolation;
+	readonly _expression: Expression | ExpressionList | PatternList | Yield;
+	readonly _debug: boolean;
+	readonly _type_conversion?: TypeConversion;
+	readonly _format_specifier?: FormatSpecifier;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _expression: 'expression';
+		readonly _debug: 'debug';
+		readonly _type_conversion: 'typeConversion';
+		readonly _format_specifier: 'formatSpecifier';
+	};
+	readonly __inputHints__?: {
+		readonly expression:
+			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
+			| Expression
+			| ExpressionList
+			| PatternList
+			| Yield;
+		readonly debug?: BaseBooleanKeyword<'='>;
+	};
+	readonly __looseHints__?: {
+		readonly format_specifier?: readonly (FormatSpecifierText | FormatExpression)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.Interpolation>;
+		readonly expression: SlotHint<NonNullable<T.FormatExpression.Config>['expression']>;
+		readonly debug: SlotHint<NonNullable<T.FormatExpression.Config>['debug'], true>;
+		readonly typeConversion: SlotHint<T.TypeConversion, true>;
+		readonly formatSpecifier: SlotHint<T.FormatSpecifier, true>;
 	};
-	readonly __aliasContent__?: FormatExpression.Types;
-	readonly content: () => Interpolation;
+	readonly expression: () => Expression | ExpressionList | PatternList | Yield;
+	readonly debug: () => boolean;
+	readonly typeConversion: () => TypeConversion | undefined;
+	readonly formatSpecifier: () => FormatSpecifier | undefined;
+}
+
+export interface MethodDeclaration {
+	readonly $type: TSKindId.MethodDeclaration;
+	readonly _async: boolean;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameter;
+	readonly _parameters: Parameters;
+	readonly _return_type?: Type;
+	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly async?: BaseBooleanKeyword<'async'>;
+	};
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly Type[];
+		readonly parameters: readonly Parameter[];
+		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
+	readonly __slotHints__?: {
+		readonly async: SlotHint<NonNullable<T.MethodDeclaration.Config>['async'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameter, true>;
+		readonly parameters: SlotHint<T.Parameters>;
+		readonly returnType: SlotHint<T.Type, true>;
+		readonly body: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
+	};
+	readonly async: () => boolean;
+	readonly name: () => Identifier;
+	readonly typeParameters: () => TypeParameter | undefined;
+	readonly parameters: () => Parameters;
+	readonly returnType: () => Type | undefined;
+	readonly body: () => Suite;
 }
 
 // Leaf node types
@@ -5571,6 +5735,32 @@ export type IntegerDecimal = IntegerDecimalLong | IntegerDecimalImaginary | Inte
 
 export type Layout = Tight | Space | Tab | Newline | Blankline | DoubleBlankline;
 
+export type CompoundStatementClassDefinition =
+	| IfStatement
+	| ForStatement
+	| WhileStatement
+	| TryStatement
+	| WithStatement
+	| MethodDeclaration
+	| ClassDefinition
+	| DecoratedDefinitionClassDeclaration
+	| MatchStatement;
+
+export type StatementClassDefinition =
+	| SimpleStatements
+	| CompoundStatementClassDefinition
+	| IfStatement
+	| ForStatement
+	| WhileStatement
+	| TryStatement
+	| WithStatement
+	| MethodDeclaration
+	| ClassDefinition
+	| DecoratedDefinitionClassDeclaration
+	| MatchStatement;
+
+export type SuiteClassDefinition = SuiteInline | SuiteBlockClassDeclaration | SuiteEmpty;
+
 export namespace Statement {
 	export type Kind = '_statement';
 	export type Bound = SupertypeSurface<Statement, BoundByKindId>;
@@ -5671,6 +5861,24 @@ export namespace Layout {
 	export type Kind = '_layout';
 	export type Bound = SupertypeSurface<Layout, BoundByKindId>;
 	export type Parsed = SupertypeSurface<Layout, ParsedByKindId>;
+}
+
+export namespace CompoundStatementClassDefinition {
+	export type Kind = '_compound_statement_class_definition';
+	export type Bound = SupertypeSurface<CompoundStatementClassDefinition, BoundByKindId>;
+	export type Parsed = SupertypeSurface<CompoundStatementClassDefinition, ParsedByKindId>;
+}
+
+export namespace StatementClassDefinition {
+	export type Kind = '_statement_class_definition';
+	export type Bound = SupertypeSurface<StatementClassDefinition, BoundByKindId>;
+	export type Parsed = SupertypeSurface<StatementClassDefinition, ParsedByKindId>;
+}
+
+export namespace SuiteClassDefinition {
+	export type Kind = '_suite_class_definition';
+	export type Bound = SupertypeSurface<SuiteClassDefinition, BoundByKindId>;
+	export type Parsed = SupertypeSurface<SuiteClassDefinition, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -5811,6 +6019,9 @@ export interface OptionsHintMap {
 	suiteBlock: SuiteBlock.Hints;
 	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
 	yieldFromClause: YieldFromClause.Hints;
+	blockClassDeclaration: BlockClassDeclaration.Hints;
+	suiteBlockClassDeclaration: SuiteBlockClassDeclaration.Hints;
+	decoratedDefinitionClassDeclaration: DecoratedDefinitionClassDeclaration.Hints;
 }
 
 export namespace Module {
@@ -7862,6 +8073,46 @@ export namespace YieldFromClause {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly fromKeyword?: { readonly after?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace BlockClassDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly statements?: {
+				readonly classDefinition?: { readonly after?: WhitespaceKindId };
+				readonly decoratedDefinitionClassDeclaration?: { readonly after?: WhitespaceKindId };
+				readonly forStatement?: { readonly after?: WhitespaceKindId };
+				readonly ifStatement?: { readonly after?: WhitespaceKindId };
+				readonly matchStatement?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly simpleStatements?: { readonly after?: WhitespaceKindId };
+				readonly tryStatement?: { readonly after?: WhitespaceKindId };
+				readonly whileStatement?: { readonly after?: WhitespaceKindId };
+				readonly withStatement?: { readonly after?: WhitespaceKindId };
+			};
+		};
+	}
+}
+
+export namespace SuiteBlockClassDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+	}
+}
+
+export namespace DecoratedDefinitionClassDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly decorator?: {
+				readonly decorator?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+			};
 		};
 	}
 }
@@ -10107,13 +10358,55 @@ export interface YieldFromClauseNs extends NodeNs<
 	readonly BuildArgs: YieldFromClause.BuildArgs;
 	readonly LooseArgs: YieldFromClause.LooseArgs;
 }
+export interface BlockClassDeclarationNs extends NodeNs<
+	BlockClassDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	BlockClassDeclaration.Bound,
+	never,
+	TSKindId.BlockClassDeclaration,
+	BlockClassDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: BlockClassDeclaration.BuildArgs;
+	readonly LooseArgs: BlockClassDeclaration.LooseArgs;
+}
+export interface SuiteBlockClassDeclarationNs extends NodeNs<
+	SuiteBlockClassDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SuiteBlockClassDeclaration.Bound,
+	'block_class_declaration',
+	TSKindId.SuiteBlockClassDeclaration,
+	SuiteBlockClassDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: SuiteBlockClassDeclaration.BuildArgs;
+	readonly LooseArgs: SuiteBlockClassDeclaration.LooseArgs;
+}
+export interface DecoratedDefinitionClassDeclarationNs extends NodeNs<
+	DecoratedDefinitionClassDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	DecoratedDefinitionClassDeclaration.Bound,
+	never,
+	TSKindId.DecoratedDefinitionClassDeclaration,
+	DecoratedDefinitionClassDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: DecoratedDefinitionClassDeclaration.BuildArgs;
+	readonly LooseArgs: DecoratedDefinitionClassDeclaration.LooseArgs;
+}
 export interface NamesNs extends NodeNs<
 	Names,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Names.Bound,
-	'content',
+	'name',
 	TSKindId.Names,
 	Names.Parsed,
 	never
@@ -10141,13 +10434,27 @@ export interface FormatExpressionNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	FormatExpression.Bound,
-	'content',
+	never,
 	TSKindId.FormatExpression,
 	FormatExpression.Parsed,
 	never
 > {
 	readonly BuildArgs: FormatExpression.BuildArgs;
 	readonly LooseArgs: FormatExpression.LooseArgs;
+}
+export interface MethodDeclarationNs extends NodeNs<
+	MethodDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	MethodDeclaration.Bound,
+	never,
+	TSKindId.MethodDeclaration,
+	MethodDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: MethodDeclaration.BuildArgs;
+	readonly LooseArgs: MethodDeclaration.LooseArgs;
 }
 export interface WildcardImportNs extends KeywordNs<TSKindId.WildcardImport, '*', TSKindId.WildcardImport> {}
 export interface PassStatementNs extends KeywordNs<TSKindId.PassStatement, 'pass', TSKindId.PassStatement> {}
@@ -10396,9 +10703,13 @@ export interface NamespaceMap {
 	[TSKindId.SuiteEmpty]: SuiteEmptyNs;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparatorNs;
 	[TSKindId.YieldFromClause]: YieldFromClauseNs;
+	[TSKindId.BlockClassDeclaration]: BlockClassDeclarationNs;
+	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclarationNs;
+	[TSKindId.DecoratedDefinitionClassDeclaration]: DecoratedDefinitionClassDeclarationNs;
 	[TSKindId.Names]: NamesNs;
 	[TSKindId.AsPatternTarget]: AsPatternTargetNs;
 	[TSKindId.FormatExpression]: FormatExpressionNs;
+	[TSKindId.MethodDeclaration]: MethodDeclarationNs;
 	[TSKindId.WildcardImport]: WildcardImportNs;
 	[TSKindId.PassStatement]: PassStatementNs;
 	[TSKindId.BreakStatement]: BreakStatementNs;
@@ -10595,9 +10906,13 @@ export interface BoundByKindId {
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Bound;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparator.Bound;
 	[TSKindId.YieldFromClause]: YieldFromClause.Bound;
+	[TSKindId.BlockClassDeclaration]: BlockClassDeclaration.Bound;
+	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclaration.Bound;
+	[TSKindId.DecoratedDefinitionClassDeclaration]: DecoratedDefinitionClassDeclaration.Bound;
 	[TSKindId.Names]: Names.Bound;
 	[TSKindId.AsPatternTarget]: AsPatternTarget.Bound;
 	[TSKindId.FormatExpression]: FormatExpression.Bound;
+	[TSKindId.MethodDeclaration]: MethodDeclaration.Bound;
 	[TSKindId.ImportPrefix]: ImportPrefix.Bound;
 	[TSKindId.TypeConversion]: TypeConversion.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
@@ -10773,9 +11088,13 @@ export interface ParsedByKindId {
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Parsed;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparator.Parsed;
 	[TSKindId.YieldFromClause]: YieldFromClause.Parsed;
+	[TSKindId.BlockClassDeclaration]: BlockClassDeclaration.Parsed;
+	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclaration.Parsed;
+	[TSKindId.DecoratedDefinitionClassDeclaration]: DecoratedDefinitionClassDeclaration.Parsed;
 	[TSKindId.Names]: Names.Parsed;
 	[TSKindId.AsPatternTarget]: AsPatternTarget.Parsed;
 	[TSKindId.FormatExpression]: FormatExpression.Parsed;
+	[TSKindId.MethodDeclaration]: MethodDeclaration.Parsed;
 	[TSKindId.ImportPrefix]: ImportPrefix.Parsed;
 	[TSKindId.TypeConversion]: TypeConversion.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
@@ -11061,9 +11380,13 @@ export interface TypeKeyOf {
 	[TSKindId.SuiteEmpty]: 'suiteEmpty';
 	[TSKindId.ComparisonOperatorComparator]: 'comparisonOperatorComparator';
 	[TSKindId.YieldFromClause]: 'yieldFromClause';
+	[TSKindId.BlockClassDeclaration]: 'blockClassDeclaration';
+	[TSKindId.SuiteBlockClassDeclaration]: 'suiteBlockClassDeclaration';
+	[TSKindId.DecoratedDefinitionClassDeclaration]: 'decoratedDefinitionClassDeclaration';
 	[TSKindId.Names]: 'names';
 	[TSKindId.AsPatternTarget]: 'asPatternTarget';
 	[TSKindId.FormatExpression]: 'formatExpression';
+	[TSKindId.MethodDeclaration]: 'methodDeclaration';
 	[TSKindId.WildcardImport]: 'wildcardImport';
 	[TSKindId.PassStatement]: 'passStatement';
 	[TSKindId.BreakStatement]: 'breakStatement';
@@ -11178,8 +11501,8 @@ export namespace ImportStatement {
 	}
 	export type Loose = LooseFor<TSKindId.ImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
-	export type BuildArgs = [value: Admit<T.Names | T.Names.Types>] | [value: Admit<T.ImportList>];
-	export type LooseArgs = [value: T.ImportStatement.Loose];
+	export type BuildArgs = [value: Admit<T.Names>] | T.Names.BuildArgs;
+	export type LooseArgs = [value: T.ImportStatement.Loose] | T.Names.LooseArgs;
 	export type Kind = TSKindId.ImportStatement;
 }
 export namespace RelativeImport {
@@ -14177,33 +14500,17 @@ export namespace FormatSpecifier {
 	}
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
-	export type BuildArgs = [
-		...children: Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
-	];
+	export type BuildArgs = [...children: Admit<(T.FormatSpecifierText | T.FormatExpression)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
 					| T.FormatSpecifier.Loose
-					| LooseValue<
-							(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
 					| LooseValue<T.FormatSpecifierText | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<T.FormatSpecifierText | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					)[]
+					LooseValue<T.FormatSpecifierText | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 				>
 		  ];
 	export type Kind = TSKindId.FormatSpecifier;
@@ -16127,12 +16434,102 @@ export namespace YieldFromClause {
 	export type LooseArgs = [value: T.YieldFromClause.Loose];
 	export type Kind = TSKindId.YieldFromClause;
 }
+export namespace BlockClassDeclaration {
+	export type Config = ConfigFor<TSKindId.BlockClassDeclaration>;
+	export interface Bound extends BoundOf<T.BlockClassDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.BlockClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.BlockClassDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.BlockClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.BlockClassDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.BlockClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BlockClassDeclaration>;
+	export type BuildArgs = [...children: Admit<T.StatementClassDefinition[]>];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.BlockClassDeclaration.Loose
+					| LooseValue<T.StatementClassDefinition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [children: Readonly<LooseValue<T.StatementClassDefinition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
+	export type Kind = TSKindId.BlockClassDeclaration;
+}
+export namespace SuiteBlockClassDeclaration {
+	export type Config = ConfigFor<TSKindId.SuiteBlockClassDeclaration>;
+	export interface Bound extends BoundOf<T.SuiteBlockClassDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.SuiteBlockClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.SuiteBlockClassDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.SuiteBlockClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.SuiteBlockClassDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.SuiteBlockClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlockClassDeclaration>;
+	export type BuildArgs = [value: Admit<T.BlockClassDeclaration>] | T.BlockClassDeclaration.BuildArgs;
+	export type LooseArgs = [value?: T.SuiteBlockClassDeclaration.Loose] | T.BlockClassDeclaration.LooseArgs;
+	export type Kind = TSKindId.SuiteBlockClassDeclaration;
+}
+export namespace DecoratedDefinitionClassDeclaration {
+	export type Config = ConfigFor<TSKindId.DecoratedDefinitionClassDeclaration>;
+	export interface Bound
+		extends BoundOf<T.DecoratedDefinitionClassDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.DecoratedDefinitionClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.DecoratedDefinitionClassDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.DecoratedDefinitionClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.DecoratedDefinitionClassDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.DecoratedDefinitionClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DecoratedDefinitionClassDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.DecoratedDefinitionClassDeclaration>];
+	export type LooseArgs = [config: T.DecoratedDefinitionClassDeclaration.Loose];
+	export type Kind = TSKindId.DecoratedDefinitionClassDeclaration;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'decorators'>,
+			KeyRefusesEmpty<LooseConfig, 'decorators'>,
+			SetterRefusesEmpty<Bound, 'decorators'>
+		]
+	>;
+}
 export namespace Names {
 	export type Config = ConfigFor<TSKindId.Names>;
-	export type Types = SupertypeSurface<ImportList, BoundByKindId>;
 	export interface Bound extends BoundOf<T.Names, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.Names['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Names, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.Names['$type'];
@@ -16145,12 +16542,41 @@ export namespace Names {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.Names['$type']>;
+		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Names>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Names>;
-	export type BuildArgs = [value: Admit<T.ImportList>];
-	export type LooseArgs = [value: T.Names.Loose];
+	export type BuildArgs =
+		| [element: Admit<T.DottedName | T.AliasedImport>, ...elements: Admit<T.DottedName | T.AliasedImport>[]]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element: Admit<T.DottedName | T.AliasedImport>,
+				...elements: Admit<T.DottedName | T.AliasedImport>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element:
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.Names;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'names'>, KeyRefusesEmpty<LooseConfig, 'names'>, SetterRefusesEmpty<Bound, 'names'>]
+	>;
 }
 export namespace AsPatternTarget {
 	export type Config = ConfigFor<TSKindId.AsPatternTarget>;
@@ -16179,7 +16605,6 @@ export namespace AsPatternTarget {
 }
 export namespace FormatExpression {
 	export type Config = ConfigFor<TSKindId.FormatExpression>;
-	export type Types = SupertypeSurface<Interpolation, BoundByKindId>;
 	export interface Bound extends BoundOf<T.FormatExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.FormatExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -16198,9 +16623,33 @@ export namespace FormatExpression {
 	}
 	export type Loose = LooseFor<TSKindId.FormatExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatExpression>;
-	export type BuildArgs = [value: Admit<T.Interpolation>];
-	export type LooseArgs = [value: T.FormatExpression.Loose];
+	export type BuildArgs = [config: ConfigOf<T.FormatExpression>];
+	export type LooseArgs = [config: T.FormatExpression.Loose];
 	export type Kind = TSKindId.FormatExpression;
+}
+export namespace MethodDeclaration {
+	export type Config = ConfigFor<TSKindId.MethodDeclaration>;
+	export interface Bound extends BoundOf<T.MethodDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.MethodDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MethodDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.MethodDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.MethodDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.MethodDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MethodDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.MethodDeclaration>];
+	export type LooseArgs = [config: T.MethodDeclaration.Loose];
+	export type Kind = TSKindId.MethodDeclaration;
 }
 export namespace WildcardImport {
 	export type Config = WildcardImportNs['Config'];

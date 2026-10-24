@@ -29,11 +29,12 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
-import { aliasEnvelopeIds, aliasEnvelopesOf, isTextLeaf } from '../shared.ts';
+import { isTextLeaf } from '../shared.ts';
 import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
 	assertOneUntaggedSlot,
+	displayClaimedIds,
 	enumKindArgs,
 	flankArgs,
 	layoutTokenIds,
@@ -582,7 +583,7 @@ describe('node read facts', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
-			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'rust'
 		};
@@ -602,7 +603,7 @@ describe('node read facts', () => {
 	const shape = (s: AssembledNonterminal) => nodeSlotShapeOf(s, model.nodeMap);
 
 	it('lists the tokens a kind writes itself as its layout', () => {
-		expect(args('FunctionItemNode')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
+		expect(args('FunctionItemNode')).toBe('kind = kind::FUNCTION_ITEM, displays = [kind::_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT]');
 	});
 
 	it('reads a layout token from its stamp and refuses one with none', () => {
@@ -687,7 +688,7 @@ describe('node read facts for an aliased presence keyword', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
-			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'typescript'
 		};
@@ -714,7 +715,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemNode \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);

@@ -14,6 +14,7 @@ import { fieldRules, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symb
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
+import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
 import { type BindingFacts, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
@@ -74,17 +75,28 @@ const metaOf = (r: GrammarRecord): GrammarRecord => (isRecord(r.metadata) ? r.me
 const isLift = (r: GrammarRecord): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
 const isGroupAlias = (r: GrammarRecord): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
 
-function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: string, child: string): string | undefined {
-	let found: string | undefined;
-	const walk = (r: unknown, field: string | undefined): void => {
-		if (Array.isArray(r)) return r.forEach((x) => walk(x, field));
-		if (!isRecord(r)) return;
-		if (r.type === 'SYMBOL' && r.name === child && field !== undefined) found = field;
-		const inner = r.type === 'FIELD' ? (r.name as string) : field;
-		for (const v of Object.values(r)) walk(v, inner);
-	};
-	walk(rules[owner], undefined);
-	return found;
+interface ReferenceField {
+	readonly name: string;
+	readonly whole: boolean;
+}
+
+function reachesThroughHidden(rules: Readonly<Record<string, unknown>>, rule: unknown, child: string, entered: Set<string>): boolean {
+	if (Array.isArray(rule)) return rule.some((r) => reachesThroughHidden(rules, r, child, entered));
+	if (!isRecord(rule) || (OPAQUE_RULES.has(rule.type) && !isEnrichedField(rule))) return false;
+	if (rule.type !== 'SYMBOL' || typeof rule.name !== 'string') return Object.values(rule).some((v) => reachesThroughHidden(rules, v, child, entered));
+	if (rule.name === child) return true;
+	if (!isParserHiddenName(rule.name) || isEnrichGroupLiftSymbol(rule) || entered.has(rule.name)) return false;
+	entered.add(rule.name);
+	return reachesThroughHidden(rules, rules[rule.name], child, entered);
+}
+
+function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: string, child: string): ReferenceField | undefined {
+	const field = fieldRules(rules[owner])
+		.filter((f) => !isEnrichedField(f) && reachesThroughHidden(rules, f.content, child, new Set()))
+		.at(-1);
+	if (field === undefined) return undefined;
+	const content = unwrappedPrec(field.content);
+	return { name: field.name, whole: isRecord(content) && content.type === 'SYMBOL' && content.name === child };
 }
 
 function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
@@ -216,7 +228,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const realizedByParent: string[] = [];
 	const wanted: { kind: string; to: string; row: string }[] = [];
 	const wantedAliases: { kind: string; to: string; row: string }[] = [];
-	const placedSplits: { kind: string; within: readonly string[]; as: string; member: string }[] = [];
+	const placedSplits: { kind: string; within: readonly string[]; as: string; member: ReferenceField }[] = [];
 	for (const c of claims) {
 		const row = `${c.kind ?? '(group)'} → ${c.vocab}`;
 		if (c.refinement !== null) {
@@ -300,20 +312,28 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		realizedKinds.push(a.row);
 	}
 
-	const splits: Split[] = placedSplits.map((split) => {
-		const outer = split.within[split.within.length - 1]!;
-		const outerName = Object.hasOwn(renames, outer) ? renames[outer]! : Object.hasOwn(aliases, outer) ? aliases[outer]! : outer;
-		return {
-			kind: split.kind,
-			within: split.within,
-			as: split.as,
-			containers: split.within.slice(0, -1).map(() => ({ name: `${outerName}_${split.member}`, field: memberFieldName(split.member) }))
-		};
-	});
-
 	const checks = { ...base, rules } as unknown as GrammarRecord;
 	const layer = input.layerRules as unknown as GrammarRecord;
 	const stop = supertypesOf(checks);
+
+	const splits: Split[] = placedSplits.map((split) => {
+		const owner = split.within[split.within.length - 1]!;
+		const ownerName = Object.hasOwn(renames, owner) ? renames[owner]! : Object.hasOwn(aliases, owner) ? aliases[owner]! : owner;
+		const kinds = [...split.within.slice(0, -1).toReversed(), split.kind];
+		const cloneName = (kind: string, i: number): string | null => {
+			if (i === kinds.length - 1 || stop.has(kind)) return null;
+			return i === 0 && split.member.whole ? `${ownerName}_${split.member.name}` : `${kind}_${ownerName}`;
+		};
+		return {
+			owner,
+			path: kinds.map((kind, i) => ({
+				field: i === 0 ? split.member.name : (fieldOfReference(rules, kinds[i - 1]!, kind)?.name ?? null),
+				kind,
+				as: cloneName(kind, i)
+			})),
+			as: split.as
+		};
+	});
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.members.filter(isNamedMember);

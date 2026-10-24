@@ -24,6 +24,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	text: null,
 	pattern: null,
 	variantOf: null,
+	splitFrom: null,
+	aliasStorage: null,
 	shownAs: []
 });
 

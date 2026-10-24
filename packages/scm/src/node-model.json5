@@ -10,9 +10,33 @@
 		"predicate.name": {"identifier":"_immediate_identifier"}
 	},
 	"displayUnions": {
+		"blankline": [
+			{"storage":"\n\n","literal":true}
+		],
+		"dedent": [
+			{"storage":"﷑\n","literal":true}
+		],
+		"double_blankline": [
+			{"storage":"\n\n\n","literal":true}
+		],
 		"identifier": [
 			{"storage":"_immediate_identifier","literal":false},
 			{"storage":"identifier","literal":false}
+		],
+		"indent": [
+			{"storage":"﷐\n","literal":true}
+		],
+		"newline": [
+			{"storage":"\n","literal":true}
+		],
+		"space": [
+			{"storage":" ","literal":true}
+		],
+		"tab": [
+			{"storage":"\t","literal":true}
+		],
+		"tight": [
+			{"storage":"","literal":true}
 		]
 	},
 	"spelledTrivia": {

@@ -51,6 +51,7 @@ export type LeafStringMap = {
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
+	[TSKindId.Lazy]: '?';
 	[TSKindId.Caret]: '^';
 	[TSKindId.LparenQmark]: '(?';
 	[TSKindId.Eq]: '=';
@@ -896,9 +897,6 @@ export interface UnicodePropertyValueExpression {
 		readonly _unicode_property_value_expression_group: 'unicodePropertyValueExpressionGroup';
 		readonly _unicode_property_value: 'unicodePropertyValue';
 	};
-	readonly __looseHints__?: {
-		readonly unicode_property_value_expression_group?: readonly UnicodePropertyValue[];
-	};
 	readonly __slotHints__?: {
 		readonly unicodePropertyValueExpressionGroup: SlotHint<T.UnicodePropertyValueExpressionGroup, true>;
 		readonly unicodePropertyValue: SlotHint<T.UnicodePropertyValue>;
@@ -1052,11 +1050,8 @@ export interface UnicodePropertyValueExpressionGroup {
 	readonly __slotNames__?: {
 		readonly _unicode_property_name: 'unicodePropertyName';
 	};
-	readonly __looseHints__?: {
-		readonly unicode_property_name: readonly UnicodePropertyValue[];
-	};
 	readonly __slotHints__?: {
-		readonly unicodePropertyName: SlotHint<T.UnicodePropertyName | T.UnicodePropertyName.Types>;
+		readonly unicodePropertyName: SlotHint<T.UnicodePropertyName>;
 	};
 	readonly unicodePropertyName: () => UnicodePropertyName;
 }
@@ -1122,35 +1117,6 @@ export interface InlineFlagsGroupDisable {
 	readonly pattern: () => Pattern | undefined;
 }
 
-export interface Lazy {
-	readonly $type: TSKindId.Lazy;
-	readonly _content: number;
-	readonly __slotNames__?: {
-		readonly _content: 'content';
-	};
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'?', TSKindId.Qmark>;
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<TSKindId.Qmark>>;
-	};
-	readonly __aliasContent__?: Lazy.Types;
-	readonly content: () => number;
-}
-
-export interface UnicodePropertyName {
-	readonly $type: TSKindId.UnicodePropertyName;
-	readonly _content: UnicodePropertyValue;
-	readonly __slotNames__?: {
-		readonly _content: 'content';
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<T.UnicodePropertyValue>;
-	};
-	readonly __aliasContent__?: UnicodePropertyName.Types;
-	readonly content: () => UnicodePropertyValue;
-}
-
 // Leaf node types
 export type AnyCharacter = TSKindId.AnyCharacter;
 export type StartAssertion = TSKindId.StartAssertion;
@@ -1175,6 +1141,8 @@ export type Tight = TSKindId.Tight;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
+export type Lazy = TSKindId.Lazy;
+export type UnicodePropertyName = Terminal<TSKindId.UnicodePropertyName, string>;
 
 // Supertype unions
 export type InlineFlagsGroup = InlineFlagsGroupEnable | InlineFlagsGroupToggle | InlineFlagsGroupDisable;
@@ -1918,34 +1886,6 @@ export interface InlineFlagsGroupDisableNs extends NodeNs<
 	readonly BuildArgs: InlineFlagsGroupDisable.BuildArgs;
 	readonly LooseArgs: InlineFlagsGroupDisable.LooseArgs;
 }
-export interface LazyNs extends NodeNs<
-	Lazy,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	Lazy.Bound,
-	'content',
-	TSKindId.Lazy,
-	Lazy.Parsed,
-	never
-> {
-	readonly BuildArgs: Lazy.BuildArgs;
-	readonly LooseArgs: Lazy.LooseArgs;
-}
-export interface UnicodePropertyNameNs extends NodeNs<
-	UnicodePropertyName,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	UnicodePropertyName.Bound,
-	'content',
-	TSKindId.UnicodePropertyName,
-	UnicodePropertyName.Parsed,
-	never
-> {
-	readonly BuildArgs: UnicodePropertyName.BuildArgs;
-	readonly LooseArgs: UnicodePropertyName.LooseArgs;
-}
 export interface AnyCharacterNs extends KeywordNs<TSKindId.AnyCharacter, '.', TSKindId.AnyCharacter> {}
 export interface StartAssertionNs extends KeywordNs<TSKindId.StartAssertion, '^', TSKindId.StartAssertion> {}
 export interface EndAssertionNs extends KeywordNs<TSKindId.EndAssertion, '$', TSKindId.EndAssertion> {}
@@ -1960,6 +1900,7 @@ export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
+export interface LazyNs extends KeywordNs<TSKindId.Lazy, '?', TSKindId.Lazy> {}
 export interface PatternCharacterNs extends LeafNs<
 	PatternCharacter,
 	string,
@@ -2018,6 +1959,12 @@ export interface CharacterClassEscapeText2Ns extends LeafNs<
 	CharacterClassEscapeText2.Bound,
 	TSKindId.CharacterClassEscapeText2
 > {}
+export interface UnicodePropertyNameNs extends LeafNs<
+	UnicodePropertyName,
+	string,
+	UnicodePropertyName.Bound,
+	TSKindId.UnicodePropertyName
+> {}
 
 export interface NamespaceMap {
 	[TSKindId.Pattern]: PatternNs;
@@ -2049,8 +1996,6 @@ export interface NamespaceMap {
 	[TSKindId.InlineFlagsGroupEnable]: InlineFlagsGroupEnableNs;
 	[TSKindId.InlineFlagsGroupToggle]: InlineFlagsGroupToggleNs;
 	[TSKindId.InlineFlagsGroupDisable]: InlineFlagsGroupDisableNs;
-	[TSKindId.Lazy]: LazyNs;
-	[TSKindId.UnicodePropertyName]: UnicodePropertyNameNs;
 	[TSKindId.AnyCharacter]: AnyCharacterNs;
 	[TSKindId.StartAssertion]: StartAssertionNs;
 	[TSKindId.EndAssertion]: EndAssertionNs;
@@ -2061,6 +2006,7 @@ export interface NamespaceMap {
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
+	[TSKindId.Lazy]: LazyNs;
 	[TSKindId.PatternCharacter]: PatternCharacterNs;
 	[TSKindId.PosixClassName]: PosixClassNameNs;
 	[TSKindId.ClassCharacter]: ClassCharacterNs;
@@ -2074,6 +2020,7 @@ export interface NamespaceMap {
 	[TSKindId.DecimalDigits]: DecimalDigitsNs;
 	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1Ns;
 	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2Ns;
+	[TSKindId.UnicodePropertyName]: UnicodePropertyNameNs;
 }
 
 export interface BoundByKindId {
@@ -2106,8 +2053,6 @@ export interface BoundByKindId {
 	[TSKindId.InlineFlagsGroupEnable]: InlineFlagsGroupEnable.Bound;
 	[TSKindId.InlineFlagsGroupToggle]: InlineFlagsGroupToggle.Bound;
 	[TSKindId.InlineFlagsGroupDisable]: InlineFlagsGroupDisable.Bound;
-	[TSKindId.Lazy]: Lazy.Bound;
-	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Bound;
 	[TSKindId.PatternCharacter]: PatternCharacter.Bound;
 	[TSKindId.PosixClassName]: PosixClassName.Bound;
 	[TSKindId.ClassCharacter]: ClassCharacter.Bound;
@@ -2121,6 +2066,7 @@ export interface BoundByKindId {
 	[TSKindId.DecimalDigits]: DecimalDigits.Bound;
 	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Bound;
 	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Bound;
+	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Bound;
 }
 
 export interface ParsedByKindId {
@@ -2153,8 +2099,6 @@ export interface ParsedByKindId {
 	[TSKindId.InlineFlagsGroupEnable]: InlineFlagsGroupEnable.Parsed;
 	[TSKindId.InlineFlagsGroupToggle]: InlineFlagsGroupToggle.Parsed;
 	[TSKindId.InlineFlagsGroupDisable]: InlineFlagsGroupDisable.Parsed;
-	[TSKindId.Lazy]: Lazy.Parsed;
-	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Parsed;
 	[TSKindId.PatternCharacter]: PatternCharacter.Parsed;
 	[TSKindId.PosixClassName]: PosixClassName.Parsed;
 	[TSKindId.ClassCharacter]: ClassCharacter.Parsed;
@@ -2168,6 +2112,7 @@ export interface ParsedByKindId {
 	[TSKindId.DecimalDigits]: DecimalDigits.Parsed;
 	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Parsed;
 	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Parsed;
+	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Parsed;
 }
 
 export interface PortableReads {}
@@ -2182,6 +2127,7 @@ export type FixedTextKindId =
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
+	| TSKindId.Lazy
 	| TSKindId.Caret
 	| TSKindId.LparenQmark
 	| TSKindId.Eq
@@ -2239,8 +2185,6 @@ export interface TypeKeyOf {
 	[TSKindId.InlineFlagsGroupEnable]: 'inlineFlagsGroupEnable';
 	[TSKindId.InlineFlagsGroupToggle]: 'inlineFlagsGroupToggle';
 	[TSKindId.InlineFlagsGroupDisable]: 'inlineFlagsGroupDisable';
-	[TSKindId.Lazy]: 'lazy';
-	[TSKindId.UnicodePropertyName]: 'unicodePropertyName';
 	[TSKindId.AnyCharacter]: 'anyCharacter';
 	[TSKindId.StartAssertion]: 'startAssertion';
 	[TSKindId.EndAssertion]: 'endAssertion';
@@ -2251,6 +2195,7 @@ export interface TypeKeyOf {
 	[TSKindId.Newline]: 'newline';
 	[TSKindId.Blankline]: 'blankline';
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
+	[TSKindId.Lazy]: 'lazy';
 	[TSKindId.PatternCharacter]: 'patternCharacter';
 	[TSKindId.PosixClassName]: 'posixClassName';
 	[TSKindId.ClassCharacter]: 'classCharacter';
@@ -2264,6 +2209,7 @@ export interface TypeKeyOf {
 	[TSKindId.DecimalDigits]: 'decimalDigits';
 	[TSKindId.CharacterClassEscapeText1]: 'characterClassEscapeText1';
 	[TSKindId.CharacterClassEscapeText2]: 'characterClassEscapeText2';
+	[TSKindId.UnicodePropertyName]: 'unicodePropertyName';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -2934,9 +2880,7 @@ export namespace UnicodePropertyValueExpressionGroup {
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpressionGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyValueExpressionGroup>;
-	export type BuildArgs =
-		| [value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>]
-		| [value: Admit<T.UnicodePropertyValue>];
+	export type BuildArgs = [value: Admit<T.UnicodePropertyName>];
 	export type LooseArgs = [value: T.UnicodePropertyValueExpressionGroup.Loose];
 	export type Kind = TSKindId.UnicodePropertyValueExpressionGroup;
 }
@@ -3014,57 +2958,6 @@ export namespace InlineFlagsGroupDisable {
 	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupDisable>];
 	export type LooseArgs = [config: T.InlineFlagsGroupDisable.Loose];
 	export type Kind = TSKindId.InlineFlagsGroupDisable;
-}
-export namespace Lazy {
-	export type Config = ConfigFor<TSKindId.Lazy>;
-	export type Types = SupertypeSurface<TSKindId.Qmark, BoundByKindId>;
-	export interface Bound extends BoundOf<T.Lazy, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.Lazy['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.Lazy, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.Lazy['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.Lazy['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.Lazy>;
-	export type LooseConfig = LooseConfigFor<TSKindId.Lazy>;
-	export type BuildArgs = [value?: Admit<TSKindId.Qmark>];
-	export type LooseArgs = [value?: T.Lazy.Loose];
-	export type Kind = TSKindId.Lazy;
-}
-export namespace UnicodePropertyName {
-	export type Config = ConfigFor<TSKindId.UnicodePropertyName>;
-	export type Types = SupertypeSurface<UnicodePropertyValue, BoundByKindId>;
-	export interface Bound extends BoundOf<T.UnicodePropertyName, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.UnicodePropertyName['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.UnicodePropertyName, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.UnicodePropertyName['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.UnicodePropertyName['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.UnicodePropertyName>;
-	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyName>;
-	export type BuildArgs = [value: Admit<T.UnicodePropertyValue>];
-	export type LooseArgs = [value: T.UnicodePropertyName.Loose];
-	export type Kind = TSKindId.UnicodePropertyName;
 }
 export namespace AnyCharacter {
 	export type Config = AnyCharacterNs['Config'];
@@ -3165,6 +3058,16 @@ export namespace DoubleBlankline {
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
 	export type Kind = TSKindId.DoubleBlankline;
+}
+export namespace Lazy {
+	export type Config = LazyNs['Config'];
+	export type Bound = LazyNs['Bound'];
+	export type Parsed = LazyNs['Bound'];
+	export type Loose = LazyNs['Loose'];
+	export type LooseConfig = LazyNs['LooseConfig'];
+	export type BuildArgs = LazyNs['BuildArgs'];
+	export type LooseArgs = LazyNs['LooseArgs'];
+	export type Kind = TSKindId.Lazy;
 }
 export namespace PatternCharacter {
 	export type Config = PatternCharacterNs['Config'];
@@ -3399,6 +3302,24 @@ export namespace CharacterClassEscapeText2 {
 	export type BuildArgs = CharacterClassEscapeText2Ns['BuildArgs'];
 	export type LooseArgs = CharacterClassEscapeText2Ns['LooseArgs'];
 	export type Kind = TSKindId.CharacterClassEscapeText2;
+}
+export namespace UnicodePropertyName {
+	export type Config = UnicodePropertyNameNs['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.UnicodePropertyName;
+		readonly $named: true;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.UnicodePropertyName;
+		readonly $named: true;
+		$text(): string;
+	}
+	export type Loose = UnicodePropertyNameNs['Loose'];
+	export type LooseConfig = UnicodePropertyNameNs['LooseConfig'];
+	export type BuildArgs = UnicodePropertyNameNs['BuildArgs'];
+	export type LooseArgs = UnicodePropertyNameNs['LooseArgs'];
+	export type Kind = TSKindId.UnicodePropertyName;
 }
 
 export interface RegexTypeMap extends GrammarTypeMap {

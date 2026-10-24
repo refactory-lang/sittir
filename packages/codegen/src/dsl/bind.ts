@@ -10,11 +10,16 @@ import {
 } from './rule-patterns.ts';
 import type { BindingEffect, Lead, LeadMatch } from './verbs/effects.ts';
 
-export interface Split {
+export interface SplitStep {
+	readonly field: string | null;
 	readonly kind: string;
-	readonly within: readonly string[];
+	readonly as: string | null;
+}
+
+export interface Split {
+	readonly owner: string;
+	readonly path: readonly SplitStep[];
 	readonly as: string;
-	readonly containers: readonly { readonly name: string; readonly field: string }[];
 }
 
 export interface FieldRename {
@@ -32,10 +37,6 @@ export interface FieldWrap {
 
 export function lead(list: string, item: string, field: string, ...admits: LeadMatch[]): Lead {
 	return { list, item, field, admits };
-}
-
-export function split(kind: string, as: string, placement: Pick<Split, 'within' | 'containers'>): Split {
-	return { kind, as, within: placement.within, containers: placement.containers };
 }
 
 export function mappedName(record: Readonly<Record<string, string>> | undefined, name: string): string {

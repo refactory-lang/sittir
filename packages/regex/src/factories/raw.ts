@@ -17,11 +17,9 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
-	admitAliasContent,
 	kindIdStorage,
 	listStorage,
 	numberText,
-	orDefault,
 	strictBooleanStorage,
 	unaffixed
 } from '@sittir/common/utils';
@@ -39,6 +37,7 @@ export const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
 export const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
 export const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
 export const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
+export const _leafRe_buildUnicodePropertyName = _leafRe_buildUnicodePropertyValue;
 export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
 export function buildPattern<V extends Admit<T.Alternation | T.Term>>(value: V & RefuseUndeclared<V>): T.Pattern.Bound;
@@ -1130,47 +1129,21 @@ export function buildCharacterClassEscapeArm(
 	return stampBuilt(node) as unknown as T.CharacterClassEscapeArm.Bound;
 }
 
-export function buildUnicodePropertyValueExpressionGroup<
-	V extends Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
->(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
-export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyValue>>(
+export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyName>>(
 	value: V & RefuseUndeclared<V>
-): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
-export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildUnicodePropertyValueExpressionGroup(
-			args[0] as Parameters<typeof _buildUnicodePropertyValueExpressionGroup>[0]
-		);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.UnicodePropertyName as const);
-	return prebuilt
-		? _buildUnicodePropertyValueExpressionGroup(
-				args[0] as Parameters<typeof _buildUnicodePropertyValueExpressionGroup>[0]
-			)
-		: _buildUnicodePropertyValueExpressionGroup(
-				(buildUnicodePropertyName as (...a: unknown[]) => unknown)(...args) as Parameters<
-					typeof _buildUnicodePropertyValueExpressionGroup
-				>[0]
-			);
-}
-function _buildUnicodePropertyValueExpressionGroup(
-	value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
+): T.UnicodePropertyValueExpressionGroup.Bound;
+export function buildUnicodePropertyValueExpressionGroup(
+	value: Admit<T.UnicodePropertyName>
 ): T.UnicodePropertyValueExpressionGroup.Bound {
-	const _unicode_property_name = admitAliasContent<
-		NonNullable<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']>
-	>(value, [[[35], (v: unknown) => buildUnicodePropertyName(v as never)]]);
+	const _unicode_property_name = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnicodePropertyValueExpressionGroup as const,
 		$named: true as const,
 		_unicode_property_name,
 		$with: {
-			unicodePropertyName: (value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>) =>
-				rebuilt(node, handle, () => _buildUnicodePropertyValueExpressionGroup(value))
+			unicodePropertyName: (value: Admit<T.UnicodePropertyName>) =>
+				rebuilt(node, handle, () => buildUnicodePropertyValueExpressionGroup(value))
 		},
 		unicodePropertyName: () => hydrateStoredSlot(node, '_unicode_property_name'),
 		$render: () => renderText(handle, node),
@@ -1360,44 +1333,18 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export function buildLazy<V extends Admit<TSKindId.Qmark>>(...value: [value?: V] & RefuseUndeclared<V>): T.Lazy.Bound;
-export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
-	const _content = kindIdStorage<NonNullable<T.Lazy['_content']>>(orDefault(value, () => TSKindId.Qmark as const));
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.Lazy as const,
-		$named: true as const,
-		_content,
-		$with: {
-			content: (value: Admit<NonNullable<TSKindId.Qmark>>) => rebuilt(node, handle, () => buildLazy(value))
-		},
-		content: () => _content,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.Lazy.Bound;
-}
+export const buildLazy: TSKindId.Lazy = TSKindId.Lazy;
 
-export function buildUnicodePropertyName<V extends Admit<T.UnicodePropertyValue>>(
-	value: V & RefuseUndeclared<V>
-): T.UnicodePropertyName.Bound;
-export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): T.UnicodePropertyName.Bound {
-	const _content = value;
+export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bound {
+	if (typeof text !== 'string') throw new Error(`unicode_property_name: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`unicode_property_name: text must be non-empty`);
+	if (!_leafRe_buildUnicodePropertyName.test(text))
+		throw new Error(`unicode_property_name: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnicodePropertyName as const,
 		$named: true as const,
-		_content,
-		$with: {
-			content: (value: Admit<T.UnicodePropertyValue>) => rebuilt(node, handle, () => buildUnicodePropertyName(value))
-		},
-		content: () => hydrateStoredSlot(node, '_content'),
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1463,8 +1410,8 @@ export type FluentKindMap = {
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
-	lazy: T.Lazy.Bound;
-	unicode_property_name: T.UnicodePropertyName.Bound;
+	lazy: T.Lazy;
+	unicode_property_name: T.UnicodePropertyName;
 };
 
 export const _factoryMap = {

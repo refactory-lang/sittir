@@ -52,6 +52,43 @@ describe.each(GRAMMARS)('%s builder paths', (grammar) => {
 		expect(unlisted).toEqual([]);
 	});
 
+	it('nests a builder under a kind it is a member of or a slot of, and a supertype admits every member built under it', async () => {
+		const model = await loadNodeModel(grammar);
+		const { is, isMember, membersOf } = (await import(`../../${grammar}/src/is.ts`)) as {
+			is: Record<string, (value: { $type: number }) => boolean>;
+			isMember(kind: number, type: number): boolean;
+			membersOf(kind: number): readonly number[];
+		};
+		const { kindIdFromName } = (await import(`../../${grammar}/src/types.ts`)) as { kindIdFromName(name: string): number };
+		const admits = (holder: string, kind: string): boolean => {
+			const types = membersOf(kindIdFromName(kind));
+			if (model.modelTypes[holder] !== 'supertype') return types.every((type) => isMember(kindIdFromName(holder), type));
+			const guard = is[model.irKeys[holder]!];
+			return guard !== undefined && types.every(($type) => guard({ $type }));
+		};
+		const holds = (owner: string, kind: string): boolean => Object.values(model.slotKinds[owner] ?? {}).some((kinds) => kinds.includes(kind));
+		const routes = Object.entries(model.builderPaths).map(([kind, path]) => [kind, [path, ...(model.builderPathAlternates[kind] ?? [])]] as const);
+		const kindAt = new Map(routes.flatMap(([kind, paths]) => paths.map((path) => [path.join('.'), kind] as const)));
+		const strays = routes.flatMap(([kind, paths]) =>
+			paths.flatMap((path) => {
+				const chain = path.map((_, end) => kindAt.get(path.slice(0, end + 1).join('.')));
+				const found: string[] = [];
+				let throughMembers = true;
+				for (let at = chain.length - 2; at >= 0; at--) {
+					const [holder, next] = [chain[at], chain[at + 1]];
+					if (holder === undefined || next === undefined) return [`${kind} at ${path.join('.')}: unresolved step ${at}`];
+					if (!admits(holder, next)) {
+						if (holds(holder, next)) throughMembers = false;
+						else found.push(`${kind} at ${path.join('.')}: ${holder} neither admits nor holds ${next}`);
+					}
+					if (throughMembers && model.modelTypes[holder] === 'supertype' && !admits(holder, kind)) found.push(`${kind} at ${path.join('.')}: is.${model.irKeys[holder]}`);
+				}
+				return found;
+			})
+		);
+		expect(strays).toEqual([]);
+	});
+
 	it('names an ir member with every ir key', async () => {
 		const model = await loadNodeModel(grammar);
 		const ir = await irOf(grammar);

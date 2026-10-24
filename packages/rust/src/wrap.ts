@@ -1428,7 +1428,7 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
 		},
 		body() {
-			return hydrateSlot<T.DeclarationList>(this, '_body', tree);
+			return hydrateSlot<T.TraitInterfaceDeclarationBody>(this, '_body', tree);
 		},
 		$with: {
 			visibilityModifier: (v: NonNullable<T.TraitItem['_visibility_modifier']>) =>
@@ -2206,7 +2206,7 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 		...data,
 		$type: TSKindId.VisibilityModifier as const,
 		content() {
-			return hydrateSlot<T.CrateVisibilityModifier | T.VisibilityModifierPub>(this, '_content', tree);
+			return hydrateSlot<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>(this, '_content', tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.VisibilityModifier['_content']>) =>
@@ -6638,7 +6638,7 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
 		},
 		body() {
-			return hydrateSlot<T.DeclarationList>(this, '_body', tree);
+			return hydrateSlot<T.ExtensionDeclarationBody>(this, '_body', tree);
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ImplItemBody['_unsafe']>) =>
@@ -8655,6 +8655,70 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 	return node as unknown as T.MatchBlockArms.Parsed;
 }
 
+export function wrapTraitInterfaceDeclarationBody(
+	data: T.TraitInterfaceDeclarationBody,
+	tree: TreeHandle
+): T.TraitInterfaceDeclarationBody.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.TraitInterfaceDeclarationBody as const,
+		declarations() {
+			return hydrateSlots<T.DeclarationStatementTraitItem>(this, '_declarations', tree);
+		},
+		$with: {
+			declarations: (...v: NonNullable<T.TraitInterfaceDeclarationBody['_declarations']>[number][]) =>
+				rebuilt(node, handle, () =>
+					wrapTraitInterfaceDeclarationBody({ ...$edited(data), _declarations: restItems('declarations', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.TraitInterfaceDeclarationBody.Parsed;
+}
+
+export function wrapExtensionDeclarationBody(
+	data: T.ExtensionDeclarationBody,
+	tree: TreeHandle
+): T.ExtensionDeclarationBody.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ExtensionDeclarationBody as const,
+		declarations() {
+			return hydrateSlots<T.DeclarationStatementImplItemBody>(this, '_declarations', tree);
+		},
+		$with: {
+			declarations: (...v: NonNullable<T.ExtensionDeclarationBody['_declarations']>[number][]) =>
+				rebuilt(node, handle, () =>
+					wrapExtensionDeclarationBody({ ...$edited(data), _declarations: restItems('declarations', v) }, tree)
+				)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ExtensionDeclarationBody.Parsed;
+}
+
 export function wrapReceiverParameterDeclaration(
 	data: T.ReceiverParameterDeclaration,
 	tree: TreeHandle
@@ -8923,35 +8987,6 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 	return node as unknown as T.FieldIdentifier.Parsed;
 }
 
-export function wrapCrateVisibilityModifier(
-	data: T.CrateVisibilityModifier,
-	tree: TreeHandle
-): T.CrateVisibilityModifier.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.CrateVisibilityModifier as const,
-		content() {
-			return this._content;
-		},
-		$with: {
-			content: (v: NonNullable<T.CrateVisibilityModifier['_content']>) =>
-				rebuilt(node, handle, () => wrapCrateVisibilityModifier({ ...$edited(data), _content: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.CrateVisibilityModifier.Parsed;
-}
-
 export function wrapShorthandFieldIdentifier(
 	data: T.ShorthandFieldIdentifier,
 	tree: TreeHandle
@@ -8979,6 +9014,166 @@ export function wrapShorthandFieldIdentifier(
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.ShorthandFieldIdentifier.Parsed;
+}
+
+export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandle): T.MethodDeclaration.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.MethodDeclaration as const,
+		visibilityModifier() {
+			return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+		},
+		functionModifiers() {
+			return hydrateSlot<T.FunctionModifiers | undefined>(this, '_function_modifiers', tree);
+		},
+		name() {
+			return hydrateSlot<T.Identifier | T.Metavariable>(this, '_name', tree);
+		},
+		typeParameters() {
+			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+		},
+		parameters() {
+			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+		},
+		returnType() {
+			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
+		},
+		whereClause() {
+			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
+		},
+		body() {
+			return hydrateSlot<T.Block>(this, '_body', tree);
+		},
+		$with: {
+			visibilityModifier: (v: NonNullable<T.MethodDeclaration['_visibility_modifier']>) =>
+				rebuilt(node, handle, () => wrapMethodDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)),
+			functionModifiers: (v: NonNullable<T.MethodDeclaration['_function_modifiers']>) =>
+				rebuilt(node, handle, () => wrapMethodDeclaration({ ...$edited(data), _function_modifiers: v }, tree)),
+			name: (v: NonNullable<T.MethodDeclaration['_name']>) =>
+				rebuilt(node, handle, () => wrapMethodDeclaration({ ...$edited(data), _name: v }, tree)),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: RAW.buildTypeParameters,
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
+						},
+						(v: NonNullable<T.MethodDeclaration['_type_parameters']>) =>
+							wrapMethodDeclaration({ ...$edited(data), _type_parameters: v }, tree)
+					)
+				),
+			parameters: (v: NonNullable<T.MethodDeclaration['_parameters']>) =>
+				rebuilt(node, handle, () => wrapMethodDeclaration({ ...$edited(data), _parameters: v }, tree)),
+			returnType: (v: NonNullable<T.MethodDeclaration['_return_type']>) =>
+				rebuilt(node, handle, () => wrapMethodDeclaration({ ...$edited(data), _return_type: v }, tree)),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
+						(v: NonNullable<T.MethodDeclaration['_where_clause']>) =>
+							wrapMethodDeclaration({ ...$edited(data), _where_clause: v }, tree)
+					)
+				),
+			body: (v: NonNullable<T.MethodDeclaration['_body']>) =>
+				rebuilt(node, handle, () => wrapMethodDeclaration({ ...$edited(data), _body: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MethodDeclaration.Parsed;
+}
+
+export function wrapSignatureMethodDeclaration(
+	data: T.SignatureMethodDeclaration,
+	tree: TreeHandle
+): T.SignatureMethodDeclaration.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SignatureMethodDeclaration as const,
+		visibilityModifier() {
+			return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+		},
+		functionModifiers() {
+			return hydrateSlot<T.FunctionModifiers | undefined>(this, '_function_modifiers', tree);
+		},
+		name() {
+			return hydrateSlot<T.Identifier | T.Metavariable>(this, '_name', tree);
+		},
+		typeParameters() {
+			return hydrateSlot<T.TypeParameters | undefined>(this, '_type_parameters', tree);
+		},
+		parameters() {
+			return hydrateSlot<T.Parameters>(this, '_parameters', tree);
+		},
+		returnType() {
+			return hydrateSlot<T.Type | undefined>(this, '_return_type', tree);
+		},
+		whereClause() {
+			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
+		},
+		$with: {
+			visibilityModifier: (v: NonNullable<T.SignatureMethodDeclaration['_visibility_modifier']>) =>
+				rebuilt(node, handle, () =>
+					wrapSignatureMethodDeclaration({ ...$edited(data), _visibility_modifier: v }, tree)
+				),
+			functionModifiers: (v: NonNullable<T.SignatureMethodDeclaration['_function_modifiers']>) =>
+				rebuilt(node, handle, () => wrapSignatureMethodDeclaration({ ...$edited(data), _function_modifiers: v }, tree)),
+			name: (v: NonNullable<T.SignatureMethodDeclaration['_name']>) =>
+				rebuilt(node, handle, () => wrapSignatureMethodDeclaration({ ...$edited(data), _name: v }, tree)),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: RAW.buildTypeParameters,
+							element: { keys: ['attributeItems', 'content'], make: RAW.buildAttributedTypeParameter }
+						},
+						(v: NonNullable<T.SignatureMethodDeclaration['_type_parameters']>) =>
+							wrapSignatureMethodDeclaration({ ...$edited(data), _type_parameters: v }, tree)
+					)
+				),
+			parameters: (v: NonNullable<T.SignatureMethodDeclaration['_parameters']>) =>
+				rebuilt(node, handle, () => wrapSignatureMethodDeclaration({ ...$edited(data), _parameters: v }, tree)),
+			returnType: (v: NonNullable<T.SignatureMethodDeclaration['_return_type']>) =>
+				rebuilt(node, handle, () => wrapSignatureMethodDeclaration({ ...$edited(data), _return_type: v }, tree)),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
+						(v: NonNullable<T.SignatureMethodDeclaration['_where_clause']>) =>
+							wrapSignatureMethodDeclaration({ ...$edited(data), _where_clause: v }, tree)
+					)
+				)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SignatureMethodDeclaration.Parsed;
 }
 
 function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
@@ -9248,6 +9443,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.AttributedOrderedField]: (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
 	[TSKindId.TypeArgument]: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	[TSKindId.MatchBlockArms]: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
+	[TSKindId.TraitInterfaceDeclarationBody]: (d, t) =>
+		wrapTraitInterfaceDeclarationBody(d as unknown as T.TraitInterfaceDeclarationBody, t),
+	[TSKindId.ExtensionDeclarationBody]: (d, t) =>
+		wrapExtensionDeclarationBody(d as unknown as T.ExtensionDeclarationBody, t),
 	[TSKindId.ReceiverParameterDeclaration]: (d, t) =>
 		wrapReceiverParameterDeclaration(d as unknown as T.ReceiverParameterDeclaration, t),
 	[TSKindId.AttributedParameterReceiver]: (d, t) =>
@@ -9258,10 +9457,11 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 		wrapParametersElementsReceiverGroup(d as unknown as T.ParametersElementsReceiverGroup, t),
 	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(d as unknown as T.TypeIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(d as unknown as T.FieldIdentifier, t),
-	[TSKindId.CrateVisibilityModifier]: (d, t) =>
-		wrapCrateVisibilityModifier(d as unknown as T.CrateVisibilityModifier, t),
 	[TSKindId.ShorthandFieldIdentifier]: (d, t) =>
 		wrapShorthandFieldIdentifier(d as unknown as T.ShorthandFieldIdentifier, t),
+	[TSKindId.MethodDeclaration]: (d, t) => wrapMethodDeclaration(d as unknown as T.MethodDeclaration, t),
+	[TSKindId.SignatureMethodDeclaration]: (d, t) =>
+		wrapSignatureMethodDeclaration(d as unknown as T.SignatureMethodDeclaration, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.TokenRepetitionPatternText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringOpen]: (d, t) => wrapLeaf(d, t),

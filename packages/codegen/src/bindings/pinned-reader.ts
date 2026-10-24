@@ -75,6 +75,7 @@ type PatternNode = NamedNode.Parsed | AnonymousNode.Parsed | Grouping.Parsed;
 
 interface ParsedPattern extends PatternOrigin {
 	readonly definition: Definition.Parsed;
+	readonly offsetOf: (node: object) => number;
 }
 
 interface Visit {
@@ -130,10 +131,15 @@ async function parsedBindings(text: string): Promise<ReturnType<Engine['parse']>
 
 function patternsIn(text: string, root: ReturnType<Engine['parse']>): ParsedPattern[] {
 	const spans = sourceSpans(text);
+	const indexOf = (node: object): number => {
+		const span = spanOf(node);
+		if (span === undefined) throw new Error('bindings.scm: a parsed node carries no span');
+		return spans.toIndices(span).start;
+	};
 	return root.definitions().map((definition) => {
-		const span = spanOf(definition);
-		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
-		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
+		const span = spanOf(definition)!;
+		const start = indexOf(definition);
+		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition, offsetOf: (node: object) => indexOf(node) - start };
 	});
 }
 
@@ -687,21 +693,21 @@ export async function readBindingsInProcess(text: string): Promise<BindingFacts>
 }
 
 
-function* referencesIn(expression: Expression): Generator<PatternReference> {
+function* referencesIn(expression: Expression, at: (node: object) => number): Generator<PatternReference> {
 	switch (expression.$type) {
 		case K.NamedNodePlain: {
 			const name = expression.name();
-			if (typeof name !== 'number' && leafText(name) !== 'ERROR') yield { kind: 'node', name: leafText(name) };
-			yield* groupReferences(expression);
+			if (typeof name !== 'number' && leafText(name) !== 'ERROR') yield { kind: 'node', name: leafText(name), at: at(name) };
+			yield* groupReferences(expression, at);
 			return;
 		}
 		case K.NamedNodeSupertyped: {
 			const name = expression.name();
-			yield { kind: 'node', name: leafText(expression.supertype()) };
+			yield { kind: 'node', name: leafText(expression.supertype()), at: at(expression.supertype()) };
 			yield name.$type === K.ImmediateIdentifier
-				? { kind: 'node', name: leafText(name) }
+				? { kind: 'node', name: leafText(name), at: at(name) }
 				: { kind: 'token', name: stringValue(name) };
-			yield* groupReferences(expression);
+			yield* groupReferences(expression, at);
 			return;
 		}
 		case K.AnonymousNode: {
@@ -713,45 +719,45 @@ function* referencesIn(expression: Expression): Generator<PatternReference> {
 			const name = expression.name();
 			if (name === undefined) return;
 			yield name.$type === K.Identifier
-				? { kind: 'node', name: leafText(name) }
+				? { kind: 'node', name: leafText(name), at: at(name) }
 				: { kind: 'token', name: stringValue(name) };
 			return;
 		}
 		case K.FieldDefinition:
 			yield { kind: 'field', name: leafText(expression.name()) };
-			yield* referencesIn(expression.definition());
+			yield* referencesIn(expression.definition(), at);
 			return;
 		case K.NegatedField:
 			yield { kind: 'field', name: leafText(expression.identifier()) };
 			return;
 		case K.List:
-			for (const option of expression.definitions()) yield* referencesIn(option);
+			for (const option of expression.definitions()) yield* referencesIn(option, at);
 			return;
 		case K.Grouping:
-			for (const group of expression.groupingGroups()) yield* referencesIn(group.groupExpression());
+			for (const group of expression.groupingGroups()) yield* referencesIn(group.groupExpression(), at);
 			return;
 		case K.NamedNodeExpressionArm:
 		case K.GroupExpressionArm:
-			yield* referencesIn(expression.left());
-			yield* referencesIn(expression.right());
+			yield* referencesIn(expression.left(), at);
+			yield* referencesIn(expression.right(), at);
 			return;
 		case K.Predicate:
 			return;
 	}
 }
 
-function* groupReferences(node: NamedNode.Parsed): Generator<PatternReference> {
+function* groupReferences(node: NamedNode.Parsed, at: (node: object) => number): Generator<PatternReference> {
 	const group = node.namedNodeGroup();
 	if (group === undefined) return;
 	const expressions =
 		group.$type === K.NamedNodeGroupChildren
 			? group.namedNodeExpressions()
 			: [...group.namedNodeExpressions(), group.last()];
-	for (const expression of expressions) yield* referencesIn(expression);
+	for (const expression of expressions) yield* referencesIn(expression, at);
 }
 
 export async function bindingPatternsInProcess(text: string): Promise<BindingPattern[]> {
-	return (await parsedPatterns(text)).map(({ line, source, definition }) => ({ line, source, references: [...referencesIn(definition)] }));
+	return (await parsedPatterns(text)).map(({ line, source, definition, offsetOf }) => ({ line, source, references: [...referencesIn(definition, offsetOf)] }));
 }
 
 export async function roundTripBindingsInProcess(text: string): Promise<BindingsRoundTrip> {

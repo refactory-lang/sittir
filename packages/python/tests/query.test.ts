@@ -81,7 +81,8 @@ describe('traversal', () => {
 					.ofType(K.FunctionDefinition)
 					.map((fn) => firstLine(SOURCE, fn))
 			)
-		).toEqual(['def a(x):', 'def _b():', 'def __init__(self):', 'def _d(self, y):', 'def e():']);
+		).toEqual(['def a(x):', 'def _b():', 'def e():']);
+		expect(Array.from(descendants().ofType(K.MethodDeclaration).map((fn) => firstLine(SOURCE, fn)))).toEqual(['def __init__(self):', 'def _d(self, y):']);
 	});
 
 	it('takes the direct structural children in source order', () => {
@@ -288,7 +289,8 @@ describe('the view verbs', () => {
 		expect(names().at(-1)).toBe(all.at(-1));
 		expect(names().find((name) => name.startsWith('_'))).toBe('_b');
 		expect(names().findIndex((name) => name === 'e')).toBe(all.indexOf('e'));
-		expect(names().some((name) => name === '__init__')).toBe(true);
+		expect(names().some((name) => name === 'e')).toBe(true);
+		expect(names().some((name) => name === '__init__')).toBe(false);
 		expect(names().every((name) => name.length > 0)).toBe(true);
 		expect(names().reduce((joined, name) => `${joined},${name}`)).toBe(all.join(','));
 		const seen: string[] = [];
@@ -314,14 +316,14 @@ describe('the view verbs', () => {
 	it('slices the declarative prefix before hydrating', () => {
 		expect(
 			Array.from(descendants().ofType(K.FunctionDefinition).slice(1, 3)).map((fn) => firstLine(SOURCE, fn))
-		).toEqual(['def _b():', 'def __init__(self):']);
+		).toEqual(['def _b():', 'def e():']);
 	});
 
 	it('flatMap spreads an array result and a view runs again on each pass', () => {
 		const view = descendants()
 			.ofType(K.FunctionDefinition)
 			.flatMap((fn) => [fn.$type, fn.$type]);
-		expect([...view].length).toBe(10);
+		expect([...view].length).toBe(6);
 		expect([...view]).toEqual([...view]);
 	});
 

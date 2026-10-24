@@ -1178,6 +1178,38 @@
         "list": true
       }
     },
+    "block_class_declaration": {
+      "vocab": "statement.block",
+      "read": [
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "statements",
+          "route": "slot",
+          "slot": "statements",
+          "path": [
+            {
+              "owner": "block_class_declaration",
+              "slot": "statements"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "kinds": [
+          "_statement_class_definition"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
     "boolean_operator": {
       "vocab": "expression.binary.logical",
       "read": [
@@ -2641,6 +2673,16 @@
         "list": false
       }
     },
+    "decorated_definition_class_declaration": {
+      "container": {
+        "kinds": [
+          "class_definition",
+          "method_declaration"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
     "decorator": {
       "vocab": "attribute.decorator",
       "read": [
@@ -3888,15 +3930,6 @@
         }
       ]
     },
-    "format_expression": {
-      "container": {
-        "kinds": [
-          "interpolation"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
     "format_specifier": {
       "vocab": "expression.interpolation.format",
       "read": [
@@ -3933,101 +3966,6 @@
     "function_definition": {
       "vocab": "declaration.function",
       "read": [
-        {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "decorated_definition"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 1,
-              "via": [
-                {
-                  "slots": {
-                    "177": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "staticmethod",
-                "slots": {
-                  "178": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.constructor",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "__init__",
-                "slots": {
-                  "164": 1
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.special",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "match",
-                "pattern": "^__(?<stem>.*)__$",
-                "slots": {
-                  "164": 1
-                }
-              }
-            }
-          ],
-          "template": {
-            "target": "name",
-            "template": "__${string}__",
-            "holes": [
-              "stem"
-            ]
-          }
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "decorated_definition",
-            "block",
-            "suite_block",
-            "class_definition"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "block",
-            "suite_block",
-            "class_definition"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "declaration.function",
           "toplevel": true,
@@ -5086,6 +5024,179 @@
         }
       ]
     },
+    "method_declaration": {
+      "vocab": "declaration.method",
+      "read": [
+        {
+          "vocab": "declaration.constructor",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "__init__",
+                "slots": {
+                  "342": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.special",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^__(?<stem>.*)__$",
+                "slots": {
+                  "342": 1
+                }
+              }
+            }
+          ],
+          "template": {
+            "target": "name",
+            "template": "__${string}__",
+            "holes": [
+              "stem"
+            ]
+          }
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "async",
+          "route": "slot",
+          "slot": "async",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "async"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "returnType",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "doc",
+          "route": "nested",
+          "via": [
+            {
+              "field": "item",
+              "kind": "expression_statement",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "simple_statements_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "simple_statements",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "expression_statement",
+          "slot": "content",
+          "multiple": false,
+          "path": null
+        }
+      ]
+    },
     "module": {
       "vocab": "file",
       "read": [
@@ -5157,10 +5268,11 @@
     "names": {
       "container": {
         "kinds": [
-          "import_list"
+          "dotted_name",
+          "aliased_import"
         ],
         "terminals": [],
-        "list": false
+        "list": true
       }
     },
     "none": {
@@ -6274,6 +6386,15 @@
         "list": false
       }
     },
+    "suite_block_class_declaration": {
+      "container": {
+        "kinds": [
+          "block_class_declaration"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
     "suite_empty": {
       "container": {
         "kinds": [
@@ -7194,7 +7315,7 @@
       {
         "depth": 2,
         "paths": 74,
-        "kinds": 69,
+        "kinds": 71,
         "refinements": 6
       },
       {

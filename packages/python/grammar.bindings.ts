@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "d73a97a6b5cf4db229db8026e44092440486cf7acee179e1831b64f79bb6dcda";
+export const hash = "d3b17dd3d24ccb3daca0680e48c0041026677401caa843a40d8fedd97b7aaf9e";
 
 export const renames = {
 	module: "file",
@@ -110,7 +110,7 @@ export default grammar(
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
 			case_clause: { "1": field("case_patterns") },
-			class_definition: { "3": field("bases") },
+			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": alias("method_declaration"), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": alias("method_declaration") }],
 			conditional_expression: { "0": field("consequence") },
 			default_parameter: { "2": field("default") },
 			dictionary_splat_pattern: { "1": field("pattern") },

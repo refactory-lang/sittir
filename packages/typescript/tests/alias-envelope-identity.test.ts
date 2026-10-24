@@ -36,10 +36,11 @@ describe('an alias envelope is seated by the kind the parser shows', () => {
 
 describe("a trivia write on a content that shares its envelope's parser node", () => {
 	it.each(['leading', 'trailing'] as const)('%s: the envelope unfolds and the written comment renders', (side) => {
-		const root = ts.parse('interface A { x: number }\nlet b = 1;\n');
+		const root = ts.parse('type T = A;\nlet b = 1;\n');
 		const declaration = root.statements()[0];
-		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration)) throw new Error('expected an interface declaration');
-		const envelope = declaration.body();
+		if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
+		const envelope = declaration.value();
+		if (!ts.is.typeIdentifier(envelope)) throw new Error('expected a type identifier');
 		const content = envelope.content();
 		expect(content).not.toBe(envelope);
 		content.$trivia[side]('// c');

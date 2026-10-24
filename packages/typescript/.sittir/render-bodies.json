@@ -4719,7 +4719,33 @@
 	"interface_body": [
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "opening"
+		},
+		{
+			"kind": "seam",
+			"field": "opening_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "members",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "members"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "closing_before"
+		},
+		{
+			"kind": "slot",
+			"name": "closing"
 		}
 	],
 	"interface_declaration": [

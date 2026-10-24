@@ -1092,6 +1092,12 @@ export interface IsGuards {
 	matchBlockArms<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MatchBlockArms };
+	traitInterfaceDeclarationBody<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TraitInterfaceDeclarationBody };
+	extensionDeclarationBody<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExtensionDeclarationBody };
 	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
@@ -1110,12 +1116,15 @@ export interface IsGuards {
 	fieldIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldIdentifier };
-	crateVisibilityModifier<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CrateVisibilityModifier };
 	shorthandFieldIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ShorthandFieldIdentifier };
+	methodDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDeclaration };
+	signatureMethodDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SignatureMethodDeclaration };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Statement]>;
 	readonly declarationStatement: {
@@ -1575,6 +1584,9 @@ export interface IsGuards {
 	errorSentinel<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorSentinel };
+	crateVisibilityModifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.CrateVisibilityModifier>;
 }
 
 const _supertype_statement_ids = new Set<number>([
@@ -1593,7 +1605,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	473, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	479, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
@@ -1627,6 +1639,14 @@ const _supertype_escapeSequence_ids = new Set<number>([151, 152, 153, 154]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
+const _supertype_declarationStatementTraitItem_ids = new Set<number>([
+	476, 478, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
+	215, 223, 224, 204, 206
+]);
+const _supertype_declarationStatementImplItemBody_ids = new Set<number>([
+	476, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 209, 377, 378, 214,
+	215, 223, 224, 204, 206
+]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
@@ -1841,7 +1861,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_VariadicParameter_guard = _g(TSKindId.VariadicParameter);
 	const _kind_Parameter_guard = _g(TSKindId.Parameter);
 	const _kind_ExternModifier_guard = _g(TSKindId.ExternModifier);
-	const _kind_CrateVisibilityModifier_guard = _g(TSKindId.CrateVisibilityModifier);
+	const _kind_CrateVisibilityModifier_guard = _mg(TSKindId.CrateVisibilityModifier);
 	const _kind_VisibilityModifier_guard = _g(TSKindId.VisibilityModifier);
 	const _kind_VisibilityModifierPubScope_guard = _g(TSKindId.VisibilityModifierPubScope);
 	const _kind_VisibilityModifierPubScopeInPath_guard = _g(TSKindId.VisibilityModifierPubScopeInPath);
@@ -1952,6 +1972,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_AttributedOrderedField_guard = _g(TSKindId.AttributedOrderedField);
 	const _kind_TypeArgument_guard = _g(TSKindId.TypeArgument);
 	const _kind_MatchBlockArms_guard = _g(TSKindId.MatchBlockArms);
+	const _kind_TraitInterfaceDeclarationBody_guard = _g(TSKindId.TraitInterfaceDeclarationBody);
+	const _kind_ExtensionDeclarationBody_guard = _g(TSKindId.ExtensionDeclarationBody);
 	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
 	const _kind_AttributedParameterReceiver_guard = _g(TSKindId.AttributedParameterReceiver);
 	const _kind_ParametersElementsReceiver_guard = _g(TSKindId.ParametersElementsReceiver);
@@ -1959,6 +1981,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_TypeIdentifier_guard = _g(TSKindId.TypeIdentifier);
 	const _kind_FieldIdentifier_guard = _g(TSKindId.FieldIdentifier);
 	const _kind_ShorthandFieldIdentifier_guard = _g(TSKindId.ShorthandFieldIdentifier);
+	const _kind_MethodDeclaration_guard = _g(TSKindId.MethodDeclaration);
+	const _kind_SignatureMethodDeclaration_guard = _g(TSKindId.SignatureMethodDeclaration);
 	const _kind_FragmentSpecifier_guard = _mg(TSKindId.FragmentSpecifier);
 	const _kind_UnitType_guard = _mg(TSKindId.UnitType);
 	const _kind_NeverType_guard = _mg(TSKindId.NeverType);
@@ -2384,14 +2408,17 @@ export function guardsWith(test: KindTest): IsGuards {
 		attributedOrderedField: _kind_AttributedOrderedField_guard,
 		typeArgument: _kind_TypeArgument_guard,
 		matchBlockArms: _kind_MatchBlockArms_guard,
+		traitInterfaceDeclarationBody: _kind_TraitInterfaceDeclarationBody_guard,
+		extensionDeclarationBody: _kind_ExtensionDeclarationBody_guard,
 		receiverParameterDeclaration: _kind_ReceiverParameterDeclaration_guard,
 		attributedParameterReceiver: _kind_AttributedParameterReceiver_guard,
 		parametersElementsReceiver: _kind_ParametersElementsReceiver_guard,
 		parametersElementsReceiverGroup: _kind_ParametersElementsReceiverGroup_guard,
 		typeIdentifier: _kind_TypeIdentifier_guard,
 		fieldIdentifier: _kind_FieldIdentifier_guard,
-		crateVisibilityModifier: _kind_CrateVisibilityModifier_guard,
 		shorthandFieldIdentifier: _kind_ShorthandFieldIdentifier_guard,
+		methodDeclaration: _kind_MethodDeclaration_guard,
+		signatureMethodDeclaration: _kind_SignatureMethodDeclaration_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		statement: _mg(177),
 		declarationStatement: _supertype_declarationStatement_guard,
@@ -2458,7 +2485,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		docComment: _kind_DocComment_guard,
 		blockCommentContent: _kind_BlockCommentContent_guard,
 		stringClose: _kind_StringClose_guard,
-		errorSentinel: _kind_ErrorSentinel_guard
+		errorSentinel: _kind_ErrorSentinel_guard,
+		crateVisibilityModifier: _kind_CrateVisibilityModifier_guard
 	}) as unknown as IsGuards;
 }
 

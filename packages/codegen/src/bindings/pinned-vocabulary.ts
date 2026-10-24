@@ -99,11 +99,17 @@ function collect(statements: readonly Statement[], scope: readonly string[], out
 	}
 }
 
+type InterfaceMembers = NonNullable<ReturnType<ReturnType<InterfaceDeclaration.Parsed['body']>['members']>>;
+
+function pinnedMembers(declaration: InterfaceDeclaration.Parsed): InterfaceMembers | readonly [] {
+	return (declaration.body() as unknown as { content(): { members(): InterfaceMembers | undefined } | undefined }).content()?.members() ?? [];
+}
+
 function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
 	const { K, text } = source;
 	let path: string | undefined;
 	const members: Member[] = [];
-	for (const member of declaration.body().content()?.members() ?? []) {
+	for (const member of pinnedMembers(declaration)) {
 		if (member.$type !== K.PropertySignature) continue;
 		const name = identifier(member.name(), [K.PropertyIdentifier], source);
 		const typed = member.type();
@@ -183,7 +189,7 @@ function heritageNames(heritage: ExtendsTypeClause.Parsed | undefined, source: S
 
 function markerKey(declaration: InterfaceDeclaration.Parsed, source: Source): string | undefined {
 	const { K, text } = source;
-	const [member, ...rest] = declaration.body().content()?.members() ?? [];
+	const [member, ...rest] = pinnedMembers(declaration);
 	if (member === undefined || rest.length > 0 || member.$type !== K.PropertySignature) return undefined;
 	const annotation = member.type()?.type();
 	if (!isNode(annotation) || annotation.$type !== K.LiteralType || text(annotation) !== 'true') return undefined;

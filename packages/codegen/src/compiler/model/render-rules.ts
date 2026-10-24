@@ -5,7 +5,7 @@ import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type R
 import { ALIAS, CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/node-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
@@ -795,7 +795,8 @@ function isLexedKind(kind: string, nodeMap: NodeMap): boolean {
 }
 
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
-	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound) || isLexedKind(kind, nodeMap)) return false;
+	const node = nodeMap.nodes.get(kind);
+	if (!(node instanceof AbstractAssembledCompound) || layoutNodeOf(node) !== node || isLexedKind(kind, nodeMap)) return false;
 	const display = displayNameOf(kind, nodeMap);
 	return kind === display || !nodeMap.nodes.has(display);
 }
@@ -1066,7 +1067,7 @@ function seatedElementKinds(seats: readonly Seat[], nodeMap: NodeMap, edged: (ki
 function seatedUnitKinds(rules: Readonly<Record<string, RenderRule>>, nodeMap: NodeMap, ownEdges: (kind: string) => boolean): ReadonlySet<string> {
 	const unit = (kind: string): boolean => {
 		const node = nodeMap.nodes.get(kind);
-		return node !== undefined && isFixedTextLeaf(node);
+		return node !== undefined && isFixedTextLeaf(node) && node.aliasStorageNode === undefined;
 	};
 	const out = new Set<string>();
 	for (const seat of seatedElementKinds(seatsOf(rules, nodeMap), nodeMap, (kind) => ownEdges(kind) || unit(kind)).values()) {

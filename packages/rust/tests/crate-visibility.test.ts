@@ -14,11 +14,16 @@ describe('a bare crate visibility is the crate_visibility_modifier alias', () =>
 		);
 	});
 
-	it('coerces its kind id, directly and through an item', () => {
-		expect(rs.build.visibilityModifier(rust.kinds.Crate).$render()).toBe('crate');
-		expect(rs.build.visibilityModifier.coerce(rust.kinds.Crate).$render()).toBe('crate');
+	it('coerces its own kind id, directly and through an item', () => {
+		expect(rs.build.visibilityModifier(rust.kinds.CrateVisibilityModifier).$render()).toBe('crate');
+		expect(rs.build.visibilityModifier.coerce(rust.kinds.CrateVisibilityModifier).$render()).toBe('crate');
 		expect(
-			rs.build.functionItem({ visibilityModifier: rust.kinds.Crate, name: 'f', parameters: [], body: block() }).$render()
+			rs.build.functionItem({ visibilityModifier: rust.kinds.CrateVisibilityModifier, name: 'f', parameters: [], body: block() }).$render()
 		).toBe('crate fn f() {}');
+	});
+
+	it("takes the crate keyword's id as the keyword inside pub(crate), not as the display", () => {
+		expect(rs.build.visibilityModifier(rust.kinds.Crate).$render()).toBe('pub(crate)');
+		expect(rs.build.visibilityModifier.coerce(rust.kinds.Crate).$render()).toBe('pub(crate)');
 	});
 });

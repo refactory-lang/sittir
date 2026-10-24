@@ -412,6 +412,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
 
 enum Role {
     Layout,
+    Kind,
     Slot(SlotAttrs),
     Flank(FlankAttrs),
     SeparatorKind(SeparatorKindAttrs),
@@ -434,6 +435,7 @@ fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'
         .iter()
         .map(|field| {
             let ident = field.ident.as_ref().expect("a named field");
+            let key = attrs::wire_key(&field.attrs)?;
             let role = if let Some(slot) = attrs::slot_attrs(&field.attrs)? {
                 Role::Slot(slot)
             } else if let Some(flank) = attrs::flank_attrs(&field.attrs)? {
@@ -442,10 +444,12 @@ fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'
                 Role::SeparatorKind(separator)
             } else if is_layout(&field.ty) {
                 Role::Layout
+            } else if key.as_ref().is_some_and(|key| key.value() == "$type") {
+                Role::Kind
             } else {
                 Role::Other
             };
-            Ok(Field { ident, ty: &field.ty, role, key: attrs::wire_key(&field.attrs)? })
+            Ok(Field { ident, ty: &field.ty, role, key })
         })
         .collect()
 }
@@ -500,6 +504,13 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         })
         .collect();
     let record = crate::record::checks(ident, attrs.words, &stamped)?;
+    let kind_field = fields.iter().find(|field| matches!(field.role, Role::Kind));
+    match (kind_field, attrs.displays.is_empty()) {
+        (Some(field), true) => return Err(syn::Error::new_spanned(field.ident, "a `$type` field holds a display id: declare them with `#[node(displays = […])]`")),
+        (None, false) => return Err(syn::Error::new_spanned(ident, "a struct with `displays` holds the id it shows in a `#[wire(key = \"$type\")]` field")),
+        _ => {}
+    }
+    let displays = &attrs.displays;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -556,6 +567,8 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             use ::sittir_core::types::KindId as __Kind;
             #[allow(dead_code)]
             const __KIND: __Kind = #kind;
+            #[allow(dead_code)]
+            const __DISPLAYS: &[__Kind] = &[#(#displays),*];
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
             #items
@@ -625,6 +638,10 @@ fn common_inits(fields: &[Field<'_>], skip: &str, units: bool) -> Vec<TokenStrea
             match field.role {
                 Role::Layout if units => Some(quote!(#name: Some(ctx.layout_with_units(index, __at, true, __units)),)),
                 Role::Layout => Some(quote!(#name: Some(ctx.layout(index, __at, true)),)),
+                Role::Kind => Some(quote!(#name: {
+                    let __shown = __rt::display_id(&__node);
+                    if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
+                },)),
                 Role::Other => Some(quote!(#name: ::core::default::Default::default(),)),
                 _ => None,
             }

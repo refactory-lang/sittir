@@ -225,9 +225,13 @@ export const _fromMap = {
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
+	block_class_declaration: coerceToBlockClassDeclaration,
+	suite_block_class_declaration: coerceToSuiteBlockClassDeclaration,
+	decorated_definition_class_declaration: coerceToDecoratedDefinitionClassDeclaration,
 	names: coerceToNames,
 	as_pattern_target: coerceToAsPatternTarget,
-	format_expression: coerceToFormatExpression
+	format_expression: coerceToFormatExpression,
+	method_declaration: coerceToMethodDeclaration
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -560,9 +564,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140, 141, 142, 144, 145, 146,
 		147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209, 212, 213, 216, 219, 220,
 		221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259, 268, 271, 275, 277, 278,
-		280, 286, 287, 288, 289, 298, 337
+		280, 286, 287, 288, 289, 298, 343
 	]),
-	import_statement: new Set([135, 136, 181, 337]),
+	import_statement: new Set([136, 181, 343]),
 	future_import_statement: new Set([135, 136, 181, 280]),
 	import_list: new Set([136, 181]),
 	print_statement: new Set([
@@ -591,13 +595,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138, 140, 141, 142, 144, 145,
 		146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207, 208, 209, 212, 213, 216,
 		219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259, 268, 271, 275,
-		277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 337
+		277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 343
 	]),
 	finally_clause: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138, 140, 141, 142, 144, 145,
 		146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207, 208, 209, 212, 213, 216,
 		219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259, 268, 271, 275,
-		277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 337
+		277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 343
 	]),
 	with_item: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202, 206, 207, 208, 209, 212,
@@ -698,7 +702,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140, 141, 142, 144, 145, 146,
 		147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209, 212, 213, 216, 219, 220,
 		221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 268, 271, 275, 277, 278, 280,
-		286, 287, 288, 289, 298, 337
+		286, 287, 288, 289, 298, 343
 	]),
 	subjects: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202, 206, 207, 208, 209, 212,
@@ -784,7 +788,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140, 141, 142, 144, 145, 146,
 		147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209, 212, 213, 216, 219, 220,
 		221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259, 268, 271, 275, 277, 278,
-		280, 286, 287, 288, 289, 298, 337
+		280, 286, 287, 288, 289, 298, 343
 	]),
 	suite_block: new Set([179]),
 	suite_empty: new Set([115]),
@@ -792,12 +796,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202, 206, 207, 208, 209, 212,
 		213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 268, 271, 298
 	]),
-	names: new Set([135, 136, 181]),
+	suite_block_class_declaration: new Set([300]),
+	names: new Set([136, 181]),
 	as_pattern_target: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202, 206, 207, 208, 209, 212,
 		213, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 268, 271, 298
-	]),
-	format_expression: new Set([249])
+	])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};
 
@@ -1041,9 +1045,10 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	suite_block: TSKindId.SuiteBlock,
 	suite_empty: TSKindId.SuiteEmpty,
 	yield_from_clause: TSKindId.YieldFromClause,
+	block_class_declaration: TSKindId.BlockClassDeclaration,
+	suite_block_class_declaration: TSKindId.SuiteBlockClassDeclaration,
 	names: TSKindId.Names,
-	as_pattern_target: TSKindId.AsPatternTarget,
-	format_expression: TSKindId.FormatExpression
+	as_pattern_target: TSKindId.AsPatternTarget
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -1103,9 +1108,9 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	suite_inline: 'simple_statements_elements',
 	suite_block: 'block',
 	yield_from_clause: 'expression',
-	names: 'import_list',
-	as_pattern_target: 'expression',
-	format_expression: 'interpolation'
+	block_class_declaration: '_statement_class_definition',
+	suite_block_class_declaration: 'block_class_declaration',
+	as_pattern_target: 'expression'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -1157,9 +1162,8 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'suite_block',
 	'suite_empty',
 	'yield_from_clause',
-	'names',
-	'as_pattern_target',
-	'format_expression'
+	'suite_block_class_declaration',
+	'as_pattern_target'
 ]);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
@@ -1346,12 +1350,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildSuiteEmpty(children[0] as Parameters<typeof F.buildSuiteEmpty>[0]);
 		case 'yield_from_clause':
 			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
+		case 'block_class_declaration':
+			return (coerceToBlockClassDeclaration as (...args: unknown[]) => unknown)(...children);
+		case 'suite_block_class_declaration':
+			return F.buildSuiteBlockClassDeclaration(children[0] as Parameters<typeof F.buildSuiteBlockClassDeclaration>[0]);
 		case 'names':
-			return F.buildNames(children[0] as Parameters<typeof F.buildNames>[0]);
+			return (coerceToNames as (...args: unknown[]) => unknown)(...children);
 		case 'as_pattern_target':
 			return F.buildAsPatternTarget(children[0] as Parameters<typeof F.buildAsPatternTarget>[0]);
-		case 'format_expression':
-			return F.buildFormatExpression(children[0] as Parameters<typeof F.buildFormatExpression>[0]);
 		default:
 			return undefined;
 	}
@@ -1450,6 +1456,11 @@ function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
 const _super_suite: readonly string[] = ['suite_inline', 'suite_block', 'suite_empty'];
 const _super_match_block: readonly string[] = ['match_block_block', 'match_block_empty'];
 const _super_with_clause: readonly string[] = ['with_clause_bare', 'with_clause_paren'];
+const _super_suite_class_definition: readonly string[] = [
+	'suite_inline',
+	'suite_block_class_declaration',
+	'suite_empty'
+];
 const _super_integer_decimal: readonly string[] = [
 	'integer_decimal_long',
 	'integer_decimal_imaginary',
@@ -2022,6 +2033,19 @@ const _K44: readonly string[] = [
 const _K45: readonly string[] = ['pair', 'dictionary_splat'];
 const _K46: readonly string[] = ['for_in_clause', 'if_clause'];
 const _K47: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
+const _K48: readonly string[] = [
+	'_simple_statements',
+	'if_statement',
+	'for_statement',
+	'while_statement',
+	'try_statement',
+	'with_statement',
+	'method_declaration',
+	'class_definition',
+	'decorated_definition_class_declaration',
+	'match_statement'
+];
+const _K49: readonly string[] = ['class_definition', 'method_declaration'];
 
 export function coerceToModule(): T.EmptyModule;
 export function coerceToModule<const A extends T.Module.LooseArgs>(
@@ -2082,10 +2106,15 @@ export function resolveImportStatement_names(
 	return _resolveOneBranch<T.Names>(value, 'names');
 }
 
+export function coerceToImportStatement<const A extends T.Names.LooseArgs>(
+	...input: A & RefuseUndeclared<A, T.Names.LooseArgs>
+): ReturnType<typeof F.buildImportStatement>;
 export function coerceToImportStatement<const I extends T.ImportStatement.Loose>(
 	input: I & RefuseUndeclared<I, T.ImportStatement.Loose>
 ): ReturnType<typeof F.buildImportStatement>;
-export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
+export function coerceToImportStatement(...args: unknown[]): ReturnType<typeof F.buildImportStatement> {
+	if (args.length > 1) return F.buildImportStatement(coerceToNames(...(args as Parameters<typeof coerceToNames>)));
+	const input = args[0] as T.ImportStatement.Loose;
 	if (isNodeOfKind(input, TSKindId.ImportStatement))
 		return input as unknown as ReturnType<typeof F.buildImportStatement>;
 	return F.buildImportStatement(
@@ -3160,7 +3189,7 @@ export function resolveClassDefinition_bases(
 export function resolveClassDefinition_body(
 	value: T.ClassDefinition.LooseConfig['body']
 ): Admit<T.ClassDefinition['_body']> {
-	return _resolveOne<T.Suite>(value, _K0, _super_suite);
+	return _resolveOne<T.SuiteClassDefinition>(value, _K0, _super_suite_class_definition);
 }
 
 export function coerceToClassDefinition<const I extends T.ClassDefinition.Loose>(
@@ -7680,20 +7709,126 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function resolveNames_content(value: T.Names.LooseConfig['content']): Admit<T.Names['_content']> {
-	return _resolveOneBranch<T.ImportList>(value, 'import_list');
+export function coerceToBlockClassDeclaration<const A extends T.BlockClassDeclaration.LooseArgs>(
+	...input: A & RefuseUndeclared<A, T.BlockClassDeclaration.LooseArgs>
+): ReturnType<typeof F.buildBlockClassDeclaration>;
+export function coerceToBlockClassDeclaration(
+	...input: T.BlockClassDeclaration.LooseArgs
+): ReturnType<typeof F.buildBlockClassDeclaration> {
+	currentHandle()?.admit(TSKindId.BlockClassDeclaration, input);
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.BlockClassDeclaration)) {
+		const data = input[0];
+		const stored = (data as unknown as { _statements?: unknown })._statements;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildBlockClassDeclaration(
+			...(_resolveMany<T.StatementClassDefinition>(children, _K0, _K48) as unknown as Parameters<
+				typeof F.buildBlockClassDeclaration
+			>)
+		);
+	}
+	const _elems: readonly unknown[] = (() => {
+		if (input.length !== 1) return input;
+		const head: unknown = input[0];
+		if (Array.isArray(head)) return head;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('statements' in head)) return input;
+		const v = (head as Record<string, unknown>)['statements'];
+		return Array.isArray(v) ? v : [v];
+	})();
+	return F.buildBlockClassDeclaration(
+		...(_resolveMany<T.StatementClassDefinition>(_elems, _K0, _K48) as unknown as Parameters<
+			typeof F.buildBlockClassDeclaration
+		>)
+	);
 }
 
-export function coerceToNames<const I extends T.Names.Loose>(
-	input: I & RefuseUndeclared<I, T.Names.Loose>
+export function resolveSuiteBlockClassDeclaration_blockClassDeclaration(
+	value: T.SuiteBlockClassDeclaration.LooseConfig['blockClassDeclaration'] | undefined
+): Admit<T.SuiteBlockClassDeclaration['_block_class_declaration']> {
+	return _resolveOneBranch<T.BlockClassDeclaration>(value, 'block_class_declaration');
+}
+
+export function coerceToSuiteBlockClassDeclaration<const A extends T.BlockClassDeclaration.LooseArgs>(
+	...input: A & RefuseUndeclared<A, T.BlockClassDeclaration.LooseArgs>
+): ReturnType<typeof F.buildSuiteBlockClassDeclaration>;
+export function coerceToSuiteBlockClassDeclaration<const I extends T.SuiteBlockClassDeclaration.Loose>(
+	...input: [input?: I] & RefuseUndeclared<I, T.SuiteBlockClassDeclaration.Loose>
+): ReturnType<typeof F.buildSuiteBlockClassDeclaration>;
+export function coerceToSuiteBlockClassDeclaration(
+	...args: unknown[]
+): ReturnType<typeof F.buildSuiteBlockClassDeclaration> {
+	if (args.length > 1)
+		return F.buildSuiteBlockClassDeclaration(
+			coerceToBlockClassDeclaration(...(args as Parameters<typeof coerceToBlockClassDeclaration>))
+		);
+	const input = args[0] as T.SuiteBlockClassDeclaration.Loose | undefined;
+	if (input !== undefined && isNodeOfKind(input, TSKindId.SuiteBlockClassDeclaration))
+		return input as unknown as ReturnType<typeof F.buildSuiteBlockClassDeclaration>;
+	return F.buildSuiteBlockClassDeclaration(
+		_resolveOneBranch<T.BlockClassDeclaration>(
+			configFieldOr(input, 'blockClassDeclaration', () => input),
+			'block_class_declaration'
+		) ?? F.buildBlockClassDeclaration()
+	);
+}
+
+export function resolveDecoratedDefinitionClassDeclaration_decorators(
+	value: T.DecoratedDefinitionClassDeclaration.LooseConfig['decorators']
+): Admit<T.DecoratedDefinitionClassDeclaration['_decorator']> {
+	return _resolveManyBranch<T.Decorator>(value, 'decorator') as Admit<
+		T.DecoratedDefinitionClassDeclaration['_decorator']
+	>;
+}
+
+export function resolveDecoratedDefinitionClassDeclaration_definition(
+	value: T.DecoratedDefinitionClassDeclaration.LooseConfig['definition']
+): Admit<T.DecoratedDefinitionClassDeclaration['_definition']> {
+	return _resolveOne<T.ClassDefinition | T.MethodDeclaration>(value, _K0, _K49);
+}
+
+export function coerceToDecoratedDefinitionClassDeclaration<
+	const I extends T.DecoratedDefinitionClassDeclaration.Loose
+>(
+	input: I & RefuseUndeclared<I, T.DecoratedDefinitionClassDeclaration.Loose>
+): ReturnType<typeof F.buildDecoratedDefinitionClassDeclaration>;
+export function coerceToDecoratedDefinitionClassDeclaration(
+	input: T.DecoratedDefinitionClassDeclaration.Loose
+): ReturnType<typeof F.buildDecoratedDefinitionClassDeclaration> {
+	if (!_isLooseConfig<T.DecoratedDefinitionClassDeclaration.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildDecoratedDefinitionClassDeclaration>;
+	currentHandle()?.admit(TSKindId.DecoratedDefinitionClassDeclaration, [input]);
+	return F.buildDecoratedDefinitionClassDeclaration({
+		decorators: resolveDecoratedDefinitionClassDeclaration_decorators(input.decorators),
+		definition: resolveDecoratedDefinitionClassDeclaration_definition(input.definition)
+	});
+}
+
+export function coerceToNames<const A extends T.Names.LooseArgs>(
+	...input: A & RefuseUndeclared<A, T.Names.LooseArgs>
 ): ReturnType<typeof F.buildNames>;
-export function coerceToNames(input: T.Names.Loose): ReturnType<typeof F.buildNames> {
-	if (isNodeOfKind(input, TSKindId.Names)) return input as unknown as ReturnType<typeof F.buildNames>;
+export function coerceToNames(...input: T.Names.LooseArgs): ReturnType<typeof F.buildNames> {
+	currentHandle()?.admit(TSKindId.Names, input);
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Names)) {
+		const data = input[0];
+		const stored = (data as unknown as { _name?: unknown })._name;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildNames(
+			{
+				delimiter: (() => {
+					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
+					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
+				})()
+			},
+			...(children as unknown as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>)
+		);
+	}
 	return F.buildNames(
-		_resolveOneBranch<T.ImportList>(
-			configFieldOr(input, 'content', () => input),
-			'import_list'
-		)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.DottedName | T.AliasedImport>(els, _K0, _K5),
+			['dotted_name', 'aliased_import']
+		) as unknown as NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>)
 	);
 }
 
@@ -7729,22 +7864,101 @@ export function coerceToAsPatternTarget(input: T.AsPatternTarget.Loose): ReturnT
 	);
 }
 
-export function resolveFormatExpression_content(
-	value: T.FormatExpression.LooseConfig['content']
-): Admit<T.FormatExpression['_content']> {
-	return _resolveOneBranch<T.Interpolation>(value, 'interpolation');
+export function resolveFormatExpression_expression(
+	value: T.FormatExpression.LooseConfig['expression']
+): Admit<T.FormatExpression['_expression']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () =>
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K7, _K37)
+		),
+		[]
+	);
+}
+
+export function resolveFormatExpression_debug(
+	value: T.FormatExpression.LooseConfig['debug']
+): Admit<T.FormatExpression['_debug']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveFormatExpression_typeConversion(
+	value: T.FormatExpression.LooseConfig['typeConversion']
+): Admit<T.FormatExpression['_type_conversion']> {
+	return _resolveOneLeaf<T.TypeConversion>(value, 'type_conversion');
+}
+
+export function resolveFormatExpression_formatSpecifier(
+	value: T.FormatExpression.LooseConfig['formatSpecifier']
+): Admit<T.FormatExpression['_format_specifier']> {
+	return _resolveOneBranch<T.FormatSpecifier>(value, 'format_specifier', undefined, true);
 }
 
 export function coerceToFormatExpression<const I extends T.FormatExpression.Loose>(
 	input: I & RefuseUndeclared<I, T.FormatExpression.Loose>
 ): ReturnType<typeof F.buildFormatExpression>;
 export function coerceToFormatExpression(input: T.FormatExpression.Loose): ReturnType<typeof F.buildFormatExpression> {
-	if (isNodeOfKind(input, TSKindId.FormatExpression))
+	if (!_isLooseConfig<T.FormatExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFormatExpression>;
-	return F.buildFormatExpression(
-		_resolveOneBranch<T.Interpolation>(
-			configFieldOr(input, 'content', () => input),
-			'interpolation'
-		)
-	);
+	currentHandle()?.admit(TSKindId.FormatExpression, [input]);
+	return F.buildFormatExpression({
+		expression: resolveFormatExpression_expression(input.expression),
+		debug: resolveFormatExpression_debug(input.debug),
+		typeConversion: resolveFormatExpression_typeConversion(input.typeConversion),
+		formatSpecifier: resolveFormatExpression_formatSpecifier(input.formatSpecifier)
+	});
+}
+
+export function resolveMethodDeclaration_async(
+	value: T.MethodDeclaration.LooseConfig['async']
+): Admit<T.MethodDeclaration['_async']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveMethodDeclaration_name(
+	value: T.MethodDeclaration.LooseConfig['name']
+): Admit<T.MethodDeclaration['_name']> {
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+}
+
+export function resolveMethodDeclaration_typeParameters(
+	value: T.MethodDeclaration.LooseConfig['typeParameters']
+): Admit<T.MethodDeclaration['_type_parameters']> {
+	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter', undefined, true);
+}
+
+export function resolveMethodDeclaration_parameters(
+	value: T.MethodDeclaration.LooseConfig['parameters']
+): Admit<T.MethodDeclaration['_parameters']> {
+	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+}
+
+export function resolveMethodDeclaration_returnType(
+	value: T.MethodDeclaration.LooseConfig['returnType']
+): Admit<T.MethodDeclaration['_return_type']> {
+	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
+}
+
+export function resolveMethodDeclaration_body(
+	value: T.MethodDeclaration.LooseConfig['body']
+): Admit<T.MethodDeclaration['_body']> {
+	return _resolveOne<T.Suite>(value, _K0, _super_suite);
+}
+
+export function coerceToMethodDeclaration<const I extends T.MethodDeclaration.Loose>(
+	input: I & RefuseUndeclared<I, T.MethodDeclaration.Loose>
+): ReturnType<typeof F.buildMethodDeclaration>;
+export function coerceToMethodDeclaration(
+	input: T.MethodDeclaration.Loose
+): ReturnType<typeof F.buildMethodDeclaration> {
+	if (!_isLooseConfig<T.MethodDeclaration.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildMethodDeclaration>;
+	currentHandle()?.admit(TSKindId.MethodDeclaration, [input]);
+	return F.buildMethodDeclaration({
+		async: resolveMethodDeclaration_async(input.async),
+		name: resolveMethodDeclaration_name(input.name),
+		typeParameters: resolveMethodDeclaration_typeParameters(input.typeParameters),
+		parameters: resolveMethodDeclaration_parameters(input.parameters) ?? F.buildParameters(),
+		returnType: resolveMethodDeclaration_returnType(input.returnType),
+		body: resolveMethodDeclaration_body(input.body)
+	});
 }

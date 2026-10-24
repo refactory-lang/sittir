@@ -5,8 +5,8 @@ import { rows as rust } from '../../rust/src/portable.ts';
 import { rows as typescript } from '../../typescript/src/portable.ts';
 
 const PLACED_CEILING = {
-	python: { within: 3, up: 1 },
-	rust: { within: 54, up: 0 },
+	python: { within: 0, up: 0 },
+	rust: { within: 35, up: 0 },
 	typescript: { within: 0, up: 0 }
 };
 

@@ -600,3 +600,4 @@ export const formalParametersElementsReceiver = bundle(
 	C.coerceToFormalParametersElementsReceiver,
 	{ key: 'formalParametersElementsReceiver', max: 1 }
 );
+export const interfaceBody = bundle(F.buildInterfaceBody, C.coerceToInterfaceBody, { key: 'interfaceBody', max: 1 });

@@ -645,7 +645,7 @@ export function kindEnumAltIdPairs(
 		if (!isFixedTextLeaf(target)) continue;
 		const stored = keywordRefWireIdentity(value, target).kindId;
 		if (stored === undefined) continue;
-		for (const alt of [value.storageKindId, value.parseKindId, target.resolvedKindId]) {
+		for (const alt of [value.storageKindId, value.parseKindId, target.aliasStorageNode === undefined ? target.resolvedKindId : undefined]) {
 			if (alt === undefined || alt === stored || seen.has(alt)) continue;
 			seen.add(alt);
 			out.push([alt, stored]);
@@ -1294,6 +1294,10 @@ export function importLocalName(specifier: string): string {
 
 export function isDeclaredSupertype(node: AssembledNode | undefined): node is AssembledSupertype {
 	return node instanceof AssembledSupertype && node.declared;
+}
+
+export function isAuthoredSupertype(node: AssembledNode | undefined): node is AssembledSupertype {
+	return isDeclaredSupertype(node) && node.splitFrom === undefined;
 }
 
 export function pruneUnusedImports(lines: readonly string[], names: readonly string[]): string[] {

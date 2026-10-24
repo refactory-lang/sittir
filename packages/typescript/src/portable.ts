@@ -4870,6 +4870,7 @@ const table: PortableTable = {
 		[TSKindId.Newline]: '\n',
 		[TSKindId.Blankline]: '\n\n',
 		[TSKindId.DoubleBlankline]: '\n\n\n',
+		[TSKindId.ThisType]: 'this',
 		[TSKindId.Star]: '*',
 		[TSKindId.AsKeyword]: 'as',
 		[TSKindId.DefaultKeyword]: 'default',

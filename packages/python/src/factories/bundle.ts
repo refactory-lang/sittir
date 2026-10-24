@@ -7,10 +7,7 @@ export * from './coerce.js';
 
 export const module = bundle(F.buildModule, C.coerceToModule);
 export const simpleStatements = bundle(F.buildSimpleStatements, C.coerceToSimpleStatements);
-export const importStatement = bundle(F.buildImportStatement, C.coerceToImportStatement, {
-	key: 'importStatement',
-	max: 1
-});
+export const importStatement = bundle(F.buildImportStatement, C.coerceToImportStatement);
 export const relativeImport = bundle(F.buildRelativeImport, C.coerceToRelativeImport, {
 	key: 'relativeImport',
 	max: 1
@@ -287,3 +284,22 @@ export const matchBlockEmpty = bundle(F.buildMatchBlockEmpty, C.coerceToMatchBlo
 export const suiteInline = bundle(F.buildSuiteInline, C.coerceToSuiteInline);
 export const suiteBlock = bundle(F.buildSuiteBlock, C.coerceToSuiteBlock);
 export const suiteEmpty = bundle(F.buildSuiteEmpty, C.coerceToSuiteEmpty, { key: 'suiteEmpty', max: 1 });
+export const blockClassDeclaration = bundle(F.buildBlockClassDeclaration, C.coerceToBlockClassDeclaration);
+export const suiteBlockClassDeclaration = bundle(
+	F.buildSuiteBlockClassDeclaration,
+	C.coerceToSuiteBlockClassDeclaration
+);
+export const decoratedDefinitionClassDeclaration = bundle(
+	F.buildDecoratedDefinitionClassDeclaration,
+	C.coerceToDecoratedDefinitionClassDeclaration,
+	{ key: 'decoratedDefinitionClassDeclaration', max: 1 }
+);
+export const names = bundle(F.buildNames, C.coerceToNames);
+export const formatExpression = bundle(F.buildFormatExpression, C.coerceToFormatExpression, {
+	key: 'formatExpression',
+	max: 1
+});
+export const methodDeclaration = bundle(F.buildMethodDeclaration, C.coerceToMethodDeclaration, {
+	key: 'methodDeclaration',
+	max: 1
+});

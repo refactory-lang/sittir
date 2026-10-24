@@ -55,16 +55,17 @@ export interface PortableIds {
 		| TSKindId.ClassDefinition
 		| TSKindId.DefaultParameter
 		| TSKindId.FunctionDefinition
+		| TSKindId.MethodDeclaration
 		| TSKindId.TypeAliasStatement
 		| TSKindId.TypeParameter
 		| TSKindId.TypedDefaultParameter
 		| TSKindId.TypedParameter;
 	'declaration.class': TSKindId.ClassDefinition;
 	'declaration.constant': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
-	'declaration.constructor': TSKindId.FunctionDefinition;
+	'declaration.constructor': TSKindId.MethodDeclaration;
 	'declaration.function': TSKindId.FunctionDefinition;
-	'declaration.method': TSKindId.FunctionDefinition;
-	'declaration.method.special': TSKindId.FunctionDefinition;
+	'declaration.method': TSKindId.MethodDeclaration;
+	'declaration.method.special': TSKindId.MethodDeclaration;
 	'declaration.parameter': TSKindId.DefaultParameter | TSKindId.TypedDefaultParameter | TSKindId.TypedParameter;
 	'declaration.parameter.default': TSKindId.DefaultParameter;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
@@ -353,6 +354,7 @@ export interface PortableIds {
 	statement:
 		| TSKindId.AssertStatement
 		| TSKindId.Block
+		| TSKindId.BlockClassDeclaration
 		| TSKindId.BreakStatement
 		| TSKindId.ContinueStatement
 		| TSKindId.DeleteStatement
@@ -376,7 +378,7 @@ export interface PortableIds {
 		| TSKindId.WhileStatement
 		| TSKindId.WithStatement;
 	'statement.assert': TSKindId.AssertStatement;
-	'statement.block': TSKindId.Block;
+	'statement.block': TSKindId.Block | TSKindId.BlockClassDeclaration;
 	'statement.break': TSKindId.BreakStatement;
 	'statement.continue': TSKindId.ContinueStatement;
 	'statement.delete': TSKindId.DeleteStatement;
@@ -1771,6 +1773,7 @@ const table: PortableTable = {
 				TSKindId.ClassDefinition,
 				TSKindId.DefaultParameter,
 				TSKindId.FunctionDefinition,
+				TSKindId.MethodDeclaration,
 				TSKindId.TypeAliasStatement,
 				TSKindId.TypeParameter,
 				TSKindId.TypedDefaultParameter,
@@ -1783,10 +1786,10 @@ const table: PortableTable = {
 			ids: [TSKindId.AssignmentEq, TSKindId.AssignmentType, TSKindId.AssignmentTyped],
 			exact: false
 		},
-		'declaration.constructor': { ids: [TSKindId.FunctionDefinition], exact: false },
-		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: false },
-		'declaration.method': { ids: [TSKindId.FunctionDefinition], exact: false },
-		'declaration.method.special': { ids: [TSKindId.FunctionDefinition], exact: false },
+		'declaration.constructor': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: true },
+		'declaration.method': { ids: [TSKindId.MethodDeclaration], exact: false },
+		'declaration.method.special': { ids: [TSKindId.MethodDeclaration], exact: false },
 		'declaration.parameter': {
 			ids: [TSKindId.DefaultParameter, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
 			exact: true
@@ -2132,6 +2135,7 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.AssertStatement,
 				TSKindId.Block,
+				TSKindId.BlockClassDeclaration,
 				TSKindId.BreakStatement,
 				TSKindId.ContinueStatement,
 				TSKindId.DeleteStatement,
@@ -2158,7 +2162,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'statement.assert': { ids: [TSKindId.AssertStatement], exact: true },
-		'statement.block': { ids: [TSKindId.Block], exact: true },
+		'statement.block': { ids: [TSKindId.Block, TSKindId.BlockClassDeclaration], exact: true },
 		'statement.break': { ids: [TSKindId.BreakStatement], exact: true },
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
 		'statement.delete': { ids: [TSKindId.DeleteStatement], exact: true },
@@ -2380,6 +2384,7 @@ const table: PortableTable = {
 			{ path: 'expression.binary', within: [], test: [] }
 		],
 		[TSKindId.Block]: [{ path: 'statement.block', within: [], test: [] }],
+		[TSKindId.BlockClassDeclaration]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.BooleanOperator]: [
 			{
 				path: 'expression.binary.logical.and',
@@ -2607,30 +2612,7 @@ const table: PortableTable = {
 		[TSKindId.ForInClause]: [{ path: 'clause.comprehension.for', within: [], test: [] }],
 		[TSKindId.ForStatement]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
 		[TSKindId.FormatSpecifier]: [{ path: 'expression.interpolation.format', within: [], test: [] }],
-		[TSKindId.FunctionDefinition]: [
-			{
-				path: 'declaration.method',
-				within: [TSKindId.DecoratedDefinition],
-				test: [{ up: 1, via: [{ slots: { '177': 0 } }], plan: { op: 'eq', text: 'staticmethod', slots: { '178': 0 } } }]
-			},
-			{
-				path: 'declaration.constructor',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '164': 1 } } }]
-			},
-			{
-				path: 'declaration.method.special',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '164': 1 } } }]
-			},
-			{
-				path: 'declaration.method',
-				within: [TSKindId.DecoratedDefinition, TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition],
-				test: []
-			},
-			{ path: 'declaration.method', within: [TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition], test: [] },
-			{ path: 'declaration.function', within: [], test: [] }
-		],
+		[TSKindId.FunctionDefinition]: [{ path: 'declaration.function', within: [], test: [] }],
 		[TSKindId.FutureImportStatement]: [{ path: 'statement.import.future', within: [], test: [] }],
 		[TSKindId.GeneratorExpression]: [{ path: 'expression.comprehension.generator', within: [], test: [] }],
 		[TSKindId.GenericType]: [{ path: 'type.generic', within: [], test: [] }],
@@ -2659,6 +2641,19 @@ const table: PortableTable = {
 		[TSKindId.ListSplatPattern]: [{ path: 'pattern.rest', within: [], test: [] }],
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
 		[TSKindId.MemberType]: [{ path: 'type.path', within: [], test: [] }],
+		[TSKindId.MethodDeclaration]: [
+			{
+				path: 'declaration.constructor',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '342': 1 } } }]
+			},
+			{
+				path: 'declaration.method.special',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '342': 1 } } }]
+			},
+			{ path: 'declaration.method', within: [], test: [] }
+		],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.NamedExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
 		[TSKindId.None]: [{ path: 'literal.null', within: [], test: [] }],
@@ -2926,19 +2921,21 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '159': 0 } } },
 	[TSKindId.ForInClause]: { async: { op: 'present', slots: { '243': 0 } } },
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '156': 0 } } },
-	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '164': 0 } }, static: null },
+	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '164': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '249': 1 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '342': 0 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '161': 0 } } }
 } satisfies QueryFlags);
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
-	127: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
+	127: { statements: { async: { types: [], kinds: [156, 161, 164] } } },
 	158: { handlers: { group: { types: [], kinds: [159] } } },
-	177: { definition: { async: { types: [], kinds: [164] }, static: { kind: 164 } } },
-	179: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
+	177: { definition: { async: { types: [], kinds: [164] } } },
+	179: { statements: { async: { types: [], kinds: [156, 161, 164] } } },
 	247: { contents: { debug: { types: [], kinds: [249] } } },
 	281: { contents: { async: { types: [], kinds: [243] } } },
-	336: { content: { debug: { types: [], kinds: [249] } } }
+	300: { statements: { async: { types: [], kinds: [156, 161, 342] } } },
+	302: { definition: { async: { types: [], kinds: [342] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
@@ -2957,6 +2954,9 @@ declare module './types.js' {
 	}
 	interface Interpolation {
 		readonly __flags__?: 'debug';
+	}
+	interface MethodDeclaration {
+		readonly __flags__?: 'async';
 	}
 	interface WithStatement {
 		readonly __flags__?: 'async';
@@ -2979,7 +2979,10 @@ declare module './types.js' {
 	interface ComprehensionClauses {
 		readonly __slotFlags__?: { readonly contents: 'async' };
 	}
-	interface FormatExpression {
-		readonly __slotFlags__?: { readonly content: 'debug' };
+	interface BlockClassDeclaration {
+		readonly __slotFlags__?: { readonly statements: 'async' };
+	}
+	interface DecoratedDefinitionClassDeclaration {
+		readonly __slotFlags__?: { readonly definition: 'async' };
 	}
 }

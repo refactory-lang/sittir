@@ -119,7 +119,7 @@ export const primaryType: {
 	readonly flowMaybe: typeof F.flowMaybeType;
 	readonly query: typeof F.typeQuery;
 	readonly indexQuery: typeof F.indexTypeQuery;
-	readonly this: typeof F.buildThis;
+	readonly this: typeof F.buildThisType;
 	readonly existential: typeof F.buildExistentialType;
 	readonly literal: typeof F.literalType;
 	readonly lookup: typeof F.lookupType;
@@ -137,7 +137,7 @@ export const primaryType: {
 	flowMaybe: F.flowMaybeType,
 	query: F.typeQuery,
 	indexQuery: F.indexTypeQuery,
-	this: F.buildThis,
+	this: F.buildThisType,
 	existential: F.buildExistentialType,
 	literal: F.literalType,
 	lookup: F.lookupType,
@@ -419,6 +419,7 @@ export const ir: {
 	readonly publicFieldDefinitionAccessor: typeof F.publicFieldDefinitionAccessor;
 	readonly receiverParameterDeclaration: typeof F.receiverParameterDeclaration;
 	readonly formalParametersElementsReceiver: typeof F.formalParametersElementsReceiver;
+	readonly interfaceBody: typeof F.interfaceBody;
 	readonly declaration: typeof F.declaration;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
@@ -461,6 +462,7 @@ export const ir: {
 	readonly formalParametersGetAccessorSignature: typeof F.buildFormalParametersGetAccessorSignature;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
 	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
+	readonly thisType: typeof F.buildThisType;
 	readonly hashBangLine: typeof F.buildHashBangLine;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly privatePropertyIdentifier: typeof F.buildPrivatePropertyIdentifier;
@@ -690,6 +692,7 @@ export const ir: {
 	publicFieldDefinitionAccessor: F.publicFieldDefinitionAccessor,
 	receiverParameterDeclaration: F.receiverParameterDeclaration,
 	formalParametersElementsReceiver: F.formalParametersElementsReceiver,
+	interfaceBody: F.interfaceBody,
 	declaration: F.declaration,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
@@ -734,6 +737,7 @@ export const ir: {
 	formalParametersGetAccessorSignature: F.buildFormalParametersGetAccessorSignature,
 	automaticSemicolon: F.buildAutomaticSemicolon,
 	functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
+	thisType: F.buildThisType,
 
 	// Leaves whose one slot is their own text
 	hashBangLine: F.buildHashBangLine,

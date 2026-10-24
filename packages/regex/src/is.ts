@@ -171,12 +171,6 @@ export interface IsGuards {
 	inlineFlagsGroupDisable<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InlineFlagsGroupDisable };
-	lazy<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Lazy };
-	unicodePropertyName<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	readonly inlineFlagsGroup: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.InlineFlagsGroup]>;
@@ -240,6 +234,10 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharacterClassEscapeText2 };
 	negation<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Negation>;
+	lazy<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Lazy>;
+	unicodePropertyName<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyName };
 }
 
 const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
@@ -326,8 +324,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_UnicodePropertyValueExpressionGroup_guard = _g(TSKindId.UnicodePropertyValueExpressionGroup);
 	const _kind_UnicodePropertyValueExpression_guard = _g(TSKindId.UnicodePropertyValueExpression);
 	const _kind_IdentityEscape_guard = _g(TSKindId.IdentityEscape);
-	const _kind_Lazy_guard = _g(TSKindId.Lazy);
-	const _kind_UnicodePropertyName_guard = _g(TSKindId.UnicodePropertyName);
 	const _kind_PosixClassName_guard = _g(TSKindId.PosixClassName);
 	const _kind_ClassCharacter_guard = _g(TSKindId.ClassCharacter);
 	const _kind_Flags_guard = _g(TSKindId.Flags);
@@ -339,6 +335,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CharacterClassEscapeText1_guard = _g(TSKindId.CharacterClassEscapeText1);
 	const _kind_CharacterClassEscapeText2_guard = _g(TSKindId.CharacterClassEscapeText2);
 	const _kind_Negation_guard = _mg(TSKindId.Negation);
+	const _kind_Lazy_guard = _mg(TSKindId.Lazy);
+	const _kind_UnicodePropertyName_guard = _g(TSKindId.UnicodePropertyName);
 	const _form_Pattern_guard = _vg(_g(TSKindId.Pattern), {
 		alternation: _at(_kind_Pattern_guard, 'content', _kind_Alternation_guard),
 		term: _at(_kind_Pattern_guard, 'content', _kind_Term_guard)
@@ -438,8 +436,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		inlineFlagsGroupEnable: _kind_InlineFlagsGroupEnable_guard,
 		inlineFlagsGroupToggle: _kind_InlineFlagsGroupToggle_guard,
 		inlineFlagsGroupDisable: _kind_InlineFlagsGroupDisable_guard,
-		lazy: _kind_Lazy_guard,
-		unicodePropertyName: _kind_UnicodePropertyName_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
 		layout: _sg(_supertype_layout_ids),
@@ -461,7 +457,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		decimalDigits: _kind_DecimalDigits_guard,
 		characterClassEscapeText1: _kind_CharacterClassEscapeText1_guard,
 		characterClassEscapeText2: _kind_CharacterClassEscapeText2_guard,
-		negation: _kind_Negation_guard
+		negation: _kind_Negation_guard,
+		lazy: _kind_Lazy_guard,
+		unicodePropertyName: _kind_UnicodePropertyName_guard
 	}) as unknown as IsGuards;
 }
 

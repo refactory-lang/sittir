@@ -29,7 +29,7 @@ import {
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
 import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
-import { GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
+import { aliasStorageOf, GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { KindProvenance } from '../types.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
@@ -1040,6 +1040,8 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	typeKey?: string;
 	builderPath?: readonly string[];
 	builderPathAlternates?: readonly (readonly string[])[];
+	aliasStorageNode?: AssembledNode;
+	aliasDisplays: readonly AssembledNode[] = [];
 	abstract readonly modelType: ModelType;
 
 	get kindId(): number | undefined {
@@ -1078,6 +1080,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 
 	get ruleMetadata(): RuleMetadata | undefined {
 		return this.rule.metadata;
+	}
+
+	get aliasStorage(): string | undefined {
+		return aliasStorageOf(this.rule.metadata);
 	}
 
 	get diagnosticRule(): R {
@@ -1377,12 +1383,13 @@ export function resolveSlotAliasPairs(
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
 		if (node instanceof AssembledSupertype) candidates.push(...(node.subtypeRestampPairs ?? []));
 	}
-	const readAsEnvelope = ([parseKind, storage]: readonly [string, string]): boolean => {
+	const readAsItself = ([parseKind, storage]: readonly [string, string]): boolean => {
+		const display = ctx.nodes.get(parseKind);
 		const stored = ctx.nodes.get(storage);
-		return ctx.nodes.get(parseKind) instanceof AssembledAlias && stored !== undefined && !isTerminalNode(stored);
+		return (display instanceof AssembledAlias || display?.aliasStorageNode !== undefined) && stored !== undefined && !isTerminalNode(stored);
 	};
 	const storagesByParseName = new Map<string, Set<string>>();
-	for (const [parseKind, storage] of candidates.filter((pair) => !readAsEnvelope(pair))) {
+	for (const [parseKind, storage] of candidates.filter((pair) => !readAsItself(pair))) {
 		storagesByParseName.set(parseKind, (storagesByParseName.get(parseKind) ?? new Set<string>()).add(storage));
 	}
 	const pairs = [...storagesByParseName].flatMap(([parseKind, storages]) =>
@@ -1588,6 +1595,14 @@ export function isPatternLeaf(node: AssembledNode): node is AssembledPattern {
 
 export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
+}
+
+export function layoutNodeOf(node: AssembledNode): AssembledNode {
+	return node.aliasStorageNode === undefined || isFixedTextLeaf(node) ? node : node.aliasStorageNode;
+}
+
+export function layoutDisplaysOf(node: AssembledNode): readonly AssembledNode[] {
+	return node.aliasDisplays.filter((display) => layoutNodeOf(display) === node);
 }
 
 export function isBuilderTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
@@ -2013,7 +2028,7 @@ const COMPOUND_CLASS_BY_MODEL_TYPE: Record<CompoundModelType, CompoundClass> = {
 	alias: AssembledAlias
 };
 
-function aliasContentRefs(body: SimplifiedRule | undefined): readonly { readonly name: string }[] | undefined {
+export function aliasContentRefs(body: SimplifiedRule | undefined): readonly { readonly name: string }[] | undefined {
 	if (body?.type === SYMBOL) return [body];
 	if (body?.type === CHOICE && body.members.length > 0 && body.members.every((m) => m.type === SYMBOL))
 		return body.members as readonly { readonly name: string }[];
@@ -2030,7 +2045,9 @@ export function isAliasEnvelopeKind(display: string, ctx: CompoundModelTypeCtx):
 	});
 }
 export function aliasEnvelopeOf(ref: { readonly aliasedTo?: string }, ctx: CompoundModelTypeCtx): string | undefined {
-	return ref.aliasedTo !== undefined && isAliasEnvelopeKind(ref.aliasedTo, ctx) ? ref.aliasedTo : undefined;
+	const display = ref.aliasedTo;
+	if (display === undefined) return undefined;
+	return isAliasEnvelopeKind(display, ctx) || aliasStorageOf(ctx.simplifiedRules[display]?.metadata) !== undefined ? display : undefined;
 }
 export function branchClassFor(kind: string, simplifiedRule: SimplifiedRule, ctx: CompoundModelTypeCtx): CompoundClass {
 	return COMPOUND_CLASS_BY_MODEL_TYPE[compoundModelTypeFor(kind, simplifiedRule, ctx)];

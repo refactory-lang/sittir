@@ -304,7 +304,8 @@ export const _fromMap = {
 	shorthand_property_identifier_pattern: coerceToShorthandPropertyIdentifierPattern,
 	property_identifier: coerceToPropertyIdentifier,
 	type_identifier: coerceToTypeIdentifier,
-	interface_body: coerceToInterfaceBody
+	interface_body: coerceToInterfaceBody,
+	this_type: coerceToThisType
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -430,7 +431,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	type_identifier: {
 		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
-	}
+	},
+	this_type: { values: ['this'], factory: () => F.buildThisType }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'hash_bang_line',
@@ -479,7 +481,8 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'_blankline',
 	'_double_blankline',
 	'_indent',
-	'_dedent'
+	'_dedent',
+	'this_type'
 ]);
 
 function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
@@ -511,6 +514,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'empty_statement',
 	'optional_chain',
 	'this',
+	'this_type',
 	'super',
 	'true',
 	'false',
@@ -681,7 +685,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 	117, 121, 123, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 	148, 149, 150, 151, 165, 167, 169, 170, 171, 172, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 225, 253,
-	277, 278, 279, 280, 281, 324, 325, 362, 365, 393, 406, 414, 438, 439, 445
+	277, 278, 279, 280, 281, 324, 325, 362, 365, 393, 406, 414, 438, 439, 445, 499
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	namespace_export: new Set([1, 422, 423]),
@@ -771,83 +775,83 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	omitting_type_annotation: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	adding_type_annotation: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	opting_type_annotation: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	type_annotation: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	asserts: new Set([1, 277, 350]),
 	asserts_annotation: new Set([1, 277, 335, 350]),
 	optional_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	rest_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	template_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	type_predicate_annotation: new Set([350]),
 	type_query: new Set([1, 277, 352, 353, 354, 355]),
 	index_type_query: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	literal_type: new Set([128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 279, 280, 281, 403, 422, 423]),
 	flow_maybe_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	parenthesized_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	type_arguments: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 389, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 389, 391, 403, 422, 423, 499, 500
 	]),
 	type_parameters: new Set([1, 371, 390, 500]),
 	default_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	array_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	tuple_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	readonly_type: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	export_specifiers: new Set([1, 192, 422, 423]),
 	import_specifiers: new Set([415, 416]),
@@ -865,13 +869,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	types: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	type_parameters_elements: new Set([1, 371, 500]),
 	tuple_type_members: new Set([
 		1, 40, 41, 42, 43, 44, 46, 77, 128, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 277, 279,
 		280, 281, 317, 333, 334, 338, 339, 340, 341, 343, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 360, 362,
-		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 500
+		363, 364, 365, 367, 376, 377, 378, 379, 380, 381, 391, 403, 422, 423, 499, 500
 	]),
 	import_clause_group: new Set([1, 199, 200, 383, 415, 416]),
 	ambient_declaration_global: new Set([209]),
@@ -914,8 +918,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	shorthand_property_identifier: new Set([1]),
 	shorthand_property_identifier_pattern: new Set([1]),
 	property_identifier: new Set([1]),
-	type_identifier: new Set([1]),
-	interface_body: new Set([367])
+	type_identifier: new Set([1])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	34: ['accessibility_modifier'],
@@ -1185,8 +1188,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	shorthand_property_identifier: TSKindId.ShorthandPropertyIdentifier,
 	shorthand_property_identifier_pattern: TSKindId.ShorthandPropertyIdentifierPattern,
 	property_identifier: TSKindId.PropertyIdentifier,
-	type_identifier: TSKindId.TypeIdentifier,
-	interface_body: TSKindId.InterfaceBody
+	type_identifier: TSKindId.TypeIdentifier
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -1248,8 +1250,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	shorthand_property_identifier: 'identifier',
 	shorthand_property_identifier_pattern: 'identifier',
 	property_identifier: 'identifier',
-	type_identifier: 'identifier',
-	interface_body: 'object_type'
+	type_identifier: 'identifier'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -1322,8 +1323,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'shorthand_property_identifier',
 	'shorthand_property_identifier_pattern',
 	'property_identifier',
-	'type_identifier',
-	'interface_body'
+	'type_identifier'
 ]);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
@@ -1557,8 +1557,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildPropertyIdentifier(children[0] as Parameters<typeof F.buildPropertyIdentifier>[0]);
 		case 'type_identifier':
 			return F.buildTypeIdentifier(children[0] as Parameters<typeof F.buildTypeIdentifier>[0]);
-		case 'interface_body':
-			return F.buildInterfaceBody(children[0] as Parameters<typeof F.buildInterfaceBody>[0]);
 		default:
 			return undefined;
 	}
@@ -2152,7 +2150,7 @@ const _K38: readonly string[] = [
 	'computed_property_name'
 ];
 const _K39: readonly string[] = ['decorator_member_expression', 'decorator_call_expression'];
-const _K40: readonly string[] = ['predefined_type', 'this', 'existential_type'];
+const _K40: readonly string[] = ['predefined_type', 'this_type', 'existential_type'];
 const _K41: readonly string[] = [
 	'parenthesized_type',
 	'type_identifier',
@@ -8170,7 +8168,7 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 				),
 			[
 				'predefined_type',
-				'this',
+				'this_type',
 				'existential_type',
 				'parenthesized_type',
 				'type_identifier',
@@ -8278,7 +8276,7 @@ export function coerceToTupleTypeMembers(
 				),
 			[
 				'predefined_type',
-				'this',
+				'this_type',
 				'existential_type',
 				'tuple_parameter',
 				'optional_tuple_parameter',
@@ -11589,21 +11587,44 @@ export function coerceToTypeIdentifier(input: T.TypeIdentifier.Loose): ReturnTyp
 	);
 }
 
-export function resolveInterfaceBody_content(
-	value: T.InterfaceBody.LooseConfig['content']
-): Admit<T.InterfaceBody['_content']> {
-	return _resolveOneBranch<T.ObjectType>(value, 'object_type');
+export function resolveInterfaceBody_opening(
+	value: T.InterfaceBody.LooseConfig['opening']
+): Admit<T.InterfaceBody['_opening']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () => _resolveOne<'{' | '{|'>(value, _K2, _K2)),
+		[['{', TSKindId.Lbrace] as const, ['{|', TSKindId.LbracePipe] as const]
+	);
+}
+
+export function resolveInterfaceBody_members(
+	value: T.InterfaceBody.LooseConfig['members']
+): Admit<T.InterfaceBody['_members']> {
+	return _resolveOneBranch<T.ObjectTypeContent>(value, 'object_type_content', undefined, true);
+}
+
+export function resolveInterfaceBody_closing(
+	value: T.InterfaceBody.LooseConfig['closing']
+): Admit<T.InterfaceBody['_closing']> {
+	return coerceKindEnumStorage(
+		_resolveKindEnumScalar(value, () => _resolveOne<'}' | '|}'>(value, _K2, _K2)),
+		[['}', TSKindId.Rbrace] as const, ['|}', TSKindId.PipeRbrace] as const]
+	);
 }
 
 export function coerceToInterfaceBody<const I extends T.InterfaceBody.Loose>(
 	input: I & RefuseUndeclared<I, T.InterfaceBody.Loose>
 ): ReturnType<typeof F.buildInterfaceBody>;
 export function coerceToInterfaceBody(input: T.InterfaceBody.Loose): ReturnType<typeof F.buildInterfaceBody> {
-	if (isNodeOfKind(input, TSKindId.InterfaceBody)) return input as unknown as ReturnType<typeof F.buildInterfaceBody>;
-	return F.buildInterfaceBody(
-		_resolveOneBranch<T.ObjectType>(
-			configFieldOr(input, 'content', () => input),
-			'object_type'
-		)
-	);
+	if (!_isLooseConfig<T.InterfaceBody.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildInterfaceBody>;
+	currentHandle()?.admit(TSKindId.InterfaceBody, [input]);
+	return F.buildInterfaceBody({
+		opening: resolveInterfaceBody_opening(input.opening),
+		members: resolveInterfaceBody_members(input.members),
+		closing: resolveInterfaceBody_closing(input.closing)
+	});
+}
+
+export function coerceToThisType(_input?: T.ThisType.Loose): typeof F.buildThisType {
+	return F.buildThisType;
 }

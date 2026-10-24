@@ -8828,12 +8828,28 @@ export function wrapInterfaceBody(data: T.InterfaceBody, tree: TreeHandle): T.In
 	const node = {
 		...data,
 		$type: TSKindId.InterfaceBody as const,
-		content() {
-			return hydrateSlot<T.ObjectType>(this, '_content', tree, contentRole(this, this._content));
+		opening() {
+			return this._opening;
+		},
+		members() {
+			return hydrateSlot<T.ObjectTypeContent | undefined>(this, '_members', tree);
+		},
+		closing() {
+			return this._closing;
 		},
 		$with: {
-			content: (v: NonNullable<T.InterfaceBody['_content']>) =>
-				rebuilt(node, handle, () => wrapInterfaceBody({ ...$edited(data), _content: v }, tree))
+			opening: (v: NonNullable<T.InterfaceBody['_opening']>) =>
+				rebuilt(node, handle, () => wrapInterfaceBody({ ...$edited(data), _opening: v }, tree)),
+			members: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: RAW.buildObjectTypeContent },
+						(v: NonNullable<T.InterfaceBody['_members']>) => wrapInterfaceBody({ ...$edited(data), _members: v }, tree)
+					)
+				),
+			closing: (v: NonNullable<T.InterfaceBody['_closing']>) =>
+				rebuilt(node, handle, () => wrapInterfaceBody({ ...$edited(data), _closing: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

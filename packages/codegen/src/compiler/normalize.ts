@@ -42,6 +42,8 @@ import { runToFixpoint } from './fixpoint.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
+import { collectGeneratedKindEntries } from '../dsl/symbol-table.ts';
+import { aliasEnvelopeStorages, copyAliasEnvelopeBodies, withAliasEnvelopeEntries } from './alias-envelopes.ts';
 
 export class NormalizeCtx extends BaseCtx<'link'> {
 	readonly inlineKinds: ReadonlySet<string>;
@@ -326,6 +328,10 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		}
 	}
 
+	const aliasStorages = aliasEnvelopeStorages(simplifiedRules, collectGeneratedKindEntries(linked.generatedIdTables), linked.word);
+	copyAliasEnvelopeBodies(simplifiedRules, aliasStorages);
+	copyAliasEnvelopeBodies(normalizedRules, aliasStorages);
+
 	return {
 		name: linked.name,
 		root: linked.root,
@@ -344,10 +350,10 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		nodelessExtrasRun: linked.nodelessExtrasRun,
 		displayUnions: linked.displayUnions,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
-		leafTextPatterns: linked.leafTextPatterns,
+		leafTextPatterns: withAliasEnvelopeEntries(linked.leafTextPatterns, aliasStorages),
 		externalRoles: linked.externalRoles,
 		terminalAliasWireIds: linked.terminalAliasWireIds,
-		refineForms: linked.refineForms,
+		refineForms: withAliasEnvelopeEntries(linked.refineForms, aliasStorages),
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
 		variantChildren: linked.variantChildren,

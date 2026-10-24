@@ -12,9 +12,9 @@
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
-((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
-((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
-((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
+((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
+((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
+((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default

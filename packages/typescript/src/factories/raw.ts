@@ -4801,9 +4801,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _type_parameters = config.typeParameters;
 	const _extends_type_clause = config.extendsTypeClause;
-	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(config.body, [
-		[[367], (v: unknown) => buildInterfaceBody(v as never)]
-	]);
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.InterfaceDeclaration as const,
@@ -4825,7 +4823,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 				),
 			extendsTypeClause: (value?: Admit<T.ExtendsTypeClause>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value })),
-			body: (value: Admit<T.InterfaceBody | T.InterfaceBody.Types>) =>
+			body: (value: Admit<T.InterfaceBody>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
@@ -12404,20 +12402,38 @@ export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifie
 	return stampBuilt(node) as unknown as T.TypeIdentifier.Bound;
 }
 
-export function buildInterfaceBody<V extends Admit<T.ObjectType>>(
-	value: V & RefuseUndeclared<V>
+export function buildInterfaceBody<MembersSlot extends ConfigOf<T.InterfaceBody>['members']>(
+	config: RefusingConfig<ConfigOf<T.InterfaceBody>, { members: MembersSlot }>
 ): T.InterfaceBody.Bound;
-export function buildInterfaceBody(value: Admit<T.ObjectType>): T.InterfaceBody.Bound {
-	const _content = value;
+export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.InterfaceBody.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceBody, [config]);
+	const _opening = kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(config.opening);
+	const _members = config.members;
+	const _closing = kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(config.closing);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.InterfaceBody as const,
 		$named: true as const,
-		_content,
+		_opening,
+		_members,
+		_closing,
 		$with: {
-			content: (value: Admit<T.ObjectType>) => rebuilt(node, handle, () => buildInterfaceBody(value))
+			opening: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
+				rebuilt(node, handle, () => buildInterfaceBody({ ...config, opening: value })),
+			members: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
+					)
+				),
+			closing: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
+				rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value }))
 		},
-		content: () => hydrateStoredSlot(node, '_content'),
+		opening: () => _opening,
+		members: () => hydrateStoredSlot(node, '_members'),
+		closing: () => _closing,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -12429,6 +12445,76 @@ export function buildInterfaceBody(value: Admit<T.ObjectType>): T.InterfaceBody.
 	};
 	return stampBuilt(node) as unknown as T.InterfaceBody.Bound;
 }
+
+export function buildInterfaceBodyCurly<MembersSlot extends T.InterfaceBody.Curly.Config['members']>(
+	config?: RefusingConfig<T.InterfaceBody.Curly.Config, { members: MembersSlot }>
+): T.InterfaceBody.Curly.Bound;
+export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): T.InterfaceBody.Curly.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceBody, [config], ['members']);
+	const _opening = TSKindId.Lbrace as const;
+	const _members = config?.members;
+	const _closing = TSKindId.Rbrace as const;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.InterfaceBody as const,
+		$named: true as const,
+		_opening,
+		_members,
+		_closing,
+		$with: {
+			members: (value?: Admit<T.ObjectTypeContent>) =>
+				rebuilt(node, handle, () => buildInterfaceBodyCurly({ ...config, members: value }))
+		},
+		opening: () => _opening,
+		members: () => hydrateStoredSlot(node, '_members'),
+		closing: () => _closing,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.InterfaceBody.Curly.Bound;
+}
+
+export function buildInterfaceBodyFlow<MembersSlot extends T.InterfaceBody.Flow.Config['members']>(
+	config?: RefusingConfig<T.InterfaceBody.Flow.Config, { members: MembersSlot }>
+): T.InterfaceBody.Flow.Bound;
+export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.InterfaceBody.Flow.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceBody, [config], ['members']);
+	const _opening = TSKindId.LbracePipe as const;
+	const _members = config?.members;
+	const _closing = TSKindId.PipeRbrace as const;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.InterfaceBody as const,
+		$named: true as const,
+		_opening,
+		_members,
+		_closing,
+		$with: {
+			members: (value?: Admit<T.ObjectTypeContent>) =>
+				rebuilt(node, handle, () => buildInterfaceBodyFlow({ ...config, members: value }))
+		},
+		opening: () => _opening,
+		members: () => hydrateStoredSlot(node, '_members'),
+		closing: () => _closing,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.InterfaceBody.Flow.Bound;
+}
+
+export const buildThisType: TSKindId.ThisType = TSKindId.ThisType;
 
 export type FluentKindMap = {
 	program: T.Program.Bound;
@@ -12706,6 +12792,7 @@ export type FluentKindMap = {
 	property_identifier: T.PropertyIdentifier.Bound;
 	type_identifier: T.TypeIdentifier.Bound;
 	interface_body: T.InterfaceBody.Bound;
+	this_type: T.ThisType;
 };
 
 export const _factoryMap = {
@@ -12983,6 +13070,7 @@ export const _factoryMap = {
 	shorthand_property_identifier_pattern: buildShorthandPropertyIdentifierPattern,
 	property_identifier: buildPropertyIdentifier,
 	type_identifier: buildTypeIdentifier,
-	interface_body: buildInterfaceBody
+	interface_body: buildInterfaceBody,
+	this_type: buildThisType
 } as const;
 export type _FactoryMap = typeof _factoryMap;

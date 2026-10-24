@@ -7,7 +7,7 @@ import { evaluate } from '../../dsl/evaluate.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import type { GrammarBindingsInput } from '../grammar-bindings.ts';
 import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
-import { lead, split } from '../../dsl/bind.ts';
+import { lead, type Split } from '../../dsl/bind.ts';
 import { match } from '../../dsl/primitives/narrow.ts';
 import { BINDINGS_MODULE, layerPath } from '../../grammars.ts';
 import {
@@ -177,6 +177,8 @@ describe('deriveGrammarBindings', () => {
 			text: null,
 			pattern: null,
 			variantOf: '_item',
+			splitFrom: null,
+			aliasStorage: null,
 			shownAs: [],
 			...extra
 		});
@@ -208,6 +210,8 @@ describe('deriveGrammarBindings', () => {
 			text: null,
 			pattern: null,
 			variantOf: '_item',
+			splitFrom: null,
+			aliasStorage: null,
 			shownAs: [],
 			...extra
 		});
@@ -319,6 +323,74 @@ describe('deriveGrammarBindings', () => {
 		expect(bindings.patches.size).toBe(0);
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'let_item.name' });
 	});
+
+	it("places a split through the owner's field that reaches its container, names each visible clone by its place, and steps each holder's authored field on the way", () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const rules = {
+			...base.rules,
+			trait_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'trait' }, { type: 'FIELD', name: 'body', content: symbol('list_x') }] },
+			class_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'class' }, { type: 'FIELD', name: 'body', content: symbol('_suite_x') }] },
+			_suite_x: { type: 'CHOICE', members: [symbol('block_x'), symbol('identifier')] },
+			list_x: { type: 'REPEAT', content: symbol('fn_x') },
+			block_x: {
+				type: 'FIELD',
+				name: 'statements',
+				metadata: { fieldSource: 'enriched' },
+				content: { type: 'REPEAT', content: { type: 'CHOICE', members: [symbol('fn_x'), symbol('deco_x')] } }
+			},
+			deco_x: { type: 'SEQ', members: [symbol('identifier'), { type: 'FIELD', name: 'definition', content: symbol('fn_x') }] },
+			fn_x: { type: 'SEQ', members: [{ type: 'STRING', value: 'fn' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [
+				claim('declaration.method', 'fn_x', { toplevel: false, within: ['list_x', 'trait_x'] }),
+				claim('declaration.method', 'fn_x', { toplevel: false, within: ['block_x', 'class_x'] }),
+				claim('declaration.method', 'fn_x', { toplevel: false, within: ['deco_x', 'block_x', 'class_x'] })
+			],
+			members: []
+		};
+		const { bindings } = bind({ file: FILE, facts, base: { ...base, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		const body = { field: 'body', kind: 'block_x', as: 'block_x_class_x' };
+		expect(bindings.splits).toEqual([
+			{ owner: 'trait_x', path: [{ field: 'body', kind: 'list_x', as: 'trait_x_body' }, { field: null, kind: 'fn_x', as: null }], as: 'method_declaration' },
+			{ owner: 'class_x', path: [body, { field: null, kind: 'fn_x', as: null }], as: 'method_declaration' },
+			{
+				owner: 'class_x',
+				path: [body, { field: null, kind: 'deco_x', as: 'deco_x_class_x' }, { field: 'definition', kind: 'fn_x', as: null }],
+				as: 'method_declaration'
+			}
+		]);
+	});
+
+	it('leaves a supertype a split path enters unnamed, so its clone stays hidden', () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const rules = {
+			...base.rules,
+			class_y: { type: 'SEQ', members: [{ type: 'STRING', value: 'class' }, { type: 'FIELD', name: 'body', content: symbol('block_y') }] },
+			block_y: { type: 'REPEAT', content: symbol('stmt_y') },
+			stmt_y: { type: 'CHOICE', members: [symbol('fn_y'), symbol('identifier')] },
+			fn_y: { type: 'SEQ', members: [{ type: 'STRING', value: 'fn' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [claim('declaration.method', 'fn_y', { toplevel: false, within: ['stmt_y', 'block_y', 'class_y'] })],
+			members: []
+		};
+		const grammar = { ...base, rules, supertypes: [symbol('stmt_y')] };
+		const { bindings } = bind({ file: FILE, facts, base: grammar, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		expect(bindings.splits).toEqual([
+			{
+				owner: 'class_y',
+				path: [
+					{ field: 'body', kind: 'block_y', as: 'class_y_body' },
+					{ field: null, kind: 'stmt_y', as: null },
+					{ field: null, kind: 'fn_y', as: null }
+				],
+				as: 'method_declaration'
+			}
+		]);
+	});
 });
 
 const EDITS: GrammarBindings['patches'] = new Map([
@@ -370,14 +442,19 @@ export default grammar(
 		expect(text).not.toContain('facts');
 	});
 
-	it('computes splits but prints none, and imports lead and match only beside a lead', () => {
-		const text = printBindingsModule(
-			{ patches: new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]), renames: {}, leads: [], splits: [split('let_item', 'let_statement', { within: ['source_file'], containers: [] })] },
-			'h'
-		);
-		expect(text).toContain("import { enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
+	it('prints each split as an alias at its path under its owner, and imports lead and match only beside a lead', () => {
+		const split: Split = {
+			owner: 'trait_item',
+			path: [
+				{ field: 'body', kind: 'declaration_list', as: 'trait_body' },
+				{ field: null, kind: 'function_item', as: null }
+			],
+			as: 'method_declaration'
+		};
+		const text = printBindingsModule({ patches: new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]), renames: {}, leads: [], splits: [split] }, 'h');
+		expect(text).toContain("import { alias, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
 		expect(text).toContain('export const renames = {};');
-		expect(text).not.toMatch(/split|let_statement/);
+		expect(text).toContain('trait_item: { "body:/(declaration_list as trait_body)/(function_item)": alias("method_declaration") }');
 	});
 
 	it('gives a kind its patch sets first, then one set per lead on it', () => {
@@ -455,6 +532,8 @@ describe('a child that shares a union slot', () => {
 					text: null,
 					pattern: null,
 					variantOf: null,
+					splitFrom: null,
+					aliasStorage: null,
 					shownAs: []
 				} as ModelNode
 			]
@@ -527,6 +606,8 @@ describe('a claim on a supertype owner', () => {
 		text: null,
 		pattern: null,
 		variantOf: null,
+		splitFrom: null,
+		aliasStorage: null,
 		shownAs: [],
 		...extra
 	});

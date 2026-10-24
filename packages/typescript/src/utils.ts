@@ -28,7 +28,7 @@ export const triviaFacts = Object.freeze({
 		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 382, 383, 385, 386, 388, 389, 390, 391, 392, 394, 401,
 		402, 403, 405, 407, 408, 409, 410, 411, 412, 413, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427,
 		428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 440, 441, 442, 443, 447, 451, 452, 453, 454, 455, 456, 457, 458,
-		459, 460, 461, 466, 493, 495, 496, 497, 498, 500
+		459, 460, 461, 466, 495, 496, 497, 498, 500
 	]),
 	listKinds: new Set<number>([382, 383, 385, 388, 389, 390, 391, 399]),
 	layout: new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]),
@@ -49,7 +49,7 @@ export const triviaFacts = Object.freeze({
 		[377, ['_tuple_type_members']]
 	]),
 	namedUnits: new Set<number>([
-		128, 173, 178, 195, 225, 253, 277, 278, 279, 280, 281, 325, 362, 393, 406, 414, 438, 439, 445
+		128, 173, 178, 195, 225, 253, 277, 278, 279, 280, 281, 325, 362, 393, 406, 414, 438, 439, 445, 499
 	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
@@ -897,7 +897,11 @@ export const querySlots: QuerySlots = Object.freeze({
 		['formalParametersElementsReceiverGroup', 1, undefined, '_formal_parameters_elements_receiver_group']
 	],
 	466: [['elements', 0, undefined, '_elements']],
-	493: [['content', 0, undefined, '_content']],
+	493: [
+		['opening', 0, undefined, '_opening'],
+		['members', 1, undefined, '_members'],
+		['closing', 2, undefined, '_closing']
+	],
 	495: [['content', 0, undefined, '_content']],
 	496: [['content', 0, undefined, '_content']],
 	497: [['content', 0, undefined, '_content']],
@@ -929,7 +933,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 		117, 121, 123, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 		148, 149, 150, 151, 165, 167, 169, 170, 171, 172, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 225, 253,
-		277, 278, 279, 280, 281, 325, 362, 393, 406, 414, 438, 439, 445
+		277, 278, 279, 280, 281, 325, 362, 393, 406, 414, 438, 439, 445, 499
 	]),
 	blank: 0,
 	options: Object.freeze<NodeJSONFacts['options']>({
@@ -3451,8 +3455,16 @@ export const structure: StructureTable = Object.freeze({
 	},
 	493: {
 		kind: 'interface_body',
-		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'InterfaceBody.content', 'a built ObjectType', [367]]]
+		required: [
+			['_opening', 'opening'],
+			['_closing', 'closing']
+		],
+		nodeOnly: [['_members', 'InterfaceBody.members', 'a built ObjectTypeContent', [399]]],
+		kindIds: [
+			['_opening', 'InterfaceBody.opening', [5, 146]],
+			['_closing', 'InterfaceBody.closing', [6, 147]]
+		],
+		config: ['opening', 'members', 'closing']
 	},
 	495: {
 		kind: 'property_identifier',

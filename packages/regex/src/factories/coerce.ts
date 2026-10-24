@@ -116,10 +116,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
-	unicode_property_name: {
-		pattern: F._leafRe_buildUnicodePropertyValue,
-		factory: (text: string) => F.buildUnicodePropertyName(F.buildUnicodePropertyValue(text) as never)
-	}
+	lazy: { values: ['?'], factory: () => F.buildLazy },
+	unicode_property_name: { pattern: F._leafRe_buildUnicodePropertyName, factory: F.buildUnicodePropertyName }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['identity_escape']);
 const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
@@ -145,7 +143,9 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'_tight',
 	'_newline',
 	'_blankline',
-	'_double_blankline'
+	'_double_blankline',
+	'lazy',
+	'unicode_property_name'
 ]);
 
 function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
@@ -166,6 +166,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'end_assertion',
 	'boundary_assertion',
 	'non_boundary_assertion',
+	'lazy',
 	'negation',
 	'pattern_character',
 	'posix_class_name',
@@ -290,12 +291,11 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'backreference_escape',
 	'named_group_backreference',
 	'count_quantifier_group',
-	'unicode_property_value_expression_group',
-	'unicode_property_name'
+	'unicode_property_value_expression_group'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-	48, 49, 50, 54, 82
+	48, 49, 50, 54, 82, 89
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	pattern: new Set([52, 53]),
@@ -307,8 +307,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	named_group_backreference: new Set([38]),
 	character_class_escape: new Set([41, 74, 80]),
 	count_quantifier_group: new Set([39]),
-	unicode_property_value_expression_group: new Set([35, 90]),
-	unicode_property_name: new Set([35])
+	unicode_property_value_expression_group: new Set([90])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};
 
@@ -480,8 +479,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	named_group_backreference: TSKindId.NamedGroupBackreference,
 	character_class_escape: TSKindId.CharacterClassEscape,
 	count_quantifier_group: TSKindId.CountQuantifierGroup,
-	unicode_property_value_expression_group: TSKindId.UnicodePropertyValueExpressionGroup,
-	unicode_property_name: TSKindId.UnicodePropertyName
+	unicode_property_value_expression_group: TSKindId.UnicodePropertyValueExpressionGroup
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -493,8 +491,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	backreference_escape: 'group_name',
 	named_group_backreference: 'group_name',
 	count_quantifier_group: 'decimal_digits',
-	unicode_property_value_expression_group: 'unicode_property_name',
-	unicode_property_name: 'unicode_property_value'
+	unicode_property_value_expression_group: 'unicode_property_name'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -507,8 +504,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'named_group_backreference',
 	'character_class_escape',
 	'count_quantifier_group',
-	'unicode_property_value_expression_group',
-	'unicode_property_name'
+	'unicode_property_value_expression_group'
 ]);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set(['count_quantifier_group']);
@@ -541,8 +537,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildUnicodePropertyValueExpressionGroup(
 				children[0] as Parameters<typeof F.buildUnicodePropertyValueExpressionGroup>[0]
 			);
-		case 'unicode_property_name':
-			return F.buildUnicodePropertyName(children[0] as Parameters<typeof F.buildUnicodePropertyName>[0]);
 		default:
 			return undefined;
 	}
@@ -1488,7 +1482,7 @@ export function coerceToCharacterClassEscapeArm(
 export function resolveUnicodePropertyValueExpressionGroup_unicodePropertyName(
 	value: T.UnicodePropertyValueExpressionGroup.LooseConfig['unicodePropertyName']
 ): Admit<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']> {
-	return _resolveOneBranch<T.UnicodePropertyName>(value, 'unicode_property_name');
+	return _resolveOneLeaf<T.UnicodePropertyName>(value, 'unicode_property_name');
 }
 
 export function coerceToUnicodePropertyValueExpressionGroup<
@@ -1502,7 +1496,7 @@ export function coerceToUnicodePropertyValueExpressionGroup(
 	if (isNodeOfKind(input, TSKindId.UnicodePropertyValueExpressionGroup))
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup>;
 	return F.buildUnicodePropertyValueExpressionGroup(
-		_resolveOneBranch<T.UnicodePropertyName>(
+		_resolveOneLeaf<T.UnicodePropertyName>(
 			configFieldOr(input, 'unicodePropertyName', () =>
 				typeof input === 'string' ? spelledInterior(input, '', '=') : input
 			),
@@ -1639,53 +1633,16 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function resolveLazy_content(value: T.Lazy.LooseConfig['content'] | undefined): Admit<T.Lazy['_content']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'?'>(value, _K0, _K0)),
-		[['?', TSKindId.Qmark] as const]
-	);
+export function coerceToLazy(_input?: T.Lazy.Loose): typeof F.buildLazy {
+	return F.buildLazy;
 }
 
-export function coerceToLazy<const I extends T.Lazy.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.Lazy.Loose>
-): ReturnType<typeof F.buildLazy>;
-export function coerceToLazy(input?: T.Lazy.Loose): ReturnType<typeof F.buildLazy> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.Lazy))
-		return input as unknown as ReturnType<typeof F.buildLazy>;
-	return F.buildLazy(
-		coerceKindEnumStorage(
-			_resolveKindEnumScalar(
-				configFieldOr(input, 'content', () => input),
-				() =>
-					_resolveOne<'?'>(
-						configFieldOr(input, 'content', () => input),
-						_K0,
-						_K0
-					)
-			),
-			[['?', TSKindId.Qmark] as const]
-		) ?? (TSKindId.Qmark as const)
-	);
-}
-
-export function resolveUnicodePropertyName_content(
-	value: T.UnicodePropertyName.LooseConfig['content']
-): Admit<T.UnicodePropertyName['_content']> {
-	return _resolveOneLeaf<T.UnicodePropertyValue>(value, 'unicode_property_value');
-}
-
-export function coerceToUnicodePropertyName<const I extends T.UnicodePropertyName.Loose>(
-	input: I & RefuseUndeclared<I, T.UnicodePropertyName.Loose>
+export function coerceToUnicodePropertyName<const V extends T.UnicodePropertyName.Loose>(
+	input: V & RefuseUndeclared<V, T.UnicodePropertyName.Loose>
 ): ReturnType<typeof F.buildUnicodePropertyName>;
 export function coerceToUnicodePropertyName(
 	input: T.UnicodePropertyName.Loose
 ): ReturnType<typeof F.buildUnicodePropertyName> {
-	if (isNodeOfKind(input, TSKindId.UnicodePropertyName))
-		return input as unknown as ReturnType<typeof F.buildUnicodePropertyName>;
-	return F.buildUnicodePropertyName(
-		_resolveOneLeaf<T.UnicodePropertyValue>(
-			configFieldOr(input, 'content', () => input),
-			'unicode_property_value'
-		)
-	);
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnicodePropertyName>;
+	return F.buildUnicodePropertyName(input as Parameters<typeof F.buildUnicodePropertyName>[0]);
 }

@@ -766,6 +766,5 @@ export const records = {
 	ShorthandPropertyIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
 	ShorthandPropertyIdentifierPatternNode: { words: 7, content: { word: 2, width: 5 } },
 	PropertyIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
-	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
-	InterfaceBodyNode: { words: 7, content: { word: 2, width: 5 } }
+	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

@@ -133,6 +133,17 @@ export interface KindMembers {
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalImaginary
 		| TSKindId.IntegerDecimalPlain;
+	[TSKindId.StatementClassDefinition]:
+		| TSKindId.SimpleStatements
+		| TSKindId.MethodDeclaration
+		| TSKindId.IfStatement
+		| TSKindId.ForStatement
+		| TSKindId.WhileStatement
+		| TSKindId.TryStatement
+		| TSKindId.WithStatement
+		| TSKindId.ClassDefinition
+		| TSKindId.DecoratedDefinitionClassDeclaration
+		| TSKindId.MatchStatement;
 }
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -712,6 +723,15 @@ export interface IsGuards {
 	yieldFromClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
+	blockClassDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockClassDeclaration };
+	suiteBlockClassDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteBlockClassDeclaration };
+	decoratedDefinitionClassDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DecoratedDefinitionClassDeclaration };
 	names<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Names };
@@ -721,6 +741,9 @@ export interface IsGuards {
 	formatExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatExpression };
+	methodDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDeclaration };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Statement]>;
 	readonly simpleStatement: {
@@ -1197,6 +1220,9 @@ const _supertype_float_ids = new Set<number>([96, 97, 98]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
+const _supertype_compoundStatementClassDefinition_ids = new Set<number>([342, 150, 156, 157, 158, 161, 173, 302, 153]);
+const _supertype_statementClassDefinition_ids = new Set<number>([129, 342, 150, 156, 157, 158, 161, 173, 302, 153]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([294, 301, 296]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
@@ -1210,7 +1236,8 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
 	[TSKindId.Integer, _supertype_integer_ids],
 	[TSKindId.Float, _supertype_float_ids],
-	[TSKindId.IntegerDecimal, _supertype_integerDecimal_ids]
+	[TSKindId.IntegerDecimal, _supertype_integerDecimal_ids],
+	[TSKindId.StatementClassDefinition, _supertype_statementClassDefinition_ids]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -1432,9 +1459,13 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
 	const _kind_ComparisonOperatorComparator_guard = _g(TSKindId.ComparisonOperatorComparator);
+	const _kind_BlockClassDeclaration_guard = _g(TSKindId.BlockClassDeclaration);
+	const _kind_SuiteBlockClassDeclaration_guard = _g(TSKindId.SuiteBlockClassDeclaration);
+	const _kind_DecoratedDefinitionClassDeclaration_guard = _g(TSKindId.DecoratedDefinitionClassDeclaration);
 	const _kind_Names_guard = _g(TSKindId.Names);
 	const _kind_AsPatternTarget_guard = _g(TSKindId.AsPatternTarget);
 	const _kind_FormatExpression_guard = _g(TSKindId.FormatExpression);
+	const _kind_MethodDeclaration_guard = _g(TSKindId.MethodDeclaration);
 	const _kind_ImportPrefix_guard = _g(TSKindId.ImportPrefix);
 	const _kind_NotEscapeSequence_guard = _mg(TSKindId.NotEscapeSequence);
 	const _kind_TypeConversion_guard = _g(TSKindId.TypeConversion);
@@ -1840,9 +1871,13 @@ export function guardsWith(test: KindTest): IsGuards {
 		suiteEmpty: _kind_SuiteEmpty_guard,
 		comparisonOperatorComparator: _kind_ComparisonOperatorComparator_guard,
 		yieldFromClause: _kind_YieldFromClause_guard,
+		blockClassDeclaration: _kind_BlockClassDeclaration_guard,
+		suiteBlockClassDeclaration: _kind_SuiteBlockClassDeclaration_guard,
+		decoratedDefinitionClassDeclaration: _kind_DecoratedDefinitionClassDeclaration_guard,
 		names: _kind_Names_guard,
 		asPatternTarget: _kind_AsPatternTarget_guard,
 		formatExpression: _kind_FormatExpression_guard,
+		methodDeclaration: _kind_MethodDeclaration_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
 		statement: _mg(128),
 		simpleStatement: _supertype_simpleStatement_guard,

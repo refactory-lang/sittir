@@ -37456,7 +37456,7 @@
                     "$text": "a"
                   },
                   "_alias": {
-                    "$type": 335,
+                    "$type": 340,
                     "_content": {
                       "$type": 1,
                       "$text": "b"
@@ -37575,7 +37575,7 @@
                 "$text": "a"
               },
               "_alias": {
-                "$type": 335,
+                "$type": 340,
                 "_content": {
                   "$type": 1,
                   "$text": "b"
@@ -37688,7 +37688,7 @@
               "$text": "a"
             },
             "_alias": {
-              "$type": 335,
+              "$type": 340,
               "_content": {
                 "$type": 1,
                 "$text": "b"
@@ -37730,7 +37730,7 @@
           "$text": "a"
         },
         "_alias": {
-          "$type": 335,
+          "$type": 340,
           "_content": {
             "$type": 1,
             "$text": "b"
@@ -37767,7 +37767,7 @@
         "$text": "a"
       },
       "_alias": {
-        "$type": 335,
+        "$type": 340,
         "_content": {
           "$type": 1,
           "$text": "b"
@@ -37797,7 +37797,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 335,
+      "$type": 340,
       "_content": {
         "$type": 1,
         "$text": "b"
@@ -60387,44 +60387,38 @@
                         "$type": 253,
                         "_elements": [
                           {
-                            "$type": 336,
-                            "_content": {
-                              "$type": 249,
-                              "_expression": {
-                                "$type": 220,
-                                "_object": {
-                                  "$type": 1,
-                                  "$text": "c"
-                                },
-                                "_property": {
-                                  "$type": 1,
-                                  "$text": "d"
-                                }
+                            "$type": 341,
+                            "_expression": {
+                              "$type": 220,
+                              "_object": {
+                                "$type": 1,
+                                "$text": "c"
                               },
-                              "_debug": false
-                            }
+                              "_property": {
+                                "$type": 1,
+                                "$text": "d"
+                              }
+                            },
+                            "_debug": false
                           },
                           {
                             "$type": 89,
                             "$text": "."
                           },
                           {
-                            "$type": 336,
-                            "_content": {
-                              "$type": 249,
-                              "_expression": {
-                                "$type": 220,
-                                "_object": {
-                                  "$type": 1,
-                                  "$text": "d"
-                                },
-                                "_property": {
-                                  "$type": 1,
-                                  "$text": "e"
-                                }
+                            "$type": 341,
+                            "_expression": {
+                              "$type": 220,
+                              "_object": {
+                                "$type": 1,
+                                "$text": "d"
                               },
-                              "_debug": false
-                            }
+                              "_property": {
+                                "$type": 1,
+                                "$text": "e"
+                              }
+                            },
+                            "_debug": false
                           }
                         ]
                       }
@@ -60596,31 +60590,28 @@
                         "$type": 253,
                         "_elements": [
                           {
-                            "$type": 336,
-                            "_content": {
-                              "$type": 249,
-                              "_expression": {
-                                "$type": 208,
-                                "_left": {
-                                  "$type": 1,
-                                  "$text": "width"
-                                },
-                                "_operator": 49,
-                                "_right": {
-                                  "$type": 1,
-                                  "$text": "padding"
-                                }
+                            "$type": 341,
+                            "_expression": {
+                              "$type": 208,
+                              "_left": {
+                                "$type": 1,
+                                "$text": "width"
                               },
-                              "_debug": false,
-                              "_type_conversion": {
-                                "$type": 66,
-                                "$text": "!r",
-                                "$_layout": {
-                                  "trivia": {
-                                    "leading": [
-                                      122
-                                    ]
-                                  }
+                              "_operator": 49,
+                              "_right": {
+                                "$type": 1,
+                                "$text": "padding"
+                              }
+                            },
+                            "_debug": false,
+                            "_type_conversion": {
+                              "$type": 66,
+                              "$text": "!r",
+                              "$_layout": {
+                                "trivia": {
+                                  "leading": [
+                                    122
+                                  ]
                                 }
                               }
                             }
@@ -60630,15 +60621,12 @@
                             "$text": "."
                           },
                           {
-                            "$type": 336,
-                            "_content": {
-                              "$type": 249,
-                              "_expression": {
-                                "$type": 1,
-                                "$text": "precision"
-                              },
-                              "_debug": false
-                            }
+                            "$type": 341,
+                            "_expression": {
+                              "$type": 1,
+                              "$text": "precision"
+                            },
+                            "_debug": false
                           }
                         ]
                       }
@@ -60810,44 +60798,38 @@
                     "$type": 253,
                     "_elements": [
                       {
-                        "$type": 336,
-                        "_content": {
-                          "$type": 249,
-                          "_expression": {
-                            "$type": 220,
-                            "_object": {
-                              "$type": 1,
-                              "$text": "c"
-                            },
-                            "_property": {
-                              "$type": 1,
-                              "$text": "d"
-                            }
+                        "$type": 341,
+                        "_expression": {
+                          "$type": 220,
+                          "_object": {
+                            "$type": 1,
+                            "$text": "c"
                           },
-                          "_debug": false
-                        }
+                          "_property": {
+                            "$type": 1,
+                            "$text": "d"
+                          }
+                        },
+                        "_debug": false
                       },
                       {
                         "$type": 89,
                         "$text": "."
                       },
                       {
-                        "$type": 336,
-                        "_content": {
-                          "$type": 249,
-                          "_expression": {
-                            "$type": 220,
-                            "_object": {
-                              "$type": 1,
-                              "$text": "d"
-                            },
-                            "_property": {
-                              "$type": 1,
-                              "$text": "e"
-                            }
+                        "$type": 341,
+                        "_expression": {
+                          "$type": 220,
+                          "_object": {
+                            "$type": 1,
+                            "$text": "d"
                           },
-                          "_debug": false
-                        }
+                          "_property": {
+                            "$type": 1,
+                            "$text": "e"
+                          }
+                        },
+                        "_debug": false
                       }
                     ]
                   }
@@ -61107,31 +61089,28 @@
                     "$type": 253,
                     "_elements": [
                       {
-                        "$type": 336,
-                        "_content": {
-                          "$type": 249,
-                          "_expression": {
-                            "$type": 208,
-                            "_left": {
-                              "$type": 1,
-                              "$text": "width"
-                            },
-                            "_operator": 49,
-                            "_right": {
-                              "$type": 1,
-                              "$text": "padding"
-                            }
+                        "$type": 341,
+                        "_expression": {
+                          "$type": 208,
+                          "_left": {
+                            "$type": 1,
+                            "$text": "width"
                           },
-                          "_debug": false,
-                          "_type_conversion": {
-                            "$type": 66,
-                            "$text": "!r",
-                            "$_layout": {
-                              "trivia": {
-                                "leading": [
-                                  122
-                                ]
-                              }
+                          "_operator": 49,
+                          "_right": {
+                            "$type": 1,
+                            "$text": "padding"
+                          }
+                        },
+                        "_debug": false,
+                        "_type_conversion": {
+                          "$type": 66,
+                          "$text": "!r",
+                          "$_layout": {
+                            "trivia": {
+                              "leading": [
+                                122
+                              ]
                             }
                           }
                         }
@@ -61141,15 +61120,12 @@
                         "$text": "."
                       },
                       {
-                        "$type": 336,
-                        "_content": {
-                          "$type": 249,
-                          "_expression": {
-                            "$type": 1,
-                            "$text": "precision"
-                          },
-                          "_debug": false
-                        }
+                        "$type": 341,
+                        "_expression": {
+                          "$type": 1,
+                          "$text": "precision"
+                        },
+                        "_debug": false
                       }
                     ]
                   }
@@ -61313,44 +61289,38 @@
                   "$type": 253,
                   "_elements": [
                     {
-                      "$type": 336,
-                      "_content": {
-                        "$type": 249,
-                        "_expression": {
-                          "$type": 220,
-                          "_object": {
-                            "$type": 1,
-                            "$text": "c"
-                          },
-                          "_property": {
-                            "$type": 1,
-                            "$text": "d"
-                          }
+                      "$type": 341,
+                      "_expression": {
+                        "$type": 220,
+                        "_object": {
+                          "$type": 1,
+                          "$text": "c"
                         },
-                        "_debug": false
-                      }
+                        "_property": {
+                          "$type": 1,
+                          "$text": "d"
+                        }
+                      },
+                      "_debug": false
                     },
                     {
                       "$type": 89,
                       "$text": "."
                     },
                     {
-                      "$type": 336,
-                      "_content": {
-                        "$type": 249,
-                        "_expression": {
-                          "$type": 220,
-                          "_object": {
-                            "$type": 1,
-                            "$text": "d"
-                          },
-                          "_property": {
-                            "$type": 1,
-                            "$text": "e"
-                          }
+                      "$type": 341,
+                      "_expression": {
+                        "$type": 220,
+                        "_object": {
+                          "$type": 1,
+                          "$text": "d"
                         },
-                        "_debug": false
-                      }
+                        "_property": {
+                          "$type": 1,
+                          "$text": "e"
+                        }
+                      },
+                      "_debug": false
                     }
                   ]
                 }
@@ -61598,31 +61568,28 @@
                   "$type": 253,
                   "_elements": [
                     {
-                      "$type": 336,
-                      "_content": {
-                        "$type": 249,
-                        "_expression": {
-                          "$type": 208,
-                          "_left": {
-                            "$type": 1,
-                            "$text": "width"
-                          },
-                          "_operator": 49,
-                          "_right": {
-                            "$type": 1,
-                            "$text": "padding"
-                          }
+                      "$type": 341,
+                      "_expression": {
+                        "$type": 208,
+                        "_left": {
+                          "$type": 1,
+                          "$text": "width"
                         },
-                        "_debug": false,
-                        "_type_conversion": {
-                          "$type": 66,
-                          "$text": "!r",
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                122
-                              ]
-                            }
+                        "_operator": 49,
+                        "_right": {
+                          "$type": 1,
+                          "$text": "padding"
+                        }
+                      },
+                      "_debug": false,
+                      "_type_conversion": {
+                        "$type": 66,
+                        "$text": "!r",
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              122
+                            ]
                           }
                         }
                       }
@@ -61632,15 +61599,12 @@
                       "$text": "."
                     },
                     {
-                      "$type": 336,
-                      "_content": {
-                        "$type": 249,
-                        "_expression": {
-                          "$type": 1,
-                          "$text": "precision"
-                        },
-                        "_debug": false
-                      }
+                      "$type": 341,
+                      "_expression": {
+                        "$type": 1,
+                        "$text": "precision"
+                      },
+                      "_debug": false
                     }
                   ]
                 }
@@ -61794,44 +61758,38 @@
               "$type": 253,
               "_elements": [
                 {
-                  "$type": 336,
-                  "_content": {
-                    "$type": 249,
-                    "_expression": {
-                      "$type": 220,
-                      "_object": {
-                        "$type": 1,
-                        "$text": "c"
-                      },
-                      "_property": {
-                        "$type": 1,
-                        "$text": "d"
-                      }
+                  "$type": 341,
+                  "_expression": {
+                    "$type": 220,
+                    "_object": {
+                      "$type": 1,
+                      "$text": "c"
                     },
-                    "_debug": false
-                  }
+                    "_property": {
+                      "$type": 1,
+                      "$text": "d"
+                    }
+                  },
+                  "_debug": false
                 },
                 {
                   "$type": 89,
                   "$text": "."
                 },
                 {
-                  "$type": 336,
-                  "_content": {
-                    "$type": 249,
-                    "_expression": {
-                      "$type": 220,
-                      "_object": {
-                        "$type": 1,
-                        "$text": "d"
-                      },
-                      "_property": {
-                        "$type": 1,
-                        "$text": "e"
-                      }
+                  "$type": 341,
+                  "_expression": {
+                    "$type": 220,
+                    "_object": {
+                      "$type": 1,
+                      "$text": "d"
                     },
-                    "_debug": false
-                  }
+                    "_property": {
+                      "$type": 1,
+                      "$text": "e"
+                    }
+                  },
+                  "_debug": false
                 }
               ]
             }
@@ -62055,31 +62013,28 @@
               "$type": 253,
               "_elements": [
                 {
-                  "$type": 336,
-                  "_content": {
-                    "$type": 249,
-                    "_expression": {
-                      "$type": 208,
-                      "_left": {
-                        "$type": 1,
-                        "$text": "width"
-                      },
-                      "_operator": 49,
-                      "_right": {
-                        "$type": 1,
-                        "$text": "padding"
-                      }
+                  "$type": 341,
+                  "_expression": {
+                    "$type": 208,
+                    "_left": {
+                      "$type": 1,
+                      "$text": "width"
                     },
-                    "_debug": false,
-                    "_type_conversion": {
-                      "$type": 66,
-                      "$text": "!r",
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            122
-                          ]
-                        }
+                    "_operator": 49,
+                    "_right": {
+                      "$type": 1,
+                      "$text": "padding"
+                    }
+                  },
+                  "_debug": false,
+                  "_type_conversion": {
+                    "$type": 66,
+                    "$text": "!r",
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          122
+                        ]
                       }
                     }
                   }
@@ -62089,15 +62044,12 @@
                   "$text": "."
                 },
                 {
-                  "$type": 336,
-                  "_content": {
-                    "$type": 249,
-                    "_expression": {
-                      "$type": 1,
-                      "$text": "precision"
-                    },
-                    "_debug": false
-                  }
+                  "$type": 341,
+                  "_expression": {
+                    "$type": 1,
+                    "$text": "precision"
+                  },
+                  "_debug": false
                 }
               ]
             }
@@ -62243,44 +62195,38 @@
             "$type": 253,
             "_elements": [
               {
-                "$type": 336,
-                "_content": {
-                  "$type": 249,
-                  "_expression": {
-                    "$type": 220,
-                    "_object": {
-                      "$type": 1,
-                      "$text": "c"
-                    },
-                    "_property": {
-                      "$type": 1,
-                      "$text": "d"
-                    }
+                "$type": 341,
+                "_expression": {
+                  "$type": 220,
+                  "_object": {
+                    "$type": 1,
+                    "$text": "c"
                   },
-                  "_debug": false
-                }
+                  "_property": {
+                    "$type": 1,
+                    "$text": "d"
+                  }
+                },
+                "_debug": false
               },
               {
                 "$type": 89,
                 "$text": "."
               },
               {
-                "$type": 336,
-                "_content": {
-                  "$type": 249,
-                  "_expression": {
-                    "$type": 220,
-                    "_object": {
-                      "$type": 1,
-                      "$text": "d"
-                    },
-                    "_property": {
-                      "$type": 1,
-                      "$text": "e"
-                    }
+                "$type": 341,
+                "_expression": {
+                  "$type": 220,
+                  "_object": {
+                    "$type": 1,
+                    "$text": "d"
                   },
-                  "_debug": false
-                }
+                  "_property": {
+                    "$type": 1,
+                    "$text": "e"
+                  }
+                },
+                "_debug": false
               }
             ]
           }
@@ -62492,31 +62438,28 @@
             "$type": 253,
             "_elements": [
               {
-                "$type": 336,
-                "_content": {
-                  "$type": 249,
-                  "_expression": {
-                    "$type": 208,
-                    "_left": {
-                      "$type": 1,
-                      "$text": "width"
-                    },
-                    "_operator": 49,
-                    "_right": {
-                      "$type": 1,
-                      "$text": "padding"
-                    }
+                "$type": 341,
+                "_expression": {
+                  "$type": 208,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "width"
                   },
-                  "_debug": false,
-                  "_type_conversion": {
-                    "$type": 66,
-                    "$text": "!r",
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          122
-                        ]
-                      }
+                  "_operator": 49,
+                  "_right": {
+                    "$type": 1,
+                    "$text": "padding"
+                  }
+                },
+                "_debug": false,
+                "_type_conversion": {
+                  "$type": 66,
+                  "$text": "!r",
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        122
+                      ]
                     }
                   }
                 }
@@ -62526,15 +62469,12 @@
                 "$text": "."
               },
               {
-                "$type": 336,
-                "_content": {
-                  "$type": 249,
-                  "_expression": {
-                    "$type": 1,
-                    "$text": "precision"
-                  },
-                  "_debug": false
-                }
+                "$type": 341,
+                "_expression": {
+                  "$type": 1,
+                  "$text": "precision"
+                },
+                "_debug": false
               }
             ]
           }
@@ -62656,44 +62596,38 @@
         "$type": 253,
         "_elements": [
           {
-            "$type": 336,
-            "_content": {
-              "$type": 249,
-              "_expression": {
-                "$type": 220,
-                "_object": {
-                  "$type": 1,
-                  "$text": "c"
-                },
-                "_property": {
-                  "$type": 1,
-                  "$text": "d"
-                }
+            "$type": 341,
+            "_expression": {
+              "$type": 220,
+              "_object": {
+                "$type": 1,
+                "$text": "c"
               },
-              "_debug": false
-            }
+              "_property": {
+                "$type": 1,
+                "$text": "d"
+              }
+            },
+            "_debug": false
           },
           {
             "$type": 89,
             "$text": "."
           },
           {
-            "$type": 336,
-            "_content": {
-              "$type": 249,
-              "_expression": {
-                "$type": 220,
-                "_object": {
-                  "$type": 1,
-                  "$text": "d"
-                },
-                "_property": {
-                  "$type": 1,
-                  "$text": "e"
-                }
+            "$type": 341,
+            "_expression": {
+              "$type": 220,
+              "_object": {
+                "$type": 1,
+                "$text": "d"
               },
-              "_debug": false
-            }
+              "_property": {
+                "$type": 1,
+                "$text": "e"
+              }
+            },
+            "_debug": false
           }
         ]
       }
@@ -62714,80 +62648,6 @@
     "expectedSourceOut": "{b:{c.d}.{d.e}}",
     "expectedReparseTree": "(interpolation expression: (identifier) format_specifier: (format_specifier elements: (format_expression expression: (attribute object: (identifier) property: (identifier))) elements: (format_specifier_text) elements: (format_expression expression: (attribute object: (identifier) property: (identifier)))))",
     "wrappedText": "_ = (f\"{b:{c.d}.{d.e}}\")",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "interpolation",
-    "input": {
-      "$type": 249,
-      "_expression": {
-        "$type": 220,
-        "_object": {
-          "$type": 1,
-          "$text": "c"
-        },
-        "_property": {
-          "$type": 1,
-          "$text": "d"
-        }
-      },
-      "_debug": false
-    },
-    "expectedOutput": "{c.d}",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "{c.d}",
-    "pattern": "interpolation",
-    "edits": [],
-    "expectedSourceOut": "{c.d}",
-    "expectedReparseTree": "(interpolation expression: (attribute object: (identifier) property: (identifier)))",
-    "wrappedText": "_ = (f\"{c.d}\")",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "interpolation",
-    "input": {
-      "$type": 249,
-      "_expression": {
-        "$type": 220,
-        "_object": {
-          "$type": 1,
-          "$text": "d"
-        },
-        "_property": {
-          "$type": 1,
-          "$text": "e"
-        }
-      },
-      "_debug": false
-    },
-    "expectedOutput": "{d.e}",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "{d.e}",
-    "pattern": "interpolation",
-    "edits": [],
-    "expectedSourceOut": "{d.e}",
-    "expectedReparseTree": "(interpolation expression: (attribute object: (identifier) property: (identifier)))",
-    "wrappedText": "_ = (f\"{d.e}\")",
     "wrappedOffset": 7
   },
   {
@@ -62927,31 +62787,28 @@
         "$type": 253,
         "_elements": [
           {
-            "$type": 336,
-            "_content": {
-              "$type": 249,
-              "_expression": {
-                "$type": 208,
-                "_left": {
-                  "$type": 1,
-                  "$text": "width"
-                },
-                "_operator": 49,
-                "_right": {
-                  "$type": 1,
-                  "$text": "padding"
-                }
+            "$type": 341,
+            "_expression": {
+              "$type": 208,
+              "_left": {
+                "$type": 1,
+                "$text": "width"
               },
-              "_debug": false,
-              "_type_conversion": {
-                "$type": 66,
-                "$text": "!r",
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      122
-                    ]
-                  }
+              "_operator": 49,
+              "_right": {
+                "$type": 1,
+                "$text": "padding"
+              }
+            },
+            "_debug": false,
+            "_type_conversion": {
+              "$type": 66,
+              "$text": "!r",
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    122
+                  ]
                 }
               }
             }
@@ -62961,15 +62818,12 @@
             "$text": "."
           },
           {
-            "$type": 336,
-            "_content": {
-              "$type": 249,
-              "_expression": {
-                "$type": 1,
-                "$text": "precision"
-              },
-              "_debug": false
-            }
+            "$type": 341,
+            "_expression": {
+              "$type": 1,
+              "$text": "precision"
+            },
+            "_debug": false
           }
         ]
       }
@@ -62990,85 +62844,6 @@
     "expectedSourceOut": "{value:{width + padding!r}.{precision}}",
     "expectedReparseTree": "(interpolation expression: (identifier) format_specifier: (format_specifier elements: (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) elements: (format_specifier_text) elements: (format_expression expression: (identifier))))",
     "wrappedText": "_ = (f\"{value:{width + padding!r}.{precision}}\")",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "interpolation",
-    "input": {
-      "$type": 249,
-      "_expression": {
-        "$type": 208,
-        "_left": {
-          "$type": 1,
-          "$text": "width"
-        },
-        "_operator": 49,
-        "_right": {
-          "$type": 1,
-          "$text": "padding"
-        }
-      },
-      "_debug": false,
-      "_type_conversion": {
-        "$type": 66,
-        "$text": "!r",
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              122
-            ]
-          }
-        }
-      }
-    },
-    "expectedOutput": "{width + padding!r}",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "{width + padding!r}",
-    "pattern": "interpolation",
-    "edits": [],
-    "expectedSourceOut": "{width + padding!r}",
-    "expectedReparseTree": "(interpolation expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion))",
-    "wrappedText": "_ = (f\"{width + padding!r}\")",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "interpolation",
-    "input": {
-      "$type": 249,
-      "_expression": {
-        "$type": 1,
-        "$text": "precision"
-      },
-      "_debug": false
-    },
-    "expectedOutput": "{precision}",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "{precision}",
-    "pattern": "interpolation",
-    "edits": [],
-    "expectedSourceOut": "{precision}",
-    "expectedReparseTree": "(interpolation expression: (identifier))",
-    "wrappedText": "_ = (f\"{precision}\")",
     "wrappedOffset": 7
   },
   {
@@ -63141,44 +62916,38 @@
       "$type": 253,
       "_elements": [
         {
-          "$type": 336,
-          "_content": {
-            "$type": 249,
-            "_expression": {
-              "$type": 220,
-              "_object": {
-                "$type": 1,
-                "$text": "c"
-              },
-              "_property": {
-                "$type": 1,
-                "$text": "d"
-              }
+          "$type": 341,
+          "_expression": {
+            "$type": 220,
+            "_object": {
+              "$type": 1,
+              "$text": "c"
             },
-            "_debug": false
-          }
+            "_property": {
+              "$type": 1,
+              "$text": "d"
+            }
+          },
+          "_debug": false
         },
         {
           "$type": 89,
           "$text": "."
         },
         {
-          "$type": 336,
-          "_content": {
-            "$type": 249,
-            "_expression": {
-              "$type": 220,
-              "_object": {
-                "$type": 1,
-                "$text": "d"
-              },
-              "_property": {
-                "$type": 1,
-                "$text": "e"
-              }
+          "$type": 341,
+          "_expression": {
+            "$type": 220,
+            "_object": {
+              "$type": 1,
+              "$text": "d"
             },
-            "_debug": false
-          }
+            "_property": {
+              "$type": 1,
+              "$text": "e"
+            }
+          },
+          "_debug": false
         }
       ]
     },
@@ -63270,31 +63039,28 @@
       "$type": 253,
       "_elements": [
         {
-          "$type": 336,
-          "_content": {
-            "$type": 249,
-            "_expression": {
-              "$type": 208,
-              "_left": {
-                "$type": 1,
-                "$text": "width"
-              },
-              "_operator": 49,
-              "_right": {
-                "$type": 1,
-                "$text": "padding"
-              }
+          "$type": 341,
+          "_expression": {
+            "$type": 208,
+            "_left": {
+              "$type": 1,
+              "$text": "width"
             },
-            "_debug": false,
-            "_type_conversion": {
-              "$type": 66,
-              "$text": "!r",
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    122
-                  ]
-                }
+            "_operator": 49,
+            "_right": {
+              "$type": 1,
+              "$text": "padding"
+            }
+          },
+          "_debug": false,
+          "_type_conversion": {
+            "$type": 66,
+            "$text": "!r",
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  122
+                ]
               }
             }
           }
@@ -63304,15 +63070,12 @@
           "$text": "."
         },
         {
-          "$type": 336,
-          "_content": {
-            "$type": 249,
-            "_expression": {
-              "$type": 1,
-              "$text": "precision"
-            },
-            "_debug": false
-          }
+          "$type": 341,
+          "_expression": {
+            "$type": 1,
+            "$text": "precision"
+          },
+          "_debug": false
         }
       ]
     },
@@ -63339,22 +63102,19 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 336,
-      "_content": {
-        "$type": 249,
-        "_expression": {
-          "$type": 220,
-          "_object": {
-            "$type": 1,
-            "$text": "c"
-          },
-          "_property": {
-            "$type": 1,
-            "$text": "d"
-          }
+      "$type": 341,
+      "_expression": {
+        "$type": 220,
+        "_object": {
+          "$type": 1,
+          "$text": "c"
         },
-        "_debug": false
-      }
+        "_property": {
+          "$type": 1,
+          "$text": "d"
+        }
+      },
+      "_debug": false
     },
     "expectedOutput": "{c.d}",
     "options": {
@@ -63379,22 +63139,19 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 336,
-      "_content": {
-        "$type": 249,
-        "_expression": {
-          "$type": 220,
-          "_object": {
-            "$type": 1,
-            "$text": "d"
-          },
-          "_property": {
-            "$type": 1,
-            "$text": "e"
-          }
+      "$type": 341,
+      "_expression": {
+        "$type": 220,
+        "_object": {
+          "$type": 1,
+          "$text": "d"
         },
-        "_debug": false
-      }
+        "_property": {
+          "$type": 1,
+          "$text": "e"
+        }
+      },
+      "_debug": false
     },
     "expectedOutput": "{d.e}",
     "options": {
@@ -63419,31 +63176,28 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 336,
-      "_content": {
-        "$type": 249,
-        "_expression": {
-          "$type": 208,
-          "_left": {
-            "$type": 1,
-            "$text": "width"
-          },
-          "_operator": 49,
-          "_right": {
-            "$type": 1,
-            "$text": "padding"
-          }
+      "$type": 341,
+      "_expression": {
+        "$type": 208,
+        "_left": {
+          "$type": 1,
+          "$text": "width"
         },
-        "_debug": false,
-        "_type_conversion": {
-          "$type": 66,
-          "$text": "!r",
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                122
-              ]
-            }
+        "_operator": 49,
+        "_right": {
+          "$type": 1,
+          "$text": "padding"
+        }
+      },
+      "_debug": false,
+      "_type_conversion": {
+        "$type": 66,
+        "$text": "!r",
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              122
+            ]
           }
         }
       }
@@ -63471,15 +63225,12 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 336,
-      "_content": {
-        "$type": 249,
-        "_expression": {
-          "$type": 1,
-          "$text": "precision"
-        },
-        "_debug": false
-      }
+      "$type": 341,
+      "_expression": {
+        "$type": 1,
+        "$text": "precision"
+      },
+      "_debug": false
     },
     "expectedOutput": "{precision}",
     "options": {
@@ -179948,72 +179699,28 @@
               {
                 "$type": 130,
                 "_names": {
-                  "$type": 337,
-                  "_content": {
-                    "$type": 135,
-                    "_name": [
-                      {
-                        "$type": 181,
-                        "_names": [
-                          {
-                            "$type": 1,
-                            "$text": "a"
-                          }
-                        ]
-                      },
-                      {
-                        "$type": 181,
-                        "_names": [
-                          {
-                            "$type": 1,
-                            "$text": "b"
-                          }
-                        ]
-                      }
-                    ],
-                    "_delimiter": 0
-                  }
-                }
-              }
-            ],
-            "_delimiter": 0
-          }
-        },
-        {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
-              {
-                "$type": 130,
-                "_names": {
-                  "$type": 337,
-                  "_content": {
-                    "$type": 135,
-                    "_name": [
-                      {
-                        "$type": 136,
-                        "_name": {
-                          "$type": 181,
-                          "_names": [
-                            {
-                              "$type": 1,
-                              "$text": "b"
-                            },
-                            {
-                              "$type": 1,
-                              "$text": "c"
-                            }
-                          ]
-                        },
-                        "_alias": {
+                  "$type": 343,
+                  "_name": [
+                    {
+                      "$type": 181,
+                      "_names": [
+                        {
                           "$type": 1,
-                          "$text": "d"
+                          "$text": "a"
                         }
-                      }
-                    ],
-                    "_delimiter": 0
-                  }
+                      ]
+                    },
+                    {
+                      "$type": 181,
+                      "_names": [
+                        {
+                          "$type": 1,
+                          "$text": "b"
+                        }
+                      ]
+                    }
+                  ],
+                  "_delimiter": 0
                 }
               }
             ],
@@ -180028,17 +179735,13 @@
               {
                 "$type": 130,
                 "_names": {
-                  "$type": 337,
-                  "_content": {
-                    "$type": 135,
-                    "_name": [
-                      {
+                  "$type": 343,
+                  "_name": [
+                    {
+                      "$type": 136,
+                      "_name": {
                         "$type": 181,
                         "_names": [
-                          {
-                            "$type": 1,
-                            "$text": "a"
-                          },
                           {
                             "$type": 1,
                             "$text": "b"
@@ -180048,10 +179751,49 @@
                             "$text": "c"
                           }
                         ]
+                      },
+                      "_alias": {
+                        "$type": 1,
+                        "$text": "d"
                       }
-                    ],
-                    "_delimiter": 0
-                  }
+                    }
+                  ],
+                  "_delimiter": 0
+                }
+              }
+            ],
+            "_delimiter": 0
+          }
+        },
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              {
+                "$type": 130,
+                "_names": {
+                  "$type": 343,
+                  "_name": [
+                    {
+                      "$type": 181,
+                      "_names": [
+                        {
+                          "$type": 1,
+                          "$text": "a"
+                        },
+                        {
+                          "$type": 1,
+                          "$text": "b"
+                        },
+                        {
+                          "$type": 1,
+                          "$text": "c"
+                        }
+                      ]
+                    }
+                  ],
+                  "_delimiter": 0
                 }
               }
             ],
@@ -180091,31 +179833,28 @@
           {
             "$type": 130,
             "_names": {
-              "$type": 337,
-              "_content": {
-                "$type": 135,
-                "_name": [
-                  {
-                    "$type": 181,
-                    "_names": [
-                      {
-                        "$type": 1,
-                        "$text": "a"
-                      }
-                    ]
-                  },
-                  {
-                    "$type": 181,
-                    "_names": [
-                      {
-                        "$type": 1,
-                        "$text": "b"
-                      }
-                    ]
-                  }
-                ],
-                "_delimiter": 0
-              }
+              "$type": 343,
+              "_name": [
+                {
+                  "$type": 181,
+                  "_names": [
+                    {
+                      "$type": 1,
+                      "$text": "a"
+                    }
+                  ]
+                },
+                {
+                  "$type": 181,
+                  "_names": [
+                    {
+                      "$type": 1,
+                      "$text": "b"
+                    }
+                  ]
+                }
+              ],
+              "_delimiter": 0
             }
           }
         ],
@@ -180152,33 +179891,30 @@
           {
             "$type": 130,
             "_names": {
-              "$type": 337,
-              "_content": {
-                "$type": 135,
-                "_name": [
-                  {
-                    "$type": 136,
-                    "_name": {
-                      "$type": 181,
-                      "_names": [
-                        {
-                          "$type": 1,
-                          "$text": "b"
-                        },
-                        {
-                          "$type": 1,
-                          "$text": "c"
-                        }
-                      ]
-                    },
-                    "_alias": {
-                      "$type": 1,
-                      "$text": "d"
-                    }
+              "$type": 343,
+              "_name": [
+                {
+                  "$type": 136,
+                  "_name": {
+                    "$type": 181,
+                    "_names": [
+                      {
+                        "$type": 1,
+                        "$text": "b"
+                      },
+                      {
+                        "$type": 1,
+                        "$text": "c"
+                      }
+                    ]
+                  },
+                  "_alias": {
+                    "$type": 1,
+                    "$text": "d"
                   }
-                ],
-                "_delimiter": 0
-              }
+                }
+              ],
+              "_delimiter": 0
             }
           }
         ],
@@ -180215,30 +179951,27 @@
           {
             "$type": 130,
             "_names": {
-              "$type": 337,
-              "_content": {
-                "$type": 135,
-                "_name": [
-                  {
-                    "$type": 181,
-                    "_names": [
-                      {
-                        "$type": 1,
-                        "$text": "a"
-                      },
-                      {
-                        "$type": 1,
-                        "$text": "b"
-                      },
-                      {
-                        "$type": 1,
-                        "$text": "c"
-                      }
-                    ]
-                  }
-                ],
-                "_delimiter": 0
-              }
+              "$type": 343,
+              "_name": [
+                {
+                  "$type": 181,
+                  "_names": [
+                    {
+                      "$type": 1,
+                      "$text": "a"
+                    },
+                    {
+                      "$type": 1,
+                      "$text": "b"
+                    },
+                    {
+                      "$type": 1,
+                      "$text": "c"
+                    }
+                  ]
+                }
+              ],
+              "_delimiter": 0
             }
           }
         ],
@@ -180273,31 +180006,28 @@
         {
           "$type": 130,
           "_names": {
-            "$type": 337,
-            "_content": {
-              "$type": 135,
-              "_name": [
-                {
-                  "$type": 181,
-                  "_names": [
-                    {
-                      "$type": 1,
-                      "$text": "a"
-                    }
-                  ]
-                },
-                {
-                  "$type": 181,
-                  "_names": [
-                    {
-                      "$type": 1,
-                      "$text": "b"
-                    }
-                  ]
-                }
-              ],
-              "_delimiter": 0
-            }
+            "$type": 343,
+            "_name": [
+              {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "a"
+                  }
+                ]
+              },
+              {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "b"
+                  }
+                ]
+              }
+            ],
+            "_delimiter": 0
           }
         }
       ],
@@ -180331,33 +180061,30 @@
         {
           "$type": 130,
           "_names": {
-            "$type": 337,
-            "_content": {
-              "$type": 135,
-              "_name": [
-                {
-                  "$type": 136,
-                  "_name": {
-                    "$type": 181,
-                    "_names": [
-                      {
-                        "$type": 1,
-                        "$text": "b"
-                      },
-                      {
-                        "$type": 1,
-                        "$text": "c"
-                      }
-                    ]
-                  },
-                  "_alias": {
-                    "$type": 1,
-                    "$text": "d"
-                  }
+            "$type": 343,
+            "_name": [
+              {
+                "$type": 136,
+                "_name": {
+                  "$type": 181,
+                  "_names": [
+                    {
+                      "$type": 1,
+                      "$text": "b"
+                    },
+                    {
+                      "$type": 1,
+                      "$text": "c"
+                    }
+                  ]
+                },
+                "_alias": {
+                  "$type": 1,
+                  "$text": "d"
                 }
-              ],
-              "_delimiter": 0
-            }
+              }
+            ],
+            "_delimiter": 0
           }
         }
       ],
@@ -180391,30 +180118,27 @@
         {
           "$type": 130,
           "_names": {
-            "$type": 337,
-            "_content": {
-              "$type": 135,
-              "_name": [
-                {
-                  "$type": 181,
-                  "_names": [
-                    {
-                      "$type": 1,
-                      "$text": "a"
-                    },
-                    {
-                      "$type": 1,
-                      "$text": "b"
-                    },
-                    {
-                      "$type": 1,
-                      "$text": "c"
-                    }
-                  ]
-                }
-              ],
-              "_delimiter": 0
-            }
+            "$type": 343,
+            "_name": [
+              {
+                "$type": 181,
+                "_names": [
+                  {
+                    "$type": 1,
+                    "$text": "a"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "b"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "c"
+                  }
+                ]
+              }
+            ],
+            "_delimiter": 0
           }
         }
       ],
@@ -180445,31 +180169,28 @@
     "input": {
       "$type": 130,
       "_names": {
-        "$type": 337,
-        "_content": {
-          "$type": 135,
-          "_name": [
-            {
-              "$type": 181,
-              "_names": [
-                {
-                  "$type": 1,
-                  "$text": "a"
-                }
-              ]
-            },
-            {
-              "$type": 181,
-              "_names": [
-                {
-                  "$type": 1,
-                  "$text": "b"
-                }
-              ]
-            }
-          ],
-          "_delimiter": 0
-        }
+        "$type": 343,
+        "_name": [
+          {
+            "$type": 181,
+            "_names": [
+              {
+                "$type": 1,
+                "$text": "a"
+              }
+            ]
+          },
+          {
+            "$type": 181,
+            "_names": [
+              {
+                "$type": 1,
+                "$text": "b"
+              }
+            ]
+          }
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "import a, b",
@@ -180497,33 +180218,30 @@
     "input": {
       "$type": 130,
       "_names": {
-        "$type": 337,
-        "_content": {
-          "$type": 135,
-          "_name": [
-            {
-              "$type": 136,
-              "_name": {
-                "$type": 181,
-                "_names": [
-                  {
-                    "$type": 1,
-                    "$text": "b"
-                  },
-                  {
-                    "$type": 1,
-                    "$text": "c"
-                  }
-                ]
-              },
-              "_alias": {
-                "$type": 1,
-                "$text": "d"
-              }
+        "$type": 343,
+        "_name": [
+          {
+            "$type": 136,
+            "_name": {
+              "$type": 181,
+              "_names": [
+                {
+                  "$type": 1,
+                  "$text": "b"
+                },
+                {
+                  "$type": 1,
+                  "$text": "c"
+                }
+              ]
+            },
+            "_alias": {
+              "$type": 1,
+              "$text": "d"
             }
-          ],
-          "_delimiter": 0
-        }
+          }
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "import b.c as d",
@@ -180551,30 +180269,27 @@
     "input": {
       "$type": 130,
       "_names": {
-        "$type": 337,
-        "_content": {
-          "$type": 135,
-          "_name": [
-            {
-              "$type": 181,
-              "_names": [
-                {
-                  "$type": 1,
-                  "$text": "a"
-                },
-                {
-                  "$type": 1,
-                  "$text": "b"
-                },
-                {
-                  "$type": 1,
-                  "$text": "c"
-                }
-              ]
-            }
-          ],
-          "_delimiter": 0
-        }
+        "$type": 343,
+        "_name": [
+          {
+            "$type": 181,
+            "_names": [
+              {
+                "$type": 1,
+                "$text": "a"
+              },
+              {
+                "$type": 1,
+                "$text": "b"
+              },
+              {
+                "$type": 1,
+                "$text": "c"
+              }
+            ]
+          }
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "import a.b.c",
@@ -180600,155 +180315,7 @@
     "grammar": "python",
     "pattern": "names",
     "input": {
-      "$type": 337,
-      "_content": {
-        "$type": 135,
-        "_name": [
-          {
-            "$type": 181,
-            "_names": [
-              {
-                "$type": 1,
-                "$text": "a"
-              }
-            ]
-          },
-          {
-            "$type": 181,
-            "_names": [
-              {
-                "$type": 1,
-                "$text": "b"
-              }
-            ]
-          }
-        ],
-        "_delimiter": 0
-      }
-    },
-    "expectedOutput": "a, b",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "a, b",
-    "pattern": "names",
-    "edits": [],
-    "expectedSourceOut": "a, b",
-    "expectedReparseTree": "(names name: (dotted_name names: (identifier)) name: (dotted_name names: (identifier)))",
-    "wrappedText": "import a, b",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "names",
-    "input": {
-      "$type": 337,
-      "_content": {
-        "$type": 135,
-        "_name": [
-          {
-            "$type": 136,
-            "_name": {
-              "$type": 181,
-              "_names": [
-                {
-                  "$type": 1,
-                  "$text": "b"
-                },
-                {
-                  "$type": 1,
-                  "$text": "c"
-                }
-              ]
-            },
-            "_alias": {
-              "$type": 1,
-              "$text": "d"
-            }
-          }
-        ],
-        "_delimiter": 0
-      }
-    },
-    "expectedOutput": "b.c as d",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "b.c as d",
-    "pattern": "names",
-    "edits": [],
-    "expectedSourceOut": "b.c as d",
-    "expectedReparseTree": "(names name: (aliased_import name: (dotted_name names: (identifier) names: (identifier)) alias: (identifier)))",
-    "wrappedText": "import b.c as d",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "names",
-    "input": {
-      "$type": 337,
-      "_content": {
-        "$type": 135,
-        "_name": [
-          {
-            "$type": 181,
-            "_names": [
-              {
-                "$type": 1,
-                "$text": "a"
-              },
-              {
-                "$type": 1,
-                "$text": "b"
-              },
-              {
-                "$type": 1,
-                "$text": "c"
-              }
-            ]
-          }
-        ],
-        "_delimiter": 0
-      }
-    },
-    "expectedOutput": "a.b.c",
-    "options": {
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "a.b.c",
-    "pattern": "names",
-    "edits": [],
-    "expectedSourceOut": "a.b.c",
-    "expectedReparseTree": "(names name: (dotted_name names: (identifier) names: (identifier) names: (identifier)))",
-    "wrappedText": "import a.b.c",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "import_list",
-    "input": {
-      "$type": 135,
+      "$type": 343,
       "_name": [
         {
           "$type": 181,
@@ -180782,19 +180349,19 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "a, b",
-    "pattern": "import_list",
+    "pattern": "names",
     "edits": [],
     "expectedSourceOut": "a, b",
-    "expectedReparseTree": "(import_list name: (dotted_name names: (identifier)) name: (dotted_name names: (identifier)))",
-    "wrappedText": "from a import (a, b)",
-    "wrappedOffset": 15
+    "expectedReparseTree": "(names name: (dotted_name names: (identifier)) name: (dotted_name names: (identifier)))",
+    "wrappedText": "import a, b",
+    "wrappedOffset": 7
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "import_list",
+    "pattern": "names",
     "input": {
-      "$type": 135,
+      "$type": 343,
       "_name": [
         {
           "$type": 136,
@@ -180830,19 +180397,19 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "b.c as d",
-    "pattern": "import_list",
+    "pattern": "names",
     "edits": [],
     "expectedSourceOut": "b.c as d",
-    "expectedReparseTree": "(import_list name: (aliased_import name: (dotted_name names: (identifier) names: (identifier)) alias: (identifier)))",
-    "wrappedText": "from a import (b.c as d)",
-    "wrappedOffset": 15
+    "expectedReparseTree": "(names name: (aliased_import name: (dotted_name names: (identifier) names: (identifier)) alias: (identifier)))",
+    "wrappedText": "import b.c as d",
+    "wrappedOffset": 7
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "import_list",
+    "pattern": "names",
     "input": {
-      "$type": 135,
+      "$type": 343,
       "_name": [
         {
           "$type": 181,
@@ -180875,12 +180442,12 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "a.b.c",
-    "pattern": "import_list",
+    "pattern": "names",
     "edits": [],
     "expectedSourceOut": "a.b.c",
-    "expectedReparseTree": "(import_list name: (dotted_name names: (identifier) names: (identifier) names: (identifier)))",
-    "wrappedText": "from a import (a.b.c)",
-    "wrappedOffset": 15
+    "expectedReparseTree": "(names name: (dotted_name names: (identifier) names: (identifier) names: (identifier)))",
+    "wrappedText": "import a.b.c",
+    "wrappedOffset": 7
   },
   {
     "kind": "render",
@@ -202370,7 +201937,7 @@
                     "$text": "a"
                   },
                   "_alias": {
-                    "$type": 335,
+                    "$type": 340,
                     "_content": {
                       "$type": 1,
                       "$text": "b"
@@ -202457,7 +202024,7 @@
                       }
                     },
                     "_alias": {
-                      "$type": 335,
+                      "$type": 340,
                       "_content": {
                         "$type": 1,
                         "$text": "d"
@@ -202508,7 +202075,7 @@
                       }
                     },
                     "_alias": {
-                      "$type": 335,
+                      "$type": 340,
                       "_content": {
                         "$type": 1,
                         "$text": "e"
@@ -202589,7 +202156,7 @@
                     "$text": "e"
                   },
                   "_alias": {
-                    "$type": 335,
+                    "$type": 340,
                     "_content": {
                       "$type": 1,
                       "$text": "f"
@@ -202606,7 +202173,7 @@
                     "$text": "g"
                   },
                   "_alias": {
-                    "$type": 335,
+                    "$type": 340,
                     "_content": {
                       "$type": 1,
                       "$text": "h"
@@ -202692,7 +202259,7 @@
                 "$text": "a"
               },
               "_alias": {
-                "$type": 335,
+                "$type": 340,
                 "_content": {
                   "$type": 1,
                   "$text": "b"
@@ -202804,7 +202371,7 @@
                   }
                 },
                 "_alias": {
-                  "$type": 335,
+                  "$type": 340,
                   "_content": {
                     "$type": 1,
                     "$text": "d"
@@ -202855,7 +202422,7 @@
                   }
                 },
                 "_alias": {
-                  "$type": 335,
+                  "$type": 340,
                   "_content": {
                     "$type": 1,
                     "$text": "e"
@@ -202954,7 +202521,7 @@
                 "$text": "e"
               },
               "_alias": {
-                "$type": 335,
+                "$type": 340,
                 "_content": {
                   "$type": 1,
                   "$text": "f"
@@ -202971,7 +202538,7 @@
                 "$text": "g"
               },
               "_alias": {
-                "$type": 335,
+                "$type": 340,
                 "_content": {
                   "$type": 1,
                   "$text": "h"
@@ -203044,7 +202611,7 @@
               "$text": "a"
             },
             "_alias": {
-              "$type": 335,
+              "$type": 340,
               "_content": {
                 "$type": 1,
                 "$text": "b"
@@ -203092,7 +202659,7 @@
               "$text": "e"
             },
             "_alias": {
-              "$type": 335,
+              "$type": 340,
               "_content": {
                 "$type": 1,
                 "$text": "f"
@@ -203109,7 +202676,7 @@
               "$text": "g"
             },
             "_alias": {
-              "$type": 335,
+              "$type": 340,
               "_content": {
                 "$type": 1,
                 "$text": "h"
@@ -203154,7 +202721,7 @@
           "$text": "a"
         },
         "_alias": {
-          "$type": 335,
+          "$type": 340,
           "_content": {
             "$type": 1,
             "$text": "b"
@@ -203230,7 +202797,7 @@
           }
         },
         "_alias": {
-          "$type": 335,
+          "$type": 340,
           "_content": {
             "$type": 1,
             "$text": "d"
@@ -203306,7 +202873,7 @@
           }
         },
         "_alias": {
-          "$type": 335,
+          "$type": 340,
           "_content": {
             "$type": 1,
             "$text": "e"
@@ -203348,7 +202915,7 @@
           "$text": "e"
         },
         "_alias": {
-          "$type": 335,
+          "$type": 340,
           "_content": {
             "$type": 1,
             "$text": "f"
@@ -203390,7 +202957,7 @@
           "$text": "g"
         },
         "_alias": {
-          "$type": 335,
+          "$type": 340,
           "_content": {
             "$type": 1,
             "$text": "h"
@@ -203430,7 +202997,7 @@
         "$text": "a"
       },
       "_alias": {
-        "$type": 335,
+        "$type": 340,
         "_content": {
           "$type": 1,
           "$text": "b"
@@ -203503,7 +203070,7 @@
         }
       },
       "_alias": {
-        "$type": 335,
+        "$type": 340,
         "_content": {
           "$type": 1,
           "$text": "d"
@@ -203576,7 +203143,7 @@
         }
       },
       "_alias": {
-        "$type": 335,
+        "$type": 340,
         "_content": {
           "$type": 1,
           "$text": "e"
@@ -203615,7 +203182,7 @@
         "$text": "e"
       },
       "_alias": {
-        "$type": 335,
+        "$type": 340,
         "_content": {
           "$type": 1,
           "$text": "f"
@@ -203654,7 +203221,7 @@
         "$text": "g"
       },
       "_alias": {
-        "$type": 335,
+        "$type": 340,
         "_content": {
           "$type": 1,
           "$text": "h"
@@ -203687,7 +203254,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 335,
+      "$type": 340,
       "_content": {
         "$type": 1,
         "$text": "b"
@@ -203719,7 +203286,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 335,
+      "$type": 340,
       "_content": {
         "$type": 1,
         "$text": "d"
@@ -203751,7 +203318,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 335,
+      "$type": 340,
       "_content": {
         "$type": 1,
         "$text": "e"
@@ -203783,7 +203350,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 335,
+      "$type": 340,
       "_content": {
         "$type": 1,
         "$text": "f"
@@ -203815,7 +203382,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 335,
+      "$type": 340,
       "_content": {
         "$type": 1,
         "$text": "h"
@@ -204512,7 +204079,7 @@
                 }
               },
               "_alias": {
-                "$type": 335,
+                "$type": 340,
                 "_content": {
                   "$type": 1,
                   "$text": "d"
@@ -204563,7 +204130,7 @@
                 }
               },
               "_alias": {
-                "$type": 335,
+                "$type": 340,
                 "_content": {
                   "$type": 1,
                   "$text": "e"
@@ -204668,7 +204235,7 @@
               }
             },
             "_alias": {
-              "$type": 335,
+              "$type": 340,
               "_content": {
                 "$type": 1,
                 "$text": "d"
@@ -204719,7 +204286,7 @@
               }
             },
             "_alias": {
-              "$type": 335,
+              "$type": 340,
               "_content": {
                 "$type": 1,
                 "$text": "e"
@@ -215863,12 +215430,12 @@
             "$text": "A"
           },
           "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
+            "$type": 301,
+            "_block_class_declaration": {
+              "$type": 300,
               "_statements": [
                 {
-                  "$type": 164,
+                  "$type": 342,
                   "_async": false,
                   "_name": {
                     "$type": 1,
@@ -215926,9 +215493,9 @@
             "$type": 176
           },
           "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
+            "$type": 301,
+            "_block_class_declaration": {
+              "$type": 300,
               "_statements": [
                 {
                   "$type": 129,
@@ -215971,12 +215538,12 @@
             }
           },
           "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
+            "$type": 301,
+            "_block_class_declaration": {
+              "$type": 300,
               "_statements": [
                 {
-                  "$type": 164,
+                  "$type": 342,
                   "_async": false,
                   "_name": {
                     "$type": 1,
@@ -216064,9 +215631,9 @@
             }
           },
           "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
+            "$type": 301,
+            "_block_class_declaration": {
+              "$type": 300,
               "_statements": [
                 {
                   "$type": 129,
@@ -216126,9 +215693,9 @@
             }
           },
           "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
+            "$type": 301,
+            "_block_class_declaration": {
+              "$type": 300,
               "_statements": [
                 {
                   "$type": 129,
@@ -216171,7 +215738,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nclass A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n",
-    "expectedReparseTree": "(module statements: (class_definition name: (identifier) body: (suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier))) body: (suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (subscript object: (identifier) (subscripts subscript: (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (subscript object: (identifier) (subscripts subscript: (identifier) subscript: (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))))",
+    "expectedReparseTree": "(module statements: (class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (subscript object: (identifier) (subscripts subscript: (identifier))))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))) statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (subscript object: (identifier) (subscripts subscript: (identifier) subscript: (identifier))))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))))",
     "wrappedText": "\nclass A:\n  def b(self):\n    return c\nclass B():\n  pass\nclass B(method1):\n  def method1(self):\n    return\nclass C(method1, Sequence[T]):\n  pass\nclass D(Sequence[T, U]):\n  pass\n",
     "wrappedOffset": 0
   },
@@ -216186,12 +215753,12 @@
         "$text": "A"
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
-              "$type": 164,
+              "$type": 342,
               "_async": false,
               "_name": {
                 "$type": 1,
@@ -216256,7 +215823,7 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class A:\n  def b(self):\n    return c\n",
-    "expectedReparseTree": "(class_definition name: (identifier) body: (suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent))))",
     "wrappedText": "class A:\n  def b(self):\n    return c\n",
     "wrappedOffset": 0
   },
@@ -216274,9 +215841,9 @@
         "$type": 176
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
               "$type": 129,
@@ -216309,7 +215876,7 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class B():\n  pass\n",
-    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))))",
     "wrappedText": "class B():\n  pass\n",
     "wrappedOffset": 0
   },
@@ -216337,12 +215904,12 @@
         }
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
-              "$type": 164,
+              "$type": 342,
               "_async": false,
               "_name": {
                 "$type": 1,
@@ -216403,7 +215970,7 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class B(method1):\n  def method1(self):\n    return\n",
-    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier))) body: (suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent))))",
     "wrappedText": "class B(method1):\n  def method1(self):\n    return\n",
     "wrappedOffset": 0
   },
@@ -216448,9 +216015,9 @@
         }
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
               "$type": 129,
@@ -216483,7 +216050,7 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class C(method1, Sequence[T]):\n  pass\n",
-    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (subscript object: (identifier) (subscripts subscript: (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (subscript object: (identifier) (subscripts subscript: (identifier))))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))))",
     "wrappedText": "class C(method1, Sequence[T]):\n  pass\n",
     "wrappedOffset": 0
   },
@@ -216528,9 +216095,9 @@
         }
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
               "$type": 129,
@@ -216563,21 +216130,21 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class D(Sequence[T, U]):\n  pass\n",
-    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (subscript object: (identifier) (subscripts subscript: (identifier) subscript: (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (subscript object: (identifier) (subscripts subscript: (identifier) subscript: (identifier))))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))))",
     "wrappedText": "class D(Sequence[T, U]):\n  pass\n",
     "wrappedOffset": 0
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "suite_block",
+    "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
         "_statements": [
           {
-            "$type": 164,
+            "$type": 342,
             "_async": false,
             "_name": {
               "$type": 1,
@@ -216638,12 +216205,763 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "\n  def b(self):\n    return c",
-    "pattern": "suite_block",
+    "pattern": "suite_block_class_declaration",
     "edits": [],
     "expectedSourceOut": "def b(self):\n    return c\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent)))",
-    "wrappedText": "if a:\n  def b(self):\n      return c\n  ",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent)))",
+    "wrappedText": "class A:\n  def b(self):\n      return c\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block_class_declaration",
+    "input": {
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
+        "_statements": [
+          {
+            "$type": 129,
+            "_elements": {
+              "$type": 259,
+              "_item": [
+                147
+              ],
+              "_delimiter": 0
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "pass\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n  pass",
+    "pattern": "suite_block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "pass\n",
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))",
+    "wrappedText": "class A:\n  pass\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block_class_declaration",
+    "input": {
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
+        "_statements": [
+          {
+            "$type": 342,
+            "_async": false,
+            "_name": {
+              "$type": 1,
+              "$text": "method1"
+            },
+            "_parameters": {
+              "$type": 165,
+              "_elements": {
+                "$type": 192,
+                "_item": [
+                  {
+                    "$type": 1,
+                    "$text": "self"
+                  }
+                ],
+                "_delimiter": 0
+              }
+            },
+            "_body": {
+              "$type": 295,
+              "_block": {
+                "$type": 179,
+                "_statements": [
+                  {
+                    "$type": 129,
+                    "_elements": {
+                      "$type": 259,
+                      "_item": [
+                        {
+                          "$type": 144
+                        }
+                      ],
+                      "_delimiter": 0
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "def method1(self):\n    return\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n  def method1(self):\n    return",
+    "pattern": "suite_block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "def method1(self):\n    return\n",
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent)))",
+    "wrappedText": "class A:\n  def method1(self):\n      return\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block_class_declaration",
+    "input": {
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
+        "_statements": [
+          {
+            "$type": 129,
+            "_elements": {
+              "$type": 259,
+              "_item": [
+                147
+              ],
+              "_delimiter": 0
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "pass\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n  pass",
+    "pattern": "suite_block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "pass\n",
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))",
+    "wrappedText": "class A:\n  pass\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block_class_declaration",
+    "input": {
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
+        "_statements": [
+          {
+            "$type": 129,
+            "_elements": {
+              "$type": 259,
+              "_item": [
+                147
+              ],
+              "_delimiter": 0
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "pass\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n  pass",
+    "pattern": "suite_block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "pass\n",
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))",
+    "wrappedText": "class A:\n  pass\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block_class_declaration",
+    "input": {
+      "$type": 300,
+      "_statements": [
+        {
+          "$type": 342,
+          "_async": false,
+          "_name": {
+            "$type": 1,
+            "$text": "b"
+          },
+          "_parameters": {
+            "$type": 165,
+            "_elements": {
+              "$type": 192,
+              "_item": [
+                {
+                  "$type": 1,
+                  "$text": "self"
+                }
+              ],
+              "_delimiter": 0
+            }
+          },
+          "_body": {
+            "$type": 295,
+            "_block": {
+              "$type": 179,
+              "_statements": [
+                {
+                  "$type": 129,
+                  "_elements": {
+                    "$type": 259,
+                    "_item": [
+                      {
+                        "$type": 144,
+                        "_expressions": {
+                          "$type": 1,
+                          "$text": "c"
+                        }
+                      }
+                    ],
+                    "_delimiter": 0
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "expectedOutput": "def b(self):\n  return c\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def b(self):\n    return c",
+    "pattern": "block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "def b(self):\n  return c\n",
+    "expectedReparseTree": "(block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent))",
+    "wrappedText": "class A:\n  \n  def b(self):\n    return c\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block_class_declaration",
+    "input": {
+      "$type": 300,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              147
+            ],
+            "_delimiter": 0
+          }
+        }
+      ]
+    },
+    "expectedOutput": "pass\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "pass",
+    "pattern": "block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "pass\n",
+    "expectedReparseTree": "(block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
+    "wrappedText": "class A:\n  \n  pass\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block_class_declaration",
+    "input": {
+      "$type": 300,
+      "_statements": [
+        {
+          "$type": 342,
+          "_async": false,
+          "_name": {
+            "$type": 1,
+            "$text": "method1"
+          },
+          "_parameters": {
+            "$type": 165,
+            "_elements": {
+              "$type": 192,
+              "_item": [
+                {
+                  "$type": 1,
+                  "$text": "self"
+                }
+              ],
+              "_delimiter": 0
+            }
+          },
+          "_body": {
+            "$type": 295,
+            "_block": {
+              "$type": 179,
+              "_statements": [
+                {
+                  "$type": 129,
+                  "_elements": {
+                    "$type": 259,
+                    "_item": [
+                      {
+                        "$type": 144
+                      }
+                    ],
+                    "_delimiter": 0
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "expectedOutput": "def method1(self):\n  return\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def method1(self):\n    return",
+    "pattern": "block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "def method1(self):\n  return\n",
+    "expectedReparseTree": "(block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent))",
+    "wrappedText": "class A:\n  \n  def method1(self):\n    return\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block_class_declaration",
+    "input": {
+      "$type": 300,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              147
+            ],
+            "_delimiter": 0
+          }
+        }
+      ]
+    },
+    "expectedOutput": "pass\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "pass",
+    "pattern": "block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "pass\n",
+    "expectedReparseTree": "(block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
+    "wrappedText": "class A:\n  \n  pass\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block_class_declaration",
+    "input": {
+      "$type": 300,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              147
+            ],
+            "_delimiter": 0
+          }
+        }
+      ]
+    },
+    "expectedOutput": "pass\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "pass",
+    "pattern": "block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "pass\n",
+    "expectedReparseTree": "(block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
+    "wrappedText": "class A:\n  \n  pass\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "method_declaration",
+    "input": {
+      "$type": 342,
+      "_async": false,
+      "_name": {
+        "$type": 1,
+        "$text": "b"
+      },
+      "_parameters": {
+        "$type": 165,
+        "_elements": {
+          "$type": 192,
+          "_item": [
+            {
+              "$type": 1,
+              "$text": "self"
+            }
+          ],
+          "_delimiter": 0
+        }
+      },
+      "_body": {
+        "$type": 295,
+        "_block": {
+          "$type": 179,
+          "_statements": [
+            {
+              "$type": 129,
+              "_elements": {
+                "$type": 259,
+                "_item": [
+                  {
+                    "$type": 144,
+                    "_expressions": {
+                      "$type": 1,
+                      "$text": "c"
+                    }
+                  }
+                ],
+                "_delimiter": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "expectedOutput": "def b(self):\n  return c\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def b(self):\n    return c",
+    "pattern": "method_declaration",
+    "edits": [],
+    "expectedSourceOut": "def b(self):\n  return c\n",
+    "expectedReparseTree": "(method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent))))",
+    "wrappedText": "class A:\n  \n  def b(self):\n    return c\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "method_declaration",
+    "input": {
+      "$type": 342,
+      "_async": false,
+      "_name": {
+        "$type": 1,
+        "$text": "method1"
+      },
+      "_parameters": {
+        "$type": 165,
+        "_elements": {
+          "$type": 192,
+          "_item": [
+            {
+              "$type": 1,
+              "$text": "self"
+            }
+          ],
+          "_delimiter": 0
+        }
+      },
+      "_body": {
+        "$type": 295,
+        "_block": {
+          "$type": 179,
+          "_statements": [
+            {
+              "$type": 129,
+              "_elements": {
+                "$type": 259,
+                "_item": [
+                  {
+                    "$type": 144
+                  }
+                ],
+                "_delimiter": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "expectedOutput": "def method1(self):\n  return\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def method1(self):\n    return",
+    "pattern": "method_declaration",
+    "edits": [],
+    "expectedSourceOut": "def method1(self):\n  return\n",
+    "expectedReparseTree": "(method_declaration name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent))))",
+    "wrappedText": "class A:\n  \n  def method1(self):\n    return\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters",
+    "input": {
+      "$type": 165,
+      "_elements": {
+        "$type": 192,
+        "_item": [
+          {
+            "$type": 1,
+            "$text": "self"
+          }
+        ],
+        "_delimiter": 0
+      }
+    },
+    "expectedOutput": "(self)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(self)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(self)",
+    "expectedReparseTree": "(parameters elements: (parameters_elements item: (identifier)))",
+    "wrappedText": "def _f(self):\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters",
+    "input": {
+      "$type": 165,
+      "_elements": {
+        "$type": 192,
+        "_item": [
+          {
+            "$type": 1,
+            "$text": "self"
+          }
+        ],
+        "_delimiter": 0
+      }
+    },
+    "expectedOutput": "(self)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(self)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(self)",
+    "expectedReparseTree": "(parameters elements: (parameters_elements item: (identifier)))",
+    "wrappedText": "def _f(self):\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters_elements",
+    "input": {
+      "$type": 192,
+      "_item": [
+        {
+          "$type": 1,
+          "$text": "self"
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "self",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "self",
+    "pattern": "parameters_elements",
+    "edits": [],
+    "expectedSourceOut": "self",
+    "expectedReparseTree": "(parameters_elements item: (identifier))",
+    "wrappedText": "def _f(self):\n    pass",
+    "wrappedOffset": 7
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters_elements",
+    "input": {
+      "$type": 192,
+      "_item": [
+        {
+          "$type": 1,
+          "$text": "self"
+        }
+      ],
+      "_delimiter": 0
+    },
+    "expectedOutput": "self",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "self",
+    "pattern": "parameters_elements",
+    "edits": [],
+    "expectedSourceOut": "self",
+    "expectedReparseTree": "(parameters_elements item: (identifier))",
+    "wrappedText": "def _f(self):\n    pass",
+    "wrappedOffset": 7
   },
   {
     "kind": "render",
@@ -216708,123 +217026,6 @@
             "_elements": {
               "$type": 259,
               "_item": [
-                147
-              ],
-              "_delimiter": 0
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "pass\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n  pass",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))",
-    "wrappedText": "if a:\n  pass\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "suite_block",
-    "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 164,
-            "_async": false,
-            "_name": {
-              "$type": 1,
-              "$text": "method1"
-            },
-            "_parameters": {
-              "$type": 165,
-              "_elements": {
-                "$type": 192,
-                "_item": [
-                  {
-                    "$type": 1,
-                    "$text": "self"
-                  }
-                ],
-                "_delimiter": 0
-              }
-            },
-            "_body": {
-              "$type": 295,
-              "_block": {
-                "$type": 179,
-                "_statements": [
-                  {
-                    "$type": 129,
-                    "_elements": {
-                      "$type": 259,
-                      "_item": [
-                        {
-                          "$type": 144
-                        }
-                      ],
-                      "_delimiter": 0
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "def method1(self):\n    return\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n  def method1(self):\n    return",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "def method1(self):\n    return\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent)))",
-    "wrappedText": "if a:\n  def method1(self):\n      return\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "suite_block",
-    "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 129,
-            "_elements": {
-              "$type": 259,
-              "_item": [
                 {
                   "$type": 144
                 }
@@ -216855,167 +217056,6 @@
     "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))",
     "wrappedText": "if a:\n  return\n  ",
     "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "suite_block",
-    "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 129,
-            "_elements": {
-              "$type": 259,
-              "_item": [
-                147
-              ],
-              "_delimiter": 0
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "pass\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n  pass",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))",
-    "wrappedText": "if a:\n  pass\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "suite_block",
-    "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 129,
-            "_elements": {
-              "$type": 259,
-              "_item": [
-                147
-              ],
-              "_delimiter": 0
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "pass\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n  pass",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent)))",
-    "wrappedText": "if a:\n  pass\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
-          "$type": 164,
-          "_async": false,
-          "_name": {
-            "$type": 1,
-            "$text": "b"
-          },
-          "_parameters": {
-            "$type": 165,
-            "_elements": {
-              "$type": 192,
-              "_item": [
-                {
-                  "$type": 1,
-                  "$text": "self"
-                }
-              ],
-              "_delimiter": 0
-            }
-          },
-          "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
-              "_statements": [
-                {
-                  "$type": 129,
-                  "_elements": {
-                    "$type": 259,
-                    "_item": [
-                      {
-                        "$type": 144,
-                        "_expressions": {
-                          "$type": 1,
-                          "$text": "c"
-                        }
-                      }
-                    ],
-                    "_delimiter": 0
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "expectedOutput": "def b(self):\n  return c\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def b(self):\n    return c",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "def b(self):\n  return c\n",
-    "expectedReparseTree": "(block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent)))) (dedent))",
-    "wrappedText": "if a:\n  \n  def b(self):\n    return c\n  ",
-    "wrappedOffset": 11
   },
   {
     "kind": "render",
@@ -217075,117 +217115,6 @@
           "_elements": {
             "$type": 259,
             "_item": [
-              147
-            ],
-            "_delimiter": 0
-          }
-        }
-      ]
-    },
-    "expectedOutput": "pass\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "pass",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  pass\n  ",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
-          "$type": 164,
-          "_async": false,
-          "_name": {
-            "$type": 1,
-            "$text": "method1"
-          },
-          "_parameters": {
-            "$type": 165,
-            "_elements": {
-              "$type": 192,
-              "_item": [
-                {
-                  "$type": 1,
-                  "$text": "self"
-                }
-              ],
-              "_delimiter": 0
-            }
-          },
-          "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
-              "_statements": [
-                {
-                  "$type": 129,
-                  "_elements": {
-                    "$type": 259,
-                    "_item": [
-                      {
-                        "$type": 144
-                      }
-                    ],
-                    "_delimiter": 0
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "expectedOutput": "def method1(self):\n  return\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def method1(self):\n    return",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "def method1(self):\n  return\n",
-    "expectedReparseTree": "(block statements: (function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent)))) (dedent))",
-    "wrappedText": "if a:\n  \n  def method1(self):\n    return\n  ",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
               {
                 "$type": 144
               }
@@ -217215,368 +217144,6 @@
     "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  return\n  ",
     "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
-              147
-            ],
-            "_delimiter": 0
-          }
-        }
-      ]
-    },
-    "expectedOutput": "pass\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "pass",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  pass\n  ",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
-              147
-            ],
-            "_delimiter": 0
-          }
-        }
-      ]
-    },
-    "expectedOutput": "pass\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "pass",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  pass\n  ",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "function_definition",
-    "input": {
-      "$type": 164,
-      "_async": false,
-      "_name": {
-        "$type": 1,
-        "$text": "b"
-      },
-      "_parameters": {
-        "$type": 165,
-        "_elements": {
-          "$type": 192,
-          "_item": [
-            {
-              "$type": 1,
-              "$text": "self"
-            }
-          ],
-          "_delimiter": 0
-        }
-      },
-      "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
-          "_statements": [
-            {
-              "$type": 129,
-              "_elements": {
-                "$type": 259,
-                "_item": [
-                  {
-                    "$type": 144,
-                    "_expressions": {
-                      "$type": 1,
-                      "$text": "c"
-                    }
-                  }
-                ],
-                "_delimiter": 0
-              }
-            }
-          ]
-        }
-      }
-    },
-    "expectedOutput": "def b(self):\n  return c\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def b(self):\n    return c",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def b(self):\n  return c\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement (identifier))) (newline)) (dedent))))",
-    "wrappedText": "def b(self):\n  return c\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "function_definition",
-    "input": {
-      "$type": 164,
-      "_async": false,
-      "_name": {
-        "$type": 1,
-        "$text": "method1"
-      },
-      "_parameters": {
-        "$type": 165,
-        "_elements": {
-          "$type": 192,
-          "_item": [
-            {
-              "$type": 1,
-              "$text": "self"
-            }
-          ],
-          "_delimiter": 0
-        }
-      },
-      "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
-          "_statements": [
-            {
-              "$type": 129,
-              "_elements": {
-                "$type": 259,
-                "_item": [
-                  {
-                    "$type": 144
-                  }
-                ],
-                "_delimiter": 0
-              }
-            }
-          ]
-        }
-      }
-    },
-    "expectedOutput": "def method1(self):\n  return\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def method1(self):\n    return",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def method1(self):\n  return\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters elements: (parameters_elements item: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (return_statement)) (newline)) (dedent))))",
-    "wrappedText": "def method1(self):\n  return\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "parameters",
-    "input": {
-      "$type": 165,
-      "_elements": {
-        "$type": 192,
-        "_item": [
-          {
-            "$type": 1,
-            "$text": "self"
-          }
-        ],
-        "_delimiter": 0
-      }
-    },
-    "expectedOutput": "(self)",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(self)",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "(self)",
-    "expectedReparseTree": "(parameters elements: (parameters_elements item: (identifier)))",
-    "wrappedText": "def _f(self):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "parameters",
-    "input": {
-      "$type": 165,
-      "_elements": {
-        "$type": 192,
-        "_item": [
-          {
-            "$type": 1,
-            "$text": "self"
-          }
-        ],
-        "_delimiter": 0
-      }
-    },
-    "expectedOutput": "(self)",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(self)",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "(self)",
-    "expectedReparseTree": "(parameters elements: (parameters_elements item: (identifier)))",
-    "wrappedText": "def _f(self):\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "parameters_elements",
-    "input": {
-      "$type": 192,
-      "_item": [
-        {
-          "$type": 1,
-          "$text": "self"
-        }
-      ],
-      "_delimiter": 0
-    },
-    "expectedOutput": "self",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "self",
-    "pattern": "parameters_elements",
-    "edits": [],
-    "expectedSourceOut": "self",
-    "expectedReparseTree": "(parameters_elements item: (identifier))",
-    "wrappedText": "def _f(self):\n    pass",
-    "wrappedOffset": 7
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "parameters_elements",
-    "input": {
-      "$type": 192,
-      "_item": [
-        {
-          "$type": 1,
-          "$text": "self"
-        }
-      ],
-      "_delimiter": 0
-    },
-    "expectedOutput": "self",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "self",
-    "pattern": "parameters_elements",
-    "edits": [],
-    "expectedSourceOut": "self",
-    "expectedReparseTree": "(parameters_elements item: (identifier))",
-    "wrappedText": "def _f(self):\n    pass",
-    "wrappedOffset": 7
   },
   {
     "kind": "render",
@@ -217650,9 +217217,9 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  pass\n  ",
-    "wrappedOffset": 11
+    "expectedReparseTree": "(block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
+    "wrappedText": "class A:\n  \n  pass\n  ",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -217722,9 +217289,9 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  pass\n  ",
-    "wrappedOffset": 11
+    "expectedReparseTree": "(block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
+    "wrappedText": "class A:\n  \n  pass\n  ",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -217757,9 +217324,9 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "pass\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  pass\n  ",
-    "wrappedOffset": 11
+    "expectedReparseTree": "(block_class_declaration statements: (simple_statements elements: (simple_statements_elements item: (pass_statement)) (newline)) (dedent))",
+    "wrappedText": "class A:\n  \n  pass\n  ",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -218497,12 +218064,12 @@
             }
           },
           "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
+            "$type": 301,
+            "_block_class_declaration": {
+              "$type": 300,
               "_statements": [
                 {
-                  "$type": 164,
+                  "$type": 342,
                   "_async": false,
                   "_name": {
                     "$type": 1,
@@ -218560,7 +218127,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nclass A(B, C):\n  def d():\n    e\n",
-    "expectedReparseTree": "(module statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier))) body: (suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent)))))",
+    "expectedReparseTree": "(module statements: (class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent)))))",
     "wrappedText": "\nclass A(B, C):\n  def d():\n    e\n",
     "wrappedOffset": 0
   },
@@ -218592,12 +218159,12 @@
         }
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
-              "$type": 164,
+              "$type": 342,
               "_async": false,
               "_name": {
                 "$type": 1,
@@ -218652,7 +218219,7 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class A(B, C):\n  def d():\n    e\n",
-    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier))) body: (suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) bases: (argument_list arguments: (argument_list_elements item: (identifier) item: (identifier))) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent))))",
     "wrappedText": "class A(B, C):\n  def d():\n    e\n",
     "wrappedOffset": 0
   },
@@ -218740,14 +218307,14 @@
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "suite_block",
+    "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
         "_statements": [
           {
-            "$type": 164,
+            "$type": 342,
             "_async": false,
             "_name": {
               "$type": 1,
@@ -218798,12 +218365,165 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "\n  def d():\n    e",
-    "pattern": "suite_block",
+    "pattern": "suite_block_class_declaration",
     "edits": [],
     "expectedSourceOut": "def d():\n    e\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent)))",
-    "wrappedText": "if a:\n  def d():\n      e\n  ",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent)))",
+    "wrappedText": "class A:\n  def d():\n      e\n  ",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block_class_declaration",
+    "input": {
+      "$type": 300,
+      "_statements": [
+        {
+          "$type": 342,
+          "_async": false,
+          "_name": {
+            "$type": 1,
+            "$text": "d"
+          },
+          "_parameters": {
+            "$type": 165
+          },
+          "_body": {
+            "$type": 295,
+            "_block": {
+              "$type": 179,
+              "_statements": [
+                {
+                  "$type": 129,
+                  "_elements": {
+                    "$type": 259,
+                    "_item": [
+                      {
+                        "$type": 141,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "e"
+                        }
+                      }
+                    ],
+                    "_delimiter": 0
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "expectedOutput": "def d():\n  e\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def d():\n    e",
+    "pattern": "block_class_declaration",
+    "edits": [],
+    "expectedSourceOut": "def d():\n  e\n",
+    "expectedReparseTree": "(block_class_declaration statements: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent))",
+    "wrappedText": "class A:\n  \n  def d():\n    e\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "method_declaration",
+    "input": {
+      "$type": 342,
+      "_async": false,
+      "_name": {
+        "$type": 1,
+        "$text": "d"
+      },
+      "_parameters": {
+        "$type": 165
+      },
+      "_body": {
+        "$type": 295,
+        "_block": {
+          "$type": 179,
+          "_statements": [
+            {
+              "$type": 129,
+              "_elements": {
+                "$type": 259,
+                "_item": [
+                  {
+                    "$type": 141,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "e"
+                    }
+                  }
+                ],
+                "_delimiter": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "expectedOutput": "def d():\n  e\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def d():\n    e",
+    "pattern": "method_declaration",
+    "edits": [],
+    "expectedSourceOut": "def d():\n  e\n",
+    "expectedReparseTree": "(method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "wrappedText": "class A:\n  \n  def d():\n    e\n  ",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters",
+    "input": {
+      "$type": 165
+    },
+    "expectedOutput": "()",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
   },
   {
     "kind": "render",
@@ -218862,71 +218582,6 @@
       "$type": 179,
       "_statements": [
         {
-          "$type": 164,
-          "_async": false,
-          "_name": {
-            "$type": 1,
-            "$text": "d"
-          },
-          "_parameters": {
-            "$type": 165
-          },
-          "_body": {
-            "$type": 295,
-            "_block": {
-              "$type": 179,
-              "_statements": [
-                {
-                  "$type": 129,
-                  "_elements": {
-                    "$type": 259,
-                    "_item": [
-                      {
-                        "$type": 141,
-                        "_content": {
-                          "$type": 1,
-                          "$text": "e"
-                        }
-                      }
-                    ],
-                    "_delimiter": 0
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "expectedOutput": "def d():\n  e\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def d():\n    e",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "def d():\n  e\n",
-    "expectedReparseTree": "(block statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) (dedent))",
-    "wrappedText": "if a:\n  \n  def d():\n    e\n  ",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
           "$type": 129,
           "_elements": {
             "$type": 259,
@@ -218964,94 +218619,6 @@
     "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  e\n  ",
     "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "function_definition",
-    "input": {
-      "$type": 164,
-      "_async": false,
-      "_name": {
-        "$type": 1,
-        "$text": "d"
-      },
-      "_parameters": {
-        "$type": 165
-      },
-      "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
-          "_statements": [
-            {
-              "$type": 129,
-              "_elements": {
-                "$type": 259,
-                "_item": [
-                  {
-                    "$type": 141,
-                    "_content": {
-                      "$type": 1,
-                      "$text": "e"
-                    }
-                  }
-                ],
-                "_delimiter": 0
-              }
-            }
-          ]
-        }
-      }
-    },
-    "expectedOutput": "def d():\n  e\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def d():\n    e",
-    "pattern": "function_definition",
-    "edits": [],
-    "expectedSourceOut": "def d():\n  e\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
-    "wrappedText": "def d():\n  e\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "parameters",
-    "input": {
-      "$type": 165
-    },
-    "expectedOutput": "()",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
   },
   {
     "kind": "render",
@@ -219196,12 +218763,12 @@
               "$text": "C"
             },
             "_body": {
-              "$type": 295,
-              "_block": {
-                "$type": 179,
+              "$type": 301,
+              "_block_class_declaration": {
+                "$type": 300,
                 "_statements": [
                   {
-                    "$type": 177,
+                    "$type": 302,
                     "_decorator": [
                       {
                         "$type": 178,
@@ -219262,7 +218829,7 @@
                       }
                     ],
                     "_definition": {
-                      "$type": 164,
+                      "$type": 342,
                       "_async": false,
                       "_name": {
                         "$type": 1,
@@ -219298,7 +218865,7 @@
                     }
                   },
                   {
-                    "$type": 177,
+                    "$type": 302,
                     "_decorator": [
                       {
                         "$type": 178,
@@ -219315,7 +218882,7 @@
                       }
                     ],
                     "_definition": {
-                      "$type": 164,
+                      "$type": 342,
                       "_async": true,
                       "_name": {
                         "$type": 1,
@@ -219460,7 +219027,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
-    "expectedReparseTree": "(module statements: (decorated_definition (decorator expression: (attribute object: (identifier) property: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block (indent) (block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))))) statements: (decorated_definition (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))))))",
+    "expectedReparseTree": "(module statements: (decorated_definition (decorator expression: (attribute object: (identifier) property: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))))) statements: (decorated_definition (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))))))",
     "wrappedText": "\n@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n\n@buttons[0].clicked.connect\ndef spam():\n  ...\n",
     "wrappedOffset": 0
   },
@@ -219493,12 +219060,12 @@
           "$text": "C"
         },
         "_body": {
-          "$type": 295,
-          "_block": {
-            "$type": 179,
+          "$type": 301,
+          "_block_class_declaration": {
+            "$type": 300,
             "_statements": [
               {
-                "$type": 177,
+                "$type": 302,
                 "_decorator": [
                   {
                     "$type": 178,
@@ -219559,7 +219126,7 @@
                   }
                 ],
                 "_definition": {
-                  "$type": 164,
+                  "$type": 342,
                   "_async": false,
                   "_name": {
                     "$type": 1,
@@ -219595,7 +219162,7 @@
                 }
               },
               {
-                "$type": 177,
+                "$type": 302,
                 "_decorator": [
                   {
                     "$type": 178,
@@ -219612,7 +219179,7 @@
                   }
                 ],
                 "_definition": {
-                  "$type": 164,
+                  "$type": 342,
                   "_async": true,
                   "_name": {
                     "$type": 1,
@@ -219676,208 +219243,8 @@
     "pattern": "decorated_definition",
     "edits": [],
     "expectedSourceOut": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
-    "expectedReparseTree": "(decorated_definition (decorator expression: (attribute object: (identifier) property: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block (indent) (block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent)))))",
+    "expectedReparseTree": "(decorated_definition (decorator expression: (attribute object: (identifier) property: (identifier)) newline: (newline)) definition: (class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent)))))",
     "wrappedText": "@a.b\nclass C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "decorated_definition",
-    "input": {
-      "$type": 177,
-      "_decorator": [
-        {
-          "$type": 178,
-          "_expression": {
-            "$type": 223,
-            "_function": {
-              "$type": 1,
-              "$text": "d"
-            },
-            "_arguments": {
-              "$type": 176,
-              "_arguments": {
-                "$type": 264,
-                "_item": [
-                  {
-                    "$type": 95,
-                    "$text": "1"
-                  }
-                ],
-                "_delimiter": 0
-              }
-            }
-          }
-        },
-        {
-          "$type": 178,
-          "_expression": {
-            "$type": 220,
-            "_object": {
-              "$type": 220,
-              "_object": {
-                "$type": 221,
-                "_object": {
-                  "$type": 1,
-                  "$text": "e"
-                },
-                "_subscripts": {
-                  "$type": 267,
-                  "_subscript": [
-                    {
-                      "$type": 95,
-                      "$text": "2"
-                    }
-                  ],
-                  "_delimiter": 0
-                }
-              },
-              "_property": {
-                "$type": 1,
-                "$text": "f"
-              }
-            },
-            "_property": {
-              "$type": 1,
-              "$text": "g"
-            }
-          }
-        }
-      ],
-      "_definition": {
-        "$type": 164,
-        "_async": false,
-        "_name": {
-          "$type": 1,
-          "$text": "f"
-        },
-        "_parameters": {
-          "$type": 165
-        },
-        "_body": {
-          "$type": 295,
-          "_block": {
-            "$type": 179,
-            "_statements": [
-              {
-                "$type": 129,
-                "_elements": {
-                  "$type": 259,
-                  "_item": [
-                    {
-                      "$type": 141,
-                      "_content": {
-                        "$type": 1,
-                        "$text": "g"
-                      }
-                    }
-                  ],
-                  "_delimiter": 0
-                }
-              }
-            ]
-          }
-        }
-      }
-    },
-    "expectedOutput": "@d(1)\n@e[2].f.g\ndef f():\n  g\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "@d(1)\n  @e[2].f.g\n  def f():\n    g",
-    "pattern": "decorated_definition",
-    "edits": [],
-    "expectedSourceOut": "@d(1)\n@e[2].f.g\ndef f():\n  g\n",
-    "expectedReparseTree": "(decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
-    "wrappedText": "@d(1)\n@e[2].f.g\ndef f():\n  g\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "decorated_definition",
-    "input": {
-      "$type": 177,
-      "_decorator": [
-        {
-          "$type": 178,
-          "_expression": {
-            "$type": 223,
-            "_function": {
-              "$type": 1,
-              "$text": "f"
-            },
-            "_arguments": {
-              "$type": 176
-            }
-          }
-        }
-      ],
-      "_definition": {
-        "$type": 164,
-        "_async": true,
-        "_name": {
-          "$type": 1,
-          "$text": "f"
-        },
-        "_parameters": {
-          "$type": 165
-        },
-        "_body": {
-          "$type": 295,
-          "_block": {
-            "$type": 179,
-            "_statements": [
-              {
-                "$type": 129,
-                "_elements": {
-                  "$type": 259,
-                  "_item": [
-                    {
-                      "$type": 141,
-                      "_content": {
-                        "$type": 1,
-                        "$text": "g"
-                      }
-                    }
-                  ],
-                  "_delimiter": 0
-                }
-              }
-            ]
-          }
-        }
-      }
-    },
-    "expectedOutput": "@f()\nasync def f():\n  g\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "@f()\n  async def f():\n    g",
-    "pattern": "decorated_definition",
-    "edits": [],
-    "expectedSourceOut": "@f()\nasync def f():\n  g\n",
-    "expectedReparseTree": "(decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
-    "wrappedText": "@f()\nasync def f():\n  g\n",
     "wrappedOffset": 0
   },
   {
@@ -220476,12 +219843,12 @@
         "$text": "C"
       },
       "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
+        "$type": 301,
+        "_block_class_declaration": {
+          "$type": 300,
           "_statements": [
             {
-              "$type": 177,
+              "$type": 302,
               "_decorator": [
                 {
                   "$type": 178,
@@ -220542,7 +219909,7 @@
                 }
               ],
               "_definition": {
-                "$type": 164,
+                "$type": 342,
                 "_async": false,
                 "_name": {
                   "$type": 1,
@@ -220578,7 +219945,7 @@
               }
             },
             {
-              "$type": 177,
+              "$type": 302,
               "_decorator": [
                 {
                   "$type": 178,
@@ -220595,7 +219962,7 @@
                 }
               ],
               "_definition": {
-                "$type": 164,
+                "$type": 342,
                 "_async": true,
                 "_name": {
                   "$type": 1,
@@ -220658,21 +220025,21 @@
     "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
-    "expectedReparseTree": "(class_definition name: (identifier) body: (suite_block (indent) (block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))))",
+    "expectedReparseTree": "(class_definition name: (identifier) body: (suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))))",
     "wrappedText": "class C:\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
     "wrappedOffset": 0
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "suite_block",
+    "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
+      "$type": 301,
+      "_block_class_declaration": {
+        "$type": 300,
         "_statements": [
           {
-            "$type": 177,
+            "$type": 302,
             "_decorator": [
               {
                 "$type": 178,
@@ -220733,7 +220100,7 @@
               }
             ],
             "_definition": {
-              "$type": 164,
+              "$type": 342,
               "_async": false,
               "_name": {
                 "$type": 1,
@@ -220769,7 +220136,7 @@
             }
           },
           {
-            "$type": 177,
+            "$type": 302,
             "_decorator": [
               {
                 "$type": 178,
@@ -220786,7 +220153,7 @@
               }
             ],
             "_definition": {
-              "$type": 164,
+              "$type": 342,
               "_async": true,
               "_name": {
                 "$type": 1,
@@ -220845,166 +220212,22 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "\n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
-    "pattern": "suite_block",
+    "pattern": "suite_block_class_declaration",
     "edits": [],
     "expectedSourceOut": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent)))",
-    "wrappedText": "if a:\n  @d(1)\n    @e[2].f.g\n    def f():\n      g\n  \n    @f()\n    async def f():\n      g\n  ",
-    "wrappedOffset": 8
+    "expectedReparseTree": "(suite_block_class_declaration (indent) (block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent)))",
+    "wrappedText": "class A:\n  @d(1)\n    @e[2].f.g\n    def f():\n      g\n  \n    @f()\n    async def f():\n      g\n  ",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "suite_block",
+    "pattern": "block_class_declaration",
     "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 129,
-            "_elements": {
-              "$type": 259,
-              "_item": [
-                {
-                  "$type": 141,
-                  "_content": {
-                    "$type": 1,
-                    "$text": "g"
-                  }
-                }
-              ],
-              "_delimiter": 0
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "g\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n    g",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "g\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))",
-    "wrappedText": "if a:\n  g\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "suite_block",
-    "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 129,
-            "_elements": {
-              "$type": 259,
-              "_item": [
-                {
-                  "$type": 141,
-                  "_content": {
-                    "$type": 1,
-                    "$text": "g"
-                  }
-                }
-              ],
-              "_delimiter": 0
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "g\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n    g",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "g\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))",
-    "wrappedText": "if a:\n  g\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "suite_block",
-    "input": {
-      "$type": 295,
-      "_block": {
-        "$type": 179,
-        "_statements": [
-          {
-            "$type": 129,
-            "_elements": {
-              "$type": 259,
-              "_item": [
-                {
-                  "$type": 141,
-                  "_content": 64
-                }
-              ],
-              "_delimiter": 0
-            }
-          }
-        ]
-      }
-    },
-    "expectedOutput": "...\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "\n    ...",
-    "pattern": "suite_block",
-    "edits": [],
-    "expectedSourceOut": "...\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent)))",
-    "wrappedText": "if a:\n  ...\n  ",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
+      "$type": 300,
       "_statements": [
         {
-          "$type": 177,
+          "$type": 302,
           "_decorator": [
             {
               "$type": 178,
@@ -221065,7 +220288,7 @@
             }
           ],
           "_definition": {
-            "$type": 164,
+            "$type": 342,
             "_async": false,
             "_name": {
               "$type": 1,
@@ -221101,7 +220324,7 @@
           }
         },
         {
-          "$type": 177,
+          "$type": 302,
           "_decorator": [
             {
               "$type": 178,
@@ -221118,7 +220341,7 @@
             }
           ],
           "_definition": {
-            "$type": 164,
+            "$type": 342,
             "_async": true,
             "_name": {
               "$type": 1,
@@ -221176,39 +220399,115 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "@d(1)\n  @e[2].f.g\n  def f():\n    g\n\n  @f()\n  async def f():\n    g",
-    "pattern": "block",
+    "pattern": "block_class_declaration",
     "edits": [],
     "expectedSourceOut": "@d(1)\n@e[2].f.g\ndef f():\n  g\n\n@f()\nasync def f():\n  g\n",
-    "expectedReparseTree": "(block statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))",
-    "wrappedText": "if a:\n  \n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  \n  @f()\n  async def f():\n    g\n  ",
-    "wrappedOffset": 11
+    "expectedReparseTree": "(block_class_declaration statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) (dedent))",
+    "wrappedText": "class A:\n  \n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  \n  @f()\n  async def f():\n    g\n  ",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "block",
+    "pattern": "decorated_definition_class_declaration",
     "input": {
-      "$type": 179,
-      "_statements": [
+      "$type": 302,
+      "_decorator": [
         {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
-              {
-                "$type": 141,
-                "_content": {
+          "$type": 178,
+          "_expression": {
+            "$type": 223,
+            "_function": {
+              "$type": 1,
+              "$text": "d"
+            },
+            "_arguments": {
+              "$type": 176,
+              "_arguments": {
+                "$type": 264,
+                "_item": [
+                  {
+                    "$type": 95,
+                    "$text": "1"
+                  }
+                ],
+                "_delimiter": 0
+              }
+            }
+          }
+        },
+        {
+          "$type": 178,
+          "_expression": {
+            "$type": 220,
+            "_object": {
+              "$type": 220,
+              "_object": {
+                "$type": 221,
+                "_object": {
                   "$type": 1,
-                  "$text": "g"
+                  "$text": "e"
+                },
+                "_subscripts": {
+                  "$type": 267,
+                  "_subscript": [
+                    {
+                      "$type": 95,
+                      "$text": "2"
+                    }
+                  ],
+                  "_delimiter": 0
+                }
+              },
+              "_property": {
+                "$type": 1,
+                "$text": "f"
+              }
+            },
+            "_property": {
+              "$type": 1,
+              "$text": "g"
+            }
+          }
+        }
+      ],
+      "_definition": {
+        "$type": 342,
+        "_async": false,
+        "_name": {
+          "$type": 1,
+          "$text": "f"
+        },
+        "_parameters": {
+          "$type": 165
+        },
+        "_body": {
+          "$type": 295,
+          "_block": {
+            "$type": 179,
+            "_statements": [
+              {
+                "$type": 129,
+                "_elements": {
+                  "$type": 259,
+                  "_item": [
+                    {
+                      "$type": 141,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "g"
+                      }
+                    }
+                  ],
+                  "_delimiter": 0
                 }
               }
-            ],
-            "_delimiter": 0
+            ]
           }
         }
-      ]
+      }
     },
-    "expectedOutput": "g\n",
+    "expectedOutput": "@d(1)\n@e[2].f.g\ndef f():\n  g\n",
     "options": {
       "layout": {
         "indent": "  "
@@ -221221,40 +220520,72 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "g",
-    "pattern": "block",
+    "sourceIn": "@d(1)\n  @e[2].f.g\n  def f():\n    g",
+    "pattern": "decorated_definition_class_declaration",
     "edits": [],
-    "expectedSourceOut": "g\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  g\n  ",
-    "wrappedOffset": 11
+    "expectedSourceOut": "@d(1)\n@e[2].f.g\ndef f():\n  g\n",
+    "expectedReparseTree": "(decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain)))) newline: (newline)) (decorator expression: (attribute object: (attribute object: (subscript object: (identifier) (subscripts subscript: (integer_decimal_plain))) property: (identifier)) property: (identifier)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "wrappedText": "class A:\n  \n  @d(1)\n  @e[2].f.g\n  def f():\n    g\n  \n\n  @f()\n  async def f():\n    g",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "block",
+    "pattern": "decorated_definition_class_declaration",
     "input": {
-      "$type": 179,
-      "_statements": [
+      "$type": 302,
+      "_decorator": [
         {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
+          "$type": 178,
+          "_expression": {
+            "$type": 223,
+            "_function": {
+              "$type": 1,
+              "$text": "f"
+            },
+            "_arguments": {
+              "$type": 176
+            }
+          }
+        }
+      ],
+      "_definition": {
+        "$type": 342,
+        "_async": true,
+        "_name": {
+          "$type": 1,
+          "$text": "f"
+        },
+        "_parameters": {
+          "$type": 165
+        },
+        "_body": {
+          "$type": 295,
+          "_block": {
+            "$type": 179,
+            "_statements": [
               {
-                "$type": 141,
-                "_content": {
-                  "$type": 1,
-                  "$text": "g"
+                "$type": 129,
+                "_elements": {
+                  "$type": 259,
+                  "_item": [
+                    {
+                      "$type": 141,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "g"
+                      }
+                    }
+                  ],
+                  "_delimiter": 0
                 }
               }
-            ],
-            "_delimiter": 0
+            ]
           }
         }
-      ]
+      }
     },
-    "expectedOutput": "g\n",
+    "expectedOutput": "@f()\nasync def f():\n  g\n",
     "options": {
       "layout": {
         "indent": "  "
@@ -221267,56 +220598,13 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "g",
-    "pattern": "block",
+    "sourceIn": "@f()\n  async def f():\n    g",
+    "pattern": "decorated_definition_class_declaration",
     "edits": [],
-    "expectedSourceOut": "g\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  g\n  ",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "block",
-    "input": {
-      "$type": 179,
-      "_statements": [
-        {
-          "$type": 129,
-          "_elements": {
-            "$type": 259,
-            "_item": [
-              {
-                "$type": 141,
-                "_content": 64
-              }
-            ],
-            "_delimiter": 0
-          }
-        }
-      ]
-    },
-    "expectedOutput": "...\n",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "...",
-    "pattern": "block",
-    "edits": [],
-    "expectedSourceOut": "...\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))",
-    "wrappedText": "if a:\n  \n  ...\n  ",
-    "wrappedOffset": 11
+    "expectedSourceOut": "@f()\nasync def f():\n  g\n",
+    "expectedReparseTree": "(decorated_definition_class_declaration (decorator expression: (call function: (identifier) arguments: (argument_list)) newline: (newline)) definition: (method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "wrappedText": "class A:\n  \n  @f()\n  async def f():\n    g\n  \n\n  @f()\n  async def f():\n    g",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -221656,9 +220944,9 @@
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "function_definition",
+    "pattern": "method_declaration",
     "input": {
-      "$type": 164,
+      "$type": 342,
       "_async": false,
       "_name": {
         "$type": 1,
@@ -221706,19 +220994,19 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def f():\n    g",
-    "pattern": "function_definition",
+    "pattern": "method_declaration",
     "edits": [],
     "expectedSourceOut": "def f():\n  g\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
-    "wrappedText": "def f():\n  g\n",
-    "wrappedOffset": 0
+    "expectedReparseTree": "(method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "wrappedText": "class A:\n  \n  def f():\n    g\n  ",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "function_definition",
+    "pattern": "method_declaration",
     "input": {
-      "$type": 164,
+      "$type": 342,
       "_async": true,
       "_name": {
         "$type": 1,
@@ -221766,50 +221054,267 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "async def f():\n    g",
-    "pattern": "function_definition",
+    "pattern": "method_declaration",
     "edits": [],
     "expectedSourceOut": "async def f():\n  g\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
-    "wrappedText": "async def f():\n  g\n",
-    "wrappedOffset": 0
+    "expectedReparseTree": "(method_declaration name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "wrappedText": "class A:\n  \n  async def f():\n    g\n  ",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "function_definition",
+    "pattern": "parameters",
     "input": {
-      "$type": 164,
-      "_async": false,
-      "_name": {
-        "$type": 1,
-        "$text": "spam"
+      "$type": 165
+    },
+    "expectedOutput": "()",
+    "options": {
+      "layout": {
+        "indent": "  "
       },
-      "_parameters": {
-        "$type": 165
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters",
+    "input": {
+      "$type": 165
+    },
+    "expectedOutput": "()",
+    "options": {
+      "layout": {
+        "indent": "  "
       },
-      "_body": {
-        "$type": 295,
-        "_block": {
-          "$type": 179,
-          "_statements": [
-            {
-              "$type": 129,
-              "_elements": {
-                "$type": 259,
-                "_item": [
-                  {
-                    "$type": 141,
-                    "_content": 64
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "parameters",
+    "input": {
+      "$type": 165
+    },
+    "expectedOutput": "()",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block",
+    "input": {
+      "$type": 295,
+      "_block": {
+        "$type": 179,
+        "_statements": [
+          {
+            "$type": 129,
+            "_elements": {
+              "$type": 259,
+              "_item": [
+                {
+                  "$type": 141,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "g"
                   }
-                ],
-                "_delimiter": 0
-              }
+                }
+              ],
+              "_delimiter": 0
             }
-          ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "g\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n    g",
+    "pattern": "suite_block",
+    "edits": [],
+    "expectedSourceOut": "g\n",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))",
+    "wrappedText": "if a:\n  g\n  ",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block",
+    "input": {
+      "$type": 295,
+      "_block": {
+        "$type": 179,
+        "_statements": [
+          {
+            "$type": 129,
+            "_elements": {
+              "$type": 259,
+              "_item": [
+                {
+                  "$type": 141,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "g"
+                  }
+                }
+              ],
+              "_delimiter": 0
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "g\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n    g",
+    "pattern": "suite_block",
+    "edits": [],
+    "expectedSourceOut": "g\n",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))",
+    "wrappedText": "if a:\n  g\n  ",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "suite_block",
+    "input": {
+      "$type": 295,
+      "_block": {
+        "$type": 179,
+        "_statements": [
+          {
+            "$type": 129,
+            "_elements": {
+              "$type": 259,
+              "_item": [
+                {
+                  "$type": 141,
+                  "_content": 64
+                }
+              ],
+              "_delimiter": 0
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "...\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\n    ...",
+    "pattern": "suite_block",
+    "edits": [],
+    "expectedSourceOut": "...\n",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent)))",
+    "wrappedText": "if a:\n  ...\n  ",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "block",
+    "input": {
+      "$type": 179,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              {
+                "$type": 141,
+                "_content": {
+                  "$type": 1,
+                  "$text": "g"
+                }
+              }
+            ],
+            "_delimiter": 0
+          }
         }
-      }
+      ]
     },
-    "expectedOutput": "def spam():\n  ...\n",
+    "expectedOutput": "g\n",
     "options": {
       "layout": {
         "indent": "  "
@@ -221822,22 +221327,40 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "def spam():\n    ...",
-    "pattern": "function_definition",
+    "sourceIn": "g",
+    "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "def spam():\n  ...\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))))",
-    "wrappedText": "def spam():\n  ...\n",
-    "wrappedOffset": 0
+    "expectedSourceOut": "g\n",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))",
+    "wrappedText": "if a:\n  \n  g\n  ",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "parameters",
+    "pattern": "block",
     "input": {
-      "$type": 165
+      "$type": 179,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              {
+                "$type": 141,
+                "_content": {
+                  "$type": 1,
+                  "$text": "g"
+                }
+              }
+            ],
+            "_delimiter": 0
+          }
+        }
+      ]
     },
-    "expectedOutput": "()",
+    "expectedOutput": "g\n",
     "options": {
       "layout": {
         "indent": "  "
@@ -221850,22 +221373,37 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
+    "sourceIn": "g",
+    "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
+    "expectedSourceOut": "g\n",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))",
+    "wrappedText": "if a:\n  \n  g\n  ",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
     "grammar": "python",
-    "pattern": "parameters",
+    "pattern": "block",
     "input": {
-      "$type": 165
+      "$type": 179,
+      "_statements": [
+        {
+          "$type": 129,
+          "_elements": {
+            "$type": 259,
+            "_item": [
+              {
+                "$type": 141,
+                "_content": 64
+              }
+            ],
+            "_delimiter": 0
+          }
+        }
+      ]
     },
-    "expectedOutput": "()",
+    "expectedOutput": "...\n",
     "options": {
       "layout": {
         "indent": "  "
@@ -221878,41 +221416,13 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
+    "sourceIn": "...",
+    "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "pattern": "parameters",
-    "input": {
-      "$type": 165
-    },
-    "expectedOutput": "()",
-    "options": {
-      "layout": {
-        "indent": "  "
-      },
-      "module": {
-        "before": 115
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
+    "expectedSourceOut": "...\n",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))",
+    "wrappedText": "if a:\n  \n  ...\n  ",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
@@ -222236,6 +221746,63 @@
     "expectedSourceOut": "...",
     "expectedReparseTree": "(expression_statement (ellipsis))",
     "wrappedText": "...",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "function_definition",
+    "input": {
+      "$type": 164,
+      "_async": false,
+      "_name": {
+        "$type": 1,
+        "$text": "spam"
+      },
+      "_parameters": {
+        "$type": 165
+      },
+      "_body": {
+        "$type": 295,
+        "_block": {
+          "$type": 179,
+          "_statements": [
+            {
+              "$type": 129,
+              "_elements": {
+                "$type": 259,
+                "_item": [
+                  {
+                    "$type": 141,
+                    "_content": 64
+                  }
+                ],
+                "_delimiter": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "expectedOutput": "def spam():\n  ...\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      },
+      "module": {
+        "before": 115
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def spam():\n    ...",
+    "pattern": "function_definition",
+    "edits": [],
+    "expectedSourceOut": "def spam():\n  ...\n",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (ellipsis))) (newline)) (dedent))))",
+    "wrappedText": "def spam():\n  ...\n",
     "wrappedOffset": 0
   },
   {

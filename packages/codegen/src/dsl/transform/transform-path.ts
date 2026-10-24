@@ -206,11 +206,8 @@ function descendThroughPrecWrapper(
 	return reconstructPrec(rule, newContent);
 }
 
-export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
-	const t = (rule as { type?: string }).type;
-	if (t !== 'SYMBOL') return false;
-	const meta = readRuleMetadata('metadata' in rule ? rule.metadata : undefined);
-	return meta?.symbolSource === 'group-lift';
+export function isEnrichGroupLiftSymbol(rule: object): boolean {
+	return 'type' in rule && rule.type === 'SYMBOL' && readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.symbolSource === 'group-lift';
 }
 
 function descendThroughGroupLiftSymbol(

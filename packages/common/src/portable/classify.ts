@@ -7,7 +7,7 @@ import { portablePathHasFacts } from './facts.ts';
 
 type Node = { readonly $type: number };
 
-/** Reads a node or a bare kind id of a bound grammar as the vocabulary path of its kind's first read entry that holds, if any. */
+/** Reads a node or a bare kind id of a bound grammar as the vocabulary path of its kind's first read entry that holds and that no other holding entry refines, if any. */
 export type PortableClassifier = <T extends Node>(value: T | number) => string | undefined;
 
 /** Whether a value is an object with a numeric kind id, the shape a classifier reads. */
@@ -53,7 +53,8 @@ export const readsAs = (rows: PortableRows, path: string, value: Node | number):
  * The classifier of a bound grammar's portable rows, built once per rows object.
  *
  * @param rows - The rows a bound grammar's engine carries.
- * @returns A function reading a node, or a bare kind id, as the path of its kind's first read entry that holds. An entry that
+ * @returns A function reading a node, or a bare kind id, as the path of its kind's first read entry that holds, passing over an
+ * entry whose path another holding entry refines, so a refinement that holds reads over the path it refines. An entry that
  * depends on where the value sits (a placement, or a condition on an enclosing node) is skipped, so the value reads as its next
  * entry. A kind id reads its own text from the fixed texts; it shows no slot, so an entry whose test reads one is skipped for it
  * the same way.
@@ -107,8 +108,10 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), entries.filter(keep)]));
 	const nodeEntries = entriesWhere(unplaced);
 	const kindIdEntries = entriesWhere((entry) => unplaced(entry) && decidesKindId(entry));
-	return (value) =>
-		(typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type))?.find((entry) =>
+	return (value) => {
+		const holding = ((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? []).filter((entry) =>
 			entry.test.every((condition) => conditionHolds(condition, value))
-		)?.path;
+		);
+		return holding.find((entry) => !holding.some((other) => other.path !== entry.path && portablePathHasFacts(entry.path, other.path)))?.path;
+	};
 }

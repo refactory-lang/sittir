@@ -66,6 +66,7 @@ import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
 import { mappedName } from '../dsl/bind.ts';
+import { copyBaseOf, type CopyBase } from '../dsl/automatic-variants.ts';
 import { deriveVariantChildren, isAliasMintedRef, ownedVariants, stampLabelProvenance } from './variant-structural.ts';
 import {
 	composeTokenText,
@@ -110,6 +111,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
 	readonly root: string | undefined;
+	readonly copyBase: CopyBase;
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -122,6 +124,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	) {
 		super(init);
 		this.supertypes = init.supertypes;
+		this.copyBase = copyBaseOf(init.grammar.splitFrom);
 		this.externalRoles = init.externalRoles;
 		this.inline = init.inline;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
@@ -257,7 +260,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	reportAuxTokens(evaluated.rules, linkCtx);
 
 	stampLinkMintedVisibility(rules, linkCtx);
-	const variantChildren = deriveVariantChildren(rules);
+	const variantChildren = deriveVariantChildren(rules, linkCtx.copyBase);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
@@ -300,7 +303,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		relaxedLiterals: raw.relaxedLiterals,
 		relaxedDisplayLiterals: raw.relaxedDisplayLiterals,
 		fileTypes: raw.fileTypes,
-		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references) },
+		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references, linkCtx.copyBase) },
 		references,
 		displayUnions,
 		topLevelAliasBodies,
@@ -1146,7 +1149,8 @@ function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKin
 			if (display !== undefined) addStorage({ display, content: rule });
 			return;
 		}
-		if ('members' in rule) (rule as { members: readonly Rule<'link'>[] }).members.forEach(visit);
+		if (rule.type === SUPERTYPE) rule.subtypes.forEach(visit);
+		else if ('members' in rule) (rule as { members: readonly Rule<'link'>[] }).members.forEach(visit);
 		else if ('content' in rule && rule.content !== undefined) visit((rule as { content: Rule<'link'> }).content);
 	};
 	for (const rule of Object.values(rules)) visit(rule);

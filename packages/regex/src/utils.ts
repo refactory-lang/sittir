@@ -10,11 +10,11 @@ export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_layout', '_newline', '_tight']),
 	innerKinds: INNER_SITES,
-	rebuildWrappers: new Set<number>([77, 78, 79, 80, 81, 83, 84, 85, 89, 90]),
+	rebuildWrappers: new Set<number>([77, 78, 79, 80, 81, 83, 84, 85]),
 	listKinds: new Set<number>([]),
 	layout: new Set<number>([47, 48, 49, 50]),
 	innerRegions: new Map<number, readonly string[]>([[58, ['_negation', '_leading', '_class_atoms', '_trailing']]]),
-	namedUnits: new Set<number>([2, 4, 5, 6, 19, 54, 82]),
+	namedUnits: new Set<number>([2, 4, 5, 6, 19, 54, 82, 89]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 47, '\n': 48, '\n\n': 49, '\n\n\n': 50 })
@@ -93,9 +93,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	85: [
 		['disabled', 0, undefined, '_disabled'],
 		['pattern', 1, undefined, '_pattern']
-	],
-	89: [['content', 0, undefined, '_content']],
-	90: [['content', 0, undefined, '_content']]
+	]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({
@@ -104,11 +102,11 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	slots: querySlots,
 	layout: triviaFacts.layout,
 	spread: new Set<number>([52, 53]),
-	leaves: new Set<number>([12, 20, 34, 35, 36, 38, 39, 41, 42, 60, 66, 74, 76]),
-	textEnvelopes: new Map<number, number>([[90, 35]]),
+	leaves: new Set<number>([12, 20, 34, 35, 36, 38, 39, 41, 42, 60, 66, 74, 76, 90]),
+	textEnvelopes: new Map<number, number>([]),
 	units: new Set<number>([
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-		48, 49, 50, 54, 82
+		48, 49, 50, 54, 82, 89
 	]),
 	blank: 0,
 	options: Object.freeze<NodeJSONFacts['options']>({})
@@ -329,7 +327,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_unicode_property_name',
 				'UnicodePropertyValueExpressionGroup.unicodePropertyName',
-				'a built UnicodePropertyName',
+				'buildUnicodePropertyName(…)',
 				[90]
 			]
 		]
@@ -364,12 +362,6 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51]]
 		],
 		config: ['disabled', 'pattern']
-	},
-	89: { kind: 'lazy', required: [['_content', 'content']], kindIds: [['_content', 'Lazy.content', [26]]] },
-	90: {
-		kind: 'unicode_property_name',
-		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'UnicodePropertyName.content', 'buildUnicodePropertyValue(…)', [35]]]
 	}
 });
 

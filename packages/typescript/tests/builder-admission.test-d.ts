@@ -72,3 +72,8 @@ export function optionsAndValueKeepTheirPlaces(): void {
 	ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement), statement);
 	ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement), { terminator: ts.kinds.AutomaticSemicolon });
 }
+
+export function thisTypeInATypePosition(): void {
+	ts.build.typeAnnotation(ts.build.thisType);
+	ts.build.typeAnnotation('this');
+}

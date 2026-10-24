@@ -259,9 +259,9 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 	const bound = bindFacts(
 		{
 			claims: [
-				claim('declaration.method', 'function_item', { within: ['declaration_list', 'impl_item'] }),
-				claim('declaration.method', 'function_item', { within: ['declaration_list', 'trait_item'] }),
-				claim('declaration.method.private', 'function_item', { within: ['declaration_list', 'impl_item'] }),
+				claim('declaration.method', 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] }),
+				claim('declaration.method', 'function_item', { toplevel: false, within: ['declaration_list', 'trait_item'] }),
+				claim('declaration.method.private', 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] }),
 				claim('declaration.function', 'function_item')
 			],
 			members: [{ route: 'rename', owner: 'function_item', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null, claims: [0, 3] }],
@@ -274,12 +274,12 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 		boundNameAt(same, aliases)
 	);
 
-	it('unplaces the claim that named the alias, keeps every other placement in the names the sites give, and leaves an unplaced claim on its base kind', () => {
-		expect(bound.claims.map((c) => [c.vocab, c.kind, c.within])).toEqual([
-			['declaration.method', 'method_declaration', []],
-			['declaration.method', 'method_declaration', []],
-			['declaration.method.private', 'method_declaration', ['impl_body', 'impl_item']],
-			['declaration.function', 'function_item', []]
+	it('unplaces the claim that named the alias as a claim at its pattern root, keeps every other placement in the names the sites give, and leaves an unplaced claim on its base kind', () => {
+		expect(bound.claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel])).toEqual([
+			['declaration.method', 'method_declaration', [], true],
+			['declaration.method', 'method_declaration', [], true],
+			['declaration.method.private', 'method_declaration', ['impl_body', 'impl_item'], false],
+			['declaration.function', 'function_item', [], true]
 		]);
 	});
 

@@ -224,6 +224,12 @@ export const ir: {
 	readonly suiteInline: typeof F.suiteInline;
 	readonly suiteBlock: typeof F.suiteBlock;
 	readonly suiteEmpty: typeof F.suiteEmpty;
+	readonly blockClassDeclaration: typeof F.blockClassDeclaration;
+	readonly suiteBlockClassDeclaration: typeof F.suiteBlockClassDeclaration;
+	readonly decoratedDefinitionClassDeclaration: typeof F.decoratedDefinitionClassDeclaration;
+	readonly names: typeof F.names;
+	readonly formatExpression: typeof F.formatExpression;
+	readonly methodDeclaration: typeof F.methodDeclaration;
 	readonly simpleStatement: typeof F.simpleStatement;
 	readonly compoundStatement: typeof F.compoundStatement;
 	readonly matchBlock: typeof F.matchBlock;
@@ -416,6 +422,12 @@ export const ir: {
 	suiteInline: F.suiteInline,
 	suiteBlock: F.suiteBlock,
 	suiteEmpty: F.suiteEmpty,
+	blockClassDeclaration: F.blockClassDeclaration,
+	suiteBlockClassDeclaration: F.suiteBlockClassDeclaration,
+	decoratedDefinitionClassDeclaration: F.decoratedDefinitionClassDeclaration,
+	names: F.names,
+	formatExpression: F.formatExpression,
+	methodDeclaration: F.methodDeclaration,
 	simpleStatement: F.simpleStatement,
 	compoundStatement: F.compoundStatement,
 	matchBlock: F.matchBlock,

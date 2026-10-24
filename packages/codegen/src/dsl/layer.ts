@@ -25,6 +25,7 @@ import { baseRulesOf, VERIFIED_TREE_SITTER } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
 import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, renameMapOf, rewriteInherited, scopedAlias, type Effect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
+import { copyBaseOf } from './automatic-variants.ts';
 import { applyRenames, renamedLists, vacatedNames, type ListRename } from './verbs/rename.ts';
 import { applyNarrows } from './verbs/narrow.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
@@ -518,11 +519,12 @@ function layerConflicts(ctx: LayerCtx): readonly (readonly unknown[])[] {
 
 function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, roles: ReadonlyMap<string, ExternalRole>): LayerOutput {
 	const { rules, wire, depth } = ctx;
-	const projections = ctx.inherited === undefined ? undefined : appendProvenance(ctx.inherited.projections, provenanceOf(ctx.effects, rules));
+	const provenanceHere = provenanceOf(ctx.effects, rules);
+	const projections = ctx.inherited === undefined ? undefined : appendProvenance(ctx.inherited.projections, provenanceHere);
 	const renamed = renamedLists({ ...evaluated, conflicts: layerConflicts(ctx), supertypes: ctx.lists.supertypes, inline: ctx.lists.inline }, LAYER_LIST_RENAMES, ctx.effects);
 	const view = { grammar: { ...ctx.grammar, rules, supertypes: renamed.supertypes, inline: renamed.inline } };
 	const unaliased = dropFlattenedParentAliases(view.grammar, { __wireContext__: wire });
-	stampWiredVariants(view, ctx.base, wire.automaticVariants, new Set(wire.elementSupertypes.keys()));
+	stampWiredVariants(view, ctx.base, wire.automaticVariants, new Set(wire.elementSupertypes.keys()), copyBaseOf((projections ?? provenanceHere).splitFrom));
 	const dead = deadEnrichMints(view.grammar, { mints: getEnrichMints(ctx.base), protectedNames: ctx.protectedNames });
 	const blank = nativeRuleFn<() => Rule>('blank');
 	for (const name of dead) rules[name] = blank();

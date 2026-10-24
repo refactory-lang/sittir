@@ -4,6 +4,7 @@ import type { Lead, LeadMatch } from '../dsl/verbs/effects.ts';
 import { BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackageDir, type GrammarName, type GrammarPackage } from '../grammars.ts';
 import { bindingsPathIn } from './facts.ts';
 import { assertBindingsFresh, REGENERATE_BINDINGS_COMMAND } from './hash.ts';
+import type { Split } from '../dsl/bind.ts';
 import type { GrammarBindings, GrammarBindingsEdit, GrammarBindingsPatch } from './grammar-bindings.ts';
 import { runPinned } from './read.ts';
 
@@ -32,11 +33,18 @@ function matchCall(m: LeadMatch): string {
 	return `match(${[q(m.kind), ...within, ...as].join(', ')})`;
 }
 
+const splitPath = (split: Split): string =>
+	split.path.map((step) => `${step.field === null ? '' : `${step.field}:/`}(${step.kind}${step.as === null ? '' : ` as ${step.as}`})`).join('/');
+
+const splitSet = (splits: readonly Split[]): string => `{ ${splits.map((s) => `${q(splitPath(s))}: alias(${q(s.as)})`).join(', ')} }`;
+
 const leadSet = (l: Lead): string => `{ ".": lead(${[q(l.item), q(l.field), ...l.admits.map(matchCall)].join(', ')}) }`;
 
 function editEntries(bindings: GrammarBindings): string {
 	const sets = new Map([...bindings.patches].map(([kind, patches]) => [kind, patches.map(patchSet)]));
 	for (const l of bindings.leads) sets.set(l.list, [...(sets.get(l.list) ?? []), leadSet(l)]);
+	for (const owner of new Set(bindings.splits.map((s) => s.owner)))
+		sets.set(owner, [...(sets.get(owner) ?? []), splitSet(bindings.splits.filter((s) => s.owner === owner))]);
 	if (sets.size === 0) return '{}';
 	const lines = [...sets].map(([kind, entries]) => `\t\t\t${kind}: ${entries.length === 1 ? entries[0]! : `[${entries.join(', ')}]`}`);
 	return `{\n${lines.join(',\n')}\n\t\t}`;
@@ -50,7 +58,7 @@ function renamesData(renames: Readonly<Record<string, string>>): string {
 export function printBindingsModule(bindings: GrammarBindings, hash: string): string {
 	const edits = [...bindings.patches.values()].flat(2).map((p) => p.edit);
 	const helpers = [
-		...(edits.some((e) => 'alias' in e) ? ['alias'] : []),
+		...(edits.some((e) => 'alias' in e) || bindings.splits.length > 0 ? ['alias'] : []),
 		'enrich',
 		...(edits.some((e) => 'field' in e) ? ['field'] : []),
 		...(bindings.leads.length > 0 ? ['lead'] : []),

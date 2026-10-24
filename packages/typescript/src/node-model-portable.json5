@@ -7206,15 +7206,6 @@
         }
       ]
     },
-    "interface_body": {
-      "container": {
-        "kinds": [
-          "object_type"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
     "interface_declaration": {
       "vocab": "declaration.interface",
       "read": [

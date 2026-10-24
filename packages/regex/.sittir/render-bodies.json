@@ -604,12 +604,6 @@
 			"field": "inline_flags_group_toggle_after"
 		}
 	],
-	"lazy": [
-		{
-			"kind": "text",
-			"text": "?"
-		}
-	],
 	"lookahead_assertion": [
 		{
 			"kind": "seam",
@@ -926,12 +920,6 @@
 		{
 			"kind": "seam",
 			"field": "term_group_after"
-		}
-	],
-	"unicode_property_name": [
-		{
-			"kind": "slot",
-			"name": "content"
 		}
 	],
 	"unicode_property_value_expression": [

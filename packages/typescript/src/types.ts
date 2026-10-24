@@ -83,6 +83,7 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.ThisType]: 'this';
 	[TSKindId.Star]: '*';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.DefaultKeyword]: 'default';
@@ -2807,7 +2808,7 @@ export enum PrimaryTypeKind {
 	FlowMaybeType = 'flow_maybe_type',
 	TypeQuery = 'type_query',
 	IndexTypeQuery = 'index_type_query',
-	This = 'this',
+	ThisType = 'this_type',
 	ExistentialType = 'existential_type',
 	LiteralType = 'literal_type',
 	LookupType = 'lookup_type',
@@ -5242,6 +5243,7 @@ export interface AsExpression {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.ConstKeyword
 					| TSKindId.AnyKeyword
@@ -5254,6 +5256,7 @@ export interface AsExpression {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5298,6 +5301,7 @@ export interface SatisfiesExpression {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5309,6 +5313,7 @@ export interface SatisfiesExpression {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5444,6 +5449,7 @@ export interface ImplementsClause {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5455,6 +5461,7 @@ export interface ImplementsClause {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type
@@ -5614,13 +5621,12 @@ export interface InterfaceDeclaration {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly extends_type_clause?: readonly (TypeIdentifier | NestedTypeIdentifier | GenericType)[];
-		readonly body: readonly ObjectType[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly extendsTypeClause: SlotHint<T.ExtendsTypeClause, true>;
-		readonly body: SlotHint<T.InterfaceBody | T.InterfaceBody.Types>;
+		readonly body: SlotHint<T.InterfaceBody>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
@@ -5759,6 +5765,7 @@ export interface TypeAliasDeclaration {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5770,6 +5777,7 @@ export interface TypeAliasDeclaration {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5935,6 +5943,7 @@ export interface OmittingTypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5946,6 +5955,7 @@ export interface OmittingTypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5975,6 +5985,7 @@ export interface AddingTypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5986,6 +5997,7 @@ export interface AddingTypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6015,6 +6027,7 @@ export interface OptingTypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6026,6 +6039,7 @@ export interface OptingTypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6055,6 +6069,7 @@ export interface TypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6066,6 +6081,7 @@ export interface TypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6215,6 +6231,7 @@ export interface OptionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6226,6 +6243,7 @@ export interface OptionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6255,6 +6273,7 @@ export interface RestType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6266,6 +6285,7 @@ export interface RestType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6302,6 +6322,7 @@ export interface ConstructorType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6313,6 +6334,7 @@ export interface ConstructorType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6358,6 +6380,7 @@ export interface TemplateType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6369,6 +6392,7 @@ export interface TemplateType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType
@@ -6413,6 +6437,7 @@ export interface InferType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6424,6 +6449,7 @@ export interface InferType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6464,6 +6490,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6475,6 +6502,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6490,6 +6518,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6501,6 +6530,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6516,6 +6546,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6527,6 +6558,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6542,6 +6574,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6553,6 +6586,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6654,6 +6688,7 @@ export interface TypePredicate {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6665,6 +6700,7 @@ export interface TypePredicate {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6947,6 +6983,7 @@ export interface IndexTypeQuery {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6958,6 +6995,7 @@ export interface IndexTypeQuery {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -6989,6 +7027,7 @@ export interface LookupType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7000,6 +7039,7 @@ export interface LookupType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -7015,6 +7055,7 @@ export interface LookupType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7026,6 +7067,7 @@ export interface LookupType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7061,6 +7103,7 @@ export interface MappedTypeClause {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7072,6 +7115,7 @@ export interface MappedTypeClause {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7087,6 +7131,7 @@ export interface MappedTypeClause {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7098,6 +7143,7 @@ export interface MappedTypeClause {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7186,6 +7232,7 @@ export interface FlowMaybeType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7197,6 +7244,7 @@ export interface FlowMaybeType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -7226,6 +7274,7 @@ export interface ParenthesizedType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7237,6 +7286,7 @@ export interface ParenthesizedType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7482,6 +7532,7 @@ export interface DefaultType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7493,6 +7544,7 @@ export interface DefaultType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7525,6 +7577,7 @@ export interface Constraint {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7536,6 +7589,7 @@ export interface Constraint {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7605,6 +7659,7 @@ export interface ArrayType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7616,6 +7671,7 @@ export interface ArrayType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -7670,6 +7726,7 @@ export interface ReadonlyType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7681,6 +7738,7 @@ export interface ReadonlyType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7712,6 +7770,7 @@ export interface UnionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7723,6 +7782,7 @@ export interface UnionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7738,6 +7798,7 @@ export interface UnionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7749,6 +7810,7 @@ export interface UnionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7782,6 +7844,7 @@ export interface IntersectionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7793,6 +7856,7 @@ export interface IntersectionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7808,6 +7872,7 @@ export interface IntersectionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7819,6 +7884,7 @@ export interface IntersectionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7854,6 +7920,7 @@ export interface FunctionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7865,6 +7932,7 @@ export interface FunctionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type
@@ -8116,6 +8184,7 @@ export interface AmbientDeclarationModule {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -8127,6 +8196,7 @@ export interface AmbientDeclarationModule {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -8576,6 +8646,7 @@ export interface IndexSignatureColon {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -8587,6 +8658,7 @@ export interface IndexSignatureColon {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -10354,15 +10426,50 @@ export interface TypeIdentifier {
 
 export interface InterfaceBody {
 	readonly $type: TSKindId.InterfaceBody;
-	readonly _content: ObjectType;
+	readonly _opening: number;
+	readonly _members?: ObjectTypeContent;
+	readonly _closing: number;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _opening: 'opening';
+		readonly _members: 'members';
+		readonly _closing: 'closing';
+	};
+	readonly __inputHints__?: {
+		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
+		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
+	};
+	readonly __looseHints__?: {
+		readonly members?: readonly (
+			| ExportStatement
+			| PropertySignature
+			| CallSignature
+			| ConstructSignature
+			| IndexSignature
+			| MethodSignature
+		)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.ObjectType>;
+		readonly opening: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>;
+		readonly members: SlotHint<T.ObjectTypeContent, true>;
+		readonly closing: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>;
+		readonly $listSlots: {
+			readonly members: ListSlotHint<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature,
+				{
+					separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
+					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+				}
+			>;
+		};
 	};
-	readonly __aliasContent__?: InterfaceBody.Types;
-	readonly content: () => ObjectType;
+	readonly opening: () => number;
+	readonly members: () => ObjectTypeContent | undefined;
+	readonly closing: () => number;
 }
 
 // Leaf node types
@@ -10416,6 +10523,7 @@ export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
+export type ThisType = TSKindId.ThisType;
 
 // Supertype unions
 export type ExportStatement = ExportStatementDefault | ExportStatementEqualsExport | ExportStatementNamespaceExport;
@@ -10563,7 +10671,7 @@ export type PrimaryType =
 	| FlowMaybeType
 	| TypeQuery
 	| IndexTypeQuery
-	| This
+	| ThisType
 	| ExistentialType
 	| LiteralType
 	| LookupType
@@ -12303,7 +12411,6 @@ export namespace ImplementsClause {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
-				readonly this?: { readonly after?: LayoutKindId };
 				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
@@ -13052,7 +13159,6 @@ export namespace Types {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
-				readonly this?: { readonly after?: LayoutKindId };
 				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
@@ -13119,7 +13225,6 @@ export namespace TupleTypeMembers {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
-				readonly this?: { readonly after?: LayoutKindId };
 				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleParameter?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
@@ -17206,7 +17311,7 @@ export interface InterfaceBodyNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	InterfaceBody.Bound,
-	'content',
+	never,
 	TSKindId.InterfaceBody,
 	InterfaceBody.Parsed,
 	never
@@ -17273,6 +17378,7 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface ThisTypeNs extends KeywordNs<TSKindId.ThisType, 'this', TSKindId.ThisType> {}
 export interface UnescapedDoubleStringFragmentNs extends LeafNs<
 	UnescapedDoubleStringFragment,
 	string,
@@ -17565,6 +17671,7 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.ThisType]: ThisTypeNs;
 	[TSKindId.UnescapedDoubleStringFragment]: UnescapedDoubleStringFragmentNs;
 	[TSKindId.UnescapedSingleStringFragment]: UnescapedSingleStringFragmentNs;
 	[TSKindId.RegexPattern]: RegexPatternNs;
@@ -18107,6 +18214,7 @@ export type FixedTextKindId =
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
+	| TSKindId.ThisType
 	| TSKindId.Star
 	| TSKindId.AsKeyword
 	| TSKindId.DefaultKeyword
@@ -18519,6 +18627,7 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.ThisType]: 'thisType';
 	[TSKindId.UnescapedDoubleStringFragment]: 'unescapedDoubleStringFragment';
 	[TSKindId.UnescapedSingleStringFragment]: 'unescapedSingleStringFragment';
 	[TSKindId.RegexPattern]: 'regexPattern';
@@ -25448,8 +25557,50 @@ export namespace TypeIdentifier {
 	export type Kind = TSKindId.TypeIdentifier;
 }
 export namespace InterfaceBody {
-	export type Config = ConfigFor<TSKindId.InterfaceBody>;
-	export type Types = SupertypeSurface<ObjectType, BoundByKindId>;
+	export namespace Curly {
+		export type Config = Omit<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>;
+		export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.InterfaceBody, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.InterfaceBody['$type']>;
+		}
+		export type BuildArgs = [config?: T.InterfaceBody.Curly.Config];
+		export type LooseArgs = [config?: T.InterfaceBody.Curly.Config];
+	}
+	export namespace Flow {
+		export type Config = Omit<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>;
+		export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.InterfaceBody, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.InterfaceBody['$type']>;
+		}
+		export type BuildArgs = [config?: T.InterfaceBody.Flow.Config];
+		export type LooseArgs = [config?: T.InterfaceBody.Flow.Config];
+	}
+	/** Default form: 'curly' (first-declared). */
+	export type Config = Curly.Config;
 	export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.InterfaceBody['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25468,8 +25619,8 @@ export namespace InterfaceBody {
 	}
 	export type Loose = LooseFor<TSKindId.InterfaceBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
-	export type BuildArgs = [value: Admit<T.ObjectType>];
-	export type LooseArgs = [value: T.InterfaceBody.Loose];
+	export type BuildArgs = [config: ConfigOf<T.InterfaceBody>];
+	export type LooseArgs = [config: T.InterfaceBody.Loose];
 	export type Kind = TSKindId.InterfaceBody;
 }
 export namespace Import {
@@ -25741,6 +25892,16 @@ export namespace Dedent {
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
+}
+export namespace ThisType {
+	export type Config = ThisTypeNs['Config'];
+	export type Bound = ThisTypeNs['Bound'];
+	export type Parsed = ThisTypeNs['Bound'];
+	export type Loose = ThisTypeNs['Loose'];
+	export type LooseConfig = ThisTypeNs['LooseConfig'];
+	export type BuildArgs = ThisTypeNs['BuildArgs'];
+	export type LooseArgs = ThisTypeNs['LooseArgs'];
+	export type Kind = TSKindId.ThisType;
 }
 export namespace UnescapedDoubleStringFragment {
 	export type Config = UnescapedDoubleStringFragmentNs['Config'];

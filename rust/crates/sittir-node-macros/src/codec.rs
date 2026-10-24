@@ -48,6 +48,10 @@ fn is_option(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("Option")
 }
 
+fn is_kind_key(key: &LitStr) -> bool {
+    key.value() == "$type"
+}
+
 fn is_flag(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("bool")
 }
@@ -78,6 +82,17 @@ fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenS
         .iter()
         .map(|field| {
             let (ident, key) = (field.ident, c_key(field.key)?);
+            if is_kind_key(field.key) {
+                return Ok(quote!(#ident: {
+                    let __shown: ::sittir_core::types::KindId = unsafe { ::sittir_core::boundary::optional(env, obj, #key, #owner)? }.unwrap_or(__KIND);
+                    if __shown != __KIND && !__DISPLAYS.contains(&__shown) {
+                        return ::core::result::Result::Err(::sittir_core::__napi::Error::from_reason(::std::format!(
+                            "{}: $type {} is neither its kind nor one it is shown as", #owner, __shown.0
+                        )));
+                    }
+                    __shown
+                },));
+            }
             let read = if is_option(field.ty) {
                 quote!(optional)
             } else if is_flag(field.ty) {
@@ -104,13 +119,15 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
             quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?)),)
         });
     }
+    let kind = (!fields.iter().any(|field| is_kind_key(field.key)))
+        .then(|| quote!(::core::option::Option::Some((c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)),));
     Ok(quote! {
         impl #napi::bindgen_prelude::ToNapiValue for #ident {
             unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
                 let Self { #(#names),* } = val;
                 unsafe {
                     ::sittir_core::boundary::object_with_present(env, &[
-                        ::core::option::Option::Some((c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)),
+                        #kind
                         #(#entries)*
                     ])
                 }
@@ -170,7 +187,7 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         .iter()
         .map(|field| {
             let name = field.ident;
-            quote!(#name: ::core::default::Default::default(),)
+            if is_kind_key(field.key) { quote!(#name: __KIND,) } else { quote!(#name: ::core::default::Default::default(),) }
         })
         .collect();
     let reads = field_reads(&owner, &others)?;
