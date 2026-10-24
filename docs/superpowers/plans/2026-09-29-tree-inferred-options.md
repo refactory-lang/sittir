@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (or superpowers:subagent-driven-development when the user chooses it) to implement this plan task by task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** A parsed tree's layer of the render options also carries its lists' observed spacing. A built node made from one tree's nodes renders with that tree's layer. `styleFrom` infers a language's `render` options from files, with no engine created. There is no public method that returns a tree's layer: the native inference feeds the render and `styleFrom`.
+**Goal:** `styleFrom` infers a language's `render` options from files, list spacing included, with no engine created, and the caller passes the result as engine or per-call options. Nothing infers list spacing automatically: with no options supplied, a list renders with the grammar's defaults. There is no public method that returns a tree's layer: the native inference feeds the render and `styleFrom`.
 
-**Architecture:** The tree layer exists (`options.rs::InferredOptions`): a parse reads the indentation unit and the arms of the root's edges off its source, and a render of the tree's nodes resolves over it. This plan adds one more entry type, list spacing per site. The read already classifies each list slot's gaps for its stored layout (`engine.rs::ParsedTree::node_slots`). The layer folds the same per-list classes over the whole tree, each list one vote for its site. The fold is kept as raw votes first, so `styleFrom` can add several files' votes before taking the majority, and it shares one projection from site ids to option keys with the parse result.
+**Architecture:** The tree layer exists (`options.rs::InferredOptions`): a parse reads the indentation unit and the arms of the root's edges off its source, and a render of the tree's nodes resolves over it. List spacing is not added to it: it reaches a render only through options. `styleFrom` adds list votes to its fold. The read already classifies each list slot's gaps for its stored layout (`engine.rs::ParsedTree::node_slots`), and the fold takes the same per-list classes, each list one vote for its site, beside the indentation and root-edge votes. The fold is kept as raw votes first, so `styleFrom` can add several files' votes before taking the majority, and it shares one projection from site ids to option keys with the parse result.
 
 **Tech Stack:** Rust (`sittir-core`: `options`, `engine`, `list_slots`, `classify`, `napi_engine`), the emitted grammar crates, TypeScript (`@sittir/common`, `@sittir/types`), `@sittir/codegen` emitters, vitest and cargo.
 
@@ -30,30 +30,29 @@
 - Hand-written source under `packages/{codegen,common,tools,types}/src` carries no explanatory comments. The why of a non-obvious decision goes in the commit message, and the docs peer writes the glossary entries after the PR merges. `styleFrom`, `styleFromSource` and the descriptor's members are public API and carry their usage contract as JSDoc.
 - No plan, task, PR or issue numbers in comments or docs.
 - DRY:
-  - one gap classification feeds a list's stored layout and the tree's fold;
+  - one gap classification feeds a list's stored layout and `styleFrom`'s fold;
   - one site table maps a list slot's sides to option sites, for the prepare code and the fold;
   - one projection from site ids to option keys serves the parse result and `styleFrom`.
 - Stamped facts: a site's id is resolved by the emitter. The fold never derives one by name.
+- No automatic list inference: list spacing reaches a render only through options, engine or per-call, and with none supplied a list renders with the grammar's defaults. Nothing folds a tree's lists at parse or at render.
 - A failed gate stops the work for review; never revert or stash it away.
-- Rendered bytes under default options do not move. Stored layouts may shrink (Task 1), and the row diff goes to review before push.
+- Rendered bytes and stored layouts under default options do not move: nothing here changes what a list is measured against. The row diff goes to review before push.
 
 ## Review Focus
 
-1. **Precedence:** the occurrence's stamp > per-call options > the tree's layer > engine options > grammar default. One test per adjacent pair, each with the list sites the tree layer now holds.
-2. **One vote per list:** a long list does not outweigh a short one; a tie takes the declared default; a site no list carries is absent from the layer.
-3. **Round trip:** a list that spells the tree's majority stores nothing and still renders as read; a list that differs keeps its own spacing.
-4. **Tree naming:** a render takes the tree of the node's own handle, or the one tree all its parsed descendants share. Several trees, or none, means no tree layer. No render depends on which tree was parsed last.
-5. **`styleFrom` sums raw votes:** with several files the votes are added before the fold, never a majority of per-file majorities. It creates no engine, and its temporary native instance is disposed even when a file is refused or fails to parse.
-6. **The descriptor delegates:** `rust.styleFrom` and `rust.styleFromSource` are one-line delegates to the one implementation in `@sittir/common`; importing the descriptor loads neither the language nor the native engine.
+1. **Precedence:** the occurrence's stamp > per-call options > the tree's layer > engine options > grammar default. One test per adjacent pair. The tree's layer holds indentation and root edges only, so a list site goes from per-call options to engine options to the grammar default.
+2. **One vote per list:** in `styleFrom`'s fold, a long list does not outweigh a short one; a tie takes the declared default; a site no list carries is absent from the result.
+3. **Round trip:** a parsed list is measured against the engine's options, which may themselves come from `styleFrom`. A list that agrees stores nothing, a list that differs keeps its own spacing, and both render as read. With no options supplied, the same holds against the grammar's defaults.
+4. **`styleFrom` sums raw votes:** with several files the votes are added before the fold, never a majority of per-file majorities. Its result is options: passed to `createEngine` they are engine options, passed to `render` per-call options. It creates no engine, and its temporary native instance is disposed even when a file is refused or fails to parse.
+5. **The descriptor delegates:** `rust.styleFrom` and `rust.styleFromSource` are one-line delegates to the one implementation in `@sittir/common`; importing the descriptor loads neither the language nor the native engine.
 
 ## Delivery
 
 One PR from master. Behaviour changes, each stated in the PR body:
-- a tree's layer holds its lists' majority spacing, and a list that agrees with it stores nothing (the stored-layout counts fall; rendered bytes stay);
-- a built node made from one tree's nodes follows that tree's style, where it followed the engine's options before;
+- list spacing comes only from options, which `styleFrom` infers from files on request; nothing infers it automatically, so stored layouts and rendered bytes under default options do not move;
 - the descriptor gains `styleFrom` (where the grammar has file types) and `styleFromSource`, and `fileTypes` becomes a literal tuple; the free forms sit beside `createEngine(language, ...)`.
 
-Commit order: Task 0, 1, 2, 3, 4.
+Commit order: Task 0, 1, 2, 3.
 
 ---
 
@@ -75,11 +74,11 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 1: List spacing joins the tree layer
+### Task 1: List votes join the fold
 
 **Files:**
-- Modify: `rust/crates/sittir-core/src/options.rs` (`InferredOptions` gains `spacing`, built from votes)
-- Modify: `rust/crates/sittir-core/src/engine.rs` (the parse folds the tree's lists; `node_slots` reads its per-list class from the same function)
+- Modify: `rust/crates/sittir-core/src/options.rs` (`InferredVotes` and the fold; what a parse holds in `InferredOptions` is unchanged)
+- Modify: `rust/crates/sittir-core/src/engine.rs` (a tree's list votes, read on request; `node_slots` reads its per-list class from the same function)
 - Modify: `rust/crates/sittir-core/src/list_slots.rs` (the per-side class a list takes, shared)
 - Modify: `packages/codegen/src/emitters/render-options-rs.ts` (the site table, keyed by kind and slot, emitted from the spacing sites the options emitter already names, `SpacingSite`)
 - Create (test): `rust/crates/sittir-core/tests/inferred.rs`
@@ -92,9 +91,9 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
   Votes add, so several sources sum before any fold.
 - **The fold.** It takes, per site, the arm most votes name. A tie takes the site's declared default, which leaves the entry absent, and a site with no vote is absent.
-- **Representation.** `InferredOptions` keeps its representation: only entries that differ from the options it was inferred over.
+- **Representation.** The fold's result keeps `InferredOptions`' representation: only entries that differ from the options it was inferred over.
 - **Votes from lists.** Each list slot of the tree votes once per side: the class its gaps take by majority, the same class the stored layout compares against the baseline. The site comes from the emitted table (kind, slot, side) → `SiteId`.
-- **Baseline.** The layer is computed when the tree is parsed, so `read_options` (the baseline a list is measured against) includes it. A list that agrees with the tree's majority stores nothing, and renders as read because the render resolves over the same layer.
+- **No baseline change.** A parse does not fold its lists. `read_options`, the baseline a list is measured against, stays the tree's layer over the engine's options, so its list sites come from the engine's options alone. Engine options that came from `styleFrom` are ordinary engine options: a list that agrees with them stores nothing, a list that differs stores its own class, and both render as read.
 - [ ] **Step 1: Tests** over small sources:
   - a uniform list;
   - two lists of one site that disagree, two against one (majority);
@@ -102,35 +101,18 @@ cd scratchpad/wt-tree-inferred && pnpm install
   - a site with no list (absent);
   - a long list and a short one (one vote each);
   - nested lists of one site;
-  - two sources' votes added before the fold, where a majority of majorities would differ.
+  - two sources' votes added before the fold, where a majority of majorities would differ;
+  - a parse changes no option: a list site resolves to the engine's option before and after it, or to the grammar default when none is set.
 - [ ] **Step 2: Round-trip tests:**
-  - a list spelled as the tree's majority stores no `before`/`after` and renders byte for byte;
+  - with engine options from the fold over the same source, a list spelled as they say stores no `before`/`after` and renders byte for byte;
   - a list spelled otherwise keeps its stored class;
+  - with no options supplied, a list spelled as the grammar default stores nothing, one spelled otherwise keeps its stored class, and a built list renders with the grammar default;
   - renders of the corpus under default options are byte-identical.
-- [ ] **Step 3:** Implement; regenerate; compare rows. The stored-layout counts fall and the render rows stay.
+- [ ] **Step 3:** Implement; regenerate; compare rows. The stored-layout counts and the render rows stay.
 
 ---
 
-### Task 2: A built node renders with its parsed nodes' tree
-
-**Files:**
-- Modify: `packages/common/src/engine.ts` (`renderNativeNode`'s tree choice)
-- Test: `packages/common/tests/engine-nodes.test.ts`
-
-**Behaviour:**
-- A render takes the tree of the node's own source handle. Failing that, it takes the one tree every parsed descendant shares.
-- Several trees, or none, means no tree id, so the engine's options apply.
-- The descendants are walked once, by the same walk that already projects the node to native data. The helper is not `tree-token.ts::treeOf`, which answers a node's own tree only.
-
-- [ ] **Step 1: Tests:**
-  - a built list holding parsed items of one tree renders with that tree's list spacing, with two trees of different styles parsed in either order;
-  - parsed items of two trees fall to the engine's options;
-  - a render after the tree is disposed is refused with the existing not-live diagnostic.
-- [ ] **Step 2:** Implement; compare rows.
-
----
-
-### Task 3: `styleFrom` and `styleFromSource`
+### Task 2: `styleFrom` and `styleFromSource`
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`infer_style(sources) -> options JSON`: one temporary parse per source, votes summed, folded, projected by the parse result's projection)
@@ -147,6 +129,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
   - The methods are generated one-line delegates to the free forms; there is one implementation.
 - **Loading.** The language loads through the cached `loadLanguage` that `createEngine` uses, so importing the descriptor stays cheap. A call creates one temporary native instance, parses every source with it, and disposes it, on failure too. No `Engine` is created.
 - **The fold.** All sources' votes are summed before the fold of Task 1. A tie takes the declared default, and a key no source evidences is absent. The result can be passed as `render` options as it stands.
+- **What the summed votes become.** Options. Passed to `createEngine` they are engine options; passed to `render`, per-call options. They are the only way inferred list spacing reaches a render.
 - **File types.** A path whose extension is not in the descriptor's `fileTypes` is refused at run time, naming the extension and the accepted ones.
 - **The file-based gate.**
   - The descriptor's `fileTypes` is a literal tuple (`readonly ['rs']`, `readonly []`), so its type knows emptiness.
@@ -159,6 +142,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
   - a wrong extension is refused with the accepted list;
   - a file that fails to parse still disposes the temporary instance (spy on `createNative` and `dispose`), and each call makes exactly one `createNative`;
   - the result, passed as `render` options, renders a built list the way the file spells it;
+  - the result, passed to `createEngine`, renders a built list the way the files spell it, and a parsed list that spells it stores nothing;
   - a file with no trailing newline yields the root-edge arm that spells none.
 - [ ] **Step 2: Type-level tests** in `descriptor.test-d.ts`:
   - `rust.styleFrom(...)` returns `Promise<RustAPI['options']>`;
@@ -168,7 +152,7 @@ cd scratchpad/wt-tree-inferred && pnpm install
 
 ---
 
-### Task 4: Final gates
+### Task 3: Final gates
 
 - [ ] **Step 1: Three-way gates.**
   - Targeted probes, at the wrap and render layers.
@@ -188,4 +172,5 @@ The edit work is a separate design. This plan keeps to three rules so it can fol
 
 ## Open questions
 
-1. **Parse-time cost.** Folding the lists at parse measures every list slot of the tree when it is parsed, where today each node's slots are measured on first use. The alternative keeps the list part out of the read baseline and computes it lazily for renders and `styleFrom`. But a list that spelled the old baseline would then store nothing and render with the layer's majority, which breaks the round trip unless parsed lists are re-measured against the layer. The plan takes the parse-time fold. It needs the parse benchmark before and after, and the user's yes to the cost.
+1. **Parse-time cost.** Resolved by the user's ruling: nothing folds a tree's lists at parse or at render. List spacing reaches a render only through options, which `styleFrom` infers on request, so a parse costs what it does today and a tree's lists are still measured on first use.
+2. **A built node holding one tree's nodes.** Resolved by the user's ruling: it renders with engine options, then the grammar's defaults; only a render of a parsed tree's own nodes fills unset indentation and root edges from that tree's layer.

@@ -7118,7 +7118,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	371: {
-		value: {
+		argument: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7129,7 +7129,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	372: {
-		value: {
+		argument: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7140,7 +7140,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	373: {
-		value: {
+		argument: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7151,7 +7151,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	374: {
-		value: {
+		argument: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7711,22 +7711,22 @@ declare module './types.js' {
 	}
 	interface ReferenceExpressionRawConst {
 		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly argument: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface ReferenceExpressionRawMut {
 		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly argument: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface ReferenceExpressionMut {
 		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly argument: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface ReferenceExpressionBare {
 		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
+			readonly argument: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
 		};
 	}
 	interface ImplItemBody {

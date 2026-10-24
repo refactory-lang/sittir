@@ -4747,10 +4747,10 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 
 export function buildLastMatchArm<
 	AttributesSlot extends T.LastMatchArm.Config['attributes'],
-	PatternSlot extends T.LastMatchArm.Config['pattern'],
+	MatchSlot extends T.LastMatchArm.Config['match'],
 	ValueSlot extends T.LastMatchArm.Config['value']
 >(
-	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }>,
+	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>,
 	options?: T.LastMatchArm.Options
 ): T.LastMatchArm.Bound;
 export function buildLastMatchArm(
@@ -4759,7 +4759,7 @@ export function buildLastMatchArm(
 ): T.LastMatchArm.Bound {
 	currentHandle()?.admit(TSKindId.LastMatchArm, [config]);
 	const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
@@ -4769,7 +4769,7 @@ export function buildLastMatchArm(
 	if (handle !== undefined)
 		admitChildren(handle, 'last_match_arm', {
 			attributes: _attributes,
-			pattern: _pattern,
+			match: _match,
 			value: _value,
 			trailingComma: _trailing_comma
 		});
@@ -8142,17 +8142,17 @@ export function buildReferenceExpressionRawConst<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionRawConst.Bound;
 export function buildReferenceExpressionRawConst(value: Admit<T.Expression>): T.ReferenceExpressionRawConst.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionRawConst['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawConst['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_const', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_const', { argument: _argument });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ReferenceExpressionRawConst as const, { _value });
+	handle?.verifyStored?.(TSKindId.ReferenceExpressionRawConst as const, { _argument });
 	const record = arena.record(TSKindId.ReferenceExpressionRawConst as const, 7);
-	storeCell(arena, record.data, record.base + 2, _value);
+	storeCell(arena, record.data, record.base + 2, _argument);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionRawConst(value))
 		},
 		$trivia: {
@@ -8167,17 +8167,17 @@ export function buildReferenceExpressionRawMut<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionRawMut.Bound;
 export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.ReferenceExpressionRawMut.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { argument: _argument });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ReferenceExpressionRawMut as const, { _value });
+	handle?.verifyStored?.(TSKindId.ReferenceExpressionRawMut as const, { _argument });
 	const record = arena.record(TSKindId.ReferenceExpressionRawMut as const, 7);
-	storeCell(arena, record.data, record.base + 2, _value);
+	storeCell(arena, record.data, record.base + 2, _argument);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionRawMut(value))
 		},
 		$trivia: {
@@ -8192,17 +8192,17 @@ export function buildReferenceExpressionMut<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionMut.Bound;
 export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.ReferenceExpressionMut.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { argument: _argument });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ReferenceExpressionMut as const, { _value });
+	handle?.verifyStored?.(TSKindId.ReferenceExpressionMut as const, { _argument });
 	const record = arena.record(TSKindId.ReferenceExpressionMut as const, 7);
-	storeCell(arena, record.data, record.base + 2, _value);
+	storeCell(arena, record.data, record.base + 2, _argument);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionMut(value))
 		},
 		$trivia: {
@@ -8217,17 +8217,17 @@ export function buildReferenceExpressionBare<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionBare.Bound;
 export function buildReferenceExpressionBare(value: Admit<T.Expression>): T.ReferenceExpressionBare.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionBare['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionBare['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_bare', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_bare', { argument: _argument });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ReferenceExpressionBare as const, { _value });
+	handle?.verifyStored?.(TSKindId.ReferenceExpressionBare as const, { _argument });
 	const record = arena.record(TSKindId.ReferenceExpressionBare as const, 7);
-	storeCell(arena, record.data, record.base + 2, _value);
+	storeCell(arena, record.data, record.base + 2, _argument);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionBare(value))
 		},
 		$trivia: {
@@ -9065,43 +9065,40 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 
 export function buildMatchArmWithComma<
 	AttributesSlot extends T.MatchArmWithComma.Config['attributes'],
-	PatternSlot extends T.MatchArmWithComma.Config['pattern'],
+	MatchSlot extends T.MatchArmWithComma.Config['match'],
 	ValueSlot extends T.MatchArmWithComma.Config['value']
 >(
-	config: RefusingConfig<
-		T.MatchArmWithComma.Config,
-		{ attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }
-	>
+	config: RefusingConfig<T.MatchArmWithComma.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>
 ): T.MatchArmWithComma.Bound;
 export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmWithComma, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, pattern: _pattern, value: _value });
+		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, match: _match, value: _value });
 	throw new Error('match_arm_with_comma has no record view, so a record engine cannot build it yet');
 }
 
 export function buildMatchArmBlockEnding<
 	AttributesSlot extends T.MatchArmBlockEnding.Config['attributes'],
-	PatternSlot extends T.MatchArmBlockEnding.Config['pattern'],
+	MatchSlot extends T.MatchArmBlockEnding.Config['match'],
 	ValueSlot extends T.MatchArmBlockEnding.Config['value']
 >(
 	config: RefusingConfig<
 		T.MatchArmBlockEnding.Config,
-		{ attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }
+		{ attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }
 	>
 ): T.MatchArmBlockEnding.Bound;
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmBlockEnding, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = config.value;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, pattern: _pattern, value: _value });
+		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, match: _match, value: _value });
 	throw new Error('match_arm_block_ending has no record view, so a record engine cannot build it yet');
 }
 
@@ -9565,25 +9562,25 @@ export function buildFieldPatternShorthand<NameSlot extends T.FieldPatternShorth
 ): T.FieldPatternShorthand.Bound;
 export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Bound {
 	currentHandle()?.admit(TSKindId.FieldPatternShorthand, [config]);
-	const _ref = strictBooleanStorage(config.ref);
+	const _by_reference = strictBooleanStorage(config.byReference);
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(config.name, [
 		[[1], (v: unknown) => buildShorthandFieldIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_pattern_shorthand', { ref: _ref, mutable: _mutable, name: _name });
+		admitChildren(handle, 'field_pattern_shorthand', { byReference: _by_reference, mutable: _mutable, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FieldPatternShorthand as const, { _ref, _mutable, _name });
+	handle?.verifyStored?.(TSKindId.FieldPatternShorthand as const, { _by_reference, _mutable, _name });
 	const record = arena.record(TSKindId.FieldPatternShorthand as const, 12);
-	if (_ref) storeFlag(record.data, record.base + 2, 1);
+	if (_by_reference) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
 	storeCell(arena, record.data, record.base + 3, _name);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			ref: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['ref']>) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, ref: value })),
+			byReference: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['byReference']>) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, byReference: value })),
 			mutable: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, mutable: value })),
 			name: (value: Admit<T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types>) =>
@@ -9605,7 +9602,7 @@ export function buildFieldPatternNamed<
 ): T.FieldPatternNamed.Bound;
 export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Bound {
 	currentHandle()?.admit(TSKindId.FieldPatternNamed, [config]);
-	const _ref = strictBooleanStorage(config.ref);
+	const _by_reference = strictBooleanStorage(config.byReference);
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
@@ -9613,19 +9610,24 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 	const _pattern = kindIdStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_pattern_named', { ref: _ref, mutable: _mutable, name: _name, pattern: _pattern });
+		admitChildren(handle, 'field_pattern_named', {
+			byReference: _by_reference,
+			mutable: _mutable,
+			name: _name,
+			pattern: _pattern
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FieldPatternNamed as const, { _ref, _mutable, _name, _pattern });
+	handle?.verifyStored?.(TSKindId.FieldPatternNamed as const, { _by_reference, _mutable, _name, _pattern });
 	const record = arena.record(TSKindId.FieldPatternNamed as const, 17);
-	if (_ref) storeFlag(record.data, record.base + 2, 1);
+	if (_by_reference) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
 	storeCell(arena, record.data, record.base + 3, _name);
 	storeCell(arena, record.data, record.base + 12, _pattern);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			ref: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['ref']>) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, ref: value })),
+			byReference: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['byReference']>) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, byReference: value })),
 			mutable: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, mutable: value })),
 			name: (value: Admit<T.FieldIdentifier | T.FieldIdentifier.Types>) =>

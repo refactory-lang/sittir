@@ -279,20 +279,25 @@ source. It holds only what the source sets apart from the engine's options:
 - the indentation unit, the most frequent step between consecutive line
   starts, absent when two steps tie or the source never indents;
 - the arm of each of the root's edges, from the file's leading and trailing
-  whitespace;
-- per list site, the class most of the tree's lists of that site take. Each
-  list is one vote, the declared default breaks a tie, and a site no list
-  carries is absent.
+  whitespace.
 
-It is computed when the tree is parsed and is the baseline the tree's lists
-are measured against, so a list that agrees with the tree's majority stores
-nothing. A render of the tree's nodes resolves over it (Precedence), and so
-does a render of a built node made from one tree's nodes. It is kept with
-the tree in the engine's table, a table of site and arm ids of the same
-shape as the engine's resolved options. Nothing crosses the boundary for it
-but the parse result's projection to `Options` keys, which the engine keeps
-internal. The same fold over the raw votes of several sources is
-`styleFrom` (Engine and boundary API).
+It is computed when the tree is parsed. The tree's lists are measured
+against it over the engine's options, so their list sites come from the
+engine's options alone: a list that agrees with them stores nothing, and a
+list that differs stores its own class. A render of the tree's nodes
+resolves over it (Precedence). A built node rendered on its own has no
+tree layer, even when it holds one tree's nodes: it takes options, else the
+grammar's defaults. It is kept with the tree in the engine's table, a
+table of site and arm ids of the same shape as the engine's resolved
+options. Nothing crosses the boundary for it but the parse result's
+projection to `Options` keys, which the engine keeps internal.
+
+Nothing infers list spacing automatically. `styleFrom` (Engine and boundary
+API) folds the raw votes of several sources: the indentation steps, the
+root edges' arms, and per list site the class each list takes, each list
+one vote. The declared default breaks a tie, and a site no list carries is
+absent. Its result reaches a render only as options the caller passes, and
+with no options supplied a list renders with the grammar's defaults.
 
 ### Render side
 
@@ -340,12 +345,13 @@ kind × slot  >  supertype × slot  >  the label's top-level value  >  the prefe
 
 Without `reformat`, per-call options fill unstamped slots only, which is
 what splicing a built node into a parsed file needs. A render of a node read
-from a tree, or of a built node made from one tree's nodes, then fills what
-is still unset from that tree's inferred table (Read side). So a built node
-dropped into a parsed file follows the file's own spacing with the caller
+from a tree then fills what is still unset from that tree's inferred table
+(Read side). So a built node spliced into a parsed file, rendered with the
+file, follows the file's own indentation and root edges with the caller
 passing nothing, and engine options and the grammar's defaults answer only
-where the tree gives no evidence. A built node made from no tree's nodes,
-or from several trees' nodes, has no tree layer.
+where the tree gives no evidence. Its list spacing comes from the options
+passed, else the grammar's defaults. A built node rendered on its own has
+no tree layer, even when it holds one tree's nodes.
 
 `reformat` makes a canonical render:
 
@@ -367,18 +373,21 @@ explicit `reformat` drops them.
   options at the call.
 - `engine.ir` — the coercer surface with the engine's declared defaults.
 - `engine.render(node, options?)` — per-call options of the same type. A
-  render of a node read from a tree, or of a built node made from one
-  tree's nodes, fills from that tree's inferred table after per-call
-  options and before engine options, and never needs the client to pass
-  it. The canonical render (`reformat`, Precedence) skips the table, as it
-  skips every stored choice.
+  render of a node read from a tree fills from that tree's inferred table
+  after per-call options and before engine options, and never needs the
+  client to pass it. A built node rendered on its own takes options, else
+  the grammar's defaults. The canonical render (`reformat`, Precedence)
+  skips the table, as it skips every stored choice.
 - `styleFrom(language, ...paths)` (and `rust.styleFrom(...paths)` on the
   descriptor) — the `render` options the bytes of some files evidence. Per
   key, it takes the majority of the votes their trees cast (Read side),
   absent where no file evidences the site. With several files the raw
   votes are added before the majority is taken, and a tie takes the
-  declared default. It is an inference, never a declaration: a caller who
-  renders with it round-trips the files' own spacing. It creates no
+  declared default. It is an inference, and the caller passes its result
+  as options: to `createEngine` as `render` (engine options), or to
+  `render` (per-call options). It is the only way inferred list spacing
+  reaches a render. A caller who renders with it round-trips the files'
+  own spacing. It creates no
   engine: it loads the language, parses the files with a temporary native
   instance, and disposes it. A path whose extension the language's
   `fileTypes` does not name is refused, and a language with no file types
@@ -409,7 +418,9 @@ explicit `reformat` drops them.
   a default resolves kind × slot before supertype × slot before the label
   before `space`, and a default naming no preference, no site or no
   whitespace arm fails naming the key.
-- **Behaviour**: a built node takes engine options; a parsed node keeps its
+- **Behaviour**: a built node takes engine options; with no options
+  supplied a list renders with the grammar's defaults, and a parse infers
+  no list spacing; a parsed node keeps its
   stamps; `reformat` renders the layout and every preference choice from the
   options, a parsed list's delimiter and separator, a leading `|` and a
   trailing comma included, and never changes a parsed form;

@@ -9,12 +9,12 @@ const rs = await createEngine(rust);
 
 const arm = () =>
 	rs.build.matchArm.blockEnding.strict({
-		pattern: rs.build.matchPattern.strict({ pattern: rs.build.identifier('x') }),
+		match: rs.build.matchPattern.strict({ pattern: rs.build.identifier('x') }),
 		value: rs.build.block.strict({})
 	});
 const last = () =>
 	rs.build.lastMatchArm.strict({
-		pattern: rs.build.matchPattern.strict({ pattern: rs.build.identifier('y') }),
+		match: rs.build.matchPattern.strict({ pattern: rs.build.identifier('y') }),
 		value: rs.build.identifier('z')
 	});
 

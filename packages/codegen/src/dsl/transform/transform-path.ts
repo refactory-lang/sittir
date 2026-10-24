@@ -13,7 +13,7 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
-import { isParserHiddenName } from '../rule-patterns.ts';
+import { isEnrichedField, isParserHiddenName } from '../rule-patterns.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -489,7 +489,7 @@ function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | unde
 	if (own !== undefined) return own;
 
 	if (t === 'FIELD') {
-		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField || readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.fieldSource !== 'enriched', leaf);
+		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField || !isEnrichedField(rule), leaf);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched

@@ -6673,6 +6673,23 @@ describe('_formal_parameters_set_accessor_signature', () => {
 	});
 });
 
+describe('_formal_parameters_set_accessor_signature sub-factories', () => {
+	it('elements builds the parent', () => {
+		const node = ir.formalParametersSetAccessorSignature.elements(
+			stampBuilt({
+				$type: TSKindId.SetterParameter,
+				$text: 'test',
+				$named: true,
+				_decorator: [],
+				_pattern: stampBuilt({ $type: TSKindId.This, $text: 'this', $named: true }) as any
+			}) as any
+		);
+		expect(node.$type).toBe(TSKindId.FormalParametersSetAccessorSignature);
+		expect((node as any).elements()?.$type).toBe(TSKindId.FormalParametersElementsSetAccessorSignature);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('setter_parameter', () => {
 	it('factory produces correct type', () => {
 		const node = ir.setterParameter({

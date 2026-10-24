@@ -115,9 +115,9 @@ describe('child factory surface classification', () => {
 describe('factory field metadata', () => {
 	it('includes field-backed direct factories even when auto-stamp children are present', () => {
 		// reference_expression_raw_mut carries the auto-stamped
-		// mutable_specifier child beside its `value` field; the presence
+		// mutable_specifier child beside its `argument` field; the presence
 		// toggle is filtered and the field remains.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression_raw_mut')!)).toEqual(['value']);
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression_raw_mut')!)).toEqual(['argument']);
 	});
 
 	it('keeps enum-valued operator fields in validator field metadata', () => {
@@ -136,7 +136,7 @@ describe('factory field metadata', () => {
 		// cases above); attribute gained real named fields under the
 		// kind-named-slots unification. All three match the committed
 		// node-model.json5 factoryFields.
-		expect(map.factoryFields.reference_expression_raw_mut).toEqual(['value']);
+		expect(map.factoryFields.reference_expression_raw_mut).toEqual(['argument']);
 		expect(map.factoryFields.binary_expression).toEqual(['left', 'operator', 'right']);
 		expect(map.factoryFields.attribute).toEqual(['path', 'input']);
 	});

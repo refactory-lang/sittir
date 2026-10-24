@@ -319,6 +319,13 @@ describe('transform() — object form with path keys', () => {
 		expect(readRuleMetadata(result.metadata)?.fieldSource).toBe('override');
 	});
 
+	it("a field(name) over an existing field renames it and keeps the field's annotations", () => {
+		const rule = seq({ ...fld('pattern', sym('match_pattern')), annotations: { flattened: true } }, str('=>'));
+		const result = transform(rule, { '0': field('match') }) as any;
+		expect(result.members[0]).toMatchObject({ type: 'FIELD', name: 'match', content: { type: 'SYMBOL', name: 'match_pattern' }, annotations: { flattened: true } });
+		expect(readRuleMetadata(result.members[0].metadata)?.fieldSource).toBe('override');
+	});
+
 	it('reaches into nested structure via path', () => {
 		const rule = seq(seq(sym('a'), sym('b')), sym('outer'));
 		const result = transform(rule, {

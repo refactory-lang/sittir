@@ -29,9 +29,9 @@ describe('a visible wrapper seated on its parent', () => {
 	});
 
 	it('still builds the hand-spelled wrapper, as a config and as a built node', () => {
-		const config = rs.build.matchArm.withComma({ pattern: { pattern: structPattern }, value: rs.build.block({}) });
+		const config = rs.build.matchArm.withComma({ match: { pattern: structPattern }, value: rs.build.block({}) });
 		const built = rs.build.matchArm.withComma.strict({
-			pattern: rs.build.matchPattern.strict({ pattern: rs.build.structPattern.strict({ type: rs.build.identifier('T') }) }),
+			match: rs.build.matchPattern.strict({ pattern: rs.build.structPattern.strict({ type: rs.build.identifier('T') }) }),
 			value: rs.build.block.strict({})
 		});
 		expect(config.$render()).toBe('T {} => {},');

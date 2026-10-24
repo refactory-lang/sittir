@@ -19,6 +19,7 @@ import type {
 	Rendered,
 	RenderArgument,
 	CreateEngineOptions,
+	KindMembership,
 	StructureTable
 } from '@sittir/types';
 import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
@@ -178,19 +179,23 @@ export function scopeBuilders<T extends object>(engine: object, table: T): T {
 	return scope(table);
 }
 
-function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['verifyStored'] {
+function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['verifyStored'] {
 	if (mode !== 'runtime') return undefined;
 	return (kind, stored) => {
 		const row = table[kind];
-		if (row !== undefined) checkRow(stored, row);
+		if (row !== undefined) checkRow(stored, row, membership);
 	};
 }
 
-function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['settle'] {
+function settlerOf(
+	mode: EngineOptions<LanguageAPI>['verifyStructure'],
+	table: StructureTable,
+	membership: KindMembership
+): EngineHandle['settle'] {
 	if (mode !== 'runtime') return (node) => node;
 	const seen = new WeakSet<object>();
 	return (node) => {
-		verifyStructure(node, table, seen);
+		verifyStructure(node, table, membership, seen);
 		return node;
 	};
 }
@@ -220,8 +225,8 @@ function assembleEngine<API extends LanguageAPI>(
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
-		settle: settlerOf(options?.verifyStructure, hooks.structure),
-		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure),
+		settle: settlerOf(options?.verifyStructure, hooks.structure, hooks.membership),
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];

@@ -17,7 +17,6 @@ import {
 	elementsWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -3270,13 +3269,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 			expression: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
-						{
-							slot: 'step',
-							stored: '_step',
-							kind: TSKindId.SliceGroup as const,
-							make: RAW.buildSliceGroup,
-							keys: [{ name: 'expression', rest: false }]
-						},
+						{ slot: 'step', stored: '_step', make: RAW.buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
 						'expression',
 						args,
 						(v: NonNullable<T.Slice['_step']>) =>
@@ -3286,7 +3279,6 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 				)
 		},
 		expression: data._step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
-		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -6261,18 +6253,18 @@ export function wrapExpressionStatementTuple(
 
 export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.WithClauseBare.Parsed {
 	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
+	const listedLength = storedElements(data._items).length;
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseBare as const,
 		items() {
-			return hydrateSlots<T.WithItem>(this, '_item', tree);
+			return hydrateSlots<T.WithItem>(this, '_items', tree);
 		},
 		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_item']>[number]>) =>
+			items: (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_items']>[number]>) =>
 				rebuilt(node, handle, () =>
 					wrapWithClauseBare(
-						{ ...$edited(data), _item: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
+						{ ...$edited(data), _items: admitSlot(handle, 'with_clause_bare', 'items', restItems('items', v)) },
 						tree
 					)
 				),
@@ -6304,22 +6296,22 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): T.WithClauseParen.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._with_items, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._items, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
-		withItems() {
-			return hydrateSlot<T.WithClauseWithItems>(this, '_with_items', tree);
+		items() {
+			return hydrateSlot<T.WithClauseWithItems>(this, '_items', tree);
 		},
 		$with: {
-			withItems: (...args: unknown[]) =>
+			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-						(v: NonNullable<T.WithClauseParen['_with_items']>) =>
+						(v: NonNullable<T.WithClauseParen['_items']>) =>
 							wrapWithClauseParen(
-								{ ...$edited(data), _with_items: admitSlot(handle, 'with_clause_paren', 'withItems', v) },
+								{ ...$edited(data), _items: admitSlot(handle, 'with_clause_paren', 'items', v) },
 								tree
 							)
 					)
@@ -6327,7 +6319,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 		},
 		length: listView.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -11416,15 +11408,15 @@ function viewWithClauseParen(data: RecordStub, tree: TreeHandle): T.WithClausePa
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
-		withItems() {
+		items() {
 			return viewSlot<T.WithClauseWithItems>(this, tree, 2, 6, 4);
 		},
 		$with: {
-			withItems: (...args: unknown[]) => rowWith(node, tree, _wrap, 'withItems', args)
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args)
 		},
 		length: listView.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

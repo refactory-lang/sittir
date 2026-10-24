@@ -6452,14 +6452,14 @@ function _buildWithClauseBare(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseBare.Bound {
 	currentHandle()?.admit(TSKindId.WithClauseBare, elements);
-	const _item = elements;
+	const _items = elements;
 	const _delimiter = options.delimiter;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'with_clause_bare', { items: _item });
+	if (handle !== undefined) admitChildren(handle, 'with_clause_bare', { items: _items });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.WithClauseBare as const, { _item });
+	handle?.verifyStored?.(TSKindId.WithClauseBare as const, { _items });
 	const record = arena.record(TSKindId.WithClauseBare as const, 4);
-	storeList(arena, record.data, record.base + 2, _item, 5);
+	storeList(arena, record.data, record.base + 2, _items, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
 	const node = arena.view(record);
 	bindRow(node, {
@@ -6505,19 +6505,19 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClauseParen.Bound {
-	const _with_items = hydrateStored(value);
-	const listView = ownerView(_with_items, '_item');
-	if (listView.length === undefined) refuseReadStub('_with_items');
+	const _items = hydrateStored(value);
+	const listView = ownerView(_items, '_item');
+	if (listView.length === undefined) refuseReadStub('_items');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'with_clause_paren', { withItems: _with_items });
+	if (handle !== undefined) admitChildren(handle, 'with_clause_paren', { items: _items });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.WithClauseParen as const, { _with_items });
+	handle?.verifyStored?.(TSKindId.WithClauseParen as const, { _items });
 	const record = arena.record(TSKindId.WithClauseParen as const, 8);
-	storeCell(arena, record.data, record.base + 2, _with_items);
+	storeCell(arena, record.data, record.base + 2, _items);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			withItems: (...args: unknown[]) =>
+			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,

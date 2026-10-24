@@ -16,7 +16,6 @@ import {
 	listSlotWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -1453,7 +1452,6 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 						{
 							slot: 'catchClauseGroup',
 							stored: '_catch_clause_group',
-							kind: TSKindId.CatchClauseGroup as const,
 							make: RAW.buildCatchClauseGroup,
 							keys: [
 								{ name: 'parameter', rest: false, required: true },
@@ -1476,7 +1474,6 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 						{
 							slot: 'catchClauseGroup',
 							stored: '_catch_clause_group',
-							kind: TSKindId.CatchClauseGroup as const,
 							make: RAW.buildCatchClauseGroup,
 							keys: [
 								{ name: 'parameter', rest: false, required: true },
@@ -1502,7 +1499,6 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 			data._catch_clause_group === undefined
 				? undefined
 				: () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
-		[STORED_SLOT_READERS]: { catchClauseGroup: readGroup_catchClauseGroup },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

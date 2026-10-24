@@ -1303,7 +1303,7 @@ describe('with_statement', () => {
 				$type: TSKindId.WithClauseBare,
 				$text: 'test',
 				$named: true,
-				_item: [
+				_items: [
 					stampBuilt({
 						$type: TSKindId.WithItem,
 						$text: 'test',
@@ -1333,7 +1333,7 @@ describe('with_statement', () => {
 				$type: TSKindId.WithClauseBare,
 				$text: 'test',
 				$named: true,
-				_item: [
+				_items: [
 					stampBuilt({
 						$type: TSKindId.WithItem,
 						$text: 'test',

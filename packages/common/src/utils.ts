@@ -457,15 +457,6 @@ const convertElements = (args: readonly unknown[], element: ElementConfig | unde
 	return args.length === 1 && Array.isArray(args[0]) ? [args[0].map(convert)] : args.map(convert);
 };
 
-export const STORED_SLOT_READERS: unique symbol = Symbol('sittir.storedSlotReaders');
-
-type StoredSlotReaders = Readonly<Record<string, (this: object) => unknown>>;
-
-export function storedSlotReader(node: object, accessor: string): unknown {
-	const readers = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
-	return readers?.[accessor] ?? (node as Record<string, unknown>)[accessor];
-}
-
 /**
  * A list slot's `$with` setter: no arguments clear an optional slot or build the empty list, one
  * argument that is the list itself (or `undefined`) sets it as it is, anything else is the list's
@@ -511,7 +502,6 @@ interface GroupSeatKey {
 interface GroupSeatSpec {
 	readonly slot: string;
 	readonly stored: string;
-	readonly kind: number;
 	readonly make: (config: never) => unknown;
 	readonly keys: readonly GroupSeatKey[];
 }
@@ -523,8 +513,7 @@ export function groupField(group: object | undefined, field: string): unknown {
 /**
  * A seated key's `$with` setter. Through a present group it writes the group's own field; with no
  * value it leaves the group absent; with a value it builds an absent group from that field alone
- * when no other field is required, and refuses otherwise. A key that spells the seat's slot also
- * takes the whole group.
+ * when no other field is required, and refuses otherwise.
  */
 export function seatWith(
 	spec: GroupSeatSpec,
@@ -536,9 +525,6 @@ export function seatWith(
 	const seat = set as (...args: unknown[]) => unknown;
 	const key = spec.keys.find((candidate) => candidate.name === keyName)!;
 	const make = spec.make as (config: unknown) => unknown;
-	if (key.name === spec.slot && args.length === 1 && (args[0] as { $type?: unknown } | null)?.$type === spec.kind) {
-		return seat(args[0]);
-	}
 	const fieldName = key.field ?? key.name;
 	const group = readGroup() as { readonly $with: unknown } | undefined;
 	if (group !== undefined) {
