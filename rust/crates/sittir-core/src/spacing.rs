@@ -1053,12 +1053,16 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::CoordinateError> {
         let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
         let mut frames = sources.frames(coord);
-        if let Some(options) = self.options {
+        if let Some(ctx) = self.render_context() {
             for frame in frames.iter_mut() {
-                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+                frame.prepare(&ctx)?;
             }
         }
         Ok(frames)
+    }
+
+    fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
+        Some(crate::prepare::RenderContext { options: self.options?, sources: self.sources? })
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {

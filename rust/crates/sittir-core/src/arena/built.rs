@@ -33,9 +33,15 @@ impl<G: EngineGrammar> Engine<G> {
     ///
     /// # Errors
     ///
-    /// As `built_trivia_side`.
+    /// As `built_trivia_side`, and `ArenaError::Unwritable` for entries that
+    /// hold the record at `at`, themselves or in their own sides at any
+    /// depth: a record's sides never reach the record.
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
-        self.written().write_side(Place::Record(at.record()?), side, entries);
+        let holder = at.record()?;
+        if self.written().reaches(holder, &entries) {
+            return Err(ArenaError::Unwritable("a side that reaches its own record"));
+        }
+        self.written().write_side(Place::Record(holder), side, entries);
         Ok(())
     }
 }

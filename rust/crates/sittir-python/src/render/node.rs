@@ -35303,8 +35303,10 @@ pub fn render_record(
 
 /// Render the built record `root` names as the text of a trivia entry
 /// (`sittir_core::arena::RecordGrammar::render_entry`): as `render_record`
-/// renders it, its end holding no line break. Refuses a record of a kind
-/// no side entry holds as a record (`kind::STAMPED_TRIVIA_KINDS`).
+/// renders it, without its own leading and trailing sides, which are its
+/// neighbours in the side that holds it, and its end holding no line
+/// break. Refuses a record of a kind no side entry holds as a record
+/// (`kind::STAMPED_TRIVIA_KINDS`).
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
     trees: &mut dyn ::sittir_core::arena::RecordTrees,
@@ -35329,7 +35331,7 @@ fn render_record_as(
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {
         return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx, None).map(|(_, text)| text);
     }
-    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx)?;
+    let prepared = if entry { ::sittir_core::arena::prepare_entry_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx) } else { ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx) }?;
     let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
     render_root(ctx, None, |_| entry || ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))

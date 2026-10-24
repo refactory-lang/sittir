@@ -15,12 +15,15 @@ use crate::slot::SlotValue;
 /// One trivia entry: the node, or the coordinate of one. An entry a side
 /// write was given as a built record holds the text that record renders,
 /// stamped at the write (`Engine::stamp_side`), and names the record, which a
-/// read of the side answers with.
+/// read of the side answers with. Read from a store, it holds that store,
+/// which holds the record's own sides, as a coordinate names its tree.
 #[derive(Debug, Clone, PartialEq)]
 pub struct TriviaEntry<T> {
     pub value: SlotValue<T>,
     #[cfg(feature = "arena")]
     pub record: Option<BuiltEntry>,
+    #[cfg(feature = "arena")]
+    pub store: Option<crate::trivia_store::TriviaStore<T>>,
 }
 
 impl<T> TriviaEntry<T> {
@@ -29,6 +32,8 @@ impl<T> TriviaEntry<T> {
             value,
             #[cfg(feature = "arena")]
             record: None,
+            #[cfg(feature = "arena")]
+            store: None,
         }
     }
 }
@@ -69,7 +74,7 @@ impl<T: Render> Render for TriviaEntry<T> {
 /// value and its sides into its own run (`spliced`): every value is `Clone`,
 /// and `'static`, so a coordinate's sides, which a sink answers type-erased,
 /// read back as the side's own type.
-pub trait TriviaSeam: Clone + 'static {
+pub trait TriviaSeam: Clone + crate::prepare::Prepare + 'static {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         None
     }
@@ -89,6 +94,20 @@ pub trait TriviaSeam: Clone + 'static {
 
     fn sides_mut(&mut self) -> Option<&mut NodeTrivia<Self>> {
         None
+    }
+}
+
+impl<T> TriviaEntry<T> {
+    /// Whether the entry is a built record a store answered, whose own sides
+    /// that store holds.
+    #[cfg(feature = "arena")]
+    fn held_record(&self) -> bool {
+        self.record.is_some() && self.store.is_some()
+    }
+
+    #[cfg(not(feature = "arena"))]
+    fn held_record(&self) -> bool {
+        false
     }
 }
 
@@ -568,11 +587,12 @@ fn defer_run<I: RunItem + Render>(run: &[I], w: &mut dyn RenderSink) -> RenderRe
 /// side renders an entry's sides as entries of its own run, so they take part
 /// in its joins and its line layout. A node answers its sides itself; a
 /// coordinate's are its node's own frame's, as its tree holds them
-/// (`RenderSink::frames`).
-/// `None` when no entry is a coordinate or holds sides: the side renders as
-/// it is.
+/// (`RenderSink::frames`); a built record's are the ones the store it was
+/// read from holds for it (`record_sides`).
+/// `None` when no entry is a coordinate, a built record or holds sides: the
+/// side renders as it is.
 fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], w: &dyn RenderSink) -> Result<Option<Vec<Spliced<T>>>, crate::render::CoordinateError> {
-    if !entries.iter().any(|entry| entry.has_sides() || matches!(entry.value, SlotValue::Coord(_))) {
+    if !entries.iter().any(|entry| entry.has_sides() || entry.held_record() || matches!(entry.value, SlotValue::Coord(_))) {
         return Ok(None);
     }
     let mut run = Vec::with_capacity(entries.len());
@@ -582,21 +602,47 @@ fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], w: &dyn RenderSink) -> Res
     Ok(Some(run))
 }
 
+/// A side's leading and trailing entries, as `NodeTrivia` holds them.
+type Outer<T> = (Option<Vec<TriviaEntry<T>>>, Option<Vec<TriviaEntry<T>>>);
+
+/// The own sides of the built record `entry` names, as the store it was read
+/// from holds them, prepared as the sink prepares a coordinate's frames;
+/// `None` when the entry is no record a store answered.
+#[cfg(feature = "arena")]
+fn record_sides<T: TriviaSeam>(entry: &TriviaEntry<T>, w: &dyn RenderSink) -> Result<Option<Outer<T>>, crate::render::CoordinateError> {
+    let (Some(record), Some(store)) = (entry.record, entry.store.as_ref()) else { return Ok(None) };
+    let Some(mut sides) = store.sides(crate::trivia_store::Place::Record(record.at)) else { return Ok(Some((None, None))) };
+    if let Some(ctx) = w.render_context() {
+        crate::prepare::Prepare::prepare(&mut sides, &ctx)?;
+    }
+    Ok(Some((sides.leading, sides.trailing)))
+}
+
 fn splice_into<T: TriviaSeam>(mut entry: TriviaEntry<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>) -> Result<(), crate::render::CoordinateError> {
-    let (leading, trailing, item) = match &mut entry.value {
+    #[cfg(feature = "arena")]
+    if let Some(outer) = record_sides(&entry, w)? {
+        return splice_around(outer, Spliced::Entry(entry), w, run);
+    }
+    let (outer, item) = match &mut entry.value {
         SlotValue::Node(value) => {
-            let (leading, trailing) = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
-            (leading, trailing, Spliced::Entry(entry))
+            let outer = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
+            (outer, Spliced::Entry(entry))
         }
         SlotValue::Coord(coord) => {
             let frames = w.frames(coord)?;
             match frames.own.as_deref().map(|own| own.as_any().downcast_ref::<NodeTrivia<T>>()) {
-                None => (None, None, Spliced::Bare(coord.clone(), frames.items)),
-                Some(Some(sides)) => (sides.leading.clone(), sides.trailing.clone(), Spliced::Bare(coord.clone(), frames.items)),
-                Some(None) => (None, None, Spliced::Entry(entry)),
+                None => ((None, None), Spliced::Bare(coord.clone(), frames.items)),
+                Some(Some(sides)) => ((sides.leading.clone(), sides.trailing.clone()), Spliced::Bare(coord.clone(), frames.items)),
+                Some(None) => ((None, None), Spliced::Entry(entry)),
             }
         }
     };
+    splice_around(outer, item, w, run)
+}
+
+/// `item` in the run between its own leading and trailing entries, each
+/// spliced in turn.
+fn splice_around<T: TriviaSeam>((leading, trailing): Outer<T>, item: Spliced<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>) -> Result<(), crate::render::CoordinateError> {
     for side in leading.into_iter().flatten() {
         splice_into(side, w, run)?;
     }
@@ -892,6 +938,12 @@ mod tests {
         }
     }
 
+    impl crate::prepare::Prepare for Sided {
+        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+            Ok(())
+        }
+    }
+
     fn sided(name: char, leading: Vec<super::TriviaEntry<Sided>>, trailing: Vec<super::TriviaEntry<Sided>>) -> super::TriviaEntry<Sided> {
         super::TriviaEntry::new(crate::slot::SlotValue::Node(Sided(name, super::NodeTrivia { leading: Some(leading), trailing: Some(trailing), inner: None })))
     }
@@ -918,5 +970,24 @@ mod tests {
         let run = super::spliced(&nested, &w).expect("a run").expect("spliced");
         let spliced: Vec<_> = "abcdef".chars().map(|name| (name, false)).collect();
         assert_eq!(names(&run), spliced, "each entry in order, none holding sides of its own");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_built_record_s_own_sides_are_the_ones_the_store_it_was_read_from_holds() {
+        use crate::trivia_store::{Place, TriviaStore};
+        let mut out = String::new();
+        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+        let at = crate::arena::Address(5);
+        let built = |name| super::TriviaEntry { record: Some(super::BuiltEntry { kind: crate::types::KindId(1), at }), ..sided(name, vec![], vec![]) };
+        let store = TriviaStore::<Sided>::new();
+        store.write_side(Place::Record(at), crate::trivia_table::TriviaSide::Leading, vec![sided('a', vec![], vec![])]);
+        store.write_side(Place::Record(at), crate::trivia_table::TriviaSide::Trailing, vec![sided('c', vec![], vec![])]);
+        let holder = Place::Row { tree: crate::types::TreeId(1), row: crate::types::NodeIndex::ROOT };
+        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![built('b')]);
+        let side = store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written");
+        let run = super::spliced(&side, &w).expect("a run").expect("spliced");
+        assert_eq!(names(&run), [('a', false), ('b', false), ('c', false)], "the record between the sides its store holds for it");
+        assert!(matches!(super::spliced(&[built('b')], &w), Ok(None)), "a record no store answered holds no sides of its own");
     }
 }

@@ -392,6 +392,12 @@ pub trait RenderSink {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
     }
+    /// The options and tree table this sink prepares what it looks up with,
+    /// a coordinate's frames (`frames`) and a built record's sides; none for
+    /// a sink that holds no table or no options.
+    fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
+        None
+    }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
