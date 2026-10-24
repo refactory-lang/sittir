@@ -177,17 +177,16 @@ function segmentDestinations(
 		const [head] = parsePreferencePath(segment);
 		return head?.kind === 'fieldName' && [...hostsOf(owner)].some((host) => fieldNames(rules[host]).has(head.name));
 	};
-	const destinationsOf = (owner: string, segment: string): readonly string[] => {
+	const votesOf = (owner: string, segment: string): readonly string[] => {
 		const own = [...new Set(rewrites.filter((r) => hostsOf(owner).has(r.owner) && r.from === segment).map((r) => r.to))];
-		if (!stop.has(owner) || own.length > 0) return own;
-		const forms = subtypeNames(rules, rules[owner]).map((form) => {
-			const to = destinationsOf(form, segment);
-			return to.length > 0 ? to : holds(form, segment) ? [segment] : [];
-		});
-		const agreed = new Set(forms.flat());
-		return agreed.size === 1 && agreed.has(segment) ? [] : [...agreed];
+		if (own.length > 0) return own;
+		if (!stop.has(owner)) return holds(owner, segment) ? [segment] : [];
+		return [...new Set(subtypeNames(rules, rules[owner]).flatMap((form) => votesOf(form, segment)))];
 	};
-	return destinationsOf;
+	return (owner, segment) => {
+		const votes = votesOf(owner, segment);
+		return votes.length === 1 && votes[0] === segment ? [] : votes;
+	};
 }
 
 export function boundSegmentOf(
@@ -298,10 +297,7 @@ export function effectsForOwners<E extends { readonly kind: string }>(grammar: G
 	return [
 		...effects.filter((effect) => !isSegment(effect)),
 		...owners.flatMap((owner) =>
-			from.flatMap((before): SegmentEffect[] => {
-				const destinations = destinationsOf(owner, before);
-				return destinations.length === 1 && destinations[0] === before ? [] : destinations.map((to) => ({ kind: 'segment', owner, from: before, to }));
-			})
+			from.flatMap((before) => destinationsOf(owner, before).map((to): SegmentEffect => ({ kind: 'segment', owner, from: before, to })))
 		)
 	];
 }

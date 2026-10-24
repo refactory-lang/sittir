@@ -137,6 +137,29 @@ describe('boundFieldNameOf', () => {
 		expect(() => rewriteInherited({ options: { field_pattern: { 'ref:/before': tight } } }, { effects: disagreeing, rules })).toThrow(/'field_pattern\/ref:' has conflicting field renames: by_reference:, ref:/);
 	});
 
+	it('counts a nested supertype whose forms all keep the field as keeping it', () => {
+		const grammar = {
+			supertypes: ['outer', 'nested'],
+			rules: {
+				outer: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'changed' }, { type: 'SYMBOL', name: 'nested' }] },
+				nested: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'same_a' }, { type: 'SYMBOL', name: 'same_b' }] },
+				changed: { type: 'FIELD', name: 'by_reference', content: { type: 'STRING', value: 'ref' } },
+				same_a: { type: 'FIELD', name: 'ref', content: { type: 'STRING', value: 'ref' } },
+				same_b: { type: 'FIELD', name: 'ref', content: { type: 'STRING', value: 'ref' } }
+			}
+		};
+		const changed: SegmentEffect = { kind: 'segment', owner: 'changed', from: 'ref:', to: 'by_reference:' };
+		const nameOf = boundFieldNameOf([changed], grammar);
+		expect(nameOf('nested', 'ref')).toBe('ref');
+		expect(() => nameOf('outer', 'ref')).toThrow(/'outer\/ref:' has conflicting field renames/);
+		const effects = effectsForOwners(grammar, [changed]).filter((effect) => effect.kind === 'segment' && effect.owner !== 'changed');
+		expect(effects).toEqual([
+			{ kind: 'segment', owner: 'outer', from: 'ref:', to: 'by_reference:' },
+			{ kind: 'segment', owner: 'outer', from: 'ref:', to: 'ref:' }
+		]);
+		expect(() => rewriteInherited({ options: { outer: { 'ref:/before': preference('tight') } } }, { effects, rules: grammar.rules })).toThrow(/'outer\/ref:' has conflicting field renames: by_reference:, ref:/);
+	});
+
 
 	it('reads canonical field segments and scopes the rename to its owner', () => {
 		const nameOf = boundFieldNameOf([{ owner: 'binding', from: 'left:', to: 'name:' }]);
