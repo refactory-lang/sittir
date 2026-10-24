@@ -364,9 +364,9 @@ impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
         Some(sides)
     }
 
-    fn frames(&self, coord: &NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
         if self.is_root(coord) {
-            Vec::new()
+            crate::trivia::Frames::default()
         } else {
             self.tree.frames(coord)
         }

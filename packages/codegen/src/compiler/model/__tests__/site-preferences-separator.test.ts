@@ -112,7 +112,7 @@ describe('collectSitePreferences — separator sites', () => {
 	});
 
 	it('a terminal symbol arm resolves to its catalog kind; one the catalog lacks is a build error', () => {
-		const withSymbolArm: RenderRule = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: SYMBOL, name: 'newline' }] };
+		const withSymbolArm: RenderRule = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: SYMBOL, name: 'newline', kindId: 5 }] };
 		const sites = collectSitePreferences({
 			nodeMap: listNodeMap(withSymbolArm),
 			kindEntries: [...kindEntries, { kind: 'newline', member: 'Newline', id: 5 }],

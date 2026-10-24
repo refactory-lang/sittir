@@ -4,9 +4,11 @@ import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { allGrammars, grammarPackage } from '../../grammars.ts';
-import { listSlotHints, listViewHint } from '../factories.ts';
+import { listOptionKeys, listSlotHints, listViewHint, listViewPlanOf } from '../factories.ts';
 
 const compact = (text: string): string => text.replace(/\s+/g, '').replace(/<\|/g, '<');
+
+const keysOf = (text: string): string[] => [...text.matchAll(/\b(separator|delimiter)\??:/g)].map((m) => m[1]!).sort();
 
 const read = (grammar: string, file: string): string => readFileSync(`packages/${grammar}/src/${file}`, 'utf8');
 
@@ -93,6 +95,32 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 				const wired = [...read(grammar, file).matchAll(/kind: TSKindId\.\w+ as const,\s*optional: (?:true|false),\s*make:/g)];
 				expect(wired, file).toHaveLength(parents.reduce((total, node) => total + listSlotHints(node, nodeMap, kindEntriesOf[grammar]!).length, 0));
 			}
+		});
+	}
+});
+
+describe('the list-view plan', () => {
+	it('names an option key exactly when the list factory takes it', () => {
+		expect(listOptionKeys({ hasSeparatorKindOption: false, hasDelimiterOption: true })).toEqual(['delimiter']);
+		expect(listOptionKeys({ hasSeparatorKindOption: true, hasDelimiterOption: false })).toEqual(['separator']);
+		expect(listOptionKeys({ hasSeparatorKindOption: false, hasDelimiterOption: false })).toEqual([]);
+	});
+
+	for (const grammar of GRAMMARS) {
+		it(`${grammar}: every list view's spec keys are the keys of its marker's options`, () => {
+			const nodeMap = nodeMaps[grammar]!;
+			const kindEntries = kindEntriesOf[grammar]!;
+			let views = 0;
+			for (const node of nodeMap.nodes.values()) {
+				const plan = listViewPlanOf(node, nodeMap, kindEntries);
+				const hint = listViewHint(node, nodeMap, kindEntries);
+				expect(plan === undefined).toBe(hint === undefined);
+				if (plan === undefined || hint === undefined) continue;
+				views++;
+				expect(plan.options.map((option) => option.key).sort()).toEqual(keysOf(hint.options));
+				expect(plan.count).toMatch(/^_\w+$/);
+			}
+			if (['rust', 'python', 'typescript'].includes(grammar)) expect(views).toBeGreaterThan(0);
 		});
 	}
 });

@@ -2,7 +2,7 @@ import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
-import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
@@ -184,7 +184,7 @@ function gapOf(kind: string, rule: RenderRule, config: RenderRulesConfig): { rea
 	const sep = bag(rule).separator;
 	if (sep === undefined) return {};
 	const value = bag(sep.value);
-	if (value.type === CHOICE && value.members !== undefined && value.members.every((m) => bag(m).type === STRING)) {
+	if (value.type === CHOICE && value.members !== undefined && value.members.every((m) => bag(m).type === STRING || bag(m).type === SYMBOL || bag(m).type === ALIAS)) {
 		return { token: displayNameOf(kind, config.nodeMap) };
 	}
 	if (value.type !== STRING || typeof value.value !== 'string' || value.value === '') return undefined;

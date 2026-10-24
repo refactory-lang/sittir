@@ -8727,7 +8727,7 @@ export function buildObjectTypeContent<
 	>
 >(
 	options: ListOptions<{
-		separator?: TSKindId.Comma | TSKindId.Semi;
+		separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	}>,
 	...elements: A & RefuseUndeclared<A>
@@ -8735,7 +8735,7 @@ export function buildObjectTypeContent<
 export function buildObjectTypeContent(
 	...args: (
 		| {
-				separator?: TSKindId.Comma | TSKindId.Semi;
+				separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 				delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 		  }
 		| Admit<
@@ -8755,7 +8755,7 @@ export function buildObjectTypeContent(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator', 'delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator?: TSKindId.Comma | TSKindId.Semi;
+		separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
@@ -8782,7 +8782,7 @@ function _buildObjectTypeContent(
 		>
 	>,
 	options: {
-		separator?: TSKindId.Comma | TSKindId.Semi;
+		separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	}
 ): T.ObjectTypeContent.Bound {
@@ -8812,7 +8812,7 @@ function _buildObjectTypeContent(
 					>
 				>
 			) => rebuilt(node, handle, () => buildObjectTypeContent(options, ...vs)),
-			separator: (v: TSKindId.Comma | TSKindId.Semi) =>
+			separator: (v: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon) =>
 				rebuilt(node, handle, () => buildObjectTypeContent({ ...options, separator: v }, ...elements)),
 			delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
 				rebuilt(node, handle, () => buildObjectTypeContent({ ...options, delimiter: v }, ...elements))

@@ -539,10 +539,6 @@ The value, or the default's when it is absent. The default's type is not an infe
 
 The names a list node takes from `ReadonlyArray`: its non-mutating methods and `length`. `toString` and `toLocaleString` are not among them; every object already has them. A compile-time check keeps the method list equal to `ReadonlyArray`'s own, so the runtime cannot miss a method the type promises. The emitter refuses a list whose accessors or options take one of these names.
 
-### `packages/common/src/utils.ts::storedSlotReader`
-
-The accessor that reads a slot's stored value as a node, for a caller that walks storage by accessor name (the validator's materialization). It is the node's own accessor unless a seat replaced it: a flattened key that spells the seat's slot reads the group's inner value, and the node records the group's reader under `STORED_SLOT_READERS`.
-
 ### `packages/common/src/utils.ts::isGroupConfig`
 
 Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the elements setters (`elementsWith`) and the list-slot setters share it, so a config object means the same thing on every surface.
@@ -784,10 +780,6 @@ The byte range of a parsed node in the source its tree was read from, or `undefi
 ### `packages/common/src/utils.ts::groupField`
 
 The value a seated key reads: the group's own reader of that field, or `undefined` while the group is absent.
-
-### `packages/common/src/utils.ts::STORED_SLOT_READERS`
-
-The key a node keeps the readers of its seated slots under, by accessor name, for the case where a flattened key spells its slot and so replaces that slot's own accessor. `storedSlotReader` reads it.
 
 
 ### `packages/common/src/reparse.ts::hostTemplateFor`

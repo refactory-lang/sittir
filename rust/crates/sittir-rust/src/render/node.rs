@@ -3058,6 +3058,22 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
         }
     }
 
+    fn sides(&self) -> Option<&::sittir_core::trivia::NodeTrivia<Self>> {
+        match self {
+            TriviaNode::LineComment(t) => t.layout.as_deref()?.trivia.as_ref(),
+            TriviaNode::BlockComment(t) => t.layout.as_deref()?.trivia.as_ref(),
+            _ => None,
+        }
+    }
+
+    fn sides_mut(&mut self) -> Option<&mut ::sittir_core::trivia::NodeTrivia<Self>> {
+        match self {
+            TriviaNode::LineComment(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            TriviaNode::BlockComment(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            _ => None,
+        }
+    }
+
     fn depth(&self) -> i32 {
         match self {
             TriviaNode::Indent => 1,
@@ -31942,7 +31958,7 @@ impl ::sittir_core::render::Render for TokenKeywordsEnum {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum _RangeExpressionBareNode {
-    #[kind(kind::_RANGE_EXPRESSION_BARE, kind::DOT_DOT)]
+    #[kind(kind::DOT_DOT, kind::_RANGE_EXPRESSION_BARE)]
     _RangeExpressionBare,
 }
 
@@ -31970,7 +31986,7 @@ impl ::sittir_core::render::Render for _RangeExpressionBareNode {
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice)]
 pub enum ImplItemUnsafeMarkerNode {
-    #[kind(kind::_IMPL_ITEM_UNSAFE_MARKER, kind::UNSAFE_KEYWORD)]
+    #[kind(kind::UNSAFE_KEYWORD, kind::_IMPL_ITEM_UNSAFE_MARKER)]
     ImplItemUnsafeMarker,
 }
 

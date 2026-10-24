@@ -24,7 +24,7 @@ describe('factory-roundtrip harness', () => {
 	it('uses metadata-driven child args for spread child-backed factories', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/common.ts'), 'utf-8');
 		expect(content).toMatch(
-			/const elements = getChildFactoryArgs\(kind, base, opts\.factorySlots, opts\.factoryFields\);\s*const options = shape === 'elements' \? separatedListFactoryOptions\(referenceData\) : registered;/
+			/const elements = getChildFactoryArgs\(kind, base, opts\.factorySlots, opts\.factoryFields\);\s*const options = shape === 'elements' \? separatedListFactoryOptions\(referenceData, opts\.factorySlots\?\.\[kind\], opts\.omitOptionDefaults === true\) : registered;/
 		);
 		expect(content).toMatch(/return options !== undefined \? \[options, \.\.\.elements\] : elements;\s*}/);
 		expect(content).not.toMatch(/const namedChildren = \(readData\.\$children \?\? \[\]\)\.filter/);

@@ -226,11 +226,13 @@ pub(crate) fn write_coordinate(
     if w.in_frame_of(coord) {
         return coord.write_between_edges(w, adjacent);
     }
-    let frames = w.frames(coord)?;
+    let frames = w.frames(coord)?.into_vec();
     write_framed(&frames, Some(coord), coord, adjacent, w)
 }
 
-fn write_framed(
+/// Write a coordinate's bytes framed by `frames`, outermost first, the
+/// outermost opening `origin`'s frame (`write_coordinate`).
+pub(crate) fn write_framed(
     frames: &[Box<dyn crate::trivia::FramedTrivia>],
     origin: Option<&NodeCoordinate>,
     coord: &NodeCoordinate,

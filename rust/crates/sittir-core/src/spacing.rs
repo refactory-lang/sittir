@@ -1050,11 +1050,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<Vec<Box<dyn crate::trivia::FramedTrivia>>, crate::render::CoordinateError> {
-        let Some(sources) = self.sources else { return Ok(Vec::new()) };
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::CoordinateError> {
+        let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
         let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
-            for frame in &mut frames {
+            for frame in frames.iter_mut() {
                 frame.prepare(&crate::prepare::RenderContext { options, sources })?;
             }
         }

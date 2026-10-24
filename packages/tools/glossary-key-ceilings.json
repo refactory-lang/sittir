@@ -1,10 +1,10 @@
 {
-	"ambiguous": 90,
-	"no-declaration": 157,
+	"ambiguous": 50,
+	"no-declaration": 107,
 	"wrong-owner": 0,
 	"dot-separated": 60,
 	"placeholder": 0,
 	"out-of-scope-file": 0,
-	"file-missing": 19,
-	"undocumented": 5722
+	"file-missing": 18,
+	"undocumented": 5679
 }

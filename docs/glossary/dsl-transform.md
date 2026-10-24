@@ -1719,16 +1719,6 @@ Every reference to the segment's kind in a subtree (`walkMatches`). A symbol is 
 // Dispatched before reaching applyToMembers — should never arrive here.
 ```
 
-### `packages/codegen/src/dsl/transform/transform.ts::armNamesOf`
-
-```text
-/**
- * The spellings by which an arm may be named in a preference default:
- * its variant name, a literal's text, an alias target (with and without
- * the leading underscore), a symbol's name, looking through prec wrappers.
- */
-```
-
 ### `packages/codegen/src/dsl/transform/token-forms.ts::canonicalRuleText`
 
 A runtime rule's identity as text, with the per-evaluation `id` and

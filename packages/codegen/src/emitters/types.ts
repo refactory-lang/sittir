@@ -4,7 +4,7 @@ import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isKindIdStored, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
@@ -633,12 +633,12 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	const literalTextById = new Map<number, string>();
 	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
-		for (const candidate of node.separatorCandidateKindNames) {
-			const entry = findKindEntry(entries, candidate);
+		for (const { name, text } of separatorCandidateTexts(node, nodeMap)) {
+			const entry = findKindEntry(entries, name);
 			if (entry === undefined) continue;
-			literalTextById.set(entry.id, candidate);
+			literalTextById.set(entry.id, text);
 			if (entry.parseId !== undefined && entry.parseId !== entry.id) {
-				literalTextById.set(entry.parseId, candidate);
+				literalTextById.set(entry.parseId, text);
 			}
 		}
 	}

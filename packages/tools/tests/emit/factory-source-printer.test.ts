@@ -24,6 +24,7 @@ const ctx: PrintContext = {
 		bareAccepts: {},
 		textLeavesThrough: {},
 		forwardsTo: {},
+		forwardsArguments: new Set<string>(),
 		listDefaults: {},
 		listElementKinds: {},
 		hoistedKinds: new Set(),

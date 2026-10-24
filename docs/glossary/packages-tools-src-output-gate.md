@@ -101,3 +101,47 @@ Maps each existing file under the roots, tracked or untracked, to its blob id as
 ### `packages/tools/src/output-gate/index.ts::textAt`
 
 The text of a file in the worktree, read from disk, or in a revision, read as its blob. It is how the gate compares a file's content at either end of a check.
+
+### `packages/tools/src/output-gate/index.ts::GateDifference::change`
+
+What differs: `'changed'`, `'missing'` or `'added'`.
+
+### `packages/tools/src/output-gate/index.ts::GateDifference::path`
+
+The repository-relative path of the file that differs.
+
+### `packages/tools/src/output-gate/index.ts::GateException::dropJsonKeys`
+
+The top-level JSON keys a file may differ on; every other key must match.
+
+### `packages/tools/src/output-gate/index.ts::GateException::path`
+
+The file the exception applies to.
+
+### `packages/tools/src/output-gate/index.ts::GateManifest::entries`
+
+Maps each generated file's path to its blob id at the recorded revision.
+
+### `packages/tools/src/output-gate/index.ts::OutputGateOptions::check`
+
+The revision to check the tree against.
+
+### `packages/tools/src/output-gate/index.ts::OutputGateOptions::checkSnapshot`
+
+The snapshot file to check the layers' evaluated grammars against.
+
+### `packages/tools/src/output-gate/index.ts::OutputGateOptions::except`
+
+Paths excluded from the check.
+
+### `packages/tools/src/output-gate/index.ts::OutputGateOptions::record`
+
+The manifest file to write.
+
+### `packages/tools/src/output-gate/index.ts::OutputGateOptions::rev`
+
+The revision the manifest is read from or recorded at.
+
+### `packages/tools/src/output-gate/index.ts::OutputGateOptions::snapshot`
+
+The snapshot file to write for the layers' evaluated grammars.

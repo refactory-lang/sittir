@@ -5,6 +5,23 @@ export interface Expression<G extends GrammarContext<G>> {
 	readonly $kind: 'expression';
 }
 
+export interface ExpressionSynonyms {
+	readonly coalesce: 'nullish';
+	readonly compound: 'augmented';
+	readonly conditional: 'ternary';
+	readonly construct: 'new';
+	readonly generator: 'gen';
+	readonly lambda: 'closure' | 'arrow';
+	readonly list: 'array';
+	readonly map: 'dictionary' | 'dict';
+	readonly matrix_multiply: 'matmul';
+	readonly member: 'attribute' | 'field' | 'property';
+	readonly propagate: 'try';
+	readonly qualified: 'path' | 'scoped';
+	readonly reference: 'borrow';
+	readonly subscript: 'index';
+}
+
 export namespace Expression {
 	export interface Assignment<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
