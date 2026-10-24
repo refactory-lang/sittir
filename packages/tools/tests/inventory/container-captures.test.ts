@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, derive, readBindings } from '@sittir/codegen/bindings';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, canonicalFacts, derive, readBindings, resolveFlags } from '@sittir/codegen/bindings';
 
 const slot = (name: string, kinds: readonly string[], multiple = false): ModelSlot => ({
 	name,
@@ -62,6 +62,25 @@ describe('container captures', () => {
 		expect(d.members.get('declaration.b')?.get('decorators')?.multiple).toBe(true);
 		expect(d.members.get('declaration.a')?.has('decorators') ?? false).toBe(false);
 		expect(d.untargeted).toEqual([]);
+	});
+
+	it("derive a flag captured on the envelope by its synonym as they derive the canonical flag", async () => {
+		const flagged = new Map([['async', { optional: true, flag: true }]]);
+		const kinds = new Map([['declaration.b', { name: 'declaration.b', own: flagged, parent: undefined, refines: undefined }]]);
+		const vocabulary: Vocabulary = {
+			kinds,
+			flags: new Set(['async']),
+			synonyms: { levels: new Map(), flags: new Map([['async', ['concurrent']]]) },
+			members: (path) => kinds.get(path)?.own ?? new Map()
+		};
+		const membersOf = async (name: string) => {
+			const input = await grammar([...CLAIMS, `(marked (mark)* @marks "async" @${name} body: (_) @element)`].join('\n'));
+			const bindings = resolveFlags(canonicalFacts(input.bindings, vocabulary, input.model), vocabulary, input.model);
+			return derive([{ ...input, bindings }]).members.get('declaration.b');
+		};
+		const canonical = await membersOf('async');
+		expect([...(canonical?.keys() ?? [])]).toContain('async');
+		expect(await membersOf('concurrent')).toEqual(canonical);
 	});
 
 	it('are reported, not spread, when the element slot names no kind directly', async () => {

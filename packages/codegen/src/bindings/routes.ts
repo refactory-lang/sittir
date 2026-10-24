@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -690,6 +690,10 @@ export function claimReads(model: SlotModel, claims: readonly ClaimFact[]): (cla
 		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
 		return forms.flatMap((form) => readKinds(model, form, claim).map((read) => [form, read] as const));
 	};
+}
+
+export function containerElementForms(model: SlotModel, container: ContainerFact): string[] {
+	return (slotFor(model, modelNode(model, container.kind)?.slots ?? [], container.element)?.kinds ?? []).flatMap((kind) => formsOf(model, kind));
 }
 
 export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: string): boolean {

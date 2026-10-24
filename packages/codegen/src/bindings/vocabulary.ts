@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { captureReaches, claimReads } from './routes.ts';
+import { captureReaches, claimReads, containerElementForms } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { runPinned } from './read.ts';
 
@@ -271,16 +271,24 @@ export function canonicalPaths(vocabulary: Vocabulary): (path: string) => string
 	};
 }
 
-const claimedPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((member: NamedMemberFact) => string[]) => {
+const claimedPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((reaches: (kind: string) => boolean, among?: readonly number[]) => string[]) => {
 	const readsOf = claimReads(model, claims);
-	return (member) => [
-		...new Set(
-			claims
-				.filter((claim, index) => (member.claims === undefined || member.claims.includes(index)) && readsOf(claim).some(([, read]) => captureReaches(model, member, read.kind)))
-				.map((claim) => claim.vocab)
-		)
+	return (reaches, among) => [
+		...new Set(claims.filter((claim, index) => (among === undefined || among.includes(index)) && readsOf(claim).some(([, read]) => reaches(read.kind))).map((claim) => claim.vocab))
 	];
 };
+
+const memberPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((member: NamedMemberFact) => string[]) => {
+	const pathsOf = claimedPaths(model, claims);
+	return (member) => pathsOf((kind) => captureReaches(model, member, kind), member.claims);
+};
+
+function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
+	if (paths.some((path) => vocabulary.members(path).has(camel(name)))) return name;
+	const flags = [...new Set(paths.flatMap((path) => flagsSpelledBy(vocabulary, path, name)))];
+	if (flags.length > 1) throw new Error(`bindings: ${owner}'s capture @${name} spells the flags ${flags.join(' and ')}; a synonym spells one flag`);
+	return flags[0] ?? name;
+}
 
 export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const canonical = canonicalPaths(vocabulary);
@@ -288,21 +296,28 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const vocab = canonical(claim.vocab);
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
-	const pathsOf = claimedPaths(
-		model,
-		claims.map((claim) => ({ ...claim, vocab: flagSegment(vocabulary, claim.vocab)?.parent ?? claim.vocab }))
-	);
+	const resolved = claims.map((claim) => ({ ...claim, vocab: flagSegment(vocabulary, claim.vocab)?.parent ?? claim.vocab }));
+	const pathsOf = claimedPaths(model, resolved);
+	const pathsOfMember = memberPaths(model, resolved);
 	return {
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
 		members: facts.members.map((member) => {
 			if (!isNamedMember(member)) return member;
-			const paths = pathsOf(member);
-			if (paths.some((path) => vocabulary.members(path).has(camel(member.name)))) return member;
-			const flags = [...new Set(paths.flatMap((path) => flagsSpelledBy(vocabulary, path, member.name)))];
-			if (flags.length > 1) throw new Error(`bindings: ${member.owner}'s capture @${member.name} spells the flags ${flags.join(' and ')}; a synonym spells one flag`);
-			return flags[0] === undefined ? member : { ...member, name: flags[0] };
+			const name = canonicalCapture(vocabulary, pathsOfMember(member), member.name, member.owner);
+			return name === member.name ? member : { ...member, name };
+		}),
+		containers: facts.containers.map((container) => {
+			const forms = new Set(containerElementForms(model, container));
+			const paths = pathsOf((kind) => forms.has(kind));
+			return {
+				...container,
+				captures: container.captures.map((capture) => {
+					const name = canonicalCapture(vocabulary, paths, capture.name, container.kind);
+					return name === capture.name ? capture : { ...capture, name };
+				})
+			};
 		})
 	};
 }
@@ -313,7 +328,7 @@ export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model:
 		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
 	});
 	const flagsOf = (path: string): ReadonlySet<string> => new Set([...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])));
-	const pathsOf = claimedPaths(model, claims);
+	const pathsOf = memberPaths(model, claims);
 	return {
 		...facts,
 		claims,
