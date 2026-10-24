@@ -171,10 +171,11 @@ for (const mode of ['object', 'arena']) {
     prepare: { value: refuseGenericWrite }
   });
   const name = build.identifier('shared');
+  const function_modifiers = build.function_modifiers({ modifier: [TSKindId.AsyncKeyword] });
   const parameters = build.parameters();
   const body = build.block({ trailing_expression: build.identifier('x') });
-  const first = build.function_item({ name, parameters, body });
-  const second = build.function_item({ name, parameters, body });
+  const first = build.function_item({ function_modifiers, name, parameters, body });
+  const second = build.function_item({ function_modifiers, name, parameters, body });
   const original = first.render().text;
   const renamed = name.$with.text('renamed');
   assert.notEqual(store.identity(name), store.identity(renamed));
@@ -183,19 +184,22 @@ for (const mode of ['object', 'arena']) {
   const replaced = first.$with.name(renamed);
   assert.notEqual(store.identity(first), store.identity(replaced));
   if (mode === 'arena') {
+    assert.notEqual(records.FunctionItemNode.function_modifiers.inline, undefined, 'function_modifiers is a bounded child');
     assert.equal(
-      store.identity(replaced.parameters()),
-      store.identity(replaced) + records.FunctionItemNode.parameters.word + grammarNative.CELL_INLINE_HEADER_WORDS
+      store.identity(replaced.function_modifiers()),
+      store.identity(replaced) + records.FunctionItemNode.function_modifiers.word + grammarNative.CELL_INLINE_HEADER_WORDS
     );
-    assert.notEqual(store.identity(replaced.parameters()), store.identity(parameters));
+    assert.notEqual(store.identity(replaced.function_modifiers()), store.identity(function_modifiers));
     assert.equal(
-      replaced.parameters().render().text,
-      parameters.render().text,
+      replaced.function_modifiers().render().text,
+      function_modifiers.render().text,
       'a bounded child copies its immutable value'
     );
   } else {
-    assert.equal(store.identity(replaced.parameters()), store.identity(parameters));
+    assert.equal(store.identity(replaced.function_modifiers()), store.identity(function_modifiers));
   }
+  assert.equal(records.FunctionItemNode.parameters.inline, undefined, 'parameters is held by reference');
+  assert.equal(store.identity(replaced.parameters()), store.identity(parameters));
   assert.equal(store.identity(replaced.body()), store.identity(body));
   assert.equal(first.render().text, original);
   assert.equal(second.render().text, original);

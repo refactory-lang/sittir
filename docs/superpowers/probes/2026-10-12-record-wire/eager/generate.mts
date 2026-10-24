@@ -14,10 +14,7 @@ import {
   rustNodeStructName
 } from '../../../../../packages/codegen/src/emitters/render-module.ts';
 import { slotStoredIds } from '../../../../../packages/codegen/src/emitters/factories.ts';
-import {
-  collectCatalogKinds,
-  collectKindEntries
-} from '../../../../../packages/codegen/src/emitters/kind-discriminant.ts';
+import { collectKindEntries } from '../../../../../packages/codegen/src/emitters/kind-discriminant.ts';
 import { rustFieldIdent } from '../../../../../packages/codegen/src/emitters/node-common.ts';
 import { records } from '../../../../../packages/rust/src/records.ts';
 import { unitKindIds } from '../../../../../packages/codegen/src/emitters/wrap.ts';
@@ -29,7 +26,7 @@ const compiled = await compileGrammar({
   generatedIdTables: await loadGeneratedIdTables('rust')
 });
 const { nodeMap, generatedIdTables } = compiled;
-const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+const entries = collectKindEntries(nodeMap, generatedIdTables);
 const layouts = new Map(Object.entries(records));
 assert.equal(format.inlineHeaderWords, INLINE_HEADER_WORDS);
 const wordsByKind = new Map<number, number>();

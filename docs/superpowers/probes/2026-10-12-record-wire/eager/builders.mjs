@@ -915,28 +915,22 @@ function node189(store, ref) {
 const ids190_0 = [192];
 function build190(store, input = {}) {
 	let value;
-	value = input['attribute'] ?? undefined;
+	value = input['content'] ?? undefined;
 	check(store, value, ids190_0, 'kind', true, false);
 	const v0 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(190, 26);
+	const ref = store.begin(190, 7);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
-				const child = store.location(v0._r);
-				ref.data[ref.word + 2] = 6;
-				switch (v0.$type) {
-					case 192:
-						ref.data.set(child.data.subarray(child.word, child.word + 22), ref.word + 2 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 2] = 3;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._r;
 			}
 		}
 	} else {
-		ref.data['_attribute'] = v0 === undefined ? undefined : v0._r;
+		ref.data['_content'] = v0 === undefined ? undefined : v0._r;
 	}
 	return node190(store, ref);
 }
@@ -948,35 +942,29 @@ function node190(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		attribute() {
-			return ownerOf(this).get(this, '_attribute', 2, undefined, undefined, 22);
+		content() {
+			return ownerOf(this).get(this, '_content', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				attribute(value) {
+				content(value) {
 					const store = ownerOf(this);
 					check(store, value, ids190_0, 'kind', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 26);
+					const next = store.copy(this, 7);
 					if (arena) {
-						next.data.fill(0, next.word + 2, next.word + 2 + 24);
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 2] = 6;
-								switch (value.$type) {
-									case 192:
-										next.data.set(child.data.subarray(child.word, child.word + 22), next.word + 2 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 2] = 3;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._r;
 							}
 						}
 					} else {
-						next.data['_attribute'] = value === undefined ? undefined : value._r;
+						next.data['_content'] = value === undefined ? undefined : value._r;
 					}
 					return node190(store, next);
 				}
@@ -989,28 +977,22 @@ function node190(store, ref) {
 const ids191_0 = [192];
 function build191(store, input = {}) {
 	let value;
-	value = input['attribute'] ?? undefined;
+	value = input['content'] ?? undefined;
 	check(store, value, ids191_0, 'kind', true, false);
 	const v0 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(191, 26);
+	const ref = store.begin(191, 7);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
-				const child = store.location(v0._r);
-				ref.data[ref.word + 2] = 6;
-				switch (v0.$type) {
-					case 192:
-						ref.data.set(child.data.subarray(child.word, child.word + 22), ref.word + 2 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 2] = 3;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._r;
 			}
 		}
 	} else {
-		ref.data['_attribute'] = v0 === undefined ? undefined : v0._r;
+		ref.data['_content'] = v0 === undefined ? undefined : v0._r;
 	}
 	return node191(store, ref);
 }
@@ -1022,35 +1004,29 @@ function node191(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		attribute() {
-			return ownerOf(this).get(this, '_attribute', 2, undefined, undefined, 22);
+		content() {
+			return ownerOf(this).get(this, '_content', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				attribute(value) {
+				content(value) {
 					const store = ownerOf(this);
 					check(store, value, ids191_0, 'kind', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 26);
+					const next = store.copy(this, 7);
 					if (arena) {
-						next.data.fill(0, next.word + 2, next.word + 2 + 24);
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 2] = 6;
-								switch (value.$type) {
-									case 192:
-										next.data.set(child.data.subarray(child.word, child.word + 22), next.word + 2 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 2] = 3;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._r;
 							}
 						}
 					} else {
-						next.data['_attribute'] = value === undefined ? undefined : value._r;
+						next.data['_content'] = value === undefined ? undefined : value._r;
 					}
 					return node191(store, next);
 				}
@@ -1072,7 +1048,7 @@ function build192(store, input = {}) {
 	const v1 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(192, 22);
+	const ref = store.begin(192, 12);
 	if (arena) {
 		if (v0 !== undefined) {
 			if (typeof v0 === 'number') {
@@ -1092,15 +1068,9 @@ function build192(store, input = {}) {
 		}
 		if (v1 !== undefined) {
 			{
-				const child = store.location(v1._r);
-				ref.data[ref.word + 7] = 6;
-				switch (v1.$type) {
-					case 368:
-						ref.data.set(child.data.subarray(child.word, child.word + 13), ref.word + 7 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 7] = 3;
+				ref.data[ref.word + 7 + 1] = v1.$type;
+				ref.data[ref.word + 7 + 2] = v1._r;
 			}
 		}
 	} else {
@@ -1121,7 +1091,7 @@ function node192(store, ref) {
 			return ownerOf(this).get(this, '_path', 2, undefined, undefined, 0);
 		},
 		input() {
-			return ownerOf(this).get(this, '_input', 7, undefined, undefined, 13);
+			return ownerOf(this).get(this, '_input', 7, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -1131,7 +1101,7 @@ function node192(store, ref) {
 					check(store, value, ids192_0, 'union', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 22);
+					const next = store.copy(this, 12);
 					if (arena) {
 						next.data.fill(0, next.word + 2, next.word + 2 + 5);
 						if (value !== undefined) {
@@ -1160,20 +1130,14 @@ function node192(store, ref) {
 					check(store, value, ids192_1, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 22);
+					const next = store.copy(this, 12);
 					if (arena) {
-						next.data.fill(0, next.word + 7, next.word + 7 + 15);
+						next.data.fill(0, next.word + 7, next.word + 7 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 7] = 6;
-								switch (value.$type) {
-									case 368:
-										next.data.set(child.data.subarray(child.word, child.word + 13), next.word + 7 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 7] = 3;
+								next.data[next.word + 7 + 1] = value.$type;
+								next.data[next.word + 7 + 2] = value._r;
 							}
 						}
 					} else {
@@ -1276,7 +1240,7 @@ function node195(store, ref) {
 }
 
 const ids197_0 = [235];
-const ids197_1 = [469];
+const ids197_1 = [473];
 const ids197_2 = [219];
 const ids197_3 = [211];
 const ids197_4 = [201];
@@ -1319,7 +1283,7 @@ function build197(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -1440,7 +1404,7 @@ function node197(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -1538,7 +1502,7 @@ function node197(store, ref) {
 }
 
 const ids198_0 = [235];
-const ids198_1 = [469];
+const ids198_1 = [473];
 const ids198_2 = [219];
 const ids198_3 = [211];
 const ids198_4 = [199];
@@ -1581,7 +1545,7 @@ function build198(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -1702,7 +1666,7 @@ function node198(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -2171,9 +2135,9 @@ function node201(store, ref) {
 }
 
 const ids202_0 = [235];
-const ids202_1 = [466];
+const ids202_1 = [470];
 const ids202_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build202(store, input = {}) {
@@ -2209,7 +2173,7 @@ function build202(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 466:
+					case 470:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -2293,7 +2257,7 @@ function node202(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 466:
+									case 470:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -2564,7 +2528,7 @@ function node204(store, ref) {
 const ids205_0 = [235];
 const ids205_1 = [1];
 const ids205_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids205_3 = [
@@ -2780,7 +2744,7 @@ const ids206_1 = [115];
 const ids206_2 = [58];
 const ids206_3 = [1];
 const ids206_4 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids206_5 = [
@@ -2793,7 +2757,7 @@ function build206(store, input = {}) {
 	value = input['visibility_modifier'] ?? undefined;
 	check(store, value, ids206_0, 'kind', false, false);
 	const v0 = value;
-	value = input['ref'] ?? false;
+	value = input['by_reference'] ?? false;
 	check(store, value, ids206_1, 'presence', false, false);
 	const v1 = value;
 	value = input['mutable'] ?? false;
@@ -2864,7 +2828,7 @@ function build206(store, input = {}) {
 		}
 	} else {
 		ref.data['_visibility_modifier'] = v0 === undefined ? undefined : v0._r;
-		ref.data['_ref'] = v1 ?? false;
+		ref.data['_by_reference'] = v1 ?? false;
 		ref.data['_mutable'] = v2 ?? false;
 		ref.data['_name'] = v3 === undefined ? undefined : v3._r;
 		ref.data['_type'] = v4 === undefined ? undefined : typeof v4 === 'number' ? v4 : v4._r;
@@ -2883,8 +2847,8 @@ function node206(store, ref) {
 		visibility_modifier() {
 			return ownerOf(this).get(this, '_visibility_modifier', 3, undefined, undefined, 19);
 		},
-		ref() {
-			return ownerOf(this).get(this, '_ref', 2, undefined, 0, 0);
+		by_reference() {
+			return ownerOf(this).get(this, '_by_reference', 2, undefined, 0, 0);
 		},
 		mutable() {
 			return ownerOf(this).get(this, '_mutable', 2, undefined, 1, 0);
@@ -2927,7 +2891,7 @@ function node206(store, ref) {
 					}
 					return node206(store, next);
 				},
-				ref(value) {
+				by_reference(value) {
 					const store = ownerOf(this);
 					check(store, value, ids206_1, 'presence', false, false);
 					const arena = store.isArena;
@@ -2936,7 +2900,7 @@ function node206(store, ref) {
 					if (arena) {
 						next.data[next.word + 2] = (next.data[next.word + 2] & ~1) | (value ? 1 : 0);
 					} else {
-						next.data['_ref'] = value ?? false;
+						next.data['_by_reference'] = value ?? false;
 					}
 					return node206(store, next);
 				},
@@ -3034,11 +2998,11 @@ function node206(store, ref) {
 }
 
 const ids207_0 = [235];
-const ids207_1 = [469];
+const ids207_1 = [473];
 const ids207_2 = [219];
 const ids207_3 = [211];
 const ids207_4 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids207_5 = [211];
@@ -3056,7 +3020,7 @@ function build207(store, input = {}) {
 	value = input['where_clause'] ?? undefined;
 	check(store, value, ids207_3, 'kind', false, false);
 	const v3 = value;
-	value = input['type'] ?? undefined;
+	value = input['value'] ?? undefined;
 	check(store, value, ids207_4, 'supertype', true, false);
 	const v4 = value;
 	value = input['trailing_where_clause'] ?? undefined;
@@ -3084,7 +3048,7 @@ function build207(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -3146,7 +3110,7 @@ function build207(store, input = {}) {
 		ref.data['_name'] = v1 === undefined ? undefined : v1._r;
 		ref.data['_type_parameters'] = v2 === undefined ? undefined : v2._r;
 		ref.data['_where_clause'] = v3 === undefined ? undefined : v3._r;
-		ref.data['_type'] = v4 === undefined ? undefined : typeof v4 === 'number' ? v4 : v4._r;
+		ref.data['_value'] = v4 === undefined ? undefined : typeof v4 === 'number' ? v4 : v4._r;
 		ref.data['_trailing_where_clause'] = v5 === undefined ? undefined : v5._r;
 	}
 	return node207(store, ref);
@@ -3171,8 +3135,8 @@ function node207(store, ref) {
 		where_clause() {
 			return ownerOf(this).get(this, '_where_clause', 42, undefined, undefined, 8);
 		},
-		type() {
-			return ownerOf(this).get(this, '_type', 52, undefined, undefined, 0);
+		value() {
+			return ownerOf(this).get(this, '_value', 52, undefined, undefined, 0);
 		},
 		trailing_where_clause() {
 			return ownerOf(this).get(this, '_trailing_where_clause', 57, undefined, undefined, 8);
@@ -3219,7 +3183,7 @@ function node207(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -3284,7 +3248,7 @@ function node207(store, ref) {
 					}
 					return node207(store, next);
 				},
-				type(value) {
+				value(value) {
 					const store = ownerOf(this);
 					check(store, value, ids207_4, 'supertype', true, false);
 					const arena = store.isArena;
@@ -3303,7 +3267,7 @@ function node207(store, ref) {
 							}
 						}
 					} else {
-						next.data['_type'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node207(store, next);
 				},
@@ -3345,7 +3309,7 @@ const ids208_2 = [1, 128];
 const ids208_3 = [219];
 const ids208_4 = [230];
 const ids208_5 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids208_6 = [211];
@@ -3378,7 +3342,7 @@ function build208(store, input = {}) {
 	const v7 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(208, 77);
+	const ref = store.begin(208, 72);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
@@ -3440,34 +3404,28 @@ function build208(store, input = {}) {
 		}
 		if (v4 !== undefined) {
 			{
-				const child = store.location(v4._r);
-				ref.data[ref.word + 47] = 6;
-				switch (v4.$type) {
-					case 230:
-						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 47 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 47] = 3;
+				ref.data[ref.word + 47 + 1] = v4.$type;
+				ref.data[ref.word + 47 + 2] = v4._r;
 			}
 		}
 		if (v5 !== undefined) {
 			if (typeof v5 === 'number') {
-				ref.data[ref.word + 57] = 4;
-				ref.data[ref.word + 57 + 1] = v5;
+				ref.data[ref.word + 52] = 4;
+				ref.data[ref.word + 52 + 1] = v5;
 			} else {
-				ref.data[ref.word + 57] = 3;
-				ref.data[ref.word + 57 + 1] = v5.$type;
-				ref.data[ref.word + 57 + 2] = v5._r;
+				ref.data[ref.word + 52] = 3;
+				ref.data[ref.word + 52 + 1] = v5.$type;
+				ref.data[ref.word + 52 + 2] = v5._r;
 			}
 		}
 		if (v6 !== undefined) {
 			{
 				const child = store.location(v6._r);
-				ref.data[ref.word + 62] = 6;
+				ref.data[ref.word + 57] = 6;
 				switch (v6.$type) {
 					case 211:
-						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 62 + 2);
+						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 57 + 2);
 						break;
 					default:
 						throw new Error('inline child has no stamped record width');
@@ -3476,9 +3434,9 @@ function build208(store, input = {}) {
 		}
 		if (v7 !== undefined) {
 			{
-				ref.data[ref.word + 72] = 3;
-				ref.data[ref.word + 72 + 1] = v7.$type;
-				ref.data[ref.word + 72 + 2] = v7._r;
+				ref.data[ref.word + 67] = 3;
+				ref.data[ref.word + 67 + 1] = v7.$type;
+				ref.data[ref.word + 67 + 2] = v7._r;
 			}
 		}
 	} else {
@@ -3514,16 +3472,16 @@ function node208(store, ref) {
 			return ownerOf(this).get(this, '_type_parameters', 37, undefined, undefined, 8);
 		},
 		parameters() {
-			return ownerOf(this).get(this, '_parameters', 47, undefined, undefined, 8);
+			return ownerOf(this).get(this, '_parameters', 47, undefined, undefined, 0);
 		},
 		return_type() {
-			return ownerOf(this).get(this, '_return_type', 57, undefined, undefined, 0);
+			return ownerOf(this).get(this, '_return_type', 52, undefined, undefined, 0);
 		},
 		where_clause() {
-			return ownerOf(this).get(this, '_where_clause', 62, undefined, undefined, 8);
+			return ownerOf(this).get(this, '_where_clause', 57, undefined, undefined, 8);
 		},
 		body() {
-			return ownerOf(this).get(this, '_body', 72, undefined, undefined, 0);
+			return ownerOf(this).get(this, '_body', 67, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -3533,7 +3491,7 @@ function node208(store, ref) {
 					check(store, value, ids208_0, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
 						next.data.fill(0, next.word + 2, next.word + 2 + 21);
 						if (value !== undefined) {
@@ -3559,7 +3517,7 @@ function node208(store, ref) {
 					check(store, value, ids208_1, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
 						next.data.fill(0, next.word + 23, next.word + 23 + 6);
 						if (value !== undefined) {
@@ -3585,7 +3543,7 @@ function node208(store, ref) {
 					check(store, value, ids208_2, 'union', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
 						next.data.fill(0, next.word + 29, next.word + 29 + 8);
 						if (value !== undefined) {
@@ -3617,7 +3575,7 @@ function node208(store, ref) {
 					check(store, value, ids208_3, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
 						next.data.fill(0, next.word + 37, next.word + 37 + 10);
 						if (value !== undefined) {
@@ -3643,20 +3601,14 @@ function node208(store, ref) {
 					check(store, value, ids208_4, 'kind', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
-						next.data.fill(0, next.word + 47, next.word + 47 + 10);
+						next.data.fill(0, next.word + 47, next.word + 47 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 47] = 6;
-								switch (value.$type) {
-									case 230:
-										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 47 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 47] = 3;
+								next.data[next.word + 47 + 1] = value.$type;
+								next.data[next.word + 47 + 2] = value._r;
 							}
 						}
 					} else {
@@ -3669,17 +3621,17 @@ function node208(store, ref) {
 					check(store, value, ids208_5, 'supertype', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
-						next.data.fill(0, next.word + 57, next.word + 57 + 5);
+						next.data.fill(0, next.word + 52, next.word + 52 + 5);
 						if (value !== undefined) {
 							if (typeof value === 'number') {
-								next.data[next.word + 57] = 4;
-								next.data[next.word + 57 + 1] = value;
+								next.data[next.word + 52] = 4;
+								next.data[next.word + 52 + 1] = value;
 							} else {
-								next.data[next.word + 57] = 3;
-								next.data[next.word + 57 + 1] = value.$type;
-								next.data[next.word + 57 + 2] = value._r;
+								next.data[next.word + 52] = 3;
+								next.data[next.word + 52 + 1] = value.$type;
+								next.data[next.word + 52 + 2] = value._r;
 							}
 						}
 					} else {
@@ -3692,16 +3644,16 @@ function node208(store, ref) {
 					check(store, value, ids208_6, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
-						next.data.fill(0, next.word + 62, next.word + 62 + 10);
+						next.data.fill(0, next.word + 57, next.word + 57 + 10);
 						if (value !== undefined) {
 							{
 								const child = store.location(value._r);
-								next.data[next.word + 62] = 6;
+								next.data[next.word + 57] = 6;
 								switch (value.$type) {
 									case 211:
-										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 62 + 2);
+										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 57 + 2);
 										break;
 									default:
 										throw new Error('inline child has no stamped record width');
@@ -3718,14 +3670,14 @@ function node208(store, ref) {
 					check(store, value, ids208_7, 'kind', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 77);
+					const next = store.copy(this, 72);
 					if (arena) {
-						next.data.fill(0, next.word + 72, next.word + 72 + 5);
+						next.data.fill(0, next.word + 67, next.word + 67 + 5);
 						if (value !== undefined) {
 							{
-								next.data[next.word + 72] = 3;
-								next.data[next.word + 72 + 1] = value.$type;
-								next.data[next.word + 72 + 2] = value._r;
+								next.data[next.word + 67] = 3;
+								next.data[next.word + 67 + 1] = value.$type;
+								next.data[next.word + 67 + 2] = value._r;
 							}
 						}
 					} else {
@@ -3745,7 +3697,7 @@ const ids209_2 = [1, 128];
 const ids209_3 = [219];
 const ids209_4 = [230];
 const ids209_5 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids209_6 = [211];
@@ -3774,7 +3726,7 @@ function build209(store, input = {}) {
 	const v6 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(209, 72);
+	const ref = store.begin(209, 67);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
@@ -3836,34 +3788,28 @@ function build209(store, input = {}) {
 		}
 		if (v4 !== undefined) {
 			{
-				const child = store.location(v4._r);
-				ref.data[ref.word + 47] = 6;
-				switch (v4.$type) {
-					case 230:
-						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 47 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 47] = 3;
+				ref.data[ref.word + 47 + 1] = v4.$type;
+				ref.data[ref.word + 47 + 2] = v4._r;
 			}
 		}
 		if (v5 !== undefined) {
 			if (typeof v5 === 'number') {
-				ref.data[ref.word + 57] = 4;
-				ref.data[ref.word + 57 + 1] = v5;
+				ref.data[ref.word + 52] = 4;
+				ref.data[ref.word + 52 + 1] = v5;
 			} else {
-				ref.data[ref.word + 57] = 3;
-				ref.data[ref.word + 57 + 1] = v5.$type;
-				ref.data[ref.word + 57 + 2] = v5._r;
+				ref.data[ref.word + 52] = 3;
+				ref.data[ref.word + 52 + 1] = v5.$type;
+				ref.data[ref.word + 52 + 2] = v5._r;
 			}
 		}
 		if (v6 !== undefined) {
 			{
 				const child = store.location(v6._r);
-				ref.data[ref.word + 62] = 6;
+				ref.data[ref.word + 57] = 6;
 				switch (v6.$type) {
 					case 211:
-						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 62 + 2);
+						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 57 + 2);
 						break;
 					default:
 						throw new Error('inline child has no stamped record width');
@@ -3902,13 +3848,13 @@ function node209(store, ref) {
 			return ownerOf(this).get(this, '_type_parameters', 37, undefined, undefined, 8);
 		},
 		parameters() {
-			return ownerOf(this).get(this, '_parameters', 47, undefined, undefined, 8);
+			return ownerOf(this).get(this, '_parameters', 47, undefined, undefined, 0);
 		},
 		return_type() {
-			return ownerOf(this).get(this, '_return_type', 57, undefined, undefined, 0);
+			return ownerOf(this).get(this, '_return_type', 52, undefined, undefined, 0);
 		},
 		where_clause() {
-			return ownerOf(this).get(this, '_where_clause', 62, undefined, undefined, 8);
+			return ownerOf(this).get(this, '_where_clause', 57, undefined, undefined, 8);
 		},
 		$with: store.register(
 			{
@@ -3918,7 +3864,7 @@ function node209(store, ref) {
 					check(store, value, ids209_0, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
 						next.data.fill(0, next.word + 2, next.word + 2 + 21);
 						if (value !== undefined) {
@@ -3944,7 +3890,7 @@ function node209(store, ref) {
 					check(store, value, ids209_1, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
 						next.data.fill(0, next.word + 23, next.word + 23 + 6);
 						if (value !== undefined) {
@@ -3970,7 +3916,7 @@ function node209(store, ref) {
 					check(store, value, ids209_2, 'union', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
 						next.data.fill(0, next.word + 29, next.word + 29 + 8);
 						if (value !== undefined) {
@@ -4002,7 +3948,7 @@ function node209(store, ref) {
 					check(store, value, ids209_3, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
 						next.data.fill(0, next.word + 37, next.word + 37 + 10);
 						if (value !== undefined) {
@@ -4028,20 +3974,14 @@ function node209(store, ref) {
 					check(store, value, ids209_4, 'kind', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
-						next.data.fill(0, next.word + 47, next.word + 47 + 10);
+						next.data.fill(0, next.word + 47, next.word + 47 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 47] = 6;
-								switch (value.$type) {
-									case 230:
-										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 47 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 47] = 3;
+								next.data[next.word + 47 + 1] = value.$type;
+								next.data[next.word + 47 + 2] = value._r;
 							}
 						}
 					} else {
@@ -4054,17 +3994,17 @@ function node209(store, ref) {
 					check(store, value, ids209_5, 'supertype', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
-						next.data.fill(0, next.word + 57, next.word + 57 + 5);
+						next.data.fill(0, next.word + 52, next.word + 52 + 5);
 						if (value !== undefined) {
 							if (typeof value === 'number') {
-								next.data[next.word + 57] = 4;
-								next.data[next.word + 57 + 1] = value;
+								next.data[next.word + 52] = 4;
+								next.data[next.word + 52 + 1] = value;
 							} else {
-								next.data[next.word + 57] = 3;
-								next.data[next.word + 57 + 1] = value.$type;
-								next.data[next.word + 57 + 2] = value._r;
+								next.data[next.word + 52] = 3;
+								next.data[next.word + 52 + 1] = value.$type;
+								next.data[next.word + 52 + 2] = value._r;
 							}
 						}
 					} else {
@@ -4077,16 +4017,16 @@ function node209(store, ref) {
 					check(store, value, ids209_6, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 72);
+					const next = store.copy(this, 67);
 					if (arena) {
-						next.data.fill(0, next.word + 62, next.word + 62 + 10);
+						next.data.fill(0, next.word + 57, next.word + 57 + 10);
 						if (value !== undefined) {
 							{
 								const child = store.location(value._r);
-								next.data[next.word + 62] = 6;
+								next.data[next.word + 57] = 6;
 								switch (value.$type) {
 									case 211:
-										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 62 + 2);
+										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 57 + 2);
 										break;
 									default:
 										throw new Error('inline child has no stamped record width');
@@ -4264,7 +4204,7 @@ function node211(store, ref) {
 }
 
 const ids212_0 = [
-	239, 469, 265, 246, 252, 388, 389, 243, 240, 217, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75
+	239, 473, 265, 246, 252, 388, 389, 243, 240, 217, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids212_1 = [216];
 function build212(store, input = {}) {
@@ -4382,7 +4322,7 @@ function node212(store, ref) {
 
 const ids214_0 = [235];
 const ids214_1 = [112];
-const ids214_2 = [469];
+const ids214_2 = [473];
 const ids214_3 = [219];
 const ids214_4 = [216];
 const ids214_5 = [211];
@@ -4433,7 +4373,7 @@ function build214(store, input = {}) {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 24] = 6;
 				switch (v2.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 24 + 2);
 						break;
 					default:
@@ -4588,7 +4528,7 @@ function node214(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 24] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 24 + 2);
 										break;
 									default:
@@ -4711,7 +4651,7 @@ function node214(store, ref) {
 	});
 }
 
-const ids215_0 = [469];
+const ids215_0 = [473];
 const ids215_1 = [219];
 const ids215_2 = [216];
 const ids215_3 = [211];
@@ -4738,7 +4678,7 @@ function build215(store, input = {}) {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
 				switch (v0.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 2 + 2);
 						break;
 					default:
@@ -4829,7 +4769,7 @@ function node215(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 2 + 2);
 										break;
 									default:
@@ -4927,7 +4867,7 @@ function node215(store, ref) {
 }
 
 const ids216_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75, 239, 217
 ];
 function build216(store, input = {}) {
@@ -5016,7 +4956,7 @@ function node216(store, ref) {
 
 const ids217_0 = [219];
 const ids217_1 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build217(store, input = {}) {
@@ -5133,7 +5073,7 @@ function node217(store, ref) {
 }
 
 const ids218_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build218(store, input = {}) {
@@ -5279,7 +5219,7 @@ function node219(store, ref) {
 
 const ids220_0 = [1];
 const ids220_1 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids220_2 = [313, 1, 332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330];
@@ -5291,7 +5231,7 @@ function build220(store, input = {}) {
 	value = input['type'] ?? undefined;
 	check(store, value, ids220_1, 'supertype', true, false);
 	const v1 = value;
-	value = input['value'] ?? undefined;
+	value = input['default'] ?? undefined;
 	check(store, value, ids220_2, 'union', false, false);
 	const v2 = value;
 	const arena = store.isArena;
@@ -5336,7 +5276,7 @@ function build220(store, input = {}) {
 	} else {
 		ref.data['_name'] = v0 === undefined ? undefined : v0._r;
 		ref.data['_type'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
-		ref.data['_value'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
+		ref.data['_default'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 	}
 	return node220(store, ref);
 }
@@ -5354,8 +5294,8 @@ function node220(store, ref) {
 		type() {
 			return ownerOf(this).get(this, '_type', 7, undefined, undefined, 0);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 12, undefined, undefined, 0);
+		default() {
+			return ownerOf(this).get(this, '_default', 12, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -5405,7 +5345,7 @@ function node220(store, ref) {
 					}
 					return node220(store, next);
 				},
-				value(value) {
+				default(value) {
 					const store = ownerOf(this);
 					check(store, value, ids220_2, 'union', false, false);
 					const arena = store.isArena;
@@ -5430,7 +5370,7 @@ function node220(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_default'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node220(store, next);
 				}
@@ -5440,10 +5380,10 @@ function node220(store, ref) {
 	});
 }
 
-const ids221_0 = [469];
+const ids221_0 = [473];
 const ids221_1 = [216];
 const ids221_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build221(store, input = {}) {
@@ -5454,7 +5394,7 @@ function build221(store, input = {}) {
 	value = input['bounds'] ?? undefined;
 	check(store, value, ids221_1, 'kind', false, false);
 	const v1 = value;
-	value = input['default_type'] ?? undefined;
+	value = input['default'] ?? undefined;
 	check(store, value, ids221_2, 'supertype', false, false);
 	const v2 = value;
 	const arena = store.isArena;
@@ -5466,7 +5406,7 @@ function build221(store, input = {}) {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
 				switch (v0.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 2 + 2);
 						break;
 					default:
@@ -5500,7 +5440,7 @@ function build221(store, input = {}) {
 	} else {
 		ref.data['_name'] = v0 === undefined ? undefined : v0._r;
 		ref.data['_bounds'] = v1 === undefined ? undefined : v1._r;
-		ref.data['_default_type'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
+		ref.data['_default'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 	}
 	return node221(store, ref);
 }
@@ -5518,8 +5458,8 @@ function node221(store, ref) {
 		bounds() {
 			return ownerOf(this).get(this, '_bounds', 11, undefined, undefined, 4);
 		},
-		default_type() {
-			return ownerOf(this).get(this, '_default_type', 17, undefined, undefined, 0);
+		default() {
+			return ownerOf(this).get(this, '_default', 17, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -5537,7 +5477,7 @@ function node221(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 2 + 2);
 										break;
 									default:
@@ -5576,7 +5516,7 @@ function node221(store, ref) {
 					}
 					return node221(store, next);
 				},
-				default_type(value) {
+				default(value) {
 					const store = ownerOf(this);
 					check(store, value, ids221_2, 'supertype', false, false);
 					const arena = store.isArena;
@@ -5595,7 +5535,7 @@ function node221(store, ref) {
 							}
 						}
 					} else {
-						next.data['_default_type'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_default'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node221(store, next);
 				}
@@ -5732,7 +5672,7 @@ const ids223_1 = [
 	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ];
 const ids223_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids223_3 = [
@@ -5746,7 +5686,7 @@ function build223(store, input = {}) {
 	value = input['mutable'] ?? false;
 	check(store, value, ids223_0, 'presence', false, false);
 	const v0 = value;
-	value = input['pattern'] ?? undefined;
+	value = input['name'] ?? undefined;
 	check(store, value, ids223_1, 'supertype', true, false);
 	const v1 = value;
 	value = input['type'] ?? undefined;
@@ -5814,7 +5754,7 @@ function build223(store, input = {}) {
 		}
 	} else {
 		ref.data['_mutable'] = v0 ?? false;
-		ref.data['_pattern'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
+		ref.data['_name'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
 		ref.data['_type'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 		ref.data['_value'] = v3 === undefined ? undefined : typeof v3 === 'number' ? v3 : v3._r;
 		ref.data['_alternative'] = v4 === undefined ? undefined : v4._r;
@@ -5832,8 +5772,8 @@ function node223(store, ref) {
 		mutable() {
 			return ownerOf(this).get(this, '_mutable', 2, undefined, 0, 0);
 		},
-		pattern() {
-			return ownerOf(this).get(this, '_pattern', 3, undefined, undefined, 0);
+		name() {
+			return ownerOf(this).get(this, '_name', 3, undefined, undefined, 0);
 		},
 		type() {
 			return ownerOf(this).get(this, '_type', 8, undefined, undefined, 0);
@@ -5860,7 +5800,7 @@ function node223(store, ref) {
 					}
 					return node223(store, next);
 				},
-				pattern(value) {
+				name(value) {
 					const store = ownerOf(this);
 					check(store, value, ids223_1, 'supertype', true, false);
 					const arena = store.isArena;
@@ -5885,7 +5825,7 @@ function node223(store, ref) {
 							}
 						}
 					} else {
-						next.data['_pattern'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_name'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node223(store, next);
 				},
@@ -6299,7 +6239,7 @@ const ids228_0 = [125, 128, 126, 127, 1, 263];
 const ids228_1 = [1];
 function build228(store, input = {}) {
 	let value;
-	value = input['path'] ?? undefined;
+	value = input['name'] ?? undefined;
 	check(store, value, ids228_0, 'union', true, false);
 	const v0 = value;
 	value = input['alias'] ?? undefined;
@@ -6335,7 +6275,7 @@ function build228(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_path'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_name'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 		ref.data['_alias'] = v1 === undefined ? undefined : v1._r;
 	}
 	return node228(store, ref);
@@ -6348,8 +6288,8 @@ function node228(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		path() {
-			return ownerOf(this).get(this, '_path', 2, undefined, undefined, 0);
+		name() {
+			return ownerOf(this).get(this, '_name', 2, undefined, undefined, 0);
 		},
 		alias() {
 			return ownerOf(this).get(this, '_alias', 7, undefined, undefined, 0);
@@ -6357,7 +6297,7 @@ function node228(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				path(value) {
+				name(value) {
 					const store = ownerOf(this);
 					check(store, value, ids228_0, 'union', true, false);
 					const arena = store.isArena;
@@ -6382,7 +6322,7 @@ function node228(store, ref) {
 							}
 						}
 					} else {
-						next.data['_path'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_name'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node228(store, next);
 				},
@@ -6488,27 +6428,21 @@ function node229(store, ref) {
 	});
 }
 
-const ids230_0 = [349];
+const ids230_0 = [349, 437];
 function build230(store, input = {}) {
 	let value;
 	value = input['elements'] ?? undefined;
-	check(store, value, ids230_0, 'kind', false, false);
+	check(store, value, ids230_0, 'union', false, false);
 	const v0 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(230, 8);
+	const ref = store.begin(230, 7);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
-				const child = store.location(v0._r);
-				ref.data[ref.word + 2] = 6;
-				switch (v0.$type) {
-					case 349:
-						ref.data.set(child.data.subarray(child.word, child.word + 4), ref.word + 2 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 2] = 3;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._r;
 			}
 		}
 	} else {
@@ -6525,30 +6459,24 @@ function node230(store, ref) {
 			return ownerOf(this).renderRef(this);
 		},
 		elements() {
-			return ownerOf(this).get(this, '_elements', 2, undefined, undefined, 4);
+			return ownerOf(this).get(this, '_elements', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
 				elements(value) {
 					const store = ownerOf(this);
-					check(store, value, ids230_0, 'kind', false, false);
+					check(store, value, ids230_0, 'union', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 8);
+					const next = store.copy(this, 7);
 					if (arena) {
-						next.data.fill(0, next.word + 2, next.word + 2 + 6);
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 2] = 6;
-								switch (value.$type) {
-									case 349:
-										next.data.set(child.data.subarray(child.word, child.word + 4), next.word + 2 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 2] = 3;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._r;
 							}
 						}
 					} else {
@@ -6788,10 +6716,10 @@ function node232(store, ref) {
 const ids233_0 = [58];
 const ids233_1 = [
 	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324, 317,
-	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426, 125
+	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ];
 const ids233_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build233(store, input = {}) {
@@ -6800,7 +6728,7 @@ function build233(store, input = {}) {
 	check(store, value, ids233_0, 'presence', false, false);
 	const v0 = value;
 	value = input['name'] ?? undefined;
-	check(store, value, ids233_1, 'union', true, false);
+	check(store, value, ids233_1, 'supertype', true, false);
 	const v1 = value;
 	value = input['type'] ?? undefined;
 	check(store, value, ids233_2, 'supertype', true, false);
@@ -6878,7 +6806,7 @@ function node233(store, ref) {
 				},
 				name(value) {
 					const store = ownerOf(this);
-					check(store, value, ids233_1, 'union', true, false);
+					check(store, value, ids233_1, 'supertype', true, false);
 					const arena = store.isArena;
 
 					const next = store.copy(this, 13);
@@ -7008,7 +6936,7 @@ function node234(store, ref) {
 	});
 }
 
-const ids235_0 = [465, 381];
+const ids235_0 = [469, 381];
 function build235(store, input = {}) {
 	let value;
 	value = input['content'] ?? undefined;
@@ -7023,7 +6951,7 @@ function build235(store, input = {}) {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
 				switch (v0.$type) {
-					case 465:
+					case 469:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 2 + 2);
 						break;
 					case 381:
@@ -7066,7 +6994,7 @@ function node235(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
 								switch (value.$type) {
-									case 465:
+									case 469:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 2 + 2);
 										break;
 									case 381:
@@ -7089,7 +7017,7 @@ function node235(store, ref) {
 }
 
 const ids237_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75, 238
 ];
 function build237(store, input = {}) {
@@ -7160,11 +7088,11 @@ function node237(store, ref) {
 }
 
 const ids238_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids238_1 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build238(store, input = {}) {
@@ -7341,7 +7269,7 @@ function node239(store, ref) {
 }
 
 const ids240_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids240_1 = [
@@ -7546,7 +7474,7 @@ const ids242_0 = [241];
 const ids242_1 = [382, 383];
 const ids242_2 = [230];
 const ids242_3 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build242(store, input = {}) {
@@ -7565,7 +7493,7 @@ function build242(store, input = {}) {
 	const v3 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(242, 32);
+	const ref = store.begin(242, 27);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
@@ -7589,25 +7517,19 @@ function build242(store, input = {}) {
 		}
 		if (v2 !== undefined) {
 			{
-				const child = store.location(v2._r);
-				ref.data[ref.word + 17] = 6;
-				switch (v2.$type) {
-					case 230:
-						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 17 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 17] = 3;
+				ref.data[ref.word + 17 + 1] = v2.$type;
+				ref.data[ref.word + 17 + 2] = v2._r;
 			}
 		}
 		if (v3 !== undefined) {
 			if (typeof v3 === 'number') {
-				ref.data[ref.word + 27] = 4;
-				ref.data[ref.word + 27 + 1] = v3;
+				ref.data[ref.word + 22] = 4;
+				ref.data[ref.word + 22 + 1] = v3;
 			} else {
-				ref.data[ref.word + 27] = 3;
-				ref.data[ref.word + 27 + 1] = v3.$type;
-				ref.data[ref.word + 27 + 2] = v3._r;
+				ref.data[ref.word + 22] = 3;
+				ref.data[ref.word + 22 + 1] = v3.$type;
+				ref.data[ref.word + 22 + 2] = v3._r;
 			}
 		}
 	} else {
@@ -7633,10 +7555,10 @@ function node242(store, ref) {
 			return ownerOf(this).get(this, '_content', 12, undefined, undefined, 0);
 		},
 		parameters() {
-			return ownerOf(this).get(this, '_parameters', 17, undefined, undefined, 8);
+			return ownerOf(this).get(this, '_parameters', 17, undefined, undefined, 0);
 		},
 		return_type() {
-			return ownerOf(this).get(this, '_return_type', 27, undefined, undefined, 0);
+			return ownerOf(this).get(this, '_return_type', 22, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -7646,7 +7568,7 @@ function node242(store, ref) {
 					check(store, value, ids242_0, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 32);
+					const next = store.copy(this, 27);
 					if (arena) {
 						next.data.fill(0, next.word + 2, next.word + 2 + 10);
 						if (value !== undefined) {
@@ -7672,7 +7594,7 @@ function node242(store, ref) {
 					check(store, value, ids242_1, 'union', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 32);
+					const next = store.copy(this, 27);
 					if (arena) {
 						next.data.fill(0, next.word + 12, next.word + 12 + 5);
 						if (value !== undefined) {
@@ -7692,20 +7614,14 @@ function node242(store, ref) {
 					check(store, value, ids242_2, 'kind', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 32);
+					const next = store.copy(this, 27);
 					if (arena) {
-						next.data.fill(0, next.word + 17, next.word + 17 + 10);
+						next.data.fill(0, next.word + 17, next.word + 17 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 17] = 6;
-								switch (value.$type) {
-									case 230:
-										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 17 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 17] = 3;
+								next.data[next.word + 17 + 1] = value.$type;
+								next.data[next.word + 17 + 2] = value._r;
 							}
 						}
 					} else {
@@ -7718,17 +7634,17 @@ function node242(store, ref) {
 					check(store, value, ids242_3, 'supertype', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 32);
+					const next = store.copy(this, 27);
 					if (arena) {
-						next.data.fill(0, next.word + 27, next.word + 27 + 5);
+						next.data.fill(0, next.word + 22, next.word + 22 + 5);
 						if (value !== undefined) {
 							if (typeof value === 'number') {
-								next.data[next.word + 27] = 4;
-								next.data[next.word + 27 + 1] = value;
+								next.data[next.word + 22] = 4;
+								next.data[next.word + 22 + 1] = value;
 							} else {
-								next.data[next.word + 27] = 3;
-								next.data[next.word + 27 + 1] = value.$type;
-								next.data[next.word + 27 + 2] = value._r;
+								next.data[next.word + 22] = 3;
+								next.data[next.word + 22 + 1] = value.$type;
+								next.data[next.word + 22 + 2] = value._r;
 							}
 						}
 					} else {
@@ -7937,7 +7853,7 @@ function node245(store, ref) {
 	});
 }
 
-const ids246_0 = [469, 1, 265];
+const ids246_0 = [473, 1, 265];
 const ids246_1 = [250];
 function build246(store, input = {}) {
 	let value;
@@ -8058,7 +7974,7 @@ function node246(store, ref) {
 	});
 }
 
-const ids247_0 = [469, 263];
+const ids247_0 = [473, 263];
 const ids247_1 = [250];
 function build247(store, input = {}) {
 	let value;
@@ -8168,11 +8084,11 @@ function node247(store, ref) {
 }
 
 const ids248_0 = [
-	239, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
+	239, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
 	66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 249
 ];
 const ids248_1 = [
-	239, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
+	239, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
 	66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 249
 ];
 function build248(store, input = {}) {
@@ -8430,10 +8346,10 @@ function node250(store, ref) {
 	});
 }
 
-const ids251_0 = [469];
+const ids251_0 = [473];
 const ids251_1 = [250];
 const ids251_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build251(store, input = {}) {
@@ -8456,7 +8372,7 @@ function build251(store, input = {}) {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
 				switch (v0.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 2 + 2);
 						break;
 					default:
@@ -8527,7 +8443,7 @@ function node251(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 2 + 2);
 										break;
 									default:
@@ -8598,7 +8514,7 @@ function node251(store, ref) {
 const ids252_0 = [239];
 const ids252_1 = [58];
 const ids252_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build252(store, input = {}) {
@@ -8606,7 +8522,7 @@ function build252(store, input = {}) {
 	value = input['lifetime'] ?? undefined;
 	check(store, value, ids252_0, 'kind', false, false);
 	const v0 = value;
-	value = input['mutable'] ?? false;
+	value = input['exclusive'] ?? false;
 	check(store, value, ids252_1, 'presence', false, false);
 	const v1 = value;
 	value = input['type'] ?? undefined;
@@ -8642,7 +8558,7 @@ function build252(store, input = {}) {
 		}
 	} else {
 		ref.data['_lifetime'] = v0 === undefined ? undefined : v0._r;
-		ref.data['_mutable'] = v1 ?? false;
+		ref.data['_exclusive'] = v1 ?? false;
 		ref.data['_type'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 	}
 	return node252(store, ref);
@@ -8658,8 +8574,8 @@ function node252(store, ref) {
 		lifetime() {
 			return ownerOf(this).get(this, '_lifetime', 3, undefined, undefined, 7);
 		},
-		mutable() {
-			return ownerOf(this).get(this, '_mutable', 2, undefined, 0, 0);
+		exclusive() {
+			return ownerOf(this).get(this, '_exclusive', 2, undefined, 0, 0);
 		},
 		type() {
 			return ownerOf(this).get(this, '_type', 12, undefined, undefined, 0);
@@ -8693,7 +8609,7 @@ function node252(store, ref) {
 					}
 					return node252(store, next);
 				},
-				mutable(value) {
+				exclusive(value) {
 					const store = ownerOf(this);
 					check(store, value, ids252_1, 'presence', false, false);
 					const arena = store.isArena;
@@ -8702,7 +8618,7 @@ function node252(store, ref) {
 					if (arena) {
 						next.data[next.word + 2] = (next.data[next.word + 2] & ~1) | (value ? 1 : 0);
 					} else {
-						next.data['_mutable'] = value ?? false;
+						next.data['_exclusive'] = value ?? false;
 					}
 					return node252(store, next);
 				},
@@ -8736,7 +8652,7 @@ function node252(store, ref) {
 }
 
 const ids255_0 = [219];
-const ids255_1 = [469, 265, 218, 246, 242, 243, 248];
+const ids255_1 = [473, 265, 218, 246, 242, 243, 248];
 function build255(store, input = {}) {
 	let value;
 	value = input['type_parameters'] ?? undefined;
@@ -8844,7 +8760,7 @@ function node255(store, ref) {
 	});
 }
 
-const ids256_0 = [217, 469, 265, 246, 242, 243];
+const ids256_0 = [217, 473, 265, 246, 242, 243];
 function build256(store, input = {}) {
 	let value;
 	value = input['trait'] ?? undefined;
@@ -8910,7 +8826,7 @@ const ids259_0 = [263, 1];
 const ids259_1 = [411, 412, 413];
 function build259(store, input = {}) {
 	let value;
-	value = input['macro'] ?? undefined;
+	value = input['function'] ?? undefined;
 	check(store, value, ids259_0, 'union', true, false);
 	const v0 = value;
 	value = input['arguments'] ?? undefined;
@@ -8953,7 +8869,7 @@ function build259(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_macro'] = v0 === undefined ? undefined : v0._r;
+		ref.data['_function'] = v0 === undefined ? undefined : v0._r;
 		ref.data['_arguments'] = v1 === undefined ? undefined : v1._r;
 	}
 	return node259(store, ref);
@@ -8966,8 +8882,8 @@ function node259(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		macro() {
-			return ownerOf(this).get(this, '_macro', 2, undefined, undefined, 0);
+		function() {
+			return ownerOf(this).get(this, '_function', 2, undefined, undefined, 0);
 		},
 		arguments() {
 			return ownerOf(this).get(this, '_arguments', 7, undefined, undefined, 4);
@@ -8975,7 +8891,7 @@ function node259(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				macro(value) {
+				function(value) {
 					const store = ownerOf(this);
 					check(store, value, ids259_0, 'union', true, false);
 					const arena = store.isArena;
@@ -8997,7 +8913,7 @@ function node259(store, ref) {
 							}
 						}
 					} else {
-						next.data['_macro'] = value === undefined ? undefined : value._r;
+						next.data['_function'] = value === undefined ? undefined : value._r;
 					}
 					return node259(store, next);
 				},
@@ -9165,7 +9081,7 @@ function node263(store, ref) {
 }
 
 const ids264_0 = [125, 128, 126, 127, 1, 263, 247];
-const ids264_1 = [469];
+const ids264_1 = [473];
 function build264(store, input = {}) {
 	let value;
 	value = input['path'] ?? undefined;
@@ -9199,7 +9115,7 @@ function build264(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 7] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 7 + 2);
 						break;
 					default:
@@ -9272,7 +9188,7 @@ function node264(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 7] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 7 + 2);
 										break;
 									default:
@@ -9292,7 +9208,7 @@ function node264(store, ref) {
 }
 
 const ids265_0 = [125, 128, 126, 127, 1, 263, 247, 237, 246];
-const ids265_1 = [469];
+const ids265_1 = [473];
 function build265(store, input = {}) {
 	let value;
 	value = input['path'] ?? undefined;
@@ -9326,7 +9242,7 @@ function build265(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 7] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 7 + 2);
 						break;
 					default:
@@ -9399,7 +9315,7 @@ function node265(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 7] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 7 + 2);
 										break;
 									default:
@@ -9429,7 +9345,7 @@ function build267(store, input = {}) {
 	value = input['operator'] ?? undefined;
 	check(store, value, ids267_0, 'union', true, false);
 	const v0 = value;
-	value = input['operand'] ?? undefined;
+	value = input['argument'] ?? undefined;
 	check(store, value, ids267_1, 'supertype', true, false);
 	const v1 = value;
 	const arena = store.isArena;
@@ -9460,7 +9376,7 @@ function build267(store, input = {}) {
 		}
 	} else {
 		ref.data['_operator'] = v0;
-		ref.data['_operand'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
+		ref.data['_argument'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
 	}
 	return node267(store, ref);
 }
@@ -9475,8 +9391,8 @@ function node267(store, ref) {
 		operator() {
 			return ownerOf(this).get(this, '_operator', 2, undefined, undefined, 0);
 		},
-		operand() {
-			return ownerOf(this).get(this, '_operand', 7, undefined, undefined, 0);
+		argument() {
+			return ownerOf(this).get(this, '_argument', 7, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -9500,7 +9416,7 @@ function node267(store, ref) {
 					}
 					return node267(store, next);
 				},
-				operand(value) {
+				argument(value) {
 					const store = ownerOf(this);
 					check(store, value, ids267_1, 'supertype', true, false);
 					const arena = store.isArena;
@@ -9525,7 +9441,7 @@ function node267(store, ref) {
 							}
 						}
 					} else {
-						next.data['_operand'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_argument'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node267(store, next);
 				}
@@ -9542,7 +9458,7 @@ const ids268_0 = [
 ];
 function build268(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['argument'] ?? undefined;
 	check(store, value, ids268_0, 'supertype', true, false);
 	const v0 = value;
 	const arena = store.isArena;
@@ -9566,7 +9482,7 @@ function build268(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_argument'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 	}
 	return node268(store, ref);
 }
@@ -9578,13 +9494,13 @@ function node268(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		argument() {
+			return ownerOf(this).get(this, '_argument', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				argument(value) {
 					const store = ownerOf(this);
 					check(store, value, ids268_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -9609,7 +9525,7 @@ function node268(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_argument'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node268(store, next);
 				}
@@ -10114,12 +10030,12 @@ const ids273_0 = [
 	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ];
 const ids273_1 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build273(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['expression'] ?? undefined;
 	check(store, value, ids273_0, 'supertype', true, false);
 	const v0 = value;
 	value = input['type'] ?? undefined;
@@ -10156,7 +10072,7 @@ function build273(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_expression'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 		ref.data['_type'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
 	}
 	return node273(store, ref);
@@ -10169,8 +10085,8 @@ function node273(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		expression() {
+			return ownerOf(this).get(this, '_expression', 2, undefined, undefined, 0);
 		},
 		type() {
 			return ownerOf(this).get(this, '_type', 7, undefined, undefined, 0);
@@ -10178,7 +10094,7 @@ function node273(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				expression(value) {
 					const store = ownerOf(this);
 					check(store, value, ids273_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -10203,7 +10119,7 @@ function node273(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_expression'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node273(store, next);
 				},
@@ -10700,7 +10616,7 @@ function build280(store, input = {}) {
 	value = input['attributes'] ?? [];
 	check(store, value, ids280_0, 'kind', false, true);
 	const v0 = value;
-	value = input['expressions'] ?? undefined;
+	value = input['elements'] ?? undefined;
 	check(store, value, ids280_1, 'kind', true, false);
 	const v1 = value;
 	const arena = store.isArena;
@@ -10739,7 +10655,7 @@ function build280(store, input = {}) {
 		}
 	} else {
 		ref.data['_attributes'] = v0.map((item) => item._r);
-		ref.data['_expressions'] = v1 === undefined ? undefined : v1._r;
+		ref.data['_elements'] = v1 === undefined ? undefined : v1._r;
 	}
 	return node280(store, ref);
 }
@@ -10754,8 +10670,8 @@ function node280(store, ref) {
 		attributes() {
 			return ownerOf(this).get(this, '_attributes', 2, 5, undefined, 0);
 		},
-		expressions() {
-			return ownerOf(this).get(this, '_expressions', 4, undefined, undefined, 4);
+		elements() {
+			return ownerOf(this).get(this, '_elements', 4, undefined, undefined, 4);
 		},
 		$with: store.register(
 			{
@@ -10788,7 +10704,7 @@ function node280(store, ref) {
 					}
 					return node280(store, next);
 				},
-				expressions(value) {
+				elements(value) {
 					const store = ownerOf(this);
 					check(store, value, ids280_1, 'kind', true, false);
 					const arena = store.isArena;
@@ -10810,7 +10726,7 @@ function node280(store, ref) {
 							}
 						}
 					} else {
-						next.data['_expressions'] = value === undefined ? undefined : value._r;
+						next.data['_elements'] = value === undefined ? undefined : value._r;
 					}
 					return node280(store, next);
 				}
@@ -10820,7 +10736,7 @@ function node280(store, ref) {
 	});
 }
 
-const ids282_0 = [469, 264, 247];
+const ids282_0 = [473, 264, 247];
 const ids282_1 = [283];
 function build282(store, input = {}) {
 	let value;
@@ -11010,7 +10926,7 @@ function build284(store, input = {}) {
 	value = input['attributes'] ?? [];
 	check(store, value, ids284_0, 'kind', false, true);
 	const v0 = value;
-	value = input['name'] ?? undefined;
+	value = input['field'] ?? undefined;
 	check(store, value, ids284_1, 'kind', true, false);
 	const v1 = value;
 	const arena = store.isArena;
@@ -11045,7 +10961,7 @@ function build284(store, input = {}) {
 		}
 	} else {
 		ref.data['_attributes'] = v0.map((item) => item._r);
-		ref.data['_name'] = v1 === undefined ? undefined : v1._r;
+		ref.data['_field'] = v1 === undefined ? undefined : v1._r;
 	}
 	return node284(store, ref);
 }
@@ -11060,8 +10976,8 @@ function node284(store, ref) {
 		attributes() {
 			return ownerOf(this).get(this, '_attributes', 2, 5, undefined, 0);
 		},
-		name() {
-			return ownerOf(this).get(this, '_name', 4, undefined, undefined, 0);
+		field() {
+			return ownerOf(this).get(this, '_field', 4, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -11094,7 +11010,7 @@ function node284(store, ref) {
 					}
 					return node284(store, next);
 				},
-				name(value) {
+				field(value) {
 					const store = ownerOf(this);
 					check(store, value, ids284_1, 'kind', true, false);
 					const arena = store.isArena;
@@ -11112,7 +11028,7 @@ function node284(store, ref) {
 							}
 						}
 					} else {
-						next.data['_name'] = value === undefined ? undefined : value._r;
+						next.data['_field'] = value === undefined ? undefined : value._r;
 					}
 					return node284(store, next);
 				}
@@ -11123,7 +11039,7 @@ function node284(store, ref) {
 }
 
 const ids285_0 = [190];
-const ids285_1 = [466, 141, 142, 143, 144];
+const ids285_1 = [470, 141, 142, 143, 144];
 const ids285_2 = [
 	267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 117, 118,
 	141, 142, 143, 144, 162, 1, 125, 263, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282,
@@ -11131,7 +11047,7 @@ const ids285_2 = [
 ];
 function build285(store, input = {}) {
 	let value;
-	value = input['attribute_item'] ?? [];
+	value = input['attributes'] ?? [];
 	check(store, value, ids285_0, 'kind', false, true);
 	const v0 = value;
 	value = input['field'] ?? undefined;
@@ -11166,7 +11082,7 @@ function build285(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 4] = 6;
 				switch (v1.$type) {
-					case 466:
+					case 470:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 4 + 2);
 						break;
 					case 141:
@@ -11203,7 +11119,7 @@ function build285(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_attribute_item'] = v0.map((item) => item._r);
+		ref.data['_attributes'] = v0.map((item) => item._r);
 		ref.data['_field'] = v1 === undefined ? undefined : v1._r;
 		ref.data['_value'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 	}
@@ -11217,8 +11133,8 @@ function node285(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		attribute_item() {
-			return ownerOf(this).get(this, '_attribute_item', 2, 5, undefined, 0);
+		attributes() {
+			return ownerOf(this).get(this, '_attributes', 2, 5, undefined, 0);
 		},
 		field() {
 			return ownerOf(this).get(this, '_field', 4, undefined, undefined, 10);
@@ -11229,7 +11145,7 @@ function node285(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				attribute_item(value) {
+				attributes(value) {
 					const store = ownerOf(this);
 					check(store, value, ids285_0, 'kind', false, true);
 					const arena = store.isArena;
@@ -11253,7 +11169,7 @@ function node285(store, ref) {
 						next.data[next.word + 2] = v0run.at;
 						next.data[next.word + 2 + 1] = v0run.len;
 					} else {
-						next.data['_attribute_item'] = value.map((item) => item._r);
+						next.data['_attributes'] = value.map((item) => item._r);
 					}
 					return node285(store, next);
 				},
@@ -11270,7 +11186,7 @@ function node285(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 4] = 6;
 								switch (value.$type) {
-									case 466:
+									case 470:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 4 + 2);
 										break;
 									case 141:
@@ -11937,7 +11853,7 @@ const ids292_0 = [
 const ids292_1 = [293];
 function build292(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['subject'] ?? undefined;
 	check(store, value, ids292_0, 'supertype', true, false);
 	const v0 = value;
 	value = input['body'] ?? undefined;
@@ -11971,7 +11887,7 @@ function build292(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_subject'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 		ref.data['_body'] = v1 === undefined ? undefined : v1._r;
 	}
 	return node292(store, ref);
@@ -11984,8 +11900,8 @@ function node292(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		subject() {
+			return ownerOf(this).get(this, '_subject', 2, undefined, undefined, 0);
 		},
 		body() {
 			return ownerOf(this).get(this, '_body', 7, undefined, undefined, 0);
@@ -11993,7 +11909,7 @@ function node292(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				subject(value) {
 					const store = ownerOf(this);
 					check(store, value, ids292_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -12018,7 +11934,7 @@ function node292(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_subject'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node292(store, next);
 				},
@@ -12123,7 +12039,7 @@ function build295(store, input = {}) {
 	value = input['attributes'] ?? [];
 	check(store, value, ids295_0, 'union', false, true);
 	const v0 = value;
-	value = input['pattern'] ?? undefined;
+	value = input['match'] ?? undefined;
 	check(store, value, ids295_1, 'kind', true, false);
 	const v1 = value;
 	value = input['value'] ?? undefined;
@@ -12184,7 +12100,7 @@ function build295(store, input = {}) {
 		}
 	} else {
 		ref.data['_attributes'] = v0.map((item) => item._r);
-		ref.data['_pattern'] = v1 === undefined ? undefined : v1._r;
+		ref.data['_match'] = v1 === undefined ? undefined : v1._r;
 		ref.data['_value'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 		ref.data['_trailing_comma'] = v3;
 	}
@@ -12201,8 +12117,8 @@ function node295(store, ref) {
 		attributes() {
 			return ownerOf(this).get(this, '_attributes', 2, 5, undefined, 0);
 		},
-		pattern() {
-			return ownerOf(this).get(this, '_pattern', 4, undefined, undefined, 0);
+		match() {
+			return ownerOf(this).get(this, '_match', 4, undefined, undefined, 0);
 		},
 		value() {
 			return ownerOf(this).get(this, '_value', 9, undefined, undefined, 0);
@@ -12241,7 +12157,7 @@ function node295(store, ref) {
 					}
 					return node295(store, next);
 				},
-				pattern(value) {
+				match(value) {
 					const store = ownerOf(this);
 					check(store, value, ids295_1, 'kind', true, false);
 					const arena = store.isArena;
@@ -12257,7 +12173,7 @@ function node295(store, ref) {
 							}
 						}
 					} else {
-						next.data['_pattern'] = value === undefined ? undefined : value._r;
+						next.data['_match'] = value === undefined ? undefined : value._r;
 					}
 					return node295(store, next);
 				},
@@ -12746,10 +12662,10 @@ function build299(store, input = {}) {
 	value = input['label'] ?? undefined;
 	check(store, value, ids299_0, 'kind', false, false);
 	const v0 = value;
-	value = input['pattern'] ?? undefined;
+	value = input['left'] ?? undefined;
 	check(store, value, ids299_1, 'supertype', true, false);
 	const v1 = value;
-	value = input['value'] ?? undefined;
+	value = input['right'] ?? undefined;
 	check(store, value, ids299_2, 'supertype', true, false);
 	const v2 = value;
 	value = input['body'] ?? undefined;
@@ -12813,8 +12729,8 @@ function build299(store, input = {}) {
 		}
 	} else {
 		ref.data['_label'] = v0 === undefined ? undefined : v0._r;
-		ref.data['_pattern'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
-		ref.data['_value'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
+		ref.data['_left'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
+		ref.data['_right'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 		ref.data['_body'] = v3 === undefined ? undefined : v3._r;
 	}
 	return node299(store, ref);
@@ -12830,11 +12746,11 @@ function node299(store, ref) {
 		label() {
 			return ownerOf(this).get(this, '_label', 2, undefined, undefined, 7);
 		},
-		pattern() {
-			return ownerOf(this).get(this, '_pattern', 11, undefined, undefined, 0);
+		left() {
+			return ownerOf(this).get(this, '_left', 11, undefined, undefined, 0);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 16, undefined, undefined, 0);
+		right() {
+			return ownerOf(this).get(this, '_right', 16, undefined, undefined, 0);
 		},
 		body() {
 			return ownerOf(this).get(this, '_body', 21, undefined, undefined, 0);
@@ -12868,7 +12784,7 @@ function node299(store, ref) {
 					}
 					return node299(store, next);
 				},
-				pattern(value) {
+				left(value) {
 					const store = ownerOf(this);
 					check(store, value, ids299_1, 'supertype', true, false);
 					const arena = store.isArena;
@@ -12893,11 +12809,11 @@ function node299(store, ref) {
 							}
 						}
 					} else {
-						next.data['_pattern'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_left'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node299(store, next);
 				},
-				value(value) {
+				right(value) {
 					const store = ownerOf(this);
 					check(store, value, ids299_2, 'supertype', true, false);
 					const arena = store.isArena;
@@ -12922,7 +12838,7 @@ function node299(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_right'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node299(store, next);
 				},
@@ -13615,13 +13531,13 @@ const ids308_0 = [
 	141, 142, 143, 144, 162, 1, 125, 263, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282,
 	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ];
-const ids308_1 = [466, 141, 142, 143, 144];
+const ids308_1 = [470, 141, 142, 143, 144];
 function build308(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['object'] ?? undefined;
 	check(store, value, ids308_0, 'supertype', true, false);
 	const v0 = value;
-	value = input['field'] ?? undefined;
+	value = input['property'] ?? undefined;
 	check(store, value, ids308_1, 'union', true, false);
 	const v1 = value;
 	const arena = store.isArena;
@@ -13649,7 +13565,7 @@ function build308(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 7] = 6;
 				switch (v1.$type) {
-					case 466:
+					case 470:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 7 + 2);
 						break;
 					case 141:
@@ -13670,8 +13586,8 @@ function build308(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
-		ref.data['_field'] = v1 === undefined ? undefined : v1._r;
+		ref.data['_object'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_property'] = v1 === undefined ? undefined : v1._r;
 	}
 	return node308(store, ref);
 }
@@ -13683,16 +13599,16 @@ function node308(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		object() {
+			return ownerOf(this).get(this, '_object', 2, undefined, undefined, 0);
 		},
-		field() {
-			return ownerOf(this).get(this, '_field', 7, undefined, undefined, 10);
+		property() {
+			return ownerOf(this).get(this, '_property', 7, undefined, undefined, 10);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				object(value) {
 					const store = ownerOf(this);
 					check(store, value, ids308_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -13717,11 +13633,11 @@ function node308(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_object'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node308(store, next);
 				},
-				field(value) {
+				property(value) {
 					const store = ownerOf(this);
 					check(store, value, ids308_1, 'union', true, false);
 					const arena = store.isArena;
@@ -13734,7 +13650,7 @@ function node308(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 7] = 6;
 								switch (value.$type) {
-									case 466:
+									case 470:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 7 + 2);
 										break;
 									case 141:
@@ -13755,7 +13671,7 @@ function node308(store, ref) {
 							}
 						}
 					} else {
-						next.data['_field'] = value === undefined ? undefined : value._r;
+						next.data['_property'] = value === undefined ? undefined : value._r;
 					}
 					return node308(store, next);
 				}
@@ -14450,7 +14366,7 @@ function node316(store, ref) {
 const ids317_0 = [358];
 function build317(store, input = {}) {
 	let value;
-	value = input['patterns'] ?? undefined;
+	value = input['elements'] ?? undefined;
 	check(store, value, ids317_0, 'kind', false, false);
 	const v0 = value;
 	const arena = store.isArena;
@@ -14471,7 +14387,7 @@ function build317(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_patterns'] = v0 === undefined ? undefined : v0._r;
+		ref.data['_elements'] = v0 === undefined ? undefined : v0._r;
 	}
 	return node317(store, ref);
 }
@@ -14483,13 +14399,13 @@ function node317(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		patterns() {
-			return ownerOf(this).get(this, '_patterns', 2, undefined, undefined, 4);
+		elements() {
+			return ownerOf(this).get(this, '_elements', 2, undefined, undefined, 4);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				patterns(value) {
+				elements(value) {
 					const store = ownerOf(this);
 					check(store, value, ids317_0, 'kind', false, false);
 					const arena = store.isArena;
@@ -14511,7 +14427,7 @@ function node317(store, ref) {
 							}
 						}
 					} else {
-						next.data['_patterns'] = value === undefined ? undefined : value._r;
+						next.data['_elements'] = value === undefined ? undefined : value._r;
 					}
 					return node317(store, next);
 				}
@@ -14642,7 +14558,7 @@ function node318(store, ref) {
 	});
 }
 
-const ids319_0 = [469, 265];
+const ids319_0 = [473, 265];
 const ids319_1 = [359];
 function build319(store, input = {}) {
 	let value;
@@ -15046,7 +14962,7 @@ const ids326_1 = [
 ];
 function build326(store, input = {}) {
 	let value;
-	value = input['mutable'] ?? false;
+	value = input['exclusive'] ?? false;
 	check(store, value, ids326_0, 'presence', false, false);
 	const v0 = value;
 	value = input['pattern'] ?? undefined;
@@ -15074,7 +14990,7 @@ function build326(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_mutable'] = v0 ?? false;
+		ref.data['_exclusive'] = v0 ?? false;
 		ref.data['_pattern'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
 	}
 	return node326(store, ref);
@@ -15087,8 +15003,8 @@ function node326(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		mutable() {
-			return ownerOf(this).get(this, '_mutable', 2, undefined, 0, 0);
+		exclusive() {
+			return ownerOf(this).get(this, '_exclusive', 2, undefined, 0, 0);
 		},
 		pattern() {
 			return ownerOf(this).get(this, '_pattern', 3, undefined, undefined, 0);
@@ -15096,7 +15012,7 @@ function node326(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				mutable(value) {
+				exclusive(value) {
 					const store = ownerOf(this);
 					check(store, value, ids326_0, 'presence', false, false);
 					const arena = store.isArena;
@@ -15105,7 +15021,7 @@ function node326(store, ref) {
 					if (arena) {
 						next.data[next.word + 2] = (next.data[next.word + 2] & ~1) | (value ? 1 : 0);
 					} else {
-						next.data['_mutable'] = value ?? false;
+						next.data['_exclusive'] = value ?? false;
 					}
 					return node326(store, next);
 				},
@@ -16586,7 +16502,7 @@ function node350(store, ref) {
 }
 
 const ids351_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build351(store, input = {}) {
@@ -16673,7 +16589,7 @@ function node351(store, ref) {
 	});
 }
 
-const ids352_0 = [239, 469];
+const ids352_0 = [239, 473];
 function build352(store, input = {}) {
 	let value;
 	value = input['item'] ?? [];
@@ -19033,7 +18949,7 @@ const ids369_1 = [113];
 const ids369_2 = [129];
 const ids369_3 = [302];
 const ids369_4 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids369_5 = [313];
@@ -19451,7 +19367,7 @@ const ids371_0 = [
 ];
 function build371(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['argument'] ?? undefined;
 	check(store, value, ids371_0, 'supertype', true, false);
 	const v0 = value;
 	const arena = store.isArena;
@@ -19475,7 +19391,7 @@ function build371(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_argument'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 	}
 	return node371(store, ref);
 }
@@ -19487,13 +19403,13 @@ function node371(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		argument() {
+			return ownerOf(this).get(this, '_argument', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				argument(value) {
 					const store = ownerOf(this);
 					check(store, value, ids371_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -19518,7 +19434,7 @@ function node371(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_argument'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node371(store, next);
 				}
@@ -19535,7 +19451,7 @@ const ids372_0 = [
 ];
 function build372(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['argument'] ?? undefined;
 	check(store, value, ids372_0, 'supertype', true, false);
 	const v0 = value;
 	const arena = store.isArena;
@@ -19559,7 +19475,7 @@ function build372(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_argument'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 	}
 	return node372(store, ref);
 }
@@ -19571,13 +19487,13 @@ function node372(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		argument() {
+			return ownerOf(this).get(this, '_argument', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				argument(value) {
 					const store = ownerOf(this);
 					check(store, value, ids372_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -19602,7 +19518,7 @@ function node372(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_argument'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node372(store, next);
 				}
@@ -19619,7 +19535,7 @@ const ids373_0 = [
 ];
 function build373(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['argument'] ?? undefined;
 	check(store, value, ids373_0, 'supertype', true, false);
 	const v0 = value;
 	const arena = store.isArena;
@@ -19643,7 +19559,7 @@ function build373(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_argument'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 	}
 	return node373(store, ref);
 }
@@ -19655,13 +19571,13 @@ function node373(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		argument() {
+			return ownerOf(this).get(this, '_argument', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				argument(value) {
 					const store = ownerOf(this);
 					check(store, value, ids373_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -19686,7 +19602,7 @@ function node373(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_argument'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node373(store, next);
 				}
@@ -19703,7 +19619,7 @@ const ids374_0 = [
 ];
 function build374(store, input = {}) {
 	let value;
-	value = input['value'] ?? undefined;
+	value = input['argument'] ?? undefined;
 	check(store, value, ids374_0, 'supertype', true, false);
 	const v0 = value;
 	const arena = store.isArena;
@@ -19727,7 +19643,7 @@ function build374(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_value'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
+		ref.data['_argument'] = v0 === undefined ? undefined : typeof v0 === 'number' ? v0 : v0._r;
 	}
 	return node374(store, ref);
 }
@@ -19739,13 +19655,13 @@ function node374(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		value() {
-			return ownerOf(this).get(this, '_value', 2, undefined, undefined, 0);
+		argument() {
+			return ownerOf(this).get(this, '_argument', 2, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
 				_r: address,
-				value(value) {
+				argument(value) {
 					const store = ownerOf(this);
 					check(store, value, ids374_0, 'supertype', true, false);
 					const arena = store.isArena;
@@ -19770,7 +19686,7 @@ function node374(store, ref) {
 							}
 						}
 					} else {
-						next.data['_value'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+						next.data['_argument'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
 					}
 					return node374(store, next);
 				}
@@ -19780,7 +19696,7 @@ function node374(store, ref) {
 	});
 }
 
-const ids375_0 = [469, 265, 246];
+const ids375_0 = [473, 265, 246];
 function build375(store, input = {}) {
 	let value;
 	value = input['trait'] ?? undefined;
@@ -19842,7 +19758,7 @@ function node375(store, ref) {
 	});
 }
 
-const ids376_0 = [469, 265, 246];
+const ids376_0 = [473, 265, 246];
 function build376(store, input = {}) {
 	let value;
 	value = input['trait'] ?? undefined;
@@ -19908,7 +19824,7 @@ const ids377_0 = [364];
 const ids377_1 = [219];
 const ids377_2 = [375, 376];
 const ids377_3 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids377_4 = [211];
@@ -20195,7 +20111,7 @@ const ids378_0 = [364];
 const ids378_1 = [219];
 const ids378_2 = [375, 376];
 const ids378_3 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 const ids378_4 = [211];
@@ -20665,7 +20581,7 @@ function node381(store, ref) {
 	});
 }
 
-const ids382_0 = [469, 265];
+const ids382_0 = [473, 265];
 function build382(store, input = {}) {
 	let value;
 	value = input['trait'] ?? undefined;
@@ -21297,7 +21213,7 @@ function node387(store, ref) {
 }
 
 const ids388_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build388(store, input = {}) {
@@ -21368,7 +21284,7 @@ function node388(store, ref) {
 }
 
 const ids389_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build389(store, input = {}) {
@@ -22175,7 +22091,7 @@ function build397(store, input = {}) {
 	value = input['attributes'] ?? [];
 	check(store, value, ids397_0, 'union', false, true);
 	const v0 = value;
-	value = input['pattern'] ?? undefined;
+	value = input['match'] ?? undefined;
 	check(store, value, ids397_1, 'kind', true, false);
 	const v1 = value;
 	value = input['value'] ?? undefined;
@@ -22227,7 +22143,7 @@ function build397(store, input = {}) {
 		}
 	} else {
 		ref.data['_attributes'] = v0.map((item) => item._r);
-		ref.data['_pattern'] = v1 === undefined ? undefined : v1._r;
+		ref.data['_match'] = v1 === undefined ? undefined : v1._r;
 		ref.data['_value'] = v2 === undefined ? undefined : typeof v2 === 'number' ? v2 : v2._r;
 	}
 	return node397(store, ref);
@@ -22243,8 +22159,8 @@ function node397(store, ref) {
 		attributes() {
 			return ownerOf(this).get(this, '_attributes', 2, 5, undefined, 0);
 		},
-		pattern() {
-			return ownerOf(this).get(this, '_pattern', 4, undefined, undefined, 0);
+		match() {
+			return ownerOf(this).get(this, '_match', 4, undefined, undefined, 0);
 		},
 		value() {
 			return ownerOf(this).get(this, '_value', 9, undefined, undefined, 0);
@@ -22280,7 +22196,7 @@ function node397(store, ref) {
 					}
 					return node397(store, next);
 				},
-				pattern(value) {
+				match(value) {
 					const store = ownerOf(this);
 					check(store, value, ids397_1, 'kind', true, false);
 					const arena = store.isArena;
@@ -22296,7 +22212,7 @@ function node397(store, ref) {
 							}
 						}
 					} else {
-						next.data['_pattern'] = value === undefined ? undefined : value._r;
+						next.data['_match'] = value === undefined ? undefined : value._r;
 					}
 					return node397(store, next);
 				},
@@ -22343,7 +22259,7 @@ function build398(store, input = {}) {
 	value = input['attributes'] ?? [];
 	check(store, value, ids398_0, 'union', false, true);
 	const v0 = value;
-	value = input['pattern'] ?? undefined;
+	value = input['match'] ?? undefined;
 	check(store, value, ids398_1, 'kind', true, false);
 	const v1 = value;
 	value = input['value'] ?? undefined;
@@ -22386,7 +22302,7 @@ function build398(store, input = {}) {
 		}
 	} else {
 		ref.data['_attributes'] = v0.map((item) => item._r);
-		ref.data['_pattern'] = v1 === undefined ? undefined : v1._r;
+		ref.data['_match'] = v1 === undefined ? undefined : v1._r;
 		ref.data['_value'] = v2 === undefined ? undefined : v2._r;
 	}
 	return node398(store, ref);
@@ -22402,8 +22318,8 @@ function node398(store, ref) {
 		attributes() {
 			return ownerOf(this).get(this, '_attributes', 2, 5, undefined, 0);
 		},
-		pattern() {
-			return ownerOf(this).get(this, '_pattern', 4, undefined, undefined, 0);
+		match() {
+			return ownerOf(this).get(this, '_match', 4, undefined, undefined, 0);
 		},
 		value() {
 			return ownerOf(this).get(this, '_value', 9, undefined, undefined, 0);
@@ -22439,7 +22355,7 @@ function node398(store, ref) {
 					}
 					return node398(store, next);
 				},
-				pattern(value) {
+				match(value) {
 					const store = ownerOf(this);
 					check(store, value, ids398_1, 'kind', true, false);
 					const arena = store.isArena;
@@ -22455,7 +22371,7 @@ function node398(store, ref) {
 							}
 						}
 					} else {
-						next.data['_pattern'] = value === undefined ? undefined : value._r;
+						next.data['_match'] = value === undefined ? undefined : value._r;
 					}
 					return node398(store, next);
 				},
@@ -23567,10 +23483,10 @@ function node413(store, ref) {
 
 const ids414_0 = [115];
 const ids414_1 = [58];
-const ids414_2 = [468];
+const ids414_2 = [472];
 function build414(store, input = {}) {
 	let value;
-	value = input['ref'] ?? false;
+	value = input['by_reference'] ?? false;
 	check(store, value, ids414_0, 'presence', false, false);
 	const v0 = value;
 	value = input['mutable'] ?? false;
@@ -23590,7 +23506,7 @@ function build414(store, input = {}) {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 3] = 6;
 				switch (v2.$type) {
-					case 468:
+					case 472:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 3 + 2);
 						break;
 					default:
@@ -23599,7 +23515,7 @@ function build414(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_ref'] = v0 ?? false;
+		ref.data['_by_reference'] = v0 ?? false;
 		ref.data['_mutable'] = v1 ?? false;
 		ref.data['_name'] = v2 === undefined ? undefined : v2._r;
 	}
@@ -23613,8 +23529,8 @@ function node414(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		ref() {
-			return ownerOf(this).get(this, '_ref', 2, undefined, 0, 0);
+		by_reference() {
+			return ownerOf(this).get(this, '_by_reference', 2, undefined, 0, 0);
 		},
 		mutable() {
 			return ownerOf(this).get(this, '_mutable', 2, undefined, 1, 0);
@@ -23625,7 +23541,7 @@ function node414(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				ref(value) {
+				by_reference(value) {
 					const store = ownerOf(this);
 					check(store, value, ids414_0, 'presence', false, false);
 					const arena = store.isArena;
@@ -23634,7 +23550,7 @@ function node414(store, ref) {
 					if (arena) {
 						next.data[next.word + 2] = (next.data[next.word + 2] & ~1) | (value ? 1 : 0);
 					} else {
-						next.data['_ref'] = value ?? false;
+						next.data['_by_reference'] = value ?? false;
 					}
 					return node414(store, next);
 				},
@@ -23664,7 +23580,7 @@ function node414(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 3] = 6;
 								switch (value.$type) {
-									case 468:
+									case 472:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 3 + 2);
 										break;
 									default:
@@ -23685,14 +23601,14 @@ function node414(store, ref) {
 
 const ids415_0 = [115];
 const ids415_1 = [58];
-const ids415_2 = [466];
+const ids415_2 = [470];
 const ids415_3 = [
 	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324, 317,
 	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ];
 function build415(store, input = {}) {
 	let value;
-	value = input['ref'] ?? false;
+	value = input['by_reference'] ?? false;
 	check(store, value, ids415_0, 'presence', false, false);
 	const v0 = value;
 	value = input['mutable'] ?? false;
@@ -23715,7 +23631,7 @@ function build415(store, input = {}) {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 3] = 6;
 				switch (v2.$type) {
-					case 466:
+					case 470:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 3 + 2);
 						break;
 					default:
@@ -23740,7 +23656,7 @@ function build415(store, input = {}) {
 			}
 		}
 	} else {
-		ref.data['_ref'] = v0 ?? false;
+		ref.data['_by_reference'] = v0 ?? false;
 		ref.data['_mutable'] = v1 ?? false;
 		ref.data['_name'] = v2 === undefined ? undefined : v2._r;
 		ref.data['_pattern'] = v3 === undefined ? undefined : typeof v3 === 'number' ? v3 : v3._r;
@@ -23755,8 +23671,8 @@ function node415(store, ref) {
 		render() {
 			return ownerOf(this).renderRef(this);
 		},
-		ref() {
-			return ownerOf(this).get(this, '_ref', 2, undefined, 0, 0);
+		by_reference() {
+			return ownerOf(this).get(this, '_by_reference', 2, undefined, 0, 0);
 		},
 		mutable() {
 			return ownerOf(this).get(this, '_mutable', 2, undefined, 1, 0);
@@ -23770,7 +23686,7 @@ function node415(store, ref) {
 		$with: store.register(
 			{
 				_r: address,
-				ref(value) {
+				by_reference(value) {
 					const store = ownerOf(this);
 					check(store, value, ids415_0, 'presence', false, false);
 					const arena = store.isArena;
@@ -23779,7 +23695,7 @@ function node415(store, ref) {
 					if (arena) {
 						next.data[next.word + 2] = (next.data[next.word + 2] & ~1) | (value ? 1 : 0);
 					} else {
-						next.data['_ref'] = value ?? false;
+						next.data['_by_reference'] = value ?? false;
 					}
 					return node415(store, next);
 				},
@@ -23809,7 +23725,7 @@ function node415(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 3] = 6;
 								switch (value.$type) {
-									case 466:
+									case 470:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 3 + 2);
 										break;
 									default:
@@ -24550,7 +24466,7 @@ function node422(store, ref) {
 }
 
 const ids423_0 = [235];
-const ids423_1 = [469];
+const ids423_1 = [473];
 const ids423_2 = [219];
 const ids423_3 = [211];
 const ids423_4 = [201];
@@ -24593,7 +24509,7 @@ function build423(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -24714,7 +24630,7 @@ function node423(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -24812,7 +24728,7 @@ function node423(store, ref) {
 }
 
 const ids424_0 = [235];
-const ids424_1 = [469];
+const ids424_1 = [473];
 const ids424_2 = [219];
 const ids424_3 = [203];
 const ids424_4 = [211];
@@ -24855,7 +24771,7 @@ function build424(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -24976,7 +24892,7 @@ function node424(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -25074,7 +24990,7 @@ function node424(store, ref) {
 }
 
 const ids425_0 = [235];
-const ids425_1 = [469];
+const ids425_1 = [473];
 const ids425_2 = [219];
 function build425(store, input = {}) {
 	let value;
@@ -25109,7 +25025,7 @@ function build425(store, input = {}) {
 				const child = store.location(v1._r);
 				ref.data[ref.word + 23] = 6;
 				switch (v1.$type) {
-					case 469:
+					case 473:
 						ref.data.set(child.data.subarray(child.word, child.word + 7), ref.word + 23 + 2);
 						break;
 					default:
@@ -25196,7 +25112,7 @@ function node425(store, ref) {
 								const child = store.location(value._r);
 								next.data[next.word + 23] = 6;
 								switch (value.$type) {
-									case 469:
+									case 473:
 										next.data.set(child.data.subarray(child.word, child.word + 7), next.word + 23 + 2);
 										break;
 									default:
@@ -25497,8 +25413,8 @@ function node428(store, ref) {
 
 const ids429_0 = [190];
 const ids429_1 = [
-	233, 231, 232, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62,
-	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 136
+	233, 232, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64,
+	65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 136
 ];
 function build429(store, input = {}) {
 	let value;
@@ -25510,29 +25426,23 @@ function build429(store, input = {}) {
 	const v1 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(429, 35);
+	const ref = store.begin(429, 12);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
-				const child = store.location(v0._r);
-				ref.data[ref.word + 2] = 6;
-				switch (v0.$type) {
-					case 190:
-						ref.data.set(child.data.subarray(child.word, child.word + 26), ref.word + 2 + 2);
-						break;
-					default:
-						throw new Error('inline child has no stamped record width');
-				}
+				ref.data[ref.word + 2] = 3;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._r;
 			}
 		}
 		if (v1 !== undefined) {
 			if (typeof v1 === 'number') {
-				ref.data[ref.word + 30] = 4;
-				ref.data[ref.word + 30 + 1] = v1;
+				ref.data[ref.word + 7] = 4;
+				ref.data[ref.word + 7 + 1] = v1;
 			} else {
-				ref.data[ref.word + 30] = 3;
-				ref.data[ref.word + 30 + 1] = v1.$type;
-				ref.data[ref.word + 30 + 2] = v1._r;
+				ref.data[ref.word + 7] = 3;
+				ref.data[ref.word + 7 + 1] = v1.$type;
+				ref.data[ref.word + 7 + 2] = v1._r;
 			}
 		}
 	} else {
@@ -25550,10 +25460,10 @@ function node429(store, ref) {
 			return ownerOf(this).renderRef(this);
 		},
 		attribute_item() {
-			return ownerOf(this).get(this, '_attribute_item', 2, undefined, undefined, 26);
+			return ownerOf(this).get(this, '_attribute_item', 2, undefined, undefined, 0);
 		},
 		content() {
-			return ownerOf(this).get(this, '_content', 30, undefined, undefined, 0);
+			return ownerOf(this).get(this, '_content', 7, undefined, undefined, 0);
 		},
 		$with: store.register(
 			{
@@ -25563,20 +25473,14 @@ function node429(store, ref) {
 					check(store, value, ids429_0, 'kind', false, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 35);
+					const next = store.copy(this, 12);
 					if (arena) {
-						next.data.fill(0, next.word + 2, next.word + 2 + 28);
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
 						if (value !== undefined) {
 							{
-								const child = store.location(value._r);
-								next.data[next.word + 2] = 6;
-								switch (value.$type) {
-									case 190:
-										next.data.set(child.data.subarray(child.word, child.word + 26), next.word + 2 + 2);
-										break;
-									default:
-										throw new Error('inline child has no stamped record width');
-								}
+								next.data[next.word + 2] = 3;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._r;
 							}
 						}
 					} else {
@@ -25589,17 +25493,17 @@ function node429(store, ref) {
 					check(store, value, ids429_1, 'union', true, false);
 					const arena = store.isArena;
 
-					const next = store.copy(this, 35);
+					const next = store.copy(this, 12);
 					if (arena) {
-						next.data.fill(0, next.word + 30, next.word + 30 + 5);
+						next.data.fill(0, next.word + 7, next.word + 7 + 5);
 						if (value !== undefined) {
 							if (typeof value === 'number') {
-								next.data[next.word + 30] = 4;
-								next.data[next.word + 30 + 1] = value;
+								next.data[next.word + 7] = 4;
+								next.data[next.word + 7 + 1] = value;
 							} else {
-								next.data[next.word + 30] = 3;
-								next.data[next.word + 30 + 1] = value.$type;
-								next.data[next.word + 30 + 2] = value._r;
+								next.data[next.word + 7] = 3;
+								next.data[next.word + 7 + 1] = value.$type;
+								next.data[next.word + 7 + 2] = value._r;
 							}
 						}
 					} else {
@@ -25898,7 +25802,7 @@ function node431(store, ref) {
 const ids432_0 = [190];
 const ids432_1 = [235];
 const ids432_2 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75
 ];
 function build432(store, input = {}) {
@@ -26067,7 +25971,7 @@ function node432(store, ref) {
 }
 
 const ids433_0 = [
-	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 469, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
 	67, 68, 69, 70, 71, 72, 73, 74, 75, 251, 239, 332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144,
 	162, 313
 ];
@@ -26515,6 +26419,379 @@ function node165(store, ref) {
 	});
 }
 
+const ids435_0 = [58];
+const ids435_1 = [
+	255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 473, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65, 66,
+	67, 68, 69, 70, 71, 72, 73, 74, 75
+];
+function build435(store, input = {}) {
+	let value;
+	value = input['mutable'] ?? false;
+	check(store, value, ids435_0, 'presence', false, false);
+	const v0 = value;
+	value = input['type'] ?? undefined;
+	check(store, value, ids435_1, 'supertype', true, false);
+	const v1 = value;
+	const arena = store.isArena;
+
+	const ref = store.begin(435, 8);
+	if (arena) {
+		ref.data[ref.word + 2] = (ref.data[ref.word + 2] & ~1) | (v0 ? 1 : 0);
+		if (v1 !== undefined) {
+			if (typeof v1 === 'number') {
+				ref.data[ref.word + 3] = 4;
+				ref.data[ref.word + 3 + 1] = v1;
+			} else {
+				ref.data[ref.word + 3] = 3;
+				ref.data[ref.word + 3 + 1] = v1.$type;
+				ref.data[ref.word + 3 + 2] = v1._r;
+			}
+		}
+	} else {
+		ref.data['_mutable'] = v0 ?? false;
+		ref.data['_type'] = v1 === undefined ? undefined : typeof v1 === 'number' ? v1 : v1._r;
+	}
+	return node435(store, ref);
+}
+function node435(store, ref) {
+	const address = store.address(ref);
+	return store.register({
+		$type: 435,
+		_r: address,
+		render() {
+			return ownerOf(this).renderRef(this);
+		},
+		mutable() {
+			return ownerOf(this).get(this, '_mutable', 2, undefined, 0, 0);
+		},
+		type() {
+			return ownerOf(this).get(this, '_type', 3, undefined, undefined, 0);
+		},
+		$with: store.register(
+			{
+				_r: address,
+				mutable(value) {
+					const store = ownerOf(this);
+					check(store, value, ids435_0, 'presence', false, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 8);
+					if (arena) {
+						next.data[next.word + 2] = (next.data[next.word + 2] & ~1) | (value ? 1 : 0);
+					} else {
+						next.data['_mutable'] = value ?? false;
+					}
+					return node435(store, next);
+				},
+				type(value) {
+					const store = ownerOf(this);
+					check(store, value, ids435_1, 'supertype', true, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 8);
+					if (arena) {
+						next.data.fill(0, next.word + 3, next.word + 3 + 5);
+						if (value !== undefined) {
+							if (typeof value === 'number') {
+								next.data[next.word + 3] = 4;
+								next.data[next.word + 3 + 1] = value;
+							} else {
+								next.data[next.word + 3] = 3;
+								next.data[next.word + 3 + 1] = value.$type;
+								next.data[next.word + 3 + 2] = value._r;
+							}
+						}
+					} else {
+						next.data['_type'] = value === undefined ? undefined : typeof value === 'number' ? value : value._r;
+					}
+					return node435(store, next);
+				}
+			},
+			false
+		)
+	});
+}
+
+const ids436_0 = [190];
+const ids436_1 = [435, 231];
+function build436(store, input = {}) {
+	let value;
+	value = input['attribute_item'] ?? undefined;
+	check(store, value, ids436_0, 'kind', false, false);
+	const v0 = value;
+	value = input['content'] ?? undefined;
+	check(store, value, ids436_1, 'union', true, false);
+	const v1 = value;
+	const arena = store.isArena;
+
+	const ref = store.begin(436, 12);
+	if (arena) {
+		if (v0 !== undefined) {
+			{
+				ref.data[ref.word + 2] = 3;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._r;
+			}
+		}
+		if (v1 !== undefined) {
+			{
+				ref.data[ref.word + 7] = 3;
+				ref.data[ref.word + 7 + 1] = v1.$type;
+				ref.data[ref.word + 7 + 2] = v1._r;
+			}
+		}
+	} else {
+		ref.data['_attribute_item'] = v0 === undefined ? undefined : v0._r;
+		ref.data['_content'] = v1 === undefined ? undefined : v1._r;
+	}
+	return node436(store, ref);
+}
+function node436(store, ref) {
+	const address = store.address(ref);
+	return store.register({
+		$type: 436,
+		_r: address,
+		render() {
+			return ownerOf(this).renderRef(this);
+		},
+		attribute_item() {
+			return ownerOf(this).get(this, '_attribute_item', 2, undefined, undefined, 0);
+		},
+		content() {
+			return ownerOf(this).get(this, '_content', 7, undefined, undefined, 0);
+		},
+		$with: store.register(
+			{
+				_r: address,
+				attribute_item(value) {
+					const store = ownerOf(this);
+					check(store, value, ids436_0, 'kind', false, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 12);
+					if (arena) {
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
+						if (value !== undefined) {
+							{
+								next.data[next.word + 2] = 3;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._r;
+							}
+						}
+					} else {
+						next.data['_attribute_item'] = value === undefined ? undefined : value._r;
+					}
+					return node436(store, next);
+				},
+				content(value) {
+					const store = ownerOf(this);
+					check(store, value, ids436_1, 'union', true, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 12);
+					if (arena) {
+						next.data.fill(0, next.word + 7, next.word + 7 + 5);
+						if (value !== undefined) {
+							{
+								next.data[next.word + 7] = 3;
+								next.data[next.word + 7 + 1] = value.$type;
+								next.data[next.word + 7 + 2] = value._r;
+							}
+						}
+					} else {
+						next.data['_content'] = value === undefined ? undefined : value._r;
+					}
+					return node436(store, next);
+				}
+			},
+			false
+		)
+	});
+}
+
+const ids437_0 = [436];
+const ids437_1 = [438];
+function build437(store, input = {}) {
+	let value;
+	value = input['receiver'] ?? undefined;
+	check(store, value, ids437_0, 'kind', true, false);
+	const v0 = value;
+	value = input['parameters_elements_receiver_group'] ?? undefined;
+	check(store, value, ids437_1, 'kind', false, false);
+	const v1 = value;
+	const arena = store.isArena;
+
+	const ref = store.begin(437, 17);
+	if (arena) {
+		if (v0 !== undefined) {
+			{
+				ref.data[ref.word + 2] = 3;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._r;
+			}
+		}
+		if (v1 !== undefined) {
+			{
+				const child = store.location(v1._r);
+				ref.data[ref.word + 7] = 6;
+				switch (v1.$type) {
+					case 438:
+						ref.data.set(child.data.subarray(child.word, child.word + 8), ref.word + 7 + 2);
+						break;
+					default:
+						throw new Error('inline child has no stamped record width');
+				}
+			}
+		}
+	} else {
+		ref.data['_receiver'] = v0 === undefined ? undefined : v0._r;
+		ref.data['_parameters_elements_receiver_group'] = v1 === undefined ? undefined : v1._r;
+	}
+	return node437(store, ref);
+}
+function node437(store, ref) {
+	const address = store.address(ref);
+	return store.register({
+		$type: 437,
+		_r: address,
+		render() {
+			return ownerOf(this).renderRef(this);
+		},
+		receiver() {
+			return ownerOf(this).get(this, '_receiver', 2, undefined, undefined, 0);
+		},
+		parameters_elements_receiver_group() {
+			return ownerOf(this).get(this, '_parameters_elements_receiver_group', 7, undefined, undefined, 8);
+		},
+		$with: store.register(
+			{
+				_r: address,
+				receiver(value) {
+					const store = ownerOf(this);
+					check(store, value, ids437_0, 'kind', true, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 17);
+					if (arena) {
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
+						if (value !== undefined) {
+							{
+								next.data[next.word + 2] = 3;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._r;
+							}
+						}
+					} else {
+						next.data['_receiver'] = value === undefined ? undefined : value._r;
+					}
+					return node437(store, next);
+				},
+				parameters_elements_receiver_group(value) {
+					const store = ownerOf(this);
+					check(store, value, ids437_1, 'kind', false, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 17);
+					if (arena) {
+						next.data.fill(0, next.word + 7, next.word + 7 + 10);
+						if (value !== undefined) {
+							{
+								const child = store.location(value._r);
+								next.data[next.word + 7] = 6;
+								switch (value.$type) {
+									case 438:
+										next.data.set(child.data.subarray(child.word, child.word + 8), next.word + 7 + 2);
+										break;
+									default:
+										throw new Error('inline child has no stamped record width');
+								}
+							}
+						}
+					} else {
+						next.data['_parameters_elements_receiver_group'] = value === undefined ? undefined : value._r;
+					}
+					return node437(store, next);
+				}
+			},
+			false
+		)
+	});
+}
+
+const ids438_0 = [349];
+function build438(store, input = {}) {
+	let value;
+	value = input['elements'] ?? undefined;
+	check(store, value, ids438_0, 'kind', false, false);
+	const v0 = value;
+	const arena = store.isArena;
+
+	const ref = store.begin(438, 8);
+	if (arena) {
+		if (v0 !== undefined) {
+			{
+				const child = store.location(v0._r);
+				ref.data[ref.word + 2] = 6;
+				switch (v0.$type) {
+					case 349:
+						ref.data.set(child.data.subarray(child.word, child.word + 4), ref.word + 2 + 2);
+						break;
+					default:
+						throw new Error('inline child has no stamped record width');
+				}
+			}
+		}
+	} else {
+		ref.data['_elements'] = v0 === undefined ? undefined : v0._r;
+	}
+	return node438(store, ref);
+}
+function node438(store, ref) {
+	const address = store.address(ref);
+	return store.register({
+		$type: 438,
+		_r: address,
+		render() {
+			return ownerOf(this).renderRef(this);
+		},
+		elements() {
+			return ownerOf(this).get(this, '_elements', 2, undefined, undefined, 4);
+		},
+		$with: store.register(
+			{
+				_r: address,
+				elements(value) {
+					const store = ownerOf(this);
+					check(store, value, ids438_0, 'kind', false, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 8);
+					if (arena) {
+						next.data.fill(0, next.word + 2, next.word + 2 + 6);
+						if (value !== undefined) {
+							{
+								const child = store.location(value._r);
+								next.data[next.word + 2] = 6;
+								switch (value.$type) {
+									case 349:
+										next.data.set(child.data.subarray(child.word, child.word + 4), next.word + 2 + 2);
+										break;
+									default:
+										throw new Error('inline child has no stamped record width');
+								}
+							}
+						}
+					} else {
+						next.data['_elements'] = value === undefined ? undefined : value._r;
+					}
+					return node438(store, next);
+				}
+			},
+			false
+		)
+	});
+}
+
 function build158(store, text) {
 	return node158(store, store.leaf(158, text));
 }
@@ -26573,15 +26850,15 @@ function node167(store, ref) {
 	});
 }
 
-const ids469_0 = [1];
-function build469(store, input = {}) {
+const ids473_0 = [1];
+function build473(store, input = {}) {
 	let value;
 	value = input['content'] ?? undefined;
-	check(store, value, ids469_0, 'kind', true, false);
+	check(store, value, ids473_0, 'kind', true, false);
 	const v0 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(469, 7);
+	const ref = store.begin(473, 7);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
@@ -26594,6 +26871,135 @@ function build469(store, input = {}) {
 		}
 	} else {
 		ref.data['_content'] = v0 === undefined ? undefined : v0._r;
+	}
+	return node473(store, ref);
+}
+function node473(store, ref) {
+	const address = store.address(ref);
+	return store.register({
+		$type: 473,
+		_r: address,
+		render() {
+			return ownerOf(this).renderRef(this);
+		},
+		content() {
+			return ownerOf(this).get(this, '_content', 2, undefined, undefined, 0);
+		},
+		$with: store.register(
+			{
+				_r: address,
+				content(value) {
+					const store = ownerOf(this);
+					check(store, value, ids473_0, 'kind', true, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 7);
+					if (arena) {
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
+						if (value !== undefined) {
+							{
+								next.data[next.word + 2] = 5;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._offset;
+								next.data[next.word + 2 + 3] = value._len;
+								next.data[next.word + 2 + 4] = value._r;
+							}
+						}
+					} else {
+						next.data['_content'] = value === undefined ? undefined : value._r;
+					}
+					return node473(store, next);
+				}
+			},
+			false
+		)
+	});
+}
+
+const ids470_0 = [1];
+function build470(store, input = {}) {
+	let value;
+	value = input['content'] ?? undefined;
+	check(store, value, ids470_0, 'kind', true, false);
+	const v0 = value;
+	const arena = store.isArena;
+
+	const ref = store.begin(470, 7);
+	if (arena) {
+		if (v0 !== undefined) {
+			{
+				ref.data[ref.word + 2] = 5;
+				ref.data[ref.word + 2 + 1] = v0.$type;
+				ref.data[ref.word + 2 + 2] = v0._offset;
+				ref.data[ref.word + 2 + 3] = v0._len;
+				ref.data[ref.word + 2 + 4] = v0._r;
+			}
+		}
+	} else {
+		ref.data['_content'] = v0 === undefined ? undefined : v0._r;
+	}
+	return node470(store, ref);
+}
+function node470(store, ref) {
+	const address = store.address(ref);
+	return store.register({
+		$type: 470,
+		_r: address,
+		render() {
+			return ownerOf(this).renderRef(this);
+		},
+		content() {
+			return ownerOf(this).get(this, '_content', 2, undefined, undefined, 0);
+		},
+		$with: store.register(
+			{
+				_r: address,
+				content(value) {
+					const store = ownerOf(this);
+					check(store, value, ids470_0, 'kind', true, false);
+					const arena = store.isArena;
+
+					const next = store.copy(this, 7);
+					if (arena) {
+						next.data.fill(0, next.word + 2, next.word + 2 + 5);
+						if (value !== undefined) {
+							{
+								next.data[next.word + 2] = 5;
+								next.data[next.word + 2 + 1] = value.$type;
+								next.data[next.word + 2 + 2] = value._offset;
+								next.data[next.word + 2 + 3] = value._len;
+								next.data[next.word + 2 + 4] = value._r;
+							}
+						}
+					} else {
+						next.data['_content'] = value === undefined ? undefined : value._r;
+					}
+					return node470(store, next);
+				}
+			},
+			false
+		)
+	});
+}
+
+const ids469_0 = [127];
+function build469(store, input = {}) {
+	let value;
+	value = input['content'] ?? undefined;
+	check(store, value, ids469_0, 'kind', true, false);
+	const v0 = value;
+	const arena = store.isArena;
+
+	const ref = store.begin(469, 7);
+	if (arena) {
+		if (v0 !== undefined) {
+			{
+				ref.data[ref.word + 2] = 4;
+				ref.data[ref.word + 2 + 1] = v0;
+			}
+		}
+	} else {
+		ref.data['_content'] = v0;
 	}
 	return node469(store, ref);
 }
@@ -26621,15 +27027,12 @@ function node469(store, ref) {
 						next.data.fill(0, next.word + 2, next.word + 2 + 5);
 						if (value !== undefined) {
 							{
-								next.data[next.word + 2] = 5;
-								next.data[next.word + 2 + 1] = value.$type;
-								next.data[next.word + 2 + 2] = value._offset;
-								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2] = 4;
+								next.data[next.word + 2 + 1] = value;
 							}
 						}
 					} else {
-						next.data['_content'] = value === undefined ? undefined : value._r;
+						next.data['_content'] = value;
 					}
 					return node469(store, next);
 				}
@@ -26639,15 +27042,15 @@ function node469(store, ref) {
 	});
 }
 
-const ids466_0 = [1];
-function build466(store, input = {}) {
+const ids472_0 = [1];
+function build472(store, input = {}) {
 	let value;
 	value = input['content'] ?? undefined;
-	check(store, value, ids466_0, 'kind', true, false);
+	check(store, value, ids472_0, 'kind', true, false);
 	const v0 = value;
 	const arena = store.isArena;
 
-	const ref = store.begin(466, 7);
+	const ref = store.begin(472, 7);
 	if (arena) {
 		if (v0 !== undefined) {
 			{
@@ -26661,12 +27064,12 @@ function build466(store, input = {}) {
 	} else {
 		ref.data['_content'] = v0 === undefined ? undefined : v0._r;
 	}
-	return node466(store, ref);
+	return node472(store, ref);
 }
-function node466(store, ref) {
+function node472(store, ref) {
 	const address = store.address(ref);
 	return store.register({
-		$type: 466,
+		$type: 472,
 		_r: address,
 		render() {
 			return ownerOf(this).renderRef(this);
@@ -26679,7 +27082,7 @@ function node466(store, ref) {
 				_r: address,
 				content(value) {
 					const store = ownerOf(this);
-					check(store, value, ids466_0, 'kind', true, false);
+					check(store, value, ids472_0, 'kind', true, false);
 					const arena = store.isArena;
 
 					const next = store.copy(this, 7);
@@ -26697,133 +27100,7 @@ function node466(store, ref) {
 					} else {
 						next.data['_content'] = value === undefined ? undefined : value._r;
 					}
-					return node466(store, next);
-				}
-			},
-			false
-		)
-	});
-}
-
-const ids465_0 = [127];
-function build465(store, input = {}) {
-	let value;
-	value = input['content'] ?? undefined;
-	check(store, value, ids465_0, 'kind', true, false);
-	const v0 = value;
-	const arena = store.isArena;
-
-	const ref = store.begin(465, 7);
-	if (arena) {
-		if (v0 !== undefined) {
-			{
-				ref.data[ref.word + 2] = 4;
-				ref.data[ref.word + 2 + 1] = v0;
-			}
-		}
-	} else {
-		ref.data['_content'] = v0;
-	}
-	return node465(store, ref);
-}
-function node465(store, ref) {
-	const address = store.address(ref);
-	return store.register({
-		$type: 465,
-		_r: address,
-		render() {
-			return ownerOf(this).renderRef(this);
-		},
-		content() {
-			return ownerOf(this).get(this, '_content', 2, undefined, undefined, 0);
-		},
-		$with: store.register(
-			{
-				_r: address,
-				content(value) {
-					const store = ownerOf(this);
-					check(store, value, ids465_0, 'kind', true, false);
-					const arena = store.isArena;
-
-					const next = store.copy(this, 7);
-					if (arena) {
-						next.data.fill(0, next.word + 2, next.word + 2 + 5);
-						if (value !== undefined) {
-							{
-								next.data[next.word + 2] = 4;
-								next.data[next.word + 2 + 1] = value;
-							}
-						}
-					} else {
-						next.data['_content'] = value;
-					}
-					return node465(store, next);
-				}
-			},
-			false
-		)
-	});
-}
-
-const ids468_0 = [1];
-function build468(store, input = {}) {
-	let value;
-	value = input['content'] ?? undefined;
-	check(store, value, ids468_0, 'kind', true, false);
-	const v0 = value;
-	const arena = store.isArena;
-
-	const ref = store.begin(468, 7);
-	if (arena) {
-		if (v0 !== undefined) {
-			{
-				ref.data[ref.word + 2] = 5;
-				ref.data[ref.word + 2 + 1] = v0.$type;
-				ref.data[ref.word + 2 + 2] = v0._offset;
-				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
-			}
-		}
-	} else {
-		ref.data['_content'] = v0 === undefined ? undefined : v0._r;
-	}
-	return node468(store, ref);
-}
-function node468(store, ref) {
-	const address = store.address(ref);
-	return store.register({
-		$type: 468,
-		_r: address,
-		render() {
-			return ownerOf(this).renderRef(this);
-		},
-		content() {
-			return ownerOf(this).get(this, '_content', 2, undefined, undefined, 0);
-		},
-		$with: store.register(
-			{
-				_r: address,
-				content(value) {
-					const store = ownerOf(this);
-					check(store, value, ids468_0, 'kind', true, false);
-					const arena = store.isArena;
-
-					const next = store.copy(this, 7);
-					if (arena) {
-						next.data.fill(0, next.word + 2, next.word + 2 + 5);
-						if (value !== undefined) {
-							{
-								next.data[next.word + 2] = 5;
-								next.data[next.word + 2 + 1] = value.$type;
-								next.data[next.word + 2 + 2] = value._offset;
-								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
-							}
-						}
-					} else {
-						next.data['_content'] = value === undefined ? undefined : value._r;
-					}
-					return node468(store, next);
+					return node472(store, next);
 				}
 			},
 			false
@@ -27307,18 +27584,26 @@ export function wrap(store, ref) {
 			return node166(store, ref);
 		case 165:
 			return node165(store, ref);
+		case 435:
+			return node435(store, ref);
+		case 436:
+			return node436(store, ref);
+		case 437:
+			return node437(store, ref);
+		case 438:
+			return node438(store, ref);
 		case 158:
 			return node158(store, ref);
 		case 167:
 			return node167(store, ref);
+		case 473:
+			return node473(store, ref);
+		case 470:
+			return node470(store, ref);
 		case 469:
 			return node469(store, ref);
-		case 466:
-			return node466(store, ref);
-		case 465:
-			return node465(store, ref);
-		case 468:
-			return node468(store, ref);
+		case 472:
+			return node472(store, ref);
 		default:
 			throw new Error('no generated view for kind ' + ref.kind);
 	}
@@ -27562,11 +27847,15 @@ export function builders(store) {
 		raw_string_literal_end: (input) => build161(store, input),
 		doc_comment: (input) => build166(store, input),
 		_block_comment_content: (input) => build165(store, input),
+		receiver_parameter_declaration: (input) => build435(store, input),
+		attributed_parameter_receiver: (input) => build436(store, input),
+		parameters_elements_receiver: (input) => build437(store, input),
+		parameters_elements_receiver_group: (input) => build438(store, input),
 		string_close: (input) => build158(store, input),
 		_error_sentinel: (input) => build167(store, input),
-		type_identifier: (input) => build469(store, input),
-		field_identifier: (input) => build466(store, input),
-		crate_visibility_modifier: (input) => build465(store, input),
-		shorthand_field_identifier: (input) => build468(store, input)
+		type_identifier: (input) => build473(store, input),
+		field_identifier: (input) => build470(store, input),
+		crate_visibility_modifier: (input) => build469(store, input),
+		shorthand_field_identifier: (input) => build472(store, input)
 	};
 }
