@@ -109,7 +109,8 @@ import {
 	refuseUndeclared,
 	refusingParam,
 	withTrailingParam,
-	type RefusingParams
+	type RefusingParams,
+	slotUnreservedAliases
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -272,15 +273,29 @@ function buildLeafReConsts(
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
 	const relaxed = new Set(nodeMap.relaxedLiterals ?? []);
 	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries).words.filter((text) => !relaxed.has(text));
-	if (word?.rawFactoryName && reserved.length > 0) {
-		const listName = `_reservedWordList_${word.rawFactoryName}`;
-		const constName = `_reservedWords_${word.rawFactoryName}`;
+	const leafReserved = nodeMap.wordLeafReserved ?? [];
+	if (word?.rawFactoryName) {
+		const globalConst = `_reservedWords_${word.rawFactoryName}`;
 		const typeName = `_ReservedWord_${word.rawFactoryName}`;
-		leafReConsts.set(reservedGuardKey(word.kind), constName);
-		leafReConsts.set(reservedTypeKey(word.kind), typeName);
-		lines.push(`const ${listName} = ${JSON.stringify(reserved)} as const;`);
-		lines.push(`type ${typeName} = (typeof ${listName})[number];`);
-		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
+		const sameAsGlobal = leafReserved.length === reserved.length && leafReserved.every((text) => reserved.includes(text));
+		const globalChecked = checkedSlotWordsets(nodeMap).some((ids) => ids.length === 1 && ids[0] === GLOBAL_WORDSET);
+		const emitGuard = (listName: string, constName: string, words: readonly string[]): void => {
+			leafReConsts.set(reservedGuardKey(word.kind), constName);
+			leafReConsts.set(reservedTypeKey(word.kind), typeName);
+			lines.push(`const ${listName} = ${JSON.stringify(words)} as const;`);
+			lines.push(`type ${typeName} = (typeof ${listName})[number];`);
+			lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
+		};
+		if (leafReserved.length > 0 && sameAsGlobal) {
+			emitGuard(`_reservedWordList_${word.rawFactoryName}`, globalConst, reserved);
+		} else {
+			if (reserved.length > 0 || globalChecked) {
+				lines.push(`const ${globalConst}: ReadonlySet<string> = new Set<string>(${JSON.stringify(reserved)});`);
+			}
+			if (leafReserved.length > 0) {
+				emitGuard(`_reservedLeafWordList_${word.rawFactoryName}`, `_reservedLeafWords_${word.rawFactoryName}`, leafReserved);
+			}
+		}
 	}
 	if (word?.rawFactoryName) {
 		for (const ids of checkedSlotWordsets(nodeMap)) {
@@ -327,6 +342,18 @@ function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string 
 	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
 }
 
+function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {
+	const ids = new Set<number>();
+	for (const value of f.values) {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage === undefined || storage.via !== 'node') return undefined;
+		const id = nodeMap.nodes.get(storage.kind)?.kindId;
+		if (id === undefined) return undefined;
+		ids.add(id);
+	}
+	return ids.size === 0 ? undefined : [...ids].sort((a, b) => a - b);
+}
+
 function bareTextLabel(f: AssembledNonterminal, typeName: string): string {
 	return `${typeName}.${f.propertyName}`;
 }
@@ -343,8 +370,8 @@ function keywordTextRejection(
 	const word = !nodeMap.word ? undefined : kindDiscriminantExpr(nodeMap.word, nodeMap, kindEntries);
 	const keywordChecked =
 		keywords.length === 0 ? expr : `rejectKeywordText(${expr}, '${typeName}.${f.propertyName}', ${word!}, ${JSON.stringify(keywords)})`;
-	if (word === undefined || slotUnreservedAliases(f, nodeMap).length === 0) return keywordChecked;
-	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.propertyName}', ${word}, ${wordsetConstName(f.reservedWordsets, nodeMap)})`;
+	if (word === undefined || f.checksReserved !== true) return keywordChecked;
+	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.propertyName}', ${word}, ${wordsetConstName(slotWordsetIds(f), nodeMap)})`;
 }
 
 function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
@@ -352,16 +379,18 @@ function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
 	return `_reservedWordset_${ids.join('_')}`;
 }
 
-export function slotUnreservedAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
-	return slotAliases(f, nodeMap).filter((alias) => unreservedWordFactory(alias, nodeMap) !== undefined);
+function slotWordsetIds(f: AssembledNonterminal): readonly string[] {
+	if (f.effectiveWordsets === undefined) throw new Error(`factories: slot '${f.name}' has no stamped wordsets`);
+	return f.effectiveWordsets;
 }
 
 function checkedSlotWordsets(nodeMap: NodeMap): string[][] {
 	const found = new Map<string, string[]>();
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
-			if (slotUnreservedAliases(slot, nodeMap).length === 0) continue;
-			found.set(slot.reservedWordsets.join('\0'), [...slot.reservedWordsets]);
+			if (slot.checksReserved !== true) continue;
+			const ids = slotWordsetIds(slot);
+			found.set(ids.join('\0'), [...ids]);
 		}
 	}
 	return [...found.values()];
@@ -1609,7 +1638,13 @@ export function compoundStructureRow(
 		.map((f) => [f.storageKey, `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`] as const);
 	const nodeOnly = stored.flatMap((f) => {
 		const expected = bareTextExpectation(f, nodeMap);
-		return expected === undefined ? [] : [[f.storageKey, bareTextLabel(f, node.typeName), expected] as const];
+		if (expected === undefined) return [];
+		const kinds = slotNodeKindIds(f, nodeMap);
+		return [
+			kinds === undefined
+				? ([f.storageKey, bareTextLabel(f, node.typeName), expected] as const)
+				: ([f.storageKey, bareTextLabel(f, node.typeName), expected, kinds] as const)
+		];
 	});
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;

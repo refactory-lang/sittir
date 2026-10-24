@@ -198,8 +198,24 @@ function derive(
 			}
 		}
 	}
+	for (const slot of node.slots) {
+		if (isMultiple(slot)) continue;
+		const group = forwardedGroupOf(slot, nodeMap);
+		if (group === undefined || !isCallableArm(group, isEmitted)) continue;
+		const residual = node.configSlots.filter((f) => f !== slot);
+		direct.push({ name: slot.propertyName, slot, residual, arm: { via: 'node', child: group, path: [], variantOf: node.kind }, depth: DIRECT, merges: false });
+	}
 	const nested = direct.flatMap((host) => nestedArmsOf(host, nodeMap, isEmitted, nextVisiting));
 	return settle(node, direct, nested, nodeMap, isEmitted, nextVisiting);
+}
+
+function forwardedGroupOf(slot: AssembledNonterminal, nodeMap: NodeMap): AssembledNode | undefined {
+	if (slot.values.length !== 1) return undefined;
+	const value = slot.values[0]!;
+	if (!isNodeRef(value) || value.variant !== undefined) return undefined;
+	const group = nodeMap.nodes.get(storageKindOfRef(value.node));
+	if (!isHoistedAt(value, group) || group === undefined || classifyFactoryShape(group, nodeMap) !== 'forwarded') return undefined;
+	return forwardsToSpreadTarget(group, nodeMap, true) ? undefined : group;
 }
 
 function settle(

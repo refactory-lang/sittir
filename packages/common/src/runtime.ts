@@ -37,7 +37,7 @@ export function rejectBareText<T>(value: T, where: string, expected: string): T 
 		for (const item of value) rejectBareText(item, where, expected);
 		return value;
 	}
-	if (typeof value === 'string' || typeof value === 'bigint') {
+	if (typeof value === 'string' || typeof value === 'bigint' || (isRecord(value) && !('$type' in value))) {
 		throw new Error(
 			`${where}: a strict factory takes a built node, not a ${typeof value}; expected ${expected}, or use .coerce`
 		);
