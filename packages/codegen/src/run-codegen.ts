@@ -17,6 +17,7 @@ import {
 	writeGrammarDiagnosticsJson,
 	fromDroppedTokens,
 	fromHelperSlotRead,
+	fromStampedTriviaOption,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -248,6 +249,10 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	);
 	refuseUnlessAllowed(
 		(result.renderModule?.emit.helperSlotReads ?? []).map((r) => fromHelperSlotRead(grammar, r)),
+		allowDiagnostics
+	);
+	refuseUnlessAllowed(
+		(result.renderModule?.emit.stampedTriviaOptions ?? []).map((option) => fromStampedTriviaOption(grammar, option)),
 		allowDiagnostics
 	);
 

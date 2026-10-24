@@ -90,9 +90,13 @@ export declare class SittirEngine {
   triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
   /**
    * Replace `side` of the node at `index` of the live tree `treeId`
-   * with `entries`. Refuses as `triviaSide` does.
+   * with `entries`. A built record among them (`{ $type, $record }`)
+   * is stamped with the text it renders, read from the engine's built
+   * arena, its `words` and `bytes` chunks borrowed for this call as
+   * `renderBuilt` borrows them. Refuses as `triviaSide` does, and a
+   * record `renderBuilt` refuses.
    */
-  writeTriviaSide(treeId: TreeId, index: NodeIndex, side: string, entries: object[]): void
+  writeTriviaSide(treeId: number, index: number, side: string, entries: object[], words: Uint32Array[], bytes: Uint8Array[]): void
   /**
    * Whether a write replaced a side of a node under the node at
    * `index` of the live tree `treeId`, its own `inner` included, and
@@ -252,10 +256,11 @@ renderBuilt(words: Uint32Array[], bytes: Uint8Array[], address: number, leading:
 builtTriviaSide(address: number, side: string): object[] | null
 /**
  * r" Replace `side` of the built record at `address` with
- * r" `entries`, which `renderBuilt` then writes. Refuses as
- * r" `builtTriviaSide` does.
+ * r" `entries`, which `renderBuilt` then writes; a built record
+ * r" among them is stamped as `writeTriviaSide` stamps one.
+ * r" Refuses as `builtTriviaSide` and `writeTriviaSide` do.
  */
-writeBuiltTriviaSide(address: number, side: string, entries: object[]): void
+writeBuiltTriviaSide(address: number, side: string, entries: object[], words: Uint32Array[], bytes: Uint8Array[]): void
 /**
  * r" Renders a parsed candidate without exporting its data or its
  * r" outer trivia. A record address must belong to its row; a

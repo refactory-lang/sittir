@@ -144,7 +144,7 @@ import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import type { GrammarName } from '../grammars.ts';
 import type { HelperSlotRead } from '../compiler/diagnostics/grammar-diagnostics.ts';
-import { continuationTriviaKinds, triviaKinds, whitespaceTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, stampedTriviaOptions, triviaKinds, whitespaceTriviaKinds, type StampedTriviaOption } from '../compiler/model/trivia.ts';
 
 export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
@@ -154,6 +154,7 @@ export interface RustRenderModuleEmit {
 	libRs: { path: string; contents: string };
 	recordsTs: { path: string; contents: string };
 	helperSlotReads: readonly HelperSlotRead[];
+	stampedTriviaOptions: readonly StampedTriviaOption[];
 }
 
 export interface RenderModuleBundle {
@@ -1035,6 +1036,7 @@ interface PlannedRenderOptions {
 	readonly plan: RenderPlan;
 	readonly addresses: AddressTables;
 	readonly kindEntries: readonly KindEnumEntry[];
+	readonly sites: readonly SitePreference[];
 }
 
 const EMPTY_PLAN: RenderPlan = {
@@ -1055,7 +1057,7 @@ const EMPTY_PLAN: RenderPlan = {
 	newlineArms: [],
 	newline: PREFERRED_NEWLINE
 };
-const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
+const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [], sites: [] };
 
 function planRenderOptionsFor(
 	lang: GrammarName,
@@ -1082,7 +1084,7 @@ function planRenderOptionsFor(
 		seatWrappersOf(nodeMap, generatedIdTables)
 	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
-	return { plan, addresses, kindEntries };
+	return { plan, addresses, kindEntries, sites };
 }
 
 export function emitRenderModule(
@@ -1092,7 +1094,7 @@ export function emitRenderModule(
 	generatedIdTables: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
-	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(lang, nodeMap, generatedIdTables, inputs);
+	const { plan, addresses, kindEntries: optionsKindEntries, sites } = planRenderOptionsFor(lang, nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
 	for (const kind of [...templates.bodies.keys()].sort((a, b) => compareOrdinal(a, b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
@@ -1139,7 +1141,8 @@ export function emitRenderModule(
 			path: `packages/${lang}/src/records.ts`,
 			contents: recordsTs(lang, support.records)
 		},
-		helperSlotReads: structs.flatMap(helperSlotReadsOf)
+		helperSlotReads: structs.flatMap(helperSlotReadsOf),
+		stampedTriviaOptions: stampedTriviaOptions(nodeMap, sites)
 	};
 }
 
@@ -2386,6 +2389,13 @@ function renderRootFn(): string[] {
 
 function renderRecordFn(): string[] {
 	const view = rustRecordViewName('AnyNode');
+	const params = [
+		'    root: ::sittir_core::arena::CellAt,',
+		'    trees: &mut dyn ::sittir_core::arena::RecordTrees,',
+		'    built: &dyn ::sittir_core::arena::ArenaRead,',
+		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
+		"    ctx: &::sittir_core::prepare::RenderContext<'_>,"
+	];
 	return [
 		'::sittir_core::records_codec! {',
 		'/// Render the record `root` names: a parsed root its source renders as',
@@ -2393,11 +2403,23 @@ function renderRecordFn(): string[] {
 		'/// prepared into a fresh overlay, then written through its view by the',
 		'/// writer a node renders through.',
 		'pub fn render_record(',
-		'    root: ::sittir_core::arena::CellAt,',
-		'    trees: &mut dyn ::sittir_core::arena::RecordTrees,',
-		'    built: &dyn ::sittir_core::arena::ArenaRead,',
-		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
-		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
+		...params,
+		') -> Result<String, ::sittir_core::render::RenderError> {',
+		'    render_record_as(root, trees, built, store, ctx, false)',
+		'}',
+		'',
+		'/// Render the built record `root` names as the text of a trivia entry',
+		'/// (`sittir_core::arena::RecordGrammar::render_entry`): as `render_record`',
+		'/// renders it, its end holding no line break.',
+		'pub fn render_entry_record(',
+		...params,
+		') -> Result<String, ::sittir_core::render::RenderError> {',
+		'    render_record_as(root, trees, built, store, ctx, true)',
+		'}',
+		'',
+		'fn render_record_as(',
+		...params,
+		'    entry: bool,',
 		') -> Result<String, ::sittir_core::render::RenderError> {',
 		'    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {',
 		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx, None).map(|(_, text)| text);',
@@ -2405,7 +2427,7 @@ function renderRecordFn(): string[] {
 		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(trees, built, store, root, ctx)?;`,
 		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;',
 		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
-		'    render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))',
+		'    render_root(ctx, None, |_| entry || ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))',
 		'}',
 		'}',
 		''

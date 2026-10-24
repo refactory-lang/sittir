@@ -1579,7 +1579,7 @@ export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, bui
 /** A read node's sides as the call builds them: from its tree's table while it holds one, else the trivia its copy carries. */
 function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | undefined {
 	const tree = treeOf(source as object);
-	const carried = source.$_layout?.trivia;
+	const carried = writtenSides(source as object);
 	if (tree !== undefined) return tableSides(source, opts.accessorOf, (read) => resolveChild(read, { ...childOpts(opts), tree }));
 	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 }

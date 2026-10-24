@@ -131,6 +131,13 @@ These must not be mistaken for completed builder integration:
 - The final cutover retires the transitional object codec, the object
   projection and the compatibility options, once correctness and performance
   are accepted.
+- A built leaf written as a side entry (typescript's `html_comment`, the one
+  stamped trivia kind assembled as a pattern) crosses as its text, not as kind
+  and address: its record is a header, and its text is a span of the arena's
+  bytes that only its builder's reference names, so the address alone cannot
+  stamp it. Reading the side back gives a fresh node where object construction
+  gives the builder's. Every compound comment kind crosses as kind and address
+  and reads back as the builder's node.
 - The broader cutover outline also calls for native-only built trivia, parsed
   unit identity and native file parsing. Audit their live implementations
   before claiming the whole migration complete.

@@ -313,16 +313,25 @@ macro_rules! napi_engine {
             }
 
             /// Replace `side` of the node at `index` of the live tree `treeId`
-            /// with `entries`. Refuses as `triviaSide` does.
-            #[::napi_derive::napi]
+            /// with `entries`. A built record among them (`{ $type, $record }`)
+            /// is stamped with the text it renders, read from the engine's built
+            /// arena, its `words` and `bytes` chunks borrowed for this call as
+            /// `renderBuilt` borrows them. Refuses as `triviaSide` does, and a
+            /// record `renderBuilt` refuses.
+            #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+            #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: object[], words: Uint32Array[], bytes: Uint8Array[]")]
             pub fn write_trivia_side(
                 &self,
+                env: ::napi::Env,
                 tree_id: $crate::types::TreeId,
                 index: $crate::types::NodeIndex,
                 side: String,
-                #[napi(ts_arg_type = "object[]")] entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                entries: Vec<$crate::trivia::SideWrite<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                words: Vec<::napi::Unknown<'_>>,
+                bytes: Vec<::napi::Unknown<'_>>,
             ) -> ::napi::Result<()> {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                let entries = LIVE_TREES.with(|trees| $crate::napi_engine::stamped_side::<_, $any, _>(&self.engine, &env, entries, &words, &bytes, &*trees.borrow(), || self.render_options(None, None)))?;
                 with_live_node(tree_id, index, |parsed, index| {
                     parsed.write_trivia_side(index, side, entries);
                     Ok(())
@@ -759,6 +768,7 @@ macro_rules! napi_engine {
                 /// an ordinary `ArrayBuffer`, an address naming no record the
                 /// words admit, a linked tree that is not live, and a record
                 /// whose render refuses.
+                #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
                 #[::napi_derive::napi(ts_args_type = "words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
                 pub fn render_built(&self, env: ::napi::Env, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
@@ -788,17 +798,22 @@ macro_rules! napi_engine {
                 }
 
                 /// Replace `side` of the built record at `address` with
-                /// `entries`, which `renderBuilt` then writes. Refuses as
-                /// `builtTriviaSide` does.
-                #[::napi_derive::napi]
+                /// `entries`, which `renderBuilt` then writes; a built record
+                /// among them is stamped as `writeTriviaSide` stamps one.
+                /// Refuses as `builtTriviaSide` and `writeTriviaSide` do.
+                #[::napi_derive::napi(ts_args_type = "address: number, side: string, entries: object[], words: Uint32Array[], bytes: Uint8Array[]")]
                 pub fn write_built_trivia_side(
                     &self,
+                    env: ::napi::Env,
                     address: f64,
                     side: String,
-                    #[napi(ts_arg_type = "object[]")] entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                    entries: Vec<$crate::trivia::SideWrite<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                    words: Vec<::napi::Unknown<'_>>,
+                    bytes: Vec<::napi::Unknown<'_>>,
                 ) -> ::napi::Result<()> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    let entries = LIVE_TREES.with(|trees| $crate::napi_engine::stamped_side::<_, $any, _>(&self.engine, &env, entries, &words, &bytes, &*trees.borrow(), || self.render_options(None, None)))?;
                     self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
@@ -999,6 +1014,57 @@ impl ChunkElement for u8 {
     const NAME: &'static str = "Uint8Array";
 }
 
+/// `entries` as a side write stores them: each built record stamped by
+/// `engine` (`Engine::stamp_side`) from the built arena `words` and `bytes`
+/// hold, borrowed as `borrowed_chunks` borrows them, under the `options` the
+/// write renders by, over the live `trees`. The chunks are borrowed, and
+/// the options resolved, only when a built record is among `entries`.
+///
+/// # Errors
+///
+/// What `borrowed_chunks`, `options` and `Engine::stamp_side` refuse.
+#[cfg(feature = "arena")]
+pub fn stamped_side<G: crate::arena::RecordGrammar, N: crate::arena::RecordCells, H: std::hash::BuildHasher>(
+    engine: &crate::engine::Engine<G>,
+    env: &napi::Env,
+    entries: Vec<crate::trivia::SideWrite<G::Trivia>>,
+    words: &[napi::Unknown<'_>],
+    bytes: &[napi::Unknown<'_>],
+    trees: &std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
+    options: impl FnOnce() -> napi::Result<crate::options::ResolvedOptions>,
+) -> napi::Result<Vec<crate::trivia::TriviaEntry<G::Trivia>>> {
+    use crate::trivia::SideWrite;
+    if !entries.iter().any(|entry| matches!(entry, SideWrite::Built(_))) {
+        return Ok(entries.into_iter().filter_map(|entry| if let SideWrite::Entry(entry) = entry { Some(entry) } else { None }).collect());
+    }
+    let words = borrowed_chunks::<u32>(env, words)?;
+    let bytes = borrowed_chunks::<u8>(env, bytes)?;
+    let arena = crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    let options = options()?;
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| engine.stamp_side(&arena, entries, N::shape, trees, &options)))
+        .map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, "stamp_side panicked")))?
+        .map_err(|e| napi::Error::from_reason(format!("a side write's built record failed to render: {e}")))
+}
+
+/// `entries` as a side write stores them: without the arena no built record
+/// crosses, so each is the entry it holds.
+///
+/// # Errors
+///
+/// None.
+#[cfg(not(feature = "arena"))]
+pub fn stamped_side<G: crate::engine::EngineGrammar, N, H: std::hash::BuildHasher>(
+    _engine: &crate::engine::Engine<G>,
+    _env: &napi::Env,
+    entries: Vec<crate::trivia::SideWrite<G::Trivia>>,
+    _words: &[napi::Unknown<'_>],
+    _bytes: &[napi::Unknown<'_>],
+    _trees: &std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
+    _options: impl FnOnce() -> napi::Result<crate::options::ResolvedOptions>,
+) -> napi::Result<Vec<crate::trivia::TriviaEntry<G::Trivia>>> {
+    Ok(entries.into_iter().map(|crate::trivia::SideWrite::Entry(entry)| entry).collect())
+}
+
 /// Each of `values` borrowed as the slice of `T` it holds, for the rest of
 /// the call, without copying. Each must be a typed array of `T` over an
 /// ordinary `ArrayBuffer`: a `SharedArrayBuffer` could be written by another
@@ -1015,10 +1081,10 @@ fn borrowed_chunk<'a, T: ChunkElement>(env: &'a napi::Env, value: napi::Unknown<
     }
     let (mut kind, mut len, mut data, mut buffer, mut offset) = (0, 0, std::ptr::null_mut(), std::ptr::null_mut(), 0);
     // SAFETY: inspecting a live typed array runs no JavaScript.
-    napi::check_status!(unsafe { napi::sys::napi_get_typedarray_info(env.raw(), value.raw(), &mut kind, &mut len, &mut data, &mut buffer, &mut offset) })?;
+    napi::check_status!(unsafe { napi::sys::napi_get_typedarray_info(env.raw(), value.raw(), &raw mut kind, &raw mut len, &raw mut data, &raw mut buffer, &raw mut offset) })?;
     let mut ordinary = false;
     // SAFETY: `buffer` is the live backing store `napi_get_typedarray_info` just answered.
-    napi::check_status!(unsafe { napi::sys::napi_is_arraybuffer(env.raw(), buffer, &mut ordinary) })?;
+    napi::check_status!(unsafe { napi::sys::napi_is_arraybuffer(env.raw(), buffer, &raw mut ordinary) })?;
     if kind != T::TYPE || !ordinary {
         return Err(refused());
     }

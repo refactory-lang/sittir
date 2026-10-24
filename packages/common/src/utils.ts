@@ -3,7 +3,7 @@ import { mapTriviaEntries, TRIVIA_SIDES } from './trivia.ts';
 import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, writtenSides } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { recordOf, recordSeparator } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
-import { isBuiltNode } from './built-arena.ts';
+import { builtEntryOf, isBuiltNode } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -122,10 +122,13 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
 	}
+	const tree = treeOf(node);
+	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
+	const wire = (entry: TriviaEntry): unknown =>
+		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
-		if (entries === undefined) continue;
-		at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
+		if (entries !== undefined) at.tree.writeTriviaSide(at.index, side, entries.map(wire));
 	}
 }
 

@@ -20,7 +20,8 @@ import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { builtArenaOf, type BuiltRecords } from './built-arena.ts';
+import { builtArenaOf, builtEntries, NO_CHUNKS, type BuiltRecords } from './built-arena.ts';
+import { treeBuiltArena } from './engine-scope.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -128,11 +129,13 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	triviaSide(treeId: number, index: number, side: TriviaSideName): unknown[];
 	/**
-	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
+	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`. A built record among them
+	 * (`{ $type, $record }`) is stamped with the text it renders, read from the engine's built arena, whose `words` and
+	 * `bytes` chunks are borrowed for the call, as {@link renderBuilt} borrows them.
 	 *
-	 * @throws as {@link triviaSide} does.
+	 * @throws as {@link triviaSide} does, and for a built record {@link renderBuilt} refuses.
 	 */
-	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[], words: readonly Uint32Array[], bytes: readonly Uint8Array[]): void;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -212,12 +215,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
 	/**
-	 * Replaces `side` of the built record at `address` with `entries`, which {@link renderBuilt} then writes. Present when
-	 * the addon carries the record codec.
+	 * Replaces `side` of the built record at `address` with `entries`, which {@link renderBuilt} then writes; a built
+	 * record among them is stamped as {@link writeTriviaSide} stamps one. Present when the addon carries the record codec.
 	 *
-	 * @throws as {@link builtTriviaSide} does.
+	 * @throws as {@link builtTriviaSide} and {@link writeTriviaSide} do.
 	 */
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[], words: readonly Uint32Array[], bytes: readonly Uint8Array[]): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
 	/**
@@ -600,11 +603,14 @@ export function createNativeEngine<
 							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							triviaSide: (index, side) => {
-								const entries = engine.triviaSide(parsed.treeId, index, side);
+								const entries = builtEntries(treeBuiltArena(tree), engine.triviaSide(parsed.treeId, index, side));
 								holdReadTree(entries, liveToken);
 								return entries;
 							},
-							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+							writeTriviaSide: (index, side, entries) => {
+								const { words, bytes } = treeBuiltArena(tree)?.chunks() ?? NO_CHUNKS;
+								engine.writeTriviaSide(parsed.treeId, index, side, entries, words, bytes);
+							},
 							unitSides: (index) => {
 								const units = engine.unitSides(parsed.treeId, index);
 								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
@@ -662,7 +668,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 		format,
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
-			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries)
+			writeTriviaSide: (at, side, entries, { words, bytes }) => writeBuiltTriviaSide.call(engine, at, side, entries, words, bytes)
 		}
 	};
 }

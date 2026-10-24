@@ -269,6 +269,17 @@ sittir_core::records_codec! {
         ) -> std::result::Result<String, sittir_core::render::RenderError> {
             render::node::render_record(root, trees, built, store, ctx)
         }
+
+        fn render_entry(
+            self,
+            root: sittir_core::arena::CellAt,
+            trees: &mut dyn sittir_core::arena::RecordTrees,
+            built: &dyn sittir_core::arena::ArenaRead,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+        ) -> std::result::Result<String, sittir_core::render::RenderError> {
+            render::node::render_entry_record(root, trees, built, store, ctx)
+        }
     }
 }
 

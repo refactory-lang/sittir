@@ -8,7 +8,8 @@ import {
 	AssembledPunctuation,
 	AssembledSupertype,
 	isNodeRef,
-	storageKindOfRef
+	storageKindOfRef,
+	storageKindOfValue
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
 import { endsWithLineBreak, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
@@ -21,6 +22,7 @@ import { admitsWhitespaceMember } from '../../dsl/whitespace.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import type { RenderRule } from '../../types/rule.ts';
+import type { SitePreference } from './site-preferences.ts';
 
 const triviaKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
 export const COMMENT_IR_KEY = 'comment';
@@ -243,6 +245,38 @@ function verdict(ends: readonly ResolvedLineEnd[]): boolean | undefined {
 }
 
 const referenceWalker = new RuleWalker<RenderRule>();
+
+export interface StampedTriviaOption {
+	readonly kind: string;
+	readonly site: SitePreference;
+}
+
+export function stampedTriviaKinds(nodeMap: NodeMap): string[] {
+	const layout = new Set(layoutTriviaKinds(nodeMap));
+	return [...triviaKinds(nodeMap)].filter((kind) => !layout.has(kind) && nodeMap.nodes.has(kind) && !(nodeMap.nodes.get(kind) instanceof AssembledSupertype)).sort();
+}
+
+export function stampedTriviaOptions(nodeMap: NodeMap, sites: readonly SitePreference[]): StampedTriviaOption[] {
+	return stampedTriviaKinds(nodeMap).flatMap((kind) => {
+		const within = heldKindsClosure(nodeMap, kind);
+		return sites.filter((site) => within.has(site.kind) && !(site.kind === kind && site.kindEdge === true)).map((site) => ({ kind, site }));
+	});
+}
+
+function heldKindsClosure(nodeMap: NodeMap, kind: string): ReadonlySet<string> {
+	const within = new Set([kind]);
+	for (const at of within) {
+		const node = nodeMap.nodes.get(at);
+		const held =
+			node instanceof AssembledSupertype
+				? node.subtypeNames
+				: node instanceof AbstractAssembledCompound
+					? node.slots.flatMap((slot) => slot.values.flatMap((value) => storageKindOfValue(value) ?? []))
+					: [];
+		for (const next of held) within.add(next);
+	}
+	return within;
+}
 
 export function stampTriviaInterior(nodeMap: NodeMap): void {
 	const referencers = new Map<string, Set<string>>();

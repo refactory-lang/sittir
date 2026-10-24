@@ -27,6 +27,15 @@ pub trait RecordGrammar: EngineGrammar {
     ///
     /// What the record's prepare or render refuses.
     fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
+
+    /// Renders the built record `root` names as the text of a trivia entry:
+    /// as `render_record` renders it, its end holding no line break, since
+    /// the entry writes its kind's line end after the text.
+    ///
+    /// # Errors
+    ///
+    /// As `render_record`.
+    fn render_entry(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {

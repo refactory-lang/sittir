@@ -12,16 +12,43 @@ use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
 use crate::slot::SlotValue;
 
-/// One trivia entry: the node, or the coordinate of one.
+/// One trivia entry: the node, or the coordinate of one. An entry a side
+/// write was given as a built record holds the text that record renders,
+/// stamped at the write (`Engine::stamp_side`), and names the record, which a
+/// read of the side answers with.
 #[derive(Debug, Clone, PartialEq)]
 pub struct TriviaEntry<T> {
     pub value: SlotValue<T>,
+    #[cfg(feature = "arena")]
+    pub record: Option<BuiltEntry>,
 }
 
 impl<T> TriviaEntry<T> {
     pub fn new(value: SlotValue<T>) -> Self {
-        Self { value }
+        Self {
+            value,
+            #[cfg(feature = "arena")]
+            record: None,
+        }
     }
+}
+
+/// A record of an engine's built arena, by its kind and its address, that a
+/// side write was given as an entry.
+#[cfg(feature = "arena")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BuiltEntry {
+    pub kind: KindId,
+    pub at: crate::arena::Address,
+}
+
+/// One entry of a side write: an entry as it is, or a built record, which
+/// the write stamps with the text it renders (`Engine::stamp_side`).
+#[derive(Debug, Clone, PartialEq)]
+pub enum SideWrite<T> {
+    Entry(TriviaEntry<T>),
+    #[cfg(feature = "arena")]
+    Built(BuiltEntry),
 }
 
 impl<T: Render> Render for TriviaEntry<T> {
@@ -574,9 +601,41 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
+    for SideWrite<T>
+{
+    /// A built record is `{ $type, $record }`, its kind and its address;
+    /// any other value is a trivia entry.
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        #[cfg(feature = "arena")]
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
+        if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::Object {
+            // SAFETY: `napi_val` is a live object in `env`.
+            if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "SideWrite")? } {
+                // SAFETY: `napi_val` is a live object in `env`.
+                let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "SideWrite")? };
+                return Ok(Self::Built(BuiltEntry { kind, at: crate::arena::Address(at) }));
+            }
+        }
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
+        Ok(Self::Entry(unsafe { TriviaEntry::from_napi_value(env, napi_val)? }))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
-    /// The value's own form.
+    /// The value's own form; an entry written as a built record, that
+    /// record's `{ $type, $record }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        #[cfg(feature = "arena")]
+        if let Some(BuiltEntry { kind, at }) = val.record {
+            use crate::boundary::{object_with_present, present};
+            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+            return unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?]) };
+        }
         // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
         unsafe { SlotValue::to_napi_value(env, val.value) }
     }

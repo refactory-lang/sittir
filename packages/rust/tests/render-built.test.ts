@@ -41,11 +41,11 @@ describe('a built arena rendered natively', () => {
 	it('reads and writes the sides of a built record by its address, refusing address 0', () => {
 		const native = arenaEngine();
 		expect(native.builtTriviaSide(5, 'leading')).toBeNull();
-		native.writeBuiltTriviaSide(5, 'leading', []);
+		native.writeBuiltTriviaSide(5, 'leading', [], [], []);
 		expect(native.builtTriviaSide(5, 'leading')).toEqual([]);
 		expect(native.builtTriviaSide(6, 'leading')).toBeNull();
 		expect(() => native.builtTriviaSide(0, 'leading')).toThrow(/record address 0/);
-		expect(() => native.writeBuiltTriviaSide(0, 'leading', [])).toThrow(/record address 0/);
+		expect(() => native.writeBuiltTriviaSide(0, 'leading', [], [], [])).toThrow(/record address 0/);
 		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
 	});
 

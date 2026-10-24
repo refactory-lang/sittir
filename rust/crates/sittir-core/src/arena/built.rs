@@ -10,8 +10,8 @@ use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
 use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError};
-use crate::slot::ChangedEdges;
-use crate::trivia::TriviaEntry;
+use crate::slot::{ChangedEdges, SlotValue};
+use crate::trivia::{BuiltEntry, FromTriviaText, SideWrite, TriviaEntry, TriviaText};
 use crate::trivia_store::Place;
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex, TreeId};
@@ -61,17 +61,64 @@ impl<G: RecordGrammar> Engine<G> {
         trees: &HashMap<TreeId, ParsedTree<G>, H>,
         options: &ResolvedOptions,
     ) -> Result<String, RenderError> {
-        let kind = arena.header_kind(at).map_err(RenderError::Record)?;
-        let linked = admit(arena, at, shape).map_err(RenderError::Record)?;
-        let held = linked
-            .into_iter()
-            .map(|tree| {
-                let parsed = trees.get(&tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
-                Ok((tree, parsed.tree_arena()))
-            })
-            .collect::<Result<Vec<_>, CoordinateError>>()?;
-        let root = CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None };
-        let ctx = RenderContext { options, sources: trees };
-        self.grammar().render_record(root, &mut HeldArenas::of(held), arena, self.written(), &ctx)
+        let (root, mut held) = admitted_root(arena, at, changed, shape, trees)?;
+        G::render_record(self.grammar(), root, &mut held, arena, self.written(), &RenderContext { options, sources: trees })
     }
+
+    /// `entries` as a side write stores them: each built record stamped with
+    /// the text it renders as an entry (`RecordGrammar::render_entry`), under
+    /// `options` over the engine's, as `render_built` renders a record of
+    /// `arena`, beside the record it names. A record is immutable, so its
+    /// text is a fact of it, written once.
+    ///
+    /// # Errors
+    ///
+    /// What `render_built` refuses of a record, and a record whose header
+    /// names a kind other than its entry's.
+    pub fn stamp_side<H: BuildHasher>(
+        &self,
+        arena: &dyn ArenaRead,
+        entries: Vec<SideWrite<G::Trivia>>,
+        shape: fn(KindId) -> Option<RecordShape>,
+        trees: &HashMap<TreeId, ParsedTree<G>, H>,
+        options: &ResolvedOptions,
+    ) -> Result<Vec<TriviaEntry<G::Trivia>>, RenderError> {
+        entries
+            .into_iter()
+            .map(|entry| match entry {
+                SideWrite::Entry(entry) => Ok(entry),
+                SideWrite::Built(record @ BuiltEntry { kind, at }) => {
+                    let header = arena.header_kind(at).map_err(RenderError::Record)?;
+                    if header != kind {
+                        return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(kind.0) }));
+                    }
+                    let (root, mut held) = admitted_root(arena, at, ChangedEdges::default(), shape, trees)?;
+                    let text = G::render_entry(self.grammar(), root, &mut held, arena, self.written(), &RenderContext { options, sources: trees })?;
+                    let mut entry = TriviaEntry::new(SlotValue::Node(G::Trivia::from_text(TriviaText::of(kind, &text))));
+                    entry.record = Some(record);
+                    Ok(entry)
+                }
+            })
+            .collect()
+    }
+
+}
+
+fn admitted_root<'t, G: EngineGrammar, H: BuildHasher>(
+    arena: &dyn ArenaRead,
+    at: Address,
+    changed: ChangedEdges,
+    shape: fn(KindId) -> Option<RecordShape>,
+    trees: &'t HashMap<TreeId, ParsedTree<G>, H>,
+) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
+    let kind = arena.header_kind(at).map_err(RenderError::Record)?;
+    let linked = admit(arena, at, shape).map_err(RenderError::Record)?;
+    let held = linked
+        .into_iter()
+        .map(|tree| {
+            let parsed = trees.get(&tree).ok_or(CoordinateError::UnknownTree { handle: encode_handle(tree, NodeIndex::ROOT), tree_id: tree })?;
+            Ok((tree, parsed.tree_arena()))
+        })
+        .collect::<Result<Vec<_>, CoordinateError>>()?;
+    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::of(held)))
 }

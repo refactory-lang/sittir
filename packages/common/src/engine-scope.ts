@@ -117,6 +117,10 @@ export function builtArenaOf(handle: EngineHandle | undefined): BuiltArena {
 	return arena;
 }
 
+export function treeBuiltArena(tree: object): BuiltArena | undefined {
+	return treeHandles.get(tree)?.builtArena;
+}
+
 export function isLive(current: EngineHandle['current']): current is LiveEngine {
 	return 'render' in current;
 }

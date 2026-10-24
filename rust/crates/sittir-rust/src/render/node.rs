@@ -51213,13 +51213,37 @@ pub fn render_record(
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
+    render_record_as(root, trees, built, store, ctx, false)
+}
+
+/// Render the built record `root` names as the text of a trivia entry
+/// (`sittir_core::arena::RecordGrammar::render_entry`): as `render_record`
+/// renders it, its end holding no line break.
+pub fn render_entry_record(
+    root: ::sittir_core::arena::CellAt,
+    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    built: &dyn ::sittir_core::arena::ArenaRead,
+    store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+) -> Result<String, ::sittir_core::render::RenderError> {
+    render_record_as(root, trees, built, store, ctx, true)
+}
+
+fn render_record_as(
+    root: ::sittir_core::arena::CellAt,
+    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    built: &dyn ::sittir_core::arena::ArenaRead,
+    store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+    entry: bool,
+) -> Result<String, ::sittir_core::render::RenderError> {
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {
         return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx, None).map(|(_, text)| text);
     }
     let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx)?;
     let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
-    render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))
+    render_root(ctx, None, |_| entry || ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))
 }
 }
 

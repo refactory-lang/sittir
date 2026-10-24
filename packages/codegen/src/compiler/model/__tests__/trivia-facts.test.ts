@@ -3,7 +3,8 @@ import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, stampedTriviaKinds, stampedTriviaOptions, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import type { SitePreference } from '../site-preferences.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
@@ -201,5 +202,30 @@ describe('trivia model facts', () => {
 		expect(lineBreakTerminated(python, '_dedent')).toBe(true);
 		expect(lineBreakTerminated(python, 'block')).toBe(true);
 		expect(lineBreakTerminated(python, '_indent')).toBe(false);
+	});
+
+	it('stamps the comment kinds a record can be built of: every trivia kind but layout and supertypes', async () => {
+		expect(stampedTriviaKinds(await nodeMapOf('rust'))).toEqual(['block_comment', 'line_comment']);
+		expect(stampedTriviaKinds(await nodeMapOf('python'))).toEqual(['comment']);
+		expect(stampedTriviaKinds(await nodeMapOf('typescript'))).toEqual(['comment_block', 'comment_line', 'html_comment']);
+		expect(stampedTriviaKinds(await nodeMapOf('scm'))).toEqual(['comment']);
+	});
+
+	it("names an option site inside a stamped comment kind, the kinds it holds included, but never the kind's own edges", async () => {
+		const site = (kind: string, kindEdge?: true): SitePreference => ({
+			kind,
+			slot: 'probe',
+			address: `${kind}_probe`,
+			label: 'probe',
+			arms: [],
+			defaultArm: '',
+			source: 'spacing',
+			...(kindEdge === undefined ? {} : { kindEdge })
+		});
+		const sites = [site('block_comment', true), site('block_comment_doc_inner'), site('line_comment'), site('function_item')];
+		expect(stampedTriviaOptions(await nodeMapOf('rust'), sites).map(({ kind, site }) => `${kind} holds ${site.kind}`)).toEqual([
+			'block_comment holds block_comment_doc_inner',
+			'line_comment holds line_comment'
+		]);
 	});
 });

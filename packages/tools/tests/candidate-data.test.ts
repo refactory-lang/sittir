@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { treeOf } from '@sittir/common/utils';
+import { useRecordConstruction } from '@sittir/common/engine';
+import { sidesOf, treeOf } from '@sittir/common/utils';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, tableSides } from '../src/validate/common.ts';
@@ -39,6 +40,19 @@ describe('a candidate rendered alone is its own span', () => {
 		if (statement === undefined) throw new Error('expected an expression statement');
 		const sides = (): NodeTrivia => ({ leading: [statement as never] });
 		expect(candidateData(statement as AnyUntypedNode, sides)).toBe(statement);
+		arena.dispose();
+	});
+
+	it('is a built record itself, the outer sides a write gave it emptied, so it renders as its own span', async () => {
+		const arena = await createEngine(python, { nodeStorage: 'arena' });
+		useRecordConstruction(arena, await import('../../python/src/factories/records.ts'));
+		const b = arena.build;
+		const statement = b.expressionStatement(b.call({ function: b.identifier('foo'), arguments: b.argumentList() }));
+		statement.$trivia.leading(b.comment(' lead'));
+		expect(arena.render(statement).toString()).toBe('# lead\nfoo()');
+		const candidate = candidateData(statement as unknown as AnyUntypedNode, sidesOf);
+		expect(candidate).toBe(statement);
+		expect(arena.render(statement).toString()).toBe('foo()');
 		arena.dispose();
 	});
 });

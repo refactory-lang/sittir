@@ -28,7 +28,7 @@ import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
 import { eofPlacements } from '../../dsl/eof-placement.ts';
 import { rootRuleName } from '../../util/reachable-rules.ts';
 import type { Rule } from '../../types/rule.ts';
-import { lineTerminated, triviaKinds } from '../model/trivia.ts';
+import { lineTerminated, triviaKinds, type StampedTriviaOption } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
 import { ENRICH_SHAPES } from '../../dsl/enrich-shapes.ts';
 import { SITE_EDITS_KEY } from '../../dsl/wire/wire.ts';
@@ -151,6 +151,20 @@ export function fromHelperSlotRead(grammar: string, read: HelperSlotRead): Gramm
 		message: `kind '${read.kind}': its template names slot '${read.slot}', which only a field of its hidden helper '${read.helper}' holds, so a render body over the kind's own fields cannot reach it. Name '${read.slot}' as a field of '${read.kind}' itself`,
 		canProceed: false,
 		details: { helper: read.helper }
+	};
+}
+
+export function fromStampedTriviaOption(grammar: string, option: StampedTriviaOption): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'stamped-trivia-option',
+		severity: 'error',
+		grammar,
+		ownerKind: option.kind,
+		message: `trivia kind '${option.kind}': option '${option.site.address}' of '${option.site.kind}' governs bytes inside it. A built ${option.kind} written as a side entry is stamped with its text at the write, so no render's options could reach those bytes.`,
+		proposal: `Keep options off a comment kind's interior: only its own before and after edges, which the entry writes at render time.`,
+		canProceed: false,
+		details: { site: option.site.address, owner: option.site.kind }
 	};
 }
 

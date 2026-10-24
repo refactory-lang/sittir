@@ -3,7 +3,7 @@ import { wrapRegistered } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead } from './node-data.ts';
 import { decodeIndex, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
-import type { RecordReader, TreeHandle } from './read.ts';
+import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
 import { RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
@@ -24,10 +24,20 @@ export interface BuiltPlace {
 
 type Wrap = (data: object, tree: TreeHandle) => unknown;
 
+export interface BuiltChunks {
+	readonly words: readonly Uint32Array[];
+	readonly bytes: readonly Uint8Array[];
+}
+
+export const NO_CHUNKS: BuiltChunks = { words: [], bytes: [] };
+
 /** What an engine that reads trees as records gives its built arena: the cell format, and the trivia table its records' sides are written to, by record address. */
 export interface BuiltRecords {
 	readonly format: CellFormat;
-	readonly trivia: Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
+	readonly trivia: {
+		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
+		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[], chunks: BuiltChunks): void;
+	};
 }
 
 const FIRST_CHUNK_WORDS = 1 << 10;
@@ -101,7 +111,7 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 export class BuiltArena {
 	readonly format: CellFormat;
 	/** The tree a built record's view reads through: its records are this arena's, and its trivia table is keyed by their addresses. */
-	readonly tree: TreeHandle & BuiltRecords['trivia'];
+	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly #wrap: Wrap;
 	readonly #words: Chunks<Uint32Array>;
 	readonly #bytes: Chunks<Uint8Array>;
@@ -116,7 +126,14 @@ export class BuiltArena {
 	constructor({ format, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
 		this.format = format;
 		this.#wrap = wrap;
-		this.tree = { built: this, ...trivia };
+		this.tree = {
+			built: this,
+			triviaSide: (at, side) => {
+				const entries = trivia.triviaSide(at, side);
+				return entries === undefined ? undefined : builtEntries(this, entries);
+			},
+			writeTriviaSide: (at, side, entries) => trivia.writeTriviaSide(at, side, entries, this.chunks())
+		};
 		bindTree(this.tree, handle);
 		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format);
 		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format);
@@ -186,7 +203,7 @@ export class BuiltArena {
 	}
 
 	/** Every chunk of words and of bytes, each cut to what is written, for one native call to borrow. */
-	chunks(): { readonly words: readonly Uint32Array[]; readonly bytes: readonly Uint8Array[] } {
+	chunks(): BuiltChunks {
 		const cut = <A extends Uint32Array | Uint8Array>(table: Chunks<A>): A[] =>
 			table.chunks.map((chunk, n) => chunk.subarray(0, table.used[n]) as A);
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
@@ -250,6 +267,28 @@ export class BuiltArena {
 		if (known === undefined) throw new Error(`the built leaf at ${at} was released while a record still names it`);
 		return known;
 	}
+}
+
+interface BuiltEntry {
+	readonly $type: number;
+	readonly $record: number;
+}
+
+function isBuiltEntry(entry: unknown): entry is BuiltEntry {
+	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<BuiltEntry>).$record === 'number';
+}
+
+export function builtEntries(arena: BuiltArena | undefined, entries: readonly unknown[]): unknown[] {
+	if (!entries.some(isBuiltEntry)) return entries as unknown[];
+	if (arena === undefined) throw new Error('a side names a built record, and its engine builds no records');
+	return entries.map((entry) => (isBuiltEntry(entry) ? arena.node(entry.$record) : entry));
+}
+
+export function builtEntryOf(entry: object, arena: BuiltArena | undefined): BuiltEntry | undefined {
+	const built = builtRefOf(entry);
+	if (built === undefined || built.text !== undefined) return undefined;
+	if (built.arena !== arena) throw new Error('a built record is a side entry only of a node of the engine that built it');
+	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 
 /** Whether `value` is the node of a built record, which its builder checked as it wrote it. */
