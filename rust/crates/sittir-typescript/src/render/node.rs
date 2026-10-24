@@ -2756,6 +2756,24 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
         }
     }
 
+    fn sides(&self) -> Option<&::sittir_core::trivia::NodeTrivia<Self>> {
+        match self {
+            TriviaNode::CommentLine(t) => t.layout.as_deref()?.trivia.as_ref(),
+            TriviaNode::CommentBlock(t) => t.layout.as_deref()?.trivia.as_ref(),
+            TriviaNode::HtmlComment(t) => t.layout.as_deref()?.trivia.as_ref(),
+            _ => None,
+        }
+    }
+
+    fn sides_mut(&mut self) -> Option<&mut ::sittir_core::trivia::NodeTrivia<Self>> {
+        match self {
+            TriviaNode::CommentLine(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            TriviaNode::CommentBlock(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            TriviaNode::HtmlComment(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
+            _ => None,
+        }
+    }
+
     fn depth(&self) -> i32 {
         match self {
             TriviaNode::Indent => 1,

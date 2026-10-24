@@ -37,7 +37,12 @@ impl<T: Render> Render for TriviaEntry<T> {
 /// A depth member (`indent`, `dedent`) answers the change it makes to the
 /// excess indentation (`RenderSink::layout_depth`) instead, and
 /// `depth_member` is the member that makes the change `delta`'s sign names.
-pub trait TriviaSeam {
+/// A value that holds sides of its own answers them (`sides`), and the side
+/// holding it renders them as its neighbours there, splicing copies of the
+/// value and its sides into its own run (`spliced`): every value is `Clone`,
+/// and `'static`, so a coordinate's sides, which a sink answers type-erased,
+/// read back as the side's own type.
+pub trait TriviaSeam: Clone + 'static {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         None
     }
@@ -47,15 +52,29 @@ pub trait TriviaSeam {
     }
 
     #[must_use]
-    fn depth_member(_delta: i32) -> Option<Self>
-    where
-        Self: Sized,
-    {
+    fn depth_member(_delta: i32) -> Option<Self> {
+        None
+    }
+
+    fn sides(&self) -> Option<&NodeTrivia<Self>> {
+        None
+    }
+
+    fn sides_mut(&mut self) -> Option<&mut NodeTrivia<Self>> {
         None
     }
 }
 
 impl<T: TriviaSeam> TriviaEntry<T> {
+    /// Whether the entry holds a leading or trailing side of its own.
+    fn has_sides(&self) -> bool {
+        let held = |side: &Option<Vec<TriviaEntry<T>>>| side.as_ref().is_some_and(|entries| !entries.is_empty());
+        match &self.value {
+            SlotValue::Node(value) => value.sides().is_some_and(|sides| held(&sides.leading) || held(&sides.trailing)),
+            SlotValue::Coord(_) => false,
+        }
+    }
+
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         match &self.value {
             SlotValue::Node(value) => value.seam_gap(),
@@ -75,12 +94,7 @@ impl<T: TriviaSeam> TriviaEntry<T> {
     /// Whether the entry is layout: a whitespace member, merged into its
     /// gap, or a depth member.
     pub fn is_layout(&self) -> bool {
-        self.seam_gap().is_some() || self.depth() != 0
-    }
-
-    /// Whether the entry is layout that breaks the line.
-    fn breaks(&self) -> bool {
-        self.seam_gap().is_some_and(|(gap, _)| gap.breaks())
+        RunItem::is_layout(self)
     }
 }
 
@@ -406,10 +420,74 @@ fn whitespace(gap: LayoutKinds, text: Option<&str>, after_entry: bool, w: &mut d
     }
 }
 
+/// An entry of a side's run, as the side's render lays the run out: a
+/// layout entry takes the place of a join, any other renders between joins.
+trait RunItem {
+    fn depth(&self) -> i32;
+
+    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)>;
+
+    /// Whether the item is layout: a whitespace member, merged into its gap,
+    /// or a depth member.
+    fn is_layout(&self) -> bool {
+        self.seam_gap().is_some() || self.depth() != 0
+    }
+
+    /// Whether the item is layout that breaks the line.
+    fn breaks(&self) -> bool {
+        self.seam_gap().is_some_and(|(gap, _)| gap.breaks())
+    }
+}
+
+impl<T: TriviaSeam> RunItem for TriviaEntry<T> {
+    fn depth(&self) -> i32 {
+        TriviaEntry::depth(self)
+    }
+
+    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
+        TriviaEntry::seam_gap(self)
+    }
+}
+
+/// An item of a side's run once each entry's own sides are spliced in
+/// (`spliced`): an entry, or the coordinate of a parsed node whose own sides
+/// the run holds as its neighbours. A coordinate is a trivia entry's, which
+/// no position holds adjacent, and it writes its bytes between its edges, as
+/// a coordinate with no sides does.
+enum Spliced<T> {
+    Entry(TriviaEntry<T>),
+    Bare(crate::slot::NodeCoordinate),
+}
+
+impl<T: TriviaSeam> RunItem for Spliced<T> {
+    fn depth(&self) -> i32 {
+        match self {
+            Spliced::Entry(entry) => entry.depth(),
+            Spliced::Bare(_) => 0,
+        }
+    }
+
+    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
+        match self {
+            Spliced::Entry(entry) => entry.seam_gap(),
+            Spliced::Bare(_) => None,
+        }
+    }
+}
+
+impl<T: Render> Render for Spliced<T> {
+    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        match self {
+            Spliced::Entry(entry) => entry.render(w),
+            Spliced::Bare(coord) => coord.write_between_edges(w, false),
+        }
+    }
+}
+
 /// Render `entries` joined by `between`, a whitespace entry taking the
 /// place of the join at its gap. Each entry's own edges write what follows
 /// it; only the joins are written here.
-fn render_joined<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], between: LayoutKinds, w: &mut dyn RenderSink) -> RenderResult {
+fn render_joined<I: RunItem + Render>(entries: &[I], between: LayoutKinds, w: &mut dyn RenderSink) -> RenderResult {
     let mut after_entry = false;
     for entry in entries {
         if entry.depth() != 0 {
@@ -432,21 +510,91 @@ fn render_joined<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], between: La
 
 /// Hold a run of same-line trailing entries in the sink, joined as
 /// `render_joined` joins them.
-fn defer_run<T: Render + TriviaSeam>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
+fn defer_run<I: RunItem + Render>(run: &[I], w: &mut dyn RenderSink) -> RenderResult {
     w.defer_trailing(&mut |w| render_joined(run, LayoutKinds::SPACE, w))
+}
+
+/// `entries` with each entry's own sides as its neighbours: its leading
+/// entries before it and its trailing entries after it, theirs in turn. A
+/// side renders an entry's sides as entries of its own run, so they take part
+/// in its joins and its line layout. A node answers its sides itself; a
+/// coordinate's are its node's, as its tree holds them (`RenderSink::sides`).
+/// `None` when no entry is a coordinate or holds sides: the side renders as
+/// it is.
+fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], w: &dyn RenderSink) -> Result<Option<Vec<Spliced<T>>>, crate::render::CoordinateError> {
+    if !entries.iter().any(|entry| entry.has_sides() || matches!(entry.value, SlotValue::Coord(_))) {
+        return Ok(None);
+    }
+    let mut run = Vec::with_capacity(entries.len());
+    for entry in entries {
+        splice_into(entry.clone(), w, &mut run)?;
+    }
+    Ok(Some(run))
+}
+
+fn splice_into<T: TriviaSeam>(mut entry: TriviaEntry<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>) -> Result<(), crate::render::CoordinateError> {
+    let (leading, trailing, item) = match &mut entry.value {
+        SlotValue::Node(value) => {
+            let (leading, trailing) = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
+            (leading, trailing, Spliced::Entry(entry))
+        }
+        SlotValue::Coord(coord) => match w.sides(coord)? {
+            None => (None, None, Spliced::Bare(coord.clone())),
+            Some(frame) => match frame.as_any().downcast_ref::<NodeTrivia<T>>() {
+                Some(sides) => (sides.leading.clone(), sides.trailing.clone(), Spliced::Bare(coord.clone())),
+                None => (None, None, Spliced::Entry(entry)),
+            },
+        },
+    };
+    for side in leading.into_iter().flatten() {
+        splice_into(side, w, run)?;
+    }
+    run.push(item);
+    for side in trailing.into_iter().flatten() {
+        splice_into(side, w, run)?;
+    }
+    Ok(())
+}
+
+fn leading_run<I: RunItem + Render>(leading: &[I], w: &mut dyn RenderSink) -> RenderResult {
+    render_joined(leading, LayoutKinds::SPACE, w)?;
+    if leading.last().is_some_and(|entry| !entry.is_layout()) {
+        join(LayoutKinds::SPACE, w);
+    }
+    Ok(())
+}
+
+fn trailing_run<I: RunItem + Render>(trailing: &[I], w: &mut dyn RenderSink) -> RenderResult {
+    let own = trailing.iter().position(RunItem::breaks).unwrap_or(trailing.len());
+    let (same_line, own_line) = trailing.split_at(own);
+    if same_line.iter().all(RunItem::is_layout) {
+        render_joined(same_line, LayoutKinds::SPACE, w)?;
+    } else {
+        defer_run(same_line, w)?;
+        w.seat_trailing()?;
+    }
+    if !own_line.is_empty() {
+        w.seat_trailing()?;
+        let owner_seam = w.take_seam();
+        render_joined(own_line, LayoutKinds::SPACE, w)?;
+        if let Some(seam) = owner_seam {
+            w.restore_seam(seam);
+        }
+    }
+    Ok(())
 }
 
 impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// Leading entries, before the owner renders. Each layout entry takes the
     /// place of the join at its gap; where none stands, an entry joins the
-    /// next entry, or the owner, on its line.
+    /// next entry, or the owner, on its line. Each entry's own sides are its
+    /// neighbours in the run (`spliced`).
     pub fn render_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
         let leading = self.leading.as_deref().unwrap_or(&[]);
-        render_joined(leading, LayoutKinds::SPACE, w)?;
-        if leading.last().is_some_and(|entry| !entry.is_layout()) {
-            join(LayoutKinds::SPACE, w);
+        match spliced(leading, w)? {
+            Some(run) => leading_run(&run, w),
+            None => leading_run(leading, w),
         }
-        Ok(())
     }
 
     /// Trailing entries, after the owner renders, in source order. The run
@@ -455,38 +603,30 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// text to seat, and merges into the gap after the owner. The rest render after it, each layout
     /// entry taking the place of the join at its gap and an entry with none
     /// joining the one before it on its line; the seam the owner left (its
-    /// after edge) is written after them.
+    /// after edge) is written after them. Each entry's own sides are its
+    /// neighbours in the run (`spliced`).
     pub fn render_trailing(&self, w: &mut dyn RenderSink) -> RenderResult {
         let trailing = self.trailing.as_deref().unwrap_or(&[]);
-        let own = trailing.iter().position(TriviaEntry::breaks).unwrap_or(trailing.len());
-        let (same_line, own_line) = trailing.split_at(own);
-        if same_line.iter().all(TriviaEntry::is_layout) {
-            render_joined(same_line, LayoutKinds::SPACE, w)?;
-        } else {
-            defer_run(same_line, w)?;
-            w.seat_trailing()?;
+        match spliced(trailing, w)? {
+            Some(run) => trailing_run(&run, w),
+            None => trailing_run(trailing, w),
         }
-        if !own_line.is_empty() {
-            w.seat_trailing()?;
-            let owner_seam = w.take_seam();
-            render_joined(own_line, LayoutKinds::SPACE, w)?;
-            if let Some(seam) = owner_seam {
-                w.restore_seam(seam);
-            }
-        }
-        Ok(())
     }
 
     /// The inner entries, where the owner renders its inner site: one per
     /// line when the site starts a line (the start of a block body, which the
     /// body's own indent and dedent frame, or output standing at a line
     /// start, as at the grammar root), and joined by spaces anywhere else.
+    /// Each entry's own sides are its neighbours in the run (`spliced`).
     pub fn render_inner(&self, w: &mut dyn RenderSink) -> RenderResult {
         let Some(entries) = self.inner.as_ref() else {
             return Ok(());
         };
         let between = if w.at_body_start() || w.ends_line() { LayoutKinds::NEWLINE } else { LayoutKinds::SPACE };
-        render_joined(entries, between, w)
+        match spliced(entries, w)? {
+            Some(run) => render_joined(&run, between, w),
+            None => render_joined(entries, between, w),
+        }
     }
 }
 
@@ -636,5 +776,47 @@ mod tests {
     #[test]
     fn a_balanced_side_keeps_every_depth_member() {
         assert_eq!(changed(TriviaSide::Leading, "\na\n-b\n++c\n-"), "a\n-b\n++c\n-");
+    }
+
+    /// An entry by its name, with sides of its own.
+    #[derive(Debug, Clone, PartialEq)]
+    struct Sided(char, super::NodeTrivia<Sided>);
+
+    impl super::TriviaSeam for Sided {
+        fn sides(&self) -> Option<&super::NodeTrivia<Self>> {
+            Some(&self.1)
+        }
+
+        fn sides_mut(&mut self) -> Option<&mut super::NodeTrivia<Self>> {
+            Some(&mut self.1)
+        }
+    }
+
+    fn sided(name: char, leading: Vec<super::TriviaEntry<Sided>>, trailing: Vec<super::TriviaEntry<Sided>>) -> super::TriviaEntry<Sided> {
+        super::TriviaEntry::new(crate::slot::SlotValue::Node(Sided(name, super::NodeTrivia { leading: Some(leading), trailing: Some(trailing), inner: None })))
+    }
+
+    /// Each item's name, and whether it still holds sides of its own.
+    fn names(run: &[super::Spliced<Sided>]) -> Vec<(char, bool)> {
+        run.iter()
+            .map(|item| match item {
+                super::Spliced::Entry(entry @ super::TriviaEntry { value: crate::slot::SlotValue::Node(Sided(name, _)), .. }) => (*name, entry.has_sides()),
+                _ => ('?', false),
+            })
+            .collect()
+    }
+
+    #[test]
+    fn a_side_holds_each_entry_s_own_sides_as_its_neighbours_at_every_depth() {
+        let mut out = String::new();
+        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+        let plain = vec![sided('a', vec![], vec![]), sided('b', vec![], vec![])];
+        assert!(matches!(super::spliced(&plain, &w), Ok(None)), "a side whose entries hold no sides renders as it is");
+        let a = sided('a', vec![], vec![]);
+        let e = sided('e', vec![], vec![]);
+        let nested = vec![sided('c', vec![sided('b', vec![a], vec![])], vec![sided('d', vec![], vec![e])]), sided('f', vec![], vec![])];
+        let run = super::spliced(&nested, &w).expect("a run").expect("spliced");
+        let spliced: Vec<_> = "abcdef".chars().map(|name| (name, false)).collect();
+        assert_eq!(names(&run), spliced, "each entry in order, none holding sides of its own");
     }
 }

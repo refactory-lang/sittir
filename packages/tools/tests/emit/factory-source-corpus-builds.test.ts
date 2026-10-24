@@ -40,6 +40,18 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 		expect(rendered).toContain('x.class');
 	});
 
+	it('typescript: an optional or definite marker on a class member sits tight against its name', async () => {
+		const members = ['public readonly async bar?<T>();', 'abstract baz?(): void;', 'qux?() {}', 'requiredProp!: string;'];
+		const { rendered } = await rebuildAndRender('typescript', `abstract class A {\n${members.map((m) => `  ${m}\n`).join('')}}\n`);
+		for (const member of members) expect(rendered).toContain(member);
+	});
+
+	it('typescript: a definite variable and an optional tuple element sit tight against their marker', async () => {
+		const lines = ['let x!: number;', 'type T = [x?: number, number?];'];
+		const { rendered } = await rebuildAndRender('typescript', lines.map((l) => `${l}\n`).join(''));
+		for (const line of lines) expect(rendered).toContain(line);
+	});
+
 	it('typescript: an owner forwarding to a list with options of its own is printed with the list built as its value, its options second', async () => {
 		const { source, rendered } = await rebuildAndRender('typescript', 'class A {\n  static {\n    x = 1;\n  }\n}\n');
 		expect(source).toContain('ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(');
