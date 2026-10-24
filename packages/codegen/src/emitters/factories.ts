@@ -9,7 +9,7 @@ import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
-import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID, hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
 	interiorSlotGuards,
 	numberInputType,
@@ -65,11 +65,13 @@ import {
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
+	isTextEnum,
 	classifyFactoryShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
 	classifyFactoryEmission,
 	forwardedTargetKind,
+	forwardsTargetArguments,
 	ownTextLeaf,
 	type OwnTextLeaf,
 	resolveDirectFactorySlot,
@@ -338,8 +340,18 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 
 function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	const kind = resolveFieldStorageInfo(f, nodeMap).kind;
-	if (kind === 'boolean') return 'a boolean';
-	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
+	if (kind === 'boolean' || kind === 'bitflag' || kind === 'kindEnum') return undefined;
+	return strictNodeExpectation(f, nodeMap) ?? (kind === 'mixedEnum' ? 'a kind id' : undefined);
+}
+
+function storedKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] {
+	const info = resolveFieldStorageInfo(f, nodeMap);
+	const ids = info.enumKinds.map((kind) => {
+		const id = info.enumKindsById.get(kind) ?? nodeMap.nodes.get(kind)?.kindId;
+		if (id === undefined) throw new Error(`${f.propertyName}: kind ${kind} stores no kind id`);
+		return id;
+	});
+	return (hasBlankArm(f) ? [BLANK_KIND_ID, ...ids] : ids).sort((a, b) => a - b);
 }
 
 function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {
@@ -1636,20 +1648,35 @@ export function compoundStructureRow(
 	const nonEmpty = stored
 		.filter((f) => needsNonEmptyHoist(f, nodeMap))
 		.map((f) => [f.storageKey, `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`] as const);
-	const nodeOnly = stored.flatMap((f) => {
-		const expected = bareTextExpectation(f, nodeMap);
-		if (expected === undefined) return [];
-		const kinds = slotNodeKindIds(f, nodeMap);
-		return [
-			kinds === undefined
-				? ([f.storageKey, bareTextLabel(f, node.typeName), expected] as const)
-				: ([f.storageKey, bareTextLabel(f, node.typeName), expected, kinds] as const)
-		];
-	});
+	const checks = slotStorageChecks(
+		emittedSlots(node.slots, spreadFacts, registered).map((f) => [f, f.storageKey] as const),
+		node.typeName,
+		nodeMap
+	);
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
 	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
-	return structureRow(node.kind, { required, nonEmpty, nodeOnly, config: configFirst ? configKeysOf(node) : [], lists });
+	return structureRow(node.kind, { required, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
+}
+
+function slotStorageChecks(
+	slots: readonly (readonly [slot: AssembledNonterminal, storageKey: string])[],
+	typeName: string,
+	nodeMap: NodeMap
+): Required<Pick<StructureRow, 'nodeOnly' | 'booleans' | 'kindIds' | 'texts'>> {
+	const storageOf = (f: AssembledNonterminal) => resolveFieldStorageInfo(f, nodeMap);
+	const label = (f: AssembledNonterminal) => bareTextLabel(f, typeName);
+	return {
+		nodeOnly: slots.flatMap(([f, key]) => {
+			const expected = bareTextExpectation(f, nodeMap);
+			if (expected === undefined) return [];
+			const kinds = slotNodeKindIds(f, nodeMap);
+			return [kinds === undefined ? ([key, label(f), expected] as const) : ([key, label(f), expected, kinds] as const)];
+		}),
+		booleans: slots.filter(([f]) => storageOf(f).kind === 'boolean').map(([f, key]) => [key, label(f)] as const),
+		kindIds: slots.filter(([f]) => storageOf(f).kind === 'kindEnum').map(([f, key]) => [key, label(f), storedKindIds(f, nodeMap)] as const),
+		texts: slots.filter(([f]) => isTextEnum(storageOf(f))).map(([f, key]) => [key, label(f), storageOf(f).texts] as const)
+	};
 }
 
 export function structureRowOfKind(
@@ -1658,7 +1685,7 @@ export function structureRowOfKind(
 	kindEntries: readonly KindEnumEntry[]
 ): StructureRow | undefined {
 	const node = nodeMap.nodes.get(kind);
-	if (node instanceof AssembledList) return listStructureRow(node);
+	if (node instanceof AssembledList) return listStructureRow(node, nodeMap);
 	return node !== undefined && isAuthoredCompound(node) ? compoundStructureRow(node, nodeMap, kindEntries) : undefined;
 }
 
@@ -1675,15 +1702,16 @@ export function admitStatement(
 	return [`  currentHandle()?.admit(${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${args}${keys});`];
 }
 
-export function listStructureRow(node: AssembledList): StructureRow | undefined {
+export function listStructureRow(node: AssembledList, nodeMap: NodeMap): StructureRow | undefined {
 	const elements = canonicalSeparatedListField(node);
 	return structureRow(node.kind, {
 		nonEmpty: node.nonEmpty ? [[listContentStorageKey(node), `${node.kind}.elements`]] : [],
+		...slotStorageChecks([[elements, listContentStorageKey(node)]], node.typeName, nodeMap),
 		lists: [[elements.propertyName, hasOptionalElements(elements), 0]]
 	});
 }
 
-function structureRow(kind: string, checks: { readonly [K in 'required' | 'nonEmpty' | 'nodeOnly' | 'config' | 'lists']?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
+function structureRow(kind: string, checks: { readonly [K in Exclude<keyof StructureRow, 'kind'>]?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
 	const present = Object.entries(checks).filter(([, entries]) => entries.length > 0);
 	return present.length === 0 ? undefined : { kind, ...Object.fromEntries(present) };
 }
@@ -1859,7 +1887,7 @@ function emitFieldCarryingFactory(
 			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
-		if (registered.length > 0) {
+		if (!forwardsTargetArguments(node, nodeMap)) {
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
 					`  if (args.length === 0 || args[0] === undefined) {`,
@@ -2800,7 +2828,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 	emitSeparatedList(node: AssembledList): void {
 		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
-		this.#recordStructure(node, listStructureRow(node));
+		this.#recordStructure(node, listStructureRow(node, this.#nodeMap));
 	}
 
 	#recordStructure(node: AssembledNode, row: StructureRow | undefined): void {
