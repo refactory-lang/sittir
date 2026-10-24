@@ -1,4 +1,5 @@
-import type { TreeHandle } from './read.ts';
+import { treeHandleOf } from './node-data.ts';
+import { decodeIndex, decodeTree, type TreeHandle } from './read.ts';
 
 /** How a route reaches a node: as itself, or as the content of an alias envelope that shares its parser node. */
 export type Role = 'node' | 'aliasContent';
@@ -29,4 +30,20 @@ export function register(tree: TreeHandle, index: number, role: Role, wrapper: o
 	const ref = new WeakRef(wrapper);
 	wrappers.set(key, ref);
 	collected.register(wrapper, { wrappers, key, ref });
+}
+
+/**
+ * The node `value` reads as on `tree`: the wrapper already registered at its index and role, or
+ * `wrap(value, tree)`, registered there. A value that names no index of `tree` is wrapped and not
+ * registered.
+ */
+export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
+	const handle = treeHandleOf(value);
+	if (handle === undefined || decodeTree(handle) !== tree.id) return wrap(value, tree);
+	const index = decodeIndex(handle);
+	const known = registered(tree, index, role);
+	if (known !== undefined) return known as T;
+	const wrapper = wrap(value, tree);
+	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
+	return wrapper;
 }

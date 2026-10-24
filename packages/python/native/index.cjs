@@ -592,6 +592,7 @@ module.exports.SIDE_FIELD_AT = nativeBinding.SIDE_FIELD_AT
 module.exports.SIDE_FIELD_DELIMITER = nativeBinding.SIDE_FIELD_DELIMITER
 module.exports.SIDE_FIELD_EDGES = nativeBinding.SIDE_FIELD_EDGES
 module.exports.SIDE_FIELD_SEPARATOR = nativeBinding.SIDE_FIELD_SEPARATOR
+module.exports.SIDE_FIELD_SEPARATOR_KIND = nativeBinding.SIDE_FIELD_SEPARATOR_KIND
 module.exports.SIDE_FIELD_SIDES = nativeBinding.SIDE_FIELD_SIDES
 module.exports.SIDE_FIELD_SPAN = nativeBinding.SIDE_FIELD_SPAN
 module.exports.SIDE_WORDS_AT = nativeBinding.SIDE_WORDS_AT

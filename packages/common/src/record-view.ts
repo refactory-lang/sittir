@@ -1,5 +1,5 @@
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
-import { decodeIndex, encodeHandle, type RecordReader, type TreeHandle } from './read.ts';
+import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import {
 	decodeCell,
 	decodeListCell,
@@ -27,8 +27,14 @@ export function recordOf(value: unknown): number | undefined {
 	return typeof at === 'number' ? at : undefined;
 }
 
-function recordsOf(tree: TreeHandle): RecordReader {
-	if (tree.records === undefined) throw new Error('a record view needs a tree its engine reads as records');
+function recordsOf(tree: TreeHandle): RecordWords {
+	const records = tree.records ?? tree.built;
+	if (records === undefined) throw new Error('a record view needs a tree its engine reads as records, or a built arena');
+	return records;
+}
+
+function parsedRecordsOf(tree: TreeHandle): RecordReader {
+	if (tree.records === undefined) throw new Error('a built record names no row of a parsed tree');
 	return tree.records;
 }
 
@@ -39,7 +45,7 @@ function idOf(tree: TreeHandle): number {
 
 /** The words of the record at `at`, `length` of them, and where the record starts in them. */
 function wordsAt(
-	records: RecordReader,
+	records: RecordWords,
 	at: number,
 	length: number
 ): { readonly words: Uint32Array; readonly start: number } {
@@ -47,7 +53,7 @@ function wordsAt(
 }
 
 /** The words of the side record at `side`, long enough for every field before a list's delimiters setting and the setting itself. */
-function sideWordsAt(records: RecordReader, side: number): { readonly words: Uint32Array; readonly start: number } {
+function sideWordsAt(records: RecordWords, side: number): { readonly words: Uint32Array; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;
 	const length = records.format.sideBeforeDelimiter.reduce(
@@ -58,14 +64,14 @@ function sideWordsAt(records: RecordReader, side: number): { readonly words: Uin
 }
 
 /** The address of the side record of the record at `at`, 0 for none. */
-function sideOf(records: RecordReader, at: number): number {
+function sideOf(records: RecordWords, at: number): number {
 	const { words, start } = wordsAt(records, at, 2);
 	return words[start + 1]!;
 }
 
 /** The coordinate of the row the node at `index` is, spanning `span`: its kind and subtree end as a read names them (`RecordReader.coordinate`). */
 function coordinateAt(tree: TreeHandle, index: number, span: ByteSpan): NodeCoordinate {
-	const { kind, end } = recordsOf(tree).coordinate(index);
+	const { kind, end } = parsedRecordsOf(tree).coordinate(index);
 	return { $treeHandle: encodeHandle(idOf(tree), index), $end: end, $span: span, $type: kind };
 }
 
@@ -80,7 +86,7 @@ function rowCoordinate(tree: TreeHandle, records: RecordReader, side: number, ki
 
 /** The record at `at` of `tree` as a stub: its kind and its coordinate, read from its own words. */
 export function recordStub(tree: TreeHandle, at: number): RecordStub {
-	const records = recordsOf(tree);
+	const records = parsedRecordsOf(tree);
 	const { words, start } = wordsAt(records, at, 2);
 	const kind = words[start]!;
 	return { $type: kind, [RECORD]: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) } };
@@ -112,12 +118,17 @@ export function rowOf(
 	return row;
 }
 
+/** Makes `row` what the writes of the built view `node` go through: the setters and trivia its builder made. */
+export function bindRow(node: object, row: Record<string, unknown>): void {
+	rows.set(node, row);
+}
+
 /** The read data of the row a record stub or view names, read as an object (`RecordReader.object`). */
 export function rowData(stub: object, tree: TreeHandle): unknown {
 	const at = coordinateOf(stub);
 	if (at === undefined) throw new Error('a record view names no row');
 	const kind = (stub as { readonly $type?: number }).$type;
-	let row = recordsOf(tree).object(decodeIndex(at.$treeHandle), 1);
+	let row = parsedRecordsOf(tree).object(decodeIndex(at.$treeHandle), 1);
 	while (row !== null && typeof row === 'object') {
 		if ((row as { readonly $type?: number }).$type === kind) return row;
 		row = aliasContentOf(row);
@@ -168,14 +179,18 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 		case 'parsedText':
 			return tree.text?.(cell.span);
 		case 'child':
+			if (tree.built !== undefined) return cell.link === undefined ? tree.built.node(cell.at) : tree.built.linked(cell.link, cell.at);
 			if (cell.link !== undefined && cell.link !== idOf(tree))
 				throw new Error(`a parsed record names a record of tree ${cell.link}`);
 			return carryReadTree(holder, recordStub(tree, cell.at));
 		case 'unit':
 			return cell.kind;
 		case 'builtLeaf':
+			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
+			return tree.built.leaf(cell.record);
 		case 'builtText':
-			throw new Error('a parsed record holds no built cell');
+			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
+			return tree.built.textOf(cell.offset, cell.len);
 	}
 }
 

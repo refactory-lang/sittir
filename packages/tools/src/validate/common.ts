@@ -12,8 +12,8 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { coordinateOf, hydrateTriviaEntry } from '@sittir/common/utils';
-import { scopeBuilders } from '@sittir/common/engine';
+import { coordinateOf, hydrateTriviaEntry, isBuiltNode } from '@sittir/common/utils';
+import { scopeBuilders, useRecordConstruction } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
@@ -199,8 +199,32 @@ export function validationStorage(): NodeStorage {
 	return validationNodeStorage;
 }
 
+export type Construction = 'objects' | 'records';
+
+const CONSTRUCTIONS: readonly Construction[] = ['objects', 'records'];
+
+export function parseConstruction(value: string): Construction {
+	const construction = CONSTRUCTIONS.find((known) => known === value);
+	if (construction === undefined) throw new Error(`construction '${value}' is none of ${CONSTRUCTIONS.join(', ')}`);
+	return construction;
+}
+
+let validationConstruction: Construction = 'objects';
+
+export function useValidationConstruction(construction: Construction): void {
+	if (construction === validationConstruction) return;
+	if (cachedNativeEngines.size > 0) {
+		throw new Error(`validation builds nodes as '${validationConstruction}' already; choose '${construction}' before the first engine loads`);
+	}
+	if (construction === 'records' && validationNodeStorage !== 'arena') {
+		throw new Error("record construction needs an engine reading trees as records: choose 'arena' node storage first");
+	}
+	validationConstruction = construction;
+}
+
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
 	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage });
+	if (validationConstruction === 'records') useRecordConstruction(engine, await requireGrammarModule(grammar, 'factories/records.ts'));
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
@@ -749,6 +773,19 @@ export function walkWrappedTree(
 
 export function materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode {
 	return materializeValue(root, accessorOf, onAccessorThrow) as AnyUntypedNode;
+}
+
+export function materializeBuildInput(
+	root: unknown,
+	accessorOf: SlotAccessorOf,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyUntypedNode {
+	const data = materialize(root, accessorOf, onAccessorThrow);
+	return validationConstruction === 'records' ? holdingTreeOf(root, data) : data;
+}
+
+export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
+	return validationConstruction === 'records' ? materialize(node, accessorOf) : node;
 }
 
 export function materializeDetached(
@@ -1733,12 +1770,11 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record
 		: data.$type !== undefined
 			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 			: undefined;
-	const namedSlotEntries: [string, unknown][] = [];
-	for (const key of Object.keys(rec)) {
-		if (key.startsWith('_')) {
-			namedSlotEntries.push([key.slice(1), rec[key]]);
-		}
-	}
+	const namedSlotEntries: [string, unknown][] = isBuiltNode(rec)
+		? slotValuesOf(rec as TypedNode, opts.accessorOf).map(([key, value]): [string, unknown] => [key.slice(1), value])
+		: Object.keys(rec)
+				.filter((key) => key.startsWith('_'))
+				.map((key): [string, unknown] => [key.slice(1), rec[key]]);
 	if (unprojected) {
 		for (const [name, value] of Object.entries(projectInterior(text!, interior, opts.shownKind!))) {
 			if (value !== undefined && value !== false) namedSlotEntries.push([name, value]);

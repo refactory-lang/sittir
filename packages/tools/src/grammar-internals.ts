@@ -17,6 +17,7 @@ export interface GrammarModules {
 		kindIdFromName(name: string): number;
 	};
 	'factories/raw.ts': Readonly<Record<string, unknown>> & { readonly _factoryMap: Record<string, FactoryEntry> };
+	'factories/records.ts': Readonly<Record<string, unknown>>;
 	'factories/coerce.ts': { readonly _fromMap: Record<string, (input: unknown) => unknown> };
 	'wrap.ts': {
 		wrapNode(data: unknown, tree: TreeHandle): unknown;
@@ -31,6 +32,7 @@ export interface GrammarModules {
 const DECLARED_EXPORTS = {
 	'types.ts': ['TSKindId', 'KIND_NAMES', 'KIND_DISPLAY_NAMES', 'kindIdFromName'],
 	'factories/raw.ts': ['_factoryMap'],
+	'factories/records.ts': ['_factoryMap'],
 	'factories/coerce.ts': ['_fromMap'],
 	'wrap.ts': ['wrapNode', 'hydrate'],
 	'ir.ts': ['ir'],
@@ -39,7 +41,7 @@ const DECLARED_EXPORTS = {
 	'utils.ts': ['triviaFacts', 'querySlots']
 } as const satisfies { readonly [K in keyof GrammarModules]: readonly (keyof GrammarModules[K] & string)[] };
 
-export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/bundle.ts';
+export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/bundle.ts' | 'factories/objects.ts';
 
 export function grammarModulePath(grammar: string, file: GrammarFile): string | undefined {
 	if (!isGrammar(grammar)) return undefined;

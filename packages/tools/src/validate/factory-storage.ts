@@ -34,7 +34,8 @@ import {
 	loadLanguageForGrammar,
 	buildReadHandle,
 	walkWrappedTree,
-	materialize,
+	materializeBuildInput,
+	builtStorageOf,
 	loadSlotAccessorOf,
 	type SlotAccessorOf,
 	readNodeOf,
@@ -588,7 +589,7 @@ export async function validateFactoryStorage(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = measureRoundtrip(options.profile, 'read', () => materialize(cand.node, accessorOf));
+				const referenceData = measureRoundtrip(options.profile, 'read', () => materializeBuildInput(cand.node, accessorOf));
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
@@ -713,7 +714,7 @@ export async function validateFactoryStorage(
 				if (factoryData === null) continue;
 				const diff = compareNodeStorage(
 					referenceData as unknown as Record<string, unknown>,
-					factoryData as unknown as Record<string, unknown>,
+					builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
 					'',
 					{ factoryShapes, kindNameFromId }
 				);

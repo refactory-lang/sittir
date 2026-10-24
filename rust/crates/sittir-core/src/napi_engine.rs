@@ -625,6 +625,8 @@ macro_rules! napi_engine {
             pub const SIDE_WORDS_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR_WORDS;
             #[::napi_derive::napi]
             pub const SIDE_FIELD_DELIMITER: u32 = $crate::arena::side::field::DELIMITER;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_SEPARATOR_KIND: u32 = $crate::arena::side::field::SEPARATOR_KIND;
 
             /// The address of the record of the node at `index` of `parsed`
             /// (`ParsedTree::read_record`), `None` for a node with no record.

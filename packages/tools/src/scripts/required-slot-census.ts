@@ -23,7 +23,7 @@ export const admittingSlots = async (
 		ts.sys,
 		dirname(configPath)
 	);
-	const rawPath = grammarModulePath(grammar, 'factories/raw.ts');
+	const rawPath = grammarModulePath(grammar, 'factories/objects.ts');
 	if (rawPath === undefined) throw new Error(`Missing raw factories for ${grammar}`);
 	const probePath = resolve(root, `packages/${grammar}/src/zz-loose-probe.ts`);
 	const options = { ...parsed.options, strict: true, noEmit: true };

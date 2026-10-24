@@ -1,8 +1,10 @@
+import type { BuiltArena } from './built-arena.ts';
 import type {
 	AnyUntypedNode,
 	EngineIdentity,
 	LanguageAPI,
 	LanguageHooks,
+	NodeStorage,
 	Rendered
 } from '@sittir/types';
 import { assertHoldsTree, treeOf } from './tree-token.ts';
@@ -15,8 +17,14 @@ export interface LiveEngine extends EngineIdentity {
 
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
+	/** The arena an engine's record builders write into. */
+	builtArena?: BuiltArena;
+	/** The record builder module the engine's builders dispatch to; without one they build objects. */
+	records?: object;
 	readonly settle: <T>(node: T) => T;
 	readonly admit: (kindId: unknown, args: readonly unknown[], declared?: readonly string[]) => void;
+	/** Checks the values a builder of `kind` stores before it writes them as a record, for an engine verifying structure at run time. */
+	readonly verifyStored?: (kind: number, stored: Readonly<Record<string, unknown>>) => void;
 }
 
 /** The handle a parsed tree is bound to (`bindTree`): the engine that read it, which hydrates the coordinates it names. */
@@ -41,12 +49,25 @@ export function foreignEngine(value: unknown, identity: EngineIdentity): EngineH
 	return stamp !== undefined && !sameLanguage(stamp, identity) ? stamp : undefined;
 }
 
+const engineStorages = new WeakMap<object, NodeStorage>();
+
+/** Records how `engine`, a live engine or its identity, stores its nodes, which admission compares. */
+export function stampEngineStorage(engine: object, storage: NodeStorage): void {
+	engineStorages.set(engine, storage);
+}
+
 export function admitChildren(handle: EngineHandle, kind: string, slots: Readonly<Record<string, unknown>>): void {
+	const ours = engineStorages.get(handle.current);
 	for (const [slot, value] of Object.entries(slots)) {
 		for (const child of Array.isArray(value) ? value : [value]) {
-			const foreign = foreignEngine(child, handle.current);
-			if (foreign !== undefined) {
-				throw new Error(`cannot build a ${handle.current.language.name} ${kind} with a ${foreign.language.name} node in its ${slot}`);
+			const engine = engineOf(child);
+			if (engine === undefined) continue;
+			if (!sameLanguage(engine, handle.current)) {
+				throw new Error(`cannot build a ${handle.current.language.name} ${kind} with a ${engine.language.name} node in its ${slot}`);
+			}
+			const theirs = engineStorages.get(engine);
+			if (ours !== undefined && theirs !== undefined && theirs !== ours) {
+				throw new Error(`cannot build a ${kind} with a node of an engine storing nodes as ${theirs} in its ${slot}; this engine stores them as ${ours}`);
 			}
 		}
 	}
@@ -71,6 +92,29 @@ export function inEngine<T>(handle: EngineHandle, fn: () => T): T {
 
 export function currentHandle(): EngineHandle | undefined {
 	return active;
+}
+
+/** A builder that calls the builder `pick` returns on each call: what a language's `raw.ts` exports, so the engine in scope decides which backend builds. */
+export function dispatched<F extends (...args: never[]) => unknown>(pick: () => F): F {
+	return function (this: unknown, ...args: unknown[]): unknown {
+		return Reflect.apply(pick(), this, args);
+	} as unknown as F;
+}
+
+/** The record builder module of the engine in scope, `undefined` when it builds objects. */
+export function recordBuilders<T extends object>(): T | undefined {
+	return currentHandle()?.records as T | undefined;
+}
+
+/**
+ * The built arena of `handle`, the one a record builder writes into.
+ *
+ * @throws When no engine with record construction is in scope.
+ */
+export function builtArenaOf(handle: EngineHandle | undefined): BuiltArena {
+	const arena = handle?.builtArena;
+	if (arena === undefined) throw new Error('a record builder runs only in an engine that builds records');
+	return arena;
 }
 
 export function isLive(current: EngineHandle['current']): current is LiveEngine {

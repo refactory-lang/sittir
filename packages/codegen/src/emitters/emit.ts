@@ -63,6 +63,8 @@ export interface EmitAllConfig {
 
 export interface EmitAllResult {
 	factories: string;
+	factoriesRecords: string;
+	factoriesDispatch: string;
 	overlays: Record<OverlayName, string>;
 	factoriesBundle: string;
 	factoriesIndex: string;
@@ -169,6 +171,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	);
 
 	const factories = factoryEmitter.finalize();
+	const factoriesRecords = factoryEmitter.finalizeRecords();
+	const factoriesDispatch = factoryEmitter.finalizeDispatch(factories);
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
 	const templates = templateEmitter.finalize();
@@ -203,6 +207,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 
 	return {
 		factories,
+		factoriesRecords,
+		factoriesDispatch,
 		overlays,
 		factoriesBundle,
 		factoriesIndex,
