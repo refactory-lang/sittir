@@ -271,6 +271,10 @@ export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
 export const buildIndent = O.buildIndent;
 export const buildDedent = O.buildDedent;
+export const buildReceiverParameterDeclaration = dispatched(() => backend().buildReceiverParameterDeclaration);
+export const buildAttributedParameterReceiver = dispatched(() => backend().buildAttributedParameterReceiver);
+export const buildParametersElementsReceiver = dispatched(() => backend().buildParametersElementsReceiver);
+export const buildParametersElementsReceiverGroup = dispatched(() => backend().buildParametersElementsReceiverGroup);
 export const buildStringClose = dispatched(() => backend().buildStringClose);
 export const buildErrorSentinel = dispatched(() => backend().buildErrorSentinel);
 export const buildTypeIdentifier = dispatched(() => backend().buildTypeIdentifier);
@@ -539,6 +543,10 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	receiver_parameter_declaration: buildReceiverParameterDeclaration,
+	attributed_parameter_receiver: buildAttributedParameterReceiver,
+	parameters_elements_receiver: buildParametersElementsReceiver,
+	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
 	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,

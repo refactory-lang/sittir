@@ -189,6 +189,19 @@ export interface KindMembers {
 		| TSKindId.NumberBigintDecimal;
 	[TSKindId.MetaProperty]: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta;
 	[TSKindId.Pattern]: TSKindId.LhsExpression | TSKindId.RestPattern;
+	[TSKindId.MethodDefinition]:
+		| TSKindId.MethodDefinitionPlain
+		| TSKindId.MethodDefinitionGetter
+		| TSKindId.MethodDefinitionSetter;
+	[TSKindId.PublicFieldDefinition]: TSKindId.PublicFieldDefinitionPlain | TSKindId.PublicFieldDefinitionAccessor;
+	[TSKindId.MethodSignature]:
+		| TSKindId.MethodSignaturePlain
+		| TSKindId.MethodSignatureGetter
+		| TSKindId.MethodSignatureSetter;
+	[TSKindId.AbstractMethodSignature]:
+		| TSKindId.AbstractMethodSignaturePlain
+		| TSKindId.AbstractMethodSignatureGetter
+		| TSKindId.AbstractMethodSignatureSetter;
 	[TSKindId.Type]:
 		| TSKindId.TypeIdentifier
 		| TSKindId.ThisType
@@ -549,9 +562,6 @@ export interface IsGuards {
 	restPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RestPattern };
-	methodDefinition<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinition };
 	pair<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Pair };
@@ -561,18 +571,9 @@ export interface IsGuards {
 	computedPropertyName<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComputedPropertyName };
-	publicFieldDefinition<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinition };
 	nonNullExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonNullExpression };
-	methodSignature<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignature };
-	abstractMethodSignature<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignature };
 	functionSignature<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionSignature };
@@ -828,6 +829,9 @@ export interface IsGuards {
 	catchClauseGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CatchClauseGroup };
+	getAccessorSignature<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GetAccessorSignature };
 	ambientDeclarationGlobal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationGlobal };
@@ -1012,6 +1016,59 @@ export interface IsGuards {
 	forHeaderUsingKind<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderUsingKind };
+	formalParametersSetAccessorSignature<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
+	formalParametersElementsSetAccessorSignature<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & {
+		readonly $type: TSKindId.FormalParametersElementsSetAccessorSignature;
+	};
+	setterParameter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SetterParameter };
+	methodDefinitionPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionPlain };
+	methodDefinitionGetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionGetter };
+	methodDefinitionSetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionSetter };
+	methodSignaturePlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignaturePlain };
+	methodSignatureGetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureGetter };
+	methodSignatureSetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureSetter };
+	abstractMethodSignaturePlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignaturePlain };
+	abstractMethodSignatureGetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureGetter };
+	abstractMethodSignatureSetter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureSetter };
+	publicFieldDefinitionPlain<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionPlain };
+	publicFieldDefinitionAccessor<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionAccessor };
+	receiverParameterDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReceiverParameterDeclaration };
+	formalParametersElementsReceiver<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersElementsReceiver };
+	formalParametersElementsReceiverGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersElementsReceiverGroup };
 	statementIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StatementIdentifier };
@@ -1292,6 +1349,55 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RestPattern };
 	};
+	readonly methodDefinition: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.MethodDefinition]>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionPlain };
+		getter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionGetter };
+		setter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodDefinitionSetter };
+	};
+	readonly publicFieldDefinition: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is NarrowTo<T, KindMembers[TSKindId.PublicFieldDefinition]>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionPlain };
+		accessor<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PublicFieldDefinitionAccessor };
+	};
+	readonly methodSignature: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.MethodSignature]>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignaturePlain };
+		getter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureGetter };
+		setter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MethodSignatureSetter };
+	};
+	readonly abstractMethodSignature: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is NarrowTo<T, KindMembers[TSKindId.AbstractMethodSignature]>;
+		plain<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignaturePlain };
+		getter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureGetter };
+		setter<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AbstractMethodSignatureSetter };
+	};
 	type<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Type]>;
 	primaryType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.PrimaryType]>;
 	readonly indexSignature: {
@@ -1328,19 +1434,6 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumAssignment };
 	};
-	layout<T extends { readonly $type: number } | number>(
-		v: T
-	): v is NarrowTo<
-		T,
-		| TSKindId.Tight
-		| TSKindId.Space
-		| TSKindId.Tab
-		| TSKindId.Newline
-		| TSKindId.Blankline
-		| TSKindId.DoubleBlankline
-		| TSKindId.Indent
-		| TSKindId.Dedent
-	>;
 	readonly exportStatementDefault: {
 		<T extends { readonly $type: number } | number>(
 			v: T
@@ -1388,6 +1481,19 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NumberBigintDecimal };
 	};
+	layout<T extends { readonly $type: number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
 	import<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Import>;
 	emptyStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyStatement>;
 	optionalChain<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.OptionalChain>;
@@ -1433,6 +1539,9 @@ export interface IsGuards {
 	metaPropertyImportMeta<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.MetaPropertyImportMeta>;
+	formalParametersGetAccessorSignature<T extends { readonly $type: number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.FormalParametersGetAccessorSignature>;
 	htmlComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HtmlComment };
@@ -1456,48 +1565,52 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorRecovery };
 }
 
-const _supertype_exportStatement_ids = new Set<number>([427, 428, 400, 399]);
+const _supertype_exportStatement_ids = new Set<number>([429, 430, 402, 401]);
 const _supertype_declaration_ids = new Set<number>([
 	247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([413, 414]);
+const _supertype_importSpecifier_ids = new Set<number>([415, 416]);
 const _supertype_statement_ids = new Set<number>([
-	427, 428, 400, 399, 196, 222, 204, 247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311, 209,
+	429, 430, 402, 401, 196, 222, 204, 247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311, 209,
 	211, 212, 213, 214, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([434, 435]);
-const _supertype_forHeader_ids = new Set<number>([438, 439, 440, 441]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([415, 416]);
+const _supertype_variableDeclarator_ids = new Set<number>([436, 437]);
+const _supertype_forHeader_ids = new Set<number>([440, 441, 442, 443]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([417, 418]);
 const _supertype_expression_ids = new Set<number>([
-	304, 305, 306, 314, 303, 258, 257, 415, 416, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
-	420, 421, 272, 274, 279, 280, 281, 236, 240, 246, 250, 248, 243, 436, 437, 417, 418, 419, 298, 260, 262, 256, 268,
-	267, 266, 422, 423, 255, 235
+	304, 305, 306, 314, 303, 258, 257, 417, 418, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
+	422, 423, 272, 274, 279, 280, 281, 236, 240, 246, 250, 248, 243, 438, 439, 419, 420, 421, 298, 260, 262, 256, 268,
+	267, 266, 424, 425, 255, 235
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	258, 257, 415, 416, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 420, 421, 272, 274, 279,
-	280, 281, 236, 240, 246, 250, 248, 243, 436, 437, 417, 418, 419, 298
+	258, 257, 417, 418, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 422, 423, 272, 274, 279,
+	280, 281, 236, 240, 246, 250, 248, 243, 438, 439, 419, 420, 421, 298
 ]);
-const _supertype_callExpression_ids = new Set<number>([417, 418, 419]);
-const _supertype_updateExpression_ids = new Set<number>([422, 423]);
-const _supertype_string_ids = new Set<number>([420, 421]);
+const _supertype_callExpression_ids = new Set<number>([419, 420, 421]);
+const _supertype_updateExpression_ids = new Set<number>([424, 425]);
+const _supertype_string_ids = new Set<number>([422, 423]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]);
-const _supertype_metaProperty_ids = new Set<number>([436, 437]);
+const _supertype_metaProperty_ids = new Set<number>([438, 439]);
 const _supertype_pattern_ids = new Set<number>([259, 290]);
+const _supertype_methodDefinition_ids = new Set<number>([451, 452, 453]);
+const _supertype_publicFieldDefinition_ids = new Set<number>([460, 461]);
+const _supertype_methodSignature_ids = new Set<number>([454, 455, 456]);
+const _supertype_abstractMethodSignature_ids = new Set<number>([457, 458, 459]);
 const _supertype_type_ids = new Set<number>([
-	475, 474, 364, 40, 41, 42, 43, 44, 144, 77, 145, 146, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
+	500, 499, 364, 40, 41, 42, 43, 44, 143, 77, 144, 145, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
 	348, 346, 380, 379, 381, 378, 343, 347, 333, 334
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	475, 474, 364, 40, 41, 42, 43, 44, 144, 77, 145, 146, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
+	500, 499, 364, 40, 41, 42, 43, 44, 143, 77, 144, 145, 46, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358,
 	348, 346, 380, 379
 ]);
-const _supertype_indexSignature_ids = new Set<number>([408, 409]);
-const _supertype_classBodyMember_ids = new Set<number>([405, 406, 288, 407, 404]);
+const _supertype_indexSignature_ids = new Set<number>([410, 411]);
+const _supertype_classBodyMember_ids = new Set<number>([407, 408, 288, 409, 406]);
 const _supertype_enumBodyElement_ids = new Set<number>([386, 322]);
-const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
-const _supertype_exportStatementDefault_ids = new Set<number>([427, 428]);
+const _supertype_exportStatementDefault_ids = new Set<number>([429, 430]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
+const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatement, _supertype_exportStatement_ids],
@@ -1515,6 +1628,10 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Number, _supertype_number_ids],
 	[TSKindId.MetaProperty, _supertype_metaProperty_ids],
 	[TSKindId.Pattern, _supertype_pattern_ids],
+	[TSKindId.MethodDefinition, _supertype_methodDefinition_ids],
+	[TSKindId.PublicFieldDefinition, _supertype_publicFieldDefinition_ids],
+	[TSKindId.MethodSignature, _supertype_methodSignature_ids],
+	[TSKindId.AbstractMethodSignature, _supertype_abstractMethodSignature_ids],
 	[TSKindId.Type, _supertype_type_ids],
 	[TSKindId.PrimaryType, _supertype_primaryType_ids],
 	[TSKindId.IndexSignature, _supertype_indexSignature_ids],
@@ -1523,7 +1640,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatementDefault, _supertype_exportStatementDefault_ids],
 	[TSKindId.NumberBigint, _supertype_numberBigint_ids],
 	[TSKindId.AccessibilityModifier, new Set<number>([34, 35, 36])],
-	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 144, 77, 145, 146, 46])]
+	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 143, 77, 144, 145, 46])]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -1639,6 +1756,17 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_SubscriptExpression_guard = _g(TSKindId.SubscriptExpression);
 	const _kind_NonNullExpression_guard = _g(TSKindId.NonNullExpression);
 	const _kind_RestPattern_guard = _g(TSKindId.RestPattern);
+	const _kind_MethodDefinitionPlain_guard = _g(TSKindId.MethodDefinitionPlain);
+	const _kind_MethodDefinitionGetter_guard = _g(TSKindId.MethodDefinitionGetter);
+	const _kind_MethodDefinitionSetter_guard = _g(TSKindId.MethodDefinitionSetter);
+	const _kind_PublicFieldDefinitionPlain_guard = _g(TSKindId.PublicFieldDefinitionPlain);
+	const _kind_PublicFieldDefinitionAccessor_guard = _g(TSKindId.PublicFieldDefinitionAccessor);
+	const _kind_MethodSignaturePlain_guard = _g(TSKindId.MethodSignaturePlain);
+	const _kind_MethodSignatureGetter_guard = _g(TSKindId.MethodSignatureGetter);
+	const _kind_MethodSignatureSetter_guard = _g(TSKindId.MethodSignatureSetter);
+	const _kind_AbstractMethodSignaturePlain_guard = _g(TSKindId.AbstractMethodSignaturePlain);
+	const _kind_AbstractMethodSignatureGetter_guard = _g(TSKindId.AbstractMethodSignatureGetter);
+	const _kind_AbstractMethodSignatureSetter_guard = _g(TSKindId.AbstractMethodSignatureSetter);
 	const _kind_IndexSignatureColon_guard = _g(TSKindId.IndexSignatureColon);
 	const _kind_IndexSignatureMappedTypeClause_guard = _g(TSKindId.IndexSignatureMappedTypeClause);
 	const _kind_ClassBodyMemberMethod_guard = _g(TSKindId.ClassBodyMemberMethod);
@@ -1719,13 +1847,9 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_DecoratorCallExpression_guard = _g(TSKindId.DecoratorCallExpression);
 	const _kind_ClassBody_guard = _g(TSKindId.ClassBody);
 	const _kind_FormalParameters_guard = _g(TSKindId.FormalParameters);
-	const _kind_MethodDefinition_guard = _g(TSKindId.MethodDefinition);
 	const _kind_Pair_guard = _g(TSKindId.Pair);
 	const _kind_PairPattern_guard = _g(TSKindId.PairPattern);
 	const _kind_ComputedPropertyName_guard = _g(TSKindId.ComputedPropertyName);
-	const _kind_PublicFieldDefinition_guard = _g(TSKindId.PublicFieldDefinition);
-	const _kind_MethodSignature_guard = _g(TSKindId.MethodSignature);
-	const _kind_AbstractMethodSignature_guard = _g(TSKindId.AbstractMethodSignature);
 	const _kind_DecoratorParenthesizedExpression_guard = _g(TSKindId.DecoratorParenthesizedExpression);
 	const _kind_TypeAssertion_guard = _g(TSKindId.TypeAssertion);
 	const _kind_AsExpression_guard = _g(TSKindId.AsExpression);
@@ -1797,7 +1921,16 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_TypeParametersElements_guard = _g(TSKindId.TypeParametersElements);
 	const _kind_TupleTypeMembers_guard = _g(TSKindId.TupleTypeMembers);
 	const _kind_CatchClauseGroup_guard = _g(TSKindId.CatchClauseGroup);
+	const _kind_GetAccessorSignature_guard = _g(TSKindId.GetAccessorSignature);
 	const _kind_ObjectTypeContent_guard = _g(TSKindId.ObjectTypeContent);
+	const _kind_FormalParametersSetAccessorSignature_guard = _g(TSKindId.FormalParametersSetAccessorSignature);
+	const _kind_FormalParametersElementsSetAccessorSignature_guard = _g(
+		TSKindId.FormalParametersElementsSetAccessorSignature
+	);
+	const _kind_SetterParameter_guard = _g(TSKindId.SetterParameter);
+	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
+	const _kind_FormalParametersElementsReceiver_guard = _g(TSKindId.FormalParametersElementsReceiver);
+	const _kind_FormalParametersElementsReceiverGroup_guard = _g(TSKindId.FormalParametersElementsReceiverGroup);
 	const _kind_StatementIdentifier_guard = _g(TSKindId.StatementIdentifier);
 	const _kind_ShorthandPropertyIdentifier_guard = _g(TSKindId.ShorthandPropertyIdentifier);
 	const _kind_ShorthandPropertyIdentifierPattern_guard = _g(TSKindId.ShorthandPropertyIdentifierPattern);
@@ -1819,6 +1952,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_PredefinedType_guard = _mg(TSKindId.PredefinedType);
 	const _kind_UsingDeclarationArm_guard = _mg(TSKindId.UsingDeclarationArm);
 	const _kind_OptionalChainMarker_guard = _mg(TSKindId.OptionalChainMarker);
+	const _kind_FormalParametersGetAccessorSignature_guard = _mg(TSKindId.FormalParametersGetAccessorSignature);
 	const _kind_HtmlComment_guard = _g(TSKindId.HtmlComment);
 	const _kind_JsxText_guard = _g(TSKindId.JsxText);
 	const _kind_TemplateChars_guard = _g(TSKindId.TemplateChars);
@@ -1949,6 +2083,25 @@ export function guardsWith(test: KindTest): IsGuards {
 		importMeta: _kind_MetaPropertyImportMeta_guard
 	});
 	const _supertype_pattern_guard = _vg(_mg(289), { lhs: _form_LhsExpression_guard, rest: _kind_RestPattern_guard });
+	const _supertype_methodDefinition_guard = _vg(_mg(291), {
+		plain: _kind_MethodDefinitionPlain_guard,
+		getter: _kind_MethodDefinitionGetter_guard,
+		setter: _kind_MethodDefinitionSetter_guard
+	});
+	const _supertype_publicFieldDefinition_guard = _vg(_mg(296), {
+		plain: _kind_PublicFieldDefinitionPlain_guard,
+		accessor: _kind_PublicFieldDefinitionAccessor_guard
+	});
+	const _supertype_methodSignature_guard = _vg(_mg(299), {
+		plain: _kind_MethodSignaturePlain_guard,
+		getter: _kind_MethodSignatureGetter_guard,
+		setter: _kind_MethodSignatureSetter_guard
+	});
+	const _supertype_abstractMethodSignature_guard = _vg(_mg(300), {
+		plain: _kind_AbstractMethodSignaturePlain_guard,
+		getter: _kind_AbstractMethodSignatureGetter_guard,
+		setter: _kind_AbstractMethodSignatureSetter_guard
+	});
 	const _supertype_indexSignature_guard = _vg(_mg(375), {
 		colon: _kind_IndexSignatureColon_guard,
 		mappedTypeClause: _kind_IndexSignatureMappedTypeClause_guard
@@ -1964,11 +2117,11 @@ export function guardsWith(test: KindTest): IsGuards {
 		name: _kind_EnumBodyElementName_guard,
 		assignment: _kind_EnumAssignment_guard
 	});
-	const _supertype_exportStatementDefault_guard = _vg(_mg(398), {
+	const _supertype_exportStatementDefault_guard = _vg(_mg(400), {
 		from: _form_ExportStatementDefaultFrom_guard,
 		declaration: _form_ExportStatementDefaultDeclaration_guard
 	});
-	const _supertype_numberBigint_guard = _vg(_mg(402), {
+	const _supertype_numberBigint_guard = _vg(_mg(404), {
 		hex: _kind_NumberBigintHex_guard,
 		binary: _kind_NumberBigintBinary_guard,
 		octal: _kind_NumberBigintOctal_guard,
@@ -2088,14 +2241,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		formalParameters: _kind_FormalParameters_guard,
 		classStaticBlock: _kind_ClassStaticBlock_guard,
 		restPattern: _kind_RestPattern_guard,
-		methodDefinition: _kind_MethodDefinition_guard,
 		pair: _kind_Pair_guard,
 		pairPattern: _kind_PairPattern_guard,
 		computedPropertyName: _kind_ComputedPropertyName_guard,
-		publicFieldDefinition: _kind_PublicFieldDefinition_guard,
 		nonNullExpression: _kind_NonNullExpression_guard,
-		methodSignature: _kind_MethodSignature_guard,
-		abstractMethodSignature: _kind_AbstractMethodSignature_guard,
 		functionSignature: _kind_FunctionSignature_guard,
 		decoratorParenthesizedExpression: _kind_DecoratorParenthesizedExpression_guard,
 		typeAssertion: _kind_TypeAssertion_guard,
@@ -2176,6 +2325,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		tupleTypeMembers: _kind_TupleTypeMembers_guard,
 		importClauseGroup: _kind_ImportClauseGroup_guard,
 		catchClauseGroup: _kind_CatchClauseGroup_guard,
+		getAccessorSignature: _kind_GetAccessorSignature_guard,
 		ambientDeclarationGlobal: _kind_AmbientDeclarationGlobal_guard,
 		ambientDeclarationModule: _kind_AmbientDeclarationModule_guard,
 		objectTypeContent: _kind_ObjectTypeContent_guard,
@@ -2229,6 +2379,23 @@ export function guardsWith(test: KindTest): IsGuards {
 		forHeaderVarKind: _kind_ForHeaderVarKind_guard,
 		forHeaderLetConstKind: _kind_ForHeaderLetConstKind_guard,
 		forHeaderUsingKind: _kind_ForHeaderUsingKind_guard,
+		formalParametersSetAccessorSignature: _kind_FormalParametersSetAccessorSignature_guard,
+		formalParametersElementsSetAccessorSignature: _kind_FormalParametersElementsSetAccessorSignature_guard,
+		setterParameter: _kind_SetterParameter_guard,
+		methodDefinitionPlain: _kind_MethodDefinitionPlain_guard,
+		methodDefinitionGetter: _kind_MethodDefinitionGetter_guard,
+		methodDefinitionSetter: _kind_MethodDefinitionSetter_guard,
+		methodSignaturePlain: _kind_MethodSignaturePlain_guard,
+		methodSignatureGetter: _kind_MethodSignatureGetter_guard,
+		methodSignatureSetter: _kind_MethodSignatureSetter_guard,
+		abstractMethodSignaturePlain: _kind_AbstractMethodSignaturePlain_guard,
+		abstractMethodSignatureGetter: _kind_AbstractMethodSignatureGetter_guard,
+		abstractMethodSignatureSetter: _kind_AbstractMethodSignatureSetter_guard,
+		publicFieldDefinitionPlain: _kind_PublicFieldDefinitionPlain_guard,
+		publicFieldDefinitionAccessor: _kind_PublicFieldDefinitionAccessor_guard,
+		receiverParameterDeclaration: _kind_ReceiverParameterDeclaration_guard,
+		formalParametersElementsReceiver: _kind_FormalParametersElementsReceiver_guard,
+		formalParametersElementsReceiverGroup: _kind_FormalParametersElementsReceiverGroup_guard,
 		statementIdentifier: _kind_StatementIdentifier_guard,
 		shorthandPropertyIdentifier: _kind_ShorthandPropertyIdentifier_guard,
 		shorthandPropertyIdentifierPattern: _kind_ShorthandPropertyIdentifierPattern_guard,
@@ -2252,14 +2419,18 @@ export function guardsWith(test: KindTest): IsGuards {
 		number: _supertype_number_guard,
 		metaProperty: _supertype_metaProperty_guard,
 		pattern: _supertype_pattern_guard,
+		methodDefinition: _supertype_methodDefinition_guard,
+		publicFieldDefinition: _supertype_publicFieldDefinition_guard,
+		methodSignature: _supertype_methodSignature_guard,
+		abstractMethodSignature: _supertype_abstractMethodSignature_guard,
 		type: _mg(337),
 		primaryType: _mg(344),
 		indexSignature: _supertype_indexSignature_guard,
 		classBodyMember: _supertype_classBodyMember_guard,
 		enumBodyElement: _supertype_enumBodyElement_guard,
-		layout: _sg(_supertype_layout_ids),
 		exportStatementDefault: _supertype_exportStatementDefault_guard,
 		numberBigint: _supertype_numberBigint_guard,
+		layout: _sg(_supertype_layout_ids),
 		import: _kind_Import_guard,
 		emptyStatement: _kind_EmptyStatement_guard,
 		optionalChain: _kind_OptionalChain_guard,
@@ -2283,6 +2454,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		optionalChainMarker: _kind_OptionalChainMarker_guard,
 		metaPropertyNewTarget: _kind_MetaPropertyNewTarget_guard,
 		metaPropertyImportMeta: _kind_MetaPropertyImportMeta_guard,
+		formalParametersGetAccessorSignature: _kind_FormalParametersGetAccessorSignature_guard,
 		htmlComment: _kind_HtmlComment_guard,
 		jsxText: _kind_JsxText_guard,
 		templateChars: _kind_TemplateChars_guard,

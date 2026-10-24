@@ -26,7 +26,7 @@ describe('label provenance', () => {
 	beforeAll(async () => {
 		const raw = await evaluatePackage(grammarPackage('python'));
 		const ids = await loadGeneratedIdTables('python');
-		nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw, { generatedIdTables: ids })), ids));
+		nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw, { generatedIdTables: ids }))));
 	});
 
 	it('carries an authored variant label to the assembled refs as authored', () => {

@@ -46,7 +46,8 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	g.repeat1 = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'REPEAT1', content }) as Rule<'evaluate'>;
 	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> =>
 		({ type: 'FIELD', name, content }) as Rule<'evaluate'>;
-	g.alias = (rule: unknown, value: unknown): Rule<'evaluate'> => {
+	g.alias = (rule: unknown, given: unknown): Rule<'evaluate'> => {
+		const value = given instanceof ReferenceError ? (given as ReferenceError & { readonly symbol?: unknown }).symbol : given;
 		if (typeof value === 'string') {
 			return { type: 'ALIAS', content: rule, named: false, value } as Rule<'evaluate'>;
 		}
@@ -120,4 +121,25 @@ export function applyTransformForTest(
 ): { result: unknown; deposits: ReadonlyMap<string, unknown> } {
 	const { result, ctx } = withWireContext(kind, () => transform(original as RuntimeRule, patches as Parameters<typeof transform>[1]));
 	return { result, deposits: ctx.deposits };
+}
+
+type WiredCallback = (this: unknown, $: unknown, previous?: unknown) => unknown;
+
+const runtimeBuilder: Readonly<Record<string, unknown>> = new Proxy(
+	{},
+	{ get: (_target, name) => (typeof name === 'string' ? { type: 'SYMBOL', name } : undefined) }
+);
+
+export function enterWired(wired: { readonly externals?: unknown }, previous: readonly unknown[] = []): unknown {
+	return (wired.externals as WiredCallback).call(runtimeBuilder, runtimeBuilder, previous);
+}
+
+export function evaluateWired(
+	wired: { readonly externals?: unknown; readonly rules: Readonly<Record<string, unknown>> },
+	previous: readonly unknown[] = []
+): Record<string, unknown> {
+	enterWired(wired, previous);
+	return Object.fromEntries(
+		Object.entries(wired.rules).map(([name, callback]) => [name, (callback as WiredCallback).call(runtimeBuilder, runtimeBuilder)])
+	);
 }

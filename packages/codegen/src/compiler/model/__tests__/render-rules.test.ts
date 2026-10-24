@@ -45,7 +45,7 @@ function nodeMapOf(
 				supertype,
 				{ type: 'SUPERTYPE', name: supertype, subtypes: members, nonterminal: true } as never,
 				members.map((name) => ({ name }))
-			)
+			, { kindEntries })
 		);
 	}
 	const slotByRuleId = new Map(
@@ -267,7 +267,7 @@ describe('seamRenderRules', () => {
 		const rules = { call: seq(str('fn'), sym('name'), str('('), sym('params')) };
 		const originsWith = (word: boolean) => {
 			const config = { nodeMap: nodeMapOf(rules, {}), kindEntries };
-			config.nodeMap.nodes.set('fn', (word ? new AssembledKeyword('fn', str('fn') as never) : new AssembledPunctuation('fn', str('fn') as never, { hidden: false })) as never);
+			config.nodeMap.nodes.set('fn', (word ? new AssembledKeyword('fn', str('fn') as never, { kindEntries }) : new AssembledPunctuation('fn', str('fn') as never, { kindEntries, hidden: false })) as never);
 			const members = membersOf(seamRenderRules(spaceRenderRules(config), config).rules.call!);
 			return { names: memberNames({ members } as never), fn: seamChoiceDefault(members[1]!), lparen: seamChoiceDefault(members[3]!) };
 		};
@@ -293,10 +293,10 @@ describe('seamRenderRules', () => {
 			return membersOf(group).map((m) => ((m as { members?: unknown }).members === undefined ? [(m as { name?: string }).name ?? (m as { value?: string }).value!] : memberNames(m)));
 		};
 		const arm = sym('arm_kind', { fieldName: 'dot' });
-		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { hidden: false });
+		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { kindEntries, hidden: false });
 		expect(armsOf(arm, chain)[1]).toEqual(['S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)']);
-		expect(armsOf(arm, new AssembledPunctuation('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
-		expect(armsOf(arm, new AssembledKeyword('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
+		expect(armsOf(arm, new AssembledPunctuation('arm_kind', str('?.') as never, { kindEntries }))[1]).toEqual(['arm_kind']);
+		expect(armsOf(arm, new AssembledKeyword('arm_kind', str('?.') as never, { kindEntries }))[1]).toEqual(['arm_kind']);
 	});
 
 	it('seats token seams around a reference to a visible punctuation kind that sits in a seq, optional or not', () => {
@@ -307,10 +307,10 @@ describe('seamRenderRules', () => {
 			config.nodeMap.nodes.set('arm_kind', node as never);
 			return memberNames(seamRenderRules(spaceRenderRules(config), config).rules.member!);
 		};
-		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { hidden: false });
+		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { kindEntries, hidden: false });
 		expect(namesWith(chain, 'optional')).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
 		expect(namesWith(chain)).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
-		expect(namesWith(new AssembledKeyword('arm_kind', str('?.') as never))).toEqual(['object', 'S(chain_before)', 'arm_kind', 'S(chain_after)', 'index']);
+		expect(namesWith(new AssembledKeyword('arm_kind', str('?.') as never, { kindEntries }))).toEqual(['object', 'S(chain_before)', 'arm_kind', 'S(chain_after)', 'index']);
 	});
 
 	it('gives no arm of an immediate token choice a before seam, as an enum or inside a seq', () => {
@@ -455,7 +455,7 @@ describe('seamRenderRules', () => {
 			pick: { type: 'CHOICE', nonterminal: true, members: [sym('a'), sym('b')] } as unknown as RenderRule
 		};
 		const nodeMap = nodeMapOf(rules, {});
-		for (const kind of ['call', '_helper', '_call', 'pick'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		for (const kind of ['call', '_helper', '_call', 'pick'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind], { kindEntries }));
 		const config = { nodeMap, kindEntries, options: { call: { after: preference('newline') } } } as never;
 		const out = resolveRenderRules(config, () => {}).seamed;
 		expect(memberNames(out.rules.call!)).toEqual([
@@ -488,7 +488,7 @@ describe('seamRenderRules', () => {
 			call: seq(sym('f'), sym('args'))
 		};
 		const nodeMap = nodeMapOf(rules, {});
-		for (const kind of ['args', 'paren', 'call'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		for (const kind of ['args', 'paren', 'call'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind], { kindEntries }));
 		const config = {
 			nodeMap,
 			kindEntries,
@@ -511,7 +511,7 @@ describe('seamRenderRules', () => {
 	it('marks a token face a kind row declares space as padding, and no other site', () => {
 		const rules = { braced: seq(str('('), sym('body'), str(')')) };
 		const nodeMap = nodeMapOf(rules, {});
-		nodeMap.nodes.set('braced', new AssembledBranch('braced', rules.braced as never, rules.braced));
+		nodeMap.nodes.set('braced', new AssembledBranch('braced', rules.braced as never, rules.braced, { kindEntries }));
 		const options = { braced: { '"("/after': preference('space'), '")"/before': preference('tight'), before: preference('space') } };
 		const out = resolveRenderRules({ nodeMap, kindEntries, options } as never, () => {}).seamed;
 		const sites = spacingSitesOf(out, nodeMap);
@@ -528,7 +528,7 @@ describe('seamRenderRules', () => {
 		const rules = { range: seq(choice(str('..'), str('..=')), sym('right')) };
 		const build = (options: object) => {
 			const nodeMap = nodeMapOf(rules, {});
-			nodeMap.nodes.set('range', new AssembledBranch('range', rules.range as never, rules.range));
+			nodeMap.nodes.set('range', new AssembledBranch('range', rules.range as never, rules.range, { kindEntries }));
 			const out = resolveRenderRules({ nodeMap, kindEntries: entries, options } as never, () => {}).seamed;
 			const choice = membersOf(out.rules.range!)[0]!;
 			return { edgeLiterals: seamPartOf(choice).edgeLiterals, arm: seamChoiceDefault(choice)?.arm, origin: seamChoiceDefault(choice)?.origin };
@@ -547,7 +547,7 @@ describe('seamRenderRules', () => {
 		const operators = { ...choice(str('..'), str('..=')), id: 'r1' } as never;
 		const rules = { range: seq(operators, sym('right')), call: seq(str('('), sym('args')) };
 		const nodeMap = nodeMapOf(rules, { r1: 'operator' });
-		for (const kind of ['range', 'call'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+		for (const kind of ['range', 'call'] as const) nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind], { kindEntries }));
 		const out = resolveRenderRules({ nodeMap, kindEntries: entries, options: {} } as never, () => {}).seamed;
 		const sites = spacingSitesOf(out, nodeMap);
 		const arms = sites.filter((site) => site.edgeArm !== undefined);
@@ -574,8 +574,8 @@ describe('seamRenderRules', () => {
 		const content = { ...choice(str('extends'), str(':')), id: 'r1' } as never;
 		const rules = { constraint: seq(content, sym('type')) };
 		const nodeMap = nodeMapOf(rules, { r1: 'content' });
-		nodeMap.nodes.set('constraint', new AssembledBranch('constraint', rules.constraint as never, rules.constraint));
-		nodeMap.nodes.set('extends_keyword', new AssembledKeyword('extends_keyword', str('extends') as never) as never);
+		nodeMap.nodes.set('constraint', new AssembledBranch('constraint', rules.constraint as never, rules.constraint, { kindEntries }));
+		nodeMap.nodes.set('extends_keyword', new AssembledKeyword('extends_keyword', str('extends') as never, { kindEntries }) as never);
 		const out = resolveRenderRules({ nodeMap, kindEntries: entries, options: {} } as never, () => {}).seamed;
 		const arm = (address: string) => {
 			const site = spacingSitesOf(out, nodeMap).find((s) => s.address === address)!;
@@ -588,7 +588,7 @@ describe('seamRenderRules', () => {
 	it('puts a list kind\'s edge seams around its flank wrapper, which stays a three-member seq', () => {
 		const rules = { list: commaList() };
 		const nodeMap = nodeMapOf(rules, { r1: 'items' });
-		nodeMap.nodes.set('list', new AssembledBranch('list', rules.list as never, rules.list));
+		nodeMap.nodes.set('list', new AssembledBranch('list', rules.list as never, rules.list, { kindEntries }));
 		const whitespaceText = new Map([['indent', INDENT_TEXT], ['dedent', DEDENT_TEXT]]);
 		const config = { nodeMap, kindEntries, whitespaceText };
 		const out = seamRenderRules(spaceRenderRules(config), config);
@@ -603,7 +603,7 @@ describe('seamRenderRules', () => {
 		const arms = ['tight', 'space', 'newline', 'blankline', 'indent', 'dedent'];
 		const rules = { arms: seq(sym('a'), sym('b')) };
 		const nodeMap = nodeMapOf(rules, {});
-		nodeMap.nodes.set('arms', new AssembledBranch('arms', rules.arms as never, rules.arms));
+		nodeMap.nodes.set('arms', new AssembledBranch('arms', rules.arms as never, rules.arms, { kindEntries }));
 		const run = (config: object) => resolveRenderRules(config as never, () => {}).seamed;
 		const paired = { nodeMap, kindEntries, whitespaceText, options: { arms: { before: preference('indent'), after: preference('dedent') } } };
 		const out = run(paired);
@@ -642,7 +642,7 @@ describe('a seated child edge', () => {
 		};
 		const nodeMap = nodeMapOf(rules, { r9: 'statements', r8: 'only' }, { slotKinds: { r9: ['attr', 'item'], r8: ['attr'] } });
 		for (const kind of ['file', 'solo', 'attr', 'item'] as const) {
-			nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind]));
+			nodeMap.nodes.set(kind, new AssembledBranch(kind, rules[kind] as never, rules[kind], { kindEntries }));
 		}
 		const config = { nodeMap, kindEntries, options } as never;
 		return spacingSitesOf(resolveRenderRules(config, () => {}).seamed, nodeMap);

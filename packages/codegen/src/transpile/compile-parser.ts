@@ -107,7 +107,7 @@ function syncExternalScanner(grammarDir: string, targetDir: string): readonly st
 	return [targetScanner, ...copyRelativeScannerIncludes(baseScanner, targetScanner)];
 }
 
-function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string, copied: string[] = []): readonly string[] {
+export function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string, copied: string[] = []): readonly string[] {
 	const src = readFileSync(baseScanner, 'utf8');
 	const includeRe = /#include\s+"([^"]+)"/g;
 	for (const match of src.matchAll(includeRe)) {

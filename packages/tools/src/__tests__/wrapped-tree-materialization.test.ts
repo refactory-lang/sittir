@@ -165,7 +165,7 @@ describe('wrapped tree materialization', () => {
 		async () => {
 			const source = 'export async function readFile(filename: string): Promise<Buffer>';
 			const handle = await buildReadHandle('typescript', source);
-			const readNode = (await readNodeOf('typescript'))!;
+			const readNode = await readNodeOf('typescript');
 			const root = readNode(handle) as {
 				statements: () => Array<{ content: () => unknown }>;
 			};

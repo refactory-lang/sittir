@@ -63,6 +63,7 @@ export {
 } from './validate/uncovered-content.ts';
 export { run as checkBaseline, type CheckBaselineOptions } from './validate/baseline.ts';
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
+export { run as glossaryKeys, type GlossaryKeysOptions } from './validate/glossary-keys.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
 export { run as phantomKinds, type PhantomKindsOptions } from './discover/phantom.ts';
@@ -134,6 +135,7 @@ export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoiste
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';
 export { run as textKindOverlap, type TextKindOverlapOptions } from './census/text-kind-overlap.ts';
 export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';
+export { run as outputGate, type OutputGateOptions } from './output-gate/index.ts';
 export { run as vocabularyFeatures, type VocabularyFeaturesOptions } from './vocabulary/index.ts';
 export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/grammar.ts';
 export { fetchUpstreamCorpus, type CorpusSource, type FetchCorpusOptions } from './corpus/fetch.ts';

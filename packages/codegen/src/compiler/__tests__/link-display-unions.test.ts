@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 
@@ -59,7 +60,7 @@ describe('link builds one display union per alias target', () => {
 			hidden: false
 		});
 		const linked = link(raw, {
-			generatedIdTables: {
+			generatedIdTables: { fieldIds: new Map(), folds: new Map(),
 				sourceArtifact: 'fixture',
 				kindIds: {
 					source: { id: 1, parser: parser('source') },
@@ -77,7 +78,7 @@ describe('link builds one display union per alias target', () => {
 	});
 
 	it('collects every storage kind that displays under a name', () => {
-		const linked = link(
+		const linked = linkPredicted(
 			makeRaw({
 				source: {
 					type: 'SEQ',
@@ -102,7 +103,7 @@ describe('link builds one display union per alias target', () => {
 	});
 
 	it('a rule that is also an alias target is a member of its own union', () => {
-		const linked = link(
+		const linked = linkPredicted(
 			makeRaw({
 				source: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'generic_type' }, { type: 'SYMBOL', name: 'use' }] } as Rule<'evaluate'>,
 				generic_type: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'identifier' }] } as Rule<'evaluate'>,
@@ -130,9 +131,9 @@ describe('link builds one display union per alias target', () => {
 	});
 });
 
-describe('a display family keeps a member that the compile boundary folds under OPTIONAL', () => {
+describe('an alias over a member the compile boundary folds under OPTIONAL', () => {
 	const familyOf = (aliased: Rule<'evaluate'>) => {
-		const linked = link(
+		const linked = linkPredicted(
 			makeRaw({
 				source: {
 					type: 'SEQ',
@@ -149,11 +150,7 @@ describe('a display family keeps a member that the compile boundary folds under 
 		return [...(linked.displayUnions?.get('shown') ?? [])].map((member) => member.storage).sort();
 	};
 
-	it('keeps first in the shown family when the blank-armed choice(first, blank()) is folded to OPTIONAL', () => {
-		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual(['first', 'second']);
-	});
-
-	it('keeps first in the shown family when the member is optional($.first)', () => {
-		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual(['first', 'second']);
+	it('forms no family when the alias wraps an optional member: tree-sitter drops that alias and only renames second', () => {
+		expect(familyOf({ type: 'OPTIONAL', content: { type: 'SYMBOL', name: 'first' } } as Rule<'evaluate'>)).toEqual([]);
 	});
 });

@@ -26,7 +26,7 @@ function hasKind(node: unknown, kind: number): boolean {
 
 describe('the reserved set in effect at a position', () => {
 	it('admits a keyword where a rule-level reserved set is empty', () => {
-		const member = ts.build.memberExpression({ object: 'Symbol', separator: '.', property: 'for' } as never);
+		const member = ts.build.memberExpression({ object: 'Symbol', optionalChain: '.', property: 'for' } as never);
 		expect(member.$render!()).toBe('Symbol.for');
 		expect(ts.parse('Symbol.for;').$render!().toString()).toBe('Symbol.for;');
 	});
@@ -42,7 +42,7 @@ describe('the reserved set in effect at a position', () => {
 	});
 
 	it('builds an optional-chain member over a keyword property', () => {
-		const member = ts.build.memberExpression({ object: 'a', separator: '?.', property: 'for' } as never);
+		const member = ts.build.memberExpression({ object: 'a', optionalChain: '?.', property: 'for' } as never);
 		expect(member.$render!()).toBe('a?.for');
 	});
 

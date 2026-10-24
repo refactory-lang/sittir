@@ -80,8 +80,10 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	const raw = await evaluatePackage(pkg, source);
 	stages.evaluate = raw.rules[kind] ?? null;
 
+	const { evaluationIdTables } = await load('compile');
+	const generatedIdTables = await evaluationIdTables(pkg, source, raw);
 	const { link } = await load('link');
-	const linked = link(raw, undefined);
+	const linked = link(raw, { generatedIdTables });
 	stages.link = linked.rules[kind] ?? null;
 
 	const { normalizeGrammar } = await load('normalize');
@@ -90,9 +92,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	stages.simplify = normalized.rules?.[kind] ?? null;
 
 	const { assemble, AssembleCtx, hydrateSlotRefs } = await load('assemble');
-	const { loadGeneratedIdTables } = await load('generatedMetadata');
-	const generatedIdTables = await loadGeneratedIdTables(opts.grammar);
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const node = nodeMap.nodes.get(kind) ?? null;
 	stages.assemble = node ? summarizeAssembled(node) : null;
 
@@ -109,7 +109,8 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 		}
 		try {
 			const { runTemplateEmitter } = await load('templates');
-			const tpl = runTemplateEmitter({ grammar, nodeMap });
+			const { collectKindEntries } = await load('kindDiscriminant');
+			const tpl = runTemplateEmitter({ grammar, nodeMap, kindEntries: collectKindEntries(nodeMap, generatedIdTables) });
 			const body = tpl.bodies.get(kind);
 			stages.emitTemplate = body ?? null;
 		} catch (e) {

@@ -92,7 +92,6 @@ import {
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
-	collectCatalogKinds,
 	findKindEntry,
 	findKindEntryForLiteral,
 	hasCatalogEntry,
@@ -165,7 +164,6 @@ export interface RenderOptionsInputs {
 	readonly renderRules?: RenderRules;
 	readonly options?: OptionsConfig;
 	readonly visibleExternals?: Readonly<Record<string, Rule<'evaluate'>>>;
-	readonly kindEntries?: readonly KindEnumEntry[];
 	readonly sites?: readonly SitePreference[];
 	readonly addresses?: AddressTables;
 	readonly envelopePins?: Readonly<Record<string, EnvelopePin>>;
@@ -197,7 +195,6 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 		renderRules,
 		visibleExternals,
 		options,
-		kindEntries,
 		sites,
 		addresses
 	} = config;
@@ -206,7 +203,6 @@ function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig
 			renderRules,
 			visibleExternals,
 			options,
-			kindEntries,
 			sites,
 			addresses
 		})
@@ -227,7 +223,6 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 			renderRules: config.renderRules,
 			visibleExternals: config.visibleExternals,
 			options: config.options,
-			kindEntries: config.kindEntries,
 			sites: config.sites,
 			addresses: config.addresses
 		};
@@ -1066,8 +1061,7 @@ function planRenderOptionsFor(
 	inputs: RenderOptionsInputs
 ): PlannedRenderOptions {
 	if (inputs.renderRules === undefined) return EMPTY_PLANNED_OPTIONS;
-	const kindEntries =
-		inputs.kindEntries ?? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const sites =
 		inputs.sites ??
 		collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
@@ -1212,7 +1206,7 @@ function readPrintOf(
 			names: readNames(kindEntries, generatedFieldIds(generatedIdTables)),
 			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind)),
 			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(nodeMap))),
-			folds: foldsWithRelaxed(generatedIdTables.folds ?? new Map(), nodeMap, kindEntries),
+			folds: foldsWithRelaxed(generatedIdTables.folds, nodeMap, kindEntries),
 			grammar
 		},
 		admitted: new Map(),
@@ -1286,7 +1280,7 @@ function renderNodeSupport(
 	const projection = getNodeProjection(nodeMap);
 	const nodes = projection.nodes;
 
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const kidByKind = buildKindIdByKind(kindEntries);
 	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind, plan);
 	const payloadNodes = nodes.filter((node) => !isFixedTextLeaf(node));

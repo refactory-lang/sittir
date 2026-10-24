@@ -39,8 +39,9 @@ const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	FAILED_RUN,
 	loadKindNameFromId,
-	loadCanonicalKindNameFromId,
+	loadStorageKindNameFromId,
 	buildReadHandle,
 	buildKindToSupertypes,
 	loadReparseHosts,
@@ -65,7 +66,7 @@ import {
 	kindViewOf
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
-import { importGrammarModule } from '../grammar-internals.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 import { measureRoundtrip, type RoundtripProfile } from './roundtrip-profile.ts';
 
 /**
@@ -922,8 +923,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			const tree = parser.parse(entry.source) as TSTree;
 			if (!tree.rootNode.hasError) corpus.push({ source: entry.source, tree });
 		}
-		const types = await importGrammarModule(grammar, 'types.ts');
-		if (types?.KIND_NAMES === undefined) throw new Error(`${grammar}: src/types.ts has no KIND_NAMES`);
+		const types = await requireGrammarModule(grammar, 'types.ts');
 		const idsByName = new Map<string, number[]>();
 		for (const table of [types.KIND_NAMES] as ReadonlyMap<number, string>[]) {
 			for (const [id, name] of table) idsByName.set(name, [...new Set([...(idsByName.get(name) ?? []), id])]);
@@ -996,9 +996,11 @@ export async function validateReadRenderParse(
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 
-	const readNode = await readNodeOf(grammar);
+	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
+	if (readNode instanceof Error)
+		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [] };
 	const isLeafKind = await loadIsLeafKind(grammar);
-	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
+	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -1065,7 +1067,7 @@ export async function validateReadRenderParse(
 			if (recursive === true) {
 				measureRoundtrip(options.profile, 'read', () => {
 					if (handle.records !== undefined) handle.records.hydrate(0, Infinity);
-					else if (readNode && handle.read) deepRoot = readNode(handle, undefined, Infinity) as TypedNode;
+					else if (handle.read) deepRoot = readNode(handle, undefined, Infinity) as TypedNode;
 				});
 			}
 			const candidatesByKind = new Map<
@@ -1082,9 +1084,9 @@ export async function validateReadRenderParse(
 			const seen = new Set<string>();
 			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate, address?: number): void => {
 				if (node.$named === false) return;
-				const displayKind = kindNameFromId?.(node.$type);
-				const kind = canonicalKindNameFromId?.(node.$type);
-				if (displayKind === undefined || kind === undefined || !ruleKinds.has(kind)) return;
+				const displayKind = kindNameFromId(node.$type);
+				const kind = canonicalKindNameFromId(node.$type);
+				if (kind === undefined || !ruleKinds.has(kind)) return;
 				const span = spanOf(node);
 				if (span == null) return;
 				const { start, end } = span;
@@ -1110,7 +1112,7 @@ export async function validateReadRenderParse(
 						metadata.$treeHandle === root ? { ...metadata, $span: { start: 0, end: spans.byteLength } } : metadata;
 					visitCandidate(coordinate as unknown as TypedNode, coordinate, address ?? undefined);
 				}
-			} else if (readNode && handle.read) {
+			} else if (handle.read) {
 				const wrappedRoot = deepRoot ?? (readNode(handle) as TypedNode);
 				walkWrappedTree(wrappedRoot, accessorOf, visitCandidate, onAccessorThrow);
 			}

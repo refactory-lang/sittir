@@ -1,6 +1,5 @@
 // @ts-nocheck — evaluated with the DSL globals evaluate() installs
-import { wire } from '../../dsl/wire/wire.ts';
-import { reauthored, vocabulary } from '../../dsl/primitives/rule-cause.ts';
+import { enrich, reauthored, vocabulary, wire } from '../../dsl/dsl-authoring.ts';
 
 const base = grammar({
 	name: 'rule_cause',
@@ -12,16 +11,12 @@ const base = grammar({
 });
 
 export default grammar(
-	base,
-	wire(
-		{
-			name: 'rule_cause',
-			rules: {
-				a: reauthored('ambiguity', ($) => seq($.b, $._helper)),
-				_helper: vocabulary(($) => $.c),
-				c: (_$) => 'z'
-			}
-		},
-		base
-	)
+	enrich(base),
+	wire({
+		rules: {
+			a: reauthored('ambiguity', ($) => seq($.b, $._helper)),
+			_helper: vocabulary(($) => $.c),
+			c: (_$) => 'z'
+		}
+	})
 );

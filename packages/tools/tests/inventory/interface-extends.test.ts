@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../../codegen/src/__tests__/helpers/timeouts.ts';
 import { Query } from 'web-tree-sitter';
 import { bindingPatterns } from '@sittir/codegen/bindings';
 import { deriveVocabulary } from '../../src/inventory/index.ts';
@@ -43,7 +44,7 @@ for (const form of forms) {
 			expect(member?.optional).toBe(true);
 			expect(member?.kinds.has('identifier.type')).toBe(true);
 			expect(member?.kinds.has(form.clause)).toBe(false);
-		});
+		}, FULL_PIPELINE_TIMEOUT);
 
 		for (const [source, expected] of form.cases) {
 			it(`captures the extends elements in ${source}`, async () => {

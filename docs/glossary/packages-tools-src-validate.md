@@ -395,20 +395,10 @@ The grammar's root kind reparses as written, with no wrapper: `opts.root` names 
 
 The upstream judge: `.sittir/upstream.wasm`, the unmodified grammar sittir builds on, built by the regen with the same CLI. The upstream package's published wasm stands in only when that file is absent; a grammar with neither is an error naming the gen command. An unknown name yields `undefined`.
 
-### `packages/tools/src/validate/common.ts::wrapExportOf`
-
-One export of a grammar's generated wrap module, loaded through the typed internal loader: `readNode`, `wrapNode` or `hydrateChild`. The selected export determines the return type. A module that fails to load is reported on stderr and yields null, as does a missing export.
 
 ### `packages/tools/src/validate/common.ts::readNodeOf`
 
-```text
-/**
- * Dynamic import of a grammar's `readNode` entry point. Used by
- * validators to build source-typed wrapped views — the wire `$type` is
- * the grammar symbol, so nodes arrive under their source kind and the
- * validator render dispatches through the source template directly.
- */
-```
+The grammar's wrapped read, built from the generated wrap module's `wrapNode` and `hydrate`: the root, or the node a coordinate names, read `depth` levels down and wrapped, so nodes arrive under their source kind. The wrap module is required (`requireGrammarModule`): a module that cannot load, or lacks either export, throws, and each validator turns that into its failed run.
 
 ### `packages/tools/src/validate/common.ts::Seat`
 
@@ -530,32 +520,6 @@ One accessor that threw instead of returning its slot's value, with the slot's s
  */
 ```
 
-### `packages/tools/src/validate/common.ts::loadKindNames`
-
-```text
-/**
- * Load the grammar package's `kindNameFromId` resolver for Phase D numeric
- * `$type` support. Returns a safe wrapper that returns `undefined` on unknown
- * ids rather than throwing.
- */
-```
-
-```text
-/**
- * Load the static KIND_NAMES map from the grammar's generated types module.
- * Returns the Map directly for use as `RulesConfig.kindNames`.
- */
-```
-
-#### body
-
-```text
-// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds the JS-backend
-// template renderer's name resolution, which needs the parser's
-// display label, not the canonical (wrap-dispatch) catalog key.
-// See emitKindIdEnumAndLookups's KIND_DISPLAY_NAMES doc comment.
-```
-
 ### `packages/tools/src/validate/common.ts::loadStorageKindNameFromId`
 
 ```text
@@ -571,48 +535,15 @@ One accessor that threw instead of returning its slot's value, with the slot's s
 
 ### `packages/tools/src/validate/common.ts::loadIsLeafKind`
 
-The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id. Unknown ids, and a grammar with no node model, are not leaves.
+The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by kind id through `loadKindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::loadKindNameFromId`
 
-#### body
-
-```text
-// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds findWrappedNode/
-// wrappedNodesOfKind's read<->WASM kind-name bridge, which must
-// match tree-sitter's own raw `.type` string (the display label),
-// not the canonical catalog key. See emitKindIdEnumAndLookups's
-// KIND_DISPLAY_NAMES doc comment.
-```
-
-#### body
-
-```text
-// Legacy fallback for pre-Phase-D generated types
-```
-
-### `packages/tools/src/validate/common.ts::loadCanonicalKindNameFromId`
-
-```text
-/**
- * Load the CANONICAL (catalog-key) kind-name resolver — `KIND_NAMES`, the
- * wrap-dispatch name table, NOT the parser display labels. Alias-source
- * kinds diverge between the two (rust `delim_token_tree` displays as
- * `token_tree`); use this wherever the SOURCE identity of a node matters —
- * e.g. selecting a reparse wrapper context — and `loadKindNameFromId`
- * wherever tree-sitter's own `.type` string must match.
- */
-```
+Names a kind id with its display name from the generated `KIND_DISPLAY_NAMES` (not `KIND_NAMES`): it feeds the read/WASM kind-name bridge (`findWrappedNode`, `wrappedNodesOfKind`), which compares against tree-sitter's own `.type` string. The types module is required (`requireGrammarModule`), so a grammar whose module cannot load throws instead of answering nothing, and an id the table does not name throws: the table names every kind id and `ERROR`, so such an id is a defect, never a label to fall back on.
 
 ### `packages/tools/src/validate/common.ts::loadKindIdFromName`
 
-```text
-/**
- * Load the grammar package's `kindIdFromName` resolver for Phase D numeric
- * `$type` support. Returns the raw function (which throws on unknown names)
- * so callers can wrap it in try/catch as needed.
- */
-```
+The grammar package's generated `kindIdFromName`, from the required types module (`requireGrammarModule`). It throws on a name the catalog does not have, so a caller that reads names outside the catalog wraps it.
 
 ### `packages/tools/src/validate/common.ts::loadLanguageForGrammar`
 
@@ -1365,13 +1296,9 @@ The grammar's raw factory map with every builder run through the validators' nat
 
 Loads the grammar's generated `reparse-hosts.ts` once; `wrapForReparse` reads it.
 
-### `packages/tools/src/validate/factory-storage.ts::loadFactoryKindNameFromId`
-
-Loads canonical `KIND_NAMES` for factory dispatch, preserving distinct wrap identities that can share a parser display label (Python `block` and `_match_block`, for example). A thrown types-module import is logged and returned as an `importFailure`; silently continuing without a resolver would reject every candidate and report an empty 0/0 success.
-
 ### `packages/tools/src/validate/factory-storage.ts::loadFactoryModuleForGrammar`
 
-Loads the generated raw factory map through the typed internal loader, scopes builders to the existing engine, then reads validator-only calling conventions and slot metadata from the pure-data node model. It returns partial artifacts and an import-failure record if loading throws; absent optional artifacts retain the existing empty result. Canonical factory identity loading uses `loadFactoryKindNameFromId` so types-module failures stay visible to the validator.
+Loads everything factory storage validates against, or the one reason it could not: the raw factory map through `requireGrammarModule` (builders scoped to the existing engine), the validator-only calling conventions and slot metadata from the node model, factory identity from `loadStorageKindNameFromId`, and the wrapped read (`readNodeOf`). Every artifact is required, so a missing module, a module without its declared exports, or a failing types or wrap module returns `importFailure`, which the validator reports as a failed run rather than an empty 0/0 pass.
 
 ### `packages/tools/src/validate/factory-storage.ts::buildFactoryUntypedNode`
 
@@ -1391,7 +1318,7 @@ The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as 
 
 ### `packages/tools/src/validate/common.ts::hydrateOf`
 
-A grammar's generated `hydrate`, or `null` when the grammar has no wrap module, so a validator hydrates read data on the same path as the accessors.
+The generated wrap module's `hydrate`, from the required module, so a validator hydrates read data on the same path as the accessors.
 
 ### `packages/tools/src/validate/gap-census.ts::adjacentPairs`
 
@@ -1412,6 +1339,13 @@ group's call arguments as the slot's value.
 ### `packages/tools/src/validate/reparse-derive.ts::deriveReparseHosts`
 
 The reparse hosts a grammar's corpus supports beyond its declared ones, derived at validation time and never stored. A kind is hostable when a parent kind whose slots admit it (through hidden wrapper kinds and supertypes) is hostable. Admission compares kind ids: each model kind in a slot (or, for a list kind, among its element kinds) resolves to every symbol the generated `KIND_NAMES` table names with it, and a tree node is matched on its display symbol at an alias envelope and its grammar symbol elsewhere, so a display alias such as `simple_pattern` meets the model's `_simple_pattern` and a name that owns several symbols (a keyword and the alias of it) is not reduced to one. A list, alias or envelope kind holds its content as the node itself, so admission looks through it whether or not the corpus shows it elsewhere; a hidden supertype with no stamp is compared by its model name. The derivation's host lookups pass the adopted variant kinds and the kind itself as target, so a gated parent host serves the variants it gates. Its template is the parent's host with a corpus occurrence of the parent around the kind: the kind's span is replaced by the hole, and the kind's layout lead (the whitespace its text starts with, else the whitespace before its first child) stays in the template so a node that starts at a line break is hosted with that break and text-leaf kinds are not given padding. Samples are the kind's texts in the form a render has: shifted left by the indentation of the line the first character sat on, and left out when that shift is lossy (a continuation line indented less than the first, or a token spanning lines). Breadth first from the declared hosts: each round considers only parents hostable at the round's start, candidates order by shortest context then parent name, and the first template that verifies takes the kind. A template verifies when every distinct non-empty source text of the kind in the corpus (a zero-width instance has no text to place), placed in it, reparses without an error and yields at the hole a node of the kind that is structurally the source node (`astStructuralDiff` is clean), so a host that reads the source differently from its own parent — a raw string's content under an escape-parsing string, a keyword property name read as an identifier — never takes the kind. Declared hosts always win; a kind no verified template reaches stays hostless.
+
+Corpus occurrences and their parents are also indexed under the canonical
+model names of their grammar and display ids. Two physical parser symbols can
+share a display alias while needing different hosts (Python's ordinary and
+for-in-clause lambdas). Their storage-name buckets preserve that distinction;
+the existing exact grammar-id lookup and structural comparison still verify
+every candidate host.
 
 ### `packages/tools/src/validate/common.ts::setDerivedReparseHosts`
 
@@ -1664,3 +1598,115 @@ A failure's kind labeled with the surface whose run produced it, `<surface>: <ki
 ### `packages/tools/src/validate/surface-label.ts::kindOfLabel`
 
 The kind a `surfaceLabel` names, or the entry itself when it carries no surface. A kind name holds no `': '`, so an unlabeled kind reads back unchanged. The baseline check reads the built-render-parse row's failing kinds through it, to compare them with the grammar's `kinds`.
+
+### `packages/tools/src/validate/glossary-keys.ts::GLOSSARY_TREES`
+
+The four source trees the glossary covers, as paths from the repo root. The tool reads only these trees, and a key naming a file outside them is `out-of-scope-file`.
+
+### `packages/tools/src/validate/glossary-keys.ts::GLOSSARY_DIR`
+
+The directory of glossary documents, relative to the repo root. Every `.md` file in it except `README.md` is read for headings.
+
+### `packages/tools/src/validate/glossary-keys.ts::UNDOCUMENTED_DEPTH`
+
+How deep the undocumented count reaches: exported top-level declarations and their direct members, depth two. Nested properties below that are valid keys but are not counted as undocumented.
+
+### `packages/tools/src/validate/glossary-keys.ts::DEFAULT_CEILINGS`
+
+The checked-in ceilings file, relative to the repo root: one ceiling per broken class and one for the undocumented count. A run fails when a count exceeds its ceiling. `--update` only lowers a ceiling and creates the file when it is absent.
+
+### `packages/tools/src/validate/glossary-keys.ts::VALID_CLASSES`
+
+The valid key classes the tool accepts: `ok-bare-unique` (a bare name declared once in the file), `ok-owner-qualified` (a full path matching one declaration) and `ok-module` (a file-level `::module` key).
+
+### `packages/tools/src/validate/glossary-keys.ts::BROKEN_CLASSES`
+
+The broken key classes the tool counts: `ambiguous`, `no-declaration`, `wrong-owner`, `dot-separated`, `placeholder`, `out-of-scope-file` and `file-missing`. Each has a ceiling in the ceilings file.
+
+### `packages/tools/src/validate/glossary-keys.ts::COUNT_NAMES`
+
+The names a run reports counts under, in order: each broken class, then `undocumented`. The ceilings file has one entry per name.
+
+### `packages/tools/src/validate/glossary-keys.ts::ValidClass`
+
+The union of the valid key classes, taken from `VALID_CLASSES`.
+
+### `packages/tools/src/validate/glossary-keys.ts::BrokenClass`
+
+The union of the broken key classes, taken from `BROKEN_CLASSES`.
+
+### `packages/tools/src/validate/glossary-keys.ts::KeyClass`
+
+Any key class: a valid class or a broken one.
+
+### `packages/tools/src/validate/glossary-keys.ts::CountName`
+
+A name a count is reported under: a broken class, or `undocumented`.
+
+### `packages/tools/src/validate/glossary-keys.ts::Declaration`
+
+One declaration the compiler enumerates in a source file: its path within the file (owner names, then the member name), whether it is exported, and whether it is a static member. A static and an instance member of one name are two declarations.
+
+### `packages/tools/src/validate/glossary-keys.ts::GlossaryKey`
+
+One heading key read from a glossary document: the key text and where the heading is (document and line).
+
+### `packages/tools/src/validate/glossary-keys.ts::ClassifiedKey`
+
+A glossary key with its class, and the declaration it resolves to when it resolves to one.
+
+### `packages/tools/src/validate/glossary-keys.ts::Classification`
+
+The result of classifying one key: its class, and the resolved declaration path when the key resolves to exactly one declaration.
+
+### `packages/tools/src/validate/glossary-keys.ts::Measurement`
+
+A full run's result: every classified key, the count per name (each broken class, and undocumented), and the undocumented declarations themselves.
+
+### `packages/tools/src/validate/glossary-keys.ts::Ceilings`
+
+The ceilings file's content: an optional ceiling per count name. A missing ceiling is not checked.
+
+### `packages/tools/src/validate/glossary-keys.ts::Regression`
+
+One count that exceeds its ceiling: the name, the count, and the ceiling it breaks.
+
+### `packages/tools/src/validate/glossary-keys.ts::GlossaryKeysOptions`
+
+The options a run takes: `update` lowers the ceilings file, `table` and `json` choose the output form, `undocumented` lists the undocumented declarations, `ceilings` names another ceilings file, and `root` names the repo root.
+
+### `packages/tools/src/validate/glossary-keys.ts::enumerateDeclarations`
+
+Lists the declarations one source file contains, parsed through the TypeScript compiler API. Top-level declarations, class and interface members, enum members, const-object and type-literal properties, and namespace members are enumerated at any depth, each with an export flag. Bound names in destructuring exports and dotted namespaces are walked. Private members are skipped, protected members are kept, and a static and an instance member of one name stay two declarations. A const object is followed only through `as const`, `satisfies` and parentheses.
+
+### `packages/tools/src/validate/glossary-keys.ts::inGlossaryTrees`
+
+True when a file is a TypeScript source under one of the glossary trees. A key naming any other file is `out-of-scope-file`.
+
+### `packages/tools/src/validate/glossary-keys.ts::enumerateTrees`
+
+Enumerates the declarations of every source file under the glossary trees, keyed by repo-relative path. Test files and files whose first line is the auto-generated banner are skipped: they carry no authored declarations.
+
+### `packages/tools/src/validate/glossary-keys.ts::readKeys`
+
+Reads every `### \`file::key\`` heading from the glossary documents, with its location. A fence is skipped until a closing marker with nothing after it, so a `ts` line inside a fence does not end the fence early and hide a real heading after it.
+
+### `packages/tools/src/validate/glossary-keys.ts::classifyKey`
+
+Classifies one heading key against the enumerated declarations, in order: a file outside the glossary trees is `out-of-scope-file`; a missing file is `file-missing`; a `::module` key is `ok-module` once its file exists; a bare name declared once resolves; a qualified key resolves only when its full path matches exactly one declaration; a dot-separated qualifier is `dot-separated`; `<unknown>` is `placeholder`.
+
+### `packages/tools/src/validate/glossary-keys.ts::measure`
+
+Runs the whole measurement for one repo root: enumerates the declarations, classifies every heading key, and counts each broken class and the undocumented declarations, which are the exported declarations at depth two that no key resolves to.
+
+### `packages/tools/src/validate/glossary-keys.ts::compareWithCeilings`
+
+Lists every count that exceeds its ceiling. A count with no ceiling is not checked.
+
+### `packages/tools/src/validate/glossary-keys.ts::loweredCeilings`
+
+The ceilings an `--update` run writes: each count's ceiling lowered to the current count when the count is below it, and never raised. A name with no ceiling takes the current count.
+
+### `packages/tools/src/validate/glossary-keys.ts::run`
+
+The `sittir tool glossary-keys` entry point. It measures the repo, reads the ceilings file, and prints the result in the requested form. With `update`, it writes the lowered ceilings and creates the file when absent. Otherwise it fails when any count exceeds its ceiling, or when a ceiling is not a non-negative integer, which is refused rather than compared as NaN.

@@ -1,3 +1,4 @@
+import { diagnosePredicted } from '../../../__tests__/helpers/linked.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
@@ -6,7 +7,6 @@ import { AbstractAssembledCompound } from '../node-map.ts';
 import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, stampedTriviaKinds, stampedTriviaOptions, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import type { SitePreference } from '../site-preferences.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
-import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';
 
@@ -186,7 +186,7 @@ describe('trivia model facts', () => {
 
 	it('reads a symbol whitespace extra through the rule it names', async () => {
 		const raw = await evaluateTempGrammar({ extras: '$._ws', rules: "_ws: () => token(repeat1(/[ \\t]/))" }, '');
-		const { nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
+		const { nodeMap } = diagnosePredicted(raw);
 		expect(lexicalExtrasRun(nodeMap)?.test(' \t ')).toBe(true);
 		expect(whitespaceTriviaKinds(nodeMap)).toContain('_space');
 	}, 60_000);

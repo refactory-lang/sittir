@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { structuralBuilder } from '../../dsl/builders.ts';
 import { buildRuleCatalog } from '../../compiler/rule-catalog.ts';
-import { link } from '../../compiler/link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
@@ -25,7 +25,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		word: null,
 		references: []
 	};
-	const normalized = normalizeGrammar(link(raw));
+	const normalized = normalizeGrammar(linkPredicted(raw));
 	return assemble(AssembleCtx.from(normalized));
 }
 

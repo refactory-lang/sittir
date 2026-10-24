@@ -17,10 +17,19 @@ const shallowList = (engine = rs) => {
 };
 
 const buildParameters = (list: unknown, strict = true) => {
-	const built: unknown = Reflect.apply(strict ? rs.build.parameters.strict : rs.build.parameters, undefined, [list]);
+	const elements = Array.isArray(list) ? Reflect.apply(rs.build.parametersElements.strict, undefined, list) : list;
+	const built: unknown = Reflect.apply(strict ? rs.build.parameters.strict : rs.build.parameters, undefined, [
+		elements
+	]);
 	if (typeof built !== 'object' || built === null || Reflect.get(built, '$type') !== rs.kinds.Parameters)
 		throw new Error('expected built parameters');
 	return built;
+};
+
+const elementsOf = (owner: object): object => {
+	const list: unknown = Reflect.apply(Reflect.get(owner, 'elements'), owner, []);
+	if (typeof list !== 'object' || list === null) throw new Error('expected a list');
+	return list;
 };
 
 const rendered = (node: object) => String(Reflect.apply(Reflect.get(node, '$render'), node, []));
@@ -28,17 +37,17 @@ const rendered = (node: object) => String(Reflect.apply(Reflect.get(node, '$rend
 describe('builders consuming parsed list coordinates', () => {
 	it('strict construction retains both items and renders them', () => {
 		const built = buildParameters(shallowList());
-		expect(Reflect.get(built, 'length')).toBe(2);
+		expect(Reflect.get(elementsOf(built), 'length')).toBe(2);
 		expect(rendered(built)).toBe('(a: u8, b: u16)');
 		expect(isCoordinate(Reflect.get(built, '_elements'))).toBe(false);
 	});
 
 	it('loose construction hydrates the same stored list', () => {
 		const built = buildParameters(shallowList(), false);
-		expect(Reflect.get(built, 'length')).toBe(2);
+		expect(Reflect.get(elementsOf(built), 'length')).toBe(2);
 		expect(rendered(built)).toBe('(a: u8, b: u16)');
-		expect(Reflect.get(built, 0)).toBeDefined();
-		expect(Reflect.get(built, 1)).toBeDefined();
+		expect(Reflect.get(elementsOf(built), 0)).toBeDefined();
+		expect(Reflect.get(elementsOf(built), 1)).toBeDefined();
 	});
 
 	it('still refuses item coordinates that have lost their reading tree', () => {
@@ -51,7 +60,7 @@ describe('builders consuming parsed list coordinates', () => {
 		const reader = await createEngine(rust);
 		try {
 			const built = buildParameters(shallowList(reader));
-			expect(Reflect.get(built, 'length')).toBe(2);
+			expect(Reflect.get(elementsOf(built), 'length')).toBe(2);
 			expect(rendered(built)).toBe('(a: u8, b: u16)');
 		} finally {
 			reader.dispose();
@@ -63,7 +72,7 @@ describe('builders consuming parsed list coordinates', () => {
 		const list = shallowList(reader);
 		reader.dispose();
 		const built = buildParameters(list);
-		expect(Reflect.get(built, 'length')).toBe(2);
+		expect(Reflect.get(elementsOf(built), 'length')).toBe(2);
 		expect(rendered(built)).toBe('(a: u8, b: u16)');
 	});
 });

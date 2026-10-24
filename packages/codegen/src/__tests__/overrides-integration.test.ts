@@ -1,14 +1,13 @@
 import { SEQ } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { resolveOverridesPath } from '../dsl/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
 import { evaluatePackage } from '../dsl/evaluate-package.ts';
-import { grammarPackage } from '../grammars.ts';
+import { grammarPackage, layerPath } from '../grammars.ts';
 import { FULL_PIPELINE_TIMEOUT } from './helpers/timeouts.ts';
 
 describe('Overrides integration', () => {
 	it('evaluates Python with grammar.sittir.ts', async () => {
-		const overridesPath = resolveOverridesPath('python');
+		const overridesPath = layerPath(grammarPackage('python'), 'sittir');
 		console.log('Overrides path:', overridesPath);
 		console.log('Exists:', existsSync(overridesPath));
 

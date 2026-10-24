@@ -1,14 +1,25 @@
-import type { GrammarPackage } from '../grammars.ts';
-import { evaluate, type EvaluateOptions } from './evaluate.ts';
-import type { RawGrammar } from '../compiler/types.ts';
-import { packageEntryPath, packageSourceEntry, type PackageSourceOptions } from './resolve-grammar.ts';
+import { layerPath, type GrammarPackage } from '../grammars.ts';
+import { evaluate, evaluateDsl, generatedLayerDiagnostics } from './evaluate.ts';
+import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
+import type { ProjectedGrammar } from './verbs/effects.ts';
+import { packageSourceEntry, type PackageSourceOptions } from './resolve-grammar.ts';
 import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
 
-export type PackageEvaluationOptions = PackageSourceOptions & EvaluateOptions;
+export interface PackageEvaluationOptions extends PackageSourceOptions {
+	readonly checkGeneratedLayers?: boolean;
+}
 
 export const readsGrammarBindings = (pkg: GrammarPackage, options: PackageEvaluationOptions = {}): boolean =>
-	options.unbound !== true && packageSourceEntry(pkg, options) === packageEntryPath(pkg);
+	options.unbound !== true && packageSourceEntry(pkg, options) === layerPath(pkg, 'top');
 
-export function evaluatePackage(pkg: GrammarPackage, options?: PackageEvaluationOptions): Promise<RawGrammar> {
-	return evaluate(packageSourceEntry(pkg, options), upstreamFileTypes(pkg), options);
+export async function evaluatePackage(pkg: GrammarPackage, options: PackageEvaluationOptions = {}): Promise<ProjectedGrammar<RawGrammar>> {
+	const entry = packageSourceEntry(pkg, options);
+	const produced = await evaluate(entry, upstreamFileTypes(pkg));
+	if (options.checkGeneratedLayers !== true) return produced;
+	const generated = await generatedLayerDiagnostics(entry);
+	return generated.length === 0 ? produced : { ...produced, layerDiagnostics: [...(produced.layerDiagnostics ?? []), ...generated] };
+}
+
+export function evaluatePackageLayer(pkg: GrammarPackage, options?: PackageSourceOptions): Promise<ProjectedGrammar<EvaluatedGrammar>> {
+	return evaluateDsl(packageSourceEntry(pkg, options));
 }

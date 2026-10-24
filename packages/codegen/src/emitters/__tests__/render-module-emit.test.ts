@@ -16,7 +16,7 @@ import { classifySlot, buildSupertypeNodeSet, type SlotClass } from '../node-com
 import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustNodeStructName, nodeSlotShapeOf } from '../render-module.ts';
 import { PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
-import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
+import { collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
 import { resolveRenderRules, seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { link } from '../../compiler/link.ts';
@@ -42,7 +42,6 @@ import {
 	nodeArgs,
 	type ReadFactsCtx
 } from '../node-projection.ts';
-
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -105,10 +104,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const linked = link(raw, { generatedIdTables });
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, generatedIdTables)
+		AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables })
 	);
 
-	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const rulesConfig = {
 		nodeMap,
 		kindEntries,
@@ -116,10 +115,10 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 		whitespaceText: whitespaceTextOf(raw.visibleExternals, nodeMap)
 	};
 	const prepass = spaceRenderRules(rulesConfig);
-	stampStaticSpacing(nodeMap, grammar, prepass);
+	stampStaticSpacing(nodeMap, grammar, prepass, kindEntries);
 	collectSitePreferences({ nodeMap, kindEntries, renderRules: seamRenderRules(prepass, rulesConfig), options: raw.options });
-	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced)).seamed;
-	const templates = runTemplateEmitter({ grammar, nodeMap, renderRules });
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries)).seamed;
+	const templates = runTemplateEmitter({ grammar, nodeMap, kindEntries, renderRules });
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
 
@@ -284,9 +283,9 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
 		const src = await getRustTemplatesRs();
-		expect(extractStructBody(src, 'ReferenceTypeNode')).toContain('pub mutable: bool,');
+		expect(extractStructBody(src, 'ReferenceTypeNode')).toContain('pub exclusive: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
-			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable(), MutableSpecifierNode::MutableSpecifier), "{}");'
+			'let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive(), MutableSpecifierNode::MutableSpecifier), "{}");'
 		);
 		expect(src).not.toContain('::napi::ValueType::Boolean');
 	});
@@ -648,8 +647,8 @@ describe('node read facts', () => {
 		);
 	});
 
-	it('gives a list owner its minimum depth and its tokens, and no named inner gap', () => {
-		expect(args('ParametersNode')).toBe('kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN]');
+	it('gives a parameter branch its tokens and no list forwarding depth or named inner gap', () => {
+		expect(args('ParametersNode')).toBe('kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN]');
 	});
 
 	it('selects list reading from its item slot and preserves its separator and optional flank', () => {
@@ -748,7 +747,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 77, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 72, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 29, width = 8, inline = 6\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
@@ -902,7 +901,7 @@ describe('the payload ceiling', () => {
 describe('list storage', () => {
 	it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', async () => {
 		const rust = await getNodeRsForGrammar('python');
-		expect(rust).toContain('pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseNode>>');
+		expect(rust).toContain('pub handlers: Vec<::sittir_core::SlotValue<ExceptClauseNode>>');
 		expect(rust).not.toMatch(/Option<Vec</);
 		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorNode>>');
 	}, 120_000);

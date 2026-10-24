@@ -201,4 +201,19 @@ describe('settleConflictResolutions', () => {
 		await settleConflictResolutions({ store, inputs, runGenerate: async (grammar: GeneratedGrammar) => (grammars.push(grammar), { kind: 'clean', unnecessary: [] }) });
 		expect(grammars).toEqual(['bound']);
 	});
+
+	it('withdraws a base set the bound run reports, writing withdrawn only into the bound section and only when non-empty', async () => {
+		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
+		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> => {
+			if (grammar === 'base') return store.read().resolutions.length === 0 ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean', unnecessary: [] };
+			return store.read().bound.withdrawn === undefined ? { kind: 'clean', unnecessary: [['a', 'b']] } : { kind: 'clean', unnecessary: [] };
+		};
+		const result = await settleConflictResolutions({ store, inputs, runGenerate });
+		expect(result).toMatchObject({ kind: 'settled', base: { kind: 'converged', withdrawn: [] }, bound: { kind: 'converged', withdrawn: [['a', 'b']] } });
+		expect(store.read().bound.withdrawn).toEqual([['a', 'b']]);
+		expect('withdrawn' in store.read()).toBe(false);
+		const boundSections = store.writes.map((file) => file.bound);
+		expect(boundSections.some((section) => section.withdrawn?.length === 1)).toBe(true);
+		expect(boundSections.every((section) => !('withdrawn' in section) || (section.withdrawn?.length ?? 0) > 0)).toBe(true);
+	});
 });

@@ -4,8 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { transpileOverrides } from '../transpile-overrides.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
-import { grammarPackage, sittirDirOf } from '../../grammars.ts';
-import { packageEntryPath } from '../../dsl/resolve-grammar.ts';
+import { grammarPackage, layerPath, sittirDirOf } from '../../grammars.ts';
 import { evaluateDsl } from '../../dsl/evaluate.ts';
 
 describe('transpileOverrides', () => {
@@ -13,10 +12,15 @@ describe('transpileOverrides', () => {
 	const pkg = grammarPackage(GRAMMAR);
 	const outputDir = sittirDirOf(pkg);
 
-	it('writes grammar.js as a re-export of the grammar entry', () => {
+	it('writes grammar.js as a re-export of the top layer: the generated layer where the package has one', () => {
 		const result = transpileOverrides({ package: pkg });
 		expect(result.outputPath).toBe(join(outputDir, 'grammar.js'));
-		expect(readFileSync(result.outputPath, 'utf8')).toBe("export { default } from '../grammar.sittir.ts';\n");
+		expect(readFileSync(result.outputPath, 'utf8')).toBe("export { default } from '../grammar.bindings.ts';\n");
+	});
+
+	it('writes grammar.js as a re-export of grammar.sittir.ts where the package has no generated layer', () => {
+		const scm = grammarPackage('scm');
+		expect(readFileSync(transpileOverrides({ package: scm }).outputPath, 'utf8')).toBe("export { default } from '../grammar.sittir.ts';\n");
 	});
 
 	it('writes package.json as an ES module with tree-sitter metadata', () => {
@@ -60,7 +64,7 @@ describe('tree-sitter generate runs the grammar entry itself', () => {
 			writeFileSync(join(upstream, 'package.json'), '{"name":"tree-sitter-probe","version":"0.0.0"}');
 			writeFileSync(join(upstream, 'tree-sitter.json'), '{"grammars":[{"name":"probe","file-types":["probe"]}]}');
 			const pkg = grammarPackage('probe', dir);
-			writeFileSync(packageEntryPath(pkg), entryOf('first'));
+			writeFileSync(layerPath(pkg, 'sittir'), entryOf('first'));
 			transpileOverrides({ package: pkg });
 			expect(JSON.parse(readFileSync(join(sittirDirOf(pkg), 'tree-sitter.json'), 'utf8')).grammars[0]['file-types']).toEqual(['probe']);
 			const generatedRule = (): unknown => {
@@ -69,7 +73,7 @@ describe('tree-sitter generate runs the grammar entry itself', () => {
 				return JSON.parse(readFileSync(join(sittirDirOf(pkg), 'src', 'grammar.json'), 'utf8')).rules.source_file;
 			};
 			expect(generatedRule()).toEqual({ type: 'STRING', value: 'first' });
-			writeFileSync(packageEntryPath(pkg), entryOf('second'));
+			writeFileSync(layerPath(pkg, 'sittir'), entryOf('second'));
 			expect(generatedRule()).toEqual({ type: 'STRING', value: 'second' });
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
@@ -126,12 +130,12 @@ export default grammar({
 			writeFileSync(join(upstream, 'package.json'), '{"name":"tree-sitter-probe","version":"0.0.0"}');
 			writeFileSync(join(upstream, 'tree-sitter.json'), '{"grammars":[{"name":"probe","file-types":["probe"]}]}');
 			const pkg = grammarPackage('probe', dir);
-			writeFileSync(packageEntryPath(pkg), entry);
+			writeFileSync(layerPath(pkg, 'sittir'), entry);
 			transpileOverrides({ package: pkg });
 			const run = runTreeSitterCliCapturing(['generate', '--no-parser'], sittirDirOf(pkg));
 			expect(run.status, run.stderr).toBe(0);
 			const ts: Record<string, unknown> = JSON.parse(readFileSync(join(sittirDirOf(pkg), 'src', 'grammar.json'), 'utf8'));
-			const st = (await evaluateDsl(packageEntryPath(pkg))) as unknown as Record<string, unknown>;
+			const st = (await evaluateDsl(layerPath(pkg, 'sittir'))) as unknown as Record<string, unknown>;
 			expectOrder(ts);
 			expectOrder(st);
 			expect(names(ts.externals)).toContain('ext_before');

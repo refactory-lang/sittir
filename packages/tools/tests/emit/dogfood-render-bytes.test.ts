@@ -4,13 +4,13 @@ import type { TypescriptAPI } from '@sittir/typescript';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
-import { DOGFOOD_REBUILDS } from '../../src/emit/dogfood-targets.ts';
+import { GENERATED_REBUILDS } from '../../src/emit/dogfood-targets.ts';
 import { languageByName } from '../../src/languages.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
 describe('dogfood rebuild render bytes', () => {
-	for (const target of DOGFOOD_REBUILDS) {
+	for (const target of GENERATED_REBUILDS) {
 		const { grammar, file, exportName, rendered: fixture } = target;
 		it(`${grammar}: ${exportName} renders the committed fixture byte-for-byte`, async () => {
 			const mod = (await import(pathToFileURL(ROOT + file).href)) as Record<string, () => unknown>;

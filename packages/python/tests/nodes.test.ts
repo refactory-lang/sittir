@@ -533,7 +533,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('conditional builds the parent', () => {
 		const node = ir.expressionStatement.conditional({
-			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -543,8 +543,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('named builds the parent', () => {
 		const node = ir.expressionStatement.named({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -574,8 +574,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('eq builds the parent', () => {
 		const node = ir.expressionStatement.eq({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -583,7 +583,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('type builds the parent', () => {
 		const node = ir.expressionStatement.type({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			type: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -597,14 +597,14 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('typed builds the parent', () => {
 		const node = ir.expressionStatement.typed({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			type: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -630,8 +630,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('named.identifier builds the parent', () => {
 		const node = ir.expressionStatement.named.identifier({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			name: ['test']
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -690,7 +690,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('yield.fromClause.conditional builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.conditional({
-			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -700,8 +700,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('yield.fromClause.named builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.named({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -723,8 +723,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('yield.fromClause.named.identifier builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.named.identifier({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			name: ['test']
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -735,16 +735,16 @@ describe('expression_statement sub-factories', () => {
 describe('named_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.namedExpression({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.NamedExpression);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.namedExpression({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -754,11 +754,11 @@ describe('named_expression', () => {
 describe('named_expression sub-factories', () => {
 	it('identifier builds the parent', () => {
 		const node = ir.namedExpression.identifier({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			name: ['test']
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.NamedExpression);
-		expect((node as any).name()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).left()?.$type).toBe(TSKindId.Identifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3081,7 +3081,7 @@ describe('default_parameter', () => {
 	it('factory produces correct type', () => {
 		const node = ir.defaultParameter({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			default: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.DefaultParameter);
 		expectBuiltNode(node);
@@ -3089,7 +3089,7 @@ describe('default_parameter', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.defaultParameter({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			default: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3106,7 +3106,7 @@ describe('typed_default_parameter', () => {
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			default: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.TypedDefaultParameter);
 		expectBuiltNode(node);
@@ -3120,7 +3120,7 @@ describe('typed_default_parameter', () => {
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			default: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3425,7 +3425,7 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.conditional builds the parent', () => {
 		const node = ir.yield.fromClause.conditional({
-			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -3435,8 +3435,8 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.named builds the parent', () => {
 		const node = ir.yield.fromClause.named({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.Yield);
 		expect((node as any).content()).toBeDefined();
@@ -3458,8 +3458,8 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.named.identifier builds the parent', () => {
 		const node = ir.yield.fromClause.named.identifier({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			name: ['test']
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.Yield);
 		expect((node as any).content()).toBeDefined();
@@ -3471,7 +3471,7 @@ describe('attribute', () => {
 	it('factory produces correct type', () => {
 		const node = ir.attribute({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			attribute: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			property: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expectBuiltNode(node);
@@ -3479,7 +3479,7 @@ describe('attribute', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.attribute({
 			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			attribute: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			property: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3489,7 +3489,7 @@ describe('attribute', () => {
 describe('subscript', () => {
 	it('factory produces correct type', () => {
 		const node = ir.subscript({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			subscripts: stampBuilt({
 				$type: TSKindId.Subscripts,
 				$text: 'test',
@@ -3502,7 +3502,7 @@ describe('subscript', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.subscript({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			subscripts: stampBuilt({
 				$type: TSKindId.Subscripts,
 				$text: 'test',
@@ -3677,7 +3677,7 @@ describe('type sub-factories', () => {
 	});
 	it('conditional builds the parent', () => {
 		const node = ir.type.conditional({
-			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -3687,8 +3687,8 @@ describe('type sub-factories', () => {
 	});
 	it('named builds the parent', () => {
 		const node = ir.type.named({
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
@@ -3711,7 +3711,7 @@ describe('type sub-factories', () => {
 	it('splatType builds the parent', () => {
 		const node = ir.type.splatType({
 			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
@@ -3797,8 +3797,8 @@ describe('type sub-factories', () => {
 	});
 	it('named.identifier builds the parent', () => {
 		const node = ir.type.named.identifier({
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			name: ['test']
+			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
@@ -3810,7 +3810,7 @@ describe('splat_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.splatType({
 			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.SplatType);
 		expectBuiltNode(node);
@@ -3818,7 +3818,7 @@ describe('splat_type', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.splatType({
 			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			type: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4349,7 +4349,7 @@ describe('if_clause', () => {
 describe('conditional_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.conditionalExpression({
-			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -4358,7 +4358,7 @@ describe('conditional_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.conditionalExpression({
-			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			consequence: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			condition: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			alternative: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -5236,16 +5236,16 @@ describe('escape_sequence_named', () => {
 describe('assignment_eq', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentEq({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentEq);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentEq({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -5255,7 +5255,7 @@ describe('assignment_eq', () => {
 describe('assignment_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentType({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			type: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -5268,7 +5268,7 @@ describe('assignment_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentType({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			type: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -5284,28 +5284,28 @@ describe('assignment_type', () => {
 describe('assignment_typed', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentTyped({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			type: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentTyped);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentTyped({
-			left: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			type: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			right: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

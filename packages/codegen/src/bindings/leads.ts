@@ -1,5 +1,9 @@
 import type { RawGrammar } from '../compiler/types.ts';
-import { lead, leadIssue, type GrammarRecord, type Lead, type LeadMatch } from '../dsl/bind.ts';
+import { lead } from '../dsl/bind.ts';
+import { refusalOf, verbCtxOf } from '../dsl/verbs/copy.ts';
+import { applyLead } from '../dsl/verbs/lead.ts';
+import type { Lead, LeadMatch } from '../dsl/verbs/effects.ts';
+import type { GrammarRecord } from '../dsl/rule-patterns.ts';
 import { fieldedHeadListOf, isParserHiddenName, symbolFactsOf } from '../dsl/rule-patterns.ts';
 import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
 import type { Rule } from '../types/rule.ts';
@@ -90,6 +94,7 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 		(byList.get(list) ?? byList.set(list, []).get(list)!).push({ item, field: member.name, line: member.leadMatch.line, match: member.leadMatch.match });
 	}
 	const leads: Lead[] = [];
+	const ctx = verbCtxOf(base as unknown as GrammarRecord);
 	for (const [list, claims] of [...byList].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
 		const [first] = claims;
 		if (first === undefined) continue;
@@ -107,9 +112,9 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 			continue;
 		}
 		const derived = lead(list, first.item, first.field, named.match);
-		const issue = leadIssue(base as unknown as GrammarRecord, [...leads, derived]);
-		if (issue === undefined) leads.push(derived);
-		else refuse(list, lines, issue);
+		const refusal = refusalOf(ctx, () => applyLead(derived, ctx));
+		if (refusal === undefined) leads.push(derived);
+		else refuse(list, lines, refusal.reason);
 	}
 	return { leads, diagnostics };
 }

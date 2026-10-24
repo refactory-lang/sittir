@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from '../link.ts';
-import { normalizeGrammar } from '../normalize.ts';
-import { assemble, AssembleCtx } from '../assemble.ts';
-import { armIsForm, armRoutesOf, formRoutesOf, stampIrSurface } from '../model/ir-surface.ts';
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import { armIsForm, armRoutesOf, formRoutesOf } from '../model/ir-surface.ts';
 import { emitIs } from '../../emitters/is.ts';
 
 const direct = {
@@ -22,9 +20,7 @@ const dollarNamed = {
 
 const modelOf = async (upstream: unknown) => {
 	const raw = await evaluateTempGrammar(upstream as never, '');
-	const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
-	stampIrSurface(nodeMap as never);
-	return nodeMap;
+	return assemblePredicted(raw);
 };
 
 describe('a recursive form is cut once and still emits', () => {
@@ -32,8 +28,8 @@ describe('a recursive form is cut once and still emits', () => {
 		['direct', direct],
 		['mutual', mutual]
 	])('%s recursion: emits is.ts without throwing', async (_label, upstream) => {
-		const nodeMap = await modelOf(upstream);
-		expect(emitIs({ grammar: 'synth', nodeMap } as never).length).toBeGreaterThan(0);
+		const { nodeMap, generatedIdTables } = await modelOf(upstream);
+		expect(emitIs({ grammar: 'synth', nodeMap, generatedIdTables }).length).toBeGreaterThan(0);
 	});
 
 	it.each([
@@ -41,7 +37,7 @@ describe('a recursive form is cut once and still emits', () => {
 		['mutual', mutual],
 		['dollar-named', dollarNamed]
 	])('%s: the form tree joined with $ is exactly the settled form paths', async (_label, upstream) => {
-		const nodeMap = await modelOf(upstream);
+		const { nodeMap } = await modelOf(upstream);
 		const arms = armRoutesOf(nodeMap);
 		const subsOf = (kind: string) => arms.byKind.get(kind);
 		type Route = { name: string; child: { kind: string }; forms?: readonly Route[] };
@@ -69,7 +65,7 @@ describe('a recursive form is cut once and still emits', () => {
 	});
 
 	it('nests a seated route under its own host only as far as the host settles', async () => {
-		const nodeMap = await modelOf(mutual);
+		const { nodeMap } = await modelOf(mutual);
 		const aForms = formRoutesOf(nodeMap).get('a') ?? [];
 		const b = aForms.find((route) => route.name === 'b');
 		expect(b?.forms?.map((route) => route.name)).toEqual(['a', 'x']);

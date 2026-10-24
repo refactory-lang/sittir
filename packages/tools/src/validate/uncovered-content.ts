@@ -146,7 +146,7 @@ export async function computeUncoveredContentCensus(name: string): Promise<Uncov
 	const grammar = assertGrammar(name);
 	const rules = JSON.parse(readFileSync(join(sittirDirOf(grammarPackage(grammar)), 'src', 'grammar.json'), 'utf8')) as GrammarRules;
 	const producersOf = hiddenProducers(rules);
-	const kindName = (await loadKindNameFromId(grammar))!;
+	const kindName = await loadKindNameFromId(grammar);
 	const tables = (await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)) as {
 		readonly kindIds?: ReadonlyMap<string, unknown> | Readonly<Record<string, unknown>>;
 	};

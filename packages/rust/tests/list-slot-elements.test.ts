@@ -33,12 +33,12 @@ describe('a list slot takes its elements bare, one or many', () => {
 	it('resolves a bare number, one or many, at a list slot and at a single slot alike', () => {
 		expect(rs.build.callExpression({ function: 'f', arguments: [1] }).$render()).toBe('f(1)');
 		expect(rs.build.callExpression({ function: 'f', arguments: ['a', 2.5] }).$render()).toBe('f(a, 2.5)');
-		expect(rs.build.letDeclaration({ pattern: 'x', value: 1 }).$render()).toBe('let x = 1;');
+		expect(rs.build.letDeclaration({ name: 'x', value: 1 }).$render()).toBe('let x = 1;');
 	});
 
 	it('resolves a bare boolean to the boolean literal, one or many, at a list slot and at a single slot alike', () => {
 		expect(rs.build.callExpression({ function: 'f', arguments: [true, false] }).$render()).toBe('f(true, false)');
-		expect(rs.build.letDeclaration({ pattern: 'x', value: true }).$render()).toBe('let x = true;');
+		expect(rs.build.letDeclaration({ name: 'x', value: true }).$render()).toBe('let x = true;');
 	});
 
 	it('takes the options object first and optional', () => {

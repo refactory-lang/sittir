@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import { Delimiter } from '@sittir/common/utils';
 import { languageByName } from '../../languages.ts';
 import {
-	loadCanonicalKindNameFromId,
+	loadStorageKindNameFromId,
 	loadSlotAccessorOf,
 	materialize,
 	separatedListFactoryOptions,
@@ -23,7 +23,7 @@ describe("a separated list's trailing delimiter, through the validator walk", ()
 			it(`${grammar} ${list} (${nodeStorage}): materializes as Delimiter.Trailing and becomes the factory option`, async () => {
 				const engine = await createEngine(await languageByName(grammar), { nodeStorage });
 				const accessorOf = await loadSlotAccessorOf(grammar);
-				const kindName = (await loadCanonicalKindNameFromId(grammar))!;
+				const kindName = await loadStorageKindNameFromId(grammar);
 				const found: TypedNode[] = [];
 				walkWrappedTree(engine.parse(source), accessorOf, (node) => {
 					if (kindName(node.$type) === list) found.push(node);

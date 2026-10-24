@@ -22,8 +22,8 @@ function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 	const simplifiedRule: SimplifiedRule = { type: CHOICE, members: [...members], multiplicity: 'array' };
 	const renderRule: RenderRule = { type: CHOICE, members: [...members], multiplicity: 'array' };
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('comment', new AssembledPattern('comment', { type: PATTERN, value: '#[^\\n]*' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('comment', new AssembledPattern('comment', { type: PATTERN, value: '#[^\\n]*' }, { kindEntries }));
 	nodes.set(
 		'tuple',
 		new AssembledList(
@@ -33,8 +33,7 @@ function selfContainingList(kindEntries: readonly GeneratedKindEntry[]) {
 				members: [...members],
 				multiplicity: 'array',
 				separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
-			},
-			undefined,
+			}, { kindEntries },
 			{ separatorRule: undefined, simplifiedRule, renderRule, kindEntries }
 		)
 	);

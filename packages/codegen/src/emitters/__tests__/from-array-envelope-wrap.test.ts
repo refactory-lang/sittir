@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, FIELD, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -10,7 +11,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import {kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 /**
@@ -38,12 +39,13 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 3, kind: 'identifier', member: 'Identifier' },
 	{ id: 4, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
 ];
+const ID_TABLES = kindIdTablesOf(KIND_ENTRIES);
 
-function makeNodeMap() {
+function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'type_arguments_elements',
-		new AssembledList('type_arguments_elements', LIST_RULE, undefined, {
+		new AssembledList('type_arguments_elements', LIST_RULE, { kindEntries }, {
 			separatorRule: undefined,
 			simplifiedRule: ELEMENT_SIMPLIFIED_RULE,
 			renderRule: ELEMENT_RENDER_RULE,
@@ -55,13 +57,13 @@ function makeNodeMap() {
 		name: 'typeArgumentsElements',
 		content: { type: SYMBOL, name: 'type_arguments_elements' }
 	});
-	nodes.set('type_arguments', new AssembledBranch('type_arguments', envelopeRule, envelopeRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('type_arguments', new AssembledBranch('type_arguments', envelopeRule, envelopeRule, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 describe('_wrapArray builds a nested list envelope from an array (rule 4)', () => {
-	const emitted = emitFrom({ grammar: 'synth', nodeMap: makeNodeMap(), kindEntries: KIND_ENTRIES });
+	const emitted = emitFrom({ grammar: 'synth', nodeMap: withIdTables((kindEntries) => makeNodeMap(kindEntries), ID_TABLES).nodeMap, generatedIdTables: ID_TABLES });
 
 	it('marks the envelope direct and its list target as its wrap element', () => {
 		expect(emitted).toContain('const _wrapDirectKinds: ReadonlySet<string> = new Set([');

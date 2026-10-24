@@ -2933,7 +2933,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	127: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
-	158: { exceptClauses: { group: { types: [], kinds: [159] } } },
+	158: { handlers: { group: { types: [], kinds: [159] } } },
 	177: { definition: { async: { types: [], kinds: [164] }, static: { kind: 164 } } },
 	179: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
 	247: { contents: { debug: { types: [], kinds: [249] } } },
@@ -2965,7 +2965,7 @@ declare module './types.js' {
 		readonly __slotFlags__?: { readonly statements: 'async' };
 	}
 	interface TryStatement {
-		readonly __slotFlags__?: { readonly exceptClauses: 'group' };
+		readonly __slotFlags__?: { readonly handlers: 'group' };
 	}
 	interface DecoratedDefinition {
 		readonly __slotFlags__?: { readonly definition: 'async' };

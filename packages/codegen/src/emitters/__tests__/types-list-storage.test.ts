@@ -15,7 +15,7 @@ describe('list storage in the emitted types', () => {
 	}, FULL_PIPELINE_TIMEOUT);
 
 	it('types a list storage key as an array, never optional', () => {
-		expect(types).toContain('readonly _except_clauses: readonly (ExceptClause)[];');
+		expect(types).toContain('readonly _handlers: readonly (ExceptClause)[];');
 		expect(types).toContain('readonly _decorator: NonEmptyArray<Decorator>;');
 		expect(types).not.toMatch(/readonly _\w+\?: (readonly|NonEmptyArray)/);
 	});

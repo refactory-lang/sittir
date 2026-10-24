@@ -67,15 +67,20 @@ const MODULES = {
 	optionsBlock: '../../codegen/src/dsl/wire/options-block.ts',
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
+	rulePatterns: '../../codegen/src/dsl/rule-patterns.ts',
 	types: '../../codegen/src/emitters/types.ts',
 	templates: '../../codegen/src/emitters/templates.ts',
 	from: '../../codegen/src/emitters/from.ts',
 	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
 	bind: '../../codegen/src/dsl/bind.ts',
 	nodeModel: '../../codegen/src/emitters/node-model.ts',
+	sourceParser: '../../codegen/src/transpile/source-parser.ts',
+	evaluateForDerivation: '../../codegen/src/transpile/evaluate-for-derivation.ts',
 	nodeModelRead: '../../codegen/src/emitters/node-model-read.ts',
 	recordLines: '../../codegen/src/emitters/record-lines.ts',
 	wrap: '../../codegen/src/emitters/wrap.ts',
+	contentHash: '../../codegen/src/util/content-hash.ts',
+	writeFileAtomic: '../../codegen/src/util/write-file-atomic.ts',
 	vocabularyPaths: '../../codegen/src/bindings/vocabulary-paths.ts'
 } as const;
 
@@ -117,15 +122,20 @@ export interface CodegenSurface {
 	optionsBlock: typeof import('../../codegen/src/dsl/wire/options-block.ts');
 	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
+	rulePatterns: typeof import('../../codegen/src/dsl/rule-patterns.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');
 	templates: typeof import('../../codegen/src/emitters/templates.ts');
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');
 	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
+	sourceParser: typeof import('../../codegen/src/transpile/source-parser.ts');
+	evaluateForDerivation: typeof import('../../codegen/src/transpile/evaluate-for-derivation.ts');
 	nodeModelRead: typeof import('../../codegen/src/emitters/node-model-read.ts');
 	recordLines: typeof import('../../codegen/src/emitters/record-lines.ts');
 	wrap: typeof import('../../codegen/src/emitters/wrap.ts');
+	contentHash: typeof import('../../codegen/src/util/content-hash.ts');
+	writeFileAtomic: typeof import('../../codegen/src/util/write-file-atomic.ts');
 	vocabularyPaths: typeof import('../../codegen/src/bindings/vocabulary-paths.ts');
 }
 
@@ -194,6 +204,7 @@ export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
+export type Compilation = Awaited<ReturnType<CodegenSurface['compile']['compileGrammar']>>;
 export type GrammarDiagnostic =
 	import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts').GrammarDiagnostic;
 export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantDescriptor;
@@ -219,7 +230,8 @@ export async function evaluateGrammar(grammar: string, options?: { readonly base
 /** Run evaluate → link → normalize for one grammar, returning its SimplifiedGrammar. */
 export async function buildSimplifiedGrammar(grammar: string): Promise<SimplifiedGrammar> {
 	const raw = await evaluateGrammar(grammar);
-	const linked = await invoke('link', 'link', raw);
+	const generatedIdTables = await invoke('compile', 'evaluationIdTables', await invoke('grammars', 'grammarPackage', grammar), undefined, raw);
+	const linked = await invoke('link', 'link', raw, { generatedIdTables });
 	return invoke('normalize', 'normalizeGrammar', linked);
 }
 
@@ -228,11 +240,13 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 }
 
 export async function compileNodeMap(grammar: string, options: { readonly unbound?: boolean } = {}): Promise<AssembledNodeMap> {
-	const { compileGrammar } = await load('compile');
-	const { nodeMap } = await compileGrammar({
+	return (await compileGrammarOf(grammar, options)).nodeMap;
+}
+
+/** Compile one grammar, unbound when asked, with the id tables its evaluation reads. */
+export async function compileGrammarOf(grammar: string, options: { readonly unbound?: boolean } = {}): Promise<Compilation> {
+	return invoke('compile', 'compileGrammar', {
 		package: await invoke('grammars', 'grammarPackage', grammar),
-		generatedIdTables: options.unbound === true ? undefined : await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar),
 		evaluation: { unbound: options.unbound }
 	});
-	return nodeMap;
 }

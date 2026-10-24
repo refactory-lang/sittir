@@ -5,6 +5,8 @@ describe('emitFieldIdRust', () => {
 	it('emits one FieldId constant per parser field, in id order', () => {
 		const tables = {
 			sourceArtifact: 'parser.c',
+			kindIds: new Map(),
+			folds: new Map(),
 			fieldIds: new Map([
 				['return_type', { id: 3 }],
 				['name', { id: 1 }],

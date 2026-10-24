@@ -1,4 +1,5 @@
 import type { Rule } from '../../types/rule.ts';
+import { namedCopy } from './copy.ts';
 
 export interface AliasPlaceholder {
 	readonly __sittirPlaceholder: 'alias';
@@ -25,7 +26,7 @@ export function alias(rule: Rule | string, value?: string | Rule): unknown {
 	}
 
 	if (value !== undefined) {
-		return native(rule, value);
+		return namedCopy(rule, value) ?? native(rule, value);
 	}
 
 	return native(rule, rule);

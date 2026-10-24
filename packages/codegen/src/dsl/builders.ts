@@ -18,6 +18,7 @@ import {
 import { DEDENT_TEXT, INDENT_TEXT } from './primitives/spacing.ts';
 import type {
 	AliasRule,
+	BlankRule,
 	ChoiceRule,
 	FieldRule,
 	ImmediateTokenRule,
@@ -91,6 +92,7 @@ export interface StructuralPrec extends PrecBuilder<'evaluate'> {
 
 export interface StructuralBuilder extends RuleBuilder<'evaluate'> {
 	reserved(contextName: string, content: Rule<'evaluate'>): ReservedRule<'evaluate'>;
+	blank(): BlankRule<'evaluate'>;
 	seq(...members: Rule<'evaluate'>[]): SeqRule<'evaluate'>;
 	choice(...members: Rule<'evaluate'>[]): ChoiceRule<'evaluate'>;
 	optional(content: Rule<'evaluate'>): OptionalRule<'evaluate'>;
@@ -177,6 +179,7 @@ export const structuralBuilder: StructuralBuilder = {
 	token: structuralToken,
 	prec: structuralPrec,
 	reserved: (contextName, content) => ({ type: RESERVED, content, context_name: contextName }),
+	blank: () => ({ type: 'BLANK' }),
 	string: (value) => ({ type: STRING, value }),
 	pattern: (value) => ({ type: PATTERN, value }),
 	symbol: sym,

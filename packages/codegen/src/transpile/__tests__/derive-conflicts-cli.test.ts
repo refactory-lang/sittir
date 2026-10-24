@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { DerivedResolution } from '../../dsl/conflict-resolutions.ts';
+import type { DerivedResolution, SectionDraft } from '../../dsl/conflict-resolutions.ts';
 import { parseGenerateOutcome, type GenerateOutcome } from '../conflict-summary.ts';
 import { deriveConflictResolutions, pruneUnnecessary, reuseOrDeriveConflictResolutions } from '../derive-conflicts.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
@@ -44,7 +44,8 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 		const result = await deriveConflictResolutions({
 			ruleCount: 4,
 			upstream: { upstreamConflicts: [], sourceEdges: {}, baseNames: {} },
-			generate: async (resolutions) => {
+			inherited: [],
+			generate: async ({ resolutions }) => {
 				writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
 				const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
 				return parseGenerateOutcome(run.status, run.stderr);
@@ -58,7 +59,8 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 		const result = await deriveConflictResolutions({
 			ruleCount: 4,
 			upstream: { upstreamConflicts: [['binary']], sourceEdges: {}, baseNames: {} },
-			generate: async (resolutions) => {
+			inherited: [],
+			generate: async ({ resolutions }) => {
 				writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
 				const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
 				return parseGenerateOutcome(run.status, run.stderr);
@@ -74,7 +76,7 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 			sourceChains: [['bogus']],
 			conflict: { symbolSequence: [], lookahead: '', interpretations: ['bogus'] }
 		};
-		const generate = async (resolutions: readonly DerivedResolution[]): Promise<GenerateOutcome> => {
+		const generate = async ({ resolutions }: SectionDraft): Promise<GenerateOutcome> => {
 			writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
 			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
 			return parseGenerateOutcome(run.status, run.stderr);
@@ -84,14 +86,15 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 			grammarHash: 'h',
 			ruleCount: 4,
 			upstream: { upstreamConflicts: [], sourceEdges: {}, baseNames: {} },
+			inherited: [],
 			generate,
-			generateSaved: () => generate([bogus])
+			generateSaved: () => generate({ resolutions: [bogus], withdrawn: [] })
 		});
 		expect(result).toMatchObject({ kind: 'stale', outcome: { kind: 'error' } });
 	});
 
 	describe('over one state whose lookaheads need different sets', () => {
-		const generateIn = (dir: string) => async (resolutions: readonly DerivedResolution[]): Promise<GenerateOutcome> => {
+		const generateIn = (dir: string) => async ({ resolutions }: SectionDraft): Promise<GenerateOutcome> => {
 			writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
 			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
 			return parseGenerateOutcome(run.status, run.stderr);
@@ -102,7 +105,12 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 			sourceChains: symbols.map((name) => [name]),
 			conflict: { symbolSequence: [], lookahead: '', interpretations: symbols }
 		});
-		const input = (dir: string) => ({ ruleCount: 8, upstream: { upstreamConflicts: [], sourceEdges: {}, baseNames: {} }, generate: generateIn(dir) });
+		const input = (dir: string) => ({
+			ruleCount: 8,
+			upstream: { upstreamConflicts: [], sourceEdges: {}, baseNames: {} },
+			inherited: [],
+			generate: generateIn(dir)
+		});
 
 		beforeEach(() => writeFileSync(join(dir, 'grammar.js'), STATE_GRAMMAR));
 
@@ -114,15 +122,23 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 
 		it('drops a set the CLI reports as unnecessary and keeps the two it needs', async () => {
 			const seeded = [derived(['a', 'b']), derived(['a', 'b', 'c']), derived(['a', 'c'])];
-			const run = await generateIn(dir)(seeded);
+			const run = await generateIn(dir)({ resolutions: seeded, withdrawn: [] });
 			expect(run).toEqual({ kind: 'clean', unnecessary: [['a', 'c']] });
-			const result = await pruneUnnecessary(input(dir), { kind: 'converged', resolutions: seeded, iterations: 4 }, run.kind === 'clean' ? run.unnecessary : []);
+			const result = await pruneUnnecessary(
+				input(dir),
+				{ kind: 'converged', resolutions: seeded, withdrawn: [], iterations: 4 },
+				run.kind === 'clean' ? run.unnecessary : []
+			);
 			expect(result).toMatchObject({ kind: 'converged', iterations: 5 });
 			expect(result.resolutions.map((entry) => entry.resolution.symbols)).toEqual([['a', 'b'], ['a', 'b', 'c']]);
 		});
 
 		it('fails when the set it drops was needed, since the CLI reports the conflict again', async () => {
-			const result = await pruneUnnecessary(input(dir), { kind: 'converged', resolutions: [derived(['a', 'b']), derived(['a', 'b', 'c'])], iterations: 3 }, [['a', 'b']]);
+			const result = await pruneUnnecessary(
+				input(dir),
+				{ kind: 'converged', resolutions: [derived(['a', 'b']), derived(['a', 'b', 'c'])], withdrawn: [], iterations: 3 },
+				[['a', 'b']]
+			);
 			expect(result).toMatchObject({ kind: 'unresolvable', reason: 'dropped-set-returned' });
 		});
 	});

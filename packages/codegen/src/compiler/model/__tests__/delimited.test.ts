@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { grammarPackage } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
-import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { ruleListParts } from '../../../dsl/rule-patterns.ts';
 import { recordUnguardedDelimiters } from '../../assemble.ts';
 import { fromAssembleWarning } from '../../diagnostics/grammar-diagnostics.ts';
@@ -12,7 +11,7 @@ import { FactoryEmitter } from '../../../emitters/factories.ts';
 const COMPILE_TIMEOUT = 120_000;
 
 async function delimitedKinds(grammar: string) {
-	const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) });
+	const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar) });
 	return new Map(
 		[...nodeMap.nodes].flatMap(([kind, node]) => (node instanceof AbstractAssembledCompound && node.delimited !== undefined ? [[kind, node.delimited] as const] : []))
 	);
@@ -44,14 +43,14 @@ describe('the delimited fact', () => {
 	}, COMPILE_TIMEOUT);
 
 	it('fails generation, naming the kind, when a non-trivia delimited kind has no host', async () => {
-		const { nodeMap } = await compileGrammar({ package: grammarPackage('python'), generatedIdTables: await loadGeneratedIdTables('python') });
-		expect(() => new FactoryEmitter({ grammar: 'python', nodeMap, triviaKinds: ['comment'] })).toThrow(/^string: its delimiters need a parse-back host/);
+		const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage('python') });
+		expect(() => new FactoryEmitter({ grammar: 'python', nodeMap, generatedIdTables, triviaKinds: ['comment'] })).toThrow(/^string: its delimiters need a parse-back host/);
 	}, COMPILE_TIMEOUT);
 });
 
 describe('the verdict of a skipped delimited composite', () => {
 	it('judges a regular token safe and the same leaf as an external unguarded', async () => {
-		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust'), generatedIdTables: await loadGeneratedIdTables('rust') });
+		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust') });
 		const externals = new Set(ruleListParts(nodeMap.externals ?? []).names);
 		const verdicts = (declared: ReadonlySet<string>) =>
 			delimitedLeafVerdicts(nodeMap.nodes, nodeMap.wordMatcher, { word: nodeMap.word, reserved: nodeMap.reserved, externals: declared });
@@ -64,7 +63,7 @@ describe('the verdict of a skipped delimited composite', () => {
 	}, COMPILE_TIMEOUT);
 
 	it('records the blocking delimited-closer-unguarded for an external leaf and none for a regular one', async () => {
-		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust'), generatedIdTables: await loadGeneratedIdTables('rust') });
+		const { nodeMap } = await compileGrammar({ package: grammarPackage('rust') });
 		const declared = ruleListParts(nodeMap.externals ?? []).names;
 		const grammar = (externals: readonly string[]) => ({
 			word: nodeMap.word ?? null,

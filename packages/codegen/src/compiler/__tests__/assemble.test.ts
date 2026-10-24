@@ -1,3 +1,4 @@
+import { withGeneratedIdTablesNode } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import {
 	CHOICE,
@@ -38,7 +39,7 @@ import type { GeneratedIdTables, GeneratedIdEntry } from '../../dsl/symbol-table
 // canonical (wrapper-free) input — mirrors how the production pipeline
 // applies flattenRules before assembling.
 function deriveFields(rule: Rule<'link'>) {
-	return deriveSlots(flatten(rule)).filter((s) => !s.isUnnamed);
+	return deriveSlots(flatten(rule), { kindEntries: [] }).filter((s) => !s.isUnnamed);
 }
 
 describe('Assemble — simplifyRule', () => {
@@ -106,7 +107,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('function_item', flatten(rule))).toBe('branch');
+		expect(classifyNode('function_item', flatten(rule), { kindEntries: [] })).toBe('branch');
 	});
 
 	it('classifies visible repeat as envelope (one-symbol body)', () => {
@@ -117,7 +118,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items', flatten(rule))).toBe('envelope');
+		expect(classifyNode('items', flatten(rule), { kindEntries: [] })).toBe('envelope');
 	});
 
 	it('does NOT classify a bare repeat with no separator as separatedList', () => {
@@ -125,7 +126,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items_no_sep', flatten(rule))).toBe('envelope');
+		expect(classifyNode('items_no_sep', flatten(rule), { kindEntries: [] })).toBe('envelope');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
@@ -168,12 +169,12 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('binary_op', flatten(rule))).toBe('branch');
+		expect(classifyNode('binary_op', flatten(rule), { kindEntries: [] })).toBe('branch');
 	});
 
 	it('classifies visible pattern as pattern', () => {
 		const rule: Rule<'link'> = { type: PATTERN, value: '[a-z]+' };
-		expect(classifyNode('identifier', flatten(rule))).toBe('pattern');
+		expect(classifyNode('identifier', flatten(rule), { kindEntries: [] })).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
@@ -202,7 +203,7 @@ describe('Assemble — classifyNode', () => {
 
 	it('classifies visible non-alphanumeric string as punctuation', () => {
 		const rule: Rule<'link'> = { type: STRING, value: '->' };
-		expect(classifyNode('arrow', flatten(rule))).toBe('punctuation');
+		expect(classifyNode('arrow', flatten(rule), { kindEntries: [] })).toBe('punctuation');
 	});
 
 	it('classifies enum as enum', () => {
@@ -213,7 +214,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: STRING, value: 'crate' }
 			]
 		};
-		expect(classifyNode('visibility', flatten(rule))).toBe('enum');
+		expect(classifyNode('visibility', flatten(rule), { kindEntries: [] })).toBe('enum');
 	});
 
 	it('classifies hidden choice as supertype when already SupertypeRule', () => {
@@ -225,7 +226,7 @@ describe('Assemble — classifyNode', () => {
 				{ type: SYMBOL, name: 'identifier' }
 			]
 		};
-		expect(classifyNode('_expression', flatten(rule))).toBe('supertype');
+		expect(classifyNode('_expression', flatten(rule), { kindEntries: [] })).toBe('supertype');
 	});
 
 	it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
@@ -240,9 +241,9 @@ describe('Assemble — classifyNode', () => {
 			]
 		};
 		const renderRule = flatten(rule);
-		expect(classifyNode('expression', renderRule)).toBe('supertype');
-		expect(classifyNode('_expression', renderRule)).toBe('supertype');
-		expect(classifyNode('anything', renderRule)).toBe('supertype');
+		expect(classifyNode('expression', renderRule, { kindEntries: [] })).toBe('supertype');
+		expect(classifyNode('_expression', renderRule, { kindEntries: [] })).toBe('supertype');
+		expect(classifyNode('anything', renderRule, { kindEntries: [] })).toBe('supertype');
 	});
 
 	it('classifies a link-hoisted hidden rule as a hoisted compound', () => {
@@ -291,7 +292,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('_args', flatten({ ...rule, annotations: { hoisted: true } }), { seated: true })).toBe('list');
+		expect(classifyNode('_args', flatten({ ...rule, annotations: { hoisted: true } }), { kindEntries: [], seated: true })).toBe('list');
 	});
 
 	it('classifies a group-wrapped separated list of mixed field/bare choice arms as separatedList', () => {
@@ -319,7 +320,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('_enum_body_elements', flatten(rule), { seated: true })).toBe('list');
+		expect(classifyNode('_enum_body_elements', flatten(rule), { kindEntries: [], seated: true })).toBe('list');
 	});
 
 	it('does not assemble a hidden rule whose whole body is an alias over a leaf — the parser issues only its display', () => {
@@ -601,7 +602,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('list');
+		expect(classifyNode('member_list', flatten(rule), { kindEntries: [] })).toBe('list');
 	});
 
 	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
@@ -613,7 +614,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				trailing: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('list');
+		expect(classifyNode('member_list', flatten(rule), { kindEntries: [] })).toBe('list');
 	});
 
 	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
@@ -625,7 +626,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				leading: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('list');
+		expect(classifyNode('member_list', flatten(rule), { kindEntries: [] })).toBe('list');
 	});
 
 	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
@@ -639,7 +640,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				value: { type: STRING, value: ',' }
 			}
 		};
-		expect(classifyNode('member_list', flatten(rule))).toBe('envelope');
+		expect(classifyNode('member_list', flatten(rule), { kindEntries: [] })).toBe('envelope');
 	});
 
 	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
@@ -665,7 +666,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			]
 		};
-		expect(classifyNode('some_branch', flatten(rule))).toBe('branch');
+		expect(classifyNode('some_branch', flatten(rule), { kindEntries: [] })).toBe('branch');
 	});
 });
 
@@ -684,11 +685,11 @@ describe('AssembledList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice }
 		};
-		const node = new AssembledList('member_list', rule, undefined, {
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: sepChoice,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
-		});
+		}));
 
 		expect(node.elements).toHaveLength(1);
 		expect(node.elements[0]).toMatchObject({ multiplicity: 'nonEmptyArray' });
@@ -704,11 +705,11 @@ describe('AssembledList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const node = new AssembledList('member_list', rule, undefined, {
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
-		});
+		}));
 
 		expect(node.separatorRule).toBeUndefined();
 		expect(node.trailingDelimiter).toBe('optional');
@@ -722,11 +723,11 @@ describe('AssembledList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
 		};
-		const node = new AssembledList('member_list', rule, undefined, {
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
-		});
+		}));
 
 		expect(node.separatorRule).toBeUndefined();
 		expect(node.leadingDelimiter).toBe('optional');
@@ -740,11 +741,11 @@ describe('AssembledList — construction', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const node = new AssembledList('member_list', rule, undefined, {
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
-		});
+		}));
 
 		expect(node.elements).toHaveLength(1);
 		expect(node.elements[0]).toMatchObject({ multiplicity: 'nonEmptyArray' });
@@ -758,11 +759,11 @@ describe('AssembledList — construction', () => {
 			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const node = new AssembledList('member_list', rule, undefined, {
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
 			simplifiedRule: { type: SYMBOL, name: 'member' },
 			renderRule: { type: SYMBOL, name: 'member' }
-		});
+		}));
 
 		expect(node.elements).toHaveLength(1);
 		expect(node.elements[0]).toMatchObject({ multiplicity: 'array' });
@@ -782,7 +783,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		const modelType = classifyNode('braces', flatten(rule));
+		const modelType = classifyNode('braces', flatten(rule), { kindEntries: [] });
 		expect(modelType).toBe('pattern');
 	});
 });
@@ -797,11 +798,11 @@ describe('Assemble — a literal that is itself the slot', () => {
 	});
 
 	it('makes a kind with an aliased, nonterminal literal a branch', () => {
-		expect(classifyNode('zero_or_more', flatten(quantifier({ nonterminal: true, aliasedTo: 'lazy' })))).toBe('branch');
+		expect(classifyNode('zero_or_more', flatten(quantifier({ nonterminal: true, aliasedTo: 'lazy' })), { kindEntries: [] })).toBe('branch');
 	});
 
 	it('keeps a nonterminal literal with no alias target as text', () => {
-		expect(classifyNode('zero_or_more', flatten(quantifier({ nonterminal: true })))).toBe('pattern');
+		expect(classifyNode('zero_or_more', flatten(quantifier({ nonterminal: true })), { kindEntries: [] })).toBe('pattern');
 	});
 });
 
@@ -891,7 +892,7 @@ describe('Rule — deriveFields', () => {
 			]
 		};
 
-		const slots = deriveSlots(flatten(rule));
+		const slots = deriveSlots(flatten(rule), { kindEntries: [] });
 		// Two slots — one per arm. The field arm yields a named `declaration`
 		// slot; the bare-symbol arm yields its kind-named (inferred) slot. Neither
 		// collapses into a single opaque `content` union.
@@ -973,7 +974,7 @@ describe('Assemble — assemble()', () => {
 
 describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 	function makeIdTables(kindIds: Record<string, GeneratedIdEntry>): GeneratedIdTables {
-		return { kindIds, sourceArtifact: 'test' };
+		return { fieldIds: new Map(), folds: new Map(), kindIds, sourceArtifact: 'test' };
 	}
 
 	describe('provenance', () => {
@@ -987,25 +988,25 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 
 		it('stamps the base kind a renamed kind came from', () => {
-			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			const nodeMap = assemble(AssembleCtx.from({ ...provenanced(), generatedIdTables: makeIdTables({}) }));
 			expect(nodeMap.nodes.get('binding')?.renamedFrom).toBe('let_item');
 			expect(nodeMap.nodes.get('binding')?.splitFrom).toBeUndefined();
 		});
 
 		it('stamps the kind a split kind was cloned from', () => {
-			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			const nodeMap = assemble(AssembleCtx.from({ ...provenanced(), generatedIdTables: makeIdTables({}) }));
 			expect(nodeMap.nodes.get('method')?.splitFrom).toBe('function');
 			expect(nodeMap.nodes.get('method')?.renamedFrom).toBeUndefined();
 		});
 
 		it('stamps nothing on a kind the grammar bindings left alone', () => {
-			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			const nodeMap = assemble(AssembleCtx.from({ ...provenanced(), generatedIdTables: makeIdTables({}) }));
 			expect(nodeMap.nodes.get('plain')?.renamedFrom).toBeUndefined();
 			expect(nodeMap.nodes.get('plain')?.splitFrom).toBeUndefined();
 		});
 
 		it('stamps the kind an owned variant is a form of, and nothing on other kinds', () => {
-			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			const nodeMap = assemble(AssembleCtx.from({ ...provenanced(), generatedIdTables: makeIdTables({}) }));
 			expect(nodeMap.nodes.get('plain')?.variantOf).toBe('number');
 			expect(nodeMap.nodes.get('binding')?.variantOf).toBeUndefined();
 		});
@@ -1035,12 +1036,12 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 
 		it('seats a hoisted group the parser emits a node for', () => {
-			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			const nodeMap = assemble(AssembleCtx.from({ ...groupRules(), generatedIdTables: makeIdTables({ _sig: groupEntry(false) }) }));
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(true);
 		});
 
 		it('does not seat a hoisted group the parser declares a supertype: it has no node', () => {
-			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(true) })));
+			const nodeMap = assemble(AssembleCtx.from({ ...groupRules(), generatedIdTables: makeIdTables({ _sig: groupEntry(true) }) }));
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(false);
 		});
 	});
@@ -1080,7 +1081,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const generatedIdTables = makeIdTables({ kw_in: anonEntry(7, 'in'), kw_of: anonEntry(8, 'of') });
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables }));
 		expect(nodeMap.nodes.has('kw_in')).toBe(true);
 		expect(nodeMap.nodes.has('kw_of')).toBe(true);
 		expect(nodeMap.nodes.has('in')).toBe(false);
@@ -1098,7 +1099,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const generatedIdTables = makeIdTables({ comma: anonEntry(5, ',') });
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables }));
 		expect(nodeMap.nodes.has('comma')).toBe(true);
 		expect(nodeMap.nodes.has(',')).toBe(false);
 	});
@@ -1116,7 +1117,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 		const generatedIdTables = makeIdTables({ unrelated: anonEntry(9, '@@') });
 		const diagnostics = new DiagnosticSink();
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, diagnostics));
+		const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables }, diagnostics));
 		expect(nodeMap.nodes.has('::=')).toBe(false);
 		expect(diagnostics.all().some((d) => d.code === 'kindid-unstamped-anon-literal')).toBe(true);
 	});
@@ -1134,7 +1135,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const generatedIdTables = makeIdTables({ comma: anonEntry(5, ',') });
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables }));
 		// The named 'comma' PATTERN rule keeps its own classification -- the
 		// anonymous ',' literal resolving to the same catalog kind name must
 		// not overwrite it with an AssembledPunctuation/Keyword.
@@ -1152,7 +1153,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const generatedIdTables = makeIdTables({ identifier: anonEntry(7, 'identifier') });
-		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables }));
 		expect(nodeMap.nodes.has('inner_alias')).toBe(false);
 		const storage = nodeMap.nodes.get('_inner');
 		expect(storage).toBeInstanceOf(AssembledSupertype);
@@ -1168,10 +1169,10 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				{ type: SYMBOL, name: '_simple_statements', aliasedTo: 'block', kindId: 77, aliasedToId: 42 }
 			]
 		};
-		const node = new AssembledSupertype('_expression', rule, [
+		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledSupertype('_expression', rule, [
 			{ name: 'identifier', storageKindId: 99 },
 			{ name: '_simple_statements', storageKindId: 77 }
-		]);
+		], { kindEntries }));
 		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([99, 77]);
 	});
 
@@ -1228,12 +1229,12 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		});
 
 		it('seats a hoisted group the parser emits a node for', () => {
-			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			const nodeMap = assemble(AssembleCtx.from({ ...groupRules(), generatedIdTables: makeIdTables({ _sig: groupEntry(false) }) }));
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(true);
 		});
 
 		it('gives a seated group no surface of its own: it is built through its parent', () => {
-			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(false) })));
+			const nodeMap = assemble(AssembleCtx.from({ ...groupRules(), generatedIdTables: makeIdTables({ _sig: groupEntry(false) }) }));
 			expect(nodeMap.nodes.get('_sig')?.ownSurface).toBe(false);
 		});
 
@@ -1257,7 +1258,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 					parameters: { type: PATTERN, value: '[a-z]+' }
 				}
 			);
-			const nodeMap = assemble(AssembleCtx.from(normalized, makeIdTables({})));
+			const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: makeIdTables({}) }));
 			expect(nodeMap.nodes.get('arm_eq')?.seated).toBe(true);
 			expect(nodeMap.nodes.get('arm_eq')?.ownSurface).toBe(true);
 			expect(nodeMap.nodes.get('arm_eq')?.irKey).toBe('armEq');
@@ -1280,14 +1281,14 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				},
 				parameters: { type: PATTERN, value: '[a-z]+' }
 			});
-			const nodeMap = assemble(AssembleCtx.from(normalized, makeIdTables({})));
+			const nodeMap = assemble(AssembleCtx.from({ ...normalized, generatedIdTables: makeIdTables({}) }));
 			expect(nodeMap.nodes.get('arm_eq')?.seated).toBe(true);
 			expect(nodeMap.nodes.get('arm_eq')?.ownSurface).toBe(true);
 			expect(nodeMap.nodes.get('arm_eq')?.irKey).toBe('armEq');
 		});
 
 		it('does not seat a hoisted group the parser declares a supertype: it has no node', () => {
-			const nodeMap = assemble(AssembleCtx.from(groupRules(), makeIdTables({ _sig: groupEntry(true) })));
+			const nodeMap = assemble(AssembleCtx.from({ ...groupRules(), generatedIdTables: makeIdTables({ _sig: groupEntry(true) }) }));
 			expect(nodeMap.nodes.get('_sig')?.seated).toBe(false);
 		});
 	});

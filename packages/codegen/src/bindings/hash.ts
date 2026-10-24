@@ -17,15 +17,26 @@ export const REGENERATE_BINDINGS_COMMAND = 'pnpm exec tsx packages/cli/src/cli.t
 
 export class StaleBindingsError extends Error {}
 
+export function bindingsStaleness(
+	grammar: GrammarName,
+	hash: string | undefined,
+	scmPath: string = bindingsPath(grammar),
+	vocabularyDir: string = VOCABULARY_DIR
+): string | undefined {
+	if (!existsSync(scmPath)) return undefined;
+	if (hash === undefined) return `${grammar}: bindings.scm exists but no grammar.bindings.ts carries its grammar bindings; write it with \`${REGENERATE_BINDINGS_COMMAND}\``;
+	if (hash !== bindingsSourceHash(scmPath, vocabularyDir)) {
+		return `${grammar}: grammar.bindings.ts is stale against bindings.scm and the vocabulary; regenerate it with \`${REGENERATE_BINDINGS_COMMAND}\``;
+	}
+	return undefined;
+}
+
 export function assertBindingsFresh(
 	grammar: GrammarName,
 	hash: string | undefined,
 	scmPath: string = bindingsPath(grammar),
 	vocabularyDir: string = VOCABULARY_DIR
 ): void {
-	if (!existsSync(scmPath)) return;
-	if (hash === undefined) throw new StaleBindingsError(`${grammar}: bindings.scm exists but no grammar.bindings.ts carries its grammar bindings; write it with \`${REGENERATE_BINDINGS_COMMAND}\``);
-	if (hash !== bindingsSourceHash(scmPath, vocabularyDir)) {
-		throw new StaleBindingsError(`${grammar}: grammar.bindings.ts is stale against bindings.scm and the vocabulary; regenerate it with \`${REGENERATE_BINDINGS_COMMAND}\``);
-	}
+	const stale = bindingsStaleness(grammar, hash, scmPath, vocabularyDir);
+	if (stale !== undefined) throw new StaleBindingsError(stale);
 }

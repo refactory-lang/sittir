@@ -16,7 +16,7 @@ const builders = (engine: Engine) => scopeBuilders(engine, _factoryMap) as unkno
 const read = (engine: Engine): Read =>
 	[...engine.parse('fn f() { (#[a] #[b] x, y); }').$query().$descendants.ofType(engine.kinds.TupleExpression)][0] as unknown as Read;
 const items = (engine: Engine): unknown[] => [...(read(engine).attributes!() as unknown[])];
-const build = (engine: Engine, list: unknown[]): Built => builders(engine).tuple_expression!({ attributes: list, expressions: read(engine).expressions!() });
+const build = (engine: Engine, list: unknown[]): Built => builders(engine).tuple_expression!({ attributes: list, elements: read(engine).elements!() });
 
 describe('a built node owns its stored lists', () => {
 	it.each(['trusting', 'verifying'] as const)("%s: mutating the caller's array after the build changes neither the node nor its render", (mode) => {

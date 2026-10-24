@@ -2,6 +2,7 @@ import type { Rule } from '../types/rule.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
 import { isParserHiddenName, ruleListParts, type RuleListEntry, type SymbolSource } from './rule-patterns.ts';
 import { predictedSymbolSourceOf } from './symbol-table.ts';
+import { EnrichShapeLog } from './enrich-shapes.ts';
 
 export interface EnrichCtxInit {
 	readonly rulesBag: Record<string, Rule>;
@@ -58,6 +59,7 @@ interface EnrichCtxFields extends EnrichCtxInit {
 	readonly isTextToken: (name: string) => boolean;
 	readonly isPriorMint: (name: string) => boolean;
 	readonly hoist: ClauseHoistState | undefined;
+	readonly shapes: EnrichShapeLog;
 }
 
 export class EnrichCtx implements EnrichCtxFields {
@@ -79,6 +81,7 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly isTextToken: (name: string) => boolean;
 	readonly isPriorMint: (name: string) => boolean;
 	readonly hoist: ClauseHoistState | undefined;
+	readonly shapes: EnrichShapeLog;
 
 	private constructor(fields: EnrichCtxFields) {
 		this.rulesBag = fields.rulesBag;
@@ -99,6 +102,7 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.isTextToken = fields.isTextToken;
 		this.isPriorMint = fields.isPriorMint;
 		this.hoist = fields.hoist;
+		this.shapes = fields.shapes;
 	}
 
 	static create(init: EnrichCtxInit): EnrichCtx {
@@ -115,7 +119,8 @@ export class EnrichCtx implements EnrichCtxFields {
 				const origin = init.priorOrigins.get(name);
 				return origin !== undefined && isMintOrigin(origin);
 			},
-			hoist: undefined
+			hoist: undefined,
+			shapes: new EnrichShapeLog()
 		});
 	}
 

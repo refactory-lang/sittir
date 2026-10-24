@@ -189,6 +189,14 @@ export const metaProperty: typeof F.metaProperty = F.metaProperty;
 
 export const pattern: typeof F.pattern = F.pattern;
 
+export const methodDefinition: typeof F.methodDefinition = F.methodDefinition;
+
+export const publicFieldDefinition: typeof F.publicFieldDefinition = F.publicFieldDefinition;
+
+export const methodSignature: typeof F.methodSignature = F.methodSignature;
+
+export const abstractMethodSignature: typeof F.abstractMethodSignature = F.abstractMethodSignature;
+
 export const indexSignature: typeof F.indexSignature = F.indexSignature;
 
 export const classBodyMember: typeof F.classBodyMember = F.classBodyMember;
@@ -279,14 +287,10 @@ export const ir: {
 	readonly formalParameters: typeof F.formalParameters;
 	readonly classStaticBlock: typeof F.classStaticBlock;
 	readonly restPattern: typeof F.restPattern;
-	readonly methodDefinition: typeof F.methodDefinition;
 	readonly pair: typeof F.pair;
 	readonly pairPattern: typeof F.pairPattern;
 	readonly computedPropertyName: typeof F.computedPropertyName;
-	readonly publicFieldDefinition: typeof F.publicFieldDefinition;
 	readonly nonNullExpression: typeof F.nonNullExpression;
-	readonly methodSignature: typeof F.methodSignature;
-	readonly abstractMethodSignature: typeof F.abstractMethodSignature;
 	readonly functionSignature: typeof F.functionSignature;
 	readonly decoratorParenthesizedExpression: typeof F.decoratorParenthesizedExpression;
 	readonly typeAssertion: typeof F.typeAssertion;
@@ -400,6 +404,21 @@ export const ir: {
 	readonly forHeaderVarKind: typeof F.forHeaderVarKind;
 	readonly forHeaderLetConstKind: typeof F.forHeaderLetConstKind;
 	readonly forHeaderUsingKind: typeof F.forHeaderUsingKind;
+	readonly formalParametersSetAccessorSignature: typeof F.formalParametersSetAccessorSignature;
+	readonly setterParameter: typeof F.setterParameter;
+	readonly methodDefinitionPlain: typeof F.methodDefinitionPlain;
+	readonly methodDefinitionGetter: typeof F.methodDefinitionGetter;
+	readonly methodDefinitionSetter: typeof F.methodDefinitionSetter;
+	readonly methodSignaturePlain: typeof F.methodSignaturePlain;
+	readonly methodSignatureGetter: typeof F.methodSignatureGetter;
+	readonly methodSignatureSetter: typeof F.methodSignatureSetter;
+	readonly abstractMethodSignaturePlain: typeof F.abstractMethodSignaturePlain;
+	readonly abstractMethodSignatureGetter: typeof F.abstractMethodSignatureGetter;
+	readonly abstractMethodSignatureSetter: typeof F.abstractMethodSignatureSetter;
+	readonly publicFieldDefinitionPlain: typeof F.publicFieldDefinitionPlain;
+	readonly publicFieldDefinitionAccessor: typeof F.publicFieldDefinitionAccessor;
+	readonly receiverParameterDeclaration: typeof F.receiverParameterDeclaration;
+	readonly formalParametersElementsReceiver: typeof F.formalParametersElementsReceiver;
 	readonly declaration: typeof F.declaration;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
@@ -411,6 +430,10 @@ export const ir: {
 	readonly comment: typeof F.comment;
 	readonly metaProperty: typeof F.metaProperty;
 	readonly pattern: typeof F.pattern;
+	readonly methodDefinition: typeof F.methodDefinition;
+	readonly publicFieldDefinition: typeof F.publicFieldDefinition;
+	readonly methodSignature: typeof F.methodSignature;
+	readonly abstractMethodSignature: typeof F.abstractMethodSignature;
 	readonly indexSignature: typeof F.indexSignature;
 	readonly classBodyMember: typeof F.classBodyMember;
 	readonly enumBodyElement: typeof F.enumBodyElement;
@@ -435,6 +458,7 @@ export const ir: {
 	readonly optionalChainMarker: typeof F.buildOptionalChainMarker;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
+	readonly formalParametersGetAccessorSignature: typeof F.buildFormalParametersGetAccessorSignature;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
 	readonly functionSignatureAutomaticSemicolon: typeof F.buildFunctionSignatureAutomaticSemicolon;
 	readonly hashBangLine: typeof F.buildHashBangLine;
@@ -534,14 +558,10 @@ export const ir: {
 	formalParameters: F.formalParameters,
 	classStaticBlock: F.classStaticBlock,
 	restPattern: F.restPattern,
-	methodDefinition: F.methodDefinition,
 	pair: F.pair,
 	pairPattern: F.pairPattern,
 	computedPropertyName: F.computedPropertyName,
-	publicFieldDefinition: F.publicFieldDefinition,
 	nonNullExpression: F.nonNullExpression,
-	methodSignature: F.methodSignature,
-	abstractMethodSignature: F.abstractMethodSignature,
 	functionSignature: F.functionSignature,
 	decoratorParenthesizedExpression: F.decoratorParenthesizedExpression,
 	typeAssertion: F.typeAssertion,
@@ -655,6 +675,21 @@ export const ir: {
 	forHeaderVarKind: F.forHeaderVarKind,
 	forHeaderLetConstKind: F.forHeaderLetConstKind,
 	forHeaderUsingKind: F.forHeaderUsingKind,
+	formalParametersSetAccessorSignature: F.formalParametersSetAccessorSignature,
+	setterParameter: F.setterParameter,
+	methodDefinitionPlain: F.methodDefinitionPlain,
+	methodDefinitionGetter: F.methodDefinitionGetter,
+	methodDefinitionSetter: F.methodDefinitionSetter,
+	methodSignaturePlain: F.methodSignaturePlain,
+	methodSignatureGetter: F.methodSignatureGetter,
+	methodSignatureSetter: F.methodSignatureSetter,
+	abstractMethodSignaturePlain: F.abstractMethodSignaturePlain,
+	abstractMethodSignatureGetter: F.abstractMethodSignatureGetter,
+	abstractMethodSignatureSetter: F.abstractMethodSignatureSetter,
+	publicFieldDefinitionPlain: F.publicFieldDefinitionPlain,
+	publicFieldDefinitionAccessor: F.publicFieldDefinitionAccessor,
+	receiverParameterDeclaration: F.receiverParameterDeclaration,
+	formalParametersElementsReceiver: F.formalParametersElementsReceiver,
 	declaration: F.declaration,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
@@ -666,6 +701,10 @@ export const ir: {
 	comment: F.comment,
 	metaProperty: F.metaProperty,
 	pattern: F.pattern,
+	methodDefinition: F.methodDefinition,
+	publicFieldDefinition: F.publicFieldDefinition,
+	methodSignature: F.methodSignature,
+	abstractMethodSignature: F.abstractMethodSignature,
 	indexSignature: F.indexSignature,
 	classBodyMember: F.classBodyMember,
 	enumBodyElement: F.enumBodyElement,
@@ -692,6 +731,7 @@ export const ir: {
 	optionalChainMarker: F.buildOptionalChainMarker,
 	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
+	formalParametersGetAccessorSignature: F.buildFormalParametersGetAccessorSignature,
 	automaticSemicolon: F.buildAutomaticSemicolon,
 	functionSignatureAutomaticSemicolon: F.buildFunctionSignatureAutomaticSemicolon,
 

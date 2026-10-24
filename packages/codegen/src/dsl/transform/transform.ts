@@ -13,10 +13,12 @@ import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
+import { editedCopy, refuseSplitDisplays } from '../primitives/copy.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
-import { ABSENT_VARIANT_NAME, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
+import { ABSENT_VARIANT_NAME, directVariantOf, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
+import { isRefinePlaceholder, refine, type RefinePlaceholder } from '../primitives/refine.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
@@ -24,37 +26,52 @@ import { isPreference, type PreferencePlaceholder } from '../primitives/preferen
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import { isFlattenPlaceholder, type FlattenPlaceholder } from '../primitives/flatten.ts';
 import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
+import { isLeadPlaceholder, type LeadPlaceholder } from '../primitives/lead.ts';
+import { isNarrowPlaceholder, type NarrowPlaceholder } from '../primitives/narrow.ts';
+import { isRenamePlaceholder, type RenamePlaceholder } from '../primitives/rename.ts';
+import { VerbRefusal } from '../verbs/copy.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
 import {
 	wireRenameLift,
 	wireWithPatchSites,
-	wireWithBindingEffects,
 	wireRecordBindingEffect,
 	wireHasAuthoredRule,
 	wireIsBaseSupertype,
 	wireSymbols,
 	wireRegisterSyntheticRule,
 	wireGetCurrentRuleKind,
+	wireGetCurrentDollar,
 	wireIsExtraRule,
 	wireIsPrecedenceRankedRule,
 	wireRegisterFlattenedParent,
 	wireHasDeposit,
 	wireDeclareRuleBody,
 	wireDepositTextToken,
+	wireApplyingEntries,
+	wireIsApplyingEntries,
+	wireIsInlineWrite,
+	wireIsInsideCopy,
+	wireNoteInlineWrite,
 	wireTextTokenBody,
 	wireTextTokenOf,
 	wireAutomaticVariants,
 	wireRecordPatchSite,
+	wireQueueLead,
+	wireQueueNarrow,
+	wireQueueRename,
+	wireRefuse,
+	wireAliasTargetIssue,
 	wireGetLiftBody,
 	wireElementSlotOf,
 	wireLiftRenamedTo,
 	wireSetLiftBody,
+	wireAtomic,
+	wireEntry,
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
-import { isBindingSet } from '../bind.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
@@ -71,7 +88,7 @@ import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
-import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
+import { carriedLabel, relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
 function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
 	return withAuthoredLabel(rule as RuntimeRule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) }, wireAutomaticVariants());
@@ -103,26 +120,84 @@ export type PatchValue =
 	| PreferencePlaceholder
 	| GroupPlaceholder
 	| FlattenPlaceholder
-	| RegexPlaceholder;
+	| RegexPlaceholder
+	| NarrowPlaceholder
+	| LeadPlaceholder
+	| RenamePlaceholder
+	| RefinePlaceholder
+	| ReplacingFn;
+
+export type ReplacingFn = ($: unknown, member: RuntimeRule) => RuntimeRule;
 
 type PatchSet = Record<number | string, PatchValue>;
 
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
 	let rule = original;
-	for (const patches of patchSets) {
-		const current = rule;
-		rule = isBindingSet(patches) ? wireWithBindingEffects(() => applyPatchSet(current, patches)) : applyPatchSet(current, patches);
-	}
+	for (const patches of patchSets) rule = applyPatchSet(rule, patches);
 	return rule;
+}
+
+export function edit(previous: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
+	return editedCopy(previous, (body) => transform(body, ...patchSets)) ?? transform(previous, ...patchSets);
+}
+
+export function replace(previous: RuntimeRule, path: string, rule: RuntimeRule | ReplacingFn): RuntimeRule {
+	return edit(previous, { [path]: rule });
+}
+
+export function withDirectVariants(rule: unknown, ...sets: readonly PatchSet[]): unknown {
+	const entries: [string, VariantPlaceholder][] = [];
+	const stripped = stripDirectVariants(rule, [], entries);
+	const edited = sets.length === 0 ? stripped : wireApplyingEntries(() => transform(stripped as RuntimeRule, ...sets));
+	return entries.length === 0 ? edited : transform(edited as RuntimeRule, Object.fromEntries(entries));
+}
+
+function stripDirectVariants(rule: unknown, path: readonly string[] | undefined, entries: [string, VariantPlaceholder][]): unknown {
+	if (!rule || typeof rule !== 'object') return rule;
+	const label = directVariantOf(rule);
+	if (label !== undefined) {
+		if (path === undefined) throw new Error(`variant('${label.name}', rule): the arm is under a wrapper a path cannot address; write it as an edits entry`);
+		entries.push([path.length === 0 ? '.' : path.join('/'), label]);
+	}
+	const node = rule as { type?: string; name?: string; members?: unknown[]; content?: unknown };
+	const members = node.members?.map((member, i) => stripDirectVariants(member, path === undefined ? undefined : [...path, String(i)], entries));
+	const contentPath = path === undefined ? undefined : isPrecWrapper(rule as { type: string }) ? path : node.type === 'FIELD' ? [...path, `${node.name}:`] : undefined;
+	const content = node.content === undefined ? undefined : stripDirectVariants(node.content, contentPath, entries);
+	if (label === undefined && members === undefined && content === node.content) return rule;
+	const copy = { ...node, ...(members === undefined ? {} : { members }), ...(node.content === undefined ? {} : { content }) };
+	return label !== undefined || wireIsInlineWrite(rule) ? wireNoteInlineWrite(copy) : copy;
 }
 
 function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
-		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v)
+		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
 	);
-	return hasPathKeys || hasPlaceholderAlias ? applyPathPatches(rule, patches) : applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>);
+	if (hasPathKeys || hasPlaceholderAlias) return applyPathPatches(rule, patches);
+	return appliedAtSite(Object.keys(patches).join(', '), () => applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)) ?? rule;
+}
+
+function appliedAtSite(key: string, apply: () => RuntimeRule): RuntimeRule | undefined {
+	try {
+		return wireEntry(() => refuseSplitDisplays(apply()));
+	} catch (error) {
+		const refusal = siteRefusalOf(error);
+		if (refusal === undefined) throw error;
+		const owner = wireGetCurrentRuleKind() ?? '';
+		wireRefuse({
+			code: refusal.code,
+			ownerKind: owner,
+			message: `edits: '${owner}' at '${key}': ${refusal.reason}`,
+			details: { kind: owner, path: key, ...refusal.details }
+		});
+		return undefined;
+	}
+}
+
+function siteRefusalOf(error: unknown): VerbRefusal | undefined {
+	if (error instanceof VerbRefusal) return error;
+	return error instanceof ApplyPathSkip ? new VerbRefusal('edit-site-missing', error.message) : undefined;
 }
 
 function recordPatchSites(patches: PatchSet): void {
@@ -131,7 +206,7 @@ function recordPatchSites(patches: PatchSet): void {
 
 function patchSitesOf(entries: ReadonlyArray<readonly [string, PatchValue]>): PatchSite[] {
 	const ownerKind = wireGetCurrentRuleKind();
-	return ownerKind === null ? [] : entries.map(([path, value]) => ({ ownerKind, path, ...patchFormOf(value) }));
+	return ownerKind === null ? [] : entries.flatMap(([path, value]) => (isRefinePlaceholder(value) ? [] : [{ ownerKind, path, ...patchFormOf(value) }]));
 }
 
 function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
@@ -143,6 +218,9 @@ function patchFormOf(value: PatchValue): Pick<PatchSite, 'form' | 'name'> {
 	if (isGroupPlaceholder(value)) return { form: 'group' };
 	if (isFlattenPlaceholder(value)) return { form: 'flatten' };
 	if (isRegexPlaceholder(value)) return { form: 'regex' };
+	if (isNarrowPlaceholder(value)) return { form: 'narrow' };
+	if (isLeadPlaceholder(value)) return { form: 'lead' };
+	if (isRenamePlaceholder(value)) return { form: 'rename', name: value.to };
 	if (isPreference(value)) return { form: 'preference' };
 	if (isFieldLike(value)) return { form: 'field', name: value.name };
 	return { form: 'literal' };
@@ -156,18 +234,60 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
+		if (isNarrowPlaceholder(value)) {
+			wireQueueNarrow(value, key);
+			continue;
+		}
+		const dotOnly = dotOnlyEntryOf(value);
+		if (dotOnly !== undefined && key !== '.') {
+			refuseOffDotEntry(dotOnly, key);
+			continue;
+		}
+		if (isLeadPlaceholder(value)) {
+			wireQueueLead(value);
+			continue;
+		}
+		if (isRenamePlaceholder(value)) {
+			wireQueueRename(value);
+			continue;
+		}
 		const segments = parsePath(key);
-		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
-		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
-			applyPath(rule, segments, (member, enclosing) => resolvePatch(value, member, key, enclosing))
-		);
-		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
+		const current = rule;
+		rule =
+			appliedAtSite(key, () => {
+				if (isArmDefault(value)) assertChoiceArmPath(current, key, segments);
+				const applied = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
+					applyPath(current, segments, (member, enclosing) => resolveAt(value, member, key, enclosing))
+				);
+				return isArmDefault(value) ? clearSiblingDefaults(applied, segments) : applied;
+			}) ?? current;
 	}
-	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
-	for (const [key, value] of variantEntries) {
-		if (value.default === true) rule = clearSiblingDefaults(rule, parsePath(key));
-	}
-	return rule;
+	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries) : rule;
+}
+
+const DOT_ONLY_ENTRIES = {
+	refine: 'the rule itself',
+	lead: 'the list kind itself',
+	rename: 'the kind itself'
+} as const;
+
+type DotOnlyEntry = keyof typeof DOT_ONLY_ENTRIES;
+
+function dotOnlyEntryOf(value: PatchValue): DotOnlyEntry | undefined {
+	if (isRefinePlaceholder(value)) return 'refine';
+	if (isLeadPlaceholder(value)) return 'lead';
+	if (isRenamePlaceholder(value)) return 'rename';
+	return undefined;
+}
+
+function refuseOffDotEntry(entry: DotOnlyEntry, key: string): void {
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'edit-entry-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}': a ${entry} entry applies at '.', ${DOT_ONLY_ENTRIES[entry]}, not at '${key}'`,
+		details: { kind: owner, path: key }
+	});
 }
 
 function clearSiblingDefaults(rule: RuntimeRule, segments: readonly PathSegment[]): RuntimeRule {
@@ -230,19 +350,26 @@ function applyVariantPatches(
 		}
 	}
 	let result = hoisted ? hoisted.rule : rule;
+	const missed = new Set<string>();
 	for (const [key, value] of ordered) {
 		if (hoisted?.consumed.has(key)) continue;
 		const segments = parsePath(key);
+		const current = result;
 		try {
-			result = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
-				applyPath(result, segments, (member, enclosing) => resolvePatch(value, member, key, enclosing))
+			const applied = appliedAtSite(key, () =>
+				wireWithPatchSites(patchSitesOf([[key, value]]), () =>
+					applyPath(current, segments, (member, enclosing) => resolveAt(value, member, key, enclosing))
+				)
 			);
+			if (applied === undefined) missed.add(key);
+			else result = applied;
 		} catch (error) {
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
 			throw error;
 		}
 	}
 	registerIfPureVariantChoice(result);
+	for (const [key, value] of variantEntries) if (value.default === true && !missed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
 	return result;
 }
 
@@ -449,6 +576,7 @@ function buildHoistedVariants(
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altMember = choiceMembers[resolvedAlt]!;
+		refuseSameSite(altMember, p.key);
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
 		if (lift !== null) wireRenameLift(lift.liftName, name, true);
@@ -565,7 +693,7 @@ function applyFlatPatches(original: RuntimeRule, patches: Record<number | string
 		let anyApplied = false;
 		const newMembers = members.map((m) => {
 			try {
-				const patched = applyFlatPatches(m, patches);
+				const patched = wireAtomic(() => applyFlatPatches(m, patches));
 				anyApplied = true;
 				return patched;
 			} catch (e) {
@@ -574,7 +702,7 @@ function applyFlatPatches(original: RuntimeRule, patches: Record<number | string
 			}
 		});
 		if (!anyApplied) {
-			throw new Error(
+			throw new ApplyPathSkip(
 				`transform: flat-positional key(s) [${Object.keys(patches).join(', ')}] matched no choice arm out of ${members.length} — each arm was tried independently and none had all the target positions. Flat keys patch a position uniformly across every arm; they can't select ONE specific arm (a plain digit key on a choice does not mean "arm N"). To replace one specific arm, use path syntax instead (e.g. '${Object.keys(patches)[0]}' as a path segment, or '-1' for the last arm).`
 			);
 		}
@@ -590,7 +718,7 @@ function applyFlatPatches(original: RuntimeRule, patches: Record<number | string
 		return reconstructWrapper(original, newContent);
 	}
 
-	return original;
+	throw new ApplyPathSkip(`transform: flat-positional key(s) [${Object.keys(patches).join(', ')}] index a SEQ's members, and ${t} holds no SEQ`);
 }
 
 function applyFlatPatchesThroughPrec(
@@ -615,7 +743,7 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
 			);
 		}
-		members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolvePatch(patch, members[index]!, key));
+		members[index] = wireWithPatchSites(patchSitesOf([[key, patch]]), () => resolveAt(patch, members[index]!, key));
 	}
 	return reconstructContainer(original, members);
 }
@@ -647,7 +775,8 @@ function rewritesText(patch: PatchValue): boolean {
 		isGroupPlaceholder(patch) ||
 		isFlattenPlaceholder(patch) ||
 		isVariantPlaceholder(patch) ||
-		isAliasPlaceholder(patch)
+		isAliasPlaceholder(patch) ||
+		isRefinePlaceholder(patch)
 	);
 }
 
@@ -662,12 +791,41 @@ function assertElementSlotName(fieldName: string, member: RuntimeRule): void {
 	}
 }
 
+function replacingDollar(key: string): unknown {
+	const dollar = wireGetCurrentDollar();
+	if (dollar === undefined) throw new Error(`edits: the replacing function at '${key}' runs only inside a layer's rule callback, which gives it the layer's $`);
+	return dollar;
+}
+
+function resolveAt(patch: PatchValue, member: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
+	refuseSameSite(member, key);
+	const resolved = resolvePatch(patch, member, key, enclosing);
+	return wireNoteInlineWrite(wireIsInsideCopy() && replacesMember(patch) ? carriedLabel(resolved, member, wireAutomaticVariants()) : resolved);
+}
+
+function replacesMember(patch: PatchValue): boolean {
+	return typeof patch === 'function' || (typeof (patch as { type?: unknown }).type === 'string' && !('__sittirPlaceholder' in patch));
+}
+
+function refuseSameSite(member: RuntimeRule, key: string): void {
+	if (!wireIsApplyingEntries() || !wireIsInlineWrite(member)) return;
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'edit-site-conflict',
+		ownerKind: owner,
+		message: `edits: '${owner}' at '${key}': the rule callback already edits this member inline`,
+		details: { kind: owner, path: key }
+	});
+}
+
 function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
 	const textToken = wireTextTokenOf(originalMember);
 	if (textToken !== undefined && rewritesText(patch)) {
 		wireDepositTextToken(textToken, (body) => resolvePatch(patch, body, key));
 		return originalMember;
 	}
+	if (typeof patch === 'function') return resolvePatch(patch(replacingDollar(key), originalMember), originalMember, key, enclosing);
+	if (isRefinePlaceholder(patch)) return refine(originalMember, patch.forms);
 	if (isRulePlaceholder(patch)) {
 		return resolveRulePlaceholder(patch, key);
 	}
@@ -730,8 +888,6 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 	if (isAliasPlaceholder(patch)) {
 		return resolveAliasPlaceholder(patch, originalMember, enclosing);
 	}
-	recordAliasEffect(patch);
-	if (isAliasOfSymbol(patch, originalMember)) return { ...(patch as object), content: originalMember } as unknown as RuntimeRule;
 	return patch as RuntimeRule;
 }
 
@@ -739,7 +895,8 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 	const owner = wireGetCurrentRuleKind();
 	if (owner === null) return;
 	const field = isFieldLike(member) ? member : findEnrichShapedFieldThroughTransparentWrappers(member)?.found;
-	const node = member as { type?: unknown; name?: unknown; value?: unknown };
+	const wrapped = member as { type?: unknown; name?: unknown; value?: unknown; content?: unknown };
+	const node = (wrapped.type === 'REPEAT' || wrapped.type === 'REPEAT1' ? wrapped.content : wrapped) as { type?: unknown; name?: unknown; value?: unknown };
 	const from =
 		field !== undefined ? `${(field as { name: string }).name}:`
 		: node.type === 'SYMBOL' && typeof node.name === 'string' ? `${node.name}:`
@@ -748,15 +905,26 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 	if (from !== undefined && from !== `${name}:`) wireRecordBindingEffect({ kind: 'segment', owner, from, to: `${name}:` });
 }
 
-function recordAliasEffect(patch: PatchValue): void {
-	const alias = patch as { type?: unknown; named?: unknown; value?: unknown; content?: { type?: unknown; name?: unknown } };
-	if (alias.type === 'ALIAS' && alias.named === true && typeof alias.value === 'string' && alias.content?.type === 'SYMBOL' && typeof alias.content.name === 'string')
-		wireRecordBindingEffect({ kind: 'alias', from: alias.content.name, to: alias.value });
+function aliasInPlace(member: RuntimeRule, name: string): RuntimeRule {
+	recordAlias((member as unknown as { name: string }).name, name);
+	return nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias')(member, symbolRef(name));
 }
 
-function isAliasOfSymbol(patch: PatchValue, member: RuntimeRule): boolean {
-	const alias = patch as { type?: unknown; content?: { type?: unknown; name?: unknown } };
-	return alias.type === 'ALIAS' && alias.content?.type === 'SYMBOL' && member.type === 'SYMBOL' && alias.content.name === (member as { name?: unknown }).name;
+export function recordAlias(from: string, to: string): void {
+	wireRecordBindingEffect({ kind: 'alias', from, to });
+	refuseAliasTarget(from, to);
+}
+
+function refuseAliasTarget(from: string, to: string): void {
+	const issue = wireAliasTargetIssue(from, to);
+	if (issue === undefined) return;
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'alias-target-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}': alias '${from}' → '${to}': ${issue}`,
+		details: { kind: owner, from, to }
+	});
 }
 
 function findEnrichShapedFieldThroughTransparentWrappers(
@@ -885,7 +1053,7 @@ function resolveFieldPlaceholder(
 			content = unified;
 		}
 	}
-	const maybeSymbolized = insideLexicalToken(enclosing) ? content : maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, enclosing));
+	const maybeSymbolized = insideLexicalToken(enclosing) ? content : maybeKeywordSymbol(patch.name, content);
 	if (maybeSymbolized !== content) {
 		content = maybeSymbolized;
 	}
@@ -910,6 +1078,7 @@ function resolveAliasPlaceholder(
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
+	if (isSymbolType(originalMember.type)) return aliasInPlace(originalMember, patch.name);
 	const mint = (body: RuntimeRule): RuntimeRule => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, enclosing));
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
 		const content = contentOf(originalMember);

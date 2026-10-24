@@ -13,7 +13,7 @@ const textOf = (node: unknown): string => {
 	return SOURCE.slice(start, end);
 };
 const nameOf = (param: unknown): string => textOf((param as { name(): unknown }).name());
-const patternOf = (binding: unknown): string => textOf((binding as { pattern(): unknown }).pattern());
+const bindingNameOf = (binding: unknown): string => textOf((binding as { name(): unknown }).name());
 
 describe('c.<slot>.is(flag) in a where condition', () => {
 	const params = () => rs.parse(SOURCE).$query().$descendants.ofType(rs.kinds.Parameter);
@@ -32,8 +32,8 @@ describe('c.<slot>.is(flag) in a where condition', () => {
 	});
 
 	it('tests a flag a held kind carries by its own slots on the node the slot holds', () => {
-		expect([...lets().where((c) => c.value.is('move'))].map(patternOf)).toEqual(['e']);
-		expect([...lets().where((c) => c.value.is('move').not())].map(patternOf)).toEqual(['g', 'h']);
+		expect([...lets().where((c) => c.value.is('move'))].map(bindingNameOf)).toEqual(['e']);
+		expect([...lets().where((c) => c.value.is('move').not())].map(bindingNameOf)).toEqual(['g', 'h']);
 	});
 
 	it('selects natively what the read holds: the lists declaring an async function', () => {

@@ -5,7 +5,7 @@ import { AssembledBranch, AssembledEnum, AssembledKeyword, AssembledSupertype } 
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { scalarLeafKinds } from '../shared.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 import { emitTypes } from '../types.ts';
@@ -45,6 +45,7 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 		{ id: 3, lexicalRank: 3, kind: 'boolean_literal', member: 'BooleanLiteral' },
 		{ id: 4, lexicalRank: 4, kind: 'let_declaration', member: 'LetDeclaration' }
 	];
+	const { nodeMap, generatedIdTables } = withIdTables((kindEntries) => {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'boolean_literal',
@@ -57,17 +58,18 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 					{ type: STRING, value: 'false' }
 				]
 			},
-			{ kindEntries: entries }
+			{ kindEntries }
 		)
 	);
 	nodes.set(
 		'_expression',
 		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'boolean_literal' }] }, [
 			{ name: 'boolean_literal' }
-		])
+		], { kindEntries })
 	);
-	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule)));
-	const nodeMap = makeNodeMapWith(nodes);
+	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule), { kindEntries }));
+	return makeNodeMapWith(nodes);
+	}, kindIdTablesOf(entries));
 
 	it('names the two member kinds, for the resolver and the scalar type map alike', () => {
 		expect(scalarLeafKinds(nodeMap).boolean).toEqual({
@@ -77,14 +79,14 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 	});
 
 	it('emits the member ids, never a registry lookup', () => {
-		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;');
 		expect(emitted).not.toContain('_leafRegistry["boolean_literal"]');
 	});
 	it('emits one literal-valued scalar row per boolean member', () => {
-		const emitted = emitTypes({ grammar: 'synth', nodeMap });
-		expect(emitted).toContain('["true_keyword"]: true;');
-		expect(emitted).toContain('["false_keyword"]: false;');
+		const emitted = emitTypes({ grammar: 'synth', nodeMap, generatedIdTables });
+		expect(emitted).toContain('[TSKindId.TrueKeyword]: true;');
+		expect(emitted).toContain('[TSKindId.FalseKeyword]: false;');
 		expect(emitted).not.toContain('  boolean:');
 	});
 });
@@ -95,9 +97,10 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 		{ id: 2, lexicalRank: 2, kind: 'false', member: 'False', symbolName: 'false', literalText: 'False', anon: true },
 		{ id: 3, lexicalRank: 3, kind: 'let_declaration', member: 'LetDeclaration' }
 	];
+	const { nodeMap, generatedIdTables } = withIdTables((kindEntries) => {
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('true', new AssembledKeyword('true', { type: STRING, value: 'True' }, { kindEntries: entries }));
-	nodes.set('false', new AssembledKeyword('false', { type: STRING, value: 'False' }, { kindEntries: entries }));
+	nodes.set('true', new AssembledKeyword('true', { type: STRING, value: 'True' }, { kindEntries }));
+	nodes.set('false', new AssembledKeyword('false', { type: STRING, value: 'False' }, { kindEntries }));
 	nodes.set(
 		'_expression',
 		new AssembledSupertype(
@@ -110,10 +113,11 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 				]
 			},
 			[{ name: 'true' }, { name: 'false' }]
-		)
+		, { kindEntries })
 	);
-	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule)));
-	const nodeMap = makeNodeMapWith(nodes);
+	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule), { kindEntries }));
+	return makeNodeMapWith(nodes);
+	}, kindIdTablesOf(entries));
 
 	it('names the two keyword kinds, for the resolver and the scalar type map alike', () => {
 		expect(scalarLeafKinds(nodeMap).boolean).toEqual({
@@ -123,13 +127,13 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 	});
 
 	it('emits the keyword ids', () => {
-		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.True : TSKindId.False;');
 	});
 	it('emits literal-valued scalar rows for keyword kinds', () => {
-		const emitted = emitTypes({ grammar: 'synth', nodeMap });
-		expect(emitted).toContain('["true"]: true;');
-		expect(emitted).toContain('["false"]: false;');
+		const emitted = emitTypes({ grammar: 'synth', nodeMap, generatedIdTables });
+		expect(emitted).toContain('[TSKindId.True]: true;');
+		expect(emitted).toContain('[TSKindId.False]: false;');
 		expect(emitted).not.toContain('  boolean:');
 	});
 });
@@ -139,6 +143,7 @@ describe('a grammar with no scalar kinds emits no scalar resolver', () => {
 		{ id: 1, lexicalRank: 1, kind: 'mode', member: 'Mode' },
 		{ id: 2, lexicalRank: 2, kind: 'let_declaration', member: 'LetDeclaration' }
 	];
+	const { nodeMap, generatedIdTables } = withIdTables((kindEntries) => {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'mode',
@@ -151,19 +156,20 @@ describe('a grammar with no scalar kinds emits no scalar resolver', () => {
 					{ type: STRING, value: 'b' }
 				]
 			},
-			{ kindEntries: entries }
+			{ kindEntries }
 		)
 	);
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [{ name: 'mode' }])
+		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [{ name: 'mode' }], { kindEntries })
 	);
-	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule)));
-	const nodeMap = makeNodeMapWith(nodes);
+	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule), { kindEntries }));
+	return makeNodeMapWith(nodes);
+	}, kindIdTablesOf(entries));
 
 	it('emits neither the resolver nor the branch that calls it', () => {
 		expect(scalarLeafKinds(nodeMap).boolean).toBeUndefined();
-		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
 		expect(emitted).not.toContain('_resolveScalar');
 	});
 });

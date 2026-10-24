@@ -1,0 +1,200 @@
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { bindingsModulePath } from '@sittir/codegen/bindings';
+import { GRAMMAR_LAYERS, REPO_ROOT, allGrammars, grammarPackage, layerPath, type GrammarLayer, type GrammarName } from '@sittir/codegen/grammars';
+import { invoke } from '../codegen-surface.ts';
+
+export interface GateManifest {
+	readonly entries: ReadonlyMap<string, string>;
+}
+
+export interface GateException {
+	readonly path: string;
+	readonly dropJsonKeys?: readonly string[];
+}
+
+export type GateRevision = string | 'worktree';
+
+export interface GateDifference {
+	readonly path: string;
+	readonly change: 'changed' | 'missing' | 'added';
+}
+
+function git(args: readonly string[], root: string): string {
+	return execFileSync('git', [...args], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 30 });
+}
+
+const byPath = ([left]: readonly [string, string], [right]: readonly [string, string]): number => (left < right ? -1 : left > right ? 1 : 0);
+
+export function readGateManifest(path: string): GateManifest {
+	const entries = new Map<string, string>();
+	for (const line of readFileSync(path, 'utf8').split('\n')) {
+		const text = line.trim();
+		if (text === '' || text.startsWith('#')) continue;
+		const at = text.indexOf(' ');
+		entries.set(text.slice(at + 1).trim(), text.slice(0, at));
+	}
+	return { entries };
+}
+
+export function printGateManifest(manifest: GateManifest, comment: string): string {
+	return [`# ${comment}`, ...[...manifest.entries].map(([path, blob]) => `${blob} ${path}`)].join('\n') + '\n';
+}
+
+export async function generatedOutputRoots(): Promise<readonly string[]> {
+	const roots = await Promise.all(allGrammars().map((grammar) => invoke('generatedManifest', 'generatedRootsFor', grammar)));
+	return [...roots.flat(), ...allGrammars().map((grammar) => relative(REPO_ROOT, bindingsModulePath(grammar)))];
+}
+
+function blobsAtRevision(roots: readonly string[], rev: string, root: string): Map<string, string> {
+	const blobs = new Map<string, string>();
+	for (const entry of git(['ls-tree', '-r', '-z', rev, '--', ...roots], root).split('\0')) {
+		if (entry === '') continue;
+		const tab = entry.indexOf('\t');
+		const [, type, blob] = entry.slice(0, tab).split(' ');
+		if (type === 'blob' && blob !== undefined) blobs.set(entry.slice(tab + 1), blob);
+	}
+	return blobs;
+}
+
+function blobsInWorktree(roots: readonly string[], root: string): Map<string, string> {
+	const paths = git(['ls-files', '-z', '--cached', '--others', '--exclude-per-directory=.gitignore', '--', ...roots], root)
+		.split('\0')
+		.filter((path) => path !== '' && existsSync(join(root, path)));
+	const unique = [...new Set(paths)];
+	if (unique.length === 0) return new Map();
+	const blobs = git(['hash-object', '--no-filters', '--', ...unique], root).trim().split('\n');
+	return new Map(unique.map((path, index) => [path, blobs[index]!]));
+}
+
+export function gateBlobs(roots: readonly string[], rev: GateRevision, root: string = REPO_ROOT): Map<string, string> {
+	return rev === 'worktree' ? blobsInWorktree(roots, root) : blobsAtRevision(roots, rev, root);
+}
+
+export function recordGateManifest(roots: readonly string[], rev: string, root: string = REPO_ROOT): GateManifest {
+	return { entries: new Map([...blobsAtRevision(roots, rev, root)].sort(byPath)) };
+}
+
+function textAt(path: string, blob: string, rev: GateRevision, root: string): string {
+	return rev === 'worktree' ? readFileSync(join(root, path), 'utf8') : git(['cat-file', 'blob', blob], root);
+}
+
+function printedWithoutKeys(path: string, text: string, keys: readonly string[]): string | undefined {
+	const value: unknown = JSON.parse(text);
+	if (value === null || typeof value !== 'object' || Array.isArray(value))
+		throw new Error(`output gate: ${path} has dropped keys but its JSON is not an object`);
+	const printed = JSON.stringify(value, null, 2);
+	const tail = text.slice(printed.length);
+	if (!text.startsWith(printed) || (tail !== '' && tail !== '\n')) return undefined;
+	return JSON.stringify(Object.fromEntries(Object.entries(value).filter(([key]) => !keys.includes(key))), null, 2) + tail;
+}
+
+function sameWithoutKeys(path: string, before: string, after: string, keys: readonly string[]): boolean {
+	const kept = printedWithoutKeys(path, before, keys);
+	return kept !== undefined && kept === printedWithoutKeys(path, after, keys);
+}
+
+export function checkGate(
+	manifest: GateManifest,
+	current: ReadonlyMap<string, string>,
+	rev: GateRevision,
+	except: readonly GateException[],
+	root: string = REPO_ROOT
+): readonly GateDifference[] {
+	const exceptions = new Map(except.map((exception) => [exception.path, exception]));
+	const wholeFile = (path: string): boolean => {
+		const exception = exceptions.get(path);
+		return exception !== undefined && exception.dropJsonKeys === undefined;
+	};
+	const differences: GateDifference[] = [];
+	for (const [path, expected] of manifest.entries) {
+		const actual = current.get(path);
+		if (actual === expected || wholeFile(path)) continue;
+		const keys = exceptions.get(path)?.dropJsonKeys;
+		if (actual === undefined) differences.push({ path, change: 'missing' });
+		else if (keys === undefined || !sameWithoutKeys(path, git(['cat-file', 'blob', expected], root), textAt(path, actual, rev, root), keys))
+			differences.push({ path, change: 'changed' });
+	}
+	for (const path of current.keys()) if (!manifest.entries.has(path) && !wholeFile(path)) differences.push({ path, change: 'added' });
+	return differences.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
+}
+
+export function parseGateException(spec: string): GateException {
+	const colon = spec.indexOf(':');
+	if (colon < 0) return { path: spec };
+	return { path: spec.slice(0, colon), dropJsonKeys: spec.slice(colon + 1).split(',').filter((key) => key !== '') };
+}
+
+export async function evaluatedGrammarOf(grammar: GrammarName, layer: GrammarLayer): Promise<unknown> {
+	return invoke('evaluate', 'evaluateDsl', layerPath(grammarPackage(grammar), layer));
+}
+
+export async function snapshotOf(evaluated: unknown): Promise<string> {
+	return JSON.stringify(await invoke('evaluateForDerivation', 'canonical', evaluated), null, 2) + '\n';
+}
+
+export async function evaluatedSnapshot(grammar: GrammarName, layer: GrammarLayer): Promise<string> {
+	return snapshotOf(await evaluatedGrammarOf(grammar, layer));
+}
+
+const snapshotFile = (dir: string, grammar: GrammarName, layer: GrammarLayer): string => join(dir, `${grammar}.${layer}.json`);
+
+export async function writeSnapshots(dir: string): Promise<readonly string[]> {
+	mkdirSync(dir, { recursive: true });
+	const written: string[] = [];
+	for (const grammar of allGrammars()) {
+		for (const layer of GRAMMAR_LAYERS) {
+			const file = snapshotFile(dir, grammar, layer);
+			writeFileSync(file, await evaluatedSnapshot(grammar, layer));
+			written.push(file);
+		}
+	}
+	return written;
+}
+
+export async function checkSnapshots(dir: string): Promise<readonly string[]> {
+	const differing: string[] = [];
+	for (const grammar of allGrammars()) {
+		for (const layer of GRAMMAR_LAYERS) {
+			const file = snapshotFile(dir, grammar, layer);
+			if (!existsSync(file) || readFileSync(file, 'utf8') !== (await evaluatedSnapshot(grammar, layer))) differing.push(file);
+		}
+	}
+	return differing;
+}
+
+export interface OutputGateOptions {
+	readonly record?: string;
+	readonly check?: string;
+	readonly rev?: string;
+	readonly except?: readonly string[];
+	readonly snapshot?: string;
+	readonly checkSnapshot?: string;
+}
+
+export async function run(opts: OutputGateOptions): Promise<number> {
+	const roots = await generatedOutputRoots();
+	if (opts.record !== undefined) {
+		const rev = opts.rev ?? 'HEAD';
+		const manifest = recordGateManifest(roots, rev);
+		writeFileSync(opts.record, printGateManifest(manifest, `generated outputs at ${git(['rev-parse', rev], REPO_ROOT).trim()}, as <blob> <path>`));
+		console.log(`recorded ${manifest.entries.size} generated files at ${rev} to ${opts.record}`);
+	}
+	let status = 0;
+	if (opts.check !== undefined) {
+		const rev = opts.rev ?? 'worktree';
+		const differences = checkGate(readGateManifest(opts.check), gateBlobs(roots, rev), rev, (opts.except ?? []).map(parseGateException));
+		for (const { path, change } of differences) console.log(`${change} ${path}`);
+		console.log(differences.length === 0 ? `output gate: every generated file matches ${opts.check}` : `output gate: ${differences.length} generated file(s) differ`);
+		if (differences.length > 0) status = 1;
+	}
+	if (opts.snapshot !== undefined) for (const file of await writeSnapshots(opts.snapshot)) console.log(`wrote ${file}`);
+	if (opts.checkSnapshot !== undefined) {
+		const differing = await checkSnapshots(opts.checkSnapshot);
+		for (const file of differing) console.log(`differs ${file}`);
+		console.log(differing.length === 0 ? `snapshots: every evaluated grammar matches ${opts.checkSnapshot}` : `snapshots: ${differing.length} evaluated grammar(s) differ`);
+		if (differing.length > 0) status = 1;
+	}
+	return status;
+}

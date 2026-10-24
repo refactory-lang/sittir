@@ -31,8 +31,8 @@ function makeNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('param', new AssembledBranch('param', flatten(paramRule), flatten(paramRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('param', new AssembledBranch('param', flatten(paramRule), flatten(paramRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	nodes.set(
 		'_prim',
 		new AssembledEnum(
@@ -41,13 +41,13 @@ function makeNodeMap() {
 			{ kindEntries }
 		)
 	);
-	nodes.set('_t', new AssembledSupertype('_t', tRule, [{ name: 'identifier' }, { name: '_prim' }]));
+	nodes.set('_t', new AssembledSupertype('_t', tRule, [{ name: 'identifier' }, { name: '_prim' }], { kindEntries }));
 	return { ...makeNodeMapWith(nodes), terminalAliasWireIds: new Map([['identifier', [1, 28]]]) };
 }
 
 describe('supertype node arm precedence', () => {
 	it('routes an enum member id to the enum variant even when a pattern subtype also wears it', () => {
-		const generatedIdTables: GeneratedIdTables = {
+		const generatedIdTables: GeneratedIdTables = { folds: new Map(),
 			kindIds: { identifier: 1, u8: 28, bool: 2, _t: 50, _prim: 51, param: 60 },
 			fieldIds: { type: 1 },
 			sourceArtifact: 'test'
