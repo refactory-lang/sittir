@@ -376,6 +376,25 @@ export interface DeclarationSynonyms {
 		]);
 	});
 
+	it("checks a flag's synonym against segments beneath every position the flag applies at, a prefix-only one included", async () => {
+		const prefixed = DECLARATION.replace('\t\treadonly parameters: readonly unknown[];\n', '\t\treadonly parameters: readonly unknown[];\n\t\treadonly pure?: Flag;\n').replace(
+			'\t}\n}\n',
+			`\t}
+	export namespace Function {
+		export namespace Port {
+			export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function<G>> {
+				readonly $kind: 'declaration.function.port.inner';
+			}
+		}
+	}
+}
+`
+		);
+		expect(await issues({ ...CLEAN, 'declaration.ts': prefixed, 'utils.ts': "export interface FlagSynonyms {\n\treadonly pure: 'inner';\n}\n" })).toEqual([
+			'#pure: the synonym inner spells declaration.function.port.inner, beneath kinds that have the flag'
+		]);
+	});
+
 	it('reports a table entry with no position: a segment the level does not have, or a flag no kind has', async () => {
 		expect(await synonyms("\treadonly closure: 'lambda';\n", "\treadonly shared: 'common';\n")).toEqual([
 			'declaration: the synonyms of closure have no position, since closure is no segment of the level',

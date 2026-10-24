@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -513,7 +513,7 @@ function membersOf(
 	const reached = new Map([...paths].filter(([, route]) => guaranteed.holds(route.path)));
 	const via = new Set([...reached.keys()].flatMap((m) => m.via.flatMap((step) => step.kind ?? [])));
 	const captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[] = input.bindings.members.flatMap((m) =>
-		m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && formsOf(input.model, m.owner).includes(kind) ? [m] : []
+		m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && captureReaches(input.model, m, kind) ? [m] : []
 	);
 	const flags = captures.filter((m) => m.flag === true);
 	const spelledFlags: MemberRoute[] = [];
@@ -682,8 +682,26 @@ function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly R
 	return [...members.filter((member: EnumMember) => ownTextAdmits(claim, member.text)).map((member) => ({ kind: member.kind, spelled: decides })), ...shown];
 }
 
+export function claimReads(model: SlotModel, claims: readonly ClaimFact[]): (claim: ClaimFact) => readonly (readonly [string, ReadKind])[] {
+	const claimsOwn = new Set(claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
+	return (claim) => {
+		const owner = claim.kind;
+		if (owner === null) return [];
+		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
+		return forms.flatMap((form) => readKinds(model, form, claim).map((read) => [form, read] as const));
+	};
+}
+
+export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: string): boolean {
+	if (member.route !== 'rename') return member.owner === kind;
+	const forms = formsOf(model, member.owner);
+	if (!forms.includes(kind)) return false;
+	const holds = (form: string): boolean => slotFor(model, modelNode(model, form)?.slots ?? [], member) !== undefined;
+	return holds(kind) || !forms.some(holds);
+}
+
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
-	const claimsOwn = new Set(input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
+	const readsOf = claimReads(input.model, input.bindings.claims);
 
 	const slotNames = new Map<string, Map<string, string | null>>();
 	for (const member of input.bindings.members) {
@@ -703,11 +721,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	input.bindings.claims.forEach((claim, index) => {
 		const owner = claim.kind;
 		if (owner === null) return;
-		const forms =
-			owner === WILDCARD
-				? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`))
-				: formsOf(input.model, owner);
-		for (const [form, { kind, spelled }] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [form, read] as const))) {
+		for (const [form, { kind, spelled }] of readsOf(claim)) {
 			const claimed = owner === WILDCARD ? form : owner;
 			const entry: ReadEntry = {
 				kind,

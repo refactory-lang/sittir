@@ -294,8 +294,10 @@ function synonymCollisions(
 				(holder) => camel(word) !== flag && (lines.get(holder) ?? []).some((at) => declarations.get(at)?.has(camel(word)) === true)
 			);
 			if (members.length > 0) out.push(`#${flag}: the synonym ${word} is a member of ${members.join(', ')}, which have the flag`);
-			const beneath = holders.flatMap((holder) =>
-				[...(children.get(holder) ?? [])].filter((child) => child === word || synonyms.levels.get(topSegment(holder))?.get(child)?.includes(word) === true).map((child) => `${holder}.${child}`)
+			const beneath = [...children].flatMap(([parent, segments]) =>
+				!flagsAt(parent).has(flag)
+					? []
+					: [...segments].filter((child) => child === word || synonyms.levels.get(topSegment(parent))?.get(child)?.includes(word) === true).map((child) => `${parent}.${child}`)
 			);
 			if (beneath.length > 0) out.push(`#${flag}: the synonym ${word} spells ${beneath.join(', ')}, beneath kinds that have the flag`);
 		}
