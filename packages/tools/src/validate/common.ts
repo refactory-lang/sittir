@@ -1794,8 +1794,8 @@ export function separatedListFactoryOptions(
 	const rec = (data ?? {}) as Record<string, unknown>;
 	const option = Object.values(slots ?? {}).find((meta) => meta.separator !== undefined)?.separator;
 	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
-	const separator =
-		typeof rec['_separator'] === 'number' ? rec['_separator'] : option === undefined ? undefined : slotSeparatorOf(rec);
+	const stored = typeof rec['_separator'] === 'number' ? rec['_separator'] : slotSeparatorOf(rec);
+	const separator = option === undefined ? undefined : stored;
 	const options: { separator?: number; delimiter?: number } = {};
 	if (separator !== undefined && !(omitDefault && separator === option?.default)) options.separator = separator;
 	if (delimiter !== undefined) options.delimiter = delimiter;

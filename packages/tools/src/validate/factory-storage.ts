@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { nodeText, placeOf, spanOf } from '@sittir/common/utils';
+import { nodeText, placeOf, slotSeparatorOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -275,6 +275,7 @@ function compareNodeStorage(
 		if (key === '$type' || seen.has(key)) continue;
 		const av = storageValueOf(actual, key);
 		if (isEmptyStorageValue(av)) continue;
+		if (key === '_separator' && slotSeparatorOf(expected) === av) continue;
 		return `${path || 'root'}.${key}: unexpected extra field on factory output`;
 	}
 	return null;
@@ -351,6 +352,8 @@ function rebuildChildren(
 			SOURCE_KEYS.has(key) || key === '$_layout' ? [] : [[key, rebuild(value)]]
 		)
 	);
+	const separator = isComparableNode(node) ? slotSeparatorOf(node) : undefined;
+	if (separator !== undefined && !('_separator' in copy)) copy['_separator'] = separator;
 	const trivia = isComparableNode(node) ? sides(node as unknown as ReadNodeLike, rebuild) : undefined;
 	return trivia === undefined ? copy : { ...copy, $_layout: { trivia } };
 }
