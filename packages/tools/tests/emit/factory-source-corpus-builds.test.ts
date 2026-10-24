@@ -3,7 +3,6 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import type { AnyUntypedNode } from '@sittir/types';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 import { languageByName } from '../../src/languages.ts';
 
@@ -18,7 +17,7 @@ async function rebuildAndRender(grammar: 'rust' | 'typescript' | 'regex', input:
 	try {
 		const mod = (await import(/* @vite-ignore */ pathToFileURL(file).href)) as { rebuild(): unknown };
 		const engine = await createEngine(await languageByName(grammar));
-		return { source, rendered: engine.render(mod.rebuild() as AnyUntypedNode).toString() };
+		return { source, rendered: engine.render(mod.rebuild() as never).toString() };
 	} finally {
 		rmSync(file, { force: true });
 	}
@@ -31,6 +30,14 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 		expect(source).toContain('literalType.strict(ts.build.stringDouble.strict(');
 		expect(rendered).toContain('"boom"');
 		expect(rendered).toContain('"lit"');
+	});
+
+	it('typescript: a reserved word after a dot is an identifier placed in the property slot of the member', async () => {
+		const { source, rendered } = await rebuildAndRender('typescript', 'Symbol.for("bar");\nx.class;\n');
+		expect(source).toContain('property: ts.build.identifier("for")');
+		expect(source).toContain('property: ts.build.identifier("class")');
+		expect(rendered).toContain('Symbol.for("bar")');
+		expect(rendered).toContain('x.class');
 	});
 
 	it('rust: a comment with extra slashes is built from its text by the variant', async () => {
