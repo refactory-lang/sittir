@@ -20,7 +20,8 @@ import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { builtArenaOf, builtEntries, NO_CHUNKS, type BuiltRecords } from './built-arena.ts';
+import { builtEntries, NO_CHUNKS, type BuiltRecords, type BuiltText } from './built-arena.ts';
+import { builtRefOf } from './built-ref.ts';
 import { treeBuiltArena } from './engine-scope.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -199,10 +200,11 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
 	/**
-	 * The record at `address` of a built arena rendered as a render root whose `leading` and `trailing` edges have no
-	 * neighbour, under this engine's options, with the sides `owner` holds: the engine that built the arena, which its
-	 * records' side writes went to. The arena's `words` and `bytes` chunks are borrowed for the call, never copied.
-	 * Present when the addon carries the record codec.
+	 * The built node at `address` of a built arena rendered as a render root whose `leading` and `trailing` edges have
+	 * no neighbour, under this engine's options, with the sides `owner` holds: the engine that built the arena, which its
+	 * records' side writes went to. A leaf passes the `text` its cells hold; a compound record passes `null`. The
+	 * arena's `words` and `bytes` chunks are borrowed for the call, never copied. Present when the addon carries the
+	 * record codec.
 	 *
 	 * @throws when a chunk is not a typed array of its kind over an ordinary `ArrayBuffer`, the words at `address` are no
 	 * record the arena admits, a parsed tree a record links is not live, or the record's render refuses.
@@ -212,6 +214,7 @@ export interface NativeEngineLike<TNode = unknown> {
 		words: readonly Uint32Array[],
 		bytes: readonly Uint8Array[],
 		address: number,
+		text: BuiltText | null,
 		leading: boolean,
 		trailing: boolean,
 		options?: object
@@ -495,21 +498,19 @@ export function createNativeEngine<
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			const holdsTrees = (): unknown => node;
-			// A view is never edited (a write goes through its row and returns
-			// an object node), so it renders as the record it reads.
+			const built = typeof node === 'number' ? undefined : builtRefOf(node);
+			if (built !== undefined) {
+				const changed = rootEdges(node as object);
+				const renderBuilt = engine.renderBuilt;
+				if (renderBuilt === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+				return createRenderHandle(() => {
+					const { words, bytes } = built.arena.chunks();
+					return renderBuilt.call(engine, built.arena.owner, words, bytes, built.at, built.text ?? null, changed.leading, changed.trailing, perCall);
+				});
+			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
 				const changed = rootEdges(node as object);
-				const built = builtArenaOf(node as object);
-				if (built !== undefined) {
-					const renderBuilt = engine.renderBuilt;
-					if (renderBuilt === undefined)
-						throw new Error('arena node storage needs an addon built with the `arena` feature');
-					return createRenderHandle(() => {
-						const { words, bytes } = built.chunks();
-						return renderBuilt.call(engine, built.owner, words, bytes, record, changed.leading, changed.trailing, perCall);
-					});
-				}
 				const tree = treeOf(node as object);
 				const treeId = tree?.id;
 				if (tree?.records === undefined || treeId === undefined)

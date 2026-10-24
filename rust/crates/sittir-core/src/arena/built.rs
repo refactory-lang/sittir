@@ -5,7 +5,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasher;
 
-use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, HeldArenas, RecordGrammar, RecordShape};
+use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, HeldArenas, RecordGrammar, RecordShape, StringRef};
 use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
 use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
@@ -15,6 +15,24 @@ use crate::trivia::{BuiltEntry, FromTriviaText, SideWrite, TriviaEntry, TriviaTe
 use crate::trivia_store::Place;
 use crate::trivia_table::TriviaSide;
 use crate::types::{KindId, NodeIndex, TreeId};
+
+/// What a built render starts from: a compound record, or a built leaf's
+/// header record and the text its cells hold, which its record does not.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BuiltRoot {
+    Record(Address),
+    Leaf { record: Address, text: StringRef },
+}
+
+impl BuiltRoot {
+    /// The record the root names, which holds its kind and its sides.
+    #[must_use]
+    pub fn record(self) -> Address {
+        match self {
+            Self::Record(at) | Self::Leaf { record: at, .. } => at,
+        }
+    }
+}
 
 impl<G: EngineGrammar> Engine<G> {
     /// The entries a write gave `side` of the built record at `at`, or
@@ -47,9 +65,9 @@ impl<G: EngineGrammar> Engine<G> {
 }
 
 impl<G: RecordGrammar> Engine<G> {
-    /// The record at `at` of the built arena `arena` rendered as a render
-    /// root whose `changed` edges have no neighbour, under `options`, its
-    /// line endings unspelled. The records it reaches are admitted first,
+    /// The built node `root` names, of the built arena `arena`, rendered as
+    /// a render root whose `changed` edges have no neighbour, under
+    /// `options`, its line endings unspelled. The records it reaches are admitted first,
     /// their shapes by `shape`; each parsed tree a cell links is held from
     /// `trees` for the render, and every tree's source is read from `trees`.
     ///
@@ -61,13 +79,13 @@ impl<G: RecordGrammar> Engine<G> {
     pub fn render_built<H: BuildHasher>(
         &self,
         arena: &dyn ArenaRead,
-        at: Address,
+        root: BuiltRoot,
         changed: ChangedEdges,
         shape: fn(KindId) -> Option<RecordShape>,
         trees: &HashMap<TreeId, ParsedTree<G>, H>,
         options: &ResolvedOptions,
     ) -> Result<String, RenderError> {
-        let (root, mut held) = admitted_root(arena, at, changed, shape, trees)?;
+        let (root, mut held) = admitted_root(arena, root, changed, shape, trees)?;
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), &RenderContext { options, sources: trees })
     }
 
@@ -98,7 +116,7 @@ impl<G: RecordGrammar> Engine<G> {
                     if header != kind {
                         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(kind.0) }));
                     }
-                    let (root, mut held) = admitted_root(arena, at, ChangedEdges::default(), shape, trees)?;
+                    let (root, mut held) = admitted_root(arena, BuiltRoot::Record(at), ChangedEdges::default(), shape, trees)?;
                     let text = G::render_entry(self.grammar(), root, &mut held, arena, self.written(), &RenderContext { options, sources: trees })?;
                     let mut entry = TriviaEntry::new(SlotValue::Node(G::Trivia::from_text(TriviaText::of(kind, &text))));
                     entry.record = Some(record);
@@ -112,11 +130,12 @@ impl<G: RecordGrammar> Engine<G> {
 
 fn admitted_root<'t, G: EngineGrammar, H: BuildHasher>(
     arena: &dyn ArenaRead,
-    at: Address,
+    root: BuiltRoot,
     changed: ChangedEdges,
     shape: fn(KindId) -> Option<RecordShape>,
     trees: &'t HashMap<TreeId, ParsedTree<G>, H>,
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
+    let at = root.record();
     let kind = arena.header_kind(at).map_err(RenderError::Record)?;
     let linked = admit(arena, at, shape).map_err(RenderError::Record)?;
     let held = linked
@@ -126,5 +145,9 @@ fn admitted_root<'t, G: EngineGrammar, H: BuildHasher>(
             Ok((tree, parsed.tree_arena()))
         })
         .collect::<Result<Vec<_>, CoordinateError>>()?;
-    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::of(held)))
+    let cell = match root {
+        BuiltRoot::Record(at) => Cell::Child { kind, at, link: None, changed },
+        BuiltRoot::Leaf { record, text } => Cell::BuiltLeaf { kind, text, record },
+    };
+    Ok((CellAt { cell, tree: None, site: None }, HeldArenas::of(held)))
 }

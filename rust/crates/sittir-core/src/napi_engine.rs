@@ -758,11 +758,12 @@ macro_rules! napi_engine {
                     })
                 }
 
-                /// The record at `address` of a built arena rendered as a
-                /// render root whose `leading` and `trailing` edges have no
+                /// The built node at `address` of a built arena rendered as
+                /// a render root whose `leading` and `trailing` edges have no
                 /// neighbour, under `options` over this engine's, with the
                 /// sides `owner` holds: the engine that built the arena, which
-                /// its records' side writes went to. The arena's `words` and
+                /// its records' side writes went to. A leaf passes the `text`
+                /// its cells hold; a compound record passes none. The arena's `words` and
                 /// `bytes` chunks are borrowed for this call; the records the
                 /// root reaches are admitted, and the parsed trees they link
                 /// held for the render (`Engine::render_built`). Refuses a
@@ -771,9 +772,13 @@ macro_rules! napi_engine {
                 /// words admit, a linked tree that is not live, and a record
                 /// whose render refuses.
                 #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
-                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
-                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, words: Uint32Array[], bytes: Uint8Array[], address: number, text: BuiltText | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, address: f64, text: Option<$crate::napi_engine::BuiltText>, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
+                    let record = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let root = match text {
+                        Some(text) => $crate::arena::BuiltRoot::Leaf { record, text: $crate::arena::StringRef::from_offset(text.at, text.len) },
+                        None => $crate::arena::BuiltRoot::Record(record),
+                    };
                     let words = $crate::napi_engine::borrowed_chunks::<u32>(&env, &words)?;
                     let bytes = $crate::napi_engine::borrowed_chunks::<u8>(&env, &bytes)?;
                     let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
@@ -782,7 +787,7 @@ macro_rules! napi_engine {
                         let trees = trees.borrow();
                         let changed = $crate::slot::ChangedEdges { leading, trailing };
                         let shape = <$any as $crate::arena::RecordCells>::shape;
-                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.engine.render_built(&arena, address, changed, shape, &*trees, &table)))
+                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.engine.render_built(&arena, root, changed, shape, &*trees, &table)))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))
@@ -930,6 +935,16 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
         .and_then(std::num::NonZeroU32::new)
         .map(crate::read::Depth::Levels)
         .ok_or_else(|| napi::Error::from_reason(format!("depth {levels} is not a whole number of levels (at least 1) or Infinity")))
+}
+
+/// The text a built leaf's cells hold, as its builder interned it: the
+/// chunk and byte packed as a cell stores them (`StringRef::offset`), and
+/// its length in bytes.
+#[cfg(feature = "arena")]
+#[napi_derive::napi(object)]
+pub struct BuiltText {
+    pub at: u32,
+    pub len: u32,
 }
 
 /// A run of whitespace a side takes, with the line breaks, spaces and tabs

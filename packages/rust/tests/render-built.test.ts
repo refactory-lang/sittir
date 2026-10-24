@@ -25,19 +25,19 @@ describe('a built arena rendered natively', () => {
 	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer', () => {
 		const native = arenaEngine();
 		const shared = new Uint32Array(new SharedArrayBuffer(16));
-		expect(() => native.renderBuilt([shared], [], 1, false, false)).toThrow(/a built arena chunk must be a Uint32Array over an ordinary ArrayBuffer/);
-		expect(() => native.renderBuilt([new Uint8Array(16) as never], [], 1, false, false)).toThrow(/must be a Uint32Array/);
-		expect(() => native.renderBuilt([[0, 1] as never], [], 1, false, false)).toThrow(/must be a Uint32Array/);
-		expect(() => native.renderBuilt([words(1, 0)], [new Uint8Array(new SharedArrayBuffer(8))], 1, false, false)).toThrow(
+		expect(() => native.renderBuilt([shared], [], 1, null, false, false)).toThrow(/a built arena chunk must be a Uint32Array over an ordinary ArrayBuffer/);
+		expect(() => native.renderBuilt([new Uint8Array(16) as never], [], 1, null, false, false)).toThrow(/must be a Uint32Array/);
+		expect(() => native.renderBuilt([[0, 1] as never], [], 1, null, false, false)).toThrow(/must be a Uint32Array/);
+		expect(() => native.renderBuilt([words(1, 0)], [new Uint8Array(new SharedArrayBuffer(8))], 1, null, false, false)).toThrow(
 			/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/
 		);
 	});
 
 	it('refuses words that are no record it admits', () => {
 		const native = arenaEngine();
-		expect(() => native.renderBuilt([words(1, 0)], [], 0, false, false)).toThrow(/record address 0 is not one a record writer writes/);
-		expect(() => native.renderBuilt([words(60000, 0)], [], 1, false, false)).toThrow(/record kind 60000 is not one a record writer writes/);
-		expect(() => native.renderBuilt([words(1, 0)], [], 9, false, false)).toThrow(/past what the arena wrote/);
+		expect(() => native.renderBuilt([words(1, 0)], [], 0, null, false, false)).toThrow(/record address 0 is not one a record writer writes/);
+		expect(() => native.renderBuilt([words(60000, 0)], [], 1, null, false, false)).toThrow(/record kind 60000 is not one a record writer writes/);
+		expect(() => native.renderBuilt([words(1, 0)], [], 9, null, false, false)).toThrow(/past what the arena wrote/);
 	});
 
 	it('reads and writes the sides of a built record by its address, refusing address 0', () => {

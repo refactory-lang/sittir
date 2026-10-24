@@ -113,4 +113,15 @@ describe('every construction renders each shape as objects do', () => {
 		const expected = nestedOf(objects, side, before, after);
 		for (const [, rs] of constructions) expect(nestedOf(rs, side, before, after)).toBe(expected);
 	});
+
+	const leafRoot = (rs: Engine) => {
+		const b = rs.build;
+		const x = withSide(withSide(b.identifier('x') as unknown as Sided, 'leading', [b.lineComment(' before')]), 'trailing', [b.blockComment(b.blockCommentRegular(' after '))]);
+		return (x as unknown as { $render(): string }).$render();
+	};
+
+	it.each(constructions)('renders a built leaf root with the sides written on it (%s)', (_, rs) => {
+		expect(leafRoot(rs)).toBe(leafRoot(objects));
+		expect(leafRoot(rs)).toBe('// before\nx /* after */');
+	});
 });

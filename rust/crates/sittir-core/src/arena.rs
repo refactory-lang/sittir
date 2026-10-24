@@ -29,6 +29,7 @@ use std::fmt;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
+pub use built::BuiltRoot;
 pub use cell::{Cell, ListCell};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_entry_root, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
