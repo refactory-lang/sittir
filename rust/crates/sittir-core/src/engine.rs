@@ -316,7 +316,7 @@ pub fn last_list_child(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Op
     let mut cursor = holder.walk();
     let last = holder
         .children(&mut cursor)
-        .filter(|child| !child.is_extra() && child.byte_range().len() > 0 && Span::of(child).start >= span.start && Span::of(child).end <= span.end)
+        .filter(|child| !child.is_extra() && !Span::of(child).range().is_empty() && Span::of(child).start >= span.start && Span::of(child).end <= span.end)
         .last();
     last
 }
