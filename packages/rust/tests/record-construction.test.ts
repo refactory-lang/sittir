@@ -92,6 +92,24 @@ describe('record construction', () => {
 		expect(((fn.name as () => Built)().$text as () => string)()).toBe('f');
 	});
 
+	it("builds a kind that seats a group: a key reads the group's field while the group is there, and $with seats it", () => {
+		const seated = (engine: typeof objects) => {
+			const b = engine.build;
+			const withGroup = b.useWildcard(b.identifier('a')) as unknown as Built;
+			const without = b.useWildcard() as unknown as Built;
+			const reseated = (withGroup.$with as { path(value: unknown): Built }).path(b.identifier('c'));
+			return {
+				withGroup: [String(engine.render(withGroup as never)), readBack((withGroup.path as () => unknown)())],
+				without: [String(engine.render(without as never)), without.path],
+				reseated: [String(engine.render(reseated as never)), readBack((reseated.path as () => unknown)())]
+			};
+		};
+		const record = seated(records);
+		expect(record.without[1]).toBeUndefined();
+		expect(record).toEqual(seated(objects));
+		expect(recordOf(records.build.useWildcard(records.build.identifier('a')))).toBeTypeOf('number');
+	});
+
 	it('holds untouched parsed children by link, returning the parsed nodes', () => {
 		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as Built;
 		const name = (parsed.name as () => unknown)();

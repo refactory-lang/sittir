@@ -9085,6 +9085,45 @@ function viewSubscript(data: RecordStub, tree: TreeHandle): T.Subscript.Parsed {
 	return node as unknown as T.Subscript.Parsed;
 }
 
+function viewSlice(data: RecordStub, tree: TreeHandle): T.Slice.Parsed {
+	const handle = currentHandle();
+	const readGroup_step = () => viewSlot<T.SliceGroup | undefined>(node, tree, 12, 9, 7);
+	const node = {
+		...data,
+		$type: TSKindId.Slice as const,
+		start() {
+			return viewSlot<T.Expression | undefined>(this, tree, 2, 5, 0);
+		},
+		stop() {
+			return viewSlot<T.Expression | undefined>(this, tree, 7, 5, 0);
+		},
+		step() {
+			return viewSlot<T.SliceGroup | undefined>(this, tree, 12, 9, 7);
+		},
+		$with: {
+			start: (...args: unknown[]) => rowWith(node, tree, _wrap, 'start', args),
+			stop: (...args: unknown[]) => rowWith(node, tree, _wrap, 'stop', args),
+			step: (...args: unknown[]) => rowWith(node, tree, _wrap, 'step', args),
+			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
+		},
+		expression:
+			recordSlot(data, tree, 12, 9, 7) === undefined
+				? undefined
+				: () => groupField(readGroup_step.call(node), 'expression'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Slice.Parsed;
+}
+
 function viewCall(data: RecordStub, tree: TreeHandle): T.Call.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -11991,6 +12030,7 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.Yield]: viewYield,
 	[TSKindId.Attribute]: viewAttribute,
 	[TSKindId.Subscript]: viewSubscript,
+	[TSKindId.Slice]: viewSlice,
 	[TSKindId.Call]: viewCall,
 	[TSKindId.TypedParameter]: viewTypedParameter,
 	[TSKindId.Type]: viewType,

@@ -12499,6 +12499,37 @@ function viewUseAsClause(data: RecordStub, tree: TreeHandle): T.UseAsClause.Pars
 	return node as unknown as T.UseAsClause.Parsed;
 }
 
+function viewUseWildcard(data: RecordStub, tree: TreeHandle): T.UseWildcard.Parsed {
+	const handle = currentHandle();
+	const readGroup_useWildcardGroup = () => viewSlot<T.UseWildcardGroup | undefined>(node, tree, 2, 9, 7);
+	const node = {
+		...data,
+		$type: TSKindId.UseWildcard as const,
+		useWildcardGroup() {
+			return viewSlot<T.UseWildcardGroup | undefined>(this, tree, 2, 9, 7);
+		},
+		$with: {
+			useWildcardGroup: (...args: unknown[]) => rowWith(node, tree, _wrap, 'useWildcardGroup', args),
+			path: (...args: unknown[]) => rowWith(node, tree, _wrap, 'path', args)
+		},
+		path:
+			recordSlot(data, tree, 2, 9, 7) === undefined
+				? undefined
+				: () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UseWildcard.Parsed;
+}
+
 function viewParameters(data: RecordStub, tree: TreeHandle): T.Parameters.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -14054,6 +14085,91 @@ function viewMatchExpression(data: RecordStub, tree: TreeHandle): T.MatchExpress
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.MatchExpression.Parsed;
+}
+
+function viewMatchBlock(data: RecordStub, tree: TreeHandle): T.MatchBlock.Parsed {
+	const handle = currentHandle();
+	const readGroup_matchBlockArms = () => viewSlot<T.MatchBlockArms | undefined>(node, tree, 2, 5, 0);
+	const node = {
+		...data,
+		$type: TSKindId.MatchBlock as const,
+		matchBlockArms() {
+			return viewSlot<T.MatchBlockArms | undefined>(this, tree, 2, 5, 0);
+		},
+		$with: {
+			matchBlockArms: (...args: unknown[]) => rowWith(node, tree, _wrap, 'matchBlockArms', args),
+			arms: (...args: unknown[]) => rowWith(node, tree, _wrap, 'arms', args),
+			lastArm: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lastArm', args)
+		},
+		arms:
+			recordSlot(data, tree, 2, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
+		lastArm:
+			recordSlot(data, tree, 2, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items),
+			inner: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'inner', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchBlock.Parsed;
+}
+
+function viewLastMatchArm(data: RecordStub, tree: TreeHandle): T.LastMatchArm.Parsed {
+	const handle = currentHandle();
+	const readGroup_match = () => viewSlot<T.MatchPattern | undefined>(node, tree, 4, 5, 0);
+	const node = {
+		...data,
+		$type: TSKindId.LastMatchArm as const,
+		attributes() {
+			return viewSlots<T.AttributeItem | T.InnerAttributeItem>(this, tree, 2, 2, 5, 0);
+		},
+		match() {
+			return viewSlot<T.MatchPattern>(this, tree, 4, 5, 0);
+		},
+		value() {
+			return viewSlot<T.Expression>(this, tree, 9, 5, 0);
+		},
+		trailingComma() {
+			return recordSlot(this, tree, 14, 5, 0);
+		},
+		$with: {
+			attributes: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributes', args),
+			match: (...args: unknown[]) => rowWith(node, tree, _wrap, 'match', args),
+			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
+			trailingComma: (...args: unknown[]) => rowWith(node, tree, _wrap, 'trailingComma', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
+			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args)
+		},
+		pattern:
+			recordSlot(data, tree, 4, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_match.call(node), 'pattern'),
+		condition:
+			recordSlot(data, tree, 4, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_match.call(node), 'condition'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.LastMatchArm.Parsed;
 }
 
 function viewMatchPattern(data: RecordStub, tree: TreeHandle): T.MatchPattern.Parsed {
@@ -17078,6 +17194,106 @@ function viewForeignModItemBody(data: RecordStub, tree: TreeHandle): T.ForeignMo
 	return node as unknown as T.ForeignModItemBody.Parsed;
 }
 
+function viewMatchArmWithComma(data: RecordStub, tree: TreeHandle): T.MatchArmWithComma.Parsed {
+	const handle = currentHandle();
+	const readGroup_match = () => viewSlot<T.MatchPattern | undefined>(node, tree, 4, 5, 0);
+	const node = {
+		...data,
+		$type: TSKindId.MatchArmWithComma as const,
+		attributes() {
+			return viewSlots<T.AttributeItem | T.InnerAttributeItem>(this, tree, 2, 2, 5, 0);
+		},
+		match() {
+			return viewSlot<T.MatchPattern>(this, tree, 4, 5, 0);
+		},
+		value() {
+			return viewSlot<T.Expression>(this, tree, 9, 5, 0);
+		},
+		$with: {
+			attributes: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributes', args),
+			match: (...args: unknown[]) => rowWith(node, tree, _wrap, 'match', args),
+			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
+			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args)
+		},
+		pattern:
+			recordSlot(data, tree, 4, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_match.call(node), 'pattern'),
+		condition:
+			recordSlot(data, tree, 4, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_match.call(node), 'condition'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmWithComma.Parsed;
+}
+
+function viewMatchArmBlockEnding(data: RecordStub, tree: TreeHandle): T.MatchArmBlockEnding.Parsed {
+	const handle = currentHandle();
+	const readGroup_match = () => viewSlot<T.MatchPattern | undefined>(node, tree, 4, 5, 0);
+	const node = {
+		...data,
+		$type: TSKindId.MatchArmBlockEnding as const,
+		attributes() {
+			return viewSlots<T.AttributeItem | T.InnerAttributeItem>(this, tree, 2, 2, 5, 0);
+		},
+		match() {
+			return viewSlot<T.MatchPattern>(this, tree, 4, 5, 0);
+		},
+		value() {
+			return viewSlot<
+				| T.UnsafeBlock
+				| T.AsyncBlock
+				| T.GenBlock
+				| T.TryBlock
+				| T.Block
+				| T.IfExpression
+				| T.MatchExpression
+				| T.WhileExpression
+				| T.LoopExpression
+				| T.ForExpression
+				| T.ConstBlock
+			>(this, tree, 9, 5, 0);
+		},
+		$with: {
+			attributes: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributes', args),
+			match: (...args: unknown[]) => rowWith(node, tree, _wrap, 'match', args),
+			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
+			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args)
+		},
+		pattern:
+			recordSlot(data, tree, 4, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_match.call(node), 'pattern'),
+		condition:
+			recordSlot(data, tree, 4, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_match.call(node), 'condition'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.MatchArmBlockEnding.Parsed;
+}
+
 function viewLineCommentDocOuter(data: RecordStub, tree: TreeHandle): T.LineCommentDocOuter.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -18095,6 +18311,47 @@ function viewAttributedParameterReceiver(data: RecordStub, tree: TreeHandle): T.
 	return node as unknown as T.AttributedParameterReceiver.Parsed;
 }
 
+function viewParametersElementsReceiver(data: RecordStub, tree: TreeHandle): T.ParametersElementsReceiver.Parsed {
+	const handle = currentHandle();
+	const readGroup_receiver = () => viewSlot<T.AttributedParameterReceiver | undefined>(node, tree, 2, 5, 0);
+	const node = {
+		...data,
+		$type: TSKindId.ParametersElementsReceiver as const,
+		receiver() {
+			return viewSlot<T.AttributedParameterReceiver>(this, tree, 2, 5, 0);
+		},
+		parametersElementsReceiverGroup() {
+			return viewSlot<T.ParametersElementsReceiverGroup | undefined>(this, tree, 7, 10, 8);
+		},
+		$with: {
+			receiver: (...args: unknown[]) => rowWith(node, tree, _wrap, 'receiver', args),
+			parametersElementsReceiverGroup: (...args: unknown[]) =>
+				rowWith(node, tree, _wrap, 'parametersElementsReceiverGroup', args),
+			attributeItem: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributeItem', args),
+			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
+		},
+		attributeItem:
+			recordSlot(data, tree, 2, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_receiver.call(node), 'attributeItem'),
+		content:
+			recordSlot(data, tree, 2, 5, 0) === undefined
+				? undefined
+				: () => groupField(readGroup_receiver.call(node), 'content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ParametersElementsReceiver.Parsed;
+}
+
 function viewParametersElementsReceiverGroup(
 	data: RecordStub,
 	tree: TreeHandle
@@ -18577,6 +18834,7 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.ScopedUseList]: viewScopedUseList,
 	[TSKindId.UseList]: viewUseList,
 	[TSKindId.UseAsClause]: viewUseAsClause,
+	[TSKindId.UseWildcard]: viewUseWildcard,
 	[TSKindId.Parameters]: viewParameters,
 	[TSKindId.SelfParameter]: viewSelfParameter,
 	[TSKindId.VariadicParameter]: viewVariadicParameter,
@@ -18626,6 +18884,8 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.LetChain]: viewLetChain,
 	[TSKindId.ElseClause]: viewElseClause,
 	[TSKindId.MatchExpression]: viewMatchExpression,
+	[TSKindId.MatchBlock]: viewMatchBlock,
+	[TSKindId.LastMatchArm]: viewLastMatchArm,
 	[TSKindId.MatchPattern]: viewMatchPattern,
 	[TSKindId.WhileExpression]: viewWhileExpression,
 	[TSKindId.LoopExpression]: viewLoopExpression,
@@ -18722,6 +18982,8 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.ExpressionStatementWithSemi]: viewExpressionStatementWithSemi,
 	[TSKindId.ForeignModItemSemi]: viewForeignModItemSemi,
 	[TSKindId.ForeignModItemBody]: viewForeignModItemBody,
+	[TSKindId.MatchArmWithComma]: viewMatchArmWithComma,
+	[TSKindId.MatchArmBlockEnding]: viewMatchArmBlockEnding,
 	[TSKindId.LineCommentDocOuter]: viewLineCommentDocOuter,
 	[TSKindId.LineCommentDocInner]: viewLineCommentDocInner,
 	[TSKindId.BlockCommentDocOuter]: viewBlockCommentDocOuter,
@@ -18756,6 +19018,7 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.MatchBlockArms]: viewMatchBlockArms,
 	[TSKindId.ReceiverParameterDeclaration]: viewReceiverParameterDeclaration,
 	[TSKindId.AttributedParameterReceiver]: viewAttributedParameterReceiver,
+	[TSKindId.ParametersElementsReceiver]: viewParametersElementsReceiver,
 	[TSKindId.ParametersElementsReceiverGroup]: viewParametersElementsReceiverGroup,
 	[TSKindId.TypeIdentifier]: viewTypeIdentifier,
 	[TSKindId.FieldIdentifier]: viewFieldIdentifier,

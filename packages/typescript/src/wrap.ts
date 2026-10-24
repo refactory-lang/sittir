@@ -12356,6 +12356,46 @@ function viewSwitchDefault(data: RecordStub, tree: TreeHandle): T.SwitchDefault.
 	return node as unknown as T.SwitchDefault.Parsed;
 }
 
+function viewCatchClause(data: RecordStub, tree: TreeHandle): T.CatchClause.Parsed {
+	const handle = currentHandle();
+	const readGroup_catchClauseGroup = () => viewSlot<T.CatchClauseGroup | undefined>(node, tree, 2, 15, 13);
+	const node = {
+		...data,
+		$type: TSKindId.CatchClause as const,
+		catchClauseGroup() {
+			return viewSlot<T.CatchClauseGroup | undefined>(this, tree, 2, 15, 13);
+		},
+		body() {
+			return viewSlot<T.StatementBlock>(this, tree, 17, 11, 9);
+		},
+		$with: {
+			catchClauseGroup: (...args: unknown[]) => rowWith(node, tree, _wrap, 'catchClauseGroup', args),
+			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args),
+			parameter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'parameter', args),
+			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
+		},
+		parameter:
+			recordSlot(data, tree, 2, 15, 13) === undefined
+				? undefined
+				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
+		type:
+			recordSlot(data, tree, 2, 15, 13) === undefined
+				? undefined
+				: () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.CatchClause.Parsed;
+}
+
 function viewFinallyClause(data: RecordStub, tree: TreeHandle): T.FinallyClause.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -19408,6 +19448,7 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.SwitchBody]: viewSwitchBody,
 	[TSKindId.SwitchCase]: viewSwitchCase,
 	[TSKindId.SwitchDefault]: viewSwitchDefault,
+	[TSKindId.CatchClause]: viewCatchClause,
 	[TSKindId.FinallyClause]: viewFinallyClause,
 	[TSKindId.YieldExpression]: viewYieldExpression,
 	[TSKindId.Object]: viewObject,

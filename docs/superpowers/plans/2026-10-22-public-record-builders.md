@@ -89,12 +89,16 @@ the last slice.
   - Written sides go to the native store.
   - `$with` shares unchanged children and copies bounded ones.
   - Cover disposal, growth and invalid buffers.
-- [ ] **Record views for every compound kind.** A kind whose seat plan has
-  groups, or that has a slot the layout gives no cell, has no record view, so
-  the record backend refuses it. Today these are rust `last_match_arm`,
-  `match_arm_block_ending`, `match_arm_with_comma`, `match_block` and
-  `use_wildcard`, typescript `catch_clause`, and python `slice`. The wrap
-  emitter gives them record views before the switch.
+- [x] **Record views for every compound kind.** A kind that seats a group
+  has a record view. Each key the group lends its parent is a member, present
+  only while the group's cell is set, that reads the group's field through the
+  view, as the object path reads it through the stored group. Its `$with`
+  seats the key in the group, as the object path's does. The kinds this
+  covered are rust `last_match_arm`, `match_arm_block_ending`,
+  `match_arm_with_comma`, `match_block`, `parameters_elements_receiver` and
+  `use_wildcard`, typescript `catch_clause`, and python `slice`. Only a kind
+  with a slot the layout gives no cell would still have no view, and no
+  compound kind of the five grammars has one.
 - [ ] **Switch.** Arena engines load the record backend. Prove that construction calls no
   object builder or serializer. Benchmark metadata names the construction
   backend. Both storages' complete validation history must be unchanged, and

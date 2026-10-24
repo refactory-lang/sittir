@@ -80,6 +80,19 @@ describe('a tree read as records', () => {
 		}
 	});
 
+	it("reads a kind that seats a group as a view: each key the group lends is there only while the group is, as on the object read", () => {
+		const seats = 'use a::*;\nuse *;\n\nfn f() {\n    match x {\n        y if z => 1,\n        _ => 2,\n    }\n}\n';
+		const keysOf = (wire: Wire) => {
+			const [withGroup, without] = engines[wire].parse(seats).statements() as unknown as Node[];
+			const wildcardOf = (item: Node | undefined) => (item!.argument as () => Node)();
+			return [wildcardOf(withGroup), wildcardOf(without)].map((wildcard) => ({ view: recordOf(wildcard) !== undefined, path: typeof wildcard.path, value: shape(wildcard) }));
+		};
+		const views = keysOf('arena');
+		expect(views.map((read) => [read.view, read.path])).toEqual([[true, 'function'], [true, 'undefined']]);
+		expect(views.map(({ path, value }) => ({ path, value }))).toEqual(keysOf('object').map(({ path, value }) => ({ path, value })));
+		expect(shape(engines.arena.parse(seats))).toEqual(shape(engines.object.parse(seats)));
+	});
+
 	it('renders untouched as its source, and writes through its row', () => {
 		expect(String(engines.arena.parse(source))).toBe(source);
 		const item = functionAt('arena');

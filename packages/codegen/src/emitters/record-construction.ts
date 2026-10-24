@@ -1,7 +1,5 @@
 import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { seatPlanOf } from './factories.ts';
-import type { KindEnumEntry } from './kind-discriminant.ts';
 import { builtRowLines, type InnerPositions, type SetterEntry } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
 import { RECORD_HEADER_WORDS, type RecordPlace } from './record-layout.ts';
@@ -11,10 +9,8 @@ export const RECORD_CONSTRUCTION_IMPORTS = ['bindRow', 'builtArenaOf', 'storeCel
 
 export function recordPlacesOf(
 	node: AuthoredCompound | AssembledList,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[]
+	nodeMap: NodeMap
 ): ReadonlyMap<string, RecordPlace> | undefined {
-	if (seatPlanOf(node, nodeMap, kindEntries, 'RAW.').groups.length > 0) return undefined;
 	const layout = nodeRecordLayout(node, nodeMap);
 	if (layout === undefined) return undefined;
 	const fields = new Map(layout.places.map((place) => [place.field, place]));
@@ -45,8 +41,8 @@ function slotStore(place: RecordPlace, local: string): string {
 	return `  storeCell(arena, record.data, ${at}, ${local});`;
 }
 
-export function recordTailLines(spec: RecordConstruction, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string[] {
-	const places = recordPlacesOf(spec.node, nodeMap, kindEntries);
+export function recordTailLines(spec: RecordConstruction, nodeMap: NodeMap): string[] {
+	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return recordRefusalLines(spec.node);
 	const stores = spec.slots.map((slot) => {

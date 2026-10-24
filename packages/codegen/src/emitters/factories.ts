@@ -1848,7 +1848,7 @@ function emitFieldCarryingFactory(
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
-	lines.push(...(view?.prelude ?? []), ...(backend === 'objects' ? groups.prelude : []));
+	lines.push(...(view?.prelude ?? []), ...groups.prelude);
 	lines.push(...builderHandleLines(node.kind, slotsToEmit.map((f) => [f.propertyName, f.storageKey] as const)));
 	const seated = seatedSetters(setters, plan);
 	const inner = innerPositionsOf(typeKind, nodeMap);
@@ -1856,7 +1856,7 @@ function emitFieldCarryingFactory(
 	const checks = delimitedCheck === undefined ? [] : [delimitedCheck];
 	const typeExpr = factoryTypeDiscriminant(typeKind, nodeMap, kindEntries);
 	if (backend === 'records') {
-		lines.push(...recordTailLines({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inner, checks, result: builtName }, nodeMap, kindEntries));
+		lines.push(...recordTailLines({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inner, checks, result: builtName }, nodeMap));
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
@@ -2071,7 +2071,7 @@ function emitRefineFormFactory(
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const inner = innerPositionsOf(node.kind, nodeMap);
 	if (backend === 'records') {
-		lines.push(...recordTailLines({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inner, checks: [], result: formBuiltName }, nodeMap, kindEntries));
+		lines.push(...recordTailLines({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inner, checks: [], result: formBuiltName }, nodeMap));
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
@@ -2718,8 +2718,7 @@ function emitSeparatedListFactory(
 								checks: [],
 								result: listBuiltName
 							},
-							nodeMap,
-							kindEntries
+							nodeMap
 						))
 			);
 		} else {
