@@ -1,6 +1,6 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { comparesOwnText, slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
+import { aliasContentSlot, comparesOwnText, heldSteps, slotAnchor, type ChildTest, type HeldStep, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { nodeSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
@@ -37,20 +37,24 @@ function stepsOf(entry: ReadEntry, site: CaptureSite, model: SlotModel, subjectO
 	const steps: PortableStep[] = [];
 	for (const selector of site.down) {
 		if (holder === undefined || holder === WILDCARD) return 'its capture sits under a wildcard';
-		const slot = slotFor(model, model.get(holder)?.slots ?? [], selector);
-		const subject = slot === undefined ? undefined : subjectOf(holder, slot.name);
-		if (subject === undefined) return `no slot of ${holder} holds ${JSON.stringify(selector)}`;
-		const anchor = slotAnchor(model, holder, selector);
-		steps.push(anchor === null ? subject : { ...subject, anchor });
+		const held = heldSteps(model, holder, selector);
+		const subjects = held?.map((step) => subjectOf(step.holder, step.slot.name));
+		if (held === undefined || subjects === undefined || subjects.some((subject) => subject === undefined)) return `no slot of ${holder} holds ${JSON.stringify(selector)}`;
+		const anchor = slotAnchor(model, held.at(-1)!.holder, selector);
+		steps.push(...subjects.map((subject, i) => (anchor === null || i < subjects.length - 1 ? subject! : { ...subject!, anchor })));
 		holder = selector.kind ?? undefined;
 	}
 	return { steps, kind: holder };
 }
 
+function heldSubjects(held: readonly HeldStep[], subjectOf: SlotSubjectOf): SlotSubject[] | undefined {
+	const subjects = held.map((step) => subjectOf(step.holder, step.slot.name));
+	return subjects.every((subject) => subject !== undefined) ? (subjects as SlotSubject[]) : undefined;
+}
+
 function aliasContent(model: SlotModel, kind: string | undefined, subjectOf: SlotSubjectOf): { readonly subject: SlotSubject; readonly kind: string | undefined } | undefined {
-	const node = kind === undefined ? undefined : model.get(kind);
-	const [content, ...rest] = node?.modelType === 'alias' ? node.slots : [];
-	if (content === undefined || rest.length > 0 || kind === undefined) return undefined;
+	const content = kind === undefined ? undefined : aliasContentSlot(model.get(kind));
+	if (content === undefined || kind === undefined) return undefined;
 	const subject = subjectOf(kind, content.name);
 	return subject === undefined ? undefined : { subject, kind: content.kinds.length === 1 ? content.kinds[0] : undefined };
 }
@@ -115,8 +119,12 @@ export function keywordTestOf(owner: string, slot: string, text: string, subject
 
 export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin): PortableCondition | string => {
-		const plan = keywordTestOf(entry.kind, pin.slot, pin.text, subjectOf, presenceOf);
-		return typeof plan === 'string' ? plan : { up: 0, via: [], plan };
+		const held = heldSteps(model, entry.kind, { field: pin.slot, kind: null, after: null, anchor: null });
+		const last = held?.at(-1);
+		const via = held === undefined ? undefined : heldSubjects(held.slice(0, -1), subjectOf);
+		if (last === undefined || via === undefined) return `no slot of ${entry.kind} holds the pinned ${pin.slot}`;
+		const plan = keywordTestOf(last.holder, last.slot.name, pin.text, subjectOf, presenceOf);
+		return typeof plan === 'string' ? plan : { up: 0, via, plan };
 	});
 	const predicates = [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
