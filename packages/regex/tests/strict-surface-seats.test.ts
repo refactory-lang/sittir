@@ -43,4 +43,14 @@ describe('a strict arm takes its group as a built node', () => {
 		expect(build('3')).toThrow('a strict factory takes a built node');
 		expect(build({ decimalDigits: digits(checked) })).toThrow('a strict factory takes a built node');
 	});
+
+	it('refuses a built node of another kind at the writer of a checked engine', () => {
+		const build = () =>
+			checked.build.countQuantifier.arm.strict({
+				decimalDigits: digits(checked),
+				countQuantifierGroup: digits(checked) as never
+			});
+		const rendered = () => checked.build.pattern.strict(checked.build.term.strict({ content: checked.build.patternCharacter('b'), quantifier: checked.build.countQuantifier.strict({ content: build() }) } as never));
+		expect(rendered).toThrow('CountQuantifierArm.countQuantifierGroup: a strict factory takes a built CountQuantifierGroup, not a node of kind');
+	});
 });

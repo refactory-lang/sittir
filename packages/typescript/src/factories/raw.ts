@@ -2609,12 +2609,7 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 	const _object = kindIdStorage<NonNullable<T.MemberExpression['_object']>>(config.object);
 	const _optional_chain = kindIdStorage<NonNullable<T.MemberExpression['_optional_chain']>>(config.optionalChain);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
-		rejectReservedText(
-			config.property,
-			'MemberExpression.property',
-			TSKindId.Identifier,
-			_reservedWords_buildIdentifier
-		),
+		rejectReservedText(config.property, 'MemberExpression.property', TSKindId.Identifier, _reservedWordset_properties),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();

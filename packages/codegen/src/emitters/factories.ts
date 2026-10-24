@@ -330,6 +330,18 @@ function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap, kindEntr
 	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
 }
 
+function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {
+	const ids = new Set<number>();
+	for (const value of f.values) {
+		const storage = valueStorageOf(value, nodeMap);
+		if (storage === undefined || storage.via !== 'node') return undefined;
+		const id = nodeMap.nodes.get(storage.kind)?.kindId;
+		if (id === undefined) return undefined;
+		ids.add(id);
+	}
+	return ids.size === 0 ? undefined : [...ids].sort((a, b) => a - b);
+}
+
 function bareTextLabel(f: AssembledNonterminal, typeName: string): string {
 	return `${typeName}.${f.propertyName}`;
 }
@@ -1615,7 +1627,13 @@ export function compoundStructureRow(
 		.map((f) => [f.storageKey, `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`] as const);
 	const nodeOnly = stored.flatMap((f) => {
 		const expected = bareTextExpectation(f, nodeMap, kindEntries);
-		return expected === undefined ? [] : [[f.storageKey, bareTextLabel(f, node.typeName), expected] as const];
+		if (expected === undefined) return [];
+		const kinds = slotNodeKindIds(f, nodeMap);
+		return [
+			kinds === undefined
+				? ([f.storageKey, bareTextLabel(f, node.typeName), expected] as const)
+				: ([f.storageKey, bareTextLabel(f, node.typeName), expected, kinds] as const)
+		];
 	});
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
