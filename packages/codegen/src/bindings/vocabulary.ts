@@ -302,6 +302,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const at = attached(member);
 		return at.some((path) => flagsSpelledBy(vocabulary, path, member.name).length > 0) ? at : readable(member);
 	};
+	const renamed = new Map<string, string>();
 	return {
 		...facts,
 		claims,
@@ -309,7 +310,13 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		members: facts.members.map((member) => {
 			if (!isNamedMember(member)) return member;
 			const name = canonicalCapture(vocabulary, pathsOf(member), member.name, member.owner);
-			return name === member.name ? member : { ...member, name };
+			const named = name === member.name ? member : { ...member, name };
+			if (named.route !== 'kind') {
+				renamed.set(`${member.owner} ${member.name}`, name);
+				return named;
+			}
+			const referenced = renamed.get(`${named.owner} ${named.member}`) ?? named.member;
+			return referenced === named.member ? named : { ...named, member: referenced };
 		}),
 		containers: facts.containers.map((container) => {
 			const paths = envelopeTargets(model, container, vocabs);

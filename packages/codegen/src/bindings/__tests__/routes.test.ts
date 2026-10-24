@@ -1234,6 +1234,32 @@ describe('flag captures', () => {
 		expect(await of('shared')).toEqual(canonical);
 	});
 
+	it("keeps a second capture on a node pointed at the first capture's canonical name", async () => {
+		const model = new Map(
+			[...FLAGGED_MODEL.values(), node('holder', [slot('item', ['entry'])]), node('entry', [slot('value', ['identifier'])])].map((n) => [n.kind, n])
+		);
+		const dual: Vocabulary = {
+			...vocabulary({ 'declaration.parameter': { default: false, optional: true }, 'declaration.method': { default: true } }),
+			synonyms: { levels: new Map(), flags: new Map([['default', ['provided']]]) }
+		};
+		const of = async (name: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(
+					canonicalFacts(await readBindings([`(entry value: (identifier) @${name} @optional) @declaration.parameter`, '(holder item: (entry) @declaration.method)'].join('\n')), dual, model),
+					dual,
+					model
+				),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).readEntries.get('entry');
+		const canonical = await of('default');
+		const optional = canonical?.find((entry) => entry.vocab === 'declaration.parameter')?.members.find((r) => r.name === 'optional');
+		expect(optional).toMatchObject({ route: 'kind', path: [{ owner: 'entry', slot: 'value' }] });
+		expect(await of('provided')).toEqual(canonical);
+	});
+
 	it('refuses a capture whose word is a member at one path its owner is claimed under and a flag synonym at another', async () => {
 		const synonymous: Vocabulary = {
 			...vocabulary({ 'declaration.parameter': { mutable: true }, 'declaration.variable': { mut: false } }),
