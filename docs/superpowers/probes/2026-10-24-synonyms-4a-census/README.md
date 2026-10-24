@@ -76,3 +76,12 @@ Each changes portable kinds and the captures that fill them, so it is not part o
 2. **The `qualified` row.** Withhold `identifier: qualified → dotted, nested, scoped, path` from 4a's tables until ID2's rename gives it a position, so `vocabulary-features --check` passes. Accept?
 3. **Python's f-string.** By the rule, `literal.string.interpolated` stays canonical in python, since `f` is matched only by a regex. Keep it canonical, or rewrite it as `literal.string.f` by hand?
 4. **The 27 renames.** Take them as a stage after 4a, with a census, reconciling NO7 with 2b's `match`?
+
+## Rulings
+
+Brainstorm ruled each question on 2026-10-24.
+
+1. Claim-line-only attribution. A word counts where the claim's own line spells it, and widening it would add wrong rows: a rule that needs exceptions is not one rule.
+2. `identifier.qualified` is withheld from 4a's tables. Its row arrives with the renames stage, once ID2 gives it a position.
+3. Python's `literal.string.interpolated` stays canonical. If `f` is wanted later, it comes as a change to the rule, not a hand edit.
+4. The 27 renames are a stage of their own after 4a, with a census that goes to the user, since they are public vocabulary names. That census lays out where 2b's arm `match` ends up under NO7's `clause.case.match`, with `pattern.match` hoisted.
