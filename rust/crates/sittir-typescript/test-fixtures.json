@@ -25670,13 +25670,6 @@
                     "_content": {
                       "$type": 1,
                       "$text": "bar"
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
                     }
                   },
                   "_optional": true,
@@ -26081,13 +26074,6 @@
                 "_content": {
                   "$type": 1,
                   "$text": "bar"
-                },
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
                 }
               },
               "_optional": true,
@@ -26798,13 +26784,6 @@
               "_content": {
                 "$type": 1,
                 "$text": "bar"
-              },
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
               }
             },
             "_optional": true,
@@ -27213,13 +27192,6 @@
           "_content": {
             "$type": 1,
             "$text": "bar"
-          },
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
           }
         },
         "_optional": true,
@@ -27657,13 +27629,6 @@
         "_content": {
           "$type": 1,
           "$text": "bar"
-        },
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
         }
       },
       "_optional": true,
@@ -30331,14 +30296,7 @@
                         "$type": 119,
                         "$text": "hello"
                       }
-                    ],
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
-                    }
+                    ]
                   },
                   "_optionality": 139,
                   "_type": {
@@ -30380,14 +30338,7 @@
                         "$type": 119,
                         "$text": "hello"
                       }
-                    ],
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
-                    }
+                    ]
                   },
                   "_optionality": 139,
                   "_type": {
@@ -30429,14 +30380,7 @@
                         "$type": 119,
                         "$text": "hello"
                       }
-                    ],
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
-                    }
+                    ]
                   },
                   "_optionality": 139,
                   "_type": {
@@ -30587,14 +30531,7 @@
                     "$type": 119,
                     "$text": "hello"
                   }
-                ],
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                ]
               },
               "_optionality": 139,
               "_type": {
@@ -30636,14 +30573,7 @@
                     "$type": 119,
                     "$text": "hello"
                   }
-                ],
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                ]
               },
               "_optionality": 139,
               "_type": {
@@ -30685,14 +30615,7 @@
                     "$type": 119,
                     "$text": "hello"
                   }
-                ],
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                ]
               },
               "_optionality": 139,
               "_type": {
@@ -30946,14 +30869,7 @@
                   "$type": 119,
                   "$text": "hello"
                 }
-              ],
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
-              }
+              ]
             },
             "_optionality": 139,
             "_type": {
@@ -30995,14 +30911,7 @@
                   "$type": 119,
                   "$text": "hello"
                 }
-              ],
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
-              }
+              ]
             },
             "_optionality": 139,
             "_type": {
@@ -31044,14 +30953,7 @@
                   "$type": 119,
                   "$text": "hello"
                 }
-              ],
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
-              }
+              ]
             },
             "_optionality": 139,
             "_type": {
@@ -31228,14 +31130,7 @@
               "$type": 119,
               "$text": "hello"
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
-          }
+          ]
         },
         "_optionality": 139,
         "_type": {
@@ -31299,14 +31194,7 @@
               "$type": 119,
               "$text": "hello"
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
-          }
+          ]
         },
         "_optionality": 139,
         "_type": {
@@ -31370,14 +31258,7 @@
               "$type": 119,
               "$text": "hello"
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
-          }
+          ]
         },
         "_optionality": 139,
         "_type": {
@@ -31542,14 +31423,7 @@
             "$type": 119,
             "$text": "hello"
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        ]
       },
       "_optionality": 139,
       "_type": {
@@ -31609,14 +31483,7 @@
             "$type": 119,
             "$text": "hello"
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        ]
       },
       "_optionality": 139,
       "_type": {
@@ -31676,14 +31543,7 @@
             "$type": 119,
             "$text": "hello"
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        ]
       },
       "_optionality": 139,
       "_type": {
@@ -33081,14 +32941,7 @@
                         "$type": 119,
                         "$text": "hello"
                       }
-                    ],
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
-                    }
+                    ]
                   },
                   "_optionality": 139,
                   "_type": {
@@ -33430,14 +33283,7 @@
                     "$type": 119,
                     "$text": "hello"
                   }
-                ],
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                ]
               },
               "_optionality": 139,
               "_type": {
@@ -34053,14 +33899,7 @@
                   "$type": 119,
                   "$text": "hello"
                 }
-              ],
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
-              }
+              ]
             },
             "_optionality": 139,
             "_type": {
@@ -34403,14 +34242,7 @@
               "$type": 119,
               "$text": "hello"
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
-          }
+          ]
         },
         "_optionality": 139,
         "_type": {
@@ -34634,14 +34466,7 @@
             "$type": 119,
             "$text": "hello"
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        ]
       },
       "_optionality": 139,
       "_type": {
@@ -39520,13 +39345,6 @@
                     "_content": {
                       "$type": 1,
                       "$text": "requiredProp"
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
                     }
                   },
                   "_optionality": 116,
@@ -39592,13 +39410,6 @@
                     "_content": {
                       "$type": 1,
                       "$text": "readonlyProp"
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
                     }
                   },
                   "_optional": true,
@@ -39849,13 +39660,6 @@
                 "_content": {
                   "$type": 1,
                   "$text": "requiredProp"
-                },
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
                 }
               },
               "_optionality": 116,
@@ -39921,13 +39725,6 @@
                 "_content": {
                   "$type": 1,
                   "$text": "readonlyProp"
-                },
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
                 }
               },
               "_optional": true,
@@ -40279,13 +40076,6 @@
               "_content": {
                 "$type": 1,
                 "$text": "requiredProp"
-              },
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
               }
             },
             "_optionality": 116,
@@ -40351,13 +40141,6 @@
               "_content": {
                 "$type": 1,
                 "$text": "readonlyProp"
-              },
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
               }
             },
             "_optional": true,
@@ -40579,13 +40362,6 @@
           "_content": {
             "$type": 1,
             "$text": "requiredProp"
-          },
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
           }
         },
         "_optionality": 116,
@@ -40726,13 +40502,6 @@
           "_content": {
             "$type": 1,
             "$text": "readonlyProp"
-          },
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                180
-              ]
-            }
           }
         },
         "_optional": true,
@@ -40836,13 +40605,6 @@
         "_content": {
           "$type": 1,
           "$text": "requiredProp"
-        },
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
         }
       },
       "_optionality": 116,
@@ -41329,13 +41091,6 @@
         "_content": {
           "$type": 1,
           "$text": "readonlyProp"
-        },
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
         }
       },
       "_optional": true,

@@ -40,6 +40,12 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 		expect(rendered).toContain('x.class');
 	});
 
+	it('typescript: an optional or definite marker on a class member sits tight against its name', async () => {
+		const members = ['public readonly async bar?<T>();', 'abstract baz?(): void;', 'qux?() {}', 'requiredProp!: string;'];
+		const { rendered } = await rebuildAndRender('typescript', `abstract class A {\n${members.map((m) => `  ${m}\n`).join('')}}\n`);
+		for (const member of members) expect(rendered).toContain(member);
+	});
+
 	it('rust: a comment with extra slashes is built from its text by the variant', async () => {
 		const { source, rendered } = await rebuildAndRender('rust', '//// - Only a comment\nfn f() {}\n');
 		expect(source).toContain('extraSlashes.strict("// - Only a comment")');

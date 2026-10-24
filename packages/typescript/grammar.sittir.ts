@@ -122,6 +122,10 @@ export default grammar(enrich(base), wire({
 			'statements:/(export_statement_default_declaration)/after': preference('blankline')
 		},
 		property_signature: { 'optional:/before': preference('tight') },
+		method_signature_plain: { 'optional:/before': preference('tight') },
+		abstract_method_signature_plain: { 'optional:/before': preference('tight') },
+		method_definition_plain: { 'optional:/before': preference('tight') },
+		public_field_definition_plain: { 'optionality:/before': preference('tight') },
 
 		_: {
 			'decorator:/separator': preference('tight'),
