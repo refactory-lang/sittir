@@ -763,6 +763,10 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 	return kinds[0]!;
 }
 
+export function forwardsTargetArguments(node: AssembledNode, nodeMap: NodeMap): boolean {
+	return forwardedTargetKind(node, nodeMap) !== null && registeredSlots(node).length === 0;
+}
+
 export function resolveFactoryFieldNames(node: AssembledNode): readonly string[] | undefined {
 	if (node instanceof AbstractAssembledCompound) {
 		if (node.slots.length === 0) return undefined;

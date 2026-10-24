@@ -70,6 +70,7 @@ import {
 	isSlotBearingCompound,
 	classifyFactoryEmission,
 	forwardedTargetKind,
+	forwardsTargetArguments,
 	ownTextLeaf,
 	type OwnTextLeaf,
 	resolveDirectFactorySlot,
@@ -1825,7 +1826,7 @@ function emitFieldCarryingFactory(
 			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
-		if (registered.length > 0) {
+		if (!forwardsTargetArguments(node, nodeMap)) {
 			if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
 					`  if (args.length === 0 || args[0] === undefined) {`,

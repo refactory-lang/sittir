@@ -472,6 +472,7 @@ export interface LoadedNodeModel {
 	readonly bareAccepts: Record<string, readonly string[]>;
 	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
+	readonly forwardsArguments: ReadonlySet<string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
 	/** Each list kind whose separator is chosen per instance, with the separators it may hold. */
@@ -536,6 +537,7 @@ interface ParsedNodeModel {
 		bareAccepts?: readonly string[];
 		textLeavesThrough?: readonly string[];
 		forwardsTo?: string;
+	forwardsArguments?: true;
 		defaultDelimiter?: string;
 		separatorCandidates?: readonly string[];
 		leafPattern?: string;
@@ -584,6 +586,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	bareAccepts: {},
 	textLeavesThrough: {},
 	forwardsTo: {},
+	forwardsArguments: new Set(),
 	listDefaults: {},
 	listElementKinds: {},
 	listSeparators: {},
@@ -644,6 +647,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const bareAccepts: Record<string, readonly string[]> = {};
 	const textLeavesThrough: Record<string, readonly string[]> = {};
 	const forwardsTo: Record<string, string> = {};
+	const forwardsArguments = new Set<string>();
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
 	const listSeparators: Record<string, readonly string[]> = {};
@@ -693,6 +697,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.bareAccepts !== undefined) bareAccepts[node.kind] = node.bareAccepts;
 		if (node.textLeavesThrough !== undefined) textLeavesThrough[node.kind] = node.textLeavesThrough;
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
+		if (node.forwardsArguments === true) forwardsArguments.add(node.kind);
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
 		if (node.separatorCandidates !== undefined) listSeparators[node.kind] = node.separatorCandidates;
@@ -728,6 +733,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		bareAccepts,
 		textLeavesThrough,
 		forwardsTo,
+		forwardsArguments,
 		listDefaults,
 		listElementKinds,
 		listSeparators,
