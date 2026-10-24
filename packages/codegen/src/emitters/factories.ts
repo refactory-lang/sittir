@@ -377,7 +377,7 @@ function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
 
 function holdsWord(f: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	const word = nodeMap.word;
-	if (word === undefined) return false;
+	if (!word) return false;
 	return (
 		expandAndDedupeContentTypes(slotKindNames(f), nodeMap).includes(word) ||
 		textLeaves(f, nodeMap).some((leaf) => leaf.kind === word) ||
