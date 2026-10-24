@@ -141,10 +141,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 The repo-relative paths git tracks or would track: `git ls-files --cached --others --exclude-standard`. A generated file that codegen has just written is untracked until someone runs `git add`; counting only tracked files left it out of the manifest on the first `gen` and put it in on the second. Untracked-but-not-ignored files count, ignored ones never do. Whether a generated artifact belongs in the repository is git's fact, not something a filename pattern can be trusted to reproduce, so this raises instead of degrading when git cannot be consulted: a manifest built from a guess verifies clean locally and fails on a clean checkout.
 
-### `packages/codegen/src/scripts/generated-manifest.ts::trackedPaths`
-
-`gitVisiblePaths` for the repository root, read once and cached.
-
 ### `packages/codegen/src/scripts/generated-manifest.ts::isManifestExcluded`
 
 ```text
