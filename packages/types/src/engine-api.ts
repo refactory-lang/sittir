@@ -344,7 +344,7 @@ type Representation<N> = N extends HoldsTree ? 'parsed' : N extends HoldsSource 
 
 type NarrowedEmptyForm<Entries, N> = Entries extends { readonly node: infer Node; readonly empty: infer Empty }
 	? [Representation<Node>] extends [Representation<N>]
-		? [Node] extends [N]
+		? [N] extends [Node]
 			? Empty
 			: never
 		: never
@@ -352,8 +352,8 @@ type NarrowedEmptyForm<Entries, N> = Entries extends { readonly node: infer Node
 
 /**
  * The empty form a language's `empty` map pairs with exactly `N`; for an `N` the map does not name, such as a form
- * intersected with a narrowing, the empty form of the entry of the same representation (plain, built or parsed) whose
- * node `N` narrows. Each member of a union `N` is looked up on its own.
+ * intersected with a narrowing or with a caller's own members, the empty form of the entry of the same representation
+ * (plain, built or parsed) whose node `N` is assignable to. Each member of a union `N` is looked up on its own.
  */
 export type EmptyFormOf<Entries, N> = N extends unknown
 	? [ExactEmptyForm<Entries, N>] extends [never]

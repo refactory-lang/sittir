@@ -151,6 +151,11 @@ if (guardEngine.isEmptyNode(plainNarrowedFake)) {
 	const plainEmpty: true = plainNarrowedFake.empty;
 	void plainEmpty;
 }
+declare const taggedFake: (FakeNode | ParsedFake) & { readonly reviewTag: 'tracked' };
+if (guardEngine.isEmptyNode(taggedFake)) {
+	const tag: 'tracked' = taggedFake.reviewTag;
+	void tag;
+}
 
 declare const noEmptyForm: NoEmptyForm;
 // @ts-expect-error a kind the language's empty map does not name has no empty form

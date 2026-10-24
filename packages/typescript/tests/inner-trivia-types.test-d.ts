@@ -29,3 +29,9 @@ if (engine.isEmptyNode(boundNarrowed)) boundNarrowed.$trivia.inner(engine.build.
 
 declare const parsedNarrowed: T.StatementBlock.Parsed & { readonly $type: T.StatementBlock['$type'] };
 if (engine.isEmptyNode(parsedNarrowed)) parsedNarrowed.$trivia.inner(engine.build.commentLine(' TODO')) satisfies T.EmptyStatementBlock.Parsed;
+
+declare const tagged: T.StatementBlock.Bound & { readonly reviewTag: 'tracked' };
+if (engine.isEmptyNode(tagged)) {
+	tagged.reviewTag satisfies 'tracked';
+	tagged.$trivia.inner(engine.build.commentLine(' TODO')) satisfies T.EmptyStatementBlock;
+}
