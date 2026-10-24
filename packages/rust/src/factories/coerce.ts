@@ -6620,9 +6620,7 @@ export function resolveLastMatchArm_attributes(
 	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K48);
 }
 
-export function resolveLastMatchArm_pattern(
-	value: T.LastMatchArm.LooseConfig['pattern']
-): Admit<T.LastMatchArm['_pattern']> {
+export function resolveLastMatchArm_match(value: T.LastMatchArm.LooseConfig['match']): Admit<T.LastMatchArm['_match']> {
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
@@ -6647,7 +6645,7 @@ export function coerceToLastMatchArm(
 	return F.buildLastMatchArm(
 		{
 			attributes: resolveLastMatchArm_attributes(input.attributes),
-			pattern: resolveLastMatchArm_pattern(input.pattern),
+			match: resolveLastMatchArm_match(input.match),
 			value: resolveLastMatchArm_value(input.value)
 		},
 		options
@@ -9372,9 +9370,9 @@ export function coerceToClosureExpressionExpr(
 	});
 }
 
-export function resolveReferenceExpressionRawConst_value(
-	value: T.ReferenceExpressionRawConst.LooseConfig['value']
-): Admit<T.ReferenceExpressionRawConst['_value']> {
+export function resolveReferenceExpressionRawConst_argument(
+	value: T.ReferenceExpressionRawConst.LooseConfig['argument']
+): Admit<T.ReferenceExpressionRawConst['_argument']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
@@ -9390,11 +9388,11 @@ export function coerceToReferenceExpressionRawConst(
 	return F.buildReferenceExpressionRawConst(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'value', () => input),
+				configFieldOr(input, 'argument', () => input),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'value', () => input),
+						configFieldOr(input, 'argument', () => input),
 						_K12,
 						_K13
 					)
@@ -9404,9 +9402,9 @@ export function coerceToReferenceExpressionRawConst(
 	);
 }
 
-export function resolveReferenceExpressionRawMut_value(
-	value: T.ReferenceExpressionRawMut.LooseConfig['value']
-): Admit<T.ReferenceExpressionRawMut['_value']> {
+export function resolveReferenceExpressionRawMut_argument(
+	value: T.ReferenceExpressionRawMut.LooseConfig['argument']
+): Admit<T.ReferenceExpressionRawMut['_argument']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
@@ -9422,11 +9420,11 @@ export function coerceToReferenceExpressionRawMut(
 	return F.buildReferenceExpressionRawMut(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'value', () => input),
+				configFieldOr(input, 'argument', () => input),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'value', () => input),
+						configFieldOr(input, 'argument', () => input),
 						_K12,
 						_K13
 					)
@@ -9436,9 +9434,9 @@ export function coerceToReferenceExpressionRawMut(
 	);
 }
 
-export function resolveReferenceExpressionMut_value(
-	value: T.ReferenceExpressionMut.LooseConfig['value']
-): Admit<T.ReferenceExpressionMut['_value']> {
+export function resolveReferenceExpressionMut_argument(
+	value: T.ReferenceExpressionMut.LooseConfig['argument']
+): Admit<T.ReferenceExpressionMut['_argument']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
@@ -9454,11 +9452,11 @@ export function coerceToReferenceExpressionMut(
 	return F.buildReferenceExpressionMut(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'value', () => input),
+				configFieldOr(input, 'argument', () => input),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'value', () => input),
+						configFieldOr(input, 'argument', () => input),
 						_K12,
 						_K13
 					)
@@ -9468,9 +9466,9 @@ export function coerceToReferenceExpressionMut(
 	);
 }
 
-export function resolveReferenceExpressionBare_value(
-	value: T.ReferenceExpressionBare.LooseConfig['value']
-): Admit<T.ReferenceExpressionBare['_value']> {
+export function resolveReferenceExpressionBare_argument(
+	value: T.ReferenceExpressionBare.LooseConfig['argument']
+): Admit<T.ReferenceExpressionBare['_argument']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
@@ -9486,11 +9484,11 @@ export function coerceToReferenceExpressionBare(
 	return F.buildReferenceExpressionBare(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'value', () => input),
+				configFieldOr(input, 'argument', () => input),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'value', () => input),
+						configFieldOr(input, 'argument', () => input),
 						_K12,
 						_K13
 					)
@@ -10247,9 +10245,9 @@ export function resolveMatchArmWithComma_attributes(
 	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K48);
 }
 
-export function resolveMatchArmWithComma_pattern(
-	value: T.MatchArmWithComma.LooseConfig['pattern']
-): Admit<T.MatchArmWithComma['_pattern']> {
+export function resolveMatchArmWithComma_match(
+	value: T.MatchArmWithComma.LooseConfig['match']
+): Admit<T.MatchArmWithComma['_match']> {
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
@@ -10273,7 +10271,7 @@ export function coerceToMatchArmWithComma(
 	currentHandle()?.admit(TSKindId.MatchArmWithComma, [input]);
 	return F.buildMatchArmWithComma({
 		attributes: resolveMatchArmWithComma_attributes(input.attributes),
-		pattern: resolveMatchArmWithComma_pattern(input.pattern),
+		match: resolveMatchArmWithComma_match(input.match),
 		value: resolveMatchArmWithComma_value(input.value)
 	});
 }
@@ -10284,9 +10282,9 @@ export function resolveMatchArmBlockEnding_attributes(
 	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K48);
 }
 
-export function resolveMatchArmBlockEnding_pattern(
-	value: T.MatchArmBlockEnding.LooseConfig['pattern']
-): Admit<T.MatchArmBlockEnding['_pattern']> {
+export function resolveMatchArmBlockEnding_match(
+	value: T.MatchArmBlockEnding.LooseConfig['match']
+): Admit<T.MatchArmBlockEnding['_match']> {
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
@@ -10319,7 +10317,7 @@ export function coerceToMatchArmBlockEnding(
 	currentHandle()?.admit(TSKindId.MatchArmBlockEnding, [input]);
 	return F.buildMatchArmBlockEnding({
 		attributes: resolveMatchArmBlockEnding_attributes(input.attributes),
-		pattern: resolveMatchArmBlockEnding_pattern(input.pattern),
+		match: resolveMatchArmBlockEnding_match(input.match),
 		value: resolveMatchArmBlockEnding_value(input.value)
 	});
 }
@@ -10660,9 +10658,9 @@ export function coerceToDelimTokenTreeBrace(
 	);
 }
 
-export function resolveFieldPatternShorthand_ref(
-	value: T.FieldPatternShorthand.LooseConfig['ref']
-): Admit<T.FieldPatternShorthand['_ref']> {
+export function resolveFieldPatternShorthand_byReference(
+	value: T.FieldPatternShorthand.LooseConfig['byReference']
+): Admit<T.FieldPatternShorthand['_by_reference']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -10688,15 +10686,15 @@ export function coerceToFieldPatternShorthand(
 		return input as unknown as ReturnType<typeof F.buildFieldPatternShorthand>;
 	currentHandle()?.admit(TSKindId.FieldPatternShorthand, [input]);
 	return F.buildFieldPatternShorthand({
-		ref: resolveFieldPatternShorthand_ref(input.ref),
+		byReference: resolveFieldPatternShorthand_byReference(input.byReference),
 		mutable: resolveFieldPatternShorthand_mutable(input.mutable),
 		name: resolveFieldPatternShorthand_name(input.name)
 	});
 }
 
-export function resolveFieldPatternNamed_ref(
-	value: T.FieldPatternNamed.LooseConfig['ref']
-): Admit<T.FieldPatternNamed['_ref']> {
+export function resolveFieldPatternNamed_byReference(
+	value: T.FieldPatternNamed.LooseConfig['byReference']
+): Admit<T.FieldPatternNamed['_by_reference']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -10731,7 +10729,7 @@ export function coerceToFieldPatternNamed(
 		return input as unknown as ReturnType<typeof F.buildFieldPatternNamed>;
 	currentHandle()?.admit(TSKindId.FieldPatternNamed, [input]);
 	return F.buildFieldPatternNamed({
-		ref: resolveFieldPatternNamed_ref(input.ref),
+		byReference: resolveFieldPatternNamed_byReference(input.byReference),
 		mutable: resolveFieldPatternNamed_mutable(input.mutable),
 		name: resolveFieldPatternNamed_name(input.name),
 		pattern: resolveFieldPatternNamed_pattern(input.pattern)

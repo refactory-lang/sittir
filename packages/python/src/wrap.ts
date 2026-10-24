@@ -16,7 +16,6 @@ import {
 	elementsWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -2763,13 +2762,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 			expression: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
-						{
-							slot: 'step',
-							stored: '_step',
-							kind: TSKindId.SliceGroup as const,
-							make: RAW.buildSliceGroup,
-							keys: [{ name: 'expression', rest: false }]
-						},
+						{ slot: 'step', stored: '_step', make: RAW.buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
 						'expression',
 						args,
 						(v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree),
@@ -2778,7 +2771,6 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 				)
 		},
 		expression: data._step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
-		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5247,12 +5239,12 @@ export function wrapExpressionStatementTuple(
 
 export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.WithClauseBare.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._item);
+	const listedStored = storedElements(data._items);
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseBare as const,
 		items() {
-			return hydrateSlots<T.WithItem>(this, '_item', tree);
+			return hydrateSlots<T.WithItem>(this, '_items', tree);
 		},
 		$with: {},
 		length: listedStored.length,
@@ -5280,27 +5272,26 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): T.WithClauseParen.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._with_items, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._items, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
-		withItems() {
-			return hydrateSlot<T.WithClauseWithItems>(this, '_with_items', tree);
+		items() {
+			return hydrateSlot<T.WithClauseWithItems>(this, '_items', tree);
 		},
 		$with: {
-			withItems: (...args: unknown[]) =>
+			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-						(v: NonNullable<T.WithClauseParen['_with_items']>) =>
-							wrapWithClauseParen({ ...$edited(data), _with_items: v }, tree)
+						(v: NonNullable<T.WithClauseParen['_items']>) => wrapWithClauseParen({ ...$edited(data), _items: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

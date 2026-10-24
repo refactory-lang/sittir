@@ -7189,12 +7189,12 @@ export interface MatchBlock {
 export interface LastMatchArm {
 	readonly $type: TSKindId.LastMatchArm;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
-	readonly _pattern: MatchPattern;
+	readonly _match: MatchPattern;
 	readonly _value: Expression;
 	readonly _trailing_comma?: number;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
-		readonly _pattern: 'pattern';
+		readonly _match: 'match';
 		readonly _value: 'value';
 		readonly _trailing_comma: 'trailingComma';
 	};
@@ -7206,19 +7206,19 @@ export interface LastMatchArm {
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
-		readonly pattern: SlotHint<T.MatchPattern>;
+		readonly match: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.LastMatchArm.Config>['value']>;
 		readonly trailingComma: SlotHint<NonNullable<T.LastMatchArm.Options>['trailingComma'], true>;
 		readonly $flat: FlatHint<
-			'pattern',
+			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
 			false,
-			'_pattern'
+			'_match'
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
-	readonly pattern: () => MatchPattern;
+	readonly match: () => MatchPattern;
 	readonly value: () => Expression;
 	readonly trailingComma: () => number | undefined;
 }
@@ -8843,70 +8843,70 @@ export interface ClosureExpressionExpr {
 
 export interface ReferenceExpressionRawConst {
 	readonly $type: TSKindId.ReferenceExpressionRawConst;
-	readonly _value: Expression;
+	readonly _argument: Expression;
 	readonly __slotNames__?: {
-		readonly _value: 'value';
+		readonly _argument: 'argument';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly argument:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly argument: SlotHint<NonNullable<T.Expression>>;
 	};
-	readonly value: () => Expression;
+	readonly argument: () => Expression;
 }
 
 export interface ReferenceExpressionRawMut {
 	readonly $type: TSKindId.ReferenceExpressionRawMut;
-	readonly _value: Expression;
+	readonly _argument: Expression;
 	readonly __slotNames__?: {
-		readonly _value: 'value';
+		readonly _argument: 'argument';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly argument:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly argument: SlotHint<NonNullable<T.Expression>>;
 	};
-	readonly value: () => Expression;
+	readonly argument: () => Expression;
 }
 
 export interface ReferenceExpressionMut {
 	readonly $type: TSKindId.ReferenceExpressionMut;
-	readonly _value: Expression;
+	readonly _argument: Expression;
 	readonly __slotNames__?: {
-		readonly _value: 'value';
+		readonly _argument: 'argument';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly argument:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly argument: SlotHint<NonNullable<T.Expression>>;
 	};
-	readonly value: () => Expression;
+	readonly argument: () => Expression;
 }
 
 export interface ReferenceExpressionBare {
 	readonly $type: TSKindId.ReferenceExpressionBare;
-	readonly _value: Expression;
+	readonly _argument: Expression;
 	readonly __slotNames__?: {
-		readonly _value: 'value';
+		readonly _argument: 'argument';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly argument:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly argument: SlotHint<NonNullable<T.Expression>>;
 	};
-	readonly value: () => Expression;
+	readonly argument: () => Expression;
 }
 
 export interface ImplItemPositiveClause {
@@ -9549,11 +9549,11 @@ export interface ForeignModItemBody {
 export interface MatchArmWithComma {
 	readonly $type: TSKindId.MatchArmWithComma;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
-	readonly _pattern: MatchPattern;
+	readonly _match: MatchPattern;
 	readonly _value: Expression;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
-		readonly _pattern: 'pattern';
+		readonly _match: 'match';
 		readonly _value: 'value';
 	};
 	readonly __inputHints__?: {
@@ -9563,25 +9563,25 @@ export interface MatchArmWithComma {
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
-		readonly pattern: SlotHint<T.MatchPattern>;
+		readonly match: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.MatchArmWithComma.Config>['value']>;
 		readonly $flat: FlatHint<
-			'pattern',
+			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
 			false,
-			'_pattern'
+			'_match'
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
-	readonly pattern: () => MatchPattern;
+	readonly match: () => MatchPattern;
 	readonly value: () => Expression;
 }
 
 export interface MatchArmBlockEnding {
 	readonly $type: TSKindId.MatchArmBlockEnding;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
-	readonly _pattern: MatchPattern;
+	readonly _match: MatchPattern;
 	readonly _value:
 		| UnsafeBlock
 		| AsyncBlock
@@ -9596,12 +9596,12 @@ export interface MatchArmBlockEnding {
 		| ConstBlock;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
-		readonly _pattern: 'pattern';
+		readonly _match: 'match';
 		readonly _value: 'value';
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
-		readonly pattern: SlotHint<T.MatchPattern>;
+		readonly match: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<
 			| T.UnsafeBlock
 			| T.AsyncBlock
@@ -9616,15 +9616,15 @@ export interface MatchArmBlockEnding {
 			| T.ConstBlock
 		>;
 		readonly $flat: FlatHint<
-			'pattern',
+			'match',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
 			false,
-			'_pattern'
+			'_match'
 		>;
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
-	readonly pattern: () => MatchPattern;
+	readonly match: () => MatchPattern;
 	readonly value: () =>
 		| UnsafeBlock
 		| AsyncBlock
@@ -9854,16 +9854,16 @@ export interface DelimTokenTreeBrace {
 
 export interface FieldPatternShorthand {
 	readonly $type: TSKindId.FieldPatternShorthand;
-	readonly _ref: boolean;
+	readonly _by_reference: boolean;
 	readonly _mutable: boolean;
 	readonly _name: ShorthandFieldIdentifier;
 	readonly __slotNames__?: {
-		readonly _ref: 'ref';
+		readonly _by_reference: 'byReference';
 		readonly _mutable: 'mutable';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly ref?: BaseBooleanKeyword<'ref'>;
+		readonly by_reference?: BaseBooleanKeyword<'ref'>;
 		readonly mutable?: BaseBooleanKeyword<'mut'>;
 	};
 	readonly __looseHints__?: {
@@ -9871,29 +9871,29 @@ export interface FieldPatternShorthand {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly ref: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['ref'], true>;
+		readonly byReference: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['byReference'], true>;
 		readonly mutable: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['mutable'], true>;
 		readonly name: SlotHint<T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types>;
 	};
-	readonly ref: () => boolean;
+	readonly byReference: () => boolean;
 	readonly mutable: () => boolean;
 	readonly name: () => ShorthandFieldIdentifier;
 }
 
 export interface FieldPatternNamed {
 	readonly $type: TSKindId.FieldPatternNamed;
-	readonly _ref: boolean;
+	readonly _by_reference: boolean;
 	readonly _mutable: boolean;
 	readonly _name: FieldIdentifier;
 	readonly _pattern: Pattern;
 	readonly __slotNames__?: {
-		readonly _ref: 'ref';
+		readonly _by_reference: 'byReference';
 		readonly _mutable: 'mutable';
 		readonly _name: 'name';
 		readonly _pattern: 'pattern';
 	};
 	readonly __inputHints__?: {
-		readonly ref?: BaseBooleanKeyword<'ref'>;
+		readonly by_reference?: BaseBooleanKeyword<'ref'>;
 		readonly mutable?: BaseBooleanKeyword<'mut'>;
 		readonly pattern:
 			| KindEnum<
@@ -9907,12 +9907,12 @@ export interface FieldPatternNamed {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly ref: SlotHint<NonNullable<T.FieldPatternNamed.Config>['ref'], true>;
+		readonly byReference: SlotHint<NonNullable<T.FieldPatternNamed.Config>['byReference'], true>;
 		readonly mutable: SlotHint<NonNullable<T.FieldPatternNamed.Config>['mutable'], true>;
 		readonly name: SlotHint<T.FieldIdentifier | T.FieldIdentifier.Types>;
 		readonly pattern: SlotHint<NonNullable<T.FieldPatternNamed.Config>['pattern']>;
 	};
-	readonly ref: () => boolean;
+	readonly byReference: () => boolean;
 	readonly mutable: () => boolean;
 	readonly name: () => FieldIdentifier;
 	readonly pattern: () => Pattern;
@@ -14085,8 +14085,8 @@ export namespace FieldPatternShorthand {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
+			readonly byReference?: { readonly after?: LayoutKindId };
 			readonly mutable?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly refKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -14096,9 +14096,9 @@ export namespace FieldPatternNamed {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
+			readonly byReference?: { readonly after?: LayoutKindId };
 			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly mutable?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly refKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -16747,7 +16747,7 @@ export interface ReferenceExpressionRawConstNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ReferenceExpressionRawConst.Bound,
-	'value',
+	'argument',
 	TSKindId.ReferenceExpressionRawConst,
 	ReferenceExpressionRawConst.Parsed,
 	never
@@ -16761,7 +16761,7 @@ export interface ReferenceExpressionRawMutNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ReferenceExpressionRawMut.Bound,
-	'value',
+	'argument',
 	TSKindId.ReferenceExpressionRawMut,
 	ReferenceExpressionRawMut.Parsed,
 	never
@@ -16775,7 +16775,7 @@ export interface ReferenceExpressionMutNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ReferenceExpressionMut.Bound,
-	'value',
+	'argument',
 	TSKindId.ReferenceExpressionMut,
 	ReferenceExpressionMut.Parsed,
 	never
@@ -16789,7 +16789,7 @@ export interface ReferenceExpressionBareNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ReferenceExpressionBare.Bound,
-	'value',
+	'argument',
 	TSKindId.ReferenceExpressionBare,
 	ReferenceExpressionBare.Parsed,
 	never
@@ -21516,20 +21516,17 @@ export namespace LastMatchArm {
 		config:
 			| WithoutGroup<
 					OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
-					OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>
+					OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>
 			  >
-			| (OmitEach<NonNullable<OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'pattern'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>)),
+			| (OmitEach<NonNullable<OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'match'> &
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>)),
 		options?: T.LastMatchArm.Options
 	];
 	export type LooseArgs = [
 		config:
-			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'pattern'> &
-					(
-						| T.MatchPattern.LooseArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-					)),
+			| WithoutGroup<T.LastMatchArm.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
+			| (OmitEach<NonNullable<T.LastMatchArm.Loose>, 'match'> &
+					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>)),
 		options?: T.LastMatchArm.Options
 	];
 	export type Kind = TSKindId.LastMatchArm;
@@ -24891,18 +24888,15 @@ export namespace MatchArmWithComma {
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmWithComma>;
 	export type BuildArgs = [
 		config:
-			| WithoutGroup<ConfigOf<T.MatchArmWithComma>, OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>
-			| (OmitEach<NonNullable<ConfigOf<T.MatchArmWithComma>>, 'pattern'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>))
+			| WithoutGroup<ConfigOf<T.MatchArmWithComma>, OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
+			| (OmitEach<NonNullable<ConfigOf<T.MatchArmWithComma>>, 'match'> &
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>))
 	];
 	export type LooseArgs = [
 		config:
-			| WithoutGroup<T.MatchArmWithComma.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-			| (OmitEach<NonNullable<T.MatchArmWithComma.Loose>, 'pattern'> &
-					(
-						| T.MatchPattern.LooseArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-					))
+			| WithoutGroup<T.MatchArmWithComma.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
+			| (OmitEach<NonNullable<T.MatchArmWithComma.Loose>, 'match'> &
+					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>))
 	];
 	export type Kind = TSKindId.MatchArmWithComma;
 }
@@ -24931,21 +24925,15 @@ export namespace MatchArmBlockEnding {
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmBlockEnding>;
 	export type BuildArgs = [
 		config:
-			| WithoutGroup<ConfigOf<T.MatchArmBlockEnding>, OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>
-			| (OmitEach<NonNullable<ConfigOf<T.MatchArmBlockEnding>>, 'pattern'> &
-					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, 'pattern' | '$type'>>))
+			| WithoutGroup<ConfigOf<T.MatchArmBlockEnding>, OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>
+			| (OmitEach<NonNullable<ConfigOf<T.MatchArmBlockEnding>>, 'match'> &
+					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>))
 	];
 	export type LooseArgs = [
 		config:
-			| WithoutGroup<
-					T.MatchArmBlockEnding.Loose,
-					OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>
-			  >
-			| (OmitEach<NonNullable<T.MatchArmBlockEnding.Loose>, 'pattern'> &
-					(
-						| T.MatchPattern.LooseArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, 'pattern' | '$type'>>
-					))
+			| WithoutGroup<T.MatchArmBlockEnding.Loose, OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>
+			| (OmitEach<NonNullable<T.MatchArmBlockEnding.Loose>, 'match'> &
+					(T.MatchPattern.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.LooseConfig>, '$type'>>))
 	];
 	export type Kind = TSKindId.MatchArmBlockEnding;
 }
@@ -26062,23 +26050,23 @@ export namespace ParametersElementsReceiver {
 		config:
 			| WithoutGroup<
 					ConfigOf<T.ParametersElementsReceiver>,
-					OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>
+					OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>
 			  >
 			| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> &
 					(
 						| T.AttributedParameterReceiver.BuildArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>>
 					))
 			| (OmitEach<
 					NonNullable<
 						| WithoutGroup<
 								ConfigOf<T.ParametersElementsReceiver>,
-								OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>
+								OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>
 						  >
 						| (OmitEach<NonNullable<ConfigOf<T.ParametersElementsReceiver>>, 'receiver'> &
 								(
 									| T.AttributedParameterReceiver.BuildArgs[0]
-									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, 'receiver' | '$type'>>
+									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.Config>, '$type'>>
 								))
 					>,
 					'parametersElementsReceiverGroup'
@@ -26088,23 +26076,23 @@ export namespace ParametersElementsReceiver {
 		config:
 			| WithoutGroup<
 					T.ParametersElementsReceiver.Loose,
-					OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>
+					OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>
 			  >
 			| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> &
 					(
 						| T.AttributedParameterReceiver.LooseArgs[0]
-						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>>
 					))
 			| (OmitEach<
 					NonNullable<
 						| WithoutGroup<
 								T.ParametersElementsReceiver.Loose,
-								OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>
+								OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>
 						  >
 						| (OmitEach<NonNullable<T.ParametersElementsReceiver.Loose>, 'receiver'> &
 								(
 									| T.AttributedParameterReceiver.LooseArgs[0]
-									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, 'receiver' | '$type'>>
+									| NoneOf<OmitEach<NonNullable<T.AttributedParameterReceiver.LooseConfig>, '$type'>>
 								))
 					>,
 					'parametersElementsReceiverGroup'

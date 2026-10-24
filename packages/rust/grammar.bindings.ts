@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "87a90e9225ce7ea13b37fb2b4eba8215e789a2870334ae967a7ef138abe03cef";
+export const hash = "b9ef7df68804d65437db3c26fcd77c72be123d56c3fb1629717092e57e60081b";
 
 export const renames = {
 	source_file: "file",
@@ -126,16 +126,22 @@ export default grammar(
 			const_parameter: { "4/0/1": field("default") },
 			field_expression: { "0": field("object"), "2": field("property") },
 			field_initializer: { "0": field("attributes") },
+			field_pattern_named: { "0/0": field("by_reference") },
+			field_pattern_shorthand: { "0/0": field("by_reference") },
 			for_expression: { "2": field("left"), "4": field("right") },
 			for_lifetimes: { "2": field("lifetimes") },
 			inner_attribute_item: { "3": field("content") },
+			last_match_arm: { "1": field("match") },
 			let_declaration: { "2": field("name") },
 			macro_invocation: { "0": field("function") },
+			match_arm_block_ending: { "1": field("match") },
+			match_arm_with_comma: { "1": field("match") },
 			match_expression: { "1": field("subject") },
 			pointer_type_mut: { "1": field("writable") },
-			reference_expression_mut: { "1": field("exclusive") },
-			reference_expression_raw_const: { "1/0": field("raw") },
-			reference_expression_raw_mut: { "1/0": field("raw"), "1/1": field("writable") },
+			reference_expression_bare: { "1": field("argument") },
+			reference_expression_mut: { "1": field("exclusive"), "2": field("argument") },
+			reference_expression_raw_const: { "1/0": field("raw"), "2": field("argument") },
+			reference_expression_raw_mut: { "1/0": field("raw"), "1/1": field("writable"), "2": field("argument") },
 			reference_pattern: { "1/0": field("exclusive") },
 			reference_type: { "2/0": field("exclusive") },
 			shorthand_field_initializer: { "1": field("field") },

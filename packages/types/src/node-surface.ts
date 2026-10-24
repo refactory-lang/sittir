@@ -350,7 +350,7 @@ type FlatGetters<N, F, ByChild> =
 		? {
 				readonly [P in FlatGetterNames<F>]: G[Keys[P] & keyof G] extends () => infer R ? () => Resolve<R, ByChild> : never;
 			} & {
-				[P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: N[P] extends () => infer R ? () => Resolve<NonNullable<R>, ByChild> : never;
+				[P in S & MethodKeys<N>]: N[P] extends () => infer R ? () => Resolve<NonNullable<R>, ByChild> : never;
 			}
 		: never;
 
@@ -402,25 +402,22 @@ type PresentMembers<Surface, N, H, F, ByChild> =
 	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
 		? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } & FlatGetters<N, F, ByChild> & {
 				readonly $with: {
-					[P in keyof Keys & string]: P extends S
-						? SeatSetter<Surface, N, H, F, ByChild> &
-								AdmitsOne<Admit<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>>, ShapeNode<Surface, N, H, F, true, ByChild>>
-						: KeySetter<G, Keys[P], ShapeNode<Surface, N, H, F, true, ByChild>>;
-				} & { [P in S as P extends keyof Keys ? never : P]: SeatSetter<Surface, N, H, F, ByChild> };
+					[P in keyof Keys & string]: KeySetter<G, Keys[P], ShapeNode<Surface, N, H, F, true, ByChild>>;
+				} & { [P in S]: SeatSetter<Surface, N, H, F, ByChild> };
 			}
 		: never;
 
 type AbsentMembers<Surface, N, H, F, ByChild> =
 	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
 		? { readonly [K in Stored]?: undefined } & { readonly [P in FlatGetterNames<F>]?: undefined } & {
-				[P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: () => undefined;
+				[P in S & MethodKeys<N>]: () => undefined;
 			} & {
 				readonly $with: {
 					[P in SoleKey<RequiredFlatKeys<F>>]: AdmitsOne<
 						Admit<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>>,
 						ShapeNode<Surface, N, H, F, true, ByChild>
 					>;
-				} & { [P in S as P extends keyof Keys ? never : P]: SeatSetter<Surface, N, H, F, ByChild> };
+				} & { [P in S]: SeatSetter<Surface, N, H, F, ByChild> };
 			}
 		: never;
 

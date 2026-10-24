@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
-import type { Admit, Snapshot } from './node-surface.ts';
+import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableRows, PortableSurface } from './portable.ts';
@@ -334,6 +334,33 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
 
+type ExactEmptyForm<Entries, N> = Entries extends { readonly node: infer Node; readonly empty: infer Empty }
+	? IsExactly<N, Node> extends true
+		? Empty
+		: never
+	: never;
+
+type Representation<N> = N extends HoldsTree ? 'parsed' : N extends HoldsSource ? 'bound' : 'plain';
+
+type NarrowedEmptyForm<Entries, N> = Entries extends { readonly node: infer Node; readonly empty: infer Empty }
+	? [Representation<Node>] extends [Representation<N>]
+		? [N] extends [Node]
+			? Empty
+			: never
+		: never
+	: never;
+
+/**
+ * The empty form a language's `empty` map pairs with exactly `N`; for an `N` the map does not name, such as a form
+ * intersected with a narrowing or with a caller's own members, the empty form of the entry of the same representation
+ * (plain, built or parsed) whose node `N` is assignable to. Each member of a union `N` is looked up on its own.
+ */
+export type EmptyFormOf<Entries, N> = N extends unknown
+	? [ExactEmptyForm<Entries, N>] extends [never]
+		? NarrowedEmptyForm<Entries, N>
+		: ExactEmptyForm<Entries, N>
+	: never;
+
 export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'>
 	extends EngineIdentity<API>, Disposable {
 	readonly build: BuildSurface<API, M>;
@@ -364,11 +391,10 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 * not an extra or `ERROR`, and with width. A built node answers from what it stores inside the
 	 * gap: a stored node, text, or token of a named kind (a real `;`) holds sides; an anonymous
 	 * token does not, nor does a slot outside the gap, such as typescript's automatic-semicolon
-	 * terminator after `}`, which still renders.
+	 * terminator after `}`, which still renders. A `true` answer narrows `node` to the empty
+	 * form of its own type: a plain, built or parsed node to that form's empty counterpart only.
 	 */
-	readonly isEmptyNode: <N extends API['empty']['node']>(
-		node: N
-	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
+	readonly isEmptyNode: <N extends API['empty']['node']>(node: N) => node is N & EmptyFormOf<API['empty'], N>;
 	/**
 	 * Parses `source` and returns its root. The root's `$errors` lists every
 	 * region of the source that did not parse, and is empty for a clean parse.

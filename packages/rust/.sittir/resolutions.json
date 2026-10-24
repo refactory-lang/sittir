@@ -12,7 +12,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["visibility_modifier_pub"]},"step":"upstream-declared","sourceChains":[["visibility_modifier_pub","visibility_modifier"]],"conflict":{"symbolSequence":["'struct'","identifier","'('","'pub'"],"lookahead":"'('","interpretations":["visibility_modifier_pub","visibility_modifier_pub"]}}
 	],
 	"bound": {
-		"grammarHash": "d2e6126f5c8d537b4a3770832caf9cc7de544f11ddeabe9a7bbc0c2eacc316b2",
+		"grammarHash": "21daf3ecd0f6591afd1b31f3e4ed14e8b61668ae77c31058d1c317105ba4785f",
 		"resolutions": []
 	}
 }

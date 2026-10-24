@@ -313,4 +313,5 @@ export interface NodeMap {
 	scc?: SCCAnalysis;
 	irSurface?: IrSurface;
 	wordLeafReserved?: readonly string[];
+	unbound?: true;
 }

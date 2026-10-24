@@ -3,7 +3,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -1820,7 +1820,6 @@ function emitFieldCarryingFactory(
 	}
 	const view = plan.viewPlan === undefined || owner === undefined ? undefined : ownerViewParts(plan.viewPlan, owner.storage, owner.accessor, 'factory');
 	const groups = groupSeatParts(plan, (hint) => `() => ${hint.stored}`);
-	const spelled = spelledGroupSlots(plan);
 	lines.push(...(view?.prelude ?? []), ...groups.prelude);
 	lines.push('  const handle = currentHandle();');
 	lines.push('  const node = {');
@@ -1832,7 +1831,7 @@ function emitFieldCarryingFactory(
 	lines.push(
 		...nodeMemberLines({
 			setters: seatedSetters(setters, plan),
-			accessors: slotsToEmit.filter((f) => !spelled.has(f.propertyName)).map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
+			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			extra: [...(view?.members ?? []), ...groups.members],
 			inner: innerPositionsOf(typeKind, nodeMap)
 		})
@@ -2207,7 +2206,6 @@ export interface GroupSeatHint {
 	readonly slot: string;
 	readonly stored: string;
 	readonly group: string;
-	readonly groupKind: string;
 	readonly factory: string;
 	readonly optional: boolean;
 	readonly keys: readonly GroupSeatKey[];
@@ -2239,7 +2237,6 @@ export function groupSeatHints(
 				slot: seat.slot.propertyName,
 				stored: `_${seat.slot.storageName}`,
 				group: seat.group.typeName,
-				groupKind: seat.group.kind,
 				factory: seat.group.rawFactoryName!,
 				optional: !isRequired(seat.slot),
 				keys
@@ -2261,7 +2258,7 @@ function groupSeatRuntimeSpecs(
 			rest,
 			...(required ? { required } : {})
 		}));
-		return `{ slot: ${JSON.stringify(hint.slot)}, stored: ${JSON.stringify(hint.stored)}, kind: ${factoryTypeDiscriminant(hint.groupKind, nodeMap, kindEntries)}, make: ${factoryScope}${hint.factory}, keys: ${JSON.stringify(keys)} }`;
+		return `{ slot: ${JSON.stringify(hint.slot)}, stored: ${JSON.stringify(hint.stored)}, make: ${factoryScope}${hint.factory}, keys: ${JSON.stringify(keys)} }`;
 	});
 }
 
@@ -2454,7 +2451,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		const plan = seatPlanOf(node, nodeMap, kindEntries);
 		if (plan.slots.length > 0) names.add('listSlotWith');
 		if (plan.elements.length > 0) names.add('elementsWith');
-		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField', 'STORED_SLOT_READERS']) names.add(name);
+		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {
 			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'ownerElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateStored', 'defineListIndices'];
 			for (const name of names_) names.add(name);

@@ -1052,8 +1052,8 @@ pub const SITE_WHILE_STATEMENT_COLON_AFTER: SiteId = SiteId(1042);
 pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: SiteId = SiteId(1043);
 pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: SiteId = SiteId(1044);
 pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: SiteId = SiteId(1045);
-pub const SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(1046);
-pub const SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(1047);
+pub const SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(1046);
+pub const SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(1047);
 pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: SiteId = SiteId(1048);
 pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: SiteId = SiteId(1049);
 pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: SiteId = SiteId(1050);
@@ -1093,7 +1093,7 @@ pub const DELIM_SUBSCRIPTS_SUBSCRIPT: FlankId = FlankId(16);
 pub const DELIM_TUPLE_ELEMENTS_ITEM: FlankId = FlankId(17);
 pub const DELIM_TUPLE_PATTERN_ELEMENTS_ITEM: FlankId = FlankId(18);
 pub const DELIM_TYPES_ITEM: FlankId = FlankId(19);
-pub const DELIM_WITH_CLAUSE_BARE_ITEM: FlankId = FlankId(20);
+pub const DELIM_WITH_CLAUSE_BARE_ITEMS: FlankId = FlankId(20);
 pub const DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM: FlankId = FlankId(21);
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
@@ -2144,8 +2144,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("while_statement", "while_keyword_after", "while_keyword_after", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
     ("while_statement", "while_statement_before", "while_statement_before", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
     ("while_statement", "while_statement_after", "while_statement_after", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
-    ("with_clause_bare", "item_separator_space_before", "comma_separator_space_before", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
-    ("with_clause_bare", "item_separator_space_after", "comma_separator_space_after", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
+    ("with_clause_bare", "items_separator_space_before", "comma_separator_space_before", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
+    ("with_clause_bare", "items_separator_space_after", "comma_separator_space_after", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
     ("with_clause_paren", "lparen_after", "lparen_after", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
     ("with_clause_paren", "rparen_before", "rparen_before", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
     ("with_clause_paren", "with_clause_paren_before", "with_clause_paren_before", &[KindId(122), KindId(123), KindId(124), KindId(115), KindId(125), KindId(126)]),
@@ -2314,7 +2314,7 @@ pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
-    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -2351,7 +2351,7 @@ pub static DELIMITER_SITES: &[(&str, &str, Delimiter, Delimiter)] = &[
     ("tuple_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("tuple_pattern_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
     ("types", "item_delimiter", Delimiter(2), Delimiter(0)),
-    ("with_clause_bare", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("with_clause_bare", "items_delimiter", Delimiter(2), Delimiter(0)),
     ("with_clause_with_items", "item_delimiter", Delimiter(2), Delimiter(0)),
 ];
 
@@ -7086,12 +7086,12 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "withClauseBare", path: "(with_clause_bare)", children: &[
-        ::sittir_core::options::AddressNode::Branch { key: "item", path: "(with_clause_bare)/item:", children: &[
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_WITH_CLAUSE_BARE_ITEM, path: "(with_clause_bare)/item:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(with_clause_bare)/item:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(with_clause_bare)/item:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER, path: "(with_clause_bare)/item:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE, path: "(with_clause_bare)/item:/separator/\",\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "items", path: "(with_clause_bare)/items:", children: &[
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_WITH_CLAUSE_BARE_ITEMS, path: "(with_clause_bare)/items:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(with_clause_bare)/items:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(with_clause_bare)/items:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_AFTER, path: "(with_clause_bare)/items:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_BEFORE, path: "(with_clause_bare)/items:/separator/\",\"/before" }] },
                 ] },
             ] },
         ] },
