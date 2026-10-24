@@ -200,13 +200,22 @@ export interface NativeEngineLike<TNode = unknown> {
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
 	/**
 	 * The record at `address` of a built arena rendered as a render root whose `leading` and `trailing` edges have no
-	 * neighbour. The arena's `words` and `bytes` chunks are borrowed for the call, never copied. Present when the addon
-	 * carries the record codec.
+	 * neighbour, under this engine's options, with the sides `owner` holds: the engine that built the arena, which its
+	 * records' side writes went to. The arena's `words` and `bytes` chunks are borrowed for the call, never copied.
+	 * Present when the addon carries the record codec.
 	 *
 	 * @throws when a chunk is not a typed array of its kind over an ordinary `ArrayBuffer`, the words at `address` are no
 	 * record the arena admits, a parsed tree a record links is not live, or the record's render refuses.
 	 */
-	renderBuilt?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object): string;
+	renderBuilt?(
+		owner: object,
+		words: readonly Uint32Array[],
+		bytes: readonly Uint8Array[],
+		address: number,
+		leading: boolean,
+		trailing: boolean,
+		options?: object
+	): string;
 	/**
 	 * The entries a write gave `side` of the built record at `address`, or `null` when no write did. Present when the
 	 * addon carries the record codec.
@@ -498,7 +507,7 @@ export function createNativeEngine<
 						throw new Error('arena node storage needs an addon built with the `arena` feature');
 					return createRenderHandle(() => {
 						const { words, bytes } = built.chunks();
-						return renderBuilt.call(engine, words, bytes, record, changed.leading, changed.trailing, perCall);
+						return renderBuilt.call(engine, built.owner, words, bytes, record, changed.leading, changed.trailing, perCall);
 					});
 				}
 				const tree = treeOf(node as object);
@@ -666,6 +675,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
 	return {
 		format,
+		owner: engine,
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries, { words, bytes }) => writeBuiltTriviaSide.call(engine, at, side, entries, words, bytes)

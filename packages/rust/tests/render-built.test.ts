@@ -1,3 +1,5 @@
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
 import { recordOf, treeOf, writeTrivia } from '@sittir/common/utils';
@@ -14,7 +16,7 @@ function arenaEngine() {
 	const native = new (addon().SittirEngine)();
 	const { renderBuilt, builtTriviaSide, writeBuiltTriviaSide } = native;
 	if (renderBuilt === undefined || builtTriviaSide === undefined || writeBuiltTriviaSide === undefined) throw new Error('the native addon was built without the arena feature');
-	return { renderBuilt: renderBuilt.bind(native), builtTriviaSide: builtTriviaSide.bind(native), writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native) };
+	return { renderBuilt: renderBuilt.bind(native, native), builtTriviaSide: builtTriviaSide.bind(native), writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native) };
 }
 
 const words = (...values: number[]) => new Uint32Array([0, ...values]);
@@ -60,6 +62,42 @@ describe('a built arena rendered natively', () => {
 		expect(records.render(x).toString()).toBe('x;');
 		records.dispose();
 	});
+
+	it.each([
+		['objects', async () => arena.createEngine()],
+		[
+			'records',
+			async () => {
+				const engine = await arena.createEngine();
+				useRecordConstruction(engine, await import('../src/factories/records.ts'));
+				return engine;
+			}
+		]
+	])('renders a node another engine of its language built with the sides that engine wrote, under its own options: %s', async (_, make) => {
+		const noted = (engine: Awaited<ReturnType<typeof make>>, name: string, note: string) => {
+			const b = engine.build;
+			const statement = b.expressionStatement(b.identifier(name));
+			statement.$trivia.leading(b.blockComment(b.blockCommentRegular(note)));
+			return statement;
+		};
+		const [owner, renderer] = [await make(), await make()];
+		const built = noted(owner, 'x', ' owner ');
+		noted(renderer, 'y', ' renderer ');
+		expect(renderer.render(built).toString()).toBe('/* owner */ x;');
+		expect(owner.render(built).toString()).toBe('/* owner */ x;');
+	});
+
+	it("renders a built record with its builder's sides once nothing else names its builder", () => {
+		// A collection can only be forced under `--expose-gc`, so the case runs
+		// in a child process that reports the render before and after.
+		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/built-sides-release.mts', import.meta.url));
+		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' }
+		});
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ before: '/* its builder */ x;', after: '/* its builder */ x;' });
+	}, 60_000);
 
 	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
 		const records = await arena.createEngine();

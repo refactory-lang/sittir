@@ -31,9 +31,14 @@ export interface BuiltChunks {
 
 export const NO_CHUNKS: BuiltChunks = { words: [], bytes: [] };
 
-/** What an engine that reads trees as records gives its built arena: the cell format, and the trivia table its records' sides are written to, by record address. */
+/**
+ * What an engine that reads trees as records gives its built arena: the cell format, the trivia table its records'
+ * sides are written to, by record address, and the native engine that holds that table, whose sides a render of one of
+ * the arena's records takes through whichever engine of the language renders it.
+ */
 export interface BuiltRecords {
 	readonly format: CellFormat;
+	readonly owner: object;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[], chunks: BuiltChunks): void;
@@ -110,6 +115,8 @@ class Chunks<A extends Uint32Array | Uint8Array> {
  */
 export class BuiltArena {
 	readonly format: CellFormat;
+	/** The native engine that holds this arena's records' written sides ({@link BuiltRecords.owner}). */
+	readonly owner: object;
 	/** The tree a built record's view reads through: its records are this arena's, and its trivia table is keyed by their addresses. */
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly #wrap: Wrap;
@@ -123,8 +130,9 @@ export class BuiltArena {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
 
-	constructor({ format, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
+	constructor({ format, owner, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
 		this.format = format;
+		this.owner = owner;
 		this.#wrap = wrap;
 		this.tree = {
 			built: this,

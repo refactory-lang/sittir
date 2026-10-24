@@ -238,16 +238,18 @@ renderRecord(treeId: number, address: number, leading: boolean, trailing: boolea
 /**
  * r" The record at `address` of a built arena rendered as a
  * r" render root whose `leading` and `trailing` edges have no
- * r" neighbour, under `options` over the engine's. The arena's
- * r" `words` and `bytes` chunks are borrowed for this call; the
- * r" records the root reaches are admitted, and the parsed trees
- * r" they link held for the render (`Engine::render_built`).
- * r" Refuses a chunk that is not a typed array of its kind over
- * r" an ordinary `ArrayBuffer`, an address naming no record the
+ * r" neighbour, under `options` over this engine's, with the
+ * r" sides `owner` holds: the engine that built the arena, which
+ * r" its records' side writes went to. The arena's `words` and
+ * r" `bytes` chunks are borrowed for this call; the records the
+ * r" root reaches are admitted, and the parsed trees they link
+ * r" held for the render (`Engine::render_built`). Refuses a
+ * r" chunk that is not a typed array of its kind over an
+ * r" ordinary `ArrayBuffer`, an address naming no record the
  * r" words admit, a linked tree that is not live, and a record
  * r" whose render refuses.
  */
-renderBuilt(words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+renderBuilt(owner: SittirEngine, words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
  * r" The entries a write gave `side` (`leading`, `trailing` or
  * r" `inner`) of the built record at `address`, or `null` when

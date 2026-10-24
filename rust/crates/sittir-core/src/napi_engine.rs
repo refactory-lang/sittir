@@ -760,17 +760,19 @@ macro_rules! napi_engine {
 
                 /// The record at `address` of a built arena rendered as a
                 /// render root whose `leading` and `trailing` edges have no
-                /// neighbour, under `options` over the engine's. The arena's
-                /// `words` and `bytes` chunks are borrowed for this call; the
-                /// records the root reaches are admitted, and the parsed trees
-                /// they link held for the render (`Engine::render_built`).
-                /// Refuses a chunk that is not a typed array of its kind over
-                /// an ordinary `ArrayBuffer`, an address naming no record the
+                /// neighbour, under `options` over this engine's, with the
+                /// sides `owner` holds: the engine that built the arena, which
+                /// its records' side writes went to. The arena's `words` and
+                /// `bytes` chunks are borrowed for this call; the records the
+                /// root reaches are admitted, and the parsed trees they link
+                /// held for the render (`Engine::render_built`). Refuses a
+                /// chunk that is not a typed array of its kind over an
+                /// ordinary `ArrayBuffer`, an address naming no record the
                 /// words admit, a linked tree that is not live, and a record
                 /// whose render refuses.
                 #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-                #[::napi_derive::napi(ts_args_type = "words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
-                pub fn render_built(&self, env: ::napi::Env, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
+                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, words: Uint32Array[], bytes: Uint8Array[], address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let words = $crate::napi_engine::borrowed_chunks::<u32>(&env, &words)?;
                     let bytes = $crate::napi_engine::borrowed_chunks::<u8>(&env, &bytes)?;
@@ -780,7 +782,7 @@ macro_rules! napi_engine {
                         let trees = trees.borrow();
                         let changed = $crate::slot::ChangedEdges { leading, trailing };
                         let shape = <$any as $crate::arena::RecordCells>::shape;
-                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| self.engine.render_built(&arena, address, changed, shape, &*trees, &table)))
+                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.engine.render_built(&arena, address, changed, shape, &*trees, &table)))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))
