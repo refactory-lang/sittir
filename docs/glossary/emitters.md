@@ -12125,7 +12125,7 @@ The body of one slot accessor. A scalar slot (one whose storage holds no node, `
 
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorLines`
 
-One `name() { … }` accessor line per model slot of a field-carrying kind, minus the slots in `skip` (`spelledGroupSlots`: slots whose group seat has a key of the slot's own name, which the group's reader serves instead), each body from `slotAccessorBody`.
+One `name() { … }` accessor line per model slot of a field-carrying kind, each body from `slotAccessorBody`, with `aliasContent` passed through to it (true for an alias's own content). A group key that spells its own seat is an ordinary collision, not a skipped slot.
 
 
 ### `packages/codegen/src/emitters/wrap.ts::SlotModel`
@@ -14889,10 +14889,6 @@ The storage of a refine form's narrowed slot: the kind id the narrowing literal 
 ### `packages/codegen/src/emitters/node-members.ts::seatedSetters`
 
 The setters of a node as its literal writes them, after its seats. A list slot's setter runs through `listSlotWith`, an elements slot's through `elementsWith`. Each key a group seat flattens onto the node gets a setter that runs `seatWith` over the seat's slot setter, and a key that spells its slot replaces that slot's own setter. A seat with no slot setter to wrap, a wrapped list owner among them, adds no keys.
-
-### `packages/codegen/src/emitters/node-members.ts::spelledGroupSlots`
-
-The slots whose group seat has a key of the slot's own name. That key reads the group's inner value, so the slot's own accessor is not written: the node keeps the group's reader under `STORED_SLOT_READERS` instead.
 
 ### `packages/codegen/src/emitters/node-members.ts::groupSeatParts`
 
