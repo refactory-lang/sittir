@@ -15070,3 +15070,107 @@ Each kind id that has registered slots, mapped to the slot property names its bu
 ### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
 
 The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.
+
+### `packages/codegen/src/emitters/factories.ts::ElementConfigFact`
+
+A list element's config fact: the element kind and its config surface.
+
+### `packages/codegen/src/emitters/factories.ts::EmitFactoriesConfig`
+
+The options the factory emitter takes.
+
+### `packages/codegen/src/emitters/factories.ts::GroupSeatKey`
+
+The key a group seat takes, by which a flattened key is named.
+
+### `packages/codegen/src/emitters/factories.ts::ListViewPlan`
+
+How a list's view is planned: its owner and its element view.
+
+### `packages/codegen/src/emitters/factories.ts::SeatPlan`
+
+The plan for a node's seats: its view and its groups.
+
+### `packages/codegen/src/emitters/factories.ts::SlotStorageCoercion`
+
+How a slot's stored value is coerced to its factory argument.
+
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData`
+
+The data the factory map is built from: shapes, forwards, field aliases, slots and variants.
+
+### `packages/codegen/src/emitters/factory-map.ts::FactoryMapData::forwardsArguments`
+
+The kinds whose factory forwards its arguments to another factory.
+
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta`
+
+The metadata of one factory slot.
+
+### `packages/codegen/src/emitters/node-model.ts::EmitNodeModelConfig`
+
+The options the node-model emitter takes.
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeModel`
+
+The node model as the emitter serializes it.
+
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleBundle`
+
+The bundle the render-module emitter produces.
+
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitter`
+
+The render-module emitter, which produces the render module for a grammar.
+
+### `packages/codegen/src/emitters/render-module.ts::RenderModuleEmitterConfig`
+
+The options the render-module emitter takes, extending the render options.
+
+### `packages/codegen/src/emitters/shared.ts::EnumArm`
+
+One arm of an enum: its kind and its name.
+
+### `packages/codegen/src/emitters/shared.ts::EnumArms`
+
+The arms of an enum.
+
+### `packages/codegen/src/emitters/shared.ts::FactoryDispatchContext`
+
+The context a factory dispatch runs in.
+
+### `packages/codegen/src/emitters/shared.ts::forwardsTargetArguments`
+
+Whether a node's factory forwards its arguments to its target.
+
+### `packages/codegen/src/emitters/shared.ts::FromDispatchContext`
+
+The context a from-dispatch runs in.
+
+### `packages/codegen/src/emitters/shared.ts::KindEnumTextEntry`
+
+One entry of a kind enum's text table: a kind and its text.
+
+### `packages/codegen/src/emitters/shared.ts::OwnTextLeaf`
+
+A node's own text leaf: the text it carries as its own content.
+
+### `packages/codegen/src/emitters/shared.ts::ParserSymbolDispatchContext`
+
+The context for dispatching on a parser symbol.
+
+### `packages/codegen/src/emitters/shared.ts::ScalarLeafKinds`
+
+The kinds that are scalar leaves.
+
+### `packages/codegen/src/emitters/shared.ts::SoleSlotFacts`
+
+The facts of a node with one sole slot.
+
+### `packages/codegen/src/emitters/shared.ts::TaggedLiteral`
+
+A literal carrying a tag that names its kind.
+
+### `packages/codegen/src/emitters/shared.ts::UnreservedWordFactory`
+
+The factory for a word that is not reserved.
