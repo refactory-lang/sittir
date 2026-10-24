@@ -131,8 +131,8 @@ describe('loadCorpusEntries', () => {
 describe('loadStorageKindNameFromId', () => {
 	it('names a kind id from the generated KIND_NAMES table', async () => {
 		const kindName = await loadStorageKindNameFromId('rust');
-		const { TSKindId } = await import('../../../../rust/src/kinds.ts');
-		expect(kindName(TSKindId.SourceFile)).toBe('source_file');
+		const sourceFile = (await loadKindIdFromName('rust'))('source_file');
+		expect(kindName(sourceFile)).toBe('source_file');
 	});
 
 	it('throws when the types module cannot be loaded, rather than answering nothing', async () => {
@@ -143,8 +143,8 @@ describe('loadStorageKindNameFromId', () => {
 describe('loadKindNameFromId', () => {
 	it('names a kind id with its display name', async () => {
 		const kindName = await loadKindNameFromId('rust');
-		const { TSKindId } = await import('../../../../rust/src/kinds.ts');
-		expect(kindName(TSKindId.SourceFile)).toBe('source_file');
+		const sourceFile = (await loadKindIdFromName('rust'))('source_file');
+		expect(kindName(sourceFile)).toBe('source_file');
 	});
 
 	it('throws for a kind id the table does not name, rather than answering nothing', async () => {
