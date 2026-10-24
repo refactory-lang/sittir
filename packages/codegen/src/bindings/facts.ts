@@ -2,6 +2,9 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ErrorRegion, StepAnchor } from '@sittir/types';
 import { bindMatch, type LeadMatch } from '../dsl/verbs/effects.ts';
+import type { SitedName } from '../dsl/bind.ts';
+import { isParserHiddenName } from '../dsl/rule-patterns.ts';
+import { boundKindName } from './names.ts';
 import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';
@@ -344,13 +347,48 @@ const bindLeadMatch = (
 	fieldNameOf: FieldNameOf
 ): LeadLeadMatch => ('match' in lead ? { ...lead, match: bindMatch(lead.match, rename, fieldNameOf) } : lead);
 
-function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): ClaimFact {
+type NameAt = (kind: string, scope: string | undefined) => SitedName;
+
+const unsited =
+	(rename: (kind: string) => string): NameAt =>
+	(kind) => ({ name: rename(kind), scope: kind });
+
+interface SitedPlacement {
+	readonly kind: string | null;
+	readonly within: readonly string[];
+	readonly aliased: boolean;
+}
+
+function sitedPlacement(claim: ClaimFact, nameAt: NameAt): SitedPlacement {
+	let scope: string | undefined;
+	const within = claim.within
+		.toReversed()
+		.map((kind) => {
+			const at = nameAt(kind, scope);
+			scope = at.scope;
+			return at.name;
+		})
+		.toReversed();
+	if (claim.kind === null || claim.kind === WILDCARD) return { kind: claim.kind, within, aliased: false };
+	const at = nameAt(claim.kind, scope);
+	return { kind: at.name, within, aliased: at.scope !== claim.kind };
+}
+
+const readsAbove = (claim: ClaimFact): boolean =>
+	claim.predicates.some((p) => p.subject !== null && p.subject.up > 0) || claim.children.some((child) => child.subject.up > 0);
+
+const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement): boolean =>
+	placed.aliased && !readsAbove(claim) && placed.kind === boundKindName(claim.vocab, isParserHiddenName(claim.kind!));
+
+function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf, nameAt: NameAt): ClaimFact {
+	const placed = sitedPlacement(claim, nameAt);
+	const unplaced = namesItsAlias(claim, placed);
 	return {
 		...claim,
 		...(claim.match === undefined ? {} : { match: bindMatch(claim.match, rename, fieldNameOf) }),
-		kind: claim.kind === null || claim.kind === WILDCARD ? claim.kind : rename(claim.kind),
-		field: claim.field === null ? null : bindField(claim.within[0] ?? null, claim.field, fieldNameOf),
-		within: claim.within.map(rename),
+		kind: placed.kind,
+		field: claim.field === null || unplaced ? null : bindField(claim.within[0] ?? null, claim.field, fieldNameOf),
+		within: unplaced ? [] : placed.within,
 		fieldLiterals: Object.fromEntries(
 			Object.entries(claim.fieldLiterals).map(([name, value]) => [bindField(claim.kind, name, fieldNameOf), value])
 		),
@@ -380,16 +418,26 @@ function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldName
 export function bindFacts(
 	facts: BindingFacts,
 	rename: (kind: string) => string,
-	fieldNameOf: FieldNameOf = unchangedField
+	fieldNameOf: FieldNameOf = unchangedField,
+	nameAt: NameAt = unsited(rename)
 ): BindingFacts {
+	const claims = facts.claims.map((claim) => bindClaim(claim, rename, fieldNameOf, nameAt));
+	const ownersOf = (m: MemberFact, owner: string): ReadonlyMap<string, readonly number[]> => {
+		const owners = new Map<string, number[]>();
+		for (const i of m.claims ?? []) {
+			const at = facts.claims[i]?.kind === m.owner ? (claims[i]!.kind ?? owner) : owner;
+			owners.set(at, [...(owners.get(at) ?? []), i]);
+		}
+		return owners;
+	};
 	return {
-		claims: facts.claims.map((claim) => bindClaim(claim, rename, fieldNameOf)),
-		members: facts.members.map(
-			(m): MemberFact =>
-				m.leadMatch === undefined
-					? bindMember(m, rename, fieldNameOf)
-					: { ...bindMember(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) }
-		),
+		claims,
+		members: facts.members.flatMap((m): MemberFact[] => {
+			const bound = m.leadMatch === undefined ? bindMember(m, rename, fieldNameOf) : { ...bindMember(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) };
+			const owners = ownersOf(m, bound.owner);
+			if (owners.size <= 1 && (owners.size === 0 || owners.has(bound.owner))) return [bound];
+			return [...owners].map(([owner, ids]) => ({ ...bound, owner, claims: ids }));
+		}),
 		containers: facts.containers.map((c) => ({
 			...c,
 			kind: rename(c.kind),

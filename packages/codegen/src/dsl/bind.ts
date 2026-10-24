@@ -174,3 +174,20 @@ export function boundNameOf(
 	for (const { from, to, scope } of aliases) if (scope === undefined) bound.set(from, to);
 	return (name) => bound.get(name) ?? name;
 }
+
+export interface SitedName {
+	readonly name: string;
+	readonly scope: string;
+}
+
+export function boundNameAt(
+	nameOf: (name: string) => string,
+	aliases: readonly Extract<BindingEffect, { kind: 'alias' }>[] = []
+): (name: string, scope: string | undefined) => SitedName {
+	const sited = new Map<string, Map<string, string>>();
+	for (const { from, to, scope } of aliases) if (scope !== undefined) sited.set(scope, (sited.get(scope) ?? new Map<string, string>()).set(from, to));
+	return (name, scope) => {
+		const to = scope === undefined ? undefined : sited.get(scope)?.get(name);
+		return to === undefined ? { name: nameOf(name), scope: name } : { name: to, scope: to };
+	};
+}

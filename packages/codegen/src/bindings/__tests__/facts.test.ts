@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type BindingFacts, type ClaimFact, bindFacts, refineClaims } from '../index.ts';
+import { boundNameAt } from '../../dsl/bind.ts';
 
 const claim = (vocab: string, kind: string | null, extra: Partial<ClaimFact> = {}): ClaimFact => ({
 	vocab,
@@ -244,5 +245,48 @@ describe('refineClaims', () => {
 	it("keeps an unrefined claim's own predicate, field literal or token as its refinement kind", () => {
 		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);
+	});
+});
+
+describe('bindFacts names a placed claim through the aliases at its sites', () => {
+	const aliases = [
+		{ kind: 'alias', from: 'declaration_list', to: 'impl_body', scope: 'impl_item' },
+		{ kind: 'alias', from: 'function_item', to: 'method_declaration', scope: 'impl_body' },
+		{ kind: 'alias', from: 'declaration_list', to: 'trait_body', scope: 'trait_item' },
+		{ kind: 'alias', from: 'function_item', to: 'method_declaration', scope: 'trait_body' }
+	] as const;
+	const same = (kind: string): string => kind;
+	const bound = bindFacts(
+		{
+			claims: [
+				claim('declaration.method', 'function_item', { within: ['declaration_list', 'impl_item'] }),
+				claim('declaration.method', 'function_item', { within: ['declaration_list', 'trait_item'] }),
+				claim('declaration.method.private', 'function_item', { within: ['declaration_list', 'impl_item'] }),
+				claim('declaration.function', 'function_item')
+			],
+			members: [{ route: 'rename', owner: 'function_item', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null, claims: [0, 3] }],
+			containers: [],
+			templates: [],
+			unclaimed: []
+		},
+		same,
+		undefined,
+		boundNameAt(same, aliases)
+	);
+
+	it('unplaces the claim that named the alias, keeps every other placement in the names the sites give, and leaves an unplaced claim on its base kind', () => {
+		expect(bound.claims.map((c) => [c.vocab, c.kind, c.within])).toEqual([
+			['declaration.method', 'method_declaration', []],
+			['declaration.method', 'method_declaration', []],
+			['declaration.method.private', 'method_declaration', ['impl_body', 'impl_item']],
+			['declaration.function', 'function_item', []]
+		]);
+	});
+
+	it('gives a member shared by claims at different sites one fact per bound owner', () => {
+		expect(bound.members.map((m) => [m.owner, m.claims])).toEqual([
+			['method_declaration', [0]],
+			['function_item', [3]]
+		]);
 	});
 });
