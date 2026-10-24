@@ -10,7 +10,7 @@ on:
         default: all
         options: [all, eager, corpus]
       construction:
-        description: How the corpus job's arena arm builds nodes; records runs regex, scm, python and rust, the grammars whose record builders render every corpus case byte-identical to the object builders
+        description: How the corpus job's arena arm builds nodes
         type: choice
         default: objects
         options: [objects, records]
@@ -50,5 +50,5 @@ jobs:
     uses: ./.github/workflows/benchmark-corpus.yml
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
-      grammars: ${{ inputs.construction == 'records' && '["regex","scm","python","rust"]' || needs.prepare.outputs.grammars }}
+      grammars: ${{ needs.prepare.outputs.grammars }}
       construction: ${{ inputs.construction }}
