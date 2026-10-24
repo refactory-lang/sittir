@@ -1353,10 +1353,7 @@ export function aliasTargetToSourceMapOf(slot: {
 }
 
 export interface SlotAliasPairsCtx {
-	readonly nodes: ReadonlyMap<
-		string,
-		{ modelType: string; subtypeRestampPairs?: ReadonlyArray<readonly [string, string]> }
-	>;
+	readonly nodes: ReadonlyMap<string, AssembledNode>;
 }
 
 export function resolveSlotAliasPairs(
@@ -1378,10 +1375,14 @@ export function resolveSlotAliasPairs(
 	for (const parseKind of valueParseKindsOf(slot)) {
 		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
 		const node = ctx.nodes.get(parseKind) ?? ctx.nodes.get(normalized);
-		candidates.push(...(node?.subtypeRestampPairs ?? []));
+		if (node instanceof AssembledSupertype) candidates.push(...(node.subtypeRestampPairs ?? []));
 	}
+	const readAsEnvelope = ([parseKind, storage]: readonly [string, string]): boolean => {
+		const stored = ctx.nodes.get(storage);
+		return ctx.nodes.get(parseKind) instanceof AssembledAlias && stored !== undefined && !isTerminalNode(stored);
+	};
 	const storagesByParseName = new Map<string, Set<string>>();
-	for (const [parseKind, storage] of candidates) {
+	for (const [parseKind, storage] of candidates.filter((pair) => !readAsEnvelope(pair))) {
 		storagesByParseName.set(parseKind, (storagesByParseName.get(parseKind) ?? new Set<string>()).add(storage));
 	}
 	const pairs = [...storagesByParseName].flatMap(([parseKind, storages]) =>
