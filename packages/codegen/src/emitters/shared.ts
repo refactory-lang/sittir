@@ -182,6 +182,10 @@ function placedAliasKindsOf(nodeMap: NodeMap): ReadonlySet<string> {
 	return kinds;
 }
 
+export function slotUnreservedAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
+	return slotAliases(f, nodeMap).filter((alias) => unreservedWordFactory(alias, nodeMap) !== undefined);
+}
+
 export function unreservedWordFactory(alias: AssembledAlias, nodeMap: NodeMap): UnreservedWordFactory | undefined {
 	if (!placedAliasKindsOf(nodeMap).has(alias.kind)) return undefined;
 	const leaf = aliasPatternLeaf(alias, nodeMap);

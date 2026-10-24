@@ -111,7 +111,7 @@ import {
 	refusingParam,
 	withTrailingParam,
 	type RefusingParams,
-	aliasPatternLeaf
+	slotUnreservedAliases
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -276,9 +276,7 @@ function buildLeafReConsts(
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
 	const relaxed = new Set(nodeMap.relaxedLiterals ?? []);
 	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words.filter((text) => !relaxed.has(text));
-	const leafReserved = reservedWordsAdmittedIn(nodeMap.reserved, wordHolderWordsetIds(nodeMap), kindEntries ?? []).filter(
-		(text) => !relaxed.has(text)
-	);
+	const leafReserved = nodeMap.wordLeafReserved ?? [];
 	if (word?.rawFactoryName) {
 		const globalConst = `_reservedWords_${word.rawFactoryName}`;
 		const typeName = `_ReservedWord_${word.rawFactoryName}`;
@@ -375,8 +373,8 @@ function keywordTextRejection(
 	const word = kindEntries === undefined || !nodeMap.word ? undefined : kindDiscriminantExpr(nodeMap.word, nodeMap, kindEntries);
 	const keywordChecked =
 		keywords.length === 0 ? expr : `rejectKeywordText(${expr}, '${typeName}.${f.propertyName}', ${word!}, ${JSON.stringify(keywords)})`;
-	if (word === undefined || kindEntries === undefined || !slotChecksReserved(f, nodeMap)) return keywordChecked;
-	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.propertyName}', ${word}, ${wordsetConstName(slotWordsetIds(f, nodeMap), nodeMap)})`;
+	if (word === undefined || kindEntries === undefined || f.checksReserved !== true) return keywordChecked;
+	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.propertyName}', ${word}, ${wordsetConstName(slotWordsetIds(f), nodeMap)})`;
 }
 
 function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
@@ -384,75 +382,17 @@ function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
 	return `_reservedWordset_${ids.join('_')}`;
 }
 
-function holdsWord(f: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	const word = nodeMap.word;
-	if (!word) return false;
-	return (
-		expandAndDedupeContentTypes(slotKindNames(f), nodeMap).includes(word) ||
-		textLeaves(f, nodeMap).some((leaf) => leaf.kind === word) ||
-		slotAliases(f, nodeMap).some((alias) => aliasPatternLeaf(alias, nodeMap)?.kind === word)
-	);
-}
-
-const effectiveWordsets = new WeakMap<NodeMap, ReadonlyMap<AssembledNonterminal, readonly string[]>>();
-
-function effectiveWordsetsOf(nodeMap: NodeMap): ReadonlyMap<AssembledNonterminal, readonly string[]> {
-	const cached = effectiveWordsets.get(nodeMap);
-	if (cached !== undefined) return cached;
-	const placed = new Map<string, Set<string>>();
-	for (const node of nodeMap.nodes.values()) {
-		if (node instanceof AssembledAlias) continue;
-		for (const slot of node.slots) {
-			for (const alias of slotAliases(slot, nodeMap)) {
-				const ids = placed.get(alias.kind) ?? new Set<string>();
-				for (const id of slot.reservedWordsets) ids.add(id);
-				placed.set(alias.kind, ids);
-			}
-		}
-	}
-	const out = new Map<AssembledNonterminal, readonly string[]>();
-	for (const node of nodeMap.nodes.values()) {
-		const own = node instanceof AssembledAlias ? placed.get(node.kind) : undefined;
-		for (const slot of node.slots) out.set(slot, own === undefined ? slot.reservedWordsets : [...own].sort());
-	}
-	effectiveWordsets.set(nodeMap, out);
-	return out;
-}
-
-function slotWordsetIds(f: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {
-	return effectiveWordsetsOf(nodeMap).get(f) ?? f.reservedWordsets;
-}
-
-const wordHolderIds = new WeakMap<NodeMap, readonly string[]>();
-
-function wordHolderWordsetIds(nodeMap: NodeMap): readonly string[] {
-	const cached = wordHolderIds.get(nodeMap);
-	if (cached !== undefined) return cached;
-	const ids = new Set<string>();
-	for (const node of nodeMap.nodes.values()) {
-		for (const slot of node.slots) if (holdsWord(slot, nodeMap)) for (const id of slotWordsetIds(slot, nodeMap)) ids.add(id);
-	}
-	const sorted = [...ids].sort();
-	wordHolderIds.set(nodeMap, sorted);
-	return sorted;
-}
-
-function slotChecksReserved(f: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	if (slotUnreservedAliases(f, nodeMap).length > 0) return true;
-	if (!holdsWord(f, nodeMap)) return false;
-	return [...slotWordsetIds(f, nodeMap)].sort().join('\0') !== wordHolderWordsetIds(nodeMap).join('\0');
-}
-
-export function slotUnreservedAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
-	return slotAliases(f, nodeMap).filter((alias) => unreservedWordFactory(alias, nodeMap) !== undefined);
+function slotWordsetIds(f: AssembledNonterminal): readonly string[] {
+	if (f.effectiveWordsets === undefined) throw new Error(`factories: slot '${f.name}' has no stamped wordsets`);
+	return f.effectiveWordsets;
 }
 
 function checkedSlotWordsets(nodeMap: NodeMap): string[][] {
 	const found = new Map<string, string[]>();
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
-			if (!slotChecksReserved(slot, nodeMap)) continue;
-			const ids = slotWordsetIds(slot, nodeMap);
+			if (slot.checksReserved !== true) continue;
+			const ids = slotWordsetIds(slot);
 			found.set(ids.join('\0'), [...ids]);
 		}
 	}
