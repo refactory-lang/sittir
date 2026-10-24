@@ -450,6 +450,28 @@ describe("keptKinds over a supertype the slot holds", () => {
 		expect(routes.members.get('wrapped')?.map((m) => m.name)).toEqual(['content']);
 	});
 
+	it("reads a claim pattern on an alias envelope of a structured kind in the stored kind's slots, through its content", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('call_env', node('call_env', [slot('content', ['call_x'])], { modelType: 'alias' }));
+		model.set('bin_env', node('bin_env', [slot('content', ['binary'])], { modelType: 'alias' }));
+		model.set('outer_env', node('outer_env', [slot('content', ['outer'])], { modelType: 'alias' }));
+		const bindings = [
+			'(call_env args: (expr)) @expression.call',
+			'(bin_env) @expression.binary',
+			'(bin_env "+") @expression.binary.add',
+			'(outer_env (middle (binary left: (_) @lhs))) @expression.outer'
+		].join('\n');
+		const routes = resolveRoutes({ ...(await grammar(bindings)), model });
+		expect(routes.readEntries.get('call_env')?.[0]?.children).toEqual([]);
+		expect(routes.readEntries.get('bin_env')?.[0]?.pins).toEqual([{ member: 'operator', slot: 'operator', text: '+' }]);
+		expect(routes.members.get('outer_env')?.find((m) => m.name === 'lhs')?.path).toEqual([
+			{ owner: 'outer_env', slot: 'content' },
+			{ owner: 'outer', slot: 'mid' },
+			{ owner: 'middle', slot: 'inner' },
+			{ owner: 'binary', slot: 'left' }
+		]);
+	});
+
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
 		const member = routes.members.get('outer')?.find((m) => m.name === 'lhs');
