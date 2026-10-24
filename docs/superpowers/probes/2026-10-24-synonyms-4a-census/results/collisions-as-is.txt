@@ -1,0 +1,99 @@
+603 kinds; 0 renames and 0 additions give 603 kinds
+
+== argument
+  named            keyword                          at argument.named (1)
+== clause
+  bounds           constraint                       at clause.bounds (1)
+  case             arm                              at clause.case (1)
+  catch            except rescue                    at clause.catch (1)
+  else_if          elif elsif elseif                at clause.else_if (1)
+  finally          ensure                           at clause.finally (1)
+  resource         using                            at clause.resource (1)
+  wildcard         glob                             at clause.import.wildcard (1)
+== declaration
+  constructor      initializer init                 at declaration.constructor (1)
+  enum_member      variant enumerator               at declaration.enum_member (1)
+  extension        impl                             at declaration.extension (1)
+  foreign          extern                           at declaration.module.foreign (1)
+  index            indexer                          at declaration.signature.index (1)
+  internal         crate                            at declaration.constant.public.internal, declaration.enum.public.internal, declaration.enum_member.public.internal, declaration.enum_member.struct.public.internal … (18)
+  module           mod                              at declaration.module (1)
+  receiver         self this                        at declaration.parameter.receiver (1)
+  special          dunder magic                     at declaration.method.special (1)
+  struct           record                           at declaration.enum_member.struct, declaration.struct (2)
+  type_alias       typedef typealias                at declaration.type_alias (1)
+== element
+  map              dictionary dict                  at element.spread.map (1)
+  spread           splat unpack                     at element.spread (1)
+== expression
+  coalesce         nullish                          at expression.assignment.compound.coalesce, expression.binary.coalesce (2)
+  compound         augmented                        at expression.assignment.compound (1)
+  conditional      ternary                          at expression.conditional (1)
+  construct        new                              at expression.call.construct (1)
+  generator        gen                              at expression.block.generator, expression.comprehension.generator (2)
+  lambda           closure arrow                    at expression.lambda (1)
+  list             array                            at expression.collection.list, expression.comprehension.list (2)
+  map              dictionary dict                  at expression.collection.map, expression.comprehension.map (2)
+  matrix_multiply  matmul                           at expression.assignment.compound.matrix_multiply, expression.binary.matrix_multiply (2)
+  member           attribute field property         at expression.call.member, expression.member (2)
+  propagate        try                              at expression.propagate (1)
+  qualified        path scoped                      at expression.call.qualified (1)
+  reference        borrow                           at expression.reference (1)
+  subscript        index                            at expression.subscript (1)
+== identifier
+  qualified        dotted nested scoped path        at  (0)
+  receiver         self this                        at identifier.receiver (1)
+  super            base                             at identifier.super (1)
+== literal
+  character        char rune                        at literal.character (1)
+  interpolated     f template                       at literal.string.interpolated (1)
+  multiline        triple                           at literal.string.bytes.multiline, literal.string.bytes.raw.multiline, literal.string.interpolated.multiline, literal.string.interpolated.raw.multiline … (6)
+  null             none nil                         at literal.null (1)
+== modifier
+  internal         crate                            at modifier.visibility.public.internal (1)
+== pattern
+  list             array slice                      at pattern.case.list, pattern.list (2)
+  map              dictionary dict                  at pattern.rest.map (1)
+  rest             splat unpack                     at pattern.rest, pattern.struct.rest (2)
+  struct           record                           at pattern.struct, pattern.tuple.struct (2)
+== statement
+  empty            pass                             at statement.empty (1)
+  import           use                              at statement.import (1)
+  package          crate                            at statement.import.package (1)
+  resource         using                            at statement.resource (1)
+  throw            raise                            at statement.throw (1)
+== type
+  boolean          bool                             at type.primitive.boolean (1)
+  character        char                             at type.primitive.character (1)
+  float64          double                           at type.primitive.floating.float64 (1)
+  int16            short                            at type.primitive.integral.int16 (1)
+  int8             byte                             at type.primitive.integral.int8 (1)
+  nullable         maybe                            at type.nullable (1)
+  reference        borrow                           at type.reference (1)
+  rest             splat unpack                     at type.rest (1)
+  string           str                              at type.primitive.string (1)
+
+== flags
+  (no flag synonyms proposed)
+
+== excluded (a word two languages use for different facts is a synonym of neither)
+  with     python's resource statement; typescript's (javascript's) dynamic scope, statement.scope
+  super    typescript's base-class reference; rust's parent module in a path
+  as       rust's numeric conversion; typescript's type assertion
+  is       python's identity test; the type test of C#, Kotlin and Swift
+  mut      rust's binding mutability (mutable); a reference's exclusivity (exclusive)
+  for      typescript's three-part loop (statement.loop.counted) and every language's for-each (statement.loop.for_each)
+  static   a member with no receiver (the static flag); rust's static item, a declaration.variable
+  int      32 bits in C, Java and C#; pointer-sized in Go and Swift
+  long     64 bits in Java and C#; platform-sized in C
+  float    32 bits in C, Java, C# and Swift; a double in python
+
+120 synonym positions checked; 1 collisions
+  COLLISION identifier: no segment `qualified` for its synonyms
+  note clause: `arm` is a synonym of `case` and the canonical segment of clause.match.arm
+  note expression: `try` is a synonym of `propagate` and the canonical segment of expression.block.try
+  note identifier: `dotted` is a synonym of `qualified` and the canonical segment of identifier.dotted
+  note identifier: `nested` is a synonym of `qualified` and the canonical segment of identifier.nested
+  note identifier: `scoped` is a synonym of `qualified` and the canonical segment of identifier.scoped
+  note pattern: `dictionary` is a synonym of `map` and the canonical segment of pattern.case.dictionary
+  note pattern: `splat` is a synonym of `rest` and the canonical segment of pattern.case.splat
