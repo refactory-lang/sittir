@@ -7,3 +7,7 @@ export interface Argument<G extends GrammarContext<G>> {
 	// p only
 }
 
+export interface ArgumentSynonyms {
+	readonly named: 'keyword';
+}
+

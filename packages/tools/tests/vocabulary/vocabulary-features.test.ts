@@ -277,6 +277,60 @@ describe('plan', () => {
 	});
 });
 
+describe('the synonym collision rule', () => {
+	const synonyms = (levels: string, flags = ''): Promise<readonly string[]> =>
+		issues({
+			...CLEAN,
+			'declaration.ts': `${DECLARATION}export interface DeclarationSynonyms {\n${levels}}\n`,
+			'utils.ts': `export interface FlagSynonyms {\n${flags}}\n`
+		});
+
+	it('passes tables whose every synonym spells one name at each position it has', async () => {
+		expect(await synonyms("\treadonly function: 'fn';\n\treadonly getter: 'get';\n", "\treadonly static: 'shared';\n")).toEqual([]);
+	});
+
+	it("reports a segment's synonym that is a sibling segment, or a sibling's synonym", async () => {
+		expect(await synonyms("\treadonly function: 'method';\n")).toEqual(['declaration.function: the synonym method is the sibling segment declaration.method']);
+		expect(await synonyms("\treadonly function: 'fn';\n\treadonly method: 'fn';\n")).toEqual([
+			'declaration.function: the synonym fn is also a synonym of the sibling declaration.method'
+		]);
+	});
+
+	it("reports a segment's synonym that is a flag of its parent or a kind above it, or that flag's synonym", async () => {
+		expect(await synonyms("\treadonly getter: 'static';\n")).toEqual(['declaration.method.getter: the synonym static is the flag static, which declaration.method has']);
+		expect(await synonyms("\treadonly getter: 'shared';\n", "\treadonly static: 'shared';\n")).toEqual([
+			'declaration.method.getter: the synonym shared is a synonym of the flag static, which declaration.method has',
+			'#static: the synonym shared spells declaration.method.getter, beneath kinds that have the flag'
+		]);
+	});
+
+	it("reports a flag's synonym that is a flag or another flag's synonym", async () => {
+		expect(await synonyms('', "\treadonly static: 'async';\n")).toEqual(['#static: the synonym async is the flag async']);
+		expect(await synonyms('', "\treadonly async: 'shared';\n\treadonly static: 'shared';\n")).toEqual(['#async: the synonym shared is also a synonym of the flag static']);
+	});
+
+	it("reports a flag's synonym that is a member of a kind with the flag, or a segment or synonym beneath one", async () => {
+		expect(await synonyms('', "\treadonly static: 'accessor';\n")).toEqual([
+			'#static: the synonym accessor is a member of declaration.method, declaration.method.getter, which have the flag'
+		]);
+		expect(await synonyms('', "\treadonly static: 'getter';\n")).toEqual(['#static: the synonym getter spells declaration.method.getter, beneath kinds that have the flag']);
+	});
+
+	it('reports a synonym not spelled as a segment', async () => {
+		expect(await synonyms("\treadonly function: 'Fn';\n", "\treadonly static: 'class_';\n")).toEqual([
+			'declaration.function: the synonym Fn is not spelled as a segment, in lower case with its words joined by _',
+			'#static: the synonym class_ is not spelled as a segment, in lower case with its words joined by _'
+		]);
+	});
+
+	it('reports a table entry with no position: a segment the level does not have, or a flag no kind has', async () => {
+		expect(await synonyms("\treadonly closure: 'lambda';\n", "\treadonly shared: 'common';\n")).toEqual([
+			'declaration: the synonyms of closure have no position, since closure is no segment of the level',
+			"#shared: the flags' synonyms name it, and no kind has it as a flag"
+		]);
+	});
+});
+
 describe('generate', () => {
 	it('renders nothing for a plan with issues, so the issues are reported rather than thrown', async () => {
 		const dir = vocabulary({ ...CLEAN, ...MACROS });

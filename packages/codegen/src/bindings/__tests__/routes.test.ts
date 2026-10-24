@@ -384,6 +384,7 @@ describe("keptKinds over a flag capture", () => {
 	const KEPT_VOCABULARY: Vocabulary = {
 		kinds: new Map([["declaration.function", { name: "declaration.function", own: new Map([["marked", { optional: true, flag: true }]]), parent: undefined, refines: undefined }]]),
 		flags: new Set(["marked"]),
+		synonyms: { levels: new Map(), flags: new Map() },
 		members: (path) => (path === "declaration.function" ? new Map([["marked", { optional: true, flag: true }]]) : new Map())
 	};
 	const kept = async (bindings: string): Promise<GrammarInput> => ({
@@ -959,7 +960,7 @@ describe('flag captures', () => {
 	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
 		const kinds = new Map(Object.entries(own).map(([path, members]) => [path, { name: path, own: new Map(Object.entries(members).map(([n, flag]) => [n, member(flag)])), parent: undefined, refines: undefined }]));
-		return { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), members: (path) => kinds.get(path)?.own ?? new Map() };
+		return { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), synonyms: { levels: new Map(), flags: new Map() }, members: (path) => kinds.get(path)?.own ?? new Map() };
 	};
 	const VOCABULARY = vocabulary({
 		'declaration.method': { generator: true },

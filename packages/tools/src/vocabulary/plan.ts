@@ -1,5 +1,5 @@
 import { posix } from 'node:path';
-import { type DeclaredKind, type Feature, type Member, type VocabularySource, byCodepoint, isKind } from '@sittir/codegen/bindings';
+import { type DeclaredKind, type Feature, type Member, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, snake } from '@sittir/codegen/bindings';
 
 export interface Kind {
 	readonly qname: string;
@@ -30,7 +30,6 @@ export const RESERVED_ALIASES: ReadonlySet<string> = new Set(['features', 'gate'
 
 export const under = (path: string, at: string): boolean => path === at || path.startsWith(`${at}.`);
 export const stubAlias = (feature: Feature): string => posix.basename(feature.dir).replace(/-(\w)/g, (_, c: string) => c.toUpperCase());
-const snake = (s: string): string => s.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
 const owner = (feature: Feature | undefined): string => feature?.name ?? 'the base';
 
 export function closure(name: string, features: ReadonlyMap<string, Feature>): Set<string> {
@@ -112,7 +111,9 @@ export function plan(source: VocabularySource): Plan {
 		return out;
 	};
 	const lines = new Map([...kinds.keys()].map((path) => [path, lineage(path)]));
-	issues.push(...flagSegments(kinds, declarations, lines));
+	const flagsAt = flagLookup(kinds, declarations, lines);
+	issues.push(...flagSegments(kinds, flagsAt));
+	issues.push(...synonymCollisions(source.synonyms, kinds, declarations, lines, flagsAt));
 	for (const [path, members] of owned) {
 		for (const [name, o] of members) {
 			for (const [other, byName] of declarations) {
@@ -214,31 +215,98 @@ function ownership(
 	return { owned, restated };
 }
 
-function flagSegments(
+function flagLookup(
 	kinds: ReadonlyMap<string, Kind>,
 	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
 	lines: ReadonlyMap<string, readonly string[]>
-): string[] {
-	const flagsAt = (path: string): Set<string> =>
-		new Set(
-			(lines.get(path) ?? []).flatMap((at) => [...(declarations.get(at) ?? [])].flatMap(([name, list]) => (list.some((d) => d.member.flag) ? [name] : [])))
-		);
+): (prefix: string) => ReadonlySet<string> {
 	const kindAt = (prefix: string): string | undefined => {
 		for (let at = prefix; ; at = at.slice(0, at.lastIndexOf('.'))) {
 			if (kinds.has(at)) return at;
 			if (!at.includes('.')) return undefined;
 		}
 	};
+	return (prefix) => {
+		const at = kindAt(prefix);
+		return new Set(
+			(at === undefined ? [] : (lines.get(at) ?? [])).flatMap((line) =>
+				[...(declarations.get(line) ?? [])].flatMap(([name, list]) => (list.some((d) => d.member.flag) ? [name] : []))
+			)
+		);
+	};
+}
+
+function flagSegments(kinds: ReadonlyMap<string, Kind>, flagsAt: (prefix: string) => ReadonlySet<string>): string[] {
 	const out = new Set<string>();
 	for (const path of kinds.keys()) {
 		const segments = path.split('.');
 		for (const [i, segment] of segments.entries()) {
 			const prefix = segments.slice(0, i).join('.');
-			const at = i === 0 ? undefined : kindAt(prefix);
-			if (at !== undefined && flagsAt(at).has(segment)) out.add(`${prefix}.${segment}: ${segment} is a flag of ${prefix}`);
+			if (i > 0 && flagsAt(prefix).has(segment)) out.add(`${prefix}.${segment}: ${segment} is a flag of ${prefix}`);
 		}
 	}
 	return [...out];
+}
+
+const SEGMENT = /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/;
+
+function synonymCollisions(
+	synonyms: Synonyms,
+	kinds: ReadonlyMap<string, Kind>,
+	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
+	lines: ReadonlyMap<string, readonly string[]>,
+	flagsAt: (prefix: string) => ReadonlySet<string>
+): string[] {
+	const out: string[] = [];
+	const children = new Map<string, string[]>();
+	for (const path of kinds.keys()) {
+		const cut = path.lastIndexOf('.');
+		if (cut >= 0) children.set(path.slice(0, cut), [...(children.get(path.slice(0, cut)) ?? []), path.slice(cut + 1)]);
+	}
+	const spelling = (owner: string, word: string): void => {
+		if (!SEGMENT.test(word)) out.push(`${owner}: the synonym ${word} is not spelled as a segment, in lower case with its words joined by _`);
+	};
+	const flagSynonyms = (flag: string): readonly string[] => synonyms.flags.get(flag) ?? [];
+	for (const [level, table] of synonyms.levels) {
+		for (const [canonical, words] of table) {
+			for (const word of words) spelling(`${level}.${canonical}`, word);
+			const positions = [...kinds.keys()].filter((path) => topSegment(path) === level && path.endsWith(`.${canonical}`));
+			if (positions.length === 0) out.push(`${level}: the synonyms of ${canonical} have no position, since ${canonical} is no segment of the level`);
+			for (const position of positions) {
+				const parent = position.slice(0, position.lastIndexOf('.'));
+				const siblings = (children.get(parent) ?? []).filter((sibling) => sibling !== canonical);
+				const flags = [...flagsAt(parent)];
+				for (const word of words) {
+					if (siblings.includes(word)) out.push(`${position}: the synonym ${word} is the sibling segment ${parent}.${word}`);
+					for (const sibling of siblings.filter((other) => byCodepoint(canonical, other) < 0 && table.get(other)?.includes(word) === true))
+						out.push(`${position}: the synonym ${word} is also a synonym of the sibling ${parent}.${sibling}`);
+					for (const flag of flags.filter((name) => camel(word) === name)) out.push(`${position}: the synonym ${word} is the flag ${flag}, which ${parent} has`);
+					for (const flag of flags.filter((name) => flagSynonyms(name).includes(word)))
+						out.push(`${position}: the synonym ${word} is a synonym of the flag ${flag}, which ${parent} has`);
+				}
+			}
+		}
+	}
+	const allFlags = new Set([...kinds.keys()].flatMap((path) => [...flagsAt(path)]));
+	for (const [flag, words] of synonyms.flags) {
+		if (!allFlags.has(flag)) out.push(`#${flag}: the flags' synonyms name it, and no kind has it as a flag`);
+		const holders = [...kinds.keys()].filter((path) => flagsAt(path).has(flag));
+		for (const word of words) {
+			spelling(`#${flag}`, word);
+			if (allFlags.has(camel(word))) out.push(`#${flag}: the synonym ${word} is the flag ${camel(word)}`);
+			for (const [other, theirs] of synonyms.flags)
+				if (byCodepoint(flag, other) < 0 && theirs.includes(word)) out.push(`#${flag}: the synonym ${word} is also a synonym of the flag ${other}`);
+			const members = holders.filter(
+				(holder) => camel(word) !== flag && (lines.get(holder) ?? []).some((at) => declarations.get(at)?.has(camel(word)) === true)
+			);
+			if (members.length > 0) out.push(`#${flag}: the synonym ${word} is a member of ${members.join(', ')}, which have the flag`);
+			const beneath = holders.flatMap((holder) =>
+				(children.get(holder) ?? []).filter((child) => child === word || synonyms.levels.get(topSegment(holder))?.get(child)?.includes(word) === true).map((child) => `${holder}.${child}`)
+			);
+			if (beneath.length > 0) out.push(`#${flag}: the synonym ${word} spells ${beneath.join(', ')}, beneath kinds that have the flag`);
+		}
+	}
+	return out;
 }
 
 function directReferences(

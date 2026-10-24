@@ -22,3 +22,5 @@ export type In<G extends GrammarContext<G>, F, T> = G extends F ? T : never;
 declare const flag: unique symbol;
 
 export type Flag = typeof flag;
+
+export interface FlagSynonyms {}

@@ -5,6 +5,14 @@ export interface Statement<G extends GrammarContext<G>> {
 	readonly $kind: 'statement';
 }
 
+export interface StatementSynonyms {
+	readonly empty: 'pass';
+	readonly import: 'use';
+	readonly package: 'crate';
+	readonly resource: 'using';
+	readonly throw: 'raise';
+}
+
 export namespace Statement {
 	export interface Block<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
