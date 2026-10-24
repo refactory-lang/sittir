@@ -41,4 +41,23 @@ describe("an entry's own sides are its neighbours in the side that holds it", ()
 	it('leaves nothing on the line a trailing comment breaks from when its own leading side is the break', () => {
 		expect(rendered(withSide(statement('x'), 'trailing', [sided([L.newline], [])]))).toBe('fn f() {\n    a;\n    x;\n    /* c */\n    z;\n}');
 	});
+
+	it('takes a parsed comment\'s own sides as its neighbours too, where it stays its coordinate', () => {
+		const source = 'fn f() {\n    x; /* c */\n    z;\n}\n';
+		const trailingOf = () => {
+			const root = rs.parse(source);
+			const item = root.statements()[0];
+			if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function');
+			const x = item.body().statements()[0] as unknown as Sided;
+			const [comment] = (x.$trivia as unknown as { trailing(): readonly Sided[] }).trailing();
+			if (comment === undefined) throw new Error('expected a trailing comment');
+			return { root, x, comment };
+		};
+		const nested = trailingOf();
+		withSide(nested.comment, 'leading', [L.newline]);
+		const flat = trailingOf();
+		withSide(flat.x, 'trailing', [L.newline, flat.comment]);
+		expect(nested.root.$render()).toBe(flat.root.$render());
+		expect(nested.root.$render()).toBe('fn f() {\n    x;\n    /* c */\n    z;\n}\n');
+	});
 });
