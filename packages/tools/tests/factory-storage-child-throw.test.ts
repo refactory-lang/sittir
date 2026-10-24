@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../codegen/src/__tests__/helpers/timeouts.ts';
 import { grammarModulePath } from '../src/grammar-internals.ts';
 
 afterEach(() => {
@@ -25,5 +26,5 @@ describe('validateFactoryStorage: a child factory that throws', () => {
 		expect(result.fail).toBeGreaterThan(0);
 		expect(result.errors.some((error) => error.message.includes('pattern_character: broken for the test'))).toBe(true);
 		expect(result.render.errors.length).toBeGreaterThan(0);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });

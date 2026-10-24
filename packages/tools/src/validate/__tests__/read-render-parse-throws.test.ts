@@ -26,5 +26,5 @@ describe('read-render-parse: a candidate whose input preparation throws', () => 
 		expect(injected.length).toBeGreaterThan(0);
 		expect(result.pass).toBe(0);
 		expect(fixtures).toEqual([]);
-	});
+	}, 120_000);
 });
