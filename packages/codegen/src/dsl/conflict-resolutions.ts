@@ -16,18 +16,36 @@ export interface DerivedResolution extends ConflictResolutionRecord {
 	readonly step: PolicyStep;
 }
 
+export interface SectionDraft {
+	readonly resolutions: readonly DerivedResolution[];
+	readonly withdrawn: readonly (readonly string[])[];
+}
+
 export interface ResolutionSection {
 	readonly grammarHash: string;
 	readonly resolutions: readonly DerivedResolution[];
+	readonly withdrawn?: readonly (readonly string[])[];
 }
 
 export interface ConflictResolutionsFile extends ResolutionSection {
 	readonly bound: ResolutionSection;
 }
 
-export interface ConflictResolutionsInput {
+export interface ResolutionSectionInput {
 	readonly resolutions: readonly ConflictResolutionRecord[];
-	readonly bound: { readonly resolutions: readonly ConflictResolutionRecord[] };
+	readonly withdrawn?: readonly (readonly string[])[];
+}
+
+export interface ConflictResolutionsInput extends ResolutionSectionInput {
+	readonly bound: ResolutionSectionInput;
+}
+
+export function draftOf(section: ResolutionSection): SectionDraft {
+	return { resolutions: section.resolutions, withdrawn: section.withdrawn ?? [] };
+}
+
+export function resolutionSection(grammarHash: string, draft: SectionDraft): ResolutionSection {
+	return { grammarHash, resolutions: draft.resolutions, ...(draft.withdrawn.length === 0 ? {} : { withdrawn: draft.withdrawn }) };
 }
 
 export const CONFLICT_RESOLUTIONS_FILE = 'resolutions.json';
@@ -54,14 +72,4 @@ export function sourceChain(name: string, edges: Readonly<Record<string, string>
 
 export function upstreamSourcesOf(sourceChains: readonly (readonly string[])[]): readonly string[] {
 	return [...new Set(sourceChains.map((chain) => chain[chain.length - 1]!))];
-}
-
-const conflictSetsOf = (resolutions: readonly ConflictResolutionRecord[]): string[][] => resolutions.map((entry) => [...entry.resolution.symbols]);
-
-export function applyConflictResolutions(grammar: Record<string, unknown>, input: ConflictResolutionsInput): void {
-	grammar.conflicts = conflictSetsOf(input.resolutions);
-}
-
-export function applyBoundConflictResolutions(grammar: Record<string, unknown>, input: ConflictResolutionsInput): void {
-	grammar.conflicts = [...(grammar.conflicts as readonly string[][]), ...conflictSetsOf(input.bound.resolutions)];
 }

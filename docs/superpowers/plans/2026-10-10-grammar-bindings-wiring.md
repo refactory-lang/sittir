@@ -60,8 +60,8 @@ Each gets its own red test before its fix:
   - `bindGrammar` applies the lead after the patches (`leadGrammar`). The lead mints its variants and the receiver form there, never in enrich.
   - The shape is the plain one: the plain list narrowed to the rest, and a receiver form holding the receiver and then the plain list, whose `,` and list enrich's group synthesis lifts into `<list>_<field>_group`.
   - Rust's typed `self` is a second claim beside `self_parameter`'s; the derivation unions the two claims' admits. A variant takes its name from the claim that classifies it, otherwise the variant convention's.
-  - Rust's receiver and typescript's `this_parameter` are `declaration.parameter.receiver`. The claims replace stage 1's interim `@_receiver`; every owner of a split list without a receiver claim needs one, or a `@dropped` line with its reason.
-  - The lead is applied only once enrich is a fixpoint: enrich then runs again over every rule a bindings edit creates, as their stamps name them.
+  - Rust's receiver and TypeScript's explicit `this` parameter are `declaration.parameter.receiver`; narrowed forms use the existing vocabulary's derived `receiver_parameter` name. The claims replace stage 1's interim `@_receiver`; every owner of a split list without a receiver claim needs one, or a `@dropped` line with its reason.
+  - **Q-S15 supersedes receiver-probe Q22:** complete the authored enrich→wire layer first; the configured bindings layer computes a strict no-op enrich once and reuses the checked result, then wire applies binding edits. Do not enrich again after those edits. Receiver groups reuse the canonical wire/group primitive at minting, with no separate naming derivation. Automatic variant stamping runs in the shared DSL on the final grammar result.
   - The conflict driver derives the bound grammar's sets.
 - **Gate:** validation rows equal to the unbound baseline, or each moved row named in the census and ruled.
 

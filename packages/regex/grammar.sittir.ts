@@ -3,15 +3,16 @@ import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	alias,
+	enrich,
 	field,
 	variant,
-	sittirGrammar
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'regex',
-	patches: {
+	edits: {
 		character_class: { '1/0': alias('negation'), 2: field('leading'), 4: field('trailing') },
 		class_range: { 0: field('start'), 2: field('end') },
 		term: { '0/1': field('quantifier') },
@@ -25,4 +26,4 @@ export default sittirGrammar(base, {
 			{ '1/0': variant('enable'), '1/1': variant('toggle'), '1/2': variant('disable') }
 		]
 	}
-});
+}));

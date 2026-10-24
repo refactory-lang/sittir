@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { allGrammars, grammarPackageDir, grammarRequire } from '@sittir/codegen/grammars';
+import { allGrammars, BINDINGS_MODULE, grammarPackage, grammarPackageDir, grammarRequire, topLayerPath } from '@sittir/codegen/grammars';
 import { evaluate } from '../../codegen/src/dsl/evaluate.ts';
 import { NO_FILE_TYPES } from '../../codegen/src/compiler/upstream-file-types.ts';
 import { grammarPackageFiles } from '../src/bootstrap/templates.ts';
@@ -31,21 +31,28 @@ describe('bootstrap templates reproduce an existing grammar package', () => {
 	});
 });
 
-const COMPOSITION = /\bsittirGrammar\b[^}]*\} from '\.\.\/codegen\/src\/dsl\/(index|dsl-authoring)\.ts';[\s\S]*export default sittirGrammar\(base, \{[\s\S]*\}\);\s*$/;
-const SEPARATE_STEPS = /\b(enrich|wire)\(/;
+const STOCK_SHAPE = /export default grammar\(enrich\(base\), wire\(\{[\s\S]*\}\)\);\s*$/;
+const GENERATED_SHAPE = /^import sittir from '\.\/grammar\.sittir\.ts';$[\s\S]*export default grammar\(\s*enrich\(sittir\),\s*wire\(\{[\s\S]*\}\)\s*\);\s*$/m;
+const LAYER_HALVES = /\b(enrich|wire)\(/g;
 
-function expectComposition(source: string): void {
-	expect(source).toMatch(COMPOSITION);
-	expect(source).not.toMatch(SEPARATE_STEPS);
+function expectStockShape(source: string, shape: RegExp = STOCK_SHAPE): void {
+	expect(source).toMatch(shape);
+	expect(source.match(LAYER_HALVES)).toEqual(['enrich(', 'wire(']);
 }
 
-describe('grammar composition goes through sittirGrammar, which enriches and wires the base itself', () => {
-	it('the bootstrap template', () => {
-		expectComposition(python.find((f) => f.path === 'grammar.sittir.ts')!.contents);
+describe('grammar composition is one entry, whose base enrich() and wire() complete together', () => {
+	it('the bootstrap template is in the stock shape', () => {
+		expectStockShape(python.find((f) => f.path === 'grammar.sittir.ts')!.contents);
 	});
 	for (const grammar of allGrammars()) {
 		it(grammar, () => {
-			expectComposition(readFileSync(join(grammarPackageDir(grammar), 'grammar.sittir.ts'), 'utf8'));
+			expectStockShape(readFileSync(join(grammarPackageDir(grammar), 'grammar.sittir.ts'), 'utf8'));
+		});
+	}
+
+	for (const grammar of allGrammars().filter((name) => topLayerPath(grammarPackage(name)).endsWith(BINDINGS_MODULE))) {
+		it(`${grammar}'s generated layer extends grammar.sittir.ts`, () => {
+			expectStockShape(readFileSync(topLayerPath(grammarPackage(grammar)), 'utf8'), GENERATED_SHAPE);
 		});
 	}
 });

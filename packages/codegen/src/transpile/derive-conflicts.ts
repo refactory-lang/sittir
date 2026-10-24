@@ -1,9 +1,11 @@
 import {
+	draftOf,
 	sameConflictSet,
 	sourceChain,
 	upstreamSourcesOf,
 	type DerivedResolution,
-	type ResolutionSection
+	type ResolutionSection,
+	type SectionDraft
 } from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
 import { mappedName } from '../dsl/bind.ts';
@@ -22,9 +24,9 @@ function sourceChainOf(name: string, upstream: UpstreamContext): readonly string
 export type PolicyChoice = { readonly kind: 'chosen'; readonly resolution: DerivedResolution } | { readonly kind: 'unusable' };
 
 export type DerivationResult =
-	| { readonly kind: 'reused'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: 1 }
+	| (SectionDraft & { readonly kind: 'reused'; readonly iterations: 1 })
 	| { readonly kind: 'stale'; readonly outcome: FailedGenerate; readonly resolutions: readonly DerivedResolution[] }
-	| { readonly kind: 'converged'; readonly resolutions: readonly DerivedResolution[]; readonly iterations: number }
+	| (SectionDraft & { readonly kind: 'converged'; readonly iterations: number })
 	| {
 			readonly kind: 'unresolvable';
 			readonly reason: 'repeated' | 'no-usable-offer' | 'cap' | 'dropped-set-returned';
@@ -59,7 +61,8 @@ export function chooseResolution(report: ConflictReport, upstream: UpstreamConte
 export interface DerivationInput {
 	readonly ruleCount: number;
 	readonly upstream: UpstreamContext;
-	readonly generate: (resolutions: readonly DerivedResolution[]) => Promise<GenerateOutcome>;
+	readonly inherited: readonly (readonly string[])[];
+	readonly generate: (draft: SectionDraft) => Promise<GenerateOutcome>;
 }
 
 export type FailedGenerate = Exclude<GenerateOutcome, { kind: 'clean' }>;
@@ -71,17 +74,21 @@ function conflictReportOf(outcome: FailedGenerate): ConflictReport {
 	return outcome.report;
 }
 
-export type Converged = Extract<DerivationResult, { readonly kind: 'converged' }>;
+export type Settled = Extract<DerivationResult, { readonly kind: 'reused' | 'converged' }>;
 
-export async function pruneUnnecessary(input: DerivationInput, converged: Converged, unnecessary: readonly (readonly string[])[]): Promise<DerivationResult> {
-	let { resolutions, iterations } = converged;
+export async function pruneUnnecessary(input: DerivationInput, start: Settled, unnecessary: readonly (readonly string[])[]): Promise<DerivationResult> {
+	let { resolutions, withdrawn, iterations } = start;
 	let pending = unnecessary;
-	for (;;) {
-		const drop = resolutions.filter((entry) => pending.some((set) => sameConflictSet(set, entry.resolution.symbols)));
-		if (drop.length === 0) return { kind: 'converged', resolutions, iterations };
+	for (let pass = 0; ; pass++) {
+		const reported = (symbols: readonly string[]): boolean => pending.some((set) => sameConflictSet(set, symbols));
+		const held = (set: readonly string[]): boolean => withdrawn.some((other) => sameConflictSet(other, set));
+		const drop = resolutions.filter((entry) => reported(entry.resolution.symbols));
+		const withdraw = input.inherited.filter((set) => reported(set) && !held(set));
+		if (drop.length === 0 && withdraw.length === 0) return pass === 0 ? start : { kind: 'converged', resolutions, withdrawn, iterations };
 		resolutions = resolutions.filter((entry) => !drop.includes(entry));
+		withdrawn = input.inherited.filter((set) => held(set) || withdraw.includes(set));
 		iterations++;
-		const outcome = await input.generate(resolutions);
+		const outcome = await input.generate({ resolutions, withdrawn });
 		if (outcome.kind === 'clean') {
 			pending = outcome.unnecessary;
 			continue;
@@ -94,8 +101,8 @@ export async function deriveConflictResolutions(input: DerivationInput): Promise
 	const resolutions: DerivedResolution[] = [];
 	const reported = new Set<string>();
 	for (let iterations = 1; ; iterations++) {
-		const outcome = await input.generate(resolutions);
-		if (outcome.kind === 'clean') return pruneUnnecessary(input, { kind: 'converged', resolutions, iterations }, outcome.unnecessary);
+		const outcome = await input.generate({ resolutions, withdrawn: [] });
+		if (outcome.kind === 'clean') return pruneUnnecessary(input, { kind: 'converged', resolutions, withdrawn: [], iterations }, outcome.unnecessary);
 		const report = conflictReportOf(outcome);
 		const key = conflictKey(report);
 		if (reported.has(key)) return { kind: 'unresolvable', reason: 'repeated', report, resolutions };
@@ -116,7 +123,7 @@ export async function reuseOrDeriveConflictResolutions(
 ): Promise<DerivationResult> {
 	if (input.saved.grammarHash === input.grammarHash) {
 		const outcome = await input.generateSaved();
-		if (outcome.kind === 'clean') return { kind: 'reused', resolutions: input.saved.resolutions, iterations: 1 };
+		if (outcome.kind === 'clean') return pruneUnnecessary(input, { kind: 'reused', ...draftOf(input.saved), iterations: 1 }, outcome.unnecessary);
 		return { kind: 'stale', outcome, resolutions: input.saved.resolutions };
 	}
 	return deriveConflictResolutions(input);

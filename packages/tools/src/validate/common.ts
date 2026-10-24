@@ -53,7 +53,6 @@ import {
 	importGrammarModule,
 	requireGrammarModule,
 	type FactoryEntry,
-	type GrammarModules,
 	type Hydrate
 } from '../grammar-internals.ts';
 import { UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
@@ -415,26 +414,9 @@ export function upstreamWasmPath(grammar: string): string | undefined {
 	}
 }
 
-async function wrapExportOf<K extends keyof GrammarModules['wrap.ts']>(
-	grammar: string,
-	name: K
-): Promise<GrammarModules['wrap.ts'][K] | null> {
-	try {
-		const mod = await importGrammarModule(grammar, 'wrap.ts');
-		if (!mod) return null;
-		return mod[name] ?? null;
-	} catch (e) {
-		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
-		return null;
-	}
-}
-
 /** The grammar's wrapped read: the root (or the node a coordinate names) read `depth` levels down (one when absent) and wrapped. */
-export async function readNodeOf(
-	grammar: string
-): Promise<((tree: TreeHandle, coordinate?: NodeCoordinate, depth?: number) => unknown) | null> {
-	const [wrapNode, hydrate] = await Promise.all([wrapExportOf(grammar, 'wrapNode'), wrapExportOf(grammar, 'hydrate')]);
-	if (wrapNode === null || hydrate === null) return null;
+export async function readNodeOf(grammar: string): Promise<(tree: TreeHandle, coordinate?: NodeCoordinate, depth?: number) => unknown> {
+	const { wrapNode, hydrate } = await requireGrammarModule(grammar, 'wrap.ts');
 	return (tree, coordinate, depth) => {
 		if (coordinate !== undefined) return hydrate(coordinate, tree, depth);
 		if (tree.read === undefined) throw new Error('readNodeOf: the tree has no native read');
@@ -442,12 +424,12 @@ export async function readNodeOf(
 	};
 }
 
-export function loadWrapNode(grammar: string): Promise<((data: AnyUntypedNode, tree: TreeHandle) => unknown) | null> {
-	return wrapExportOf(grammar, 'wrapNode');
+export async function loadWrapNode(grammar: string): Promise<(data: AnyUntypedNode, tree: TreeHandle) => unknown> {
+	return (await requireGrammarModule(grammar, 'wrap.ts')).wrapNode;
 }
 
-export function hydrateOf(grammar: string): Promise<Hydrate | null> {
-	return wrapExportOf(grammar, 'hydrate');
+export async function hydrateOf(grammar: string): Promise<Hydrate> {
+	return (await requireGrammarModule(grammar, 'wrap.ts')).hydrate;
 }
 
 export interface Seat {
@@ -977,8 +959,7 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const { modelTypes } = await loadNodeModel(grammar);
 	return (kindId) => {
-		const name = kindNameFromId?.(kindId);
-		return isLeafModelType(name === undefined ? undefined : modelTypes[name]);
+		return isLeafModelType(modelTypes[kindNameFromId(kindId)]);
 	};
 }
 
@@ -990,25 +971,17 @@ export function isUnitModelType(modelType: string | undefined): boolean {
 	return modelType === 'keyword' || modelType === 'punctuation';
 }
 
-export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
-	try {
-		const typesModule = await importGrammarModule(grammar, 'types.ts');
-		if (!typesModule) return undefined;
-		const kindNames = typesModule.KIND_DISPLAY_NAMES;
-		return (id: number) => kindNames.get(id);
-	} catch {
-		return undefined;
-	}
+export async function loadKindNameFromId(grammar: string): Promise<(id: number) => string> {
+	const kindNames = (await requireGrammarModule(grammar, 'types.ts')).KIND_DISPLAY_NAMES;
+	return (id: number) => {
+		const name = kindNames.get(id);
+		if (name === undefined) throw new Error(`${grammar}: kind id ${id} has no name in KIND_DISPLAY_NAMES`);
+		return name;
+	};
 }
 
-export async function loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined> {
-	try {
-		const typesModule = await importGrammarModule(grammar, 'types.ts');
-		if (!typesModule) return undefined;
-		return typesModule.kindIdFromName;
-	} catch {
-		return undefined;
-	}
+export async function loadKindIdFromName(grammar: string): Promise<(name: string) => number> {
+	return (await requireGrammarModule(grammar, 'types.ts')).kindIdFromName;
 }
 
 export async function loadLanguageForGrammar(grammar: string): Promise<{

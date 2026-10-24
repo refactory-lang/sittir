@@ -15,7 +15,7 @@ import { isCoordinate } from '@sittir/common/utils';
 import { nodeText, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
-import { importGrammarModule, requireGrammarModule, type GrammarModules } from '../grammar-internals.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 import { physicalDisplayKind, type DisplayFamilies } from './display-families.ts';
 import {
 	loadStorageKindNameFromId,
@@ -27,7 +27,6 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
-	readNativeAt,
 	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
@@ -167,24 +166,16 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
-	// Phase D: $type is numeric — load both resolvers.
-	// kindIdFromName (name→id): for treeHandle JS-side reads and findNativeNodeId's kindId variant.
-	// kindNameFromId (id→name): for findNativeNodeId's id-to-kind comparison.
-	// The generated kindIdFromName throws on missing entries; wrap it so
-	// readUntypedNode's resolveKindId falls back to the zero sentinel instead of
-	// propagating a TypeError for form kinds not in the numeric catalog.
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
-	const tokenInteriors = (await importGrammarModule(grammar, 'consts.ts'))?.TOKEN_INTERIORS;
-	const interiorOf = (kind: string): TokenInterior | undefined => tokenInteriors?.[kind];
-	const kindIdFromName = rawKindIdFromName
-		? (name: string): number | undefined => {
-				try {
-					return rawKindIdFromName(name);
-				} catch {
-					return undefined;
-				}
-			}
-		: rawKindIdFromName;
+	const tokenInteriors = (await requireGrammarModule(grammar, 'consts.ts')).TOKEN_INTERIORS;
+	const interiorOf = (kind: string): TokenInterior | undefined => tokenInteriors[kind];
+	const kindIdFromName = (name: string): number | undefined => {
+		try {
+			return rawKindIdFromName(name);
+		} catch {
+			return undefined;
+		}
+	};
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const storageKindNameFromId = await loadStorageKindNameFromId(grammar);
 
@@ -201,7 +192,6 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let displayUnions: DisplayFamilies = {};
-	let wrapNode: GrammarModules['wrap.ts']['wrapNode'] | undefined;
 	const errors: FromValidationError[] = [];
 	try {
 		const fromModule = await requireGrammarModule(grammar, 'factories/coerce.ts');
@@ -232,16 +222,16 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			message: (e as Error).message
 		});
 	}
-	try {
-		const wrapModule = await requireGrammarModule(grammar, 'wrap.ts');
-		wrapNode = wrapModule.wrapNode;
-	} catch {
-		/* wrap module unavailable — the read crosses unwrapped */
-	}
-	const readNode = await readNodeOf(grammar);
+	const wrap = await requireGrammarModule(grammar, 'wrap.ts').then(
+		(module) => module,
+		(e: unknown) => {
+			errors.push({ kind: '(wrap-module-load)', severity: 'error', message: (e as Error).message });
+			return undefined;
+		}
+	);
 
 	if (errors.length === 0) factoryMap = await loadScopedFactoryMap(grammar, factoryMap);
-	if (errors.length > 0) {
+	if (errors.length > 0 || wrap === undefined) {
 		return {
 			grammar,
 			...FAILED_RUN,
@@ -254,6 +244,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			trivia: []
 		};
 	}
+	const readNode = await readNodeOf(grammar);
 
 	const entries = loadCorpusEntries(grammar);
 	const cases = new KindCases();
@@ -263,12 +254,14 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	const orphanedExtras = new Map<string, ValidatorSkip>();
 	const unreadKinds = new Map<string, CorpusEntry>();
 	const storageKindOf = (kindId: number): string => storageKindNameFromId(kindId) ?? '';
+	const factoryStorageKind = (kindId: number): string | undefined => {
+		const storage = storageKindNameFromId(kindId);
+		return storage !== undefined && storage in fromMap && storage in factoryMap ? storage : undefined;
+	};
+	const factoryKindNameFromId = (kindId: number): string | undefined => factoryStorageKind(kindId) ?? kindNameFromId(kindId);
 	const occurrenceKind = (node: TSNode): string =>
 		physicalDisplayKind(node.type, storageKindNameFromId(node.grammarId), displayUnions);
-	const nativeKindName = (id: number): string | undefined => {
-		const display = kindNameFromId?.(id);
-		return display === undefined ? undefined : physicalDisplayKind(display, storageKindNameFromId(id), displayUnions);
-	};
+	const nativeKindName = (id: number): string => physicalDisplayKind(kindNameFromId(id), storageKindNameFromId(id), displayUnions);
 	const unreadReason = (node: TSNode): string | undefined => {
 		if (insideExtra(node)) return 'native-read-dropped-extra';
 		if (node.parent !== null && factoryShapes[storageKindOf(node.parent.typeId)] === 'text')
@@ -347,13 +340,9 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 			if (nativeCoords?.embeddedData !== undefined) {
-				readData = wrapNode
-					? (wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode)
-					: nativeCoords.embeddedData;
+				readData = wrap.wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode;
 			} else {
-				readData = readNode
-					? (readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode)
-					: readNativeAt(handle, nativeCoords ?? {});
+				readData = readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode;
 			}
 		} catch (e) {
 			errors.push({
@@ -367,12 +356,12 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		// The read node's $type is the storage stamp; in an alias context the
 		// CST face name (`kind`) differs from it (a decorator's member chain
 		// wears the member_expression face over the decorator_member_expression
-		// storage kind). Storage identity picks the from/factory pair — the
-		// face is only how the corpus walk found the node.
-		const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId(readData.$type) : undefined;
-		const readKind =
-			readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
-		const readKindId = kindIdFromName?.(readKind);
+		// storage kind). Storage identity picks the from/factory pair and the
+		// slot tables the config reads, for the node and every child it holds —
+		// the face is only how the corpus walk found the node, and a display
+		// that two storage kinds share has no slot table of its own.
+		const readKind = (typeof readData.$type === 'number' ? factoryStorageKind(readData.$type) : undefined) ?? kind;
+		const readKindId = kindIdFromName(readKind);
 		const readText = nodeText(readData);
 		const aliasRead =
 			readText !== undefined &&
@@ -411,7 +400,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: factoryKindNameFromId
 					});
 					if (shape === 'direct' || shape === 'forwarded') {
 						// Direct-call shape: use the sole field when metadata
@@ -423,7 +412,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 								? (config as Record<string, unknown>)[slotKeyOf(factorySlots, readKind, rawName)]
 								: getChildFactoryArgs(readKind, config, factorySlots, factoryFields)[0];
 						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
-							readTree !== undefined && readNode !== null && isCoordinate(value) ? readNode(readTree, value) : value
+							readTree !== undefined && isCoordinate(value) ? readNode(readTree, value) : value
 						);
 					} else {
 						// Config-shaped factories with flank capture take `(config,
@@ -455,7 +444,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: factoryKindNameFromId
 					});
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 					const options = separatedListFactoryOptions(readData);
@@ -470,7 +459,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						factoryFields,
 						factorySlots,
 						fieldAliasMap,
-						kindNameFromId
+						kindNameFromId: factoryKindNameFromId
 					});
 					const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 					factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);

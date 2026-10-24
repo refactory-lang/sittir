@@ -35,6 +35,7 @@ const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
+	FAILED_RUN,
 	loadKindNameFromId,
 	loadStorageKindNameFromId,
 	buildReadHandle,
@@ -59,7 +60,7 @@ import {
 	kindViewOf
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
-import { importGrammarModule } from '../grammar-internals.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -897,8 +898,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 			const tree = parser.parse(entry.source) as TSTree;
 			if (!tree.rootNode.hasError) corpus.push({ source: entry.source, tree });
 		}
-		const types = await importGrammarModule(grammar, 'types.ts');
-		if (types?.KIND_NAMES === undefined) throw new Error(`${grammar}: src/types.ts has no KIND_NAMES`);
+		const types = await requireGrammarModule(grammar, 'types.ts');
 		const idsByName = new Map<string, number[]>();
 		for (const table of [types.KIND_NAMES] as ReadonlyMap<number, string>[]) {
 			for (const [id, name] of table) idsByName.set(name, [...new Set([...(idsByName.get(name) ?? []), id])]);
@@ -968,7 +968,9 @@ export async function validateReadRenderParse(
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 
-	const readNode = await readNodeOf(grammar);
+	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
+	if (readNode instanceof Error)
+		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], skips: [], excluded: [], trivia: [] };
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
@@ -1037,7 +1039,7 @@ export async function validateReadRenderParse(
 				string,
 				{ start: number; end: number; node: TypedNode; displayKind: string }[]
 			>();
-			if (readNode && handle.read) {
+			if (handle.read) {
 				const wrappedRoot = readNode(handle) as TypedNode;
 				const seen = new Set<string>();
 				walkWrappedTree(
@@ -1045,13 +1047,13 @@ export async function validateReadRenderParse(
 					accessorOf,
 					(w: TypedNode) => {
 						if (w.$named === false) return;
-						const displayKind = kindNameFromId?.(w.$type);
+						const displayKind = kindNameFromId(w.$type);
 						const sourceKind = canonicalKindNameFromId(w.$type);
 						// Testable-surface filter is CANONICAL-keyed, like the bucketing:
 						// template filenames carry canonical spellings, so hidden minted
 						// kinds (whose display name differs) are admitted and probed
 						// against their own templates rather than silently skipped.
-						if (displayKind === undefined || sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+						if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 						const span = spanOf(w);
 						if (span == null) return;
 						const dedup = `${sourceKind}@${span.start}:${span.end}`;

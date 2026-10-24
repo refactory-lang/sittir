@@ -256,11 +256,18 @@ describe('loose surface printing', () => {
 			'ir.arguments({\n\t$type: rs.kinds.Holder,\n\titem: "x",\n\tother: true,\n})'
 		);
 	});
-	it("spells an absorbed spread child as the loose wrapper's array argument", () => {
-		const absorbing = mapFor({ ...ctx, absorbedKinds: new Set(['elements']) });
+	it('spreads a child list only when the canonical forwarding fact names it', () => {
+		const absorbing = mapFor({ ...ctx, facts: { ...facts, forwardsTo: { wrapper: 'elements' } } });
 		expect(expectPrinted(absorbing.wrapper!(absorbing.elements!(map.identifier!('x'), map.identifier!('y')))).source).toBe(
-			'ir.wrapper(["x", "y"])'
+			'ir.wrapper("x", "y")'
 		);
+	});
+	it('keeps a seated list node when a direct choice owner does not forward to it', () => {
+		const choice = printingFactoryMap({ ...shapes, wrapper: 'direct' }, (kind) => ids[kind], {
+			...ctx,
+			facts: { ...facts, forwardsTo: {} }
+		});
+		expect(expectPrinted(choice.wrapper!(choice.elements!(map.identifier!('x')))).source).toBe('ir.wrapper(ir.elements("x"))');
 	});
 	it('prints a read leaf bare where the slot admits one pattern kind', () => {
 		expect(printValue(map.function_item!({ name: { $type: 3, $text: 'main' } }), ctx, 0)).toBe(

@@ -21,7 +21,7 @@ export const triviaFacts = Object.freeze({
 		'comment'
 	]),
 	innerKinds: INNER_SITES,
-	rebuildWrappers: new Set<number>([54, 58, 61, 62, 63, 64]),
+	rebuildWrappers: new Set<number>([54, 56, 57, 58, 61, 62, 63, 64]),
 	listKinds: new Set<number>([]),
 	layout: new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]),
 	innerRegions: new Map<number, readonly string[]>([
@@ -124,7 +124,11 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 export const structure: StructureTable = Object.freeze({
 	1: { kind: 'escape_sequence', required: [['_content', 'content']] },
 	11: { kind: 'comment', required: [['_content', 'content']] },
-	33: { kind: 'program', nodeOnly: [['_definitions', 'Program.definitions', 'a built Definition']] },
+	33: {
+		kind: 'program',
+		nodeOnly: [['_definitions', 'Program.definitions', 'a built Definition']],
+		lists: [['definitions', false, 0]]
+	},
 	39: {
 		kind: 'capture',
 		required: [['_name', 'name']],
@@ -138,12 +142,14 @@ export const structure: StructureTable = Object.freeze({
 	42: {
 		kind: 'string_content',
 		nonEmpty: [['_content', 'string_content.children']],
-		nodeOnly: [['_content', 'StringContent.contents', 'buildStringContentText(…)']]
+		nodeOnly: [['_content', 'StringContent.contents', 'buildStringContentText(…)']],
+		lists: [['contents', false, 0]]
 	},
 	43: {
 		kind: 'parameters',
 		nonEmpty: [['_elements', 'parameters.children']],
-		nodeOnly: [['_elements', 'Parameters.elements', 'buildIdentifier(…)']]
+		nodeOnly: [['_elements', 'Parameters.elements', 'buildIdentifier(…)']],
+		lists: [['elements', false, 0]]
 	},
 	44: {
 		kind: 'list',
@@ -151,6 +157,11 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_definitions', 'List.definitions', 'a built Definition'],
 			['_elements', 'List.elements', 'a built ListElement']
+		],
+		config: ['definitions', 'elements'],
+		lists: [
+			['definitions', false, 'key'],
+			['elements', false, 'key']
 		]
 	},
 	45: {
@@ -159,6 +170,11 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_grouping_group', 'Grouping.groupingGroups', 'a built GroupingGroup'],
 			['_elements', 'Grouping.elements', 'a built ListElement']
+		],
+		config: ['groupingGroups', 'elements'],
+		lists: [
+			['groupingGroups', false, 'key'],
+			['elements', false, 'key']
 		]
 	},
 	46: {
@@ -166,7 +182,9 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_name', 'MissingNode.name', 'buildIdentifier(…)'],
 			['_elements', 'MissingNode.elements', 'a built ListElement']
-		]
+		],
+		config: ['name', 'elements'],
+		lists: [['elements', false, 'key']]
 	},
 	47: {
 		kind: 'anonymous_node',
@@ -174,7 +192,9 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_name', 'AnonymousNode.name', 'a built String'],
 			['_elements', 'AnonymousNode.elements', 'a built ListElement']
-		]
+		],
+		config: ['name', 'elements'],
+		lists: [['elements', false, 'key']]
 	},
 	50: {
 		kind: 'field_definition',
@@ -185,7 +205,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_name', 'FieldDefinition.name', 'buildIdentifier(…)'],
 			['_definition', 'FieldDefinition.definition', 'a built Definition']
-		]
+		],
+		config: ['name', 'definition']
 	},
 	51: {
 		kind: 'negated_field',
@@ -204,7 +225,8 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'Predicate.name', 'buildImmediateIdentifier(…)'],
 			['_type', 'Predicate.type', 'a kind id'],
 			['_parameters', 'Predicate.parameters', 'a built Parameters']
-		]
+		],
+		config: ['prefix', 'name', 'type', 'parameters']
 	},
 	54: {
 		kind: 'list_element_quantifier',
@@ -220,7 +242,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_left', 'GroupExpressionArm.left', 'a built Definition / GroupExpressionArm'],
 			['_right', 'GroupExpressionArm.right', 'a built Definition / GroupExpressionArm']
-		]
+		],
+		config: ['left', 'right']
 	},
 	57: {
 		kind: 'named_node_expression_arm',
@@ -231,7 +254,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_left', 'NamedNodeExpressionArm.left', 'a built Definition / NegatedField / NamedNodeExpressionArm'],
 			['_right', 'NamedNodeExpressionArm.right', 'a built Definition / NegatedField / NamedNodeExpressionArm']
-		]
+		],
+		config: ['left', 'right']
 	},
 	58: {
 		kind: 'grouping_group',
@@ -239,7 +263,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_group_expression', 'GroupingGroup.groupExpression', 'a built Definition / GroupExpressionArm'],
 			['_anchor', 'GroupingGroup.anchor', 'a boolean']
-		]
+		],
+		config: ['groupExpression', 'anchor']
 	},
 	61: {
 		kind: 'named_node_plain',
@@ -248,7 +273,9 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'NamedNodePlain.name', 'buildIdentifier(…)'],
 			['_named_node_group', 'NamedNodePlain.namedNodeGroup', 'a built NamedNodeGroup'],
 			['_elements', 'NamedNodePlain.elements', 'a built ListElement']
-		]
+		],
+		config: ['name', 'namedNodeGroup', 'elements'],
+		lists: [['elements', false, 'key']]
 	},
 	62: {
 		kind: 'named_node_supertyped',
@@ -261,7 +288,9 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'NamedNodeSupertyped.name', 'buildImmediateIdentifier(…)'],
 			['_named_node_group', 'NamedNodeSupertyped.namedNodeGroup', 'a built NamedNodeGroup'],
 			['_elements', 'NamedNodeSupertyped.elements', 'a built ListElement']
-		]
+		],
+		config: ['supertype', 'name', 'namedNodeGroup', 'elements'],
+		lists: [['elements', false, 'key']]
 	},
 	63: {
 		kind: 'named_node_group_children',
@@ -273,7 +302,9 @@ export const structure: StructureTable = Object.freeze({
 				'NamedNodeGroupChildren.namedNodeExpressions',
 				'a built Definition / NegatedField / NamedNodeExpressionArm'
 			]
-		]
+		],
+		config: ['anchor', 'namedNodeExpressions'],
+		lists: [['namedNodeExpressions', false, 'key']]
 	},
 	64: {
 		kind: 'named_node_group_anchored_last',
@@ -286,7 +317,9 @@ export const structure: StructureTable = Object.freeze({
 				'a built Definition / NegatedField / NamedNodeExpressionArm'
 			],
 			['_last', 'NamedNodeGroupAnchoredLast.last', 'a built Definition / NegatedField / NamedNodeExpressionArm']
-		]
+		],
+		config: ['anchor', 'namedNodeExpressions', 'last'],
+		lists: [['namedNodeExpressions', false, 'key']]
 	}
 });
 

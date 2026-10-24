@@ -387,9 +387,9 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 
 **Options**
 
-- `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, and check the vocabulary flags module against its Flag declarations
+- `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, check the vocabulary flags module against its Flag declarations, and check that each grammar.bindings.ts is enrich's fixpoint over grammar.sittir.ts
 - `--members` — Print member names and kinds per shared kind
-- `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the grammar bindings and the hash of the sources it was derived from
+- `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the generated layer above grammar.sittir.ts, with the hash of the sources it was derived from, failing when the written layer is not enrich's fixpoint
 
 **Example**
 
@@ -460,6 +460,24 @@ Field source tracking (override/enriched/grammar)
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool field-provenance [options]
+```
+
+### `tool glossary-keys`
+
+Glossary key ratchet (every heading names one declaration; count undocumented exports; fail on a ceiling increase)
+
+**Options**
+
+- `--update` — Lower the committed ceilings to the current counts (never raises one)
+- `--table` — Print every broken key with its class and glossary location
+- `--undocumented` — Print every exported declaration no valid key resolves to
+- `--json` — Machine-readable JSON output
+- `--ceilings <path>` — Ceilings path (default: packages/tools/glossary-key-ceilings.json)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool glossary-keys [options]
 ```
 
 ### `tool grammar-diagnostics`
@@ -555,6 +573,25 @@ Census what node JSON and the reviver rest on: unwrapped text leaves, kinds the 
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool node-json-census [options]
+```
+
+### `tool output-gate`
+
+Record the generated files as git blobs and check a tree against them, or snapshot and check each layer's evaluated grammar
+
+**Options**
+
+- `--record <out>` — Write a manifest of every generated file, as <blob> <path> lines, at --rev (default HEAD)
+- `--check <manifest>` — Compare the generated files at --rev (default the worktree) with a manifest, and print each changed, missing or added file
+- `--rev <rev>` — The revision to record or check
+- `--except <path[:key,key]>` — A generated file allowed to differ; with keys, only those top-level JSON keys may differ (repeatable)
+- `--snapshot <dir>` — Write each grammar's evaluated grammar, per layer, as canonical JSON
+- `--check-snapshot <dir>` — Compare each grammar's evaluated grammar, per layer, with the snapshots in a directory
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool output-gate [options]
 ```
 
 ### `tool override-census`

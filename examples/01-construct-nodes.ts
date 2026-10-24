@@ -26,7 +26,7 @@ export function nestedGreetFunction() {
 		),
 		name: rs.build.identifier('greet'),
 		parameters: rs.build.parameters.strict(
-			rs.build.parameter({ name: 'name', type: 'String' }),
+			rs.build.parametersElements.strict(rs.build.parameter({ name: 'name', type: 'String' })),
 		),
 		body: rs.build.block.strict(),
 	});
@@ -37,10 +37,10 @@ export function looseGreetFunction() {
 		visibilityModifier: 'pub',
 		name: 'greet',
 		parameters: rs.build.parameters(
-			rs.build.parameter({ name: 'name', type: 'String', mutable: true }),
+			rs.build.parametersElements(rs.build.parameter({ name: 'name', type: 'String', mutable: true })),
 		),
 		body: rs.build.block({
-			statements: rs.build.statement.let({ pattern: 'a', mutable: true, value: rs.build.integerLiteral('1') }),
+			statements: rs.build.statement.let({ name: 'a', mutable: true, value: rs.build.integerLiteral('1') }),
 		}),
 	});
 }

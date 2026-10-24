@@ -16,6 +16,6 @@ describe('rust reads a parenthesized primitive parameter as a type, as upstream 
 		const { sittir, upstream } = await parse(source);
 		expect(upstream).toContain('(parameters (tuple_type (primitive_type)))');
 		expect(sittir).not.toContain('ERROR');
-		expect(sittir).toContain('(attributed_parameter (tuple_type (types item: (primitive_type))))');
+		expect(sittir).toContain('(attributed_parameter (tuple_type types: (types item: (primitive_type))))');
 	});
 });

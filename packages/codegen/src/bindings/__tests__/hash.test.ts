@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { REGENERATE_BINDINGS_COMMAND, StaleBindingsError, assertBindingsFresh, bindingsSourceHash } from '../index.ts';
+import { bindingsStaleness } from '../hash.ts';
 
 function sources(scm: string, vocabulary: Readonly<Record<string, string>>): { scm: string; vocabulary: string } {
 	const root = mkdtempSync(join(tmpdir(), 'bindings-hash-'));
@@ -64,5 +65,37 @@ describe('assertBindingsFresh', () => {
 
 	it('accepts a grammar with no bindings.scm and no grammar bindings', () => {
 		expect(() => assertBindingsFresh('g', undefined, join(paths.vocabulary, 'missing.scm'), paths.vocabulary)).not.toThrow();
+	});
+});
+
+describe('bindingsStaleness', () => {
+	const paths = sources('(identifier) @identifier', { 'a.ts': 'A' });
+	const fresh = bindingsSourceHash(paths.scm, paths.vocabulary);
+	const missingScm = join(paths.vocabulary, 'missing.scm');
+
+	it('reports nothing when the grammar has no bindings.scm', () => {
+		expect(bindingsStaleness('g', undefined, missingScm, paths.vocabulary)).toBeUndefined();
+	});
+
+	it('names the regeneration command when bindings.scm exists and no hash is committed', () => {
+		const message = bindingsStaleness('g', undefined, paths.scm, paths.vocabulary);
+		expect(message).toContain('no grammar.bindings.ts carries its grammar bindings');
+		expect(message).toContain(REGENERATE_BINDINGS_COMMAND);
+	});
+
+	it('names the regeneration command when the committed hash is wrong', () => {
+		const message = bindingsStaleness('g', 'stale', paths.scm, paths.vocabulary);
+		expect(message).toContain('is stale against bindings.scm and the vocabulary');
+		expect(message).toContain(REGENERATE_BINDINGS_COMMAND);
+	});
+
+	it('reports nothing when the committed hash matches the current sources', () => {
+		expect(bindingsStaleness('g', fresh, paths.scm, paths.vocabulary)).toBeUndefined();
+	});
+
+	it('throws the same message that bindingsStaleness reports', () => {
+		const message = bindingsStaleness('g', 'stale', paths.scm, paths.vocabulary);
+		expect(message).toBeDefined();
+		expect(() => assertBindingsFresh('g', 'stale', paths.scm, paths.vocabulary)).toThrow(new StaleBindingsError(message!));
 	});
 });

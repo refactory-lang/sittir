@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dedupeMismatchesByContainment, loadCorpusEntries, loadStorageKindNameFromId, parseCorpus } from '../common.ts';
+import { dedupeMismatchesByContainment, loadCorpusEntries, loadKindIdFromName, loadKindNameFromId, loadStorageKindNameFromId, parseCorpus } from '../common.ts';
 
 describe('dedupeMismatchesByContainment', () => {
 	it('drops an ancestor mismatch whose span strictly contains a descendant mismatch in the same entry', () => {
@@ -137,5 +137,28 @@ describe('loadStorageKindNameFromId', () => {
 
 	it('throws when the types module cannot be loaded, rather than answering nothing', async () => {
 		await expect(loadStorageKindNameFromId('no_such_grammar')).rejects.toThrow();
+	});
+});
+
+describe('loadKindNameFromId', () => {
+	it('names a kind id with its display name', async () => {
+		const kindName = await loadKindNameFromId('rust');
+		const { TSKindId } = await import('../../../../rust/src/kinds.ts');
+		expect(kindName(TSKindId.SourceFile)).toBe('source_file');
+	});
+
+	it('throws for a kind id the table does not name, rather than answering nothing', async () => {
+		const kindName = await loadKindNameFromId('rust');
+		expect(() => kindName(0)).toThrow('rust: kind id 0 has no name in KIND_DISPLAY_NAMES');
+	});
+
+	it('throws when the types module cannot be loaded, rather than answering nothing', async () => {
+		await expect(loadKindNameFromId('no_such_grammar')).rejects.toThrow("grammar 'no_such_grammar' has no generated src/types.ts");
+	});
+});
+
+describe('loadKindIdFromName', () => {
+	it('throws when the types module cannot be loaded, rather than answering nothing', async () => {
+		await expect(loadKindIdFromName('no_such_grammar')).rejects.toThrow("grammar 'no_such_grammar' has no generated src/types.ts");
 	});
 });

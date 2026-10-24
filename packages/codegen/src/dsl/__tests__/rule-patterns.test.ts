@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual } from '../rule-patterns.ts';
+import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual, throughEnrichedField } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
 const symbols = predictedSymbolSourceOf({
@@ -289,5 +289,33 @@ describe('separatedListBodyInfo: what a consumer builds the list from', () => {
 		const fieldedRun = { type: 'REPEAT', content: seq(str(','), field(sym('item'))) };
 		expect(read(seq(field(sym('other')), fieldedRun))).toBeNull();
 		expect(read(seq(sym('item'), fieldedRun))).toMatchObject({ form: 'head' });
+	});
+});
+
+describe('hiddenChoiceClass', () => {
+	it('reads a precedence-wrapped arm by its core, so the DSL rule and the resolved rule get one class', () => {
+		const sym = (name: string) => ({ type: 'SYMBOL', name });
+		const wrapped = { type: 'CHOICE', members: [sym('definition'), { type: 'PREC_LEFT', value: 1, content: sym('group_arm') }] };
+		const resolved = { type: 'CHOICE', members: [sym('definition'), sym('group_arm')] };
+		const none = (): undefined => undefined;
+		expect(hiddenChoiceClass(resolved, none, false)).toBe('supertype');
+		expect(hiddenChoiceClass(wrapped, none, false)).toBe('supertype');
+	});
+});
+
+describe('throughEnrichedField', () => {
+	it('reads an enriched field through to its content', () => {
+		const content = { type: 'SYMBOL', name: 'item' };
+		expect(throughEnrichedField({ type: 'FIELD', name: 'item', content, metadata: { fieldSource: 'enriched' } })).toBe(content);
+	});
+
+	it('reads an authored field as itself', () => {
+		const authored = { type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'item' } };
+		expect(throughEnrichedField(authored)).toBe(authored);
+	});
+
+	it('reads a non-field rule as itself', () => {
+		const rule = { type: 'SYMBOL', name: 'item' };
+		expect(throughEnrichedField(rule)).toBe(rule);
 	});
 });

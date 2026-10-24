@@ -5,7 +5,7 @@
     "severity": "error",
     "grammar": "scm",
     "ownerKind": "predicate",
-    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "nested-seq",

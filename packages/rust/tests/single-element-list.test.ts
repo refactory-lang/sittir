@@ -19,7 +19,7 @@ const parsedTuple = (expression: string) => {
 	return value;
 };
 const tupleOf = (expressions: ReturnType<typeof build.expressions>) =>
-	build.tupleExpression({ expressions });
+	build.tupleExpression({ elements: expressions });
 
 describe('a tuple expression with one element', () => {
 	it('renders the separator that makes it a tuple, when built', () => {
@@ -35,8 +35,8 @@ describe('a tuple expression with one element', () => {
 
 	it('renders it when a parsed tuple of two is cut down to one', () => {
 		const parsed = parsedTuple('(a, b)');
-		const [first] = parsed.expressions();
-		const text = parsed.$with.expressions(build.expressions(first!)).$render();
+		const [first] = parsed.elements();
+		const text = parsed.$with.elements(build.expressions(first!)).$render();
 		expect(text).toBe('(a,)');
 		expect(is.tupleExpression(parsedValue(text))).toBe(true);
 	});

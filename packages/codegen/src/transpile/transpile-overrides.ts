@@ -1,7 +1,6 @@
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join, posix } from 'node:path';
-import { GRAMMAR_ENTRY, grammarTypePrefix, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
-import { packageEntryPath } from '../dsl/resolve-grammar.ts';
+import { basename, dirname, join, posix } from 'node:path';
+import { GRAMMAR_ENTRY, grammarTypePrefix, layerPath, packageRequire, sittirDirOf, topLayerPath, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 
@@ -26,12 +25,12 @@ export interface TranspileResult {
 
 export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 	const grammar = opts.package.name;
-	const inputPath = packageEntryPath(opts.package);
+	const inputPath = layerPath(opts.package, 'sittir');
 	const outputDir = sittirDirOf(opts.package);
 	const outputPath = join(outputDir, 'grammar.js');
 
 	if (!existsSync(inputPath)) {
-		throw new Error(`transpileOverrides: no grammar.sittir.ts at ${inputPath}`);
+		throw new Error(`transpileOverrides: no ${GRAMMAR_ENTRY} at ${inputPath}`);
 	}
 
 	const fileTypes = upstreamFileTypes(opts.package);
@@ -84,7 +83,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 		) + '\n'
 	);
 
-	writeFileIfChanged(outputPath, `export { default } from '${posix.join('..', GRAMMAR_ENTRY)}';\n`);
+	writeFileIfChanged(outputPath, `export { default } from '${posix.join('..', basename(topLayerPath(opts.package)))}';\n`);
 
 	return { outputPath };
 }

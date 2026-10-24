@@ -46,7 +46,7 @@ Each vocabulary path's members as the grammar-bindings derivation reads them: ev
 
 ### `packages/tools/src/inventory/index.ts::bindingsModule`
 
-The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the grammar bindings derived from them against the grammar evaluated without them, each vocabulary path's members (`vocabularyMembers`) and each claimed kind's member routes over the model of the grammar compiled without its grammar bindings (`compileNodeMap` with `unbound`, `buildNodeModel`, `resolveRoutes`; `deriveGrammarBindings`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A blocking derivation record (`lead-refused`) stops it through the diagnostics gate (`assertGatePasses`) before anything is printed, and the record names the `bindings.scm` path relative to the repository. A test holds every committed module equal to what this writes.
+The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the grammar bindings derived from them against layer 1 (`evaluateGrammar` with `unbound`) and placed in layer 1's own rules (`evaluatePackageLayer` with `unbound`), each vocabulary path's members (`vocabularyMembers`) and each claimed kind's member routes over layer 1's model (`compileNodeMap` with `unbound`, `buildNodeModel`, `resolveRoutes`; `deriveGrammarBindings`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A blocking derivation record (`lead-refused`) stops it through the diagnostics gate (`assertGatePasses`) before anything is printed, and the record names the `bindings.scm` path relative to the repository. A test holds every committed module equal to what this writes.
 
 ### `packages/tools/src/inventory/index.ts::grammarBindingsSummary`
 
@@ -66,19 +66,41 @@ writes the vocabulary's flags module (`printFlagsModule`, built as nodes with `@
 hash covers, then each grammar's `grammar.bindings.ts` (`bindingsModule`), and
 prints its convergence (`grammarBindingsSummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
-(`vocabularyDisagreements`), and whether the flags module is current
-(`flagsCurrent`). A cycle, a container capture with no direct
+(`vocabularyDisagreements`), whether the flags module is current
+(`flagsCurrent`), and whether each grammar.bindings.ts is current and enrich's fixpoint over
+grammar.sittir.ts (`generatedLayerReport`). `--write` refuses a layer it wrote that
+is not (`generatedLayerFixpoint`). A cycle, a container capture with no direct
 target, a container slot left uncaptured, a form with no entry for its supertype's
-claim, a failed compile, a disagreement or a stale flags module is a non-zero
-exit.
+claim, a failed compile, a disagreement, a stale flags module, a stale layer or a layer that is not enrich's
+fixpoint is a non-zero exit.
 ```
 
 ### `packages/tools/src/inventory/index.ts::flagsCurrent`
 
 Whether the committed flags module is the one the vocabulary's `Flag` declarations imply (`printFlagsModule`); a missing module is not current. The check is async because the module is rendered by the engine.
 
+### `packages/tools/src/inventory/index.ts::generatedLayerFixpoint`
+
+The producer check of one grammar's generated layer: the diagnostics of its top layer's fixpoint check (`dsl/evaluate.ts::generatedLayerDiagnostics`). The compile leaves that check to this inventory and to `gen`, so a layer that enrich would still change fails where it is written or regenerated.
+
+### `packages/tools/src/inventory/index.ts::GeneratedLayerReport`
+
+What `generatedLayerReport` prints, a line per grammar with any diagnostic under it, and whether any grammar failed.
+
+### `packages/tools/src/inventory/index.ts::generatedLayerReport`
+
+`--check`'s layer report: for each grammar, whether its `grammar.bindings.ts` is current against `bindings.scm` and the vocabulary (`bindingsStaleness`, the test the compile throws on), and then whether it is enrich's fixpoint over `grammar.sittir.ts` (`generatedLayerFixpoint`), with the diagnostics formatted under the ones that are not (`formatGrammarDiagnostics`). A stale layer is reported by its message and not checked further. Any such grammar fails the check.
+
 ### `packages/tools/src/inventory/flags.ts::printFlagsModule`
 
 The flags module as text, asked of the pinned build's child (`runPinned('flagsModule', flagMembers(names))`): an `enum Flags` whose members come from `flagMembers`, each `Name = 1 << bit`, under the generated-file header comment. The module is built as nodes with the factories of the pinned `@sittir/typescript` and rendered by its engine with a tab indent, so the bytes are the engine's (`flagsModuleInProcess`). The writer therefore needs the pinned build: it is the first place sittir writes its own TypeScript with itself, and a missing build fails the write rather than falling back to a template. It is async, as `flagsCurrent` is.
 
 The enum body is built as `enumBody.strict(enumBodyElements.strict({ delimiter: Delimiter.None }, first, ...rest))`, with the empty list taking the zero-argument `enumBody.strict()`. The strict `enumBody` surface drops the `(options, ...elements)` overload and requires a non-empty variadic list, though `enum E {}` is valid TypeScript, so the writer goes through `enumBodyElements.strict` until the strict surface carries both.
+
+### `packages/tools/src/inventory/bindings.ts::sourceLanguage`
+
+Caches the loaded completed grammar.sittir parser per grammar for authored query
+compilation and reference checks. A failed load is evicted so a retry can recover.
+`loadSourceLanguage` loads the temporary source parser's bytes through the canonical
+web-tree-sitter initializer. Both inventory checks use this source stage because
+bindings.scm names fields and kinds before grammar.bindings applies its edits.

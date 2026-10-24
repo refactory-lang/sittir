@@ -11,7 +11,6 @@
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import type { AuthoringRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
-import { transform } from '../codegen/src/dsl/transform/transform.ts';
 import {
 	role,
 	field,
@@ -23,7 +22,9 @@ import {
 	token,
 	reauthored,
 	vocabulary,
-	sittirGrammar
+	enrich,
+	wire,
+	edit
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
@@ -34,7 +35,7 @@ function tupleElements(element: AuthoringRule) {
 	return seq(seq(element, ','), repeat(seq(element, ',')), optional(element));
 }
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'python',
 	supertypes: ($, previous) => [...(previous ?? []), $._statement!],
@@ -171,7 +172,7 @@ export default sittirGrammar(base, {
 		}
 	},
 
-	patches: {
+	edits: {
 		parenthesized_list_splat: { 1: field('content') },
 		list_splat_pattern: { 1: field('target') },
 		dictionary_splat_pattern: { 1: field('target') },
@@ -396,7 +397,7 @@ export default sittirGrammar(base, {
 		tuple_pattern: reauthored(
 			'semantic-gap',
 			[{ text: '(x) = y\n', form: ['(', { symbol: 'pattern' }, ')'], kind: 'tuple_pattern', meaning: 'Binds the entire value, rather than unpacking a one-element tuple (#550).' }],
-			($, original) => transform(original, { 1: field('elements', optional(alias($._tuple_pattern_elements, $.tuple_pattern_elements))) })
+			($, original) => edit(original, { 1: field('elements', optional(alias($._tuple_pattern_elements, $.tuple_pattern_elements))) })
 		),
 		// See docs/python-grammar-sittir-glossary.md::tuple
 		_tuple_elements: vocabulary(($) => tupleElements(field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat)))),
@@ -477,4 +478,4 @@ export default sittirGrammar(base, {
 
 		_wildcard_pattern: vocabulary(($) => '_')
 	}
-});
+}));

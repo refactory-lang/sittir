@@ -38,5 +38,5 @@ ts.build.number.bigint.binary(42n);
 // declared and where it is mounted as a sub-factory arm.
 ts.build.updateExpression({ argument: 'i', operator: '++' });
 ts.build.expression.update({ argument: 'i', operator: '--' });
-ts.build.parenthesizedExpression.typed.update({ type: 'T', expression: [{ argument: 'i', operator: '++' }] });
-ts.build.parenthesizedExpression.typed.update.prefix({ type: 'T', expression: [{ argument: 'i', operator: '++' }] });
+ts.build.parenthesizedExpression.typed({ type: 'T', expression: ts.build.updateExpression({ argument: 'i', operator: '++' }) });
+ts.build.parenthesizedExpression.typed({ type: 'T', expression: ts.build.updateExpression.prefix({ argument: 'i', operator: '++' }) });

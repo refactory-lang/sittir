@@ -96,14 +96,15 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 		},
 		{
 			path: 'grammar.sittir.ts',
-			contents: `import base from '${v.upstreamDependency}/grammar.js';
+			contents: `/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import base from '${v.upstreamDependency}/grammar.js';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { sittirGrammar } from '../codegen/src/dsl/index.ts';
+import { enrich, wire } from '../codegen/src/dsl/index.ts';
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: '${v.name}'
-});
+}));
 `
 		},
 		{

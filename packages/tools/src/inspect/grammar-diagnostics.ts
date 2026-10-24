@@ -35,7 +35,7 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 		return diagnoseEvaluated(grammar, rawGrammar, await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	}
 	if (rawGrammar.stages === undefined) {
-		process.stderr.write(`${grammar}: no stages were evaluated (the grammar declares no rules: or patches:)\n`);
+		process.stderr.write(`${grammar}: no stages were evaluated (the grammar declares no rules: or edits:)\n`);
 		return 2;
 	}
 	return report(await invoke('stage', 'diagnoseEvaluationStage', rawGrammar.stages[stage]));

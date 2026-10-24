@@ -124,12 +124,14 @@ export const structure: StructureTable = Object.freeze({
 	52: {
 		kind: 'alternation',
 		nonEmpty: [['_terms', 'alternation.children']],
-		nodeOnly: [['_terms', 'Alternation.terms', 'a built Term']]
+		nodeOnly: [['_terms', 'Alternation.terms', 'a built Term']],
+		lists: [['terms', true, 0]]
 	},
 	53: {
 		kind: 'term',
 		nonEmpty: [['_term_group', 'term.children']],
-		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup']]
+		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup']],
+		lists: [['termGroups', false, 0]]
 	},
 	55: {
 		kind: 'lookaround_assertion',
@@ -145,7 +147,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_content', 'LookaheadAssertion.content', 'a kind id'],
 			['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern']
-		]
+		],
+		config: ['content', 'pattern']
 	},
 	57: {
 		kind: 'lookbehind_assertion',
@@ -156,7 +159,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_content', 'LookbehindAssertion.content', 'a kind id'],
 			['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern']
-		]
+		],
+		config: ['content', 'pattern']
 	},
 	58: {
 		kind: 'character_class',
@@ -169,7 +173,9 @@ export const structure: StructureTable = Object.freeze({
 				'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
 			],
 			['_trailing', 'CharacterClass.trailing', 'a boolean']
-		]
+		],
+		config: ['negation', 'leading', 'classAtoms', 'trailing'],
+		lists: [['classAtoms', false, 'key']]
 	},
 	59: {
 		kind: 'posix_character_class',
@@ -185,7 +191,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_start', 'ClassRange.start', 'buildClassCharacter(…) / buildControlEscape(…)'],
 			['_end', 'ClassRange.end', 'buildClassCharacter(…) / buildControlEscape(…)']
-		]
+		],
+		config: ['start', 'end']
 	},
 	62: {
 		kind: 'anonymous_capturing_group',
@@ -203,23 +210,25 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'NamedCapturingGroup.content', 'a kind id'],
 			['_group_name', 'NamedCapturingGroup.groupName', 'buildGroupName(…)'],
 			['_pattern', 'NamedCapturingGroup.pattern', 'a built Pattern']
-		]
+		],
+		config: ['content', 'groupName', 'pattern']
 	},
 	64: {
 		kind: 'non_capturing_group',
 		required: [['_pattern', 'pattern']],
 		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern']]
 	},
-	67: { kind: 'zero_or_more', nodeOnly: [['_lazy', 'ZeroOrMore.lazy', 'a boolean']] },
-	68: { kind: 'one_or_more', nodeOnly: [['_lazy', 'OneOrMore.lazy', 'a boolean']] },
-	69: { kind: 'optional', nodeOnly: [['_lazy', 'Optional.lazy', 'a boolean']] },
+	67: { kind: 'zero_or_more', nodeOnly: [['_lazy', 'ZeroOrMore.lazy', 'a boolean']], config: ['lazy'] },
+	68: { kind: 'one_or_more', nodeOnly: [['_lazy', 'OneOrMore.lazy', 'a boolean']], config: ['lazy'] },
+	69: { kind: 'optional', nodeOnly: [['_lazy', 'Optional.lazy', 'a boolean']], config: ['lazy'] },
 	70: {
 		kind: 'count_quantifier',
 		required: [['_content', 'content']],
 		nodeOnly: [
 			['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)'],
 			['_lazy', 'CountQuantifier.lazy', 'a boolean']
-		]
+		],
+		config: ['content', 'lazy']
 	},
 	71: {
 		kind: 'backreference_escape',
@@ -248,7 +257,8 @@ export const structure: StructureTable = Object.freeze({
 				'a built UnicodePropertyValueExpressionGroup'
 			],
 			['_unicode_property_value', 'UnicodePropertyValueExpression.unicodePropertyValue', 'buildUnicodePropertyValue(…)']
-		]
+		],
+		config: ['unicodePropertyValueExpressionGroup', 'unicodePropertyValue']
 	},
 	77: {
 		kind: 'term_group',
@@ -260,7 +270,8 @@ export const structure: StructureTable = Object.freeze({
 				'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
 			],
 			['_quantifier', 'TermGroup.quantifier', 'a built ZeroOrMore / OneOrMore / Optional / CountQuantifier']
-		]
+		],
+		config: ['content', 'quantifier']
 	},
 	78: {
 		kind: 'count_quantifier_group',
@@ -272,7 +283,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_decimal_digits', 'CountQuantifierArm.decimalDigits', 'buildDecimalDigits(…)'],
 			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup', 'a built CountQuantifierGroup']
-		]
+		],
+		config: ['decimalDigits', 'countQuantifierGroup']
 	},
 	80: {
 		kind: 'character_class_escape_arm',
@@ -291,7 +303,8 @@ export const structure: StructureTable = Object.freeze({
 				'CharacterClassEscapeArm.unicodePropertyValueExpression',
 				'a built UnicodePropertyValueExpression'
 			]
-		]
+		],
+		config: ['characterClassEscapeText2', 'unicodePropertyValueExpression']
 	},
 	81: {
 		kind: 'unicode_property_value_expression_group',
@@ -310,7 +323,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_enabled', 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)'],
 			['_pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern']
-		]
+		],
+		config: ['enabled', 'pattern']
 	},
 	84: {
 		kind: 'inline_flags_group_toggle',
@@ -322,7 +336,8 @@ export const structure: StructureTable = Object.freeze({
 			['_enabled', 'InlineFlagsGroupToggle.enabled', 'buildFlags(…)'],
 			['_disabled', 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)'],
 			['_pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern']
-		]
+		],
+		config: ['enabled', 'disabled', 'pattern']
 	},
 	85: {
 		kind: 'inline_flags_group_disable',
@@ -330,7 +345,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_disabled', 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)'],
 			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern']
-		]
+		],
+		config: ['disabled', 'pattern']
 	},
 	89: { kind: 'lazy', required: [['_content', 'content']], nodeOnly: [['_content', 'Lazy.content', 'a kind id']] },
 	90: {

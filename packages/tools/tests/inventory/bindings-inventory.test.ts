@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../../codegen/src/__tests__/helpers/timeouts.ts';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, posix, relative, sep } from 'node:path';
@@ -42,7 +43,7 @@ describe('bindingIssues', () => {
 			{ line: 3, message: 'unknown node no_such_kind' },
 			{ line: 4, message: 'unknown field no_such_field' }
 		]);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('compileBindings', () => {
@@ -189,6 +190,13 @@ describe('deriveVocabulary', () => {
 			'declaration.method',
 			'declaration.method.signature',
 			'declaration.method.signature.abstract',
+			'declaration.property',
+			'declaration.property.getter',
+			'declaration.property.setter',
+			'declaration.property.signature.abstract.getter',
+			'declaration.property.signature.abstract.setter',
+			'declaration.property.signature.getter',
+			'declaration.property.signature.setter',
 			'declaration.signature.index',
 			'statement.block.static'
 		]);

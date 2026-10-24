@@ -1,12 +1,12 @@
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { packageEntryPath } from '../dsl/resolve-grammar.ts';
 import type { EvaluatedGrammar } from '../compiler/types.ts';
 import { baseNamesOf } from '../dsl/bind.ts';
-import type { GrammarPackage } from '../grammars.ts';
+import { layerPath, type GrammarPackage } from '../grammars.ts';
+import { sha256 } from '../util/content-hash.ts';
 import type { UpstreamContext } from './derive-conflicts.ts';
+import { treeSitterPruned, type TreeSitterGrammarDoc } from './prune-grammar-json.ts';
 import { treeSitterCliVersion } from './tree-sitter-cli.ts';
 
 export interface GrammarDerivationInputs extends UpstreamContext {
@@ -21,11 +21,16 @@ export interface DerivationInputs {
 
 export const DERIVATION_INPUTS_MARKER = '\u0000sittir-derivation-inputs\u0000';
 
-function canonical(value: unknown): unknown {
-	if (value instanceof Map) return [...value].map(([key, entry]) => [canonical(key), canonical(entry)]).sort(byJson);
-	if (value instanceof Set) return [...value].map(canonical).sort(byJson);
-	if (Array.isArray(value)) return value.map(canonical);
+export function canonical(value: unknown): unknown {
+	if (value instanceof Map) return [...value].map(([key, entry]) => [canonicalElement(key), canonicalElement(entry)]).sort(byJson);
+	if (value instanceof Set) return [...value].map(canonicalElement).sort(byJson);
+	if (Array.isArray(value)) return value.map(canonicalElement);
+	if (typeof value === 'function' || typeof value === 'bigint') return unprintable(`a ${typeof value}`);
+	if (typeof value === 'number' && !Number.isFinite(value)) return unprintable(String(value));
 	if (value && typeof value === 'object') {
+		const prototype: unknown = Object.getPrototypeOf(value);
+		if (prototype !== Object.prototype && prototype !== null)
+			return unprintable(`a ${(value as { constructor?: { name?: string } }).constructor?.name ?? 'non-plain'} object`);
 		return Object.fromEntries(
 			Object.keys(value)
 				.sort()
@@ -35,46 +40,56 @@ function canonical(value: unknown): unknown {
 	return value;
 }
 
+function canonicalElement(value: unknown): unknown {
+	return value === undefined ? unprintable('an undefined element') : canonical(value);
+}
+
+function unprintable(what: string): never {
+	throw new Error(`canonical: ${what} has no canonical JSON form`);
+}
+
 function byJson(left: unknown, right: unknown): number {
 	const a = JSON.stringify(left);
 	const b = JSON.stringify(right);
 	return a < b ? -1 : a > b ? 1 : 0;
 }
 
-export function grammarHash(evaluated: object, treeSitterVersion: string): string {
-	const grammar = { ...evaluated, conflicts: undefined, derivationRecords: undefined };
-	return createHash('sha256').update(JSON.stringify(canonical({ grammar, treeSitterVersion }))).digest('hex');
+const PARSER_INPUT = ['rules', 'extras', 'externals', 'inline', 'supertypes', 'word', 'precedences', 'reserved'] as const satisfies readonly (keyof TreeSitterGrammarDoc)[];
+
+export function grammarHash<G extends TreeSitterGrammarDoc>(evaluated: G, upstream: UpstreamContext, treeSitterVersion: string): string {
+	const pruned: TreeSitterGrammarDoc = treeSitterPruned(evaluated).grammar;
+	const parserInput = Object.fromEntries(PARSER_INPUT.map((key) => [key, pruned[key]]));
+	return sha256(JSON.stringify(canonical({ parserInput, upstream, treeSitterVersion })));
 }
 
 export function derivationInputsOf(evaluated: EvaluatedGrammar): GrammarDerivationInputs {
 	const records = evaluated.derivationRecords;
-	if (records === undefined) throw new Error('evaluated grammar carries no derivation records: it was not built by sittirGrammar');
-	return {
-		grammarHash: grammarHash(evaluated, treeSitterCliVersion()),
-		ruleCount: Object.keys(evaluated.rules).length,
+	if (records === undefined) throw new Error('evaluated grammar carries no derivation records: no layer pass built it');
+	const upstream: UpstreamContext = {
 		upstreamConflicts: records.upstreamConflicts,
 		sourceEdges: records.sourceEdges,
 		baseNames: baseNamesOf(evaluated.renamedFrom, evaluated.splitFrom)
+	};
+	return {
+		grammarHash: grammarHash(evaluated, upstream, treeSitterCliVersion()),
+		ruleCount: Object.keys(evaluated.rules).length,
+		...upstream
 	};
 }
 
 const requireFromHere = createRequire(import.meta.url);
 
 export function evaluateForDerivation(pkg: Pick<GrammarPackage, 'dir'>): DerivationInputs {
+	const layers = [layerPath(pkg, 'sittir'), layerPath(pkg, 'top')];
 	const child = spawnSync(
 		process.execPath,
-		[
-			'--import',
-			pathToFileURL(requireFromHere.resolve('tsx')).href,
-			fileURLToPath(new URL('./evaluate-for-derivation.child.ts', import.meta.url)),
-			packageEntryPath(pkg)
-		],
+		['--import', pathToFileURL(requireFromHere.resolve('tsx')).href, fileURLToPath(new URL('./evaluate-for-derivation.child.ts', import.meta.url)), ...layers],
 		{ encoding: 'utf8', maxBuffer: 1 << 28 }
 	);
 	if (child.error) throw child.error;
 	const at = child.stdout.lastIndexOf(DERIVATION_INPUTS_MARKER);
 	if (child.status !== 0 || at < 0) {
-		throw new Error(`evaluating ${packageEntryPath(pkg)} for conflict derivation failed (exit ${child.status}):\n${child.stderr}`);
+		throw new Error(`evaluating ${layers.join(' and ')} for conflict derivation failed (exit ${child.status}):\n${child.stderr}`);
 	}
 	return JSON.parse(child.stdout.slice(at + DERIVATION_INPUTS_MARKER.length)) as DerivationInputs;
 }

@@ -34,7 +34,7 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
   - **Variant arms of the public API:** rust `reference_expression` (raw_const, raw_mut, mut) and `impl_item` (positive_clause, negative_clause) flatten upstream's nested choice and `optional('!')` into the arms their variants address.
   - **Fields and a refinement:** typescript `object_type` names `opening` and `closing` and refines them into curly and flow. Without it, two `content` slots collide (`storagename-collision`).
 - `patch-without-cause` — python 4: the `rule('comprehension_clauses')` patch on the four comprehension kinds, from when the native read could not refill the inlined clause list. It is load-bearing: without it, all four become `unclassifiable-shape` (nested-seq), the same shape as scm `predicate`.
-- `unclassifiable-shape` — rust 1, scm 1, typescript 2; `union-slot-mixed-row` — typescript 1. Shapes collect-slots cannot classify though their owners carry patches: choice-with-structured-arms (rust `_let_chain`, typescript `binary_expression`, `public_field_definition`) and nested-seq (scm `predicate`).
+- `unclassifiable-shape` — rust 1, scm 1, typescript 2; `union-slot-mixed-row` — typescript 1. Shapes collect-slots cannot classify though their owners carry patches: choice-with-structured-arms (rust `_let_chain`, typescript `binary_expression`, `public_field_definition_plain`) and nested-seq (scm `predicate`).
 
 **Status: open.** A fix removes the row and its floor entry together.
 

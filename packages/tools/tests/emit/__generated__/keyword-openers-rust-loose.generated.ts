@@ -10,7 +10,7 @@ export function rebuildKeywordOpenersRustLoose() {
 			typeParameters: rs.build.typeParameter({
 				name: "T",
 			}),
-			parameters: [rs.build.parameter({
+			parameters: rs.build.parametersElements(rs.build.parameter({
 				name: "a",
 				type: rs.build.genericType({
 					type: "Vec",
@@ -23,23 +23,23 @@ export function rebuildKeywordOpenersRustLoose() {
 						element: "Foo",
 					}),
 				}),
-			})],
+			})),
 			returnType: rs.build.genericType({
 				type: "Option",
 				typeArguments: rs.build.tupleType("Foo", "Foo"),
 			}),
 			body: rs.build.block({
 				statements: [rs.build.letDeclaration({
-					pattern: "x",
+					name: "x",
 					value: rs.build.tupleExpression({
-						expressions: [rs.build.integerLiteralDecimal({
+						elements: [rs.build.integerLiteralDecimal({
 							content: "1",
 						}), rs.build.integerLiteralDecimal({
 							content: "2",
 						})],
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "y",
+					name: "y",
 					value: rs.build.arrayExpressionList({
 						elements: [{
 							expression: rs.build.integerLiteralDecimal({
@@ -59,8 +59,8 @@ export function rebuildKeywordOpenersRustLoose() {
 					condition: rs.build.parenthesizedExpression(rs.build.binaryExpression({
 						left: rs.build.callExpression({
 							function: rs.build.fieldExpression({
-								value: "a",
-								field: "len",
+								object: "a",
+								property: "len",
 							}),
 							arguments: rs.build.arguments(),
 						}),
@@ -71,7 +71,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					})),
 					consequence: rs.build.block({
 						statements: [rs.build.expressionStatement.withSemi(rs.build.returnExpression(rs.build.tupleExpression({
-							expressions: [rs.build.integerLiteralDecimal({
+							elements: [rs.build.integerLiteralDecimal({
 								content: "1",
 							}), rs.build.integerLiteralDecimal({
 								content: "2",
@@ -79,8 +79,8 @@ export function rebuildKeywordOpenersRustLoose() {
 						})))],
 					}),
 				}), rs.build.forExpression({
-					pattern: rs.build.tuplePattern("i", "v"),
-					value: rs.build.parenthesizedExpression(rs.build.rangeExpressionBinary({
+					left: rs.build.tuplePattern("i", "v"),
+					right: rs.build.parenthesizedExpression(rs.build.rangeExpressionBinary({
 						start: rs.build.integerLiteralDecimal({
 							content: "0",
 						}),
@@ -91,7 +91,7 @@ export function rebuildKeywordOpenersRustLoose() {
 					})),
 					body: rs.build.block({
 						statements: [rs.build.letDeclaration({
-							pattern: "q",
+							name: "q",
 							value: rs.build.parenthesizedExpression("i"),
 						})],
 					}),
@@ -106,15 +106,15 @@ export function rebuildKeywordOpenersRustLoose() {
 						}))],
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "z",
+					name: "z",
 					value: rs.build.typeCastExpression({
-						value: "a",
+						expression: "a",
 						type: rs.build.tupleType("Foo"),
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "m",
+					name: "m",
 					value: rs.build.macroInvocation({
-						macro: "vec",
+						function: "vec",
 						arguments: rs.build.delimTokenTreeBracket(rs.build.integerLiteralDecimal({
 							content: "1",
 						}), rs.kinds.Comma, rs.build.integerLiteralDecimal({
@@ -122,45 +122,45 @@ export function rebuildKeywordOpenersRustLoose() {
 						})),
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "c",
+					name: "c",
 					value: rs.build.closureExpressionExpr({
 						parameters: "p",
 						body: rs.build.parenthesizedExpression("p"),
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "t",
+					name: "t",
 					type: rs.build.tupleType("Foo", "Foo"),
 					value: rs.build.tupleExpression({
-						expressions: [rs.build.integerLiteralDecimal({
+						elements: [rs.build.integerLiteralDecimal({
 							content: "1",
 						}), rs.build.integerLiteralDecimal({
 							content: "2",
 						})],
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "u",
+					name: "u",
 					value: rs.build.referenceExpressionBare(rs.build.parenthesizedExpression(rs.build.integerLiteralDecimal({
 						content: "1",
 					}))),
 				}), rs.build.letDeclaration({
-					pattern: "v",
+					name: "v",
 					value: rs.build.unaryExpression({
 						operator: rs.kinds.Dash,
-						operand: rs.build.parenthesizedExpression(rs.build.integerLiteralDecimal({
+						argument: rs.build.parenthesizedExpression(rs.build.integerLiteralDecimal({
 							content: "1",
 						})),
 					}),
 				}), rs.build.letDeclaration({
-					pattern: "n",
+					name: "n",
 					value: rs.build.unaryExpression({
 						operator: rs.kinds.Bang,
-						operand: rs.build.parenthesizedExpression(rs.kinds.TrueKeyword),
+						argument: rs.build.parenthesizedExpression(rs.kinds.TrueKeyword),
 					}),
 				})],
 				trailingExpression: rs.build.callExpression({
 					function: "Some",
 					arguments: rs.build.tupleExpression({
-						expressions: [rs.build.integerLiteralDecimal({
+						elements: [rs.build.integerLiteralDecimal({
 							content: "1",
 						}), rs.build.integerLiteralDecimal({
 							content: "2",

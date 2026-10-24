@@ -41,10 +41,10 @@ describe('c.<slot>.is(flag) on a slot whose kinds carry the flag always or by th
 	});
 
 	it('selects natively what the read holds', () => {
-		type Expression = { readonly $type: number; separator?(): number; optionalChain?(): boolean };
+		type Expression = { readonly $type: number; optionalChain?(): boolean | number };
 		const chains = (expression: Expression): boolean =>
 			expression.$type === TSKindId.CallExpressionMember ||
-			(expression.$type === TSKindId.MemberExpression && expression.separator?.() === TSKindId.OptionalChain) ||
+			(expression.$type === TSKindId.MemberExpression && expression.optionalChain?.() === TSKindId.OptionalChain) ||
 			(expression.$type === TSKindId.SubscriptExpression && expression.optionalChain?.() === true);
 		const reference = [...statements()].filter((statement) => chains((statement as { expression(): Expression }).expression())).map(textOf);
 		expect([...statements().where((c) => c.expression.is('optionalChain'))].map(textOf)).toEqual(reference);

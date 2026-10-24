@@ -134,9 +134,10 @@ describe('an alias envelope and its content', () => {
 		const root = engine.parse('fn f() { a.b; }\n', { depth: 1 });
 		const access = root.$query().$descendants.ofType(engine.kinds.FieldExpression).at(0);
 		if (access === undefined || !engine.is.fieldExpression(access)) throw new Error('expected a field expression');
-		const envelope = access.field();
+		const envelope = access.property();
+		if (!engine.is.fieldIdentifier(envelope)) throw new Error('expected a field identifier');
 		const content = envelope.content();
-		expect(access.field()).toBe(envelope);
+		expect(access.property()).toBe(envelope);
 		expect(envelope.content()).toBe(content);
 		expect(content).not.toBe(envelope);
 		expect(Array.from(root.$query().$descendants).find((node) => engine.is.fieldIdentifier(node))).toBe(envelope);
@@ -148,7 +149,7 @@ describe('ofType at an alias envelope', () => {
 	const accessed = (root: ReturnType<typeof engine.parse>) =>
 		root.$query().$descendants.ofType(engine.kinds.FieldExpression).map((access) => {
 			if (!engine.is.fieldExpression(access)) throw new Error('expected a field expression');
-			return access.field();
+			return access.property();
 		});
 
 	it('selects the envelopes by their display kind, the objects the accessors return', () => {
@@ -261,7 +262,7 @@ describe('a built node over parsed storage', () => {
 		const root = engine.parse('type T = (Vec<A>, Vec<B>);\n', { depth: 1 });
 		const item = root.statements()[0];
 		if (item === undefined || !engine.is.typeItem(item)) throw new Error('expected a type item');
-		const tuple = item.type();
+		const tuple = item.value();
 		if (!engine.is.tupleType(tuple)) throw new Error('expected a tuple type');
 		const parsed = tuple.types();
 		const stored = storageOf(parsed)._item;
