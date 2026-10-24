@@ -28,7 +28,7 @@ export const triviaFacts = Object.freeze({
 		[33, ['_definitions']],
 		[46, ['_name']]
 	]),
-	namedUnits: new Set<number>([25, 26, 27, 28, 29, 30, 31, 32, 60]),
+	namedUnits: new Set<number>([60]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s+))+)$/u,
 		kindIdByText: Object.freeze({ '': 25, ' ': 26, '\t': 27, '\n': 28, '\n\n': 29, '\n\n\n': 30 })

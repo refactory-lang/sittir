@@ -85,3 +85,19 @@ The command's flags. Each of `record`, `check`, `snapshot` and `checkSnapshot` i
 ### `packages/tools/src/output-gate/index.ts::run`
 
 The `tool output-gate` command. `--record` writes a manifest at a revision, and `--check` prints every difference and exits 1 if there is any. `--snapshot` and `--check-snapshot` do the same for the evaluated grammars.
+
+### `packages/tools/src/output-gate/index.ts::git`
+
+Runs `git` with the given arguments in the root and returns its stdout as text. The output buffer allows 1 GiB, because a manifest lists every generated file.
+
+### `packages/tools/src/output-gate/index.ts::blobsAtRevision`
+
+Maps each blob under the roots at a revision to its path. It reads the tree with `ls-tree -z`, which keeps paths with unusual characters intact, and skips entries that are not blobs.
+
+### `packages/tools/src/output-gate/index.ts::blobsInWorktree`
+
+Maps each existing file under the roots, tracked or untracked, to its blob id as it is on disk. Hashing uses `hash-object --no-filters`, so a change of line endings alone shows. Untracked files are listed against the repository's own `.gitignore` files only, so a local or global exclude cannot hide a generated file. Why: the gate must compare the bytes on disk, not the normalized text.
+
+### `packages/tools/src/output-gate/index.ts::textAt`
+
+The text of a file in the worktree, read from disk, or in a revision, read as its blob. It is how the gate compares a file's content at either end of a check.

@@ -4,17 +4,5 @@
 	"19-dogfood-python.generated.ts": 0,
 	"17-dogfood-rust-loose.generated.ts": 0,
 	"18-dogfood-typescript-loose.generated.ts": 0,
-	"19-dogfood-python-loose.generated.ts": 0,
-	"20-keyword-openers-python.generated.ts": 0,
-	"20-keyword-openers-rust.generated.ts": 0,
-	"20-keyword-openers-typescript.generated.ts": 0,
-	"21-list-seat-configs-rust.generated.ts": 0,
-	"21-list-seat-configs-rust-loose.generated.ts": 0,
-	"22-trivia-rust.generated.ts": 0,
-	"22-trivia-typescript.generated.ts": 0,
-	"20-keyword-openers-python-loose.generated.ts": 0,
-	"20-keyword-openers-rust-loose.generated.ts": 0,
-	"20-keyword-openers-typescript-loose.generated.ts": 0,
-	"22-trivia-rust-loose.generated.ts": 0,
-	"22-trivia-typescript-loose.generated.ts": 0
+	"19-dogfood-python-loose.generated.ts": 0
 }

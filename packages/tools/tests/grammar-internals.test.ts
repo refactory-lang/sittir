@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { stableGrammars } from '@sittir/codegen/grammars';
 import { grammarModulePath, importGrammarModule, requireGrammarModule } from '../src/grammar-internals.ts';
@@ -83,5 +83,21 @@ describe('missing grammar artifacts', () => {
 		await expect(requireGrammarModule('not-a-grammar', 'factories/coerce.ts')).rejects.toThrow(
 			"grammar 'not-a-grammar' has no generated src/factories/coerce.ts"
 		);
+	});
+
+	it('refuses a generated module that lacks an export its file declares', async () => {
+		const path = grammarModulePath('regex', 'factories/coerce.ts');
+		if (path === undefined) throw new Error('regex has no factories/coerce.ts');
+		vi.doMock(path, async (importOriginal) => {
+			return { ...(await importOriginal<Record<string, unknown>>()), _fromMap: undefined };
+		});
+		vi.resetModules();
+		try {
+			const { requireGrammarModule: reload } = await import('../src/grammar-internals.ts');
+			await expect(reload('regex', 'factories/coerce.ts')).rejects.toThrow("grammar 'regex' src/factories/coerce.ts has no export '_fromMap'");
+		} finally {
+			vi.doUnmock(path);
+			vi.resetModules();
+		}
 	});
 });

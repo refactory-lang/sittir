@@ -214,7 +214,7 @@ export interface LinkedGrammar {
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
 	readonly splicedNames?: ReadonlySet<string>;
-	readonly generatedIdTables?: GeneratedIdTables;
+	readonly generatedIdTables: GeneratedIdTables;
 }
 
 export interface NormalizedGrammar {
@@ -267,6 +267,7 @@ export interface SimplifiedGrammar {
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
+	readonly generatedIdTables: GeneratedIdTables;
 }
 
 export type PhaseRuleOf<P extends PhaseName> = P extends 'simplify'

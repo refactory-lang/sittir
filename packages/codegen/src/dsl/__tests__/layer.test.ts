@@ -21,6 +21,7 @@ import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
 import { layerOptions, pendingBase } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
+import { predictedIdTablesOf } from '../symbol-table.ts';
 import { VERIFIED_TREE_SITTER } from '../shared.ts';
 import { lead } from '../primitives/lead.ts';
 import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
@@ -275,7 +276,7 @@ describe('an edits key that names no rule', () => {
 	it('blocks the compile gate', async () => {
 		const evaluated = await evaluate(chain('missing-edit.ts'), []);
 		expect(evaluated.rules).not.toHaveProperty('let_statemnt');
-		const diagnosis = diagnoseGrammar({ grammar: 'chain', evaluated });
+		const diagnosis = diagnoseGrammar({ grammar: 'chain', evaluated, generatedIdTables: predictedIdTablesOf(evaluated) });
 		expect(diagnosis.passed).toBe(false);
 		expect(diagnosis.blocked).toEqual([expect.objectContaining({ code: 'edit-site-missing', grammar: 'chain', ownerKind: 'let_statemnt' })]);
 	});
@@ -306,7 +307,7 @@ describe('a config key wire does not know', () => {
 
 	it('blocks the compile gate when the config is spliced into the grammar as text', async () => {
 		const evaluated = await evaluateTempGrammar({ extras: '/\\s/', rules: 'pair: ($) => seq($.word, $.word)' }, "patches: { pair: { 0: field('left') } }");
-		const diagnosis = diagnoseGrammar({ grammar: 'demo', evaluated });
+		const diagnosis = diagnoseGrammar({ grammar: 'demo', evaluated, generatedIdTables: predictedIdTablesOf(evaluated) });
 		expect(diagnosis.passed).toBe(false);
 		expect(diagnosis.blocked).toEqual([expect.objectContaining({ code: 'config-key-unknown', grammar: 'demo', details: { key: 'patches', known: KNOWN.split(', ') } })]);
 	});

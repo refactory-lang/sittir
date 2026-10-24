@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
-import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { rootEdgeKinds, layoutSymbolsOf } from '../layout-kinds.ts';
 import { NEWLINE_MEMBER, TIGHT_MEMBER } from '../../../dsl/whitespace.ts';
@@ -9,7 +8,7 @@ import type { NodeMap } from '../../types.ts';
 const COMPILE_TIMEOUT = 120_000;
 
 async function nodeMapOf(grammar: string): Promise<NodeMap> {
-	return (await compileGrammar({ package: grammarPackage(grammar), generatedIdTables: await loadGeneratedIdTables(grammar) })).nodeMap;
+	return (await compileGrammar({ package: grammarPackage(grammar) })).nodeMap;
 }
 
 function memberOf(nodeMap: NodeMap, arm: string): string | undefined {

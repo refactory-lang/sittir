@@ -46,9 +46,7 @@ export const triviaFacts = Object.freeze({
 		[274, ['_elements']],
 		[292, ['_alternative']]
 	]),
-	namedUnits: new Set<number>([
-		64, 70, 71, 72, 107, 115, 116, 117, 122, 123, 124, 125, 126, 137, 147, 148, 149, 252, 257, 258, 279
-	]),
+	namedUnits: new Set<number>([64, 70, 71, 72, 107, 115, 116, 117, 137, 147, 148, 149, 252, 257, 258, 279]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 122, ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })

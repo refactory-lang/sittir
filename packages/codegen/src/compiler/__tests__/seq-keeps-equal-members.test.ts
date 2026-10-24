@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 
 const TAIL = ", a: () => 'a'";
@@ -8,7 +8,7 @@ const kRule = (body: string) => `source: ($) => repeat($.k), k: ($) => ${body}${
 
 const normalizedK = async (body: string) => {
 	const raw = await evaluateTempGrammar({ extras: '', rules: kRule(body) }, '');
-	return normalizeGrammar(link(raw));
+	return normalizeGrammar(linkPredicted(raw));
 };
 
 const IGNORE = new Set(['id', 'absorbedIds']);

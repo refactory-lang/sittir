@@ -2,7 +2,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import { bundleKeyedNodes, flattenedVariantParents, ownTextKeyedNodes, type IrKeyedNode } from '../../compiler/model/ir-surface.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
@@ -54,22 +54,20 @@ export interface BundleEntry {
 	readonly maxArgs: number | undefined;
 }
 
-export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
+export function bundleEntries(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): BundleEntry[] {
 	return withMaxArgs(bundleKeyedNodes(nodeMap), nodeMap, generatedIdTables);
 }
 
-export function ownTextEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
+export function ownTextEntries(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): BundleEntry[] {
 	return withMaxArgs(ownTextKeyedNodes(nodeMap), nodeMap, generatedIdTables);
 }
 
-function withMaxArgs(entries: readonly IrKeyedNode[], nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
+function withMaxArgs(entries: readonly IrKeyedNode[], nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): BundleEntry[] {
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	return entries.map((entry) => ({ ...entry, maxArgs: builtTypeSurfaceOf(entry.node, nodeMap, kindEntries)?.maxArgs }));
 }
 
-export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }): string {
+export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables: GeneratedIdTables }): string {
 	const lines: string[] = [
 		HEADER,
 		"import * as F from './raw.js';",
@@ -88,7 +86,7 @@ export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?:
 
 export function emitFactoriesIndex(
 	head: OverlayName,
-	config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }
+	config: { nodeMap: NodeMap; generatedIdTables: GeneratedIdTables }
 ): string {
 	const source = `./overlays/${head}.js`;
 	const lines: string[] = [

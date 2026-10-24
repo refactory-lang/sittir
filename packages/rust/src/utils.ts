@@ -61,10 +61,7 @@ export const triviaFacts = Object.freeze({
 		[412, ['_delim_tokens']],
 		[413, ['_delim_tokens']]
 	]),
-	namedUnits: new Set<number>([
-		58, 125, 126, 127, 163, 164, 168, 169, 170, 171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364,
-		421, 426
-	]),
+	namedUnits: new Set<number>([58, 125, 126, 127, 163, 164, 178, 244, 254, 281, 321, 338, 339, 421, 426]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s))+)$/u,
 		kindIdByText: Object.freeze({ '': 168, ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })

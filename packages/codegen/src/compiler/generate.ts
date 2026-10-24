@@ -59,7 +59,7 @@ export interface GeneratedFiles {
 	kindIds: string;
 	fieldIds: string;
 	nodeMap: NodeMap;
-	generatedIdTables?: GeneratedIdTables;
+	generatedIdTables: GeneratedIdTables;
 	renderModule?: RenderModuleBundle;
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	droppedTokens: readonly DroppedTokens[];
@@ -189,8 +189,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portableNodeModel: portable?.nodeModel,
 			portable: portable?.surface,
 			is: emitted.is,
-			kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
-			fieldIds: generatedIdTables ? emitFieldIdRust(cfg.grammar, generatedIdTables) : '',
+			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),
 			nodeMap,
 			generatedIdTables,
 			renderModule: emitted.renderModule,

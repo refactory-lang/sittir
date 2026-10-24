@@ -24,7 +24,7 @@ import {
 	blankFromInput
 } from './shared.ts';
 import { builtTypeSurfaceOf, fieldElementType, listSelfViewPlan, seatPlanOf } from './factories.ts';
-import { collectKindEntries, findKindEntry, collectCatalogKinds, type KindEnumEntry } from './kind-discriminant.ts';
+import { collectKindEntries, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export function listKindIds(nodeMap: NodeMap): number[] {
@@ -42,7 +42,7 @@ export function unitKindIds(nodeMap: NodeMap): number[] {
 }
 
 export function namedUnitKindIds(nodeMap: NodeMap): number[] {
-	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry?.anon !== true);
+	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry?.anon !== true && node.kindEntry?.hidden !== true);
 }
 
 export function layoutMemberKindIds(nodeMap: NodeMap): number[] {
@@ -83,18 +83,17 @@ interface SlotModel {
 export interface EmitWrapConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	generatedIdTables?: GeneratedIdTables;
+	generatedIdTables: GeneratedIdTables;
 	inlineKinds?: readonly string[];
 	synthesizedKinds?: ReadonlySet<string>;
-	kindEntries?: readonly KindEnumEntry[];
 	rootKind?: string;
 }
 
 function declaredParsedType(
 	node: { readonly kind: string; readonly typeName: string },
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): string | undefined {
-	return kindEntries !== undefined && findKindEntry(kindEntries, node.kind) !== undefined
+	return findKindEntry(kindEntries, node.kind) !== undefined
 		? `T.${node.typeName}.Parsed`
 		: undefined;
 }
@@ -114,8 +113,8 @@ function renameUnusedTreeParam(source: string): string {
 	return source.replace(header, header.replace(', tree: TreeHandle)', ', _tree: TreeHandle)'));
 }
 
-function typeStampLines(node: { readonly kind: string }, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
-	const entry = kindEntries === undefined ? undefined : findKindEntry(kindEntries, node.kind);
+function typeStampLines(node: { readonly kind: string }, kindEntries: readonly KindEnumEntry[]): string[] {
+	const entry = findKindEntry(kindEntries, node.kind);
 	return entry === undefined ? [] : [`    $type: TSKindId.${entry.member} as const,`];
 }
 
@@ -123,7 +122,7 @@ export namespace wrap {
 	export function branch(
 		output: string[],
 		node: AuthoredCompound,
-		kindEntries: readonly KindEnumEntry[] | undefined,
+		kindEntries: readonly KindEnumEntry[],
 		nodeMap: NodeMap
 	): void {
 		if (!node.rawFactoryName) return;
@@ -133,7 +132,7 @@ export namespace wrap {
 	export function separatedList(
 		output: string[],
 		node: AssembledList,
-		kindEntries: readonly KindEnumEntry[] | undefined,
+		kindEntries: readonly KindEnumEntry[],
 		nodeMap: NodeMap
 	): void {
 		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
@@ -174,7 +173,7 @@ export function buildSeparatedListContentSlot(node: AssembledList): AssembledNon
 
 function emitSeparatedListWrap(
 	node: AssembledList,
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap
 ): string | undefined {
 	if (!node.rawFactoryName) return undefined;
@@ -199,7 +198,7 @@ function emitSeparatedListWrap(
 			{
 				elemType: fieldElementType(contentSlot, nodeMap, kindEntries),
 				required: node.nonEmpty,
-				storageInfo: resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries)
+				storageInfo: resolveFieldStorageInfo(contentSlot, nodeMap)
 			}
 		);
 		lines.push(`    ${canonical.propertyName}() { ${body}; },`);
@@ -222,7 +221,7 @@ function emitSeparatedListWrap(
 
 function fieldAccessorLines(
 	slots: readonly AssembledNonterminal[],
-	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	aliasContent = false
 ): string[] {
@@ -230,14 +229,14 @@ function fieldAccessorLines(
 		const body = slotAccessorBody(f, {
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
-			storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries),
+			storageInfo: resolveFieldStorageInfo(f, nodeMap),
 			aliasContent
 		});
 		return `    ${f.propertyName}() { ${body}; },`;
 	});
 }
 
-function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
+function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string {
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
@@ -273,7 +272,7 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 	].join('\n');
 }
 
-function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): SetterEntry[] {
+function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): SetterEntry[] {
 	const wrapFn = `wrap${node.typeName}`;
 	const restSlots = new Set(
 		(builtTypeSurfaceOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries)?.setters ?? [])
@@ -303,7 +302,7 @@ function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: re
 
 export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
-	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #kindEntries: readonly KindEnumEntry[];
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #canonicalAliasSourceKinds: ReadonlySet<string>;
@@ -318,11 +317,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	}
 
 	constructor(config: EmitWrapConfig) {
-		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries, rootKind } = config;
+		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, rootKind } = config;
 		this.#nodeMap = nodeMap;
-		this.#kindEntries =
-			providedKindEntries ??
-			(generatedIdTables ? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables) : undefined);
+		this.#kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 		this.#inlineKinds = inlineKinds;
 		this.#synthesizedKinds = synthesizedKinds;
 		this.#canonicalAliasSourceKinds = new Set(collectAliasTargetToSourceMap(nodeMap).values());
@@ -378,38 +375,37 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const rows = new Map<string, { row: string; exact: boolean }>();
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (!isSlotBearingCompound(node) || !this.#emittedStructuralKinds.has(kind)) continue;
-			const entry = this.#kindEntries ? findKindEntry(this.#kindEntries, kind) : undefined;
-			if (this.#kindEntries && entry === undefined) {
+			const entry = findKindEntry(this.#kindEntries, kind);
+			if (entry === undefined) {
 				console.warn(
 					`[codegen] wrap dispatch: '${kind}' resolves to no catalog entry — no numeric dispatch row emitted (no parser-issued $type can reach it)`
 				);
 				continue;
 			}
-			if (node instanceof AssembledAlias && (entry === undefined || (entry.parseId ?? entry.id) !== node.aliasTypeId)) {
+			if (node instanceof AssembledAlias && (entry.parseId ?? entry.id) !== node.aliasTypeId) {
 				throw new Error(
 					`emitWrap: alias envelope '${kind}' has no catalog entry for its type id ${node.aliasTypeId} — the reader stamps that id and nothing could dispatch it`
 				);
 			}
-			const memberName = entry?.member ?? node.typeName;
-			const tableKey = this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`;
-			const row = `  ${tableKey}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`;
-			const exact = node instanceof AssembledAlias || (entry !== undefined && entry.kind === kind);
+			const memberName = entry.member;
+			const row = `  [TSKindId.${memberName}]: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`;
+			const exact = node instanceof AssembledAlias || entry.kind === kind;
 			const existing = rows.get(memberName);
 			if (existing === undefined || (exact && !existing.exact)) rows.set(memberName, { row, exact });
 		}
 		const table = new Map([...rows].map(([member, { row }]) => [member, row]));
 		for (const { kind } of storedTextKinds(this.#nodeMap, this.#kindEntries)) {
-			const entry = this.#kindEntries ? findKindEntry(this.#kindEntries, kind) : undefined;
-			if (this.#kindEntries && entry === undefined) continue;
-			const memberName = entry?.member ?? kind;
+			const entry = findKindEntry(this.#kindEntries, kind);
+			if (entry === undefined) continue;
+			const memberName = entry.member;
 			if (table.has(memberName)) continue;
-			table.set(memberName, `  ${this.#kindEntries ? `[TSKindId.${memberName}]` : `'${kind}'`}: (d, t) => wrapLeaf(d, t),`);
+			table.set(memberName, `  [TSKindId.${memberName}]: (d, t) => wrapLeaf(d, t),`);
 		}
 		return table;
 	}
 
 	#rootTreeLines(rows: ReadonlyMap<string, string>): string[] {
-		if (!this.#kindEntries || this.#rootKind === undefined) return [];
+		if (this.#rootKind === undefined) return [];
 		const rootEntry = findKindEntry(this.#kindEntries, this.#rootKind);
 		if (rootEntry === undefined || !rows.has(rootEntry.member)) {
 			throw new Error(`emitWrap: root kind '${this.#rootKind}' has no wrap-table row — cannot name the wrapped root surface`);
@@ -430,7 +426,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 	finalize(): string {
 		const rows = this.#wrapTableRows();
-		const keyed = this.#kindEntries !== undefined;
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'',
@@ -438,22 +433,18 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
-			...(keyed ? ["import { TSKindId } from './kinds.js';"] : []),
-			...(keyed && this.#rootEmptyForm() !== undefined ? [`import type { ${this.#rootEmptyForm()} } from './types.js';`] : []),
+			"import { TSKindId } from './kinds.js';",
+			...(this.#rootEmptyForm() !== undefined ? [`import type { ${this.#rootEmptyForm()} } from './types.js';`] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			"import * as RAW from './factories/raw.js';",
 			"import { jsonFacts } from './utils.js';",
 			'',
-			...(keyed
-				? [
-						'export type ParsedOfData<D> = D extends { readonly $type: infer Id }',
-						'  ? Id extends keyof T.ParsedByKindId',
-						'    ? T.ParsedByKindId[Id]',
-						'    : D',
-						'  : D;'
-					]
-				: ['export type ParsedOfData<D> = D;']),
+			'export type ParsedOfData<D> = D extends { readonly $type: infer Id }',
+			'  ? Id extends keyof T.ParsedByKindId',
+			'    ? T.ParsedByKindId[Id]',
+			'    : D',
+			'  : D;',
 			'const _wrap = (data: object, tree: TreeHandle): unknown => wrapNode(data as _UntypedNode, tree);',
 			'/** A stored value as an accessor returns it: a coordinate read `depth` levels down and wrapped, a node wrapped, anything else as it is. */',
 			'export function hydrate<T>(value: T, tree: TreeHandle, depth?: number): ParsedOfData<T> {',
@@ -480,30 +471,28 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			''
 		);
 		lines.push(
-			`const _wrapTable: Record<${keyed ? 'number' : 'string'}, (data: _UntypedNode, tree: TreeHandle) => unknown> = {`,
+			'const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {',
 			...rows.values(),
 			'};',
 			'',
 			...this.#rootTreeLines(rows),
 			'/** Wrap a node into its kind\'s node: the node as it crossed, with the kind\'s members attached. */'
 		);
-		if (keyed) {
-			if (this.#rootTreeTypeName !== undefined) {
-				lines.push(
-					`export function wrapNode(data: _UntypedNode & { readonly $type: TSKindId.${this.#rootMember} } & ParsedRoot, tree: TreeHandle): ${this.#rootTreeTypeName};`
-				);
-			}
+		if (this.#rootTreeTypeName !== undefined) {
 			lines.push(
-				'export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(',
-				'  data: D,',
-				'  tree: TreeHandle',
-				"): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;",
-				'export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;'
+				`export function wrapNode(data: _UntypedNode & { readonly $type: TSKindId.${this.#rootMember} } & ParsedRoot, tree: TreeHandle): ${this.#rootTreeTypeName};`
 			);
 		}
 		lines.push(
+			'export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(',
+			'  data: D,',
+			'  tree: TreeHandle',
+			"): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;",
+			'export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;'
+		);
+		lines.push(
 			'export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {',
-			`  const fn = _wrapTable[data.$type as unknown as ${keyed ? 'number' : 'string'}];`,
+			'  const fn = _wrapTable[data.$type as unknown as number];',
 			'  return fn === undefined ? asTextNode(data) : carryRead(data, inTreeEngine(tree, () => fn(data, tree)));',
 			'}',
 			''

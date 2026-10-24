@@ -10,7 +10,7 @@ import {
 	AssembledPattern,
 	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
-import type { GeneratedIdTables, GeneratedKindEntry } from '../../dsl/symbol-table.ts';
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -58,10 +58,10 @@ function makeMinimalNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('call_expression', new AssembledBranch('call_expression', flatten(callRule), flatten(callRule), opts));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, opts));
-	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }, opts));
-	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }, opts));
+	nodes.set('call_expression', new AssembledBranch('call_expression', flatten(callRule), flatten(callRule), { ...opts, kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { ...opts, kindEntries }));
+	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }, { ...opts, kindEntries }));
+	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }, { ...opts, kindEntries }));
 	nodes.set(
 		'operator',
 		new AssembledEnum(
@@ -72,29 +72,27 @@ function makeMinimalNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap
 					{ type: STRING, value: '+' },
 					{ type: STRING, value: '-' }
 				]
-			},
-			opts
-		)
+			}, { ...opts, kindEntries })
 	);
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }], opts)
+		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }], { ...opts, kindEntries })
 	);
 	return nodeMapWith(nodes);
 }
 
-function makeRequiredChildrenNodeMap(): NodeMap {
+function makeRequiredChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('child_parent', new AssembledBranch('child_parent', flatten(parentRule), flatten(parentRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('child_parent', new AssembledBranch('child_parent', flatten(parentRule), flatten(parentRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeOptionalChildrenNodeMap(): NodeMap {
+function makeOptionalChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -105,12 +103,12 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_parent', new AssembledBranch('optional_parent', flatten(parentRule), flatten(parentRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('optional_parent', new AssembledBranch('optional_parent', flatten(parentRule), flatten(parentRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeRepeatedChildrenNodeMap(): NodeMap {
+function makeRepeatedChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -121,12 +119,12 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('repeated_parent', new AssembledBranch('repeated_parent', flatten(parentRule), flatten(parentRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('repeated_parent', new AssembledBranch('repeated_parent', flatten(parentRule), flatten(parentRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeRepeatedFieldNodeMap(): NodeMap {
+function makeRepeatedFieldNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -143,13 +141,13 @@ function makeRepeatedFieldNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'repeated_field_parent',
-		new AssembledBranch('repeated_field_parent', flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('repeated_field_parent', flatten(parentRule), flatten(parentRule), { kindEntries })
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeOptionalRepeatedFieldNodeMap(): NodeMap {
+function makeOptionalRepeatedFieldNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -166,13 +164,13 @@ function makeOptionalRepeatedFieldNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'optional_repeated_field_parent',
-		new AssembledBranch('optional_repeated_field_parent', flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('optional_repeated_field_parent', flatten(parentRule), flatten(parentRule), { kindEntries })
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeReservedNestedSupertypeNodeMap(): NodeMap {
+function makeReservedNestedSupertypeNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -195,18 +193,18 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('parent_expression', new AssembledBranch('parent_expression', flatten(parentRule), flatten(parentRule)));
-	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, [{ name: 'string_literal' }]));
+	nodes.set('parent_expression', new AssembledBranch('parent_expression', flatten(parentRule), flatten(parentRule), { kindEntries }));
+	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, [{ name: 'string_literal' }], { kindEntries }));
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', expressionRule, [{ name: '_literal' }, { name: 'identifier' }])
+		new AssembledSupertype('_expression', expressionRule, [{ name: '_literal' }, { name: 'identifier' }], { kindEntries })
 	);
 	return nodeMapWith(nodes);
 }
 
-function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
+function makeSupertypeAndSubtypeChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
@@ -228,18 +226,18 @@ function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'supertype_alias_parent',
-		new AssembledBranch('supertype_alias_parent', flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('supertype_alias_parent', flatten(parentRule), flatten(parentRule), { kindEntries })
 	);
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }])
+		new AssembledSupertype('_expression', expressionRule, [{ name: 'identifier' }, { name: 'call_expression' }], { kindEntries })
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('call_expression', new AssembledBranch('call_expression', flatten(callRule), flatten(callRule)));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('call_expression', new AssembledBranch('call_expression', flatten(callRule), flatten(callRule), { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
+function makeHiddenWrapperChildEnumNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const wrapperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
@@ -254,15 +252,15 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'hidden_wrapper_parent',
-		new AssembledBranch('hidden_wrapper_parent', flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('hidden_wrapper_parent', flatten(parentRule), flatten(parentRule), { kindEntries })
 	);
-	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', flatten(wrapperRule), flatten(wrapperRule)));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', flatten(wrapperRule), flatten(wrapperRule), { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
+function makeOptionalRepeatedChildrenNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -275,13 +273,13 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'optional_repeated_parent',
-		new AssembledBranch('optional_repeated_parent', flatten(parentRule), flatten(parentRule))
+		new AssembledBranch('optional_repeated_parent', flatten(parentRule), flatten(parentRule), { kindEntries })
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeTransparentStatementWrapperNodeMap(): NodeMap {
+function makeTransparentStatementWrapperNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const wrapperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: '_simple_statement' }]
@@ -306,15 +304,15 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'_simple_statement',
-		new AssembledSupertype('_simple_statement', simpleStatementRule, [{ name: 'expression_statement' }])
+		new AssembledSupertype('_simple_statement', simpleStatementRule, [{ name: 'expression_statement' }], { kindEntries })
 	);
-	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, [{ name: '_simple_statements' }]));
+	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, [{ name: '_simple_statements' }], { kindEntries }));
 	nodes.set(
 		'_simple_statements',
-		new AssembledBranch('_simple_statements', flatten(wrapperRule), flatten(wrapperRule))
+		new AssembledBranch('_simple_statements', flatten(wrapperRule), flatten(wrapperRule), { kindEntries })
 	);
-	nodes.set('expression_statement', new AssembledPattern('expression_statement', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('module', new AssembledBranch('module', flatten(moduleRule), flatten(moduleRule)));
+	nodes.set('expression_statement', new AssembledPattern('expression_statement', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('module', new AssembledBranch('module', flatten(moduleRule), flatten(moduleRule), { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
@@ -322,7 +320,7 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 // `types` list is `field_identifier | integer_literal` — two distinct concrete
 // kinds with no grammar supertype covering both. Under cleanup-rules §E1, such
 // a named heterogeneous field should also get a per-slot typed enum.
-function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
+function makeNamedHeterogeneousFieldNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -340,16 +338,16 @@ function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('field_expression', new AssembledBranch('field_expression', flatten(parentRule), flatten(parentRule)));
+	nodes.set('field_expression', new AssembledBranch('field_expression', flatten(parentRule), flatten(parentRule), { kindEntries }));
 	nodes.set(
 		'field_identifier',
-		new AssembledPattern('field_identifier', { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' })
+		new AssembledPattern('field_identifier', { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' }, { kindEntries })
 	);
-	nodes.set('integer_literal', new AssembledPattern('integer_literal', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('integer_literal', new AssembledPattern('integer_literal', { type: PATTERN, value: '[0-9]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
-function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
+function makeSupertypeBackedChildEnumNodeMap(kindEntries: readonly GeneratedKindEntry[]): NodeMap {
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
@@ -377,17 +375,17 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('object_like', new AssembledBranch('object_like', flatten(parentRule), flatten(parentRule)));
-	nodes.set('pair', new AssembledBranch('pair', flatten(pairRule), flatten(pairRule)));
+	nodes.set('object_like', new AssembledBranch('object_like', flatten(parentRule), flatten(parentRule), { kindEntries }));
+	nodes.set('pair', new AssembledBranch('pair', flatten(pairRule), flatten(pairRule), { kindEntries }));
 	nodes.set(
 		'_shorthand_property_identifier',
 		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, [
 			{ name: 'identifier' },
 			{ name: '_reserved_identifier' }
-		])
+		], { kindEntries })
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('_reserved_identifier', new AssembledPattern('_reserved_identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('_reserved_identifier', new AssembledPattern('_reserved_identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return nodeMapWith(nodes);
 }
 
@@ -548,19 +546,11 @@ describe('native node emission', () => {
 	});
 
 	it('widens statement unions through transparent hidden wrappers', () => {
-		const generatedIdTables: GeneratedIdTables = {
-			kindIds: {
-				_statement: 109,
-				_simple_statements: 110,
-				expression_statement: 122,
-				module: 123
-			},
-			sourceArtifact: 'test'
-		};
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeTransparentStatementWrapperNodeMap(kindEntries));
 		const emitted = emitRenderModule(
 			'python',
 			emittedTemplates({ module: EMPTY }),
-			makeTransparentStatementWrapperNodeMap(),
+			nodeMap,
 			generatedIdTables
 		).nodeRs.contents;
 
@@ -578,19 +568,11 @@ describe('native node emission', () => {
 	});
 
 	it('accepts a hidden wrapper kind id for hidden-wrapper child enums', () => {
-		const generatedIdTables: GeneratedIdTables = {
-			kindIds: {
-				_wrapped_item: 410,
-				integer: 411,
-				identifier: 412,
-				hidden_wrapper_parent: 413
-			},
-			sourceArtifact: 'test'
-		};
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeHiddenWrapperChildEnumNodeMap(kindEntries));
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ hidden_wrapper_parent: EMPTY }),
-			makeHiddenWrapperChildEnumNodeMap(),
+			nodeMap,
 			generatedIdTables
 		).nodeRs.contents;
 
@@ -600,20 +582,11 @@ describe('native node emission', () => {
 	});
 
 	it('claims each member of a supertype-backed child enum by its kind', () => {
-		const generatedIdTables: GeneratedIdTables = {
-			kindIds: {
-				object_like: 500,
-				pair: 501,
-				identifier: 502,
-				_reserved_identifier: 503,
-				_shorthand_property_identifier: 422
-			},
-			sourceArtifact: 'test'
-		};
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeSupertypeBackedChildEnumNodeMap(kindEntries));
 		const emitted = emitRenderModule(
 			'typescript',
 			emittedTemplates({ object_like: EMPTY }),
-			makeSupertypeBackedChildEnumNodeMap(),
+			nodeMap,
 			generatedIdTables
 		).nodeRs.contents;
 
@@ -634,19 +607,11 @@ describe('native node emission', () => {
 		// `<ParentTypeName><FieldName>NodeSlot` — symmetry with unnamed `$children`
 		// slots. After spec 024 cleanup-§E1, the per-slot enum is load-bearing:
 		// the struct field type IS the enum (no longer `Box<AnyNode>`).
-		const generatedIdTables: GeneratedIdTables = {
-			kindIds: {
-				field_expression: 600,
-				field_identifier: 601,
-				integer_literal: 602
-			},
-			fieldIds: { field: 1 },
-			sourceArtifact: 'test'
-		};
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) => makeNamedHeterogeneousFieldNodeMap(kindEntries));
 		const emitted = emitRenderModule(
 			'rust',
 			emittedTemplates({ field_expression: slot('field') }),
-			makeNamedHeterogeneousFieldNodeMap(),
+			nodeMap,
 			generatedIdTables
 		).nodeRs.contents;
 

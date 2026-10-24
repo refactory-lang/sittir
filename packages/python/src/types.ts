@@ -72,16 +72,21 @@ export type LeafStringMap = {
 	[TSKindId.LineContinuationNul]: '\\\u0000';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.Tight]: '';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.ImportKeyword]: 'import';
+	[TSKindId.Dot]: '.';
 	[TSKindId.FromKeyword]: 'from';
 	[TSKindId.FutureUKeyword]: '__future__';
 	[TSKindId.AsKeyword]: 'as';
+	[TSKindId.Star]: '*';
+	[TSKindId.GtGt]: '>>';
 	[TSKindId.AssertKeyword]: 'assert';
+	[TSKindId.ColonEq]: ':=';
 	[TSKindId.ReturnKeyword]: 'return';
 	[TSKindId.DelKeyword]: 'del';
 	[TSKindId.RaiseKeyword]: 'raise';
@@ -89,6 +94,7 @@ export type LeafStringMap = {
 	[TSKindId.BreakKeyword]: 'break';
 	[TSKindId.ContinueKeyword]: 'continue';
 	[TSKindId.IfKeyword]: 'if';
+	[TSKindId.Colon]: ':';
 	[TSKindId.ElifKeyword]: 'elif';
 	[TSKindId.ElseKeyword]: 'else';
 	[TSKindId.MatchKeyword]: 'match';
@@ -102,20 +108,64 @@ export type LeafStringMap = {
 	[TSKindId.FinallyKeyword]: 'finally';
 	[TSKindId.WithKeyword]: 'with';
 	[TSKindId.DefKeyword]: 'def';
+	[TSKindId.DashGt]: '->';
+	[TSKindId.Lparen]: '(';
+	[TSKindId.Rparen]: ')';
+	[TSKindId.StarStar]: '**';
 	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.NonlocalKeyword]: 'nonlocal';
 	[TSKindId.ExecKeyword]: 'exec';
 	[TSKindId.TypeKeyword]: 'type';
+	[TSKindId.Eq]: '=';
 	[TSKindId.ClassKeyword]: 'class';
+	[TSKindId.Lbrack]: '[';
+	[TSKindId.Rbrack]: ']';
+	[TSKindId.At]: '@';
+	[TSKindId.Lbrace]: '{';
+	[TSKindId.Rbrace]: '}';
 	[TSKindId.Underscore]: '_';
+	[TSKindId.Dash]: '-';
+	[TSKindId.Plus]: '+';
 	[TSKindId.NotKeyword]: 'not';
 	[TSKindId.AndKeyword]: 'and';
 	[TSKindId.OrKeyword]: 'or';
+	[TSKindId.Slash]: '/';
+	[TSKindId.Percent]: '%';
+	[TSKindId.SlashSlash]: '//';
+	[TSKindId.Pipe]: '|';
+	[TSKindId.Amp]: '&';
+	[TSKindId.Caret]: '^';
+	[TSKindId.LtLt]: '<<';
+	[TSKindId.Tilde]: '~';
 	[TSKindId.LambdaKeyword]: 'lambda';
+	[TSKindId.PlusEq]: '+=';
+	[TSKindId.DashEq]: '-=';
+	[TSKindId.StarEq]: '*=';
+	[TSKindId.SlashEq]: '/=';
+	[TSKindId.AtEq]: '@=';
+	[TSKindId.SlashSlashEq]: '//=';
+	[TSKindId.PercentEq]: '%=';
+	[TSKindId.StarStarEq]: '**=';
+	[TSKindId.GtGtEq]: '>>=';
+	[TSKindId.LtLtEq]: '<<=';
+	[TSKindId.AmpEq]: '&=';
+	[TSKindId.CaretEq]: '^=';
+	[TSKindId.PipeEq]: '|=';
 	[TSKindId.YieldKeyword]: 'yield';
+	[TSKindId.Comma]: ',';
+	[TSKindId.Bslash]: '\\';
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.PrintKeyword]: 'print';
+	[TSKindId.Lt]: '<';
+	[TSKindId.LtEq]: '<=';
+	[TSKindId.EqEq]: '==';
+	[TSKindId.BangEq]: '!=';
+	[TSKindId.GtEq]: '>=';
+	[TSKindId.Gt]: '>';
+	[TSKindId.LtGt]: '<>';
+	[TSKindId.NotIn]: 'not in';
 	[TSKindId.IsKeyword]: 'is';
+	[TSKindId.IsNot]: 'is not';
 };
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -12501,7 +12551,12 @@ export namespace UnionPattern {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<
+				>
+		  ]
+		| [
+				children: Readonly<
+					NonEmptyArray<
+						LooseValue<
 							| T.ClassPattern
 							| T.SplatPattern
 							| T.UnionPattern
@@ -12510,62 +12565,17 @@ export namespace UnionPattern {
 							| T.DictPattern
 							| T.String
 							| T.ConcatenatedString
-							| 'True'
-							| 'False'
-							| 'None'
+							| TSKindId.True
+							| TSKindId.False
+							| TSKindId.None
 							| T.SimplePatternNegative
 							| T.ComplexPattern
 							| T.DottedName
-							| '_',
+							| TSKindId.WildcardPattern,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
-					  >
-				>
-		  ]
-		| [
-				children: Readonly<
-					NonEmptyArray<
-						| LooseValue<
-								| T.ClassPattern
-								| T.SplatPattern
-								| T.UnionPattern
-								| T.CaseListPattern
-								| T.CaseTuplePattern
-								| T.DictPattern
-								| T.String
-								| T.ConcatenatedString
-								| TSKindId.True
-								| TSKindId.False
-								| TSKindId.None
-								| T.SimplePatternNegative
-								| T.ComplexPattern
-								| T.DottedName
-								| TSKindId.WildcardPattern,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								| T.ClassPattern
-								| T.SplatPattern
-								| T.UnionPattern
-								| T.CaseListPattern
-								| T.CaseTuplePattern
-								| T.DictPattern
-								| T.String
-								| T.ConcatenatedString
-								| 'True'
-								| 'False'
-								| 'None'
-								| T.SimplePatternNegative
-								| T.ComplexPattern
-								| T.DottedName
-								| '_',
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						>
 					>
 				>
 		  ];
@@ -14100,29 +14110,17 @@ export namespace StringContent {
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >
-					| LooseValue<
-							T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
 				>
 		  ]
 		| [
 				children: Readonly<
 					NonEmptyArray<
-						| LooseValue<
-								T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						LooseValue<
+							T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+						>
 					>
 				>
 		  ];

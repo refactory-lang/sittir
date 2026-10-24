@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 
 function raw(rules: Record<string, Rule<'evaluate'>>, supertypes: string[] = []): RawGrammar {
 	return {
@@ -43,13 +44,13 @@ function rootOf(name: string): Rule<'evaluate'> {
 
 describe('link keeps the hoisted annotation on the rule', () => {
 	it('collects a rule that carries the hoisted annotation', () => {
-		const linked = link(raw({ root: rootOf('g'), g: { ...fielded, annotations: { hoisted: true } } }));
+		const linked = linkPredicted(raw({ root: rootOf('g'), g: { ...fielded, annotations: { hoisted: true } } }));
 
 		expect(linked.rules['g']?.annotations?.hoisted).toBe(true);
 	});
 
 	it('does not hoist a hidden sequence for carrying a field', () => {
-		const linked = link(raw({ root: rootOf('_g'), _g: fielded }));
+		const linked = linkPredicted(raw({ root: rootOf('_g'), _g: fielded }));
 
 		expect(linked.rules['_g']?.annotations?.hoisted).toBeUndefined();
 	});
@@ -74,7 +75,7 @@ describe('link keeps the hoisted annotation on the rule', () => {
 				['g']
 			),
 			{
-				generatedIdTables: {
+				generatedIdTables: { fieldIds: new Map(), folds: new Map(),
 					sourceArtifact: 'test',
 					kindIds: {
 						g: {

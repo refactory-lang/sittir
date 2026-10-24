@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../../types.ts';
 import { bundleKeyedNodes, flattenedVariantParents, irPlanOf, resolveBuilderPaths, stampIrSurface, type OwnerRoute } from '../ir-surface.ts';
-import { makeMinimalNodeMap } from '../../../__tests__/helpers/node-map-fixtures.ts';
+import { makeMinimalNodeMap, withGeneratedIdTables } from '../../../__tests__/helpers/node-map-fixtures.ts';
+
+const fixture = withGeneratedIdTables(makeMinimalNodeMap);
 
 function unstamped(): NodeMap {
-	const { irSurface: _, ...rest } = makeMinimalNodeMap();
+	const { irSurface: _, ...rest } = fixture.nodeMap;
 	return rest;
 }
 
@@ -17,7 +19,7 @@ describe('ir surface', () => {
 
 	it('reads what the stamp stored', () => {
 		const nodeMap = unstamped();
-		stampIrSurface(nodeMap);
+		stampIrSurface(nodeMap, fixture.generatedIdTables);
 		expect(irPlanOf(nodeMap)).toBe(nodeMap.irSurface?.plan);
 		expect(bundleKeyedNodes(nodeMap).map((entry) => entry.key)).toEqual(['callExpression']);
 	});

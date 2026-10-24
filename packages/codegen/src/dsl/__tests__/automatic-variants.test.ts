@@ -6,7 +6,7 @@ import { field } from '../primitives/field.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { getEnrichAutomaticVariants, isSupertypeOwner, relabelledArm } from '../automatic-variants.ts';
-import { link } from '../../compiler/link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import { stampLabelProvenance, variantChildrenOf } from '../../compiler/variant-structural.ts';
 import { armFactsOf } from '../../compiler/model/node-map.ts';
@@ -140,7 +140,7 @@ describe('automatic variants', () => {
 	});
 
 	it('names a literal arm from its resolved token kind, by the supertype member rule under a supertype owner', () => {
-		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'logic_and' }, undefined)).toEqual({ variant: 'and', variantOf: 'logic' });
+		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'logic_and' }, { kindEntries: [] })).toEqual({ variant: 'and', variantOf: 'logic' });
 		const tokens = {
 			kindEntries: [
 				{ kind: 'or_keyword', id: 1, literalText: 'or', anon: true, keyword: true },
@@ -149,7 +149,7 @@ describe('automatic variants', () => {
 		} as never;
 		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'or_keyword' }, tokens)).toEqual({ variant: 'or', variantOf: 'logic' });
 		expect(armFactsOf({ annotations: { variantOf: 'logic' }, resolvedKind: 'pipe_pipe' }, tokens)).toEqual({ variant: 'pipe_pipe', variantOf: 'logic' });
-		const supertypeOwner = { simplifiedRules: { _literal: { type: SUPERTYPE } } } as never;
+		const supertypeOwner = { kindEntries: [], simplifiedRules: { _literal: { type: SUPERTYPE } } } as never;
 		expect(armFactsOf({ annotations: { variantOf: '_literal' }, resolvedKind: 'true_literal' }, supertypeOwner)).toEqual({ variant: 'true', variantOf: '_literal' });
 	});
 
@@ -190,7 +190,7 @@ describe('the supertype recognizer', () => {
 			word: null,
 			references: []
 		} as unknown as RawGrammar;
-		return link(raw).rules._thing?.type === SUPERTYPE;
+		return linkPredicted(raw).rules._thing?.type === SUPERTYPE;
 	};
 	const leaves = {
 		a_thing: { type: PATTERN, value: 'a' },

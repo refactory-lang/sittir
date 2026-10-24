@@ -1,8 +1,9 @@
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import type { NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { REPARSE_HOSTS } from '../../../../rust/src/reparse-hosts.ts';
-import { link } from '../link.ts';
-import { normalizeGrammar } from '../normalize.ts';
-import { assemble, AssembleCtx } from '../assemble.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import type { NodeMap } from '../types.ts';
 import { AssembledList, type AssembledNode } from '../model/node-map.ts';
@@ -18,6 +19,7 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 
 let nodeMap: NodeMap;
+let rustIdTables: GeneratedIdTables;
 let typescriptNodeMap: NodeMap;
 let pythonNodeMap: NodeMap;
 
@@ -27,19 +29,14 @@ let pythonNodeMap: NodeMap;
 // override-resolved one — the raw grammar lacks override-declared fields
 // (e.g. rust self_parameter's `reference`), which changes shape
 // classification.
-async function assembleGrammar(grammar: string): Promise<NodeMap> {
-	const raw = await evaluatePackage(grammarPackage(grammar));
-	const normalized = normalizeGrammar(link(raw));
-	const nodeMap = assemble(AssembleCtx.from(normalized));
-	// Mirror the generate() pipeline: determined slots leave the record
-	// before any classification runs.
-	return nodeMap;
+async function assembleGrammar(grammar: string): Promise<NodeMapWithIdTables> {
+	return assemblePredicted(await evaluatePackage(grammarPackage(grammar)));
 }
 
 beforeAll(async () => {
-	nodeMap = await assembleGrammar('rust');
-	typescriptNodeMap = await assembleGrammar('typescript');
-	pythonNodeMap = await assembleGrammar('python');
+	({ nodeMap, generatedIdTables: rustIdTables } = await assembleGrammar('rust'));
+	({ nodeMap: typescriptNodeMap } = await assembleGrammar('typescript'));
+	({ nodeMap: pythonNodeMap } = await assembleGrammar('python'));
 });
 
 function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
@@ -134,7 +131,7 @@ describe('factory field metadata', () => {
 	});
 
 	it('propagates the shared field metadata into factory-map output', () => {
-		const map = buildFactoryMap(nodeMap);
+		const map = buildFactoryMap(nodeMap, collectKindEntries(nodeMap, rustIdTables));
 		// Expectations updated to the current factory surfaces (see the two
 		// cases above); attribute gained real named fields under the
 		// kind-named-slots unification. All three match the committed
@@ -173,6 +170,7 @@ describe('terminated separated lists', () => {
 			emitFactories({
 				grammar: 'rust',
 				nodeMap,
+				generatedIdTables: rustIdTables,
 				reparseHosts: REPARSE_HOSTS,
 				triviaKinds: ['block_comment', 'line_comment']
 			})

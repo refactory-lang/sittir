@@ -2,8 +2,8 @@
  * Regression test for `validateFrom`'s module-load-failure sentinel: a
  * rejected dynamic import of the generated
  * `from.ts`/`factories.ts` module must surface as a
- * `(from-module-load)`/`(factory-module-load)` sentinel error with
- * total/pass/fail/skip all 0 — not a silently-passing false "0/0" result,
+ * `(from-module-load)`/`(factory-module-load)` sentinel error and a failed
+ * run — not a silently-passing false "0/0" result,
  * which is what `corpus-validation.test.ts` alone can't catch since it only
  * exercises successful generated-module loads.
  */
@@ -26,7 +26,7 @@ describe('validateFrom — module load failure sentinel', () => {
 
 		expect(result.total).toBe(0);
 		expect(result.pass).toBe(0);
-		expect(result.fail).toBe(0);
+		expect(result.fail).toBe(1);
 		expect(result.skip).toBe(0);
 		expect(result.errors).toHaveLength(1);
 		expect(result.errors[0]).toMatchObject({ kind: '(from-module-load)', severity: 'error' });
@@ -34,6 +34,26 @@ describe('validateFrom — module load failure sentinel', () => {
 		// wrapper, not the thrown error verbatim — assert only that a
 		// non-empty diagnostic made it through, not its literal content.
 		expect(result.errors[0]!.message.length).toBeGreaterThan(0);
+	}, 60000);
+});
+
+describe('validateFrom — a coercion module without its map', () => {
+	it('reports the run failed when factories/coerce.ts exports no _fromMap', async () => {
+		const path = grammarModulePath('regex', 'factories/coerce.ts');
+		if (path === undefined) throw new Error('regex has no factories/coerce.ts');
+		vi.doMock(path, async (importOriginal) => {
+			return { ...(await importOriginal<Record<string, unknown>>()), _fromMap: undefined };
+		});
+		vi.resetModules();
+		try {
+			const result = await (await loadValidateFrom())('regex');
+			expect(result.fail).toBe(1);
+			expect(result.errors[0]).toMatchObject({ kind: '(from-module-load)', severity: 'error' });
+			expect(result.errors[0]!.message).toContain("no export '_fromMap'");
+		} finally {
+			vi.doUnmock(path);
+			vi.resetModules();
+		}
 	}, 60000);
 });
 

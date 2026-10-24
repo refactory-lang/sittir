@@ -26,7 +26,6 @@ describe('native node coords', () => {
 		if (!tree) throw new Error('expected parser to return a tree');
 		const handle = await buildReadHandle(grammar, entry.source);
 		const kindNameFromId = await loadKindNameFromId(grammar);
-		if (!kindNameFromId) throw new Error('expected rust kindNameFromId resolver');
 
 		// NOTE: 'identifier' was dropped from this list — under the
 		// VerbatimNode design, text-only kinds degrade to bare strings
@@ -65,7 +64,6 @@ describe('native node coords', () => {
 		if (!tree) throw new Error('expected parser to return a tree');
 		const handle = await buildReadHandle(grammar, source);
 		const kindNameFromId = await loadKindNameFromId(grammar);
-		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 
 		for (const kind of ['expression_statement', 'assignment_eq', 'call', 'argument_list'] as const) {
 			const coords = findNativeNodeId(handle, kind, kindNameFromId);
@@ -91,7 +89,6 @@ describe('native node coords', () => {
 		if (!tree) throw new Error('expected parser to return a tree');
 		const handle = await buildReadHandle(grammar, source);
 		const kindNameFromId = await loadKindNameFromId(grammar);
-		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 
 		const coords = findNativeNodeId(handle, 'module', kindNameFromId);
 		expect(coords).not.toBeNull();

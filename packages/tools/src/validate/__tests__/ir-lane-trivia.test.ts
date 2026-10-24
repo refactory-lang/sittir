@@ -8,10 +8,11 @@ import {
 	loadNativeEngine,
 	loadNodeModel,
 	loadScopedFactoryMap,
+	loadStorageKindNameFromId,
 	readNodeOf,
 	type ReadNodeLike
 } from '../common.ts';
-import { importGrammarModule } from '../../grammar-internals.ts';
+import { requireGrammarModule } from '../../grammar-internals.ts';
 
 /** Comments on their own lines: at a file's edges, between statements and in a childless node, laid out by the layout runs their sides carry. */
 const OWN_LINE: Record<string, readonly string[]> = {
@@ -40,27 +41,25 @@ const COPIED: Record<string, readonly string[]> = {
 const tokens = (text: string): string => text.replace(/\s+/g, '');
 
 async function lane(grammar: string) {
-	const raw = await importGrammarModule(grammar, 'factories/raw.ts');
 	const model = await loadNodeModel(grammar);
 	const artifacts = {
-		factoryMap: await loadScopedFactoryMap(grammar, raw?._factoryMap ?? {}),
+		factoryMap: await loadScopedFactoryMap(grammar, (await requireGrammarModule(grammar, 'factories/raw.ts'))._factoryMap),
 		factoryShapes: model.factoryShapes,
 		fieldAliasMap: model.fieldAliasMap,
 		factoryFields: model.factoryFields,
 		factorySlots: model.factorySlots,
 		surface: await loadIrSurface(grammar)
 	};
-	const kindNames = (await importGrammarModule(grammar, 'types.ts'))?.KIND_NAMES;
-	const kindNameFromId = (id: number): string | undefined => kindNames?.get(id);
+	const kindNameFromId = await loadStorageKindNameFromId(grammar);
 	const readNode = await readNodeOf(grammar);
-	const hydrate = (await hydrateOf(grammar)) ?? undefined;
+	const hydrate = await hydrateOf(grammar);
 	const engine = await loadNativeEngine(grammar);
-	const read = async (source: string): Promise<ReadNodeLike> => readNode?.(await buildReadHandle(grammar, source)) as ReadNodeLike;
+	const read = async (source: string): Promise<ReadNodeLike> => readNode(await buildReadHandle(grammar, source)) as ReadNodeLike;
 	return {
 		read,
 		async render(source: string): Promise<string> {
 			const tree = await buildReadHandle(grammar, source);
-			const root = readNode?.(tree) as ReadNodeLike;
+			const root = readNode(tree) as ReadNodeLike;
 			const built = buildFactoryNodeFromReference(root, kindNameFromId(Number(root.$type)) ?? '', artifacts, { kindNameFromId, tree, hydrate });
 			return engine.render(built as never).toString();
 		}

@@ -4,7 +4,11 @@ import { buildFactoryNode, loadFactoryArtifacts, run } from '../src/exercise/rou
 
 const KINDS = ['identifier', 'number_literal', 'direct_child', 'spread_child', 'rebuilt_direct', 'rebuilt_spread'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
-const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
+const kindNameFromId = (kindId: number): string => {
+	const kind = KINDS[kindId - 1];
+	if (kind === undefined) throw new Error(`fixture: kind id ${kindId} has no name`);
+	return kind;
+};
 
 describe('exercise roundtrip helpers', () => {
 	afterEach(() => {

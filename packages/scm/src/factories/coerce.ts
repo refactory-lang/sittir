@@ -846,7 +846,7 @@ export function resolveAnonymousNode_name(value: T.AnonymousNode.LooseConfig['na
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, [TSKindId.Underscore], () =>
-				_resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])
+				_resolveOneBranch<T.String | TSKindId.Underscore>(value, 'string', [TSKindId.Underscore])
 			),
 			[['_', TSKindId.Underscore] as const]
 		)
@@ -929,7 +929,7 @@ export function resolvePredicate_name(value: T.Predicate.LooseConfig['name']): A
 
 export function resolvePredicate_type(value: T.Predicate.LooseConfig['type']): Admit<T.Predicate['_type']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'?' | '!'>(value, 'predicate_type')),
+		_resolveKindEnumScalar(value, () => _resolveOneLeaf<TSKindId.Qmark | TSKindId.Bang>(value, 'predicate_type')),
 		[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
 	);
 }
@@ -958,7 +958,9 @@ export function resolveListElementQuantifier_quantifier(
 	value: T.ListElementQuantifier.LooseConfig['quantifier']
 ): Admit<T.ListElementQuantifier['_quantifier']> {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'*' | '+' | '?'>(value, 'quantifier')),
+		_resolveKindEnumScalar(value, () =>
+			_resolveOneLeaf<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(value, 'quantifier')
+		),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -976,7 +978,7 @@ export function coerceToListElementQuantifier(
 			_resolveKindEnumScalar(
 				configFieldOr(input, 'quantifier', () => input),
 				() =>
-					_resolveOneLeaf<'*' | '+' | '?'>(
+					_resolveOneLeaf<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 						configFieldOr(input, 'quantifier', () => input),
 						'quantifier'
 					)
@@ -1084,7 +1086,9 @@ export function resolveNamedNodePlain_name(
 ): Admit<T.NamedNodePlain['_name']> {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, [TSKindId.Underscore], () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
+			_resolveKindEnum(value, [TSKindId.Underscore], () =>
+				_resolveOneLeaf<T.Identifier | TSKindId.Underscore>(value, 'identifier')
+			),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);

@@ -7067,11 +7067,11 @@ Predicts the parser's symbol table from the evaluated grammar by porting tree-si
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
-A predicted symbol table and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported. `eofNotLast` lists the rules with a production that continues past the end of the input (`eofNotLastSites`).
+A predicted symbol table, its predicted field table (`predictedFields`), and the names the grammar references that are neither rules nor externals. Tree-sitter rejects a grammar with any; the table still answers for every defined name, so enrich can classify a grammar before its undefined names are reported. `eofNotLast` lists the rules with a production that continues past the end of the input (`eofNotLastSites`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKinds`
 
-What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted kind catalog's rows with its key collisions and `eofNotLast` sites, or why it could not be predicted — the failure's message and the undefined names when that was the cause.
+What `compiler/canonical-rules.ts::canonicalGrammar` stamps as `RawGrammar.predictedKinds` (`predictedKindsOf`): the predicted id tables, their kind-catalog rows with key collisions and `eofNotLast` sites, or why they could not be predicted — the failure's message and the undefined names when that was the cause.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::undefinedNamesOf`
 
@@ -7091,11 +7091,11 @@ Compares the predicted kind catalog with the parser's row by row on `PREDICTED_K
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedKindCatalog`
 
-The rows `predictKindCatalog` predicts, with the grammar's undefined names, key collisions and `eofNotLast` sites beside them.
+The id tables `predictKindCatalog` predicts and the rows they hold, with the grammar's undefined names, key collisions and `eofNotLast` sites beside them.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictKindCatalog`
 
-The kind-catalog rows tree-sitter would generate for a grammar: `predictSymbolTable` turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are, and without `lexicalRank`, which the prediction does not derive faithfully. A grammar with undefined names still gets the rows of its defined names; the names come back in `undefinedNames`, and an undefined name has no row.
+The id tables tree-sitter would generate for a grammar, and the kind-catalog rows they hold. The kind ids are `predictSymbolTable` turned into rows by `kindTableOfSymbolTable`, with the declared visible externals stamped as the parser catalog's are. The field ids are the predicted field names joined as the parser's are (`joinIdNames` with `deriveFieldRuntimeName`). The folds are empty. The rows leave out `lexicalRank`, which the prediction does not derive faithfully. A grammar with undefined names still gets the rows of its defined names; the names come back in `undefinedNames`, and an undefined name has no row.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictedKindsOf`
 
@@ -7112,10 +7112,6 @@ A `catalogSymbolSource` for a grammar whose rules still carry the names the cata
 ### `packages/codegen/src/dsl/symbol-table.ts::predictedSymbolSourceOf`
 
 The `SymbolSource` of a grammar before any parser.c exists: its predicted kind catalog (`predictKindCatalog`), asked through `renameAwareSymbolSource`. A name the grammar leaves undefined has no row, so `hasSymbol` and `isTerminal` are false for it; the failure itself is reported from `RawGrammar.predictedKinds`, never here. Enrich builds one per rule set it classifies (`enrich-ctx.ts::enrichSymbolSource`).
-### `packages/codegen/src/dsl/symbol-table.ts::kindCatalogOf`
-
-The one route to the kind catalog the front half reads: the parser's rows, as stamped by the tables' owner (link stamps the declared visible externals before it reads them), when id tables are passed, else the rows evaluate predicted (`RawGrammar.predictedKinds`), ids included. Link, the grammar diagnostics, the diagnostics tool and the upstream compile all read it.
-
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::PolicyStep`
 
 Whether a derived conflict is one upstream declared: `upstream-declared` when the conflict's rules, each mapped to its upstream source and deduplicated, are exactly a set upstream listed in its own `conflicts`; otherwise `default`. Every conflict is resolved with AddConflict either way; the step is a record, not a choice between resolutions.
@@ -7679,6 +7675,18 @@ The precedence wrapper types, which carry no slot topology.
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedIdTablesOf`
+
+The id tables an evaluated grammar predicts for itself (`RawGrammar.predictedKinds`), for a compile of a grammar tree-sitter did not generate: an unbound or base evaluation, a stage grammar, or a synthetic grammar in a test. A grammar whose tables could not be predicted is refused with the prediction's failure. Its kind and field ids equal the parser's for every grammar tree-sitter generates; the predicted-id-tables test pins that against each package's parser.c.
+
+### `packages/codegen/src/dsl/symbol-table.ts::predictedFields`
+
+The field table tree-sitter generates: every field name in the expanded syntax variables, sorted, with ids from 1 and C names `field_<name>`. It walks the variables after repeat expansion, because expansion moves a repeated body, and the fields in it, into an auxiliary variable; a field inside a token left with the token when it was extracted.
+
+### `packages/codegen/src/dsl/symbol-table.ts::deriveFieldRuntimeName`
+
+A field's name from its C name when the name table has no entry for it: the C name without its `field_` prefix. The parser's tables and the predicted ones join field ids through it.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::spelledTokenText`
 
@@ -8821,3 +8829,75 @@ Enrich's mints are judged where the author wrote them. A group-lift reference (`
 ### `packages/codegen/src/dsl/eof-placement.ts::EofPlacement`
 
 Where an authored rule holds a refused `eof()`: under a token (`inToken`), anywhere but last in the start rule (`notLast`), or both.
+
+### `packages/codegen/src/dsl/automatic-groups.ts::collapseSingletonMintOrdinals`
+
+Renames a minted hidden rule that is the only one of its parent and flavour. Minted rules named `<parent>_arm<n>` or `<parent>_group<n>` are bucketed by parent and flavour. A bucket with exactly one member takes the bare name (visible when the old one was visible, hidden otherwise), unless that name is already taken. The rule, its minted entry and its origin move together, and every reference to the old name is rewritten.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringEdit`
+
+The authoring type of `edit(previous, ...sets)`, the inline spelling of applying a kind's patch sets to its rule. It has the same shape as `refine`: it takes a rule and returns a rule of the same type. Why: a kind's callback is its rules, followed by its edits, and authors write that application inline.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringReplace`
+
+The authoring type of `replace(previous, path, rule)`, the inline form of a replacing entry. The replacement is a rule, or a function of `$` and the member it replaces, so the new rule can keep that member.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringReserved`
+
+The authoring type of the `reserved` verb, which the native rule function of that name provides at runtime.
+
+### `packages/codegen/src/dsl/dsl-authoring.ts::AuthoringToken`
+
+The authoring type of the `token` verb, which is the native `token` function with its `immediate` member attached.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShape`
+
+One shape that enrich rewrote: its code, from the `ENRICH_SHAPES` table, and the name of the rule that held it.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::isEnrichShapeCode`
+
+Type guard for a shape code: true when the string is an own key of `ENRICH_SHAPES`.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::sameRule`
+
+Whether two rules are equal, by identity or by their JSON form. Enrich uses it to decide whether a pass changed a rule.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeLog`
+
+Collects the shapes an enrich run rewrites. A shape is recorded once per pair of code and rule name, in the order it was first seen.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeLog::record`
+
+Adds one shape, unless the same code and rule name are already recorded.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeLog::noted`
+
+Records the shape only when the pass changed the rule (`sameRule` is false), and returns the rule after the pass unchanged. A pass that makes no change leaves no shape. Why: a shape is a rewrite the grammar author did not write, so an unchanged rule is not one.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::EnrichShapeLog::shapes`
+
+The recorded shapes, in the order they were first seen.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::enrichShapesOf`
+
+Reads the shapes an enrich run stored under its `__enrichedShapes__` key on a grammar. A value that is not a grammar object, or has no array under that key, has no shapes.
+
+### `packages/codegen/src/dsl/enrich-shapes.ts::enrichShapeDiagnostics`
+
+Turns each recorded shape into a grammar error that names the pass that rewrites it, and says the rule reached the model as written. The diagnostic cannot proceed. Why: a shape code cannot be listed as an expected diagnostic, so an expectation cannot silence it.
+
+### `packages/codegen/src/dsl/enrich.ts::isLoneOptionalToken`
+
+True for an optional sequence of exactly two members: a string token, then an optional field, after precedence wrappers are peeled. Enrich's clause hoist and its shape diagnostic share this predicate, so a shape is reported exactly where the hoist rewrites it.
+
+### `packages/codegen/src/dsl/enrich.ts::notedHiddenListRef`
+
+Promotes a reference to a hidden separated-list rule and records the rewrite as a `hidden-list-reference` shape under the parent kind, when the promotion changed the member.
+
+### `packages/codegen/src/dsl/layer.ts::get#1`
+
+The getter that `enrich` installs for each pending base key. Reading a base key before the layer pass completed it throws, naming the key. The runtime calls these in the order that was verified against tree-sitter, so a read out of order is a bug in the caller, not in the grammar.
+
+### `packages/codegen/src/dsl/layer.ts::get#2`
+
+The `rules` getter on the options that `wire` returns. Reading it before `externals` has run the layer pass throws, because the rule callbacks come from that pass. After the pass, it returns the rule callbacks of the pass output.
