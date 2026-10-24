@@ -117,7 +117,12 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CountQuantifier };
-		arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CountQuantifier };
+		readonly arm: {
+			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CountQuantifier };
+			countQuantifierGroup<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.CountQuantifier };
+		};
 	};
 	backreferenceEscape<T extends { readonly $type: number } | number>(
 		v: T
@@ -134,9 +139,14 @@ export interface IsGuards {
 			v: T
 		): v is T & { readonly $type: TSKindId.CharacterClassEscape };
 	};
-	unicodePropertyValueExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyValueExpression };
+	readonly unicodePropertyValueExpression: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnicodePropertyValueExpression };
+		unicodePropertyValueExpressionGroup<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.UnicodePropertyValueExpression };
+	};
 	identityEscape<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IdentityEscape };
@@ -310,12 +320,12 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ZeroOrMore_guard = _g(TSKindId.ZeroOrMore);
 	const _kind_OneOrMore_guard = _g(TSKindId.OneOrMore);
 	const _kind_Optional_guard = _g(TSKindId.Optional);
+	const _kind_CountQuantifierGroup_guard = _g(TSKindId.CountQuantifierGroup);
 	const _kind_CountQuantifierArm_guard = _g(TSKindId.CountQuantifierArm);
 	const _kind_CountQuantifier_guard = _g(TSKindId.CountQuantifier);
+	const _kind_UnicodePropertyValueExpressionGroup_guard = _g(TSKindId.UnicodePropertyValueExpressionGroup);
 	const _kind_UnicodePropertyValueExpression_guard = _g(TSKindId.UnicodePropertyValueExpression);
 	const _kind_IdentityEscape_guard = _g(TSKindId.IdentityEscape);
-	const _kind_CountQuantifierGroup_guard = _g(TSKindId.CountQuantifierGroup);
-	const _kind_UnicodePropertyValueExpressionGroup_guard = _g(TSKindId.UnicodePropertyValueExpressionGroup);
 	const _kind_Lazy_guard = _g(TSKindId.Lazy);
 	const _kind_UnicodePropertyName_guard = _g(TSKindId.UnicodePropertyName);
 	const _kind_PosixClassName_guard = _g(TSKindId.PosixClassName);
@@ -371,11 +381,28 @@ export function guardsWith(test: KindTest): IsGuards {
 		lookbehindAssertion: _at(_kind_LookaroundAssertion_guard, 'content', _kind_LookbehindAssertion_guard)
 	});
 	const _form_CountQuantifier_guard = _vg(_g(TSKindId.CountQuantifier), {
-		arm: _at(_kind_CountQuantifier_guard, 'content', _kind_CountQuantifierArm_guard)
+		arm: _at(
+			_kind_CountQuantifier_guard,
+			'content',
+			_vg(_g(TSKindId.CountQuantifierArm), {
+				countQuantifierGroup: _at(
+					_kind_CountQuantifierArm_guard,
+					'countQuantifierGroup',
+					_kind_CountQuantifierGroup_guard
+				)
+			})
+		)
 	});
 	const _form_CharacterClassEscape_guard = _vg(_g(TSKindId.CharacterClassEscape), {
 		arm: _at(_kind_CharacterClassEscape_guard, 'content', _kind_CharacterClassEscapeArm_guard),
 		unicodeCharacterEscape: _at(_kind_CharacterClassEscape_guard, 'content', _kind_UnicodeCharacterEscape_guard)
+	});
+	const _form_UnicodePropertyValueExpression_guard = _vg(_g(TSKindId.UnicodePropertyValueExpression), {
+		unicodePropertyValueExpressionGroup: _at(
+			_kind_UnicodePropertyValueExpression_guard,
+			'unicodePropertyValueExpressionGroup',
+			_kind_UnicodePropertyValueExpressionGroup_guard
+		)
 	});
 	const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
 		enable: _kind_InlineFlagsGroupEnable_guard,
@@ -402,7 +429,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		backreferenceEscape: _kind_BackreferenceEscape_guard,
 		namedGroupBackreference: _kind_NamedGroupBackreference_guard,
 		characterClassEscape: _form_CharacterClassEscape_guard,
-		unicodePropertyValueExpression: _kind_UnicodePropertyValueExpression_guard,
+		unicodePropertyValueExpression: _form_UnicodePropertyValueExpression_guard,
 		identityEscape: _kind_IdentityEscape_guard,
 		countQuantifierGroup: _kind_CountQuantifierGroup_guard,
 		countQuantifierArm: _kind_CountQuantifierArm_guard,

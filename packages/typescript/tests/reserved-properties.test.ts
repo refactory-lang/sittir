@@ -31,8 +31,9 @@ describe('the reserved set in effect at a position', () => {
 		expect(ts.parse('Symbol.for;').$render!().toString()).toBe('Symbol.for;');
 	});
 
-	it('still refuses the keyword at a plain identifier', () => {
-		expect(() => (ts.build.identifier as (text: string) => unknown)('for')).toThrow("identifier: 'for' is a reserved word");
+	it('still refuses the keyword in a slot under the global set', () => {
+		const word = (ts.build.identifier as (text: string) => never)('for');
+		expect(() => ts.build.throwStatement.strict(word)).toThrow("ThrowStatement.expression: 'for' is a reserved word");
 	});
 
 	it.each(['a?.for;', 'a?.class();', 'a?.await;', 'a?.static;'])('parses %s after an optional chain', (src) => {

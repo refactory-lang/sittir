@@ -1183,6 +1183,19 @@ describe('count_quantifier sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.CountQuantifierArm);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('arm.countQuantifierGroup builds the parent', () => {
+		const node = ir.countQuantifier.arm.countQuantifierGroup({
+			content: [
+				{
+					decimalDigits: stampBuilt({ $type: TSKindId.DecimalDigits, $text: 'test', $named: true }) as any,
+					countQuantifierGroup: stampBuilt({ $type: TSKindId.DecimalDigits, $text: 'test', $named: true }) as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CountQuantifier);
+		expect((node as any).content()?.$type).toBe(TSKindId.CountQuantifierArm);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('backreference_escape', () => {
@@ -1298,6 +1311,25 @@ describe('unicode_property_value_expression', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('unicode_property_value_expression sub-factories', () => {
+	it('unicodePropertyValueExpressionGroup builds the parent', () => {
+		const node = ir.unicodePropertyValueExpression.unicodePropertyValueExpressionGroup({
+			unicodePropertyValue: stampBuilt({ $type: TSKindId.UnicodePropertyValue, $text: 'test', $named: true }) as any,
+			unicodePropertyValueExpressionGroup: stampBuilt({
+				$type: TSKindId.UnicodePropertyName,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({ $type: TSKindId.UnicodePropertyValue, $text: 'test', $named: true }) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.UnicodePropertyValueExpression);
+		expect((node as any).unicodePropertyValueExpressionGroup()?.$type).toBe(
+			TSKindId.UnicodePropertyValueExpressionGroup
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

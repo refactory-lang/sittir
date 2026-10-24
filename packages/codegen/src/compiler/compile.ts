@@ -40,7 +40,8 @@ export interface CompileGrammarConfig {
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
-	if (readsGrammarBindings(cfg.package, cfg.evaluation)) await assertPackageBindingsFresh(cfg.package);
+	const bound = readsGrammarBindings(cfg.package, cfg.evaluation);
+	if (bound) await assertPackageBindingsFresh(cfg.package);
 	const evaluated = await evaluatePackage(cfg.package, cfg.evaluation);
 	const diagnosis = diagnoseGrammar({
 		grammar,
@@ -59,6 +60,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		grammar
 	});
 	stampIrSurface(nodeMap, linked.generatedIdTables);
+	if (!bound) nodeMap.unbound = true;
 
 	return {
 		grammar,

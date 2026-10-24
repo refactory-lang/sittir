@@ -17,7 +17,6 @@ import {
 	elementsWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	LIST_ITEMS,
 	LIST_READ,
 	LIST_METHODS,
@@ -2442,7 +2441,6 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 						{
 							slot: 'useWildcardGroup',
 							stored: '_use_wildcard_group',
-							kind: TSKindId.UseWildcardGroup as const,
 							make: RAW.buildUseWildcardGroup,
 							keys: [{ name: 'path', rest: false }]
 						},
@@ -2461,7 +2459,6 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 			data._use_wildcard_group === undefined
 				? undefined
 				: () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
-		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4611,7 +4608,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: RAW.buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -4634,7 +4630,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: RAW.buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -4658,7 +4653,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 			data._match_block_arms === undefined
 				? undefined
 				: () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
-		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4676,12 +4670,15 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 
 export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.LastMatchArm.Parsed {
 	const handle = currentHandle();
-	const readGroup_pattern = () => hydrateSlot<T.MatchPattern | undefined>(node, '_pattern', tree);
+	const readGroup_match = () => hydrateSlot<T.MatchPattern | undefined>(node, '_match', tree);
 	const node = {
 		...data,
 		$type: TSKindId.LastMatchArm as const,
 		attributes() {
 			return hydrateSlots<T.AttributeItem | T.InnerAttributeItem>(this, '_attributes', tree);
+		},
+		match() {
+			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
@@ -4699,6 +4696,10 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						},
 						tree
 					)
+				),
+			match: (v: NonNullable<T.LastMatchArm['_match']>) =>
+				rebuilt(node, handle, () =>
+					wrapLastMatchArm({ ...$edited(data), _match: admitSlot(handle, 'last_match_arm', 'match', v) }, tree)
 				),
 			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
 				rebuilt(node, handle, () =>
@@ -4718,9 +4719,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -4729,18 +4729,17 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						},
 						'pattern',
 						args,
-						(v: NonNullable<T.LastMatchArm['_pattern']>) =>
-							wrapLastMatchArm({ ...$edited(data), _pattern: admitSlot(handle, 'last_match_arm', 'pattern', v) }, tree),
-						() => readGroup_pattern.call(node)
+						(v: NonNullable<T.LastMatchArm['_match']>) =>
+							wrapLastMatchArm({ ...$edited(data), _match: admitSlot(handle, 'last_match_arm', 'match', v) }, tree),
+						() => readGroup_match.call(node)
 					)
 				),
 			condition: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -4749,15 +4748,14 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 						},
 						'condition',
 						args,
-						(v: NonNullable<T.LastMatchArm['_pattern']>) =>
-							wrapLastMatchArm({ ...$edited(data), _pattern: admitSlot(handle, 'last_match_arm', 'pattern', v) }, tree),
-						() => readGroup_pattern.call(node)
+						(v: NonNullable<T.LastMatchArm['_match']>) =>
+							wrapLastMatchArm({ ...$edited(data), _match: admitSlot(handle, 'last_match_arm', 'match', v) }, tree),
+						() => readGroup_match.call(node)
 					)
 				)
 		},
-		pattern: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		pattern: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7794,14 +7792,14 @@ export function wrapReferenceExpressionRawConst(
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionRawConst as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		argument() {
+			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.ReferenceExpressionRawConst['_value']>) =>
+			argument: (v: NonNullable<T.ReferenceExpressionRawConst['_argument']>) =>
 				rebuilt(node, handle, () =>
 					wrapReferenceExpressionRawConst(
-						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_raw_const', 'value', v) },
+						{ ...$edited(data), _argument: admitSlot(handle, 'reference_expression_raw_const', 'argument', v) },
 						tree
 					)
 				)
@@ -7828,14 +7826,14 @@ export function wrapReferenceExpressionRawMut(
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionRawMut as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		argument() {
+			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.ReferenceExpressionRawMut['_value']>) =>
+			argument: (v: NonNullable<T.ReferenceExpressionRawMut['_argument']>) =>
 				rebuilt(node, handle, () =>
 					wrapReferenceExpressionRawMut(
-						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_raw_mut', 'value', v) },
+						{ ...$edited(data), _argument: admitSlot(handle, 'reference_expression_raw_mut', 'argument', v) },
 						tree
 					)
 				)
@@ -7862,14 +7860,14 @@ export function wrapReferenceExpressionMut(
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionMut as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		argument() {
+			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.ReferenceExpressionMut['_value']>) =>
+			argument: (v: NonNullable<T.ReferenceExpressionMut['_argument']>) =>
 				rebuilt(node, handle, () =>
 					wrapReferenceExpressionMut(
-						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_mut', 'value', v) },
+						{ ...$edited(data), _argument: admitSlot(handle, 'reference_expression_mut', 'argument', v) },
 						tree
 					)
 				)
@@ -7896,14 +7894,14 @@ export function wrapReferenceExpressionBare(
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionBare as const,
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		argument() {
+			return hydrateSlot<T.Expression>(this, '_argument', tree);
 		},
 		$with: {
-			value: (v: NonNullable<T.ReferenceExpressionBare['_value']>) =>
+			argument: (v: NonNullable<T.ReferenceExpressionBare['_argument']>) =>
 				rebuilt(node, handle, () =>
 					wrapReferenceExpressionBare(
-						{ ...$edited(data), _value: admitSlot(handle, 'reference_expression_bare', 'value', v) },
+						{ ...$edited(data), _argument: admitSlot(handle, 'reference_expression_bare', 'argument', v) },
 						tree
 					)
 				)
@@ -8827,12 +8825,15 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
 	const handle = currentHandle();
-	const readGroup_pattern = () => hydrateSlot<T.MatchPattern | undefined>(node, '_pattern', tree);
+	const readGroup_match = () => hydrateSlot<T.MatchPattern | undefined>(node, '_match', tree);
 	const node = {
 		...data,
 		$type: TSKindId.MatchArmWithComma as const,
 		attributes() {
 			return hydrateSlots<T.AttributeItem | T.InnerAttributeItem>(this, '_attributes', tree);
+		},
+		match() {
+			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
@@ -8848,6 +8849,13 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						tree
 					)
 				),
+			match: (v: NonNullable<T.MatchArmWithComma['_match']>) =>
+				rebuilt(node, handle, () =>
+					wrapMatchArmWithComma(
+						{ ...$edited(data), _match: admitSlot(handle, 'match_arm_with_comma', 'match', v) },
+						tree
+					)
+				),
 			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
 				rebuilt(node, handle, () =>
 					wrapMatchArmWithComma(
@@ -8859,9 +8867,8 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -8870,21 +8877,20 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						},
 						'pattern',
 						args,
-						(v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
+						(v: NonNullable<T.MatchArmWithComma['_match']>) =>
 							wrapMatchArmWithComma(
-								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_with_comma', 'pattern', v) },
+								{ ...$edited(data), _match: admitSlot(handle, 'match_arm_with_comma', 'match', v) },
 								tree
 							),
-						() => readGroup_pattern.call(node)
+						() => readGroup_match.call(node)
 					)
 				),
 			condition: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -8893,18 +8899,17 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 						},
 						'condition',
 						args,
-						(v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
+						(v: NonNullable<T.MatchArmWithComma['_match']>) =>
 							wrapMatchArmWithComma(
-								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_with_comma', 'pattern', v) },
+								{ ...$edited(data), _match: admitSlot(handle, 'match_arm_with_comma', 'match', v) },
 								tree
 							),
-						() => readGroup_pattern.call(node)
+						() => readGroup_match.call(node)
 					)
 				)
 		},
-		pattern: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		pattern: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -8921,12 +8926,15 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 
 export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeHandle): T.MatchArmBlockEnding.Parsed {
 	const handle = currentHandle();
-	const readGroup_pattern = () => hydrateSlot<T.MatchPattern | undefined>(node, '_pattern', tree);
+	const readGroup_match = () => hydrateSlot<T.MatchPattern | undefined>(node, '_match', tree);
 	const node = {
 		...data,
 		$type: TSKindId.MatchArmBlockEnding as const,
 		attributes() {
 			return hydrateSlots<T.AttributeItem | T.InnerAttributeItem>(this, '_attributes', tree);
+		},
+		match() {
+			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
 		value() {
 			return hydrateSlot<
@@ -8954,6 +8962,13 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						tree
 					)
 				),
+			match: (v: NonNullable<T.MatchArmBlockEnding['_match']>) =>
+				rebuilt(node, handle, () =>
+					wrapMatchArmBlockEnding(
+						{ ...$edited(data), _match: admitSlot(handle, 'match_arm_block_ending', 'match', v) },
+						tree
+					)
+				),
 			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
 				rebuilt(node, handle, () =>
 					wrapMatchArmBlockEnding(
@@ -8965,9 +8980,8 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -8976,21 +8990,20 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						},
 						'pattern',
 						args,
-						(v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
+						(v: NonNullable<T.MatchArmBlockEnding['_match']>) =>
 							wrapMatchArmBlockEnding(
-								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_block_ending', 'pattern', v) },
+								{ ...$edited(data), _match: admitSlot(handle, 'match_arm_block_ending', 'match', v) },
 								tree
 							),
-						() => readGroup_pattern.call(node)
+						() => readGroup_match.call(node)
 					)
 				),
 			condition: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: RAW.buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -8999,18 +9012,17 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 						},
 						'condition',
 						args,
-						(v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
+						(v: NonNullable<T.MatchArmBlockEnding['_match']>) =>
 							wrapMatchArmBlockEnding(
-								{ ...$edited(data), _pattern: admitSlot(handle, 'match_arm_block_ending', 'pattern', v) },
+								{ ...$edited(data), _match: admitSlot(handle, 'match_arm_block_ending', 'match', v) },
 								tree
 							),
-						() => readGroup_pattern.call(node)
+						() => readGroup_match.call(node)
 					)
 				)
 		},
-		pattern: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: data._pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		pattern: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: data._match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9502,8 +9514,8 @@ export function wrapFieldPatternShorthand(
 	const node = {
 		...data,
 		$type: TSKindId.FieldPatternShorthand as const,
-		ref() {
-			return this._ref;
+		byReference() {
+			return this._by_reference;
 		},
 		mutable() {
 			return this._mutable;
@@ -9512,10 +9524,10 @@ export function wrapFieldPatternShorthand(
 			return hydrateSlot<T.ShorthandFieldIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			ref: (v: NonNullable<T.FieldPatternShorthand['_ref']>) =>
+			byReference: (v: NonNullable<T.FieldPatternShorthand['_by_reference']>) =>
 				rebuilt(node, handle, () =>
 					wrapFieldPatternShorthand(
-						{ ...$edited(data), _ref: admitSlot(handle, 'field_pattern_shorthand', 'ref', v) },
+						{ ...$edited(data), _by_reference: admitSlot(handle, 'field_pattern_shorthand', 'byReference', v) },
 						tree
 					)
 				),
@@ -9553,8 +9565,8 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 	const node = {
 		...data,
 		$type: TSKindId.FieldPatternNamed as const,
-		ref() {
-			return this._ref;
+		byReference() {
+			return this._by_reference;
 		},
 		mutable() {
 			return this._mutable;
@@ -9566,9 +9578,12 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 			return hydrateSlot<T.Pattern>(this, '_pattern', tree);
 		},
 		$with: {
-			ref: (v: NonNullable<T.FieldPatternNamed['_ref']>) =>
+			byReference: (v: NonNullable<T.FieldPatternNamed['_by_reference']>) =>
 				rebuilt(node, handle, () =>
-					wrapFieldPatternNamed({ ...$edited(data), _ref: admitSlot(handle, 'field_pattern_named', 'ref', v) }, tree)
+					wrapFieldPatternNamed(
+						{ ...$edited(data), _by_reference: admitSlot(handle, 'field_pattern_named', 'byReference', v) },
+						tree
+					)
 				),
 			mutable: (v: NonNullable<T.FieldPatternNamed['_mutable']>) =>
 				rebuilt(node, handle, () =>
@@ -10684,7 +10699,6 @@ export function wrapParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: RAW.buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -10707,7 +10721,6 @@ export function wrapParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: RAW.buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -10728,7 +10741,6 @@ export function wrapParametersElementsReceiver(
 		attributeItem:
 			data._receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
 		content: data._receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
-		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -16338,11 +16350,11 @@ function viewReferenceExpressionRawConst(data: RecordStub, tree: TreeHandle): T.
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionRawConst as const,
-		value() {
+		argument() {
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
-			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args)
+			argument: (...args: unknown[]) => rowWith(node, tree, _wrap, 'argument', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16363,11 +16375,11 @@ function viewReferenceExpressionRawMut(data: RecordStub, tree: TreeHandle): T.Re
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionRawMut as const,
-		value() {
+		argument() {
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
-			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args)
+			argument: (...args: unknown[]) => rowWith(node, tree, _wrap, 'argument', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16388,11 +16400,11 @@ function viewReferenceExpressionMut(data: RecordStub, tree: TreeHandle): T.Refer
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionMut as const,
-		value() {
+		argument() {
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
-			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args)
+			argument: (...args: unknown[]) => rowWith(node, tree, _wrap, 'argument', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -16413,11 +16425,11 @@ function viewReferenceExpressionBare(data: RecordStub, tree: TreeHandle): T.Refe
 	const node = {
 		...data,
 		$type: TSKindId.ReferenceExpressionBare as const,
-		value() {
+		argument() {
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		$with: {
-			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args)
+			argument: (...args: unknown[]) => rowWith(node, tree, _wrap, 'argument', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -17411,7 +17423,7 @@ function viewFieldPatternShorthand(data: RecordStub, tree: TreeHandle): T.FieldP
 	const node = {
 		...data,
 		$type: TSKindId.FieldPatternShorthand as const,
-		ref() {
+		byReference() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		mutable() {
@@ -17421,7 +17433,7 @@ function viewFieldPatternShorthand(data: RecordStub, tree: TreeHandle): T.FieldP
 			return viewSlot<T.ShorthandFieldIdentifier>(this, tree, 3, 9, 7);
 		},
 		$with: {
-			ref: (...args: unknown[]) => rowWith(node, tree, _wrap, 'ref', args),
+			byReference: (...args: unknown[]) => rowWith(node, tree, _wrap, 'byReference', args),
 			mutable: (...args: unknown[]) => rowWith(node, tree, _wrap, 'mutable', args),
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
@@ -17444,7 +17456,7 @@ function viewFieldPatternNamed(data: RecordStub, tree: TreeHandle): T.FieldPatte
 	const node = {
 		...data,
 		$type: TSKindId.FieldPatternNamed as const,
-		ref() {
+		byReference() {
 			return recordFlag(this, tree, 2, 0);
 		},
 		mutable() {
@@ -17457,7 +17469,7 @@ function viewFieldPatternNamed(data: RecordStub, tree: TreeHandle): T.FieldPatte
 			return viewSlot<T.Pattern>(this, tree, 12, 5, 0);
 		},
 		$with: {
-			ref: (...args: unknown[]) => rowWith(node, tree, _wrap, 'ref', args),
+			byReference: (...args: unknown[]) => rowWith(node, tree, _wrap, 'byReference', args),
 			mutable: (...args: unknown[]) => rowWith(node, tree, _wrap, 'mutable', args),
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
 			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)

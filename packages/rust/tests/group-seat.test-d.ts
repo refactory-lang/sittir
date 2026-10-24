@@ -14,9 +14,10 @@ function expectTrue<_T extends true>(): void {}
 
 const engine = await createEngine(rust);
 
-export function sameNameKeyReadsTheInnerPattern(arm: T.LastMatchArm.Parsed): void {
+export function groupKeyReadsTheInnerPatternAndTheSeatTheWholeGroup(arm: T.LastMatchArm.Parsed): void {
 	type Inner = ReturnType<typeof arm.pattern>;
 	expectTrue<Equals<Extract<Inner, { readonly $type: T.MatchPattern['$type'] }>, never>>();
+	expectTrue<Equals<ReturnType<typeof arm.match>['$type'], T.MatchPattern['$type']>>();
 }
 
 export function newKeyReadsAsOptional(arm: T.LastMatchArm.Parsed): void {
@@ -24,11 +25,12 @@ export function newKeyReadsAsOptional(arm: T.LastMatchArm.Parsed): void {
 	expectTrue<Equals<undefined extends Condition ? true : false, true>>();
 }
 
-export function sameNameSetterTakesTheInnerPatternOrTheWholeGroup(arm: T.LastMatchArm.Parsed): string {
+export function groupKeySetterTakesTheInnerPatternAndTheSeatTheWholeGroup(arm: T.LastMatchArm.Parsed): string {
 	const inner = arm.$with.pattern(engine.build.identifier('b')).$render();
-	const whole = arm.$with.pattern(
-		engine.build.matchPattern({ pattern: engine.build.identifier('c'), condition: engine.build.identifier('d') })
-	);
+	const group = engine.build.matchPattern({ pattern: engine.build.identifier('c'), condition: engine.build.identifier('d') });
+	const whole = arm.$with.match(group);
+	// @ts-expect-error the group's pattern key takes the inner pattern, not the whole group
+	arm.$with.pattern(group);
 	return inner + whole.$render();
 }
 
@@ -45,7 +47,7 @@ export function flattenedListSeatReadsItsAccessors(block: T.MatchBlock.Parsed): 
 export function wholeGroupBySlotOrFlattenedKeysCompile(): void {
 	const value = engine.build.identifier('v');
 	const whole = engine.build.matchPattern({ pattern: engine.build.identifier('p') });
-	engine.build.lastMatchArm({ pattern: whole, value });
+	engine.build.lastMatchArm({ match: whole, value });
 	engine.build.lastMatchArm({ pattern: engine.build.identifier('p'), condition: engine.build.identifier('c'), value });
 }
 
@@ -53,7 +55,7 @@ export function flattenedKeyBesideTheWholeGroupIsAnError(): void {
 	const value = engine.build.identifier('v');
 	const whole = engine.build.matchPattern({ pattern: engine.build.identifier('p') });
 	// @ts-expect-error a group seated by its slot takes none of its keys beside it
-	engine.build.lastMatchArm({ pattern: whole, condition: engine.build.identifier('c'), value });
+	engine.build.lastMatchArm({ match: whole, condition: engine.build.identifier('c'), value });
 }
 
 export function aRequiredSeatHasOneShape(arm: T.LastMatchArm.Bound): void {

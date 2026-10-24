@@ -1,32 +1,33 @@
-import type { StructureRow, StructureTable } from '@sittir/types';
+import type { KindMembership, StructureRow, StructureTable } from '@sittir/types';
 import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
 import { isRebuilt } from './node-data.ts';
 import { isNodeValue } from './utils.ts';
+import { isCoordinate } from './read.ts';
 import { sourceOf } from './source-stamp.ts';
 import { isBuiltNode } from './built-arena.ts';
 
-export function verifyStructure(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
-	if (typeof value === 'object' && value !== null && !seen.has(value) && !isBuiltNode(value)) verifyNode(value as Record<string, unknown>, table, seen);
+export function verifyStructure(value: unknown, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
+	if (typeof value === 'object' && value !== null && !seen.has(value) && !isBuiltNode(value)) verifyNode(value as Record<string, unknown>, table, membership, seen);
 }
 
-function verifyNode(node: Record<string, unknown>, table: StructureTable, seen: WeakSet<object>): void {
+function verifyNode(node: Record<string, unknown>, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
 	const row = typeof node.$type === 'number' ? table[node.$type] : undefined;
-	if (row !== undefined) checkRow(node, row);
+	if (row !== undefined) checkRow(node, row, membership);
 	for (const [key, child] of Object.entries(node)) {
-		if (!key.startsWith('$')) verifyBuilt(child, table, seen);
+		if (!key.startsWith('$')) verifyBuilt(child, table, membership, seen);
 	}
 	seen.add(node);
 }
 
-function verifyBuilt(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
+function verifyBuilt(value: unknown, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
 	if (Array.isArray(value)) {
-		for (const item of value) verifyBuilt(item, table, seen);
+		for (const item of value) verifyBuilt(item, table, membership, seen);
 		return;
 	}
 	if (typeof value !== 'object' || value === null || seen.has(value)) return;
 	const node = value as Record<string, unknown>;
-	if (sourceOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, seen);
+	if (sourceOf(node) === Source.Factory || isRebuilt(node)) verifyNode(node, table, membership, seen);
 }
 
 export function checkInput(row: StructureRow, args: readonly unknown[], declared: readonly string[] | undefined = row.config): void {
@@ -58,7 +59,7 @@ function listInput(args: readonly unknown[], slot: string, arrival: 'key' | numb
 	return isConfigInput(only) && slot in only ? (Array.isArray(only[slot]) ? (only[slot] as readonly unknown[]) : [only[slot]]) : rest;
 }
 
-export function checkRow(node: Readonly<Record<string, unknown>>, row: StructureRow): void {
+export function checkRow(node: Readonly<Record<string, unknown>>, row: StructureRow, membership: KindMembership): void {
 	for (const [storage, slot] of row.required ?? []) {
 		if (node[storage] === undefined || node[storage] === null) throw new Error(`Missing required slot '${slot}' on ${row.kind}`);
 	}
@@ -66,5 +67,20 @@ export function checkRow(node: Readonly<Record<string, unknown>>, row: Structure
 		const items = node[storage];
 		if (!Array.isArray(items) || items.length === 0) throw new Error(`${label}: requires at least one element`);
 	}
-	for (const [storage, label, expected] of row.nodeOnly ?? []) rejectBareText(node[storage], label, expected);
+	for (const [storage, label, expected, kinds] of row.nodeOnly ?? []) {
+		const value = rejectBareText(node[storage], label, expected);
+		if (kinds !== undefined) rejectForeignKind(value, label, expected, kinds, membership);
+	}
+}
+
+function rejectForeignKind(value: unknown, label: string, expected: string, kinds: readonly number[], membership: KindMembership): void {
+	if (Array.isArray(value)) {
+		for (const item of value) rejectForeignKind(item, label, expected, kinds, membership);
+		return;
+	}
+	if (typeof value !== 'object' || value === null || isCoordinate(value)) return;
+	const type = (value as { $type?: unknown }).$type;
+	if (typeof type === 'number' && !kinds.some((kind) => membership.isMember(kind, type))) {
+		throw new Error(`${label}: a strict factory takes ${expected}, not a node of kind ${type}`);
+	}
 }
