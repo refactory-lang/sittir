@@ -122,11 +122,11 @@ describe('ofType keeps exactly what the language guard holds for', () => {
 		const rows = (language as unknown as { hooks?: unknown }) && (await import(`../../${_}/src/portable.ts`)).rows as { table: { paths: Record<string, unknown> } };
 		const guards = (language as unknown as { is: { portable: unknown } }).is.portable;
 		const guardAt = (path: string): Guard => path.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown>)[segment], guards) as Guard;
-		const text = source(file);
-		const all = [...descendants(engine, text)];
+		const view = descendants(engine, source(file));
+		const all = [...view];
 		const disagreements: string[] = [];
 		for (const path of Object.keys(rows.table.paths)) {
-			const selected = [...descendants(engine, text).ofType(kindAt(path))].map(keyOf);
+			const selected = [...view.ofType(kindAt(path))].map(keyOf);
 			const held = all.filter(guardAt(path)).map(keyOf);
 			if (JSON.stringify(selected) !== JSON.stringify(held)) disagreements.push(`${path}: ofType ${selected.length}, guard ${held.length}`);
 		}
@@ -136,11 +136,11 @@ describe('ofType keeps exactly what the language guard holds for', () => {
 	it.each(CORPUS)('%s: every kind id, over every descendant', async (name, language, file) => {
 		const engine = await createEngine(language as typeof rust);
 		const { membership } = (await import(`../../${name}/src/api.ts`)).hooks as { membership: { isMember(kind: number, type: number): boolean } };
-		const text = source(file);
-		const all = [...descendants(engine, text)];
+		const view = descendants(engine, source(file));
+		const all = [...view];
 		const disagreements: string[] = [];
 		for (const kind of Object.values(engine.kinds as Record<string, unknown>).filter((value): value is number => typeof value === 'number')) {
-			const selected = [...descendants(engine, text).ofType(kind)].map(keyOf);
+			const selected = [...view.ofType(kind)].map(keyOf);
 			const held = all.filter((item) => membership.isMember(kind, kindOf(item))).map(keyOf);
 			if (JSON.stringify(selected) !== JSON.stringify(held)) disagreements.push(`${engine.trivia.kindName(kind)}: ofType ${selected.length}, guard ${held.length}`);
 		}
