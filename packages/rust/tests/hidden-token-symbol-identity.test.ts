@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { scopeBuilders } from '@sittir/common/engine';
+import * as raw from '../src/factories/raw.ts';
 import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
 
@@ -21,5 +23,16 @@ describe('a hidden token rule whose parse holds its token', () => {
 		const built = rs.build.rangeExpressionBare(TSKindId.DotDot);
 		expect(JSON.parse(JSON.stringify(built))).toEqual(parsed);
 		expect(rs.render(built).toString()).toBe('..');
+	});
+});
+
+describe('a runtime engine holds an alias envelope\'s kind-id content to its kinds', () => {
+	it('refuses another kind id or a function where the alias holds its keyword', async () => {
+		const rs = await createEngine(rust, { verifyStructure: 'runtime' });
+		const { buildCrateVisibilityModifier } = scopeBuilders(rs, raw);
+		const loose = buildCrateVisibilityModifier as unknown as (...args: unknown[]) => unknown;
+		expect(() => loose(TSKindId.DotDot)).toThrow('CrateVisibilityModifier.content: takes a kind id of');
+		expect(() => loose(() => 1)).toThrow('CrateVisibilityModifier.content: takes a kind id of');
+		expect(rs.render(buildCrateVisibilityModifier()).toString()).toBe('crate');
 	});
 });

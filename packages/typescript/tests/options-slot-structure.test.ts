@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { scopeBuilders } from '@sittir/common/engine';
+import * as raw from '../src/factories/raw.ts';
 import typescript from '../src/index.ts';
 
 describe('a runtime engine holds an options slot to what its storage takes', () => {
@@ -20,5 +22,16 @@ describe('a runtime engine holds a separated list\'s elements to what their stor
 			expect(() => loose(builder)(false)).toThrow('a strict factory takes a built node, not a boolean');
 			expect(() => loose(builder)(() => 1)).toThrow('a strict factory takes a built node, not a function');
 		}
+	});
+});
+
+describe('a runtime engine holds an alias envelope\'s content to what its storage takes', () => {
+	it('refuses a boolean, a function or a string where an alias holds a built node', async () => {
+		const ts = await createEngine(typescript, { verifyStructure: 'runtime' });
+		const { buildTypeIdentifier } = scopeBuilders(ts, raw);
+		const loose = buildTypeIdentifier as unknown as (...args: unknown[]) => unknown;
+		expect(() => loose(false)).toThrow('TypeIdentifier.content: a strict factory takes a built node, not a boolean');
+		expect(() => loose(() => 1)).toThrow('TypeIdentifier.content: a strict factory takes a built node, not a function');
+		expect(ts.render(buildTypeIdentifier(ts.build.identifier('T'))).toString()).toBe('T');
 	});
 });
