@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { findEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
+import { findEntryForLiteralText, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { SeamOrigin } from '../../types/rule.ts';
 import { DELIMITER_LABEL, SEPARATOR_LABEL, VARIANT_LABEL } from '../../dsl/primitives/spacing.ts';
@@ -71,7 +71,7 @@ export interface SiteCandidate {
 
 export interface SitePreferencesConfig {
 	readonly nodeMap: NodeMap;
-	readonly kindEntries: readonly KindEntryLike[];
+	readonly kindEntries: readonly (KindEntryLike & { readonly id: number })[];
 	readonly renderRules?: RenderRules;
 	readonly options?: OptionsConfig;
 }
@@ -236,7 +236,7 @@ function separatorArmKinds(node: AssembledList, config: SitePreferencesConfig): 
 			if (name === undefined) throw new Error(`defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
 			return name;
 		}
-		const entry = findOwnKindEntry(config.kindEntries, arm.name) ?? (arm.aliasedTo === undefined ? undefined : findOwnKindEntry(config.kindEntries, arm.aliasedTo));
+		const entry = arm.kindId === undefined ? undefined : config.kindEntries.find((candidate) => candidate.id === arm.kindId);
 		if (entry === undefined) throw new Error(`defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
 		return displayNameOfEntry(entry, config.kindEntries);
 	});
