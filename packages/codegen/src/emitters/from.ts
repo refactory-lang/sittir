@@ -27,7 +27,6 @@ import {
 	classifyFactoryShape,
 	expandAndDedupeContentTypes,
 	withEmptyOverload,
-	isIdentifierKey,
 	declaredOverload,
 	refuseUndeclared,
 	refusingParam,
@@ -74,8 +73,6 @@ import {
 	childElementType,
 	kindEnumMemberDiscriminants,
 	keywordArmTextMapExpr,
-	delimiterMembersFor,
-	listHasOptions,
 	separatedListSurface,
 	spellingTypeOf,
 	listOptionKeys,
@@ -156,7 +153,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, isNodeOfKind, isNodeValue, listStorage, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -557,10 +554,8 @@ function emitRestParamFromResolver(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
-	storageKey: string,
 	unwrapConfigKey: string | undefined,
-	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
-	childrenTypeAnnotation = '',
+	buildCallExpr: (varExpr: string) => string,
 	leadingOptions?: LeadingOptions
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
@@ -592,26 +587,18 @@ function emitRestParamFromResolver(
 			...admit,
 			...split,
 			...unwrap,
-			`  return ${buildCallExpr(freshVar, false)};`,
+			`  return ${buildCallExpr(freshVar)};`,
 			'}'
 		].join('\n');
 	}
-	const storageAccess = isIdentifierKey(storageKey)
-		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
-		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
+	const sameKind = leadingOptions === undefined ? `${source}[0]` : `withOptions(${source}[0], options)`;
 	return [
 		...head,
 		...admit,
 		...split,
-		`  if (${source}.length === 1 && isNodeOfKind(${source}[0], ${typeCheck})) {`,
-		`    const data = ${source}[0];`,
-		`    const stored = ${storageAccess};`,
-		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
-		...(leadingOptions === undefined ? [] : [`    const held = data as unknown as Record<string, unknown>;`, `    const kept = { ${leadingOptions.keys.map((key, i) => `${JSON.stringify(key)}: held[${JSON.stringify(leadingOptions.storageKeys[i])}]`).join(', ')}, ...options };`]),
-		`    return ${buildCallExpr('children', true)};`,
-		`  }`,
+		`  if (${source}.length === 1 && isNodeOfKind(${source}[0], ${typeCheck})) return ${sameKind} as unknown as ${returnType};`,
 		...unwrap,
-		`  return ${buildCallExpr(freshVar, false)};`,
+		`  return ${buildCallExpr(freshVar)};`,
 		'}'
 	].join('\n');
 }
@@ -626,14 +613,13 @@ function emitRepeatedChildrenFrom(
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	storageKey: string,
 	leadingOptions?: LeadingOptions
 ): string {
 	const resolvable = resolvesLooseInput(slot, nodeMap);
-	const call = (spread: string, held: boolean): string =>
+	const call = (spread: string): string =>
 		leadingOptions === undefined
 			? `${factory}(...(${spread} as unknown as Parameters<typeof ${factory}>))`
-			: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(${held ? 'kept' : 'options'}, ...(${spread} as readonly unknown[]))`;
+			: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(options, ...(${spread} as readonly unknown[]))`;
 	return emitRestParamFromResolver(
 		fn,
 		factory,
@@ -642,11 +628,8 @@ function emitRepeatedChildrenFrom(
 		kind,
 		kindEntries,
 		nodeMap,
-		storageKey,
 		slot.propertyName,
-		(varExpr, isSelfUnwrap) =>
-			call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr, isSelfUnwrap),
-		'',
+		(varExpr) => call(resolvable ? resolveFieldCall(varExpr, slot, true, nodeMap, intern, false, elementType, kindEntries) : varExpr),
 		leadingOptions
 	);
 }
@@ -661,7 +644,6 @@ function emitSingularChildrenFrom(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
-	storageKey: string,
 	inputWiden?: string
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
@@ -674,9 +656,6 @@ function emitSingularChildrenFrom(
 			'}'
 		].join('\n');
 	}
-	const storageAccess = isIdentifierKey(storageKey)
-		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
-		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	const inputType = `${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}`;
 	return [
 		declaredOverload(`export function ${fn}`, refusingParam('input', inputType, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
@@ -684,11 +663,7 @@ function emitSingularChildrenFrom(
 		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
 			? []
 			: [
-					`  if (isNodeOfKind(input, ${typeCheck})) {`,
-					`    const data = input;`,
-					`    const child = ${storageAccess};`,
-					`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
-					`  }`
+					`  if (isNodeOfKind(input, ${typeCheck})) return input as unknown as ${factoryReturnTypeExpr(factory)};`
 				]),
 		`  return ${factory}(${
 			resolvesLooseInput(slot, nodeMap)
@@ -720,7 +695,6 @@ function emitChildrenFrom(
 			inputWiden = separatedListSurface(inner, nodeMap, kindEntries).elemType;
 		}
 	}
-	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts === null) {
 		return [
 			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
@@ -740,7 +714,6 @@ function emitChildrenFrom(
 			kindEntries,
 			nodeMap,
 			intern,
-			storageKey,
 			node.leadingOptions
 		);
 	}
@@ -754,7 +727,6 @@ function emitChildrenFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		storageKey,
 		inputWiden
 	);
 }
@@ -782,31 +754,14 @@ function emitSeparatedListFrom(
 	const resolvable = slotLiteralValues(elementSlot).length === 0;
 	const resolvedElements = (varExpr: string): string =>
 		resolvable ? resolveFieldCall(varExpr, elementSlot, true, nodeMap, intern, false, elemType, kindEntries) : varExpr;
-	const optionKeys = JSON.stringify(listOptionKeys(surface));
-	const contentStorageKey = node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
-
-	const hasSeparatorKindOption = node.separatorRule !== undefined;
-	const hasLeadingOption = node.leadingDelimiter === 'optional';
-	const hasTrailingOption = node.trailingDelimiter === 'optional';
-	const hasOptions = listHasOptions(node);
 
 	const elementsType = node.nonEmpty ? `NonEmptyArray<Admit<${elemType}>>` : `Admit<${elemType}>[]`;
 	const spreadElements = (varExpr: string): string => `...(${varExpr} as unknown as ${elementsType})`;
 
-	const buildOptionsPreservingCall = (varExpr: string): string => {
-		const sourceFields = '(data as unknown as { _separator?: number; _delimiter?: Delimiter })';
-		const optionParts: string[] = [];
-		if (hasSeparatorKindOption) optionParts.push(`separator: ${sourceFields}._separator`);
-		if (hasLeadingOption || hasTrailingOption) {
-			const guard = delimiterMembersFor(node)
-				.map((m) => `d === ${m}`)
-				.join(' || ');
-			optionParts.push(
-				`delimiter: (() => { const d = ${sourceFields}._delimiter; return ${guard} ? d : undefined; })()`
-			);
-		}
-		return `${factory}({ ${optionParts.join(', ')} }, ${spreadElements(varExpr)})`;
-	};
+	const listElements = (varExpr: string): string =>
+		`_listElements(${varExpr}, ${wrapperKindExpr}, (els) => ${resolvedElements('els')}, ${JSON.stringify(tagKinds)}${bagKinds === undefined ? '' : `, ${JSON.stringify(bagKinds)}`})`;
+	const leadingOptions: LeadingOptions | undefined =
+		surface.optionsType === undefined ? undefined : { type: surface.optionsType, keys: listOptionKeys(surface) };
 
 	return emitRestParamFromResolver(
 		fn,
@@ -816,13 +771,12 @@ function emitSeparatedListFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		contentStorageKey,
 		undefined,
-		(varExpr, isSelfUnwrap) =>
-			isSelfUnwrap && hasOptions
-				? buildOptionsPreservingCall(varExpr)
-				: `${factory}(${spreadElements(`_listElements(${varExpr}, ${optionKeys}, ${wrapperKindExpr}, (els) => ${resolvedElements('els')}, ${JSON.stringify(tagKinds)}${bagKinds === undefined ? '' : `, ${JSON.stringify(bagKinds)}`})`)})`,
-		': readonly unknown[]'
+		(varExpr) =>
+			leadingOptions === undefined
+				? `${factory}(${spreadElements(listElements(varExpr))})`
+				: `(${factory} as (...args: unknown[]) => ${factoryReturnTypeExpr(factory)})(options, ${spreadElements(listElements(varExpr))})`,
+		leadingOptions
 	);
 }
 
@@ -1706,17 +1660,12 @@ function emitResolverHelpers(
 
 	lines.push('function _listElements(');
 	lines.push('  input: readonly unknown[],');
-	lines.push('  optionKeys: readonly string[],');
 	lines.push('  wrapperKind: string | undefined,');
 	lines.push('  resolve: (elements: readonly unknown[]) => readonly unknown[],');
 	lines.push('  tagKinds: readonly string[],');
 	lines.push('  bagKinds?: readonly string[],');
 	lines.push('): readonly unknown[] {');
-	lines.push('  const head = input[0];');
-	lines.push(
-		'  const optionsFirst = optionKeys.length > 0 && typeof head === "object" && head !== null && !Array.isArray(head) && !isNodeValue(head) && Object.keys(head).every((k) => optionKeys.includes(k));'
-	);
-	lines.push('  const elements = (optionsFirst ? input.slice(1) : input).map((e) => {');
+	lines.push('  const elements = input.map((e) => {');
 	lines.push('    if (typeof e !== "object" || e === null || Array.isArray(e) || isNodeValue(e)) return e;');
 	lines.push('    const tagged = _splitTag(e);');
 	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);');
@@ -1727,7 +1676,7 @@ function emitResolverHelpers(
 	lines.push(
 		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNodeValue(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
 	);
-	lines.push('  return optionsFirst ? [head, ...resolved] : resolved;');
+	lines.push('  return resolved;');
 	lines.push('}');
 	lines.push('');
 
@@ -1938,6 +1887,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', 'listStorage', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'listStorage', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

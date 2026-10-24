@@ -11,23 +11,23 @@ export const records = {
 	IdentifierNode: { words: 2 },
 	ImmediateIdentifierNode: { words: 2 },
 	CaptureNode: { words: 7, name: { word: 2, width: 5 } },
-	StringNode: { words: 7, string_content: { word: 2, width: 5 } },
-	ImmediateStringNode: { words: 7, string_content: { word: 2, width: 5 } },
+	StringNode: { words: 8, string_content: { word: 2, width: 6, inline: 4 } },
+	ImmediateStringNode: { words: 8, string_content: { word: 2, width: 6, inline: 4 } },
 	StringContentNode: { words: 4, content: { word: 2, width: 2, run: 5 } },
 	ParametersNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	CommentNode: { words: 6, content: { word: 2, width: 4 } },
 	ListNode: { words: 6, definitions: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 2, run: 5 } },
 	GroupingNode: { words: 6, grouping_group: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 2, run: 5 } },
-	MissingNodeNode: { words: 9, name: { word: 2, width: 5 }, elements: { word: 7, width: 2, run: 5 } },
-	AnonymousNodeNode: { words: 9, name: { word: 2, width: 5 }, elements: { word: 7, width: 2, run: 5 } },
+	MissingNodeNode: { words: 14, name: { word: 2, width: 10, inline: 8 }, elements: { word: 12, width: 2, run: 5 } },
+	AnonymousNodeNode: { words: 14, name: { word: 2, width: 10, inline: 8 }, elements: { word: 12, width: 2, run: 5 } },
 	FieldDefinitionNode: { words: 12, name: { word: 2, width: 5 }, definition: { word: 7, width: 5 } },
 	NegatedFieldNode: { words: 7, identifier: { word: 2, width: 5 } },
 	PredicateNode: {
-		words: 22,
+		words: 23,
 		prefix: { word: 2, width: 5 },
 		name: { word: 7, width: 5 },
 		type_: { word: 12, width: 5 },
-		parameters: { word: 17, width: 5 }
+		parameters: { word: 17, width: 6, inline: 4 }
 	},
 	ListElementQuantifierNode: { words: 7, quantifier: { word: 2, width: 5 } },
 	GroupExpressionArmNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
@@ -41,11 +41,11 @@ export const records = {
 		elements: { word: 12, width: 2, run: 5 }
 	},
 	NamedNodeSupertypedNode: {
-		words: 19,
+		words: 24,
 		supertype: { word: 2, width: 5 },
-		name: { word: 7, width: 5 },
-		named_node_group: { word: 12, width: 5 },
-		elements: { word: 17, width: 2, run: 5 }
+		name: { word: 7, width: 10, inline: 8 },
+		named_node_group: { word: 17, width: 5 },
+		elements: { word: 22, width: 2, run: 5 }
 	},
 	NamedNodeGroupChildrenNode: {
 		words: 5,

@@ -138,6 +138,21 @@ pub enum SeamStrength {
     Trivia = 4,
 }
 
+impl SeamStrength {
+    /// The strength whose discriminant is `code`.
+    #[must_use]
+    pub const fn from_code(code: u8) -> Option<Self> {
+        match code {
+            0 => Some(Self::Fallback),
+            1 => Some(Self::Cascade),
+            2 => Some(Self::Declared),
+            3 => Some(Self::Slot),
+            4 => Some(Self::Trivia),
+            _ => None,
+        }
+    }
+}
+
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
 #[must_use]
@@ -323,7 +338,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// Records the line breaks the render writes at each gap into
     /// `baseline`, when one is given (`baseline::Recorder`).
     #[must_use]
-    pub fn with_recording(mut self, baseline: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>) -> Self {
+    pub fn with_recording(mut self, baseline: Option<&'a mut crate::baseline::Baseline>) -> Self {
         self.recorder = baseline.map(crate::baseline::Recorder::new);
         self
     }
@@ -1011,7 +1026,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if replaced {
             self.seam_template = true;
         }
-        if kinds.is_single() && kinds != LayoutKinds::TIGHT {
+        if kinds.is_single() && kinds != LayoutKinds::TIGHT && self.seam.is_some() {
             self.seam_is_token = true;
         }
     }
@@ -1028,20 +1043,22 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             let payload = Payload { set: gap, pick: gap, cont: text.unwrap_or_default().to_string() };
             self.merge_payload(payload, SeamStrength::Trivia, false);
         }
-        self.seam_is_token = true;
+        self.seam_is_token = self.seam.is_some();
     }
 
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, crate::render::CoordinateError> {
-        let Some(sources) = self.sources else { return Ok(None) };
-        let Some(mut frame) = sources.sides(coord) else { return Ok(None) };
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<Vec<Box<dyn crate::trivia::FramedTrivia>>, crate::render::CoordinateError> {
+        let Some(sources) = self.sources else { return Ok(Vec::new()) };
+        let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
-            frame.prepare(&crate::prepare::RenderContext { options, sources, recording: None })?;
+            for frame in &mut frames {
+                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+            }
         }
-        Ok(Some(frame))
+        Ok(frames)
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
@@ -1098,6 +1115,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.wrote_slice(coord.index);
         }
         self.end_leaf();
+        let moved = sources.depth_move(coord);
+        for _ in 0..moved.unsigned_abs() {
+            if moved > 0 {
+                crate::render::RenderSink::indent(self);
+            } else {
+                crate::render::RenderSink::dedent(self, LayoutKinds::NONE);
+            }
+        }
         Ok(())
     }
 

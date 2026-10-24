@@ -15,6 +15,7 @@ import {
 	writeDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromDroppedTokens,
+	fromHelperSlotRead,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -206,6 +207,13 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	return withInternalCodegenRun(() => runCodegenInternal(opts));
 }
 
+function refuseUnlessAllowed(diagnostics: readonly GrammarDiagnostic[], allowDiagnostics: ReadonlySet<string>): void {
+	if (diagnostics.length === 0) return;
+	writeDiagnostics(diagnostics, formatGrammarDiagnostics);
+	const blocked = diagnostics.filter((d) => !allowDiagnostics.has(d.code));
+	if (blocked.length > 0) throw new GrammarDiagnosticError(blocked, diagnostics);
+}
+
 async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint = sourceFingerprint(opts.grammar)): Promise<NodeMap> {
 	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
@@ -233,11 +241,14 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		writeDiagnostics(mapped, formatGrammarDiagnostics);
 	}
 
-	if (result.droppedTokens.length > 0) {
-		const dropped = result.droppedTokens.map((d) => fromDroppedTokens(grammar, d));
-		writeDiagnostics(dropped, formatGrammarDiagnostics);
-		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
-	}
+	refuseUnlessAllowed(
+		result.droppedTokens.map((d) => fromDroppedTokens(grammar, d)),
+		allowDiagnostics
+	);
+	refuseUnlessAllowed(
+		(result.renderModule?.emit.helperSlotReads ?? []).map((r) => fromHelperSlotRead(grammar, r)),
+		allowDiagnostics
+	);
 
 	const outDir = outputDir;
 
@@ -267,6 +278,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	await writeFile(join(outDir, 'options.ts'), result.options);
 	await writeFile(join(outDir, 'is.ts'), result.is);
 	await writeFile(join(outDir, 'descriptor.ts'), result.descriptor);
+	await writeFile(join(outDir, 'arena.ts'), result.arenaDescriptor);
 	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	writeFileSync(

@@ -23,7 +23,8 @@ import {
 	currentHandle,
 	isNodeOfKind,
 	isNodeValue,
-	listStorage
+	listStorage,
+	withOptions
 } from '@sittir/common/utils';
 
 const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
@@ -1130,21 +1131,12 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
@@ -1163,7 +1155,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -3643,17 +3635,8 @@ export function coerceToDeclarationList(
 	...input: T.DeclarationList.LooseArgs
 ): ReturnType<typeof F.buildDeclarationList> {
 	currentHandle()?.admit(TSKindId.DeclarationList, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList)) {
-		const data = input[0];
-		const stored = (data as unknown as { _declarations?: unknown })._declarations;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDeclarationList(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatement>(_v, _K0, _K10)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildDeclarationList>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList))
+		return input[0] as unknown as ReturnType<typeof F.buildDeclarationList>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4241,49 +4224,8 @@ export function coerceToFunctionModifiers(
 	...input: T.FunctionModifiers.LooseArgs
 ): ReturnType<typeof F.buildFunctionModifiers> {
 	currentHandle()?.admit(TSKindId.FunctionModifiers, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers)) {
-		const data = input[0];
-		const stored = (data as unknown as { _modifier?: unknown })._modifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFunctionModifiers(
-			...((children == null ? [] : Array.isArray(children) ? children : [children])
-				.map(
-					(_e: _LooseFieldInput) =>
-						_keywordOf(_e, [
-							['async', TSKindId.AsyncKeyword] as const,
-							['default', TSKindId.DefaultKeyword] as const,
-							['const', TSKindId.ConstKeyword] as const,
-							['unsafe', TSKindId.UnsafeKeyword] as const
-						]) ??
-						coerceMixedEnumStorage(
-							_resolveKindEnum(
-								_e,
-								[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword],
-								() =>
-									_resolveOneBranch<
-										| TSKindId.AsyncKeyword
-										| TSKindId.DefaultKeyword
-										| TSKindId.ConstKeyword
-										| TSKindId.UnsafeKeyword
-										| T.ExternModifier
-									>(_e, 'extern_modifier', [
-										TSKindId.AsyncKeyword,
-										TSKindId.DefaultKeyword,
-										TSKindId.ConstKeyword,
-										TSKindId.UnsafeKeyword
-									])
-							),
-							[
-								['async', TSKindId.AsyncKeyword] as const,
-								['default', TSKindId.DefaultKeyword] as const,
-								['const', TSKindId.ConstKeyword] as const,
-								['unsafe', TSKindId.UnsafeKeyword] as const
-							]
-						)
-				)
-				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildFunctionModifiers>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers))
+		return input[0] as unknown as ReturnType<typeof F.buildFunctionModifiers>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -4574,19 +4516,8 @@ export function coerceToTraitBounds<const A extends T.TraitBounds.LooseArgs>(
 ): ReturnType<typeof F.buildTraitBounds>;
 export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnType<typeof F.buildTraitBounds> {
 	currentHandle()?.admit(TSKindId.TraitBounds, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds)) {
-		const data = input[0];
-		const stored = (data as unknown as { _bounds?: unknown })._bounds;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTraitBounds(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) =>
-					_resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(_v, _K14, _K20)
-				),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildTraitBounds>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds))
+		return input[0] as unknown as ReturnType<typeof F.buildTraitBounds>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -6812,17 +6743,8 @@ export function coerceToClosureParameters(
 	...input: T.ClosureParameters.LooseArgs
 ): ReturnType<typeof F.buildClosureParameters> {
 	currentHandle()?.admit(TSKindId.ClosureParameters, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters)) {
-		const data = input[0];
-		const stored = (data as unknown as { _parameters?: unknown })._parameters;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildClosureParameters(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.Pattern | T.Parameter>(_v, _K23, _K49)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildClosureParameters>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters))
+		return input[0] as unknown as ReturnType<typeof F.buildClosureParameters>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -7591,22 +7513,19 @@ export function coerceToMacroRules<const A extends T.MacroRules.LooseArgs>(
 ): ReturnType<typeof F.buildMacroRules>;
 export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType<typeof F.buildMacroRules> {
 	currentHandle()?.admit(TSKindId.MacroRules, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildMacroRules(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.MacroRule>>)
-		);
-	}
-	return F.buildMacroRules(
-		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.MacroRule>(els, 'macro_rule'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.MacroRules))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildMacroRules>;
+	return (F.buildMacroRules as (...args: unknown[]) => ReturnType<typeof F.buildMacroRules>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.MacroRule>(els, 'macro_rule'), [
 			'macro_rule'
 		]) as unknown as NonEmptyArray<Admit<T.MacroRule>>)
 	);
@@ -7619,24 +7538,20 @@ export function coerceToEnumVariantListElements(
 	...input: T.EnumVariantListElements.LooseArgs
 ): ReturnType<typeof F.buildEnumVariantListElements> {
 	currentHandle()?.admit(TSKindId.EnumVariantListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumVariantListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildEnumVariantListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>)
-		);
-	}
-	return F.buildEnumVariantListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.EnumVariantListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildEnumVariantListElements>;
+	return (F.buildEnumVariantListElements as (...args: unknown[]) => ReturnType<typeof F.buildEnumVariantListElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_enum_variant',
 			(els) => _resolveManyBranch<T.AttributedEnumVariant | T.EnumVariant>(els, 'enum_variant'),
 			['attributed_enum_variant', 'enum_variant'],
@@ -7652,24 +7567,24 @@ export function coerceToFieldDeclarationListElements(
 	...input: T.FieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildFieldDeclarationListElements> {
 	currentHandle()?.admit(TSKindId.FieldDeclarationListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldDeclarationListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFieldDeclarationListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>)
-		);
-	}
-	return F.buildFieldDeclarationListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FieldDeclarationListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildFieldDeclarationListElements>;
+	return (
+		F.buildFieldDeclarationListElements as (
+			...args: unknown[]
+		) => ReturnType<typeof F.buildFieldDeclarationListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_field_declaration',
 			(els) => _resolveManyBranch<T.AttributedFieldDeclaration | T.FieldDeclaration>(els, 'field_declaration'),
 			['attributed_field_declaration', 'field_declaration'],
@@ -7687,24 +7602,24 @@ export function coerceToOrderedFieldDeclarationListElements(
 	...input: T.OrderedFieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> {
 	currentHandle()?.admit(TSKindId.OrderedFieldDeclarationListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.OrderedFieldDeclarationListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildOrderedFieldDeclarationListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildOrderedFieldDeclarationListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.OrderedFieldDeclarationListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
+	return (
+		F.buildOrderedFieldDeclarationListElements as (
+			...args: unknown[]
+		) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_ordered_field',
 			(els) =>
 				listStorage(
@@ -7763,28 +7678,21 @@ export function coerceToWherePredicates(
 	...input: T.WherePredicates.LooseArgs
 ): ReturnType<typeof F.buildWherePredicates> {
 	currentHandle()?.admit(TSKindId.WherePredicates, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WherePredicates)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildWherePredicates(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
-		);
-	}
-	return F.buildWherePredicates(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) => _resolveManyBranch<T.WherePredicate>(els, 'where_predicate'),
-			['where_predicate']
-		) as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.WherePredicates))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildWherePredicates>;
+	return (F.buildWherePredicates as (...args: unknown[]) => ReturnType<typeof F.buildWherePredicates>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.WherePredicate>(els, 'where_predicate'), [
+			'where_predicate'
+		]) as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
 	);
 }
 
@@ -7795,26 +7703,20 @@ export function coerceToTypeParametersElements(
 	...input: T.TypeParametersElements.LooseArgs
 ): ReturnType<typeof F.buildTypeParametersElements> {
 	currentHandle()?.admit(TSKindId.TypeParametersElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParametersElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
-			>)
-		);
-	}
-	return F.buildTypeParametersElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeParametersElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeParametersElements>;
+	return (F.buildTypeParametersElements as (...args: unknown[]) => ReturnType<typeof F.buildTypeParametersElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_type_parameter',
 			(els) =>
 				_resolveMany<
@@ -7833,37 +7735,20 @@ export function coerceToUseClauses<const A extends T.UseClauses.LooseArgs>(
 ): ReturnType<typeof F.buildUseClauses>;
 export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType<typeof F.buildUseClauses> {
 	currentHandle()?.admit(TSKindId.UseClauses, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseClauses)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildUseClauses(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<
-					| TSKindId.Self
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.Identifier
-					| T.ScopedIdentifier
-					| T.UseAsClause
-					| T.UseList
-					| T.ScopedUseList
-					| T.UseWildcard
-				>
-			>)
-		);
-	}
-	return F.buildUseClauses(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.UseClauses))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildUseClauses>;
+	return (F.buildUseClauses as (...args: unknown[]) => ReturnType<typeof F.buildUseClauses>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				(els == null ? [] : Array.isArray(els) ? els : [els])
@@ -7933,33 +7818,20 @@ export function coerceToParametersElements(
 	...input: T.ParametersElements.LooseArgs
 ): ReturnType<typeof F.buildParametersElements> {
 	currentHandle()?.admit(TSKindId.ParametersElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildParametersElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<
-					| T.AttributedParameter
-					| T.Parameter
-					| T.VariadicParameter
-					| TSKindId.Underscore
-					| T.Type
-					| T.TypeIdentifier.Types
-				>
-			>)
-		);
-	}
-	return F.buildParametersElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ParametersElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildParametersElements>;
+	return (F.buildParametersElements as (...args: unknown[]) => ReturnType<typeof F.buildParametersElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_parameter',
 			(els) => els,
 			[
@@ -8023,22 +7895,19 @@ export function coerceToLifetimes<const A extends T.Lifetimes.LooseArgs>(
 ): ReturnType<typeof F.buildLifetimes>;
 export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<typeof F.buildLifetimes> {
 	currentHandle()?.admit(TSKindId.Lifetimes, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildLifetimes(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Lifetime>>)
-		);
-	}
-	return F.buildLifetimes(
-		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.Lifetime>(els, 'lifetime'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Lifetimes))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildLifetimes>;
+	return (F.buildLifetimes as (...args: unknown[]) => ReturnType<typeof F.buildLifetimes>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.Lifetime>(els, 'lifetime'), [
 			'lifetime'
 		]) as unknown as NonEmptyArray<Admit<T.Lifetime>>)
 	);
@@ -8049,24 +7918,20 @@ export function coerceToTypes<const A extends T.Types.LooseArgs>(
 ): ReturnType<typeof F.buildTypes>;
 export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	currentHandle()?.admit(TSKindId.Types, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypes(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildTypes(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Types))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypes>;
+	return (F.buildTypes as (...args: unknown[]) => ReturnType<typeof F.buildTypes>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8104,24 +7969,20 @@ export function coerceToUseBoundsElements(
 	...input: T.UseBoundsElements.LooseArgs
 ): ReturnType<typeof F.buildUseBoundsElements> {
 	currentHandle()?.admit(TSKindId.UseBoundsElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseBoundsElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildUseBoundsElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildUseBoundsElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.UseBoundsElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildUseBoundsElements>;
+	return (F.buildUseBoundsElements as (...args: unknown[]) => ReturnType<typeof F.buildUseBoundsElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveMany<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>(els, _K2, _K58),
 			['lifetime', 'type_identifier']
@@ -8136,26 +7997,20 @@ export function coerceToTypeArgumentsElements(
 	...input: T.TypeArgumentsElements.LooseArgs
 ): ReturnType<typeof F.buildTypeArgumentsElements> {
 	currentHandle()?.admit(TSKindId.TypeArgumentsElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeArgumentsElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeArgumentsElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
-			>)
-		);
-	}
-	return F.buildTypeArgumentsElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeArgumentsElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeArgumentsElements>;
+	return (F.buildTypeArgumentsElements as (...args: unknown[]) => ReturnType<typeof F.buildTypeArgumentsElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'type_argument',
 			(els) =>
 				listStorage(
@@ -8249,24 +8104,20 @@ export function coerceToArgumentsElements(
 	...input: T.ArgumentsElements.LooseArgs
 ): ReturnType<typeof F.buildArgumentsElements> {
 	currentHandle()?.admit(TSKindId.ArgumentsElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentsElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArgumentsElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>)
-		);
-	}
-	return F.buildArgumentsElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ArgumentsElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildArgumentsElements>;
+	return (F.buildArgumentsElements as (...args: unknown[]) => ReturnType<typeof F.buildArgumentsElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			'attributed_argument',
 			(els) =>
 				listStorage(
@@ -8404,24 +8255,20 @@ export function coerceToExpressions<const A extends T.Expressions.LooseArgs>(
 ): ReturnType<typeof F.buildExpressions>;
 export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnType<typeof F.buildExpressions> {
 	currentHandle()?.admit(TSKindId.Expressions, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Expressions)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExpressions(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Expression>>)
-		);
-	}
-	return F.buildExpressions(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Expressions))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildExpressions>;
+	return (F.buildExpressions as (...args: unknown[]) => ReturnType<typeof F.buildExpressions>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8502,26 +8349,24 @@ export function coerceToFieldInitializerListElements(
 	...input: T.FieldInitializerListElements.LooseArgs
 ): ReturnType<typeof F.buildFieldInitializerListElements> {
 	currentHandle()?.admit(TSKindId.FieldInitializerListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldInitializerListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFieldInitializerListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<
-				Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
-			>)
-		);
-	}
-	return F.buildFieldInitializerListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FieldInitializerListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildFieldInitializerListElements>;
+	return (
+		F.buildFieldInitializerListElements as (
+			...args: unknown[]
+		) => ReturnType<typeof F.buildFieldInitializerListElements>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveMany<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(els, _K2, _K61),
 			['shorthand_field_initializer', 'field_initializer', 'base_field_initializer']
@@ -8536,24 +8381,20 @@ export function coerceToTuplePatternElements(
 	...input: T.TuplePatternElements.LooseArgs
 ): ReturnType<typeof F.buildTuplePatternElements> {
 	currentHandle()?.admit(TSKindId.TuplePatternElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TuplePatternElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTuplePatternElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>)
-		);
-	}
-	return F.buildTuplePatternElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TuplePatternElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTuplePatternElements>;
+	return (F.buildTuplePatternElements as (...args: unknown[]) => ReturnType<typeof F.buildTuplePatternElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8607,24 +8448,20 @@ export function coerceToPatterns<const A extends T.Patterns.LooseArgs>(
 ): ReturnType<typeof F.buildPatterns>;
 export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildPatterns> {
 	currentHandle()?.admit(TSKindId.Patterns, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildPatterns(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Pattern>>)
-		);
-	}
-	return F.buildPatterns(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Patterns))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildPatterns>;
+	return (F.buildPatterns as (...args: unknown[]) => ReturnType<typeof F.buildPatterns>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
@@ -8678,24 +8515,20 @@ export function coerceToStructPatternElements(
 	...input: T.StructPatternElements.LooseArgs
 ): ReturnType<typeof F.buildStructPatternElements> {
 	currentHandle()?.admit(TSKindId.StructPatternElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StructPatternElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStructPatternElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>)
-		);
-	}
-	return F.buildStructPatternElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.StructPatternElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildStructPatternElements>;
+	return (F.buildStructPatternElements as (...args: unknown[]) => ReturnType<typeof F.buildStructPatternElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(

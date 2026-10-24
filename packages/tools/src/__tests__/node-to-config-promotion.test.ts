@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { nodeToConfig } from '../validate/common.ts';
+import { nodeToConfig, type SlotAccessorOf } from '../validate/common.ts';
+
+const accessorOf: SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 
 function makeFactorySlots(
@@ -36,6 +38,7 @@ describe('nodeToConfig field promotion', () => {
 			} as never,
 			{
 				kindNameFromId,
+				accessorOf,
 				factorySlots: makeFactorySlots('single_field_parent', {
 					value: {
 						propertyName: 'value',
@@ -58,6 +61,7 @@ describe('nodeToConfig field promotion', () => {
 			} as never,
 			{
 				kindNameFromId,
+				accessorOf,
 				factorySlots: makeFactorySlots('repeat_field_parent', {
 					items: {
 						propertyName: 'items',

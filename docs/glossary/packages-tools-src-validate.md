@@ -213,70 +213,16 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ### `packages/tools/src/validate/common.ts::buildReadHandle`
 
-```text
-/**
- * Build the read-side TreeHandle for the corpus validators. Selects
- * between the wasm/JS handle (default) and a native-engine handle
- * (when `SITTIR_BACKEND=native` is set). A native handle is the grammar
- * engine's own parse (`readNativeTree`): every read — root and
- * hydration alike — goes through the engine that also renders, so the
- * coordinates it hands out resolve at render time.
- *
- * The wasm `tree` is still required: validators use it for kind
- * navigation (`findFirst`, `collectKinds`) — that traversal needs a
- * raw tree-sitter tree the JS side can walk. The native engine owns
- * its own internal tree for reads; the two coexist within one probe.
- */
-```
-
-### `packages/tools/src/validate/common.ts::NativeNodeCoords`
-
-`coordinate` is the node's own coordinate (`$_layout.at`, or the node itself when the walk met it unread); `embeddedData` is the native node as the whole-tree read holds it. A trivia entry read whole can carry data and no coordinate. The root is `{}`.
-
-
-### `packages/tools/src/validate/common.ts::coordsOf`
-
-What `walkNativeForKind` records for a node it visits: an unread coordinate as the coordinate alone, a native node as its stamped `at` beside the native node itself, and a native node with no `at` (a trivia entry the read handed over whole) as its data alone.
+Returns the public engine's native tree handle without requesting its diagnostic root. A caller explicitly chooses its first read: wrapped shallow data, a deep object root, or native arena hydration. The handle and all rendering share the same cached grammar engine.
 
 
 ### `packages/tools/src/validate/common.ts::isUnitModelType`
 
 Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
 
-
-### `packages/tools/src/validate/common.ts::NativeNodeCoords::embeddedData`
-
-```text
-/**
-	 * Set instead of `handle`/`childIndex` for a match found inside
-	 * `$_trivia` — those entries are fully materialized at read time
-	 * (not lazy stubs), so they carry no handle+child-index coordinates
-	 * to re-read them by. Callers must use this data directly rather
-	 * than calling `handle.read(handle, childIndex)`.
-	 */
-```
-
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
 
-Whether a node from the native read is of a given kind name, under either identity it carries: the grammar symbol that parsed it (`$type`), or the kind the parser shows it as (`$displayType`, present only at an alias). The corpus names an alias envelope by the shown kind (`property_identifier`, `field_identifier`), so a lookup by `$type` alone would never find one. `findNativeNodeId` and `walkNativeForKind` both locate nodes through it.
-
-### `packages/tools/src/validate/common.ts::findNativeNodeId`
-
-The first `walkNativeForKind` candidate, narrowed to `span` when the caller passes one. The from validator passes its CST node's span converted to bytes (`sourceSpans(source).toSpan`), because a WASM node's indices count characters while a native span counts UTF-8 bytes; it passes none for the root. A span is a stamped read fact, so no text is compared, and a node found inside a trivia entry matches the same way.
-
-
-### `packages/tools/src/validate/common.ts::NativeCandidateCoords`
-
-```text
-/**
- * A native candidate: navigation coordinates plus the node's byte span
- * (when available from the native AnyUntypedNode's `$span`).
- */
-```
-
-### `packages/tools/src/validate/common.ts::walkNativeForKind`
-
-Reads the whole tree once (`handle.read(0, Infinity)`) and visits every native node in document order, each node's trivia entries (leading, trailing and inner) before its slot children. A coordinate met on the way (a child the read left unread) is read whole through `readNode` before its children are visited. Each candidate carries `coordsOf` the node: its own coordinate and the native node as the whole-tree read holds it, so a caller uses the data without reading it again; the root is `{}`, which `readNativeAt` reads as index 0. Empty for a handle with no native read.
+Whether a node is of a kind name: the kind `kindNameFromId` gives its `$type`, else the id itself as text. The validators pass a lookup that names a kind as the corpus does (the from validator's `nativeKindName` maps a shared display to its physical kind), so a node found by kind matches the corpus node it stands for. `wrappedNodesOfKind` and the probe's lane search find nodes through it.
 
 
 ### `packages/tools/src/validate/common.ts::findFirst`
@@ -449,17 +395,10 @@ The grammar's root kind reparses as written, with no wrapper: `opts.root` names 
 
 The upstream judge: `.sittir/upstream.wasm`, the unmodified grammar sittir builds on, built by the regen with the same CLI. The upstream package's published wasm stands in only when that file is absent; a grammar with neither is an error naming the gen command. An unknown name yields `undefined`.
 
-### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
-
-A native node is a kind when its `$type` or its shown kind id (`$displayType` when present) names it; numeric ids resolve through the grammar's `kindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::readNodeOf`
 
 The grammar's wrapped read, built from the generated wrap module's `wrapNode` and `hydrate`: the root, or the node a coordinate names, read `depth` levels down and wrapped, so nodes arrive under their source kind. The wrap module is required (`requireGrammarModule`): a module that cannot load, or lacks either export, throws, and each validator turns that into its failed run.
-
-### `packages/tools/src/validate/common.ts::loadWrapNode`
-
-The generated wrap module's `wrapNode`, from the required module: the wrapper `readNodeOf` applies after reading, for data already materialized (a trivia entry's `NativeNodeCoords.embeddedData`) that has no handle to read through.
 
 ### `packages/tools/src/validate/common.ts::Seat`
 
@@ -507,7 +446,7 @@ The shape of a parsed `node-model.json5`, only the fields the validators read. E
 
 ### `packages/tools/src/validate/common.ts::parseNodeModel`
 
-Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape. `displayUnions` comes through as stored.
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind. What the record leaves out it fills through codegen's reader (`node-model-read.ts`): each slot's kinds and default value names, and the factory slots of every kind with a factory shape. `displayUnions` comes through as stored. `slotAccessors` maps each kind's slots, by storage key, to the accessor that reads them (`storageKeyOf`, `slotPropertyName`), with `{}` for a kind that has none.
 
 ### `packages/tools/src/validate/common.ts::loadBoundNameOf`
 
@@ -529,42 +468,11 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
 
 ### `packages/tools/src/validate/common.ts::walkWrappedTree`
 
-```text
-/**
- * Walk a wrapped tree via declared getters, calling `visit` on each
- * encountered wrapped node. A stored member is read through the accessor
- * the model names for it (`slotAccessorOf`, by the node's stamped kind id);
- * a stored member the model has no slot for (a list's `_delimiter`) is
- * plain data. Each child materializes through the wrap layer's hydration
- * ($type on every node is the grammar-symbol wire identity stamped by the
- * read).
- *
- * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
- * and get skipped. Leaves short-circuit when accessing a getter that
- * doesn't return a wrapped-shape value.
- */
-```
-
-#### body
-
-```text
-// $parentHandle + $childIndex form the composite dedup key: a handle can
-// repeat across child positions, so neither part suffices alone.
-```
+Walks a wrapped tree and calls `visit` on each node: the root, then each node its slots hold (`slotValuesOf`), depth first. A node's children come from the slots its kind has in the model (`slotAccessorOf`), each read through its accessor on the node's public surface and never from its `_` storage, so the walk reads object nodes and record views alike. A coordinate is visited once, keyed by its tree handle. An accessor that throws is reported through `onAccessorThrow`, and the walk does not go into that slot.
 
 ### `packages/tools/src/validate/common.ts::AccessorThrowRecord`
 
-```text
-/**
- * One accessor-throw occurrence — a slot's declared getter threw instead of
- * returning a value, so `resolveWrappedStorageValue` fell back to the raw,
- * unwrapped stub for that slot (see its doc comment for what that masks).
- * Callers that care about these beyond the unconditional stderr line pass an
- * `onAccessorThrow` collector through to receive one record per occurrence,
- * in addition to — not instead of — the stderr line. `validateReadRenderParse`
- * fails the entry on any.
- */
-```
+One accessor that threw instead of returning its slot's value, with the slot's storage key, the accessor, the node's kind id and the message. The slot then has no value in the walk or the materialized data (`slotValuesOf`). The throw always goes to stderr. A caller that collects throws passes `onAccessorThrow` and gets one record per throw as well; `validateReadRenderParse` fails the entry on any.
 
 ### `packages/tools/src/validate/common.ts::ValidatorSkip`
 
@@ -593,20 +501,6 @@ The base-to-bound kind name mapping, from the node model's `renamedFrom` through
  * skip, and one `<stage>-excluded` entry per (reason, kind) carrying the
  * candidate `count` and the sorted corpus `entries` it came from.
  */
-```
-
-### `packages/tools/src/validate/common.ts::resolveWrappedStorageValue`
-
-#### body
-
-```text
-// Unconditional (not env-gated): a thrown accessor here means this
-// ENTIRE slot falls back to raw, unwrapped stubs below — including
-// any sibling elements in an array-valued slot that wrapped fine on
-// their own. Without SITTIR_VALIDATOR_DUMP_ACCESSOR_THROW, the only
-// visible symptom is a downstream render/FromNapiValue error on an
-// innocent sibling element, which misdirects investigation toward
-// that sibling instead of the actual failing accessor.
 ```
 
 ### `packages/tools/src/validate/common.ts::IrEntry`
@@ -645,7 +539,7 @@ The model's own classification of a kind as a leaf (`isLeafModelType`), keyed by
 
 ### `packages/tools/src/validate/common.ts::loadKindNameFromId`
 
-Names a kind id with its display name from the generated `KIND_DISPLAY_NAMES` (not `KIND_NAMES`): it feeds the native/WASM kind-name bridge (`findNativeNodeId`, `walkNativeForKind`), which compares against tree-sitter's own `.type` string. The types module is required (`requireGrammarModule`), so a grammar whose module cannot load throws instead of answering nothing, and an id the table does not name throws: the table names every kind id and `ERROR`, so such an id is a defect, never a label to fall back on.
+Names a kind id with its display name from the generated `KIND_DISPLAY_NAMES` (not `KIND_NAMES`): it feeds the read/WASM kind-name bridge (`findWrappedNode`, `wrappedNodesOfKind`), which compares against tree-sitter's own `.type` string. The types module is required (`requireGrammarModule`), so a grammar whose module cannot load throws instead of answering nothing, and an id the table does not name throws: the table names every kind id and `ERROR`, so such an id is a defect, never a label to fall back on.
 
 ### `packages/tools/src/validate/common.ts::loadKindIdFromName`
 
@@ -699,6 +593,8 @@ The grammar package's generated `kindIdFromName`, from the required types module
 // older camelFields behavior so other validators can adopt this helper
 // without the recursion cost.
 ```
+
+`accessorOf` is required: the grammar's slot lookup (`slotAccessorOf`), through which the sides a node's trivia table gives it are materialized before they are built (`tableSides`), so a config is built from materialized data on either wire. `FactoryDispatchOpts` carries the same lookup to `buildFactoryNodeFromReference`.
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts::factoryShapes`
 
@@ -875,9 +771,10 @@ One child of a node as the config takes it. A scalar passes through. Given no tr
 
 ```text
 /**
- * The bytes a read node stands for: its captured text when the reader kept
- * one (an anonymous token, a text kind), otherwise the span it was read at,
- * sliced from the tree's source. Empty only when neither is known.
+ * The bytes a read node stands for: its source text (`sourceTextOf`), its
+ * captured text or else the text of the span it was read at. A node with
+ * none reads through its sole wrapped child. Empty only when nothing is
+ * known.
  */
 ```
 
@@ -1094,7 +991,7 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
 
 ### `packages/tools/src/validate/common.ts::tableSides`
 
-A read node's sides from its trivia table (`sideOf`), as trivia data a built value can carry. A comment is read whole through `tree` and built by the caller's builder, so it is built the way the caller builds every other node; an `ERROR` keeps its text, and a layout run keeps its whitespace member: a written entry with no whitespace renders on its owner's line, so the run is what keeps an own-line comment on its own line. `undefined` when every side is empty.
+A read node's sides from its trivia table (`sideOf`), as trivia data a built value can carry. A comment is hydrated (`hydrateTriviaEntry`), materialized through the slot readers, still holding its tree (`holdingTreeOf`) so a caller that keeps it as data can render its coordinate, and built by the caller's builder, so it is built from the same data, on either wire, as every other node the caller builds; an `ERROR` keeps its text, and a layout run keeps its whitespace member: a written entry with no whitespace renders on its owner's line, so the run is what keeps an own-line comment on its own line. `undefined` when every side is empty.
 
 ### `packages/tools/src/validate/common.ts::groupSides`
 
@@ -1322,6 +1219,8 @@ The grammar's root kind as the node model records it; `undefined` when no model 
 
 ### `packages/tools/src/validate/read-render-parse.ts::validateReadRenderParse`
 
+An optional run-local profile records the explicit deep root read, candidate reads, primary rendering and reparsing, plus ordered work and output fingerprints. Deep runs read the root to Infinity before enumeration. Arena runs retain node data in Rust, walk the generated record-cell schema natively, receive candidate coordinates and addresses, and render native candidates; object runs keep their detached candidate path. Enumeration and AST verification remain part of total validator runtime. Fixture capture explicitly exports a self-contained input only when requested.
+
 Reads each corpus candidate, renders it, reparses the render inside its supertype wrapper and compares the reparsed node's AST with the source's. The reparsed node is found at the wrapper's splice offset (`findReparsedNodeAtOffset`), past the candidate's own leading trivia. A candidate that is the tree's root (its kind is the first parse's root node type) is compared against the reparsed tree's root node directly: the root's render carries its source flanks, and a leading whitespace flank is padding tree-sitter starts no node at, so no offset names it. Every other candidate keeps the offset lookup, so a non-root render that starts with whitespace still fails it as `kind not found at rendered offset`.
 
 A kind passes when any of its candidates round-trips, so a candidate that only renders badly is outweighed by one that renders well. A candidate that throws is not: an error while its input is read, rendered, measured (`leadingTriviaRenderedWidth`) or captured as a fixture (`selfContainedRenderInput`) is reported with its message and fails the entry whatever its kind's other candidates do, so a broken trivia view or line-gap query surfaces as a failure instead of one fewer fixture.
@@ -1334,9 +1233,11 @@ Rendered text inside its reparse host: the kind's own host (`wrapForReparse`), o
 
 ### `packages/tools/src/validate/read-render-parse.ts::renderReparse`
 
-The render-and-reparse step every rendering row shares. It renders a node with the native engine, wraps the text in its kind's reparse wrapper (`wrapRendered`), reparses it, finds the reparsed node of the target kind at the wrapper's offset (or the tree's root for a root candidate), and diffs its AST with the source node's (`astStructuralDiff`). It returns one outcome: excluded (no wrapper for the kind, or an empty render), failed (a reparse error, or the kind not at the offset), or round-tripped with the AST difference. A render that throws propagates, so each row reports it in its own terms. `loadRenderReparseContext` loads what it needs for a grammar once per run.
+The shared primary render, reparse and AST verification for read, factory and IR rows. An object input is projected without outer trivia before native render; a render callback supplies already-framed native candidate text without materializing a JS node. Only object inputs need the existing leading-trivia width probes. Output hashing and wrappers remain outside the narrow render timer, and source-node lookup and AST comparison remain outside the narrow parse timer. The returned outcome preserves exclusions, parse failures and structural differences.
 
 ### `packages/tools/src/validate/factory-storage.ts::validateFactoryStorage`
+
+An optional profile records read-reference materialization, recursive round-trip construction, primary rendering and reparsing. The separate storage-check construction, candidate enumeration and AST/storage comparisons remain in total validator time. Raw and IR constructors currently produce object-backed built nodes for either parsed storage setting.
 
 Builds a node through the factory surface (raw builders, or the `ir` binding) from each corpus candidate's read, then checks two things apart. Its storage is compared with the read's (`compareNodeStorage`): the `factory-storage` and `ir-storage` rows. The built node is rendered and reparsed through `renderReparse`, its AST compared with the source's: the `render` result, the `built-render-parse` row. The render runs whether or not storage matched, so a storage defect and a render defect never hide each other. Both builds are given the read tree, so every child is built through its own factory: the storage comparison reads nested content the factory built, never the read's own children, and a builder is never handed a `materialize` copy. Only a candidate whose kind has no factory is skipped. A factory that throws, the kind's own or a child's, fails the candidate: the error is recorded, the storage comparison has nothing to compare, and the render still runs.
 
@@ -1386,6 +1287,8 @@ An occurrence the read holds no node for is not a failure. The walk finds the fi
 
 Each occurrence is compared by `validateAt`, which looks the node up by the kind it is read as and credits the pass or error to the kind being tested; the two differ only when an ancestor stands in.
 
+The factory side's config comes from the read node's `materialize` copy, converted by `nodeToConfig` with the read tree and `hydrate`, so each child is built by its own factory and a builder is given nodes, never a materialized copy.
+
 A display several storage kinds share is validated per storage kind (`occurrenceKind`, through `display-families.ts::physicalDisplayKind`): the corpus's kind set, the first occurrence and the ancestor walk name a node by its storage kind, and the native coordinate lookup names a native node the same way (`nativeKindName`). So each storage kind behind typescript's `string_fragment` or rust's `string_content` is checked against its own factory instead of the display's.
 
 ### `packages/tools/src/validate/common.ts::nodeToConfig`
@@ -1410,6 +1313,10 @@ Loads everything factory storage validates against, or the one reason it could n
 
 Dispatches materialized reference data through the existing factory calling convention, using the walked source kind so alias-source factories preserve their declared identities. Slot metadata, field aliases and CST hints pass through to `buildFactoryNodeFromReference`. A missing factory returns null; a thrown factory records the kind, corpus entry and source in the errors list and returns null so comparison can be skipped.
 
+### `packages/tools/src/validate/factory-storage.ts::ValidateFactoryStorageOptions`
+
+Selects the raw factory or IR construction surface and an optional run-local profiler. Profiling observes the existing read, recursive build, primary render and reparse operations; it does not select a different validation workload.
+
 ### `packages/tools/src/validate/factory-storage.ts::storageValueOf`
 
 One stored value of a node as the storage comparison reads it: `$text` through `nodeText`, since a built leaf holds its text as a function and a materialized read holds it as a string; any other key as the node holds it.
@@ -1421,14 +1328,6 @@ The signature of a grammar's generated `hydrate` (`wrap.ts`): a stored value as 
 ### `packages/tools/src/validate/common.ts::hydrateOf`
 
 The generated wrap module's `hydrate`, from the required module, so a validator hydrates read data on the same path as the accessors.
-
-### `packages/tools/src/validate/common.ts::storedChildren`
-
-Every node a native node stores in its `_` slots, list items included, in key order: the children `walkNativeForKind` descends into. A kind id or a text value is not a node and is skipped.
-
-### `packages/tools/src/validate/common.ts::sideEntries`
-
-Every node entry of a read node's sides (`sidesOf`, its tree's trivia table): its leading, trailing and inner sides, in that order, without their layout runs. `walkNativeForKind` descends into them, so a comment kind is found where the table assigns it.
 
 ### `packages/tools/src/validate/gap-census.ts::adjacentPairs`
 
@@ -1485,9 +1384,65 @@ Every named node's kind under `node`, `node` included, as `kindOf` names it (by 
 
 A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `collectKinds` use unless given another.
 
+### `packages/tools/src/validate/common.ts::NODE_STORAGES`
+
+The node storages a validation run can read trees as, each an engine `nodeStorage`: object nodes (`object`, the default) or record views (`arena`). `parseNodeStorage` checks a CLI value against it.
+
+### `packages/tools/src/validate/common.ts::parseNodeStorage`
+
+A `--node-storage` value as the node storage it names (`NODE_STORAGES`), refused when it names none. The CLI passes the raw value and calls this behind its lazy import of the tools, so the storages are listed once.
+
+### `packages/tools/src/validate/common.ts::validationNodeStorage`
+
+The node storage this process's validation engines read trees as. It is one setting per process, because the engines are cached per grammar (`loadNativeEngine`) and every validator loads them by grammar alone.
+
+### `packages/tools/src/validate/common.ts::useValidationNodeStorage`
+
+Sets the run's node storage (`validationNodeStorage`), which `createNativeEngine` passes to each engine as `nodeStorage`. It refuses a change once an engine has loaded, since a cached engine reads its trees one way. `runCountsCli` calls it from `--node-storage`, and hands the same value to each isolate worker.
+
+### `packages/tools/src/validate/common.ts::validationStorage`
+
+The run's node storage. `runCountsCli` records validation history only for object storage: the history compares runs of one wire, and a record-view run is checked against it through its report.
+
+### `packages/tools/src/validate/common.ts::slotValuesOf`
+
+A wrapped node's slot values, one `[storageKey, value]` entry per slot its kind has in the model (`slotAccessorOf`), each read by calling the accessor the model names for it (`storedSlotReader`) and never from the node's `_` storage. An object node and a record view expose the same accessors, so the same call reads a node on either wire. A list whose delimiter is chosen per instance (`KindSlots.delimiter`) adds its public `delimiter` value under `_delimiter` when it is a number.
+
+A slot the node neither stores nor has a reader for gives no entry. A slot it stores but has no reader for is refused, naming the kind, the storage key and the accessor: the model and the generated node disagree. An accessor that throws gives no entry either, rather than a fall back to raw storage; the throw goes to stderr and to `onAccessorThrow` (`AccessorThrowRecord`), and `validateReadRenderParse` fails the entry on it.
+
+### `packages/tools/src/validate/common.ts::materialize`
+
+A wrapped tree as plain node data (`materializeValue`): each node's slot values, read through the accessors its kind's model slots name, under their storage keys. It reads the same on either wire. A validator's reference data, its factory configs and its render input all start from here.
+
+The copy is a tool-internal render input, never builder input. It keeps its node's source stamp, so a builder would admit it as a node, but it has none of the node's accessors. A factory config is made from it by `nodeToConfig` with the read tree, which builds each child through its own factory.
+
+### `packages/tools/src/validate/common.ts::materializeValue`
+
+One value of `materialize`. An array maps entry by entry, and anything without a numeric `$type` passes through. A node keeps its non-`_` data keys: `$text` as `nodeText` gives it, and `$_layout` with its trivia entries materialized too. It drops its methods and the `_` keys its kind's model slots name, keeping as data a stored member the model has no slot for, and its slot values come from `slotValuesOf` instead, each through `slotValue`: materialized whole by default, or as `materializeShallow` maps them. The copy keeps where the node sits (`carryPlace`), its source stamp (`carrySourceStamp`) and its read (`carryRead`).
+
+### `packages/tools/src/validate/common.ts::wrappedNodesOfKind`
+
+Every wrapped node of a kind under a root, with its byte span (`spanOf`), in `walkWrappedTree` order. A node's trivia entries (`sidesOf`: leading, trailing, inner) are searched when the node is visited, before its slot children, so a comment kind is found where the tree's trivia table puts it. A trivia entry is hydrated (`hydrateTriviaEntry`) and walked like any subtree. The walk goes through the slot readers, so it finds nodes the same way on either wire.
+
+### `packages/tools/src/validate/common.ts::findWrappedNode`
+
+The first wrapped node of a kind (`wrappedNodesOfKind`), at `span` when the caller passes one. The from validator passes its CST node's span in bytes (`sourceSpans(source).toSpan`), since a WASM node's indices count characters and a read span counts UTF-8 bytes; it passes none for the root. A span is a stamped read fact, so no text is compared. The node comes back as found, wrapped, so the caller reads it without reading the tree again.
+
+### `packages/tools/src/validate/common.ts::WrappedCandidate`
+
+A wrapped node a search found, with its byte span, or `undefined` for a node with none (a built node).
+
+### `packages/tools/src/validate/common.ts::materializeShallow`
+
+A wrapped node one level down: its own data as `materialize` gives it, with each node its slots hold as that node's coordinate (`coordinateOf`), holding its tree, so the render reads the child from the tree. This is the input read-render-parse's shallow lane renders: data whose children are coordinates, the shape a lazy caller sends. A child with no coordinate of its own (a built child, or an alias envelope's content, which shares its envelope's row) is materialized whole instead, since that coordinate would name its holder. The copy holds the root's tree (`holdingTreeOf`). It reads through the slot readers, so it gives the same data on either wire.
+
 ### `packages/tools/src/validate/common.ts::isLeafModelType`
 
 Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
+
+### `packages/tools/src/validate/common.ts::wrappedNodesOf`
+
+Every node under a root that the slot readers reach, in `walkWrappedTree` order: the nodes a caller of the public surface holds, on either wire. The trivia profile and the node-shape script count and time these.
 
 ### `packages/tools/src/validate/common.ts::slotKeyOf`
 
@@ -1495,7 +1450,7 @@ The key a config holds a kind's slot under: the slot's model name, read from the
 
 ### `packages/tools/src/validate/common.ts::slotAccessorOf`
 
-A kind's slots for the tools' walkers (`materialize`, `walkWrappedTree`, the exercise walker's `collectChildren`, the gap census), keyed by the node's stamped kind id through `kindNameFromId`: each storage key to the accessor that reads it, built once from the loaded model (`LoadedNodeModel.slotAccessors`, from `storageKeyOf` and `slotPropertyName`). It answers the kind's name with the map (`KindSlots`). A walker reads a stored member through its accessor; a member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind, and so does a slot whose model-named accessor the node does not have as a reader (`resolveWrappedStorageValue`): the model and the generated node disagree. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
+A kind's slots for the tools' walkers (`slotValuesOf`, and through it `materialize`, `walkWrappedTree`, the exercise walker's `collectChildren` and the gap census), keyed by the node's stamped kind id through `kindNameFromId` (`KindSlots`): each storage key to the accessor that reads it, from the loaded model (`LoadedNodeModel.slotAccessors`, built from `storageKeyOf` and `slotPropertyName`), and whether the kind is a list whose delimiter is chosen per instance (`LoadedNodeModel.listDefaults`). A walker reads every slot through its accessor, so object nodes and record views give the same values; a stored member the model has no slot for is data and is copied as it is. A kind the model does not have throws, naming the kind, and so does a slot the node stores but has no model-named reader for: the model and the generated node disagree. No walker derives an accessor name from a storage key. `loadSlotAccessorOf` builds it for a grammar from its model and `KIND_NAMES`.
 
 ### `packages/tools/src/validate/common.ts::slotNameOf`
 
@@ -1512,6 +1467,18 @@ The candidate as its own source span has it. Its leading and trailing sides lie 
 value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the
 value under the slot key as an unseated slot's value is.
+
+### `packages/tools/src/validate/read-render-parse.ts::loadRenderReparseContext`
+
+Loads the existing grammar wrappers, parser, engine renderer, trivia and AST-comparison metadata for a validator run. Carries an optional run-local profile to the shared render/reparse operations; it does not select a different rendering path.
+
+### `packages/tools/src/validate/read-render-parse.ts::ValidateReadRenderParseOptions`
+
+Selects deep or shallow read validation, optional diagnostics and a run-local profiler. Deep runs explicitly read the root to Infinity before enumeration. Arena deep reads and renders stay native; an explicitly requested fixture callback separately exports a self-contained render input after validation.
+
+### `packages/tools/src/validate/read-render-parse.ts::RenderReparseContext`
+
+Run-local rendering, parser, wrapper and AST-comparison facts shared by read, factory and IR validators. An optional profiler observes primary render and reparse phases. The read validator may supply a native render callback to the shared operation; candidate projection and trivia-width probing apply to object inputs.
 
 ### `packages/tools/src/validate/layout-runs.ts::withTreeOf`
 
@@ -1532,6 +1499,10 @@ How much of its layout the source's tree stores apart from its read-time options
 ### `packages/tools/src/validate/layout-runs.ts::runLayoutRuns`
 
 The layout rows of a grammar's corpus: how many runs, which no region's record reaches, which entries' region render was refused, and what the corpus stores (`stored`, summed over `storedLayoutOf`). The stored counts are small against the runs because the baseline is the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.
+
+### `packages/tools/src/validate/layout-runs.ts::nativeBackendOf`
+
+Loads an active grammar's raw native engine constructor and tree disposal capability for internal layout diagnostics and native-only hydration measurements. Refuses an inactive native backend; callers own the raw tree lifetimes.
 
 ### `packages/tools/src/validate/grammar-diagnostics-file.ts::readGrammarDiagnostics`
 
@@ -1560,6 +1531,38 @@ The kind a node counts as: `storage` when it is one of the storage kinds sharing
 ### `packages/tools/src/validate/display-families.ts::sharedDisplayEntries`
 
 Node-types entries with each shared display's entry repeated once per storage kind (`sharedDisplayStorageKinds`), named for that kind. Template coverage walks these, so each storage kind's own template is checked against the display's node-types entry.
+
+### `packages/tools/src/validate/parity-fixtures.ts::keysInOrder`
+
+The `JSON.stringify` replacer behind the fixture files (`serializeFixtures`, `serializeLeftOut`): every object is written with its keys sorted, and arrays keep their order. A fixture's input is materialized read data whose key order follows how the walk visited the node, so without sorting a change to the walk would rewrite every fixture file without changing any fixture.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::PhaseMeasurement`
+
+Accumulated milliseconds, invocation count and thrown invocation count for one instrumented operation. Refusals remain part of the observation and propagate unchanged.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile`
+
+An optional per-validator-run collector for read materialization, recursive construction, primary render and reparse durations. Separately fingerprints ordered candidate identities and rendered text. It does not change validation results or install a global observer; a caller finishes it once after the run.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::measure`
+
+Times one synchronous operation, preserving its return identity and propagating its original exception. The finally path records elapsed time for successful and throwing calls alike. An injectable clock permits deterministic accounting tests.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::candidate`
+
+Adds an ordered candidate identity from entry name, source digest, canonical kind and byte span. Source digests are cached within the run rather than rehashing a corpus entry for every candidate; equal display names with different source content remain distinct.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::output`
+
+Fingerprints primary rendered outputs in order, including their source and target kind, and records UTF-8 byte and output counts. Hashing occurs outside the render-phase timer.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::RoundtripProfile::finish`
+
+Finalizes candidate and output digests and returns them with phase measurements. Called once per run, outside the validator and operation timers.
+
+### `packages/tools/src/validate/roundtrip-profile.ts::measureRoundtrip`
+
+Runs an operation through the optional collector, or directly when profiling is absent. The same action executes once in either case, so optional instrumentation preserves behavior.
 
 ### `packages/tools/src/validate/kind-cases.ts::KindCases`
 

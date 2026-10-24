@@ -17,6 +17,9 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// A record's cell or word that no record writer writes, met by a view.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
 }
 
 impl fmt::Display for RenderError {
@@ -25,6 +28,8 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -39,6 +44,10 @@ impl From<fmt::Error> for RenderError {
 
 impl From<CoordinateError> for RenderError {
     fn from(e: CoordinateError) -> Self {
+        #[cfg(feature = "arena")]
+        if let CoordinateError::Record(e) = e {
+            return Self::Record(e);
+        }
         Self::Coordinate(e)
     }
 }
@@ -126,12 +135,30 @@ pub trait SourceTable {
         }
     }
 
+    /// The levels the node a coordinate names opens net of those it closes:
+    /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
+    /// over its subtree. A slice moves the writer's depth by it, as the
+    /// node's template would. A coordinate whose handle names a node other
+    /// than its own span, and a table of bare sources, answer none.
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        let _ = coord;
+        0
+    }
+
     /// The sides of the node a coordinate names, as its tree's trivia table
     /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
     /// none. A table of bare sources knows no sides.
     fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
         let _ = coord;
         None
+    }
+
+    /// The sides a coordinate's bytes render between, outermost first: its
+    /// node's own (`sides`), then those of each node inside its bytes that
+    /// holds trivia at its edges for it (`ParsedTree::frame_levels`). A table
+    /// of bare sources knows no sides.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
+        self.sides(coord).into_iter().collect()
     }
 
     /// The stored layout of each list slot of the node a coordinate names
@@ -162,6 +189,15 @@ pub trait SourceTable {
     /// Whether a write replaced a side of a node in the range of the node a
     /// coordinate names, its own `inner` included (`ParsedTree::edited_within`).
     fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        let _ = coord;
+        false
+    }
+
+    /// Whether a read node from the node a coordinate names renders as that
+    /// coordinate, its source bytes: a parsed node with no write in its range
+    /// (`edited_within`). A table that holds no tree, or one a render reads
+    /// templates through on purpose, answers no.
+    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         let _ = coord;
         false
     }
@@ -204,6 +240,17 @@ pub enum CoordinateError {
         handle: crate::types::TreeHandle,
         detail: String,
     },
+    /// A record's cell or word that no record writer writes, met by a
+    /// record's prepare.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
+}
+
+#[cfg(feature = "arena")]
+impl From<crate::arena::ArenaError> for CoordinateError {
+    fn from(e: crate::arena::ArenaError) -> Self {
+        Self::Record(e)
+    }
 }
 
 impl fmt::Display for CoordinateError {
@@ -215,6 +262,8 @@ impl fmt::Display for CoordinateError {
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
             Self::Unread { handle, detail } => write!(f, "handle {handle}: the node holds a write, and its read failed: {detail}"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -320,7 +369,8 @@ pub trait RenderSink {
         self.seam(gap);
     }
     /// Write the bytes a coordinate names, from the tree table this writer
-    /// holds. The default refuses: a sink with no source table cannot answer
+    /// holds, and move the depth as the node's template would
+    /// (`SourceTable::depth_move`). The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
         Err(CoordinateError::UnknownTree {
@@ -335,12 +385,12 @@ pub trait RenderSink {
         let _ = coord;
         None
     }
-    /// The leading and trailing sides of the node a coordinate names, from
-    /// the tree table this writer holds (`SourceTable::sides`), prepared as a
-    /// slot's trivia is; a sink with no table answers none.
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, CoordinateError> {
+    /// The frames a coordinate's bytes render between, outermost first, from
+    /// the tree table this writer holds (`SourceTable::frames`), each
+    /// prepared as a slot's trivia is; a sink with no table answers none.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<Vec<Box<dyn crate::trivia::FramedTrivia>>, CoordinateError> {
         let _ = coord;
-        Ok(None)
+        Ok(Vec::new())
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.

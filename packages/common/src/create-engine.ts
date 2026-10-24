@@ -22,7 +22,7 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, foreignEngine, inEngine, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, verifyStructure } from './verify-structure.ts';
@@ -76,7 +76,10 @@ function refuseUnimplemented(options: EngineOptions<LanguageAPI, ApiSurface> | u
 function nativeEngineOptions<API extends LanguageAPI>(
 	options: EngineOptions<API, ApiSurface> | undefined
 ): NativeEngineOptions<API['options']> {
-	return options?.render === undefined ? {} : { options: options.render };
+	return {
+		...(options?.render === undefined ? {} : { options: options.render }),
+		...(options?.nodeStorage === undefined ? {} : { nodeStorage: options.nodeStorage })
+	};
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
@@ -268,9 +271,9 @@ function assembleEngine<API extends LanguageAPI>(
 		query: ((node: object) => {
 			if (handle.current !== engine)
 				throw new Error('query: engine disposed; parse the source again with a live engine');
-			const stamp = engineOf(node);
-			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
-				throw new Error(`cannot query a ${stamp.language.name} node through a ${language.name} engine`);
+			const foreign = foreignEngine(node, identity);
+			if (foreign !== undefined) {
+				throw new Error(`cannot query a ${foreign.language.name} node through a ${language.name} engine`);
 			}
 			return queryFacet(node, queryHooks);
 		}) as Engine<API>['query'],
@@ -279,9 +282,9 @@ function assembleEngine<API extends LanguageAPI>(
 		},
 		render(node: RenderArgument<API>, renderOptions?: API['options']) {
 			const target = typeof node === 'function' ? node(build) : node;
-			const stamp = engineOf(target);
-			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
-				throw new Error(`cannot render a ${stamp.language.name} node through a ${language.name} engine`);
+			const foreign = foreignEngine(target, identity);
+			if (foreign !== undefined) {
+				throw new Error(`cannot render a ${foreign.language.name} node through a ${language.name} engine`);
 			}
 			const rendered = native.render(target, renderOptions);
 			if (renderChain === undefined) {

@@ -9,6 +9,7 @@ const kindNameFromId = (kindId: number): string => {
 	if (kind === undefined) throw new Error(`fixture: kind id ${kindId} has no name`);
 	return kind;
 };
+const noSlots: common.SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
 
 describe('exercise roundtrip helpers', () => {
 	afterEach(() => {
@@ -55,6 +56,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('direct_child'), _children: leaf } as never,
 			artifacts,
 			common,
+			noSlots,
 			kindNameFromId
 		);
 
@@ -89,6 +91,7 @@ describe('exercise roundtrip helpers', () => {
 			{ $type: id('spread_child'), _children: [left, right] } as never,
 			artifacts,
 			common,
+			noSlots,
 			kindNameFromId
 		);
 

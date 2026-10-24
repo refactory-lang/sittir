@@ -11,6 +11,7 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
+import { recordOf } from './record-view.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -301,11 +302,13 @@ void readonlyArrayCovered;
 
 export const LIST_VIEW_MEMBERS: readonly string[] = [...READONLY_ARRAY_METHODS, 'length'];
 
+const holdsDecoration = (value: unknown): boolean => value !== undefined && !(Array.isArray(value) && value.length === 0);
+
 const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): unknown => {
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
 	const node = item as Members & Record<string, unknown>;
 	if ((node as { $type?: unknown }).$type !== wrapper.kind) return item;
-	if (wrapper.decorations.some((key) => node[key] !== undefined)) return item;
+	if (wrapper.decorations.some((accessor) => holdsDecoration(node[accessor]!.call(node)))) return item;
 	return node[wrapper.content]!.call(node);
 };
 
@@ -343,18 +346,18 @@ export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
 export interface OwnerView {
 	readonly list: Record<string, unknown> | undefined;
 	readonly stored: readonly unknown[] | undefined;
+	readonly length: number | undefined;
 }
 
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
-	if (list == null) return { list: undefined, stored: [] };
-	const source = count in list || !isCoordinate(list) ? list : hydrate?.(list);
-	if (source === undefined) return { list: undefined, stored: undefined };
+	if (list == null) return { list: undefined, stored: [], length: 0 };
+	const source = count in list || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
+	if (source === undefined) return { list: undefined, stored: undefined, length: undefined };
+	if (recordOf(source) !== undefined) return { list: source as Record<string, unknown>, stored: undefined, length: (source as { readonly length: number }).length };
 	const elements = (source as Record<string, unknown>)[count];
-	return {
-		list: source as Record<string, unknown>,
-		stored: Array.isArray(elements) ? elements : elements == null ? [] : [elements]
-	};
+	const items = Array.isArray(elements) ? elements : elements == null ? [] : [elements];
+	return { list: source as Record<string, unknown>, stored: items, length: items.length };
 }
 
 /** The elements a list stores: its array, or the one element it holds, or none. */
@@ -371,7 +374,8 @@ export function ownerElements(list: unknown, reader: string): readonly unknown[]
 
 /** A list option the owner reads from its list, or the option's default. */
 export function listOption(list: unknown, key: string, fallback: unknown): unknown {
-	return (list as Record<string, unknown> | null | undefined)?.[`_${key}`] ?? fallback;
+	const held = list as Record<string, unknown> | null | undefined;
+	return (recordOf(held) === undefined ? held?.[`_${key}`] : held?.[key]) ?? fallback;
 }
 
 const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
@@ -539,6 +543,18 @@ export function isNodeOfKind(v: unknown, kind: number): boolean {
 	return isNodeValue(v) && v.$type === kind;
 }
 
+/** `node` with each defined option set through its `$with` setter; throws when the node has no setter for one. */
+export function withOptions<N>(node: N, options: object): N {
+	let out: unknown = node;
+	for (const [key, value] of Object.entries(options)) {
+		if (value === undefined) continue;
+		const set = (out as { readonly $with?: Readonly<Record<string, ((v: unknown) => unknown) | undefined>> }).$with?.[key];
+		if (set === undefined) throw new Error(`cannot set the option '${key}': the node has no $with setter for it`);
+		out = set(value);
+	}
+	return out as N;
+}
+
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
 }
@@ -659,14 +675,22 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
+export {
+	decodeIndex,
+	decodeTree,
+	encodeHandle,
+	isCoordinate,
+	readNode,
+	type TreeHandle,
+	type TriviaSideName
+} from './read.ts';
 export type { Role } from './identity.ts';
-export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
+export { admitChildren, admitSlot, currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, placeOf } from './node-data.ts';
-export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
@@ -683,3 +707,18 @@ export {
 } from './interior.ts';
 export { mapTriviaEntries };
 export * from './runtime.ts';
+export {
+	RECORD,
+	recordDelimiter,
+	recordFlag,
+	recordItems,
+	recordLength,
+	recordOf,
+	recordSlot,
+	recordSlots,
+	rowData,
+	rowOf,
+	rowTrivia,
+	rowWith,
+	type RecordStub
+} from './record-view.ts';

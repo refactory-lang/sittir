@@ -66,7 +66,7 @@ What a parse produces before wrapping: the raw root data and the tree it was rea
 
 ### `packages/types/src/engine-api.ts::EngineDiagnostics`
 
-What an engine exposes for tooling rather than for consumers: the native build's compile profile (`buildProfile`, undefined for a binary that predates it) and `parseAndRead`, the read a parse makes before wrapping. The tree it returns is bound to the engine, so a node wrapped over it stamps that engine, exactly as `parse` does; `parse` is `parseAndRead` plus the wrapper. The single declaration of these members: the native engine's diagnostics extend it with the reads only it has, and the native language engine's members are picked from it.
+Diagnostic access to native build profile and a parsed tree with a lazy read root. Retaining only the tree exports no root data; accessing the root performs its requested-depth read and retains the existing parse-error and identity contract. Public parse still requests and wraps the root. Native tools may explicitly hydrate records through the retained handle instead.
 
 ### `packages/types/src/engine-api.ts::GrammarTypeMap`
 

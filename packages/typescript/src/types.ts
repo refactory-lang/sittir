@@ -7893,6 +7893,7 @@ export interface FunctionType {
 export interface ExportSpecifiers {
 	readonly $type: TSKindId.ExportSpecifiers;
 	readonly _item: NonEmptyArray<ExportSpecifier>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -7917,6 +7918,7 @@ export interface ExportSpecifiers {
 export interface ImportSpecifiers {
 	readonly $type: TSKindId.ImportSpecifiers;
 	readonly _item: NonEmptyArray<ImportSpecifier>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -7931,6 +7933,7 @@ export interface ImportSpecifiers {
 export interface FormalParametersElements {
 	readonly $type: TSKindId.FormalParametersElements;
 	readonly _item: NonEmptyArray<RequiredParameter | OptionalParameter>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -7963,6 +7966,7 @@ export interface EnumBodyElementName {
 export interface EnumBodyElements {
 	readonly $type: TSKindId.EnumBodyElements;
 	readonly _item: NonEmptyArray<EnumBodyElement>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -7977,6 +7981,7 @@ export interface EnumBodyElements {
 export interface Types {
 	readonly $type: TSKindId.Types;
 	readonly _item: NonEmptyArray<Type>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -7994,6 +7999,7 @@ export interface Types {
 export interface TypeParametersElements {
 	readonly $type: TSKindId.TypeParametersElements;
 	readonly _item: NonEmptyArray<TypeParameter>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -8014,6 +8020,7 @@ export interface TypeParametersElements {
 export interface TupleTypeMembers {
 	readonly $type: TSKindId.TupleTypeMembers;
 	readonly _item: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -8149,6 +8156,8 @@ export interface ObjectTypeContent {
 	readonly _item: NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
+	readonly _separator?: number;
+	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
 		readonly _item: 'items';
 	};
@@ -22672,7 +22681,6 @@ export namespace ExportSpecifiers {
 	export interface Bound extends BoundOf<T.ExportSpecifiers, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ExportSpecifiers['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.ExportSpecifiers, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.ExportSpecifiers['$type'];
@@ -22685,7 +22693,6 @@ export namespace ExportSpecifiers {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.ExportSpecifiers['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ExportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifiers>;
@@ -22749,7 +22756,6 @@ export namespace ImportSpecifiers {
 	export interface Bound extends BoundOf<T.ImportSpecifiers, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ImportSpecifiers['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.ImportSpecifiers, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.ImportSpecifiers['$type'];
@@ -22762,7 +22768,6 @@ export namespace ImportSpecifiers {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.ImportSpecifiers['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifiers>;
@@ -22803,7 +22808,6 @@ export namespace FormalParametersElements {
 	export interface Bound extends BoundOf<T.FormalParametersElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.FormalParametersElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed
 		extends ParsedOf<T.FormalParametersElements, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
@@ -22817,7 +22821,6 @@ export namespace FormalParametersElements {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.FormalParametersElements['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.FormalParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElements>;
@@ -22891,7 +22894,6 @@ export namespace EnumBodyElements {
 	export interface Bound extends BoundOf<T.EnumBodyElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.EnumBodyElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.EnumBodyElements, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.EnumBodyElements['$type'];
@@ -22904,7 +22906,6 @@ export namespace EnumBodyElements {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.EnumBodyElements['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBodyElements>;
@@ -22945,7 +22946,6 @@ export namespace Types {
 	export interface Bound extends BoundOf<T.Types, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.Types['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.Types, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.Types['$type'];
@@ -22958,7 +22958,6 @@ export namespace Types {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.Types['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
@@ -22999,7 +22998,6 @@ export namespace TypeParametersElements {
 	export interface Bound extends BoundOf<T.TypeParametersElements, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.TypeParametersElements['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed
 		extends ParsedOf<T.TypeParametersElements, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
@@ -23013,7 +23011,6 @@ export namespace TypeParametersElements {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.TypeParametersElements['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParametersElements>;
@@ -23077,7 +23074,6 @@ export namespace TupleTypeMembers {
 	export interface Bound extends BoundOf<T.TupleTypeMembers, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.TupleTypeMembers['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.TupleTypeMembers, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.TupleTypeMembers['$type'];
@@ -23090,7 +23086,6 @@ export namespace TupleTypeMembers {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.TupleTypeMembers['$type']>;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeMembers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeMembers>;
@@ -23309,8 +23304,6 @@ export namespace ObjectTypeContent {
 	export interface Bound extends BoundOf<T.ObjectTypeContent, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ObjectTypeContent['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
-		readonly _separator: number | undefined;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export interface Parsed extends ParsedOf<T.ObjectTypeContent, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.ObjectTypeContent['$type'];
@@ -23323,8 +23316,6 @@ export namespace ObjectTypeContent {
 			FixedTextKindId
 		>;
 		readonly $snapshot: () => Snapshot<T.ObjectTypeContent['$type']>;
-		readonly _separator: number | undefined;
-		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ObjectTypeContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectTypeContent>;

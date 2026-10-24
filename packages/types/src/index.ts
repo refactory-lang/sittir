@@ -1283,6 +1283,7 @@ export type {
 	LanguageAPI,
 	LanguageHooks,
 	NativeEngineOptions,
+	NodeStorage,
 	NativeLanguageEngine,
 	ParsedRead,
 	ParsedRoot,

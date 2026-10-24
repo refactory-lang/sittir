@@ -11,7 +11,6 @@
 
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan, sourceSpans } from '@sittir/common';
-import { isCoordinate } from '@sittir/common/utils';
 import { nodeText, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
@@ -26,7 +25,10 @@ import {
 	loadKindNameFromId,
 	buildReadHandle,
 	findFirst,
-	findNativeNodeId,
+	findWrappedNode,
+	hydrateOf,
+	loadSlotAccessorOf,
+	materialize,
 	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
@@ -222,8 +224,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			message: (e as Error).message
 		});
 	}
-	const wrap = await requireGrammarModule(grammar, 'wrap.ts').then(
-		(module) => module,
+	const readNode = await readNodeOf(grammar).then(
+		(read) => read,
 		(e: unknown) => {
 			errors.push({ kind: '(wrap-module-load)', severity: 'error', message: (e as Error).message });
 			return undefined;
@@ -231,7 +233,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	);
 
 	if (errors.length === 0) factoryMap = await loadScopedFactoryMap(grammar, factoryMap);
-	if (errors.length > 0 || wrap === undefined) {
+	if (errors.length > 0 || readNode === undefined) {
 		return {
 			grammar,
 			...FAILED_RUN,
@@ -244,7 +246,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			trivia: []
 		};
 	}
-	const readNode = await readNodeOf(grammar);
+	const hydrate = await hydrateOf(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 
 	const entries = loadCorpusEntries(grammar);
 	const cases = new KindCases();
@@ -307,24 +310,14 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		try {
 			const handle = await buildReadHandle(grammar, entry.source);
 			readTree = handle;
-			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
-			// Resolve via the native data tree; if the kind is an alias target
-			// the native engine emits under a different rule name, skip rather
-			// than fall back to a mismatched WASM ID.
-			const nativeCoords = findNativeNodeId(
-				handle,
+			const found = findWrappedNode(
+				readNode(handle),
+				accessorOf,
 				kind,
 				nativeKindName,
 				node.parent === null ? undefined : sourceSpans(entry.source).toSpan({ start: node.startIndex, end: node.endIndex })
 			);
-			if (nativeCoords === null && handle.read) {
-				// The native read stores most leaf kinds SCALARIZED — collapsed
-				// to text inside parent storage, no node to locate — and alias
-				// targets emit under a different rule name. For a text-shaped
-				// kind that is not a locator failure: the sound comparison
-				// needs no native node at all. Feed the WASM node's text
-				// through both from() (the real leaf-coercion route, pattern
-				// guards included) and the factory, and compare the results.
+			if (found === undefined) {
 				const leafShape = factoryShapes[kind] ?? 'config';
 				if (leafShape === 'text' || leafShape === 'constant') {
 					validateLeafByText(kind, credited, node.text, leafShape);
@@ -335,15 +328,11 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				errors.push({
 					kind: credited,
 					severity: 'error',
-					message: `native coords unresolved for alias target — comparing against a mismatched WASM id would be unsound`
+					message: `no read node of the kind at its source span`
 				});
 				return undefined;
 			}
-			if (nativeCoords?.embeddedData !== undefined) {
-				readData = wrap.wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode;
-			} else {
-				readData = readNode(handle, nativeCoords?.coordinate) as AnyUntypedNode;
-			}
+			readData = found as unknown as AnyUntypedNode;
 		} catch (e) {
 			errors.push({
 				kind: credited,
@@ -388,11 +377,12 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				// factory that must dispatch as `factory()` with no args).
 				const shape = factoryShapes[readKind] ?? 'config';
 				const factory = factoryMap[readKind]!;
-				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-					// ReadNode emits `_<name>` top-level keys, not
-					// `$fields`. Use `nodeToConfig` which handles both shapes
-					// and recursively resolves children through factories.
-					const config = nodeToConfig(readData, {
+				const readStorage = materialize(readData, accessorOf);
+				const configOf = (): Record<string, unknown> =>
+					nodeToConfig(readStorage, {
+						accessorOf,
+						tree: readTree,
+						hydrate,
 						shownKind: readKind,
 						interiorOf,
 						factoryMap,
@@ -402,6 +392,11 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						fieldAliasMap,
 						kindNameFromId: factoryKindNameFromId
 					});
+				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
+					// ReadNode emits `_<name>` top-level keys, not
+					// `$fields`. Use `nodeToConfig` which handles both shapes
+					// and recursively resolves children through factories.
+					const config = configOf();
 					if (shape === 'direct' || shape === 'forwarded') {
 						// Direct-call shape: use the sole field when metadata
 						// names one, otherwise treat it as a single child call.
@@ -411,15 +406,13 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 							rawName !== undefined
 								? (config as Record<string, unknown>)[slotKeyOf(factorySlots, readKind, rawName)]
 								: getChildFactoryArgs(readKind, config, factorySlots, factoryFields)[0];
-						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(
-							readTree !== undefined && isCoordinate(value) ? readNode(readTree, value) : value
-						);
+						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(value);
 					} else {
 						// Config-shaped factories with flank capture take `(config,
 						// options)` — factories without options ignore the extra argument.
 						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
 							config,
-							separatedListFactoryOptions(readData)
+							separatedListFactoryOptions(readStorage)
 						);
 					}
 				} else if (shape === 'constant') {
@@ -436,31 +429,13 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					// leading?, trailing?}, ...elements)` — distinct calling
 					// convention from 'spread's plain rest-param factories (see
 					// classifyFactoryShape's separatedList case).
-					const config = nodeToConfig(readData, {
-						shownKind: readKind,
-						interiorOf,
-						factoryMap,
-						factoryShapes,
-						factoryFields,
-						factorySlots,
-						fieldAliasMap,
-						kindNameFromId: factoryKindNameFromId
-					});
+					const config = configOf();
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-					const options = separatedListFactoryOptions(readData);
+					const options = separatedListFactoryOptions(readStorage);
 					const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
 					factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 				} else {
-					const config = nodeToConfig(readData, {
-						shownKind: readKind,
-						interiorOf,
-						factoryMap,
-						factoryShapes,
-						factoryFields,
-						factorySlots,
-						fieldAliasMap,
-						kindNameFromId: factoryKindNameFromId
-					});
+					const config = configOf();
 					const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 					factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);
 				}
@@ -491,8 +466,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 
-			// Check for undefined nodes in from() output
-			const undefinedNodes = findUndefined(fromResult);
+			const fromStorage = materialize(fromResult, accessorOf);
+			const undefinedNodes = findUndefined(fromStorage);
 			if (undefinedNodes.length > 0) {
 				undefinedCount++;
 				errors.push({
@@ -503,8 +478,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 
-			// Structural comparison
-			const diffs = structuralDiff(fromResult, factoryResult);
+			const diffs = structuralDiff(fromStorage, materialize(factoryResult, accessorOf));
 			if (diffs.length > 0) {
 				divergentCount++;
 				errors.push({

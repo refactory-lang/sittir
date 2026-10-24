@@ -1,12 +1,15 @@
 //! Text that is a slot's content with no kind of its own: a bare string in a
 //! slot whose members all render from their own text, where the variant tag
-//! is render-invisible and picking one would be a guess.
+//! is render-invisible and picking one would be a guess, or an `ERROR` node,
+//! which renders as its text and keeps its kind.
 
 use crate::render::{Render, RenderResult, RenderSink};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct VerbatimNode {
     pub text: String,
+    /// `KindId::ERROR` for an `ERROR` node, `KindId::BLANK` for bare text.
+    pub kind: crate::types::KindId,
 }
 
 impl Render for VerbatimNode {
@@ -21,19 +24,20 @@ impl crate::prepare::Prepare for VerbatimNode {
     }
 }
 
-/// A string, or an object carrying `$text` (the form an `ERROR` node crosses in).
+/// A string, as bare text, or an object carrying `$text`, as an `ERROR` node:
+/// the form one crosses in.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for VerbatimNode {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::String {
             // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-            return Ok(Self { text: unsafe { String::from_napi_value(env, napi_val)? } });
+            return Ok(Self { text: unsafe { String::from_napi_value(env, napi_val)? }, kind: crate::types::KindId::BLANK });
         }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let text = unsafe { crate::boundary::property::<String>(env, napi_val, c"$text")? }
             .ok_or_else(|| ::napi::Error::from_reason("verbatim text arrives as a string, or as an object carrying $text"))?;
-        Ok(Self { text })
+        Ok(Self { text, kind: crate::types::KindId::ERROR })
     }
 }
 

@@ -6,7 +6,9 @@
 // location has one owner. Extra flags (`--release`, `--profile gate`,
 // `--target`, a cross flag) pass through to `napi build`. Each build records
 // its profile, its native inputs and its binary's hash (`native-binary-freshness.ts`),
-// which validation and `regen:all` hold the binary to.
+// which validation and `regen:all` hold the binary to. Every build carries
+// the record codec (the crate's `arena` feature) beside the object codec, so
+// one binary serves both node storages; the engine's `nodeStorage` picks.
 //
 // A release binding is stripped. On an Apple target cargo's own stripping
 // yields a binary dyld refuses, so the binary is stripped after the build
@@ -40,7 +42,7 @@ const buildEnv = release && !apple ? { ...process.env, CARGO_PROFILE_RELEASE_STR
 const built = nativeBuildFingerprint(REPO_ROOT, grammar, { env: buildEnv });
 run(
 	'pnpm',
-	['exec', 'napi', 'build', '--platform', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
+	['exec', 'napi', 'build', '--platform', '--features', 'arena', ...flags, '--output-dir', outDir, '--js', NATIVE_LOADER, '--dts', NATIVE_TYPINGS],
 	nativeCrateDir(grammar),
 	buildEnv
 );

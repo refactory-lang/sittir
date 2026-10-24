@@ -1,5 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
-import { loadIsLeafKind, loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, readNativeTree, kindViewOf, nativeLanguageEngineOf } from '../../common.ts';
+import { loadIsLeafKind, loadSlotAccessorOf, loadNativeEngine, readNodeOf, materializeDetached, readNativeTree, kindViewOf, nativeLanguageEngineOf } from '../../common.ts';
 import { selfContainedRenderInput } from '../../read-render-parse.ts';
 
 export async function detachedRenderer(grammar: string): Promise<(source: string) => string> {

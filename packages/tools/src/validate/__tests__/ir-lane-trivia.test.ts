@@ -4,6 +4,7 @@ import {
 	buildFactoryNodeFromReference,
 	buildReadHandle,
 	hydrateOf,
+	loadSlotAccessorOf,
 	loadIrSurface,
 	loadNativeEngine,
 	loadNodeModel,
@@ -53,6 +54,7 @@ async function lane(grammar: string) {
 	const kindNameFromId = await loadStorageKindNameFromId(grammar);
 	const readNode = await readNodeOf(grammar);
 	const hydrate = await hydrateOf(grammar);
+	const accessorOf = await loadSlotAccessorOf(grammar);
 	const engine = await loadNativeEngine(grammar);
 	const read = async (source: string): Promise<ReadNodeLike> => readNode(await buildReadHandle(grammar, source)) as ReadNodeLike;
 	return {
@@ -60,7 +62,7 @@ async function lane(grammar: string) {
 		async render(source: string): Promise<string> {
 			const tree = await buildReadHandle(grammar, source);
 			const root = readNode(tree) as ReadNodeLike;
-			const built = buildFactoryNodeFromReference(root, kindNameFromId(Number(root.$type)) ?? '', artifacts, { kindNameFromId, tree, hydrate });
+			const built = buildFactoryNodeFromReference(root, kindNameFromId(Number(root.$type)) ?? '', artifacts, { kindNameFromId, accessorOf, tree, hydrate });
 			return engine.render(built as never).toString();
 		}
 	};

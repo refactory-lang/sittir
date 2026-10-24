@@ -7,6 +7,7 @@ const EXPECTED = [
 	'ast-diff',
 	'bench',
 	'bench-codemod',
+	'bench-storage',
 	'bindings-inventory',
 	'bootstrap-grammar',
 	'check-baseline',

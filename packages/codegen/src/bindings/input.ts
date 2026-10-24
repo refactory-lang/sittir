@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { slotPropertyName } from '../compiler/model/node-map.ts';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
 import { boundNameOf } from '../dsl/bind.ts';
 import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
@@ -21,6 +20,7 @@ export interface NodeModelValue {
 
 export interface NodeModelSlot {
 	readonly name: string;
+	readonly accessor: string;
 	readonly required?: boolean;
 	readonly multiple?: boolean;
 	readonly storage?: string;
@@ -66,7 +66,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			modelType: n.modelType ?? 'branch',
 			slots: (n.slots ?? []).map((s) => ({
 				name: s.name,
-				propertyName: slotPropertyName(s),
+				propertyName: s.accessor,
 				required: s.required ?? false,
 				multiple: s.multiple ?? false,
 				storage: s.storage ?? 'verbatim',

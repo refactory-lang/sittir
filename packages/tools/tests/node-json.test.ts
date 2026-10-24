@@ -375,11 +375,12 @@ describe('a comment on a token stored as its kind id survives JSON', () => {
 	});
 
 	it.each(['fn f() { let a = /* keep */true; }', 'fn f() { let a = /* keep */false; }', 'fn f() { let a = true /* keep */; }'])(
-		'known gap, the native read records no sides for a flattened enum it stores as a kind id: %s loses its comment',
+		'keeps the comment of a flattened enum the read stores as a kind id: %s',
 		(source) => {
 			const root = rs.parse(source);
-			expect(String(root)).toContain('/* keep */');
-			expect(JSON.stringify(root)).not.toContain(' keep ');
+			const json = JSON.stringify(root);
+			expect(json).toContain(' keep ');
+			expect(String(JSON.parse(json, rs.reviver))).toContain('/* keep */');
 		}
 	);
 

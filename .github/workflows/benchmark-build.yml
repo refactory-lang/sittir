@@ -1,0 +1,55 @@
+name: Build benchmark runtime
+
+on:
+  workflow_call:
+    outputs:
+      prefix:
+        value: ${{ jobs.prepare.outputs.prefix }}
+      grammars:
+        value: ${{ jobs.prepare.outputs.grammars }}
+
+permissions:
+  contents: read
+
+env:
+  CARGO_NET_RETRY: '10'
+  CARGO_HTTP_MULTIPLEXING: 'false'
+  CARGO_BUILD_JOBS: '4'
+
+jobs:
+  prepare:
+    name: Compile shared TypeScript
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      prefix: ${{ steps.plan.outputs.prefix }}
+      grammars: ${{ steps.plan.outputs.grammars }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - name: Plan canonical grammar builds
+        id: plan
+        run: |
+          pnpm exec tsx packages/tools/src/scripts/list-grammars.ts stable > "$RUNNER_TEMP/grammars.txt"
+          node --input-type=module <<'NODE' >> "$GITHUB_OUTPUT"
+          import { readFileSync } from 'node:fs';
+          const grammars = readFileSync(`${process.env.RUNNER_TEMP}/grammars.txt`, 'utf8').trim().split(/\s+/);
+          console.log(`grammars=${JSON.stringify(grammars)}`);
+          console.log(`prefix=arena-runtime-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`);
+          NODE
+      - uses: actions/cache@v4
+        id: compiled
+        with:
+          path: ${{ runner.temp }}/arena-runtime-typescript
+          key: arena-runtime-v1-${{ runner.os }}-${{ runner.arch }}-node26.12.0-${{ github.sha }}-typescript
+      - name: Compile committed TypeScript packages
+        if: steps.compiled.outputs.cache-hit != 'true'
+        run: |
+          pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
+          node scripts/ci/arena-benchmark-runtime.mjs pack "$RUNNER_TEMP/arena-runtime-typescript" typescript packages/*/dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.plan.outputs.prefix }}-typescript
+          path: ${{ runner.temp }}/arena-runtime-typescript/
+          retention-days: 7
+          if-no-files-found: error

@@ -6,6 +6,7 @@ import { TSKindId } from '../kinds.js';
 import type { Admit, NonEmptyArray, RefuseUndeclared, RefusingConfig } from '@sittir/types';
 import {
 	currentHandle,
+	admitChildren,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -35,6 +36,7 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	currentHandle()?.admit(TSKindId.Program, children);
 	const _definitions = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'program', { definitions: _definitions });
 	const node = {
 		$type: TSKindId.Program as const,
 		$named: true as const,
@@ -72,6 +74,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	if (!_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence', { content: _content });
 	const node = {
 		$type: TSKindId.EscapeSequence as const,
 		$named: true as const,
@@ -140,6 +143,7 @@ export function buildCapture<V extends Admit<T.ImmediateIdentifier>>(value: V & 
 export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bound {
 	const _name = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'capture', { name: _name });
 	const node = {
 		$type: TSKindId.Capture as const,
 		$named: true as const,
@@ -182,6 +186,7 @@ export function buildString(...args: unknown[]) {
 function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	const _string_content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'string', { stringContent: _string_content });
 	const node = {
 		$type: TSKindId.String as const,
 		$named: true as const,
@@ -226,6 +231,7 @@ export function buildImmediateString(...args: unknown[]) {
 function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateString.Bound {
 	const _string_content = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'immediate_string', { stringContent: _string_content });
 	const node = {
 		$type: TSKindId.ImmediateString as const,
 		$named: true as const,
@@ -255,6 +261,7 @@ export function buildStringContent(
 	currentHandle()?.admit(TSKindId.StringContent, children);
 	const _content = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'string_content', { contents: _content });
 	const node = {
 		$type: TSKindId.StringContent as const,
 		$named: true as const,
@@ -285,6 +292,7 @@ export function buildParameters(
 	currentHandle()?.admit(TSKindId.Parameters, children);
 	const _elements = children;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
 	const node = {
 		$type: TSKindId.Parameters as const,
 		$named: true as const,
@@ -320,6 +328,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	if (!_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'comment', { content: _content });
 	const node = {
 		$type: TSKindId.Comment as const,
 		$named: true as const,
@@ -349,6 +358,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 	const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
 	const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'list', { definitions: _definitions, elements: _elements });
 	const node = {
 		$type: TSKindId.List as const,
 		$named: true as const,
@@ -385,6 +395,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
 	const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group, elements: _elements });
 	const node = {
 		$type: TSKindId.Grouping as const,
 		$named: true as const,
@@ -429,6 +440,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	const _name = config.name;
 	const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'missing_node', { name: _name, elements: _elements });
 	const node = {
 		$type: TSKindId.MissingNode as const,
 		$named: true as const,
@@ -464,6 +476,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
 	const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'anonymous_node', { name: _name, elements: _elements });
 	const node = {
 		$type: TSKindId.AnonymousNode as const,
 		$named: true as const,
@@ -500,6 +513,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	const _name = config.name;
 	const _definition = config.definition;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_definition', { name: _name, definition: _definition });
 	const node = {
 		$type: TSKindId.FieldDefinition as const,
 		$named: true as const,
@@ -529,6 +543,7 @@ export function buildNegatedField<V extends Admit<T.Identifier>>(value: V & Refu
 export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bound {
 	const _identifier = value;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'negated_field', { identifier: _identifier });
 	const node = {
 		$type: TSKindId.NegatedField as const,
 		$named: true as const,
@@ -560,6 +575,8 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
 	const _parameters = config.parameters;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'predicate', { prefix: _prefix, name: _name, type: _type, parameters: _parameters });
 	const node = {
 		$type: TSKindId.Predicate as const,
 		$named: true as const,
@@ -601,6 +618,7 @@ export function buildListElementQuantifier(
 ): T.ListElementQuantifier.Bound {
 	const _quantifier = kindIdStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value);
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'list_element_quantifier', { quantifier: _quantifier });
 	const node = {
 		$type: TSKindId.ListElementQuantifier as const,
 		$named: true as const,
@@ -633,6 +651,7 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 	const _left = config.left;
 	const _right = config.right;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.GroupExpressionArm as const,
 		$named: true as const,
@@ -669,6 +688,7 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	const _left = config.left;
 	const _right = config.right;
 	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { left: _left, right: _right });
 	const node = {
 		$type: TSKindId.NamedNodeExpressionArm as const,
 		$named: true as const,
@@ -702,6 +722,8 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 	const _group_expression = config.groupExpression;
 	const _anchor = strictBooleanStorage(config.anchor);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'grouping_group', { groupExpression: _group_expression, anchor: _anchor });
 	const node = {
 		$type: TSKindId.GroupingGroup as const,
 		$named: true as const,
@@ -767,6 +789,8 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 	const _named_node_group = config.namedNodeGroup;
 	const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_plain', { name: _name, namedNodeGroup: _named_node_group, elements: _elements });
 	const node = {
 		$type: TSKindId.NamedNodePlain as const,
 		$named: true as const,
@@ -814,6 +838,13 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	const _named_node_group = config.namedNodeGroup;
 	const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_supertyped', {
+			supertype: _supertype,
+			name: _name,
+			namedNodeGroup: _named_node_group,
+			elements: _elements
+		});
 	const node = {
 		$type: TSKindId.NamedNodeSupertyped as const,
 		$named: true as const,
@@ -859,6 +890,11 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 		config.namedNodeExpressions
 	);
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_group_children', {
+			anchor: _anchor,
+			namedNodeExpressions: _named_node_expressions
+		});
 	const node = {
 		$type: TSKindId.NamedNodeGroupChildren as const,
 		$named: true as const,
@@ -913,6 +949,12 @@ export function buildNamedNodeGroupAnchoredLast(
 	);
 	const _last = config.last;
 	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_group_anchored_last', {
+			anchor: _anchor,
+			namedNodeExpressions: _named_node_expressions,
+			last: _last
+		});
 	const node = {
 		$type: TSKindId.NamedNodeGroupAnchoredLast as const,
 		$named: true as const,

@@ -2,7 +2,8 @@
 // the one owner every addon shares — the JavaScript process — or a rust
 // engine and a typescript engine would both mint tree 0 and a coordinate
 // read by one could slice the other's unrelated tree. A node read by one
-// grammar's engine is refused by another grammar's, naming both languages.
+// grammar's engine is refused by another grammar's, naming both languages,
+// whether it is rendered or handed to a builder.
 import { describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { createEngine } from '@sittir/common';
@@ -16,6 +17,17 @@ describe('a coordinate names its tree across grammars', () => {
 		const item = (rust.parse('fn real() {}\n') as unknown as { statements(): AnyUntypedNode[] }).statements()[0]!;
 		// @ts-expect-error a rust node is not a typescript node; the engine refuses it at runtime as well
 		expect(() => typescript.render(item).toString()).toThrow('cannot render a rust node through a typescript engine');
+	});
+
+	it('refuses a parsed node of another grammar as a builder child, naming both languages, the kind and the slot', async () => {
+		const typescript = await createEngine(await languageByName('typescript'));
+		const rust = await createEngine(await languageByName('rust'));
+		const item = rust.parse('fn real() {}\n').statements()[0]!;
+		const refusal = 'cannot build a typescript program with a rust node in its statements';
+		// @ts-expect-error a rust node is not a typescript statement; the builder refuses it at runtime as well
+		expect(() => typescript.build.program({ statements: [item] })).toThrow(refusal);
+		const root = typescript.parse('a;\n') as unknown as { $with: { statements(...items: unknown[]): unknown } };
+		expect(() => root.$with.statements(item)).toThrow(refusal);
 	});
 
 	it('mints distinct ids for trees parsed by engines of different grammars', async () => {

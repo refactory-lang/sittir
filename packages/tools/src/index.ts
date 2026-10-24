@@ -29,6 +29,7 @@ export { run as profile, type ProfileOptions } from './profile/failures.ts';
 export { run as profileFactory, type ProfileFactoryOptions } from './profile/factory.ts';
 export { run as bench, type BenchOptions } from './profile/bench.ts';
 export { run as benchCodemod, type BenchCodemodOptions } from './profile/codemod.ts';
+export { run as benchStorage, type StorageBenchOptions } from './profile/storage.ts';
 export { run as diffFailures, type DiffFailuresOptions } from './validate/diff.ts';
 export { run as defectHistogram, type DefectHistogramOptions } from './validate/defect-histogram.ts';
 export { run as dumpAstMismatches, type DumpAstMismatchesOptions } from './validate/dump-ast-mismatches.ts';
@@ -128,6 +129,7 @@ export {
 	resolveGrammars,
 	resolveBackends
 } from './commands.ts';
+export { parseNodeStorage } from './validate/common.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';

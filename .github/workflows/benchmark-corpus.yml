@@ -1,0 +1,94 @@
+name: Corpus storage benchmark
+
+on:
+  workflow_call:
+    inputs:
+      runtime-prefix:
+        type: string
+        required: true
+      grammars:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    name: ${{ matrix.grammar }} RRP, factory and IR (Linux x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
+      CARGO_BUILD_JOBS: '4'
+    strategy:
+      fail-fast: false
+      matrix:
+        grammar: ${{ fromJSON(inputs.grammars) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - uses: ./.github/actions/arena-benchmark-runtime
+        with:
+          prefix: ${{ inputs.runtime-prefix }}
+      - name: Fingerprint the measured runtime
+        run: node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/before.json"
+      - name: Measure complete validation buckets
+        env:
+          NODE_ENV: production
+          GRAMMAR: ${{ matrix.grammar }}
+        shell: bash
+        run: |
+          node --import tsx packages/cli/dist/cli.js tool bench-storage "$GRAMMAR" --validation \
+            --idle-gate scripts/ci/arena-benchmark-idle.sh \
+            --output "$RUNNER_TEMP/arena-benchmarks/corpus.json" \
+            2>&1 | tee "$RUNNER_TEMP/arena-benchmarks/corpus.log"
+      - name: Check runtime stability
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/arena-benchmarks/before.json" ]]; then
+            node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/after.json"
+            node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/arena-benchmarks/before.json" "$RUNNER_TEMP/arena-benchmarks/after.json"
+          fi
+      - name: Summarize paired measurements
+        shell: bash
+        run: node scripts/ci/arena-benchmark-report.mjs summarize "$RUNNER_TEMP/arena-benchmarks/corpus.json" "$RUNNER_TEMP/arena-benchmarks/summary.md"
+      - name: Upload raw samples and provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arena-corpus-${{ matrix.grammar }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/arena-benchmarks/
+          retention-days: 30
+          if-no-files-found: warn
+
+  summarize:
+    name: Combine verified corpus shards
+    needs: measure
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '26.12.0'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: arena-corpus-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/corpus-shards
+      - name: Validate and combine all grammar shards
+        env:
+          EXPECTED_GRAMMARS: ${{ inputs.grammars }}
+        run: |
+          node scripts/ci/arena-benchmark-report.mjs merge "$RUNNER_TEMP/corpus.json" "$RUNNER_TEMP/corpus-shards/"*/corpus.json
+          node scripts/ci/arena-benchmark-report.mjs summarize "$RUNNER_TEMP/corpus.json" "$RUNNER_TEMP/corpus-summary/summary.md"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arena-corpus-summary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/corpus.json
+            ${{ runner.temp }}/corpus-summary/
+          retention-days: 30
+          if-no-files-found: warn

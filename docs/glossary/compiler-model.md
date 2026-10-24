@@ -55,7 +55,7 @@ takes, shared by the loose resolver's kind tags.
  * True when EVERY value in the slot is guaranteed to be present:
  * `single` or `nonEmptyArray`.
  *
- * Plain `array` slots are optional at the transport/render surface: a
+ * Plain `array` slots are optional at the native node and render surface: a
  * repeated field with zero occurrences is emitted as a missing slot, not
  * a present-empty collection.
  */
@@ -1703,7 +1703,7 @@ member arm reached through an enum reference takes that enum's token seams
 ```text
 // For a literal: the resolved CST kind name the literal text maps to (a
 // catalog anon/hidden kind), when one exists. Absent for genuinely-kindless
-// literals (regex patterns / residual). Carried for transport/typing;
+// literals (regex patterns / residual). Carried for the native node and its typing;
 // render still emits from `value`.
 ```
 

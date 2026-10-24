@@ -157,6 +157,7 @@ type Accessors<N, ByKindId> = {
 		: never;
 };
 type Storage<N> = Remap<N, MethodKeys<N> | '__slotHints__'>;
+type PublicStorage<N> = Remap<N, MethodKeys<N> | '__slotHints__' | Extract<keyof N, `_${string}`>>;
 
 export type Admit<V> = V extends unknown
 	? V extends readonly unknown[]
@@ -440,7 +441,7 @@ type ShapesOf<Surface, N, H, Of, ByChild> = [Of] extends [never]
 
 export type FlatShapesOf<Surface, N, ByChild> = ShapesOf<Surface, N, FlatOf<N>, FlatOf<N>, ByChild>;
 
-type SurfaceOf<N, ByChild> = Storage<N> &
+type SurfaceOf<N, ByChild, S = Storage<N>> = S &
 	Accessors<N, ByChild> &
 	ListPart<N, ByChild> & {
 		readonly __slotHints__?: HintsOf<N>;
@@ -448,7 +449,7 @@ type SurfaceOf<N, ByChild> = Storage<N> &
 		readonly __slotFlags__?: SlotFlagsHintOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
-export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;
+export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed, PublicStorage<N>>;
 /** `$with` for a tree-bound node: one setter per slot returning the node with that slot replaced. On a supertype union the setters intersect, so a slot whose forms disagree on its value type refuses every value; `FormsHolding` names the forms that accept one. */
 export type WithNode<Self, ByBound, Of = Self> = WithOf<Self, ByBound, Of>;
 export type BoundWithNode<Self, ByBound, Of = Self> = Setters<Self, ByBound, true, Of>;

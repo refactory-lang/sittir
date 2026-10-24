@@ -194,11 +194,11 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			GENERATED_ID_TABLES
 		).nodeRs.contents;
 
-		expect(emitted).toContain('leading: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
-		expect(emitted).toContain('trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
+		expect(emitted).toContain('leading: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
+		expect(emitted).toContain('trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 		expect(emitted).toMatch(/let member_separator: fn\(KindId\) -> &'static str = \|kind\| match kind \{ KindId\(3\) => ",", KindId\(4\) => ";", _ => [^}]+ \};/);
-		expect(emitted).toContain('token: node.separator_kind.map_or(');
-		expect(emitted).toContain('separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), "_member"), member_separator)),');
+		expect(emitted).toContain('token: node.separator_kind().map_or(');
+		expect(emitted).toContain('separators: Some((::sittir_core::layout::BodyLayout::slot_tokens(node.layout(), "_member"), member_separator)),');
 	});
 
 	it('fills separator_kind from the declared separator site and falls back to the declared token', () => {
@@ -221,7 +221,9 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
 		}).nodeRs.contents;
 
-		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
+		expect(emitted).toContain('::sittir_core::prepare::Setting::fill(&mut parts.separator_kind, overlay, ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
+		expect(emitted).toContain('let chosen = ::sittir_core::prepare::Setting::chosen(&parts.separator_kind, overlay);');
+		expect(emitted).toContain('if let Some(tokens) = ::sittir_core::prepare::SlotTarget::separators(&parts.member, overlay, MemberListNode::separator_kind_of, ctx).filter(|_| !chosen) {');
 		expect(emitted).toContain('_ => ";" };');
 	});
 
@@ -241,7 +243,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: true,');
-		expect(emitted).toContain('trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
+		expect(emitted).toContain('trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 		// A 'mandatory' flank has no per-instance capture — no leading_sep field.
 		expect(emitted).toContain('pub delimiter: Option<::sittir_core::types::Delimiter>,');
 	});
@@ -283,7 +285,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		).nodeRs.contents;
 
 		expect(emitted).toContain('leading: false,');
-		expect(emitted).toContain('trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
+		expect(emitted).toContain('trailing: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),');
 	});
 
 	it('resolves only leading from the node-struct field for a literal separator with an optional leading flank (mirror of the trailing-only case)', () => {
@@ -301,7 +303,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			GENERATED_ID_TABLES
 		).nodeRs.contents;
 
-		expect(emitted).toContain('leading: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
+		expect(emitted).toContain('leading: node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING)),');
 		expect(emitted).toContain('trailing: false,');
 	});
 

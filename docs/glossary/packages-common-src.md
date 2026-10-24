@@ -348,6 +348,18 @@ The handle in scope, or `undefined` outside any engine call. A node built with n
 
 Whether a handle's `current` is a live engine rather than an identity, told by the presence of a `render` member.
 
+### `packages/common/src/engine-scope.ts::foreignEngine`
+
+The engine a value belongs to when that engine is of another language than `identity` (`engineOf`, `sameLanguage`), else `undefined`: a value with no stamp is never foreign. The one predicate behind every cross-language refusal: an engine's `render` and `query` of a root node, and a builder's or an edit's children (`admitChildren`). Each caller names the two languages in its own message.
+
+### `packages/common/src/engine-scope.ts::admitChildren`
+
+The refusal of a child from another language's engine, at the two writers of a node's children: every generated builder that has an engine in scope (`builderHandleLines`), which a direct call, a call through an engine's build table and a built node's `$with` all reach, and a parsed node's `$with`, slot by slot (`admitSlot`). `slots` maps each slot's config key to its value; a list's items are each checked, one level down and no further. A child of another language (`foreignEngine`) throws `cannot build a <language> <kind> with a <language> node in its <slot>`. It is the early refusal: a foreign coordinate that reaches the native engine another way names no tree of it and is refused at lookup.
+
+### `packages/common/src/engine-scope.ts::admitSlot`
+
+One slot's value as a parsed node's `$with` writes it, admitted under the node's engine (`admitChildren`) and returned unchanged; under no engine it is returned unchecked. A parsed node's edit rebuilds through its wrap rather than a builder, so the wrap's setters write each new value through it (`admittedSlot`).
+
 ### `packages/common/src/engine-scope.ts::hydrateOn`
 
 A value as an accessor of a node of a tree returns it, through the generated `hydrate` of the engine the tree is bound to (`hydrateWith` with the grammar's wrap): node data is wrapped as its kind's node, and anything else passes through. A tree bound to no engine returns the value as it is. `hydrateStored` reaches the same `hydrate` from a coordinate's own tree token; this takes the tree from the caller, for data that names no tree, such as a trivia entry written into a tree's table.
@@ -367,6 +379,42 @@ The level count a native read takes for a set of parse options: one by default, 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
 Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` passes the call's flat options as the render options the native engine resolves over its own, and none when the call has none or an empty object. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
+
+### `packages/common/src/engine.ts::renderNativeNode`
+
+Renders through the calling engine's native instance, so that engine supplies render defaults for both object nodes and record views. A record view supplies its source tree and record address; its tree reader owns storage access and carries no render callback. Deferred render handles retain the input node, keeping every source tree it names alive until the render finishes.
+
+### `packages/common/src/engine.ts::NativeEngineLike`
+
+The shared TypeScript contract of a grammar addon. Record lookup, deep hydration, typed candidate metadata, chunk copies, address rendering and candidate rendering are independent capabilities. Candidate enumeration exports only coordinates and addresses from the native typed record tree. Candidate rendering renders a native parsed row or record with its outer trivia excluded; it does not export node fields.
+
+### `packages/common/src/engine.ts::recordReader`
+
+Binds a parsed tree's native record operations and retains chunk copies only when words are explicitly requested. Hydration can deepen cached records without fetching words. Candidate enumeration walks native record cells and returns metadata and addresses, including nested content sharing a row. Normal rendering uses an address; candidate rendering additionally names the parsed row so its outer trivia is excluded natively. Object reads remain a separate operation for callers that explicitly need them.
+
+### `packages/common/src/engine.ts::hydrate`
+
+Delegates a requested depth to native record hydration and returns only the optional address. It refuses an addon lacking that capability instead of substituting cached lookup or exporting data.
+
+### `packages/common/src/engine.ts::renderCandidate`
+
+Delegates a parsed row and its optional record address to native candidate rendering. Recordless leaves remain native coordinate renders. No node objects or chunk words are fetched.
+
+### `packages/common/src/engine.ts::createNativeEngine`
+
+Creates a grammar's native engine with object or arena reads. Its diagnostic parse retains a tree immediately and reads the root on demand; any first root read stamps parse errors and is cached by depth. Public parsing still requests and wraps that root. Tree tokens retain native storage independently of engine disposal, and render handles retain their node's trees.
+
+### `packages/common/src/engine.ts::parseAndRead#1`
+
+Parses and registers a native tree, retaining its token in the bound read closures. The returned root getter performs the first root read at the requested depth. Code retaining only the tree can query metadata, hydrate records and render natively without exporting root data. All root reads stamp the parse's error regions and share the depth cache.
+
+### `packages/common/src/engine.ts::root`
+
+Reads the diagnostic root through the tree's depth cache. It requests the caller's parse depth and returns the same root object and error stamp as a direct root read.
+
+### `packages/common/src/engine.ts::candidates`
+
+Returns only metadata and native addresses from the hydrated typed record tree. The native walk uses the generated cell schema, includes content sharing its envelope's row, and omits unit cells and captured strings. It neither reads object data nor exports arena words.
 
 
 ### `packages/common/src/delimiter.ts::Delimiter`
@@ -590,11 +638,11 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 
 ### `packages/common/src/node-data.ts::holdReadTree`
 
-`holdTree` for the objects a read returned, the one place that records read provenance: every object it visits also counts as read (`isRead`), and is stamped `Source.Ts` (`stampSource`), so it stays a node after an edit drops its tree token. The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
+`holdTree` for the objects a read returned, which is where read provenance starts (`carryReadTree` passes it from a record view to the child objects its cells hold): every object it visits also counts as read (`isRead`), and is stamped `Source.Ts` (`stampSource`), so it stays a node after an edit drops its tree token. The engine's read sites call it; a caller that re-holds a copy calls `holdTree`, so the copy holds the tree without counting as read. Provenance lives in a weak set rather than a member, because a spread copies members: a copy built with different trivia must not inherit a fact about the object it was copied from.
 
 ### `packages/common/src/node-data.ts::carryRead`
 
-Carries read provenance from a read object to the object rebuilt from it, which is the same node in another shape. The wrap's `wrapNode` carries it to every wrapped node, and the validator's `materialize` carries it to every plain node it resolves. Every other copy is not read.
+Carries read provenance from a read object to an object made from it that is the same node in another shape but holds no tree: a `$with` rebuild (`rebuilt`, `carryRebuiltSlots`), since an edit drops the tree token, and the validator's `materialize` copy, which is detached data and must not cross as a coordinate. An object that is itself read, and so holds the tree too, takes `carryReadTree` instead. Every other copy is not read.
 
 ### `packages/common/src/node-data.ts::markRebuilt`
 
@@ -610,7 +658,11 @@ The native node for data leaving the tree it was read from, such as a render fix
 
 ### `packages/common/src/node-data.ts::toNodeValue`
 
-The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds `slots` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
+The walk behind `toNodeData` and `toDetachedNodeData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its native node when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. Every other key a node's `$_layout` holds crosses as it is (`DECIDED_LAYOUT_KEYS` names the ones the walk decides), so a fact the native read writes, such as a snapshot's `span` and `flanks`, crosses back without the walk naming it; a fold crosses the `slots` and `separator` it already holds: data a tool detached from its tree keeps the layout facts the tree would have given. A node crosses with the changed edges its holder judged only when it bears them (the entry itself, or the node a rebuilt wrapper holds, `evidenceOf`); a list node's edges are its holder's like any other node's. An alias envelope's content crosses without sides, which its envelope holds (`envelopeKindOf`). A node's source stamp does not cross: it is a symbol member, and nothing native reads it.
+
+### `packages/common/src/node-data.ts::aliasContentOf`
+
+The stored child that shares its envelope's parser row: the one whose envelope kind (`envelopeKindOf`) is its holder's kind (`isAliasContent`). Storage-key enumeration finds it without assuming a slot name. A record view's object bridge follows these children until the object's kind equals the record's logical kind, so setters act on the content even when the row is owned by its envelope.
 
 ### `packages/common/src/node-data.ts::evidenceOf`
 
@@ -727,7 +779,7 @@ The refusal of a raw factory given a list owner's storage that is a read stub, a
 
 ### `packages/common/src/node-data.ts::spanOf`
 
-The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. Tools that slice source or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
+The byte range of a parsed node in the source its tree was read from, or `undefined` for a node that was built. Internal: a node's position is not part of the public node type (`ParsedOf` declares no `$span`), and the range belongs to the version of the tree the node was read from, so after an edit it says nothing about the rebuilt node. A node's source text, its `$text` or else its span's text by the tree's native text call, is `sourceTextOf`. Tools that slice a source they hold or report a line read it here; the bindings reader slices a pattern's source text by this range, so a definition keeps the exact bytes of its leading comments, and also reports the line from it.
 
 ### `packages/common/src/utils.ts::groupField`
 
@@ -785,6 +837,10 @@ A trivia side as its reader gets it, each entry through `hydrateTriviaEntry` on 
 ### `packages/common/src/read.ts::INDEX_RANGE`
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
+
+### `packages/common/src/read.ts::RecordReader`
+
+A parsed arena's independent lookup, hydration, typed candidate enumeration, rendering, object export and word-copy operations. Native hydration returns addresses without copying chunks; candidate enumeration returns only coordinates and addresses from generated record-cell shapes, excluding units and captures. Native candidate rendering strips only the root's outer trivia. Reading words is explicit and owns a JavaScript copy. Cached record lookup does not substitute for a deeper hydration request.
 
 ### `packages/common/src/portable/facts.ts::portablePathHasFacts`
 
@@ -900,6 +956,14 @@ A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an ed
 
 The `KindView` of data with no wrapper or list kinds: no for every kind.
 
+### `packages/common/src/node-data.ts::DECIDED_LAYOUT_KEYS`
+
+The `$_layout` keys `toNodeValue` decides for itself: `at`, which a crossing never carries (an untouched node crosses as its coordinate, an edited one without it); `trivia`, `units`, `slots`, `separator` and `sides`, which it derives from the node; and `changed`, which its holder judges. Every other key crosses as the node holds it, so the walk names no copy of `NodeLayout`'s shape and a key the native side adds crosses without a change here. Pinned by a test that walks a snapshot through `toNodeData` and refuses any `$_layout` key it drops.
+
+### `packages/common/src/node-data.ts::sourceTextOf`
+
+A node's source text, the one path every reader takes to it: the node's own `$text` when it holds one (`nodeText`), and otherwise the text its coordinate spans (`spanOf`), read through its tree's native text call (`TreeHandle.text`). `$text` is slot content only, and a structural node's source is its coordinate, so a parsed compound answers by its span. A parsed tree's source stays native and never crosses to JavaScript: the span is read as one string of the node's characters. `tree` defaults to the node's own; a caller that already holds the tree passes it. A node with neither has no source text and answers `undefined`: a built compound has no coordinate, and an edit drops its node's coordinate (`markEdited`). It never renders to fill the gap, because rendered text is not source text. The portable classifier's text tests and the validators' `readNodeText` read through it.
+
 ### `packages/common/src/node-data.ts::nodeText`
 
 The text a leaf holds, from either form a value takes: a node's `$text()` method, which makes the string when called, or the `$text` string native node data carries across the boundary. `undefined` for a value with neither. Code that may hold either form, such as the crossing (`toNodeValue`), builder input checks (`rejectKeywordText`, `rejectReservedText`), the delimited check, the portable classifier and the validators, reads text here and nowhere else. Typed code holds nodes only and calls `$text()`.
@@ -911,6 +975,10 @@ A read value given a node's text member: an object whose `$text` is a string get
 ### `packages/common/src/node-data.ts::hasNodeText`
 
 Whether a value has a text member in either form, a node's `$text()` method or native data's `$text` string, decided by the member's type alone. It never calls the method: a node's text is made strictly on access, and a method backed by the tree's native `text(span)` would otherwise cost a native call and a string on every check. `isNode`, which every coercer runs, tests text presence here; code that needs the text itself reads it through `nodeText`.
+
+### `packages/common/src/node-data.ts::carryReadTree`
+
+`holdReadTree` for one object that a read of `from` produced. `to` gets `from`'s tree token (`carryTree`), its source stamp (`carrySourceStamp`) and its read provenance (`carryRead`), and is returned. A record view reads each child leaf and child record stub out of its holder's cells (`cellData`) instead of through the engine's read sites. This gives those objects the same three facts a read object holds, so a view of a child is a `Source.Ts` node on the arena wire just as a read node is on the object wire.
 
 ### `packages/common/src/node-data.ts::envelopeKindOf`
 
@@ -968,6 +1036,30 @@ The child segments of a path among a union of vocabulary paths: each path one se
 
 The type of one node of the shared kind tree: its `$path` as a literal, and each child segment (`ChildrenOf`) as the node one level down. `GuardAt` is the same shape over the guards: each node is a `PortableGuard` holding its children. Both derive from the path union that `portableTrees` is given, which for the exported `portable` is `vocabularyPaths`'s element type, so the generated path list is the one source of the shared trees' types and values.
 
+### `packages/common/src/record-cell.ts::cellFormatOf`
+
+The cell tags and the address packing a record's words are read with, taken from the constants the addon exports (`CELL_TAG_*` and `ARENA_CHUNK_SHIFT`, napi consts over `arena::cell::tag` and `arena::CHUNK_SHIFT`). The Rust codec is the one source of each value. JavaScript reads them from the binary it talks to and names none itself, so a tag the codec renumbers can't drift on the JavaScript side. An addon built without the `arena` feature exports none of them, and the answer is `undefined`: that is how the engine learns the addon has no record codec. The decoder's logic is pinned against the codec by the shared fixture `rust/crates/sittir-core/src/arena/cell-forms.json`, which a Rust test encodes and decodes and a TypeScript test decodes.
+
+### `packages/common/src/record-cell.ts::decodeCell`
+
+Decodes a slot from its bounded word slice using the constants of the loaded native codec. An inline tag requires the emitted child capacity and the scalar cell's packed address; it resolves the embedded record relative to that address, within the same chunk. Native admission checks the child's actual shape against the capacity and enforces allocation ordering before render. Ordinary leaf, coordinate, pointer, text and unit forms retain their existing meanings. Public record accessors bound the slice to the emitted width so a field cannot read a neighboring cell.
+
+### `packages/common/src/record-cell.ts::RecordCodecConstants`
+
+The required numeric codec exports supplied by each native addon. JavaScript validates this complete surface before decoding; inline tag/header constants and side-field sizes therefore come from the native representation rather than a second table.
+
+### `packages/common/src/record-cell.ts::CellFormat`
+
+The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing and ordered side fields. Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
+
+### `packages/common/src/record-cell.ts::RecordCell`
+
+The decoded cell forms consumed by record views. Ordinary and bounded-inline compound cells both resolve to a child address, with origin-link and changed-edge information retained; byte spans and built-text references keep their distinct provenance.
+
+### `packages/common/src/record-cell.ts::decodeSideDelimiter`
+
+Reads an optional delimiter setting from a side record. Its offset is the mask-selected sum of the preceding native-stamped side fields. It returns undefined when the field is absent and rejects truncated records.
+
 ### `packages/common/src/source-stamp.ts::stampSource`
 
 Stamps `node` with where it came from (`Source`), which makes it a node (`isNode`). The stamp is a member under a module-private symbol, so no literal, JSON value or string-key copy can carry it, while a spread copy keeps it (the member is enumerable, as the tree token's is). The node gets no `$source` member: `sourceOf` is the one way to read the stamp. Stamping again replaces the stamp.
@@ -983,6 +1075,26 @@ The one read of a node's provenance, public through `@sittir/common`: the stamp 
 ### `packages/common/src/source-stamp.ts::carrySourceStamp`
 
 Stamps `to` with the source stamp `from` holds, when it holds one, and returns `to`. A copy built key by key from a node (the validators' materialised copies, `materializeValue`) loses the stamp with every other symbol member, and this puts it back, so the copy is the node it stands for. A spread copy keeps the stamp and needs no carry. Beside `carryPlace`, which carries a different fact: where in its source a node sits.
+
+### `packages/common/src/record-view.ts::recordSlot`
+
+Reads a scalar using emitted literal word, width and optional inline capacity. The slot's bounded word slice and packed address go to the shared decoder; no runtime layout descriptor is read. The resulting coordinate, leaf, unit or child is mapped to the same read data as the object path.
+
+### `packages/common/src/record-view.ts::recordSlots`
+
+Reads a list cell using emitted word, cell width and run stride. An absent stride admits the scalar form as zero or one item. The shared cell decoder preserves coordinate, leaf and child semantics.
+
+### `packages/common/src/record-view.ts::recordItems`
+
+Hydrates a list slot once per holder and emitted word offset, then caches the frozen items. Distinct slots have distinct word offsets; every accessor reuses the same item identities.
+
+### `packages/common/src/record-view.ts::recordLength`
+
+Reads the item count using emitted numeric cell arguments without hydrating items. A scalar cell counts as zero when absent and one otherwise.
+
+### `packages/common/src/record-view.ts::recordFlag`
+
+Reads the emitted presence word and bit directly after checking the word slice. Kind-specific placement is resolved at generation rather than looked up through a runtime table.
 
 ### `packages/common/src/node-json.ts::nodeJSON`
 

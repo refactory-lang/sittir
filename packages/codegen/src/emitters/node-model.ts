@@ -50,6 +50,7 @@ interface SerializedValue {
 
 interface SerializedSlot {
 	name: string;
+	accessor: string;
 	required: boolean;
 	multiple: boolean;
 	nonEmpty: boolean;
@@ -298,6 +299,7 @@ function serializeSlot(
 	const meta = factorySlots?.[slot.name];
 	const out: SerializedSlot = {
 		name: slot.name,
+		accessor: slot.propertyName,
 		required: isRequired(slot),
 		multiple: isMultiple(slot),
 		nonEmpty: isNonEmpty(slot),

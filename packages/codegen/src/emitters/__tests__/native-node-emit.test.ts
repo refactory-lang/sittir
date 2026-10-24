@@ -408,7 +408,7 @@ describe('native node emission', () => {
 		);
 
 		expect(emitted.nodeRs.contents).toContain('pub enum AnyNode');
-		expect(emitted.nodeRs.contents).toContain('#[node(choice)]\npub enum AnyNode {');
+		expect(emitted.nodeRs.contents).toContain('#[node(choice, view = AnyNodeRecord)]\npub enum AnyNode {');
 		expect(emitted.nodeRs.contents).toContain('CallExpression(Box<CallExpressionNode>),');
 		expect(emitted.nodeRs.contents).toContain('pub struct CallExpressionNode');
 		expect(emitted.nodeRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionNode>,');
@@ -499,7 +499,7 @@ describe('native node emission', () => {
 		const structBody = emitted.nodeRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 5)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentNodeSlot>,'
+			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 9, inline = 7)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentNodeSlot>,'
 		);
 		expect(emitted.nodeRs.contents).toContain('pub enum SupertypeAliasParentContentNodeSlot {');
 		expect(emitted.nodeRs.contents).toContain('Identifier(IdentifierNode),');

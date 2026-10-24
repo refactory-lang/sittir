@@ -227,8 +227,12 @@ export interface Language<API extends LanguageAPI> {
 	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
 }
 
+/** How a parsed tree's nodes cross from the native engine: as objects, or as records read in place (`EngineOptions.nodeStorage`). */
+export type NodeStorage = 'object' | 'arena';
+
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
 	readonly options?: O;
+	readonly nodeStorage?: NodeStorage;
 }
 
 /** The structure facts the generated types prove for one kind's built nodes, by slot storage key. An engine constructed with `verifyStructure: 'runtime'` checks them when a node is built or rebuilt. */
@@ -292,6 +296,7 @@ export interface ParsedRoot {
 
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
+	/** Parses and retains a tree; accessing `root` performs its first read. Keeping only `tree` exports no root data. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
 
@@ -492,6 +497,14 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 	 * checks and read checks run in both modes.
 	 */
 	readonly verifyStructure?: 'compileTimeOnly' | 'runtime';
+	/**
+	 * How a parsed tree's nodes cross from the native engine. `'object'` (the default) reads each node as an object.
+	 * `'arena'` reads each node as a view over its record in the tree's native arena: its accessors read the record's
+	 * cells, and a node's text is one native call when read. Both give the same nodes, kinds and text.
+	 *
+	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
+	 */
+	readonly nodeStorage?: NodeStorage;
 }
 
 export interface Interceptor<API extends LanguageAPI> {

@@ -24,7 +24,7 @@ async function irBuild(grammar: string, source: string, rootKind: string) {
 	if (surface === undefined) throw new Error(`${grammar} has no ir surface`);
 	const tree = await buildReadHandle(grammar, source);
 	const artifacts = { factoryMap, factoryShapes: model.factoryShapes, fieldAliasMap: model.fieldAliasMap, factoryFields: model.factoryFields, factorySlots: model.factorySlots, surface };
-	const built = buildFactoryNodeFromReference(materialize(readNode(tree), accessorOf), rootKind, artifacts, { kindNameFromId, tree, placeText: true });
+	const built = buildFactoryNodeFromReference(materialize(readNode(tree), accessorOf), rootKind, artifacts, { kindNameFromId, tree, placeText: true, accessorOf });
 	const nodesOf = (kind: string): TypedNode[] => {
 		const nodes: TypedNode[] = [];
 		walkWrappedTree(built, accessorOf, (node) => {

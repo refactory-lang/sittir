@@ -30,6 +30,12 @@ pub struct NodeLayout<T> {
     /// native node that holds it. A snapshot node has no `at`; a read or built
     /// node has no span.
     pub span: Option<crate::points::PointSpan>,
+    /// A snapshot root's flanks, the gap kinds before its first item and
+    /// after its last as its read classified them from geometry
+    /// (`$_layout.flanks`, `layout_kinds::Flanks`). A root's prepare
+    /// resolves them to its edges while its end items are still the
+    /// snapshot's. Every other node stamps none.
+    pub flanks: crate::layout_kinds::Flanks,
     /// The node a built node was rebuilt from (`$_layout.sides`): each side
     /// the built node does not hold is that node's, as its tree's trivia table
     /// gives it, filled in at prepare. It names the built node's frame as
@@ -56,13 +62,33 @@ pub struct NodeLayout<T> {
     /// (`$_layout.separator`, `ParsedTree::separator_before`). A read writes
     /// it; a node without a tree carries it as data.
     pub separator: Option<KindId>,
+    /// The byte span in its tree's source of each of a token interior's
+    /// captures, one per capture field at the index the derive stamps it
+    /// (`None` where its group did not match). A read writes it; a built node
+    /// has none. It never crosses: a record keeps each span in its capture's
+    /// cell.
+    pub captures: Vec<Option<crate::types::Span>>,
+    /// The row of each unit child the read took inline, by its slot and its
+    /// item there: a parsed record's unit cell names it, so the unit's sides
+    /// key by its row as any parsed node's do. A read writes it; a built node
+    /// has none. It never crosses.
+    pub unit_rows: Vec<UnitRow>,
+}
+
+/// The row of one unit child a read took inline, by the slot that holds it
+/// (its wire key) and its item in that slot.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct UnitRow {
+    pub slot: &'static str,
+    pub item: crate::types::ItemIndex,
+    pub row: crate::types::NodeIndex,
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
 /// the separator, and its separator token, each only where its occurrence's
 /// source takes one apart from the options in effect when it was read. Every
 /// separator gap of the slot, existing or inserted, renders it, below a
-/// gap's own layout entry (`prepare::fill_slot_gaps`).
+/// gap's own layout entry (`prepare::SlotTarget::fill_gaps`).
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct SlotLayout {
     /// The slot's wire key.
@@ -72,8 +98,8 @@ pub struct SlotLayout {
     pub separator: Option<KindId>,
     /// The separator before each item, by its place in the slot, as a
     /// candidate kind of the list's separator, where its source spells
-    /// another than the slot's (`prepare::fill_slot_separators`). The prepare
-    /// walk fills it; it never crosses.
+    /// another than the slot's (`prepare::SlotTarget::separators`). The
+    /// prepare walk fills it; it never crosses.
     pub tokens: Vec<Option<KindId>>,
 }
 
@@ -178,39 +204,100 @@ pub struct UnitSides<T> {
     pub trivia: NodeTrivia<T>,
 }
 
-/// The sides `layout` holds for the unit at item `item` of the slot `slot`.
+/// The sides `units` holds for the unit at item `item` of the slot `slot`.
 #[must_use]
-pub fn unit_sides<'a, T>(layout: Option<&'a NodeLayout<T>>, slot: &str, item: crate::types::ItemIndex) -> Option<&'a NodeTrivia<T>> {
-    layout?.units.iter().find(|unit| unit.slot == slot && unit.item == item).map(|unit| &unit.trivia)
+pub fn unit_sides<'a, T>(units: &'a [UnitSides<T>], slot: &str, item: crate::types::ItemIndex) -> Option<&'a NodeTrivia<T>> {
+    units.iter().find(|unit| unit.slot == slot && unit.item == item).map(|unit| &unit.trivia)
 }
 
 /// Writes the value at item `item` of the slot `slot` (`body`) framed by the
-/// sides `layout` holds for it when it is a unit (`unit_sides`), as a
+/// sides `units` holds for it when it is a unit (`unit_sides`), as a
 /// coordinate is framed by its node's (`render_framed`).
 pub fn render_unit<T: Render + TriviaSeam>(
-    layout: Option<&NodeLayout<T>>,
+    units: &[UnitSides<T>],
     slot: &str,
     item: crate::types::ItemIndex,
     w: &mut dyn RenderSink,
     body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
 ) -> RenderResult {
-    match unit_sides(layout, slot, item) {
+    match unit_sides(units, slot, item) {
         Some(trivia) => render_framed(Some(trivia), Edges::default(), None, None, TriviaRole::Owner, w, body),
         None => body(w),
     }
 }
 
-impl<T: Render + TriviaSeam + std::fmt::Debug> crate::view::UnitFrames for NodeLayout<T> {
+impl<T: Render + TriviaSeam + std::fmt::Debug> crate::view::UnitFrames for Vec<UnitSides<T>> {
     fn frame_unit(&self, slot: &str, item: crate::types::ItemIndex, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
-        render_unit(Some(self), slot, item, w, body)
+        render_unit(self, slot, item, w, body)
     }
 }
 
-/// A list slot's unit frames, for its `ListView`: the slot `slot` of
-/// `layout`, when the node has a layout.
+/// A list slot's unit frames, for its `ListView`: the slot `slot` of a
+/// node's `units`, when the node has a layout.
 #[must_use]
-pub fn list_units<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a>(layout: Option<&'a NodeLayout<T>>, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
-    layout.map(|layout| (slot, layout as &dyn crate::view::UnitFrames))
+pub fn list_units<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a>(units: Option<&'a Vec<UnitSides<T>>>, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
+    units.map(|units| (slot, units as &dyn crate::view::UnitFrames))
+}
+
+/// What a generated render body reads from its node's layout: its edges, a
+/// unit child framed by its sides, and a list slot's per-item separators and
+/// unit frames. A native node answers from its `NodeLayout`; a record view
+/// answers from its side record.
+pub trait BodyLayout<'a>: Copy {
+    fn edges(self) -> Edges;
+
+    /// `render_unit`.
+    fn render_unit(
+        self,
+        slot: &str,
+        item: crate::types::ItemIndex,
+        w: &mut dyn RenderSink,
+        body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
+    ) -> RenderResult;
+
+    /// `slot_tokens`.
+    fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>];
+
+    /// `list_units`.
+    fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)>;
+
+    /// `trivia::render_inner`: the node's inner trivia, at its inner gap.
+    fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult;
+
+    /// `trivia::has_inner`.
+    fn has_inner(self) -> bool;
+}
+
+impl<'a, T: Render + TriviaSeam + std::fmt::Debug + 'a> BodyLayout<'a> for Option<&'a NodeLayout<T>> {
+    fn edges(self) -> Edges {
+        self.and_then(|layout| layout.edges).unwrap_or(Edges::NONE)
+    }
+
+    fn render_unit(
+        self,
+        slot: &str,
+        item: crate::types::ItemIndex,
+        w: &mut dyn RenderSink,
+        body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
+    ) -> RenderResult {
+        render_unit(self.map_or(&[], |layout| &layout.units), slot, item, w, body)
+    }
+
+    fn slot_tokens(self, slot: &str) -> &'a [Option<KindId>] {
+        slot_tokens(self, slot)
+    }
+
+    fn list_units(self, slot: &'a str) -> Option<(&'a str, &'a dyn crate::view::UnitFrames)> {
+        list_units(self.map(|layout| &layout.units), slot)
+    }
+
+    fn render_inner(self, w: &mut dyn RenderSink) -> RenderResult {
+        crate::trivia::render_inner(self.and_then(|layout| layout.trivia.as_ref()), w)
+    }
+
+    fn has_inner(self) -> bool {
+        crate::trivia::has_inner(self.and_then(|layout| layout.trivia.as_ref()))
+    }
 }
 
 impl<T> Default for NodeLayout<T> {
@@ -220,11 +307,14 @@ impl<T> Default for NodeLayout<T> {
             edges: None,
             at: None,
             span: None,
+            flanks: crate::layout_kinds::Flanks::default(),
             sides: None,
             changed: crate::slot::ChangedEdges { leading: false, trailing: false },
             units: Vec::new(),
             slots: Vec::new(),
             separator: None,
+            captures: Vec::new(),
+            unit_rows: Vec::new(),
         }
     }
 }
@@ -247,6 +337,8 @@ pub trait Layout {
     fn edges_mut(&mut self) -> &mut Edges;
     /// The stored layout of the node's list slot `slot` (`SlotLayout`).
     fn slot(&self, slot: &str) -> Option<&SlotLayout>;
+    /// The node a built node was rebuilt from (`NodeLayout::sides`).
+    fn sides(&self) -> Option<&crate::slot::NodeCoordinate>;
     /// Where a snapshot node lies, and how far its leading and trailing
     /// trivia reach (`NodeLayout::span`).
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
@@ -255,6 +347,10 @@ pub trait Layout {
     /// coordinate into one tree, a snapshot's geometry when each carries one,
     /// `None` with no inner trivia, and `Rebuilt` otherwise.
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>>;
+    /// A snapshot root's stamped flanks (`NodeLayout::flanks`).
+    fn flanks(&self) -> crate::layout_kinds::Flanks;
+    /// The coordinate a read node came from (`NodeLayout::at`).
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate>;
 }
 
 impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
@@ -280,42 +376,107 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
         slot_layout(self.as_deref(), slot)
     }
 
+    fn sides(&self) -> Option<&crate::slot::NodeCoordinate> {
+        self.as_ref()?.sides.as_ref()
+    }
+
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
-        use crate::prepare::TriviaReach;
         let layout = self.as_ref()?;
-        let trivia = layout.trivia.as_ref();
-        let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
-            None => TriviaReach::Bare,
-            Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
-        };
-        Some(crate::prepare::SnapshotEdge {
-            span: layout.span?,
-            leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
-            trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
-        })
+        snapshot_edge(layout.span, layout.trivia.as_ref())
     }
 
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>> {
-        use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
-        let entries: Vec<_> = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.iter().filter(|entry| !entry.is_layout()).collect();
-        let first = entries.first()?;
-        if let Some(coord) = first.value.coord() {
-            let mut span = coord.span;
-            for entry in &entries {
-                let Some(next) = entry.value.coord().filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
-                span = crate::types::Span { start: span.start.min(next.span.start), end: span.end.max(next.span.end) };
-            }
-            return Some(EdgeItem::Bytes { tree: coord.tree, span });
+        inner_item(self.as_ref()?.trivia.as_ref())
+    }
+
+    fn flanks(&self) -> crate::layout_kinds::Flanks {
+        self.as_ref().map_or_else(crate::layout_kinds::Flanks::default, |layout| layout.flanks)
+    }
+
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate> {
+        self.as_ref()?.at.as_ref()
+    }
+}
+
+/// `Layout::snapshot_edge` of a node at `span` with sides `trivia`.
+#[must_use]
+pub fn snapshot_edge<T: Prepare>(span: Option<crate::points::PointSpan>, trivia: Option<&NodeTrivia<T>>) -> Option<crate::prepare::SnapshotEdge> {
+    use crate::prepare::TriviaReach;
+    let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
+        None => TriviaReach::Bare,
+        Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+    };
+    Some(crate::prepare::SnapshotEdge {
+        span: span?,
+        leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
+        trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
+    })
+}
+
+/// `Layout::inner_item` of a node with sides `trivia`.
+#[must_use]
+pub fn inner_item<T: Prepare + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> Option<crate::prepare::EdgeItem<'static>> {
+    use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
+    let entries: Vec<_> = trivia?.inner.as_ref()?.iter().filter(|entry| !entry.is_layout()).collect();
+    let first = entries.first()?;
+    if let Some(coord) = first.value.coord() {
+        let mut span = coord.span;
+        for entry in &entries {
+            let Some(next) = entry.value.coord().filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
+            span = crate::types::Span { start: span.start.min(next.span.start), end: span.end.max(next.span.end) };
         }
-        let mut extent: Option<crate::points::PointSpan> = None;
-        for entry in entries {
-            let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
-            extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
-                start: span.start.min(edge.span.start),
-                end: span.end.max(edge.span.end),
-            }));
-        }
-        extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
+        return Some(EdgeItem::Bytes { tree: coord.tree, span });
+    }
+    let mut extent: Option<crate::points::PointSpan> = None;
+    for entry in entries {
+        let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+        extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
+            start: span.start.min(edge.span.start),
+            end: span.end.max(edge.span.end),
+        }));
+    }
+    extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
+}
+
+/// A prepare's handle on a layout (`prepare::LayoutTarget`) reads it as the
+/// layout it borrows.
+impl<L: Layout + ?Sized> Layout for &mut L {
+    type Trivia = L::Trivia;
+
+    fn trivia(&self) -> Option<&NodeTrivia<Self::Trivia>> {
+        (**self).trivia()
+    }
+
+    fn edges(&self) -> &Edges {
+        (**self).edges()
+    }
+
+    fn edges_mut(&mut self) -> &mut Edges {
+        (**self).edges_mut()
+    }
+
+    fn slot(&self, slot: &str) -> Option<&SlotLayout> {
+        (**self).slot(slot)
+    }
+
+    fn sides(&self) -> Option<&crate::slot::NodeCoordinate> {
+        (**self).sides()
+    }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        (**self).snapshot_edge()
+    }
+
+    fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>> {
+        (**self).inner_item()
+    }
+
+    fn flanks(&self) -> crate::layout_kinds::Flanks {
+        (**self).flanks()
+    }
+
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate> {
+        (**self).source_coordinate()
     }
 }
 
@@ -388,34 +549,35 @@ pub fn render_framed<F: Framing + ?Sized>(
     Ok(())
 }
 
+/// Gives `own` each side it holds none of from the sides `from`'s tree gives
+/// it, `from` being the node a built node was rebuilt from
+/// (`NodeLayout::sides`).
+pub fn merge_source_sides<T: 'static>(own: &mut Option<NodeTrivia<T>>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable) {
+    let Some(source) = from.and_then(|coord| sources.sides(coord)) else { return };
+    let Ok(source) = source.into_any().downcast::<NodeTrivia<T>>() else { return };
+    let own = own.get_or_insert_with(Default::default);
+    own.leading = own.leading.take().or(source.leading);
+    own.trailing = own.trailing.take().or(source.trailing);
+    own.inner = own.inner.take().or(source.inner);
+}
+
+/// A node's list slot layouts: the ones it stores, else, when it stores
+/// none, those of the node `from` it was rebuilt from.
+#[must_use]
+pub fn slots_or_source(own: Vec<SlotLayout>, from: Option<&NodeCoordinate>, sources: &dyn crate::render::SourceTable) -> Vec<SlotLayout> {
+    match from {
+        Some(coord) if own.is_empty() => sources.slot_layouts(coord),
+        _ => own,
+    }
+}
+
 impl<T: Prepare + TriviaSeam + 'static> Prepare for NodeLayout<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        if let Some(source) = self.sides.as_ref().and_then(|coord| ctx.sources.sides(coord)) {
-            if let Ok(source) = source.into_any().downcast::<NodeTrivia<T>>() {
-                let own = self.trivia.get_or_insert_with(Default::default);
-                own.leading = own.leading.take().or(source.leading);
-                own.trailing = own.trailing.take().or(source.trailing);
-                own.inner = own.inner.take().or(source.inner);
-            }
-        }
-        if self.slots.is_empty() {
-            if let Some(coord) = self.sides.as_ref() {
-                self.slots = ctx.sources.slot_layouts(coord);
-            }
-        }
+        merge_source_sides(&mut self.trivia, self.sides.as_ref(), ctx.sources);
+        self.slots = slots_or_source(std::mem::take(&mut self.slots), self.sides.as_ref(), ctx.sources);
         let changed = std::mem::take(&mut self.changed);
         if let Some(trivia) = self.trivia.as_mut() {
-            use crate::trivia_table::TriviaSide;
-            for (side, entries) in [(TriviaSide::Leading, &mut trivia.leading), (TriviaSide::Trailing, &mut trivia.trailing)] {
-                if let Some(list) = entries.as_mut().filter(|_| changed.on(side)) {
-                    crate::trivia::on_changed_edge(list, side, crate::trivia::TriviaEntry::is_layout, crate::trivia::TriviaEntry::depth, |delta| {
-                        T::depth_member(delta).map(|member| crate::trivia::TriviaEntry::new(crate::slot::SlotValue::Node(member)))
-                    });
-                    if list.is_empty() {
-                        *entries = None;
-                    }
-                }
-            }
+            trivia.trim_changed(changed);
         }
         for unit in &mut self.units {
             unit.trivia.prepare(ctx)?;
@@ -463,6 +625,10 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                     None => None,
                 },
                 span: property(env, napi_val, c"span")?,
+                flanks: match property::<u32>(env, napi_val, c"flanks")? {
+                    Some(word) => crate::layout_kinds::Flanks::of_word(word).ok_or_else(|| ::napi::Error::from_reason(format!("$_layout.flanks {word} names no two gap kinds")))?,
+                    None => crate::layout_kinds::Flanks::default(),
+                },
                 changed: property(env, napi_val, c"changed")?.unwrap_or_default(),
                 sides: match property::<::napi::bindgen_prelude::Object>(env, napi_val, c"sides")? {
                     Some(sides) => Some(
@@ -474,6 +640,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                 units: property(env, napi_val, c"units")?.unwrap_or_default(),
                 slots: property(env, napi_val, c"slots")?.unwrap_or_default(),
                 separator: property(env, napi_val, c"separator")?,
+                captures: Vec::new(),
+                unit_rows: Vec::new(),
             })
         }
     }
@@ -581,7 +749,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for NodeLayout<T> {
-    /// `{ trivia?, at?, span?, units?, slots?, separator? }`, each only when present: what a read writes.
+    /// `{ trivia?, at?, span?, flanks?, units?, slots?, separator? }`, each only when present: what a read writes.
     /// The edges never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
@@ -591,6 +759,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
                 present(env, c"trivia", val.trivia)?,
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, &at))?,
                 present(env, c"span", val.span)?,
+                present(env, c"flanks", (!val.flanks.is_none()).then(|| val.flanks.word()))?,
                 present(env, c"units", (!val.units.is_empty()).then_some(val.units))?,
                 present(env, c"slots", (!val.slots.is_empty()).then_some(val.slots))?,
                 present(env, c"separator", val.separator)?,
@@ -845,5 +1014,59 @@ mod tests {
     fn a_standalone_render_keeps_a_line_comment_break_and_drops_a_block_comment_space() {
         assert_eq!(render(&owner("a;", &[], &["// end"], true)), "a; // end\n");
         assert_eq!(render(&owner("a;", &[], &["/* end */"], true)), "a; /* end */");
+    }
+
+    /// What a render body reads from its node's layout, through the one
+    /// trait a record's side record will answer too.
+    #[test]
+    fn a_body_reads_edges_slot_tokens_and_units_through_its_layout() {
+        use super::{BodyLayout, SlotLayout};
+        use crate::options::{EdgeArm, Edges};
+
+        let none: Option<&NodeLayout<MockTrivia>> = None;
+        assert_eq!(none.edges(), Edges::NONE);
+        assert_eq!(none.slot_tokens("_items"), []);
+        assert!(none.list_units("_items").is_none());
+        let mut out = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+        none.render_unit("_items", crate::types::ItemIndex(0), &mut w, |w| w.text("x")).unwrap();
+        w.finish().unwrap();
+        assert_eq!(out, "x");
+
+        let edges = Edges { before: Some(EdgeArm { arm: KindId(3), strength: None }), after: None };
+        let layout = NodeLayout::<MockTrivia> {
+            edges: Some(edges),
+            slots: vec![SlotLayout { slot: "_items".into(), tokens: vec![None, Some(KindId(7))], ..SlotLayout::default() }],
+            ..NodeLayout::default()
+        };
+        let some = Some(&layout);
+        assert_eq!(some.edges(), edges);
+        assert_eq!(some.slot_tokens("_items"), &[None, Some(KindId(7))]);
+        assert_eq!(some.slot_tokens("_other"), []);
+        assert_eq!(some.list_units("_items").map(|(slot, _)| slot), Some("_items"));
+    }
+
+    #[test]
+    fn a_body_reads_inner_trivia_through_its_layout() {
+        use super::BodyLayout;
+
+        let none: Option<&NodeLayout<MockTrivia>> = None;
+        assert!(!none.has_inner());
+        let layout = NodeLayout::<MockTrivia> {
+            trivia: Some(NodeTrivia { inner: Some(vec![entry("/* a */")]), ..NodeTrivia::default() }),
+            ..NodeLayout::default()
+        };
+        assert!(Some(&layout).has_inner());
+        let written = |render: &dyn Fn(&mut dyn RenderSink) -> RenderResult| {
+            let mut out = String::new();
+            let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+            render(&mut w).unwrap();
+            w.finish().unwrap();
+            out
+        };
+        assert_eq!(written(&|w| none.render_inner(w)), "");
+        let through_trait = written(&|w| Some(&layout).render_inner(w));
+        assert!(through_trait.starts_with("/* a */"));
+        assert_eq!(through_trait, written(&|w| crate::trivia::render_inner(layout.trivia.as_ref(), w)));
     }
 }

@@ -36,6 +36,27 @@ export function engineOf(value: unknown): EngineHandle['current'] | undefined {
 	return tree === undefined ? undefined : treeHandles.get(tree)?.current;
 }
 
+export function foreignEngine(value: unknown, identity: EngineIdentity): EngineHandle['current'] | undefined {
+	const stamp = engineOf(value);
+	return stamp !== undefined && !sameLanguage(stamp, identity) ? stamp : undefined;
+}
+
+export function admitChildren(handle: EngineHandle, kind: string, slots: Readonly<Record<string, unknown>>): void {
+	for (const [slot, value] of Object.entries(slots)) {
+		for (const child of Array.isArray(value) ? value : [value]) {
+			const foreign = foreignEngine(child, handle.current);
+			if (foreign !== undefined) {
+				throw new Error(`cannot build a ${handle.current.language.name} ${kind} with a ${foreign.language.name} node in its ${slot}`);
+			}
+		}
+	}
+}
+
+export function admitSlot<T>(handle: EngineHandle | undefined, kind: string, slot: string, value: T): T {
+	if (handle !== undefined) admitChildren(handle, kind, { [slot]: value });
+	return value;
+}
+
 let active: EngineHandle | undefined;
 
 export function inEngine<T>(handle: EngineHandle, fn: () => T): T {

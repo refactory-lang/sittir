@@ -36,6 +36,22 @@ pub struct KindAttrs {
     pub edged: bool,
     /// On a struct: the words of its record, which codegen stamps.
     pub words: Option<u32>,
+    /// On a struct: the name of its fields trait, which codegen stamps and
+    /// its render body is generic over.
+    pub fields: Option<Ident>,
+    /// On a struct: the name of its prepare trait, which codegen stamps and
+    /// its prepare body is generic over.
+    pub prepare: Option<Ident>,
+    /// On a struct or a choice: the name of its record view, which codegen
+    /// stamps on each type it writes the view's render for.
+    pub view: Option<Ident>,
+    /// On a struct: its prepare body (`prepare_<kind>`), which codegen
+    /// stamps beside its view, so its record prepares through the same body.
+    pub prepare_fn: Option<Ident>,
+    /// On a wrapper struct: the slot whose content seats it
+    /// (`SeatTarget`), which codegen stamps where the wrapper's seat follows
+    /// its content.
+    pub seat_through: Option<Ident>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -47,6 +63,7 @@ pub struct CellStamp {
     pub width: Option<u32>,
     pub run: Option<u32>,
     pub bit: Option<u32>,
+    pub inline: Option<u32>,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -59,6 +76,22 @@ pub struct SlotAttrs {
     pub capture: Option<LitStr>,
     pub scalar: bool,
     pub cell: CellStamp,
+    /// The slot's gaps take its seat table's arms at prepare (`SeatSlot`).
+    pub seated: bool,
+    /// The optional slot takes, unset, the unit its option site chooses
+    /// (`UnitSlot`).
+    pub defaulted: bool,
+}
+
+/// `#[space(slot = N, side = before|after, site = PATH)]` on a field: a list
+/// slot's separator spacing setting, by the slot's record word, the side of
+/// the separator its render writes it on (`before` or `after`, checked as it
+/// is read), and the site prepare fills it from.
+pub struct SpaceAttrs {
+    pub slot: u32,
+    /// Whether the setting is the separator's `before` side, else its `after`.
+    pub before: bool,
+    pub site: Path,
 }
 
 /// `#[kind(…)]` on a variant: the ids it claims, display ids when marked.
@@ -165,6 +198,11 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "codec_only" => out.codec_only = true,
                 "edged" => out.edged = true,
                 "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+                "fields" => out.fields = Some(meta.value()?.parse()?),
+                "prepare" => out.prepare = Some(meta.value()?.parse()?),
+                "view" => out.view = Some(meta.value()?.parse()?),
+                "prepare_fn" => out.prepare_fn = Some(meta.value()?.parse()?),
+                "seat_through" => out.seat_through = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())
@@ -191,6 +229,9 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "width" => out.cell.width = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "run" => out.cell.run = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "bit" => out.cell.bit = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "inline" => out.cell.inline = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "seated" => out.seated = true,
+            "defaulted" => out.defaulted = true,
             _ => return Err(meta.error("unknown `slot` attribute")),
         }
         Ok(())
@@ -250,6 +291,39 @@ pub fn separator_kind_attrs(attrs: &[Attribute]) -> syn::Result<Option<Separator
         Ok(())
     })?;
     Ok(Some(out))
+}
+
+pub fn space_attrs(attrs: &[Attribute]) -> syn::Result<Option<SpaceAttrs>> {
+    let Some(attr) = attrs.iter().find(|a| a.path().is_ident("space")) else { return Ok(None) };
+    let (mut slot, mut side, mut site) = (None, None, None);
+    attr.parse_nested_meta(|meta| {
+        match key(&meta.path).as_str() {
+            "slot" => slot = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "side" => {
+                let value: Ident = meta.value()?.parse()?;
+                if value != "before" && value != "after" {
+                    return Err(syn::Error::new_spanned(value, "`side` is `before` or `after`"));
+                }
+                side = Some(value);
+            }
+            "site" => site = Some(meta.value()?.parse()?),
+            _ => return Err(meta.error("unknown `space` attribute")),
+        }
+        Ok(())
+    })?;
+    match (slot, side, site) {
+        (Some(slot), Some(side), Some(site)) => Ok(Some(SpaceAttrs { slot, before: side == "before", site })),
+        _ => Err(syn::Error::new_spanned(attr, "`space` names its `slot`, `side` and `site`")),
+    }
+}
+
+/// A bare marker attribute, `#[name]`, on a field.
+pub fn marker(attrs: &[Attribute], name: &str) -> syn::Result<bool> {
+    let Some(attr) = attrs.iter().find(|a| a.path().is_ident(name)) else { return Ok(false) };
+    match attr.meta {
+        Meta::Path(_) => Ok(true),
+        _ => Err(syn::Error::new_spanned(attr, format!("`{name}` takes no arguments"))),
+    }
 }
 
 /// `#[wire(key = "…")]` on a field: the key it crosses the wire under.

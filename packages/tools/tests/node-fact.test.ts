@@ -17,13 +17,14 @@ interface Parser {
 
 const GRAMMARS: readonly string[] = ['python', 'regex', 'rust', 'scm', 'typescript'];
 const WIRES: Readonly<Record<string, (language: Language<LanguageAPI>) => Promise<Parser>>> = {
-	object: (language) => createEngine(language)
+	object: (language) => createEngine(language),
+	arena: (language) => createEngine(language, { nodeStorage: 'arena' })
 };
 
 function readNodeFact(
 	engine: Parser,
-	grammar: string,
-	accessorOf: SlotAccessorOf
+	accessorOf: SlotAccessorOf,
+	grammar: string
 ): { read: number; unrecognised: string[]; twinsRecognised: string[]; sourceUnread: string[] } {
 	const unrecognised: string[] = [];
 	const twinsRecognised: string[] = [];
@@ -48,8 +49,8 @@ for (const [wire, engineOf] of Object.entries(WIRES)) {
 			it(`${grammar}: a read node is a node whose sourceOf is Ts, and its string-key twin is not`, async () => {
 				const { read, unrecognised, twinsRecognised, sourceUnread } = readNodeFact(
 					await engineOf(await languageByName(grammar)),
-					grammar,
-					await loadSlotAccessorOf(grammar)
+					await loadSlotAccessorOf(grammar),
+					grammar
 				);
 				expect(read).toBeGreaterThan(0);
 				expect(unrecognised).toEqual([]);

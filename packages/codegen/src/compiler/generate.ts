@@ -6,7 +6,7 @@ import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import { emitFieldIdRust } from '../emitters/field-id-rust.ts';
 import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
-import { emitDescriptor, emitIndex } from '../emitters/index-file.ts';
+import { emitArenaDescriptor, emitDescriptor, emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
 import { bindingsPathIn } from '../bindings/facts.ts';
 import { grammarInput } from '../bindings/input.ts';
@@ -34,6 +34,7 @@ export interface GeneratedFiles {
 	typesInternal: string;
 	kinds: string | undefined;
 	descriptor: string;
+	arenaDescriptor: string;
 	renderEngine: string;
 	api: string;
 	backend: string;
@@ -170,6 +171,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			typesInternal: emitted.typesInternal,
 			kinds: emitted.kinds,
 			descriptor: emitDescriptor({ grammar: cfg.grammar, nodeMap, portable: portable !== undefined }),
+			arenaDescriptor: emitArenaDescriptor(cfg.grammar),
 			templates: emitted.templates,
 			factories: emitted.factories,
 			overlays: emitted.overlays,

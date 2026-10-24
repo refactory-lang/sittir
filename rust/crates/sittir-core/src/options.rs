@@ -43,7 +43,7 @@ pub struct ResolvedOptions {
     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
     pub kind_flags: &'static [KindFlags],
     /// Per kind id of a wrapper, the way its seat passes through to the node
-    /// it holds; none for any other kind (`prepare::fill_seated_gaps`).
+    /// it holds; none for any other kind (`prepare::SeatSlot`).
     pub seat_wrappers: &'static [Option<SeatPath>],
     /// Per kind id of a list, the site its items' separator reads; none for
     /// any other kind.
@@ -138,15 +138,6 @@ pub trait Edged {
     fn kind_id(&self) -> KindId;
     fn edges(&self) -> &Edges;
     fn edges_mut(&mut self) -> &mut Edges;
-
-    /// The arm token each side's edge holds, for a kind whose edge is a
-    /// choice of tokens; `None` on a side without one.
-    fn edge_arm_kinds(
-        &self,
-        _ctx: &crate::prepare::RenderContext<'_>,
-    ) -> (Option<KindId>, Option<KindId>) {
-        (None, None)
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

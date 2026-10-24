@@ -1,0 +1,92 @@
+name: Eager builder benchmark
+
+on:
+  workflow_call:
+    inputs:
+      runtime-prefix:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify assembled eager runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
+      CARGO_BUILD_JOBS: '4'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - uses: ./.github/actions/arena-benchmark-runtime
+        with:
+          prefix: ${{ inputs.runtime-prefix }}
+          eager: 'true'
+      - uses: ./.github/actions/bootstrap
+      - name: Check builders against the public Rust format
+        run: |
+          pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts --check
+          node --import tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/verify.mts
+          git diff --exit-code -- packages rust docs/superpowers/probes/2026-10-12-record-wire/eager
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arena-eager-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/arena-benchmarks/
+          retention-days: 7
+          if-no-files-found: warn
+  measure:
+    needs: verify
+    name: Eager builders (Linux x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      CARGO_NET_RETRY: '10'
+      CARGO_HTTP_MULTIPLEXING: 'false'
+      CARGO_BUILD_JOBS: '4'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/arena-benchmark-setup
+      - uses: ./.github/actions/arena-benchmark-runtime
+        with:
+          prefix: ${{ inputs.runtime-prefix }}
+          eager: 'true'
+      - name: Verify eager construction
+        shell: bash
+        run: |
+          node --import tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/verify.mts | tee "$RUNNER_TEMP/arena-benchmarks/eager-verify.log"
+      - name: Fingerprint the measured runtime
+        run: node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/before.json"
+      - name: Measure five alternating pairs
+        env:
+          NODE_ENV: production
+        shell: bash
+        run: |
+          node --import tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/bench.mjs \
+            --count 10000 --rounds 5 --warmup 2 --iterations 3 \
+            --idle-gate scripts/ci/arena-benchmark-idle.sh \
+            --output "$RUNNER_TEMP/arena-benchmarks/eager.json" \
+            2>&1 | tee "$RUNNER_TEMP/arena-benchmarks/eager.log"
+      - name: Check runtime stability
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/arena-benchmarks/before.json" ]]; then
+            node scripts/ci/arena-benchmark-report.mjs capture "$RUNNER_TEMP/arena-benchmarks/after.json"
+            node scripts/ci/arena-benchmark-report.mjs verify "$RUNNER_TEMP/arena-benchmarks/before.json" "$RUNNER_TEMP/arena-benchmarks/after.json"
+          fi
+      - name: Summarize paired measurements
+        shell: bash
+        run: node scripts/ci/arena-benchmark-report.mjs summarize "$RUNNER_TEMP/arena-benchmarks/eager.json" "$RUNNER_TEMP/arena-benchmarks/summary.md"
+      - name: Upload raw samples and provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arena-eager-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/arena-benchmarks/
+          retention-days: 30
+          if-no-files-found: warn

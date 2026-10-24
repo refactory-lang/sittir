@@ -1,0 +1,237 @@
+{
+	"phaseStatisticsVerified": true,
+	"workAndRenderFingerprintsVerified": true,
+	"freshWorkers": 10,
+	"measuredBatches": 30,
+	"idlePercent": [90, 92, 92, 88, 92, 90, 92, 92, 89, 90],
+	"modes": {
+		"object": {
+			"workerPhaseMediansMs": {
+				"build": [6.964875000000006, 7.179666999999995, 6.926959000000011, 6.82891699999999, 6.9709170000000995],
+				"render": [23.347499999999968, 24.739041000000043, 23.872458999999935, 23.414458999999965, 23.66195799999997],
+				"parse": [95.24120800000003, 94.79095899999999, 96.33937500000002, 95.31541700000002, 95.16066699999999],
+				"pipeline": [126.16399999999999, 126.7715, 126.73112500000002, 125.62099999999998, 126.03770799999995],
+				"edit": [4.318958000000066, 4.26583299999993, 4.207833000000051, 4.213665999999989, 4.3317089999999325]
+			},
+			"nativeRenderNsPerRoot": 1884.3985,
+			"perRoot": {
+				"renderAllocations": {
+					"calls": 10.0,
+					"bytes": 1781.889,
+					"frees": 10.0,
+					"freedBytes": 1781.889
+				},
+				"allocations": {
+					"calls": 10.0,
+					"bytes": 1781.889,
+					"frees": 10.0,
+					"freedBytes": 1781.889
+				},
+				"editAllocations": {
+					"calls": 0.0,
+					"bytes": 0.0,
+					"frees": 0.0,
+					"freedBytes": 0.0
+				},
+				"bodyAllocationCalls": 9.0,
+				"bodyAllocatedBytes": 1717.889
+			},
+			"memoryMedian": {
+				"builtDelta": {
+					"rss": 16384,
+					"heapTotal": 19136512,
+					"heapUsed": 16506160,
+					"external": 40,
+					"arrayBuffers": 0
+				},
+				"snapshotsDelta": {
+					"rss": 2752896,
+					"heapTotal": 31195136,
+					"heapUsed": 30587168,
+					"external": 40,
+					"arrayBuffers": 0
+				}
+			},
+			"heapPlusExternalMedian": {
+				"builtDelta": 16506200,
+				"snapshotsDelta": 30587208
+			},
+			"storage": {
+				"empty": {
+					"records": 0,
+					"wrappers": 0
+				},
+				"builtStorage": {
+					"records": 40000,
+					"wrappers": 40000
+				},
+				"editedStorage": {
+					"records": 50001,
+					"wrappers": 50001
+				}
+			}
+		},
+		"arena": {
+			"workerPhaseMediansMs": {
+				"build": [12.024625000000015, 10.763750000000073, 11.638917000000106, 11.227334000000042, 10.545083999999974],
+				"render": [23.584291000000007, 23.627749999999992, 23.879500000000007, 23.498707999999965, 23.711625000000026],
+				"parse": [94.53887500000002, 95.70191699999998, 95.02125000000001, 96.55849999999998, 96.20404099999996],
+				"pipeline": [130.14779100000004, 130.10133299999995, 131.267875, 131.39783399999993, 130.74145799999997],
+				"edit": [4.482334000000037, 4.615957999999978, 4.231750000000034, 4.368290999999999, 4.456124999999929]
+			},
+			"nativeRenderNsPerRoot": 1514.3952,
+			"perRoot": {
+				"renderAllocations": {
+					"calls": 8.0016,
+					"bytes": 368.1464,
+					"frees": 8.0012,
+					"freedBytes": 368.1256
+				},
+				"allocations": {
+					"calls": 8.0016,
+					"bytes": 368.1464,
+					"frees": 8.0012,
+					"freedBytes": 368.1256
+				},
+				"editAllocations": {
+					"calls": 0.0,
+					"bytes": 0.0,
+					"frees": 0.0,
+					"freedBytes": 0.0
+				},
+				"bodyAllocationCalls": 6.0006,
+				"bodyAllocatedBytes": 240.0648
+			},
+			"memoryMedian": {
+				"builtDelta": {
+					"rss": 409600,
+					"heapTotal": 20709376,
+					"heapUsed": 12883632,
+					"external": 4223016,
+					"arrayBuffers": 4222976
+				},
+				"snapshotsDelta": {
+					"rss": 7127976,
+					"heapTotal": 33554432,
+					"heapUsed": 25754696,
+					"external": 8417320,
+					"arrayBuffers": 8417280
+				}
+			},
+			"heapPlusExternalMedian": {
+				"builtDelta": 17106648,
+				"snapshotsDelta": 34172016
+			},
+			"storage": {
+				"empty": {
+					"records": 0,
+					"wrappers": 0,
+					"recordBytes": 4,
+					"recordCapacity": 16384,
+					"stringBytes": 0,
+					"stringCapacity": 0,
+					"chunks": 1,
+					"stringChunks": 0
+				},
+				"builtStorage": {
+					"records": 40000,
+					"wrappers": 40000,
+					"recordBytes": 2600004,
+					"recordCapacity": 4177920,
+					"stringBytes": 48890,
+					"stringCapacity": 61440,
+					"chunks": 8,
+					"stringChunks": 4
+				},
+				"editedStorage": {
+					"records": 50001,
+					"wrappers": 50001,
+					"recordBytes": 4280012,
+					"recordCapacity": 8372224,
+					"stringBytes": 48897,
+					"stringCapacity": 61440,
+					"chunks": 9,
+					"stringChunks": 4
+				}
+			}
+		}
+	},
+	"fingerprint": [
+		"529d9f1bef79fdc56d8d9f635b8fabffee847401bae0a3146c98cc17c83cc2d9",
+		"92ff4287ec4a878ed1a496df23ad903e49fa3b4291c676b1b8ba661dc4edfdbd",
+		128890
+	],
+	"ratios": {
+		"build": 1.6119936107970396,
+		"render": 0.998554303916862,
+		"parse": 1.0048372863981307,
+		"pipeline": 1.036281807805713,
+		"edit": 1.0446084035638532
+	},
+	"summary": {
+		"object": {
+			"build": {
+				"medianMs": 6.964875000000006,
+				"minMs": 6.82891699999999,
+				"maxMs": 7.179666999999995,
+				"nsPerRoot": 696.4875000000006
+			},
+			"render": {
+				"medianMs": 23.66195799999997,
+				"minMs": 23.347499999999968,
+				"maxMs": 24.739041000000043,
+				"nsPerRoot": 2366.1957999999972
+			},
+			"parse": {
+				"medianMs": 95.24120800000003,
+				"minMs": 94.79095899999999,
+				"maxMs": 96.33937500000002,
+				"nsPerRoot": 9524.120800000002
+			},
+			"pipeline": {
+				"medianMs": 126.16399999999999,
+				"minMs": 125.62099999999998,
+				"maxMs": 126.7715,
+				"nsPerRoot": 12616.399999999998
+			},
+			"edit": {
+				"medianMs": 4.26583299999993,
+				"minMs": 4.207833000000051,
+				"maxMs": 4.3317089999999325,
+				"nsPerRoot": 426.5832999999929
+			}
+		},
+		"arena": {
+			"build": {
+				"medianMs": 11.227334000000042,
+				"minMs": 10.545083999999974,
+				"maxMs": 12.024625000000015,
+				"nsPerRoot": 1122.7334000000042
+			},
+			"render": {
+				"medianMs": 23.627749999999992,
+				"minMs": 23.498707999999965,
+				"maxMs": 23.879500000000007,
+				"nsPerRoot": 2362.774999999999
+			},
+			"parse": {
+				"medianMs": 95.70191699999998,
+				"minMs": 94.53887500000002,
+				"maxMs": 96.55849999999998,
+				"nsPerRoot": 9570.1917
+			},
+			"pipeline": {
+				"medianMs": 130.74145799999997,
+				"minMs": 130.10133299999995,
+				"maxMs": 131.39783399999993,
+				"nsPerRoot": 13074.145799999997
+			},
+			"edit": {
+				"medianMs": 4.456124999999929,
+				"minMs": 4.231750000000034,
+				"maxMs": 4.615957999999978,
+				"nsPerRoot": 445.6124999999929
+			}
+		}
+	}
+}

@@ -109,6 +109,14 @@ export declare class SittirEngine {
    */
   siblings(treeId: TreeId, index: NodeIndex): string
   /**
+   * The text `span` covers in the source of the live tree `treeId`:
+   * one string of that span's characters, so the source itself
+   * never crosses. Refuses a tree that is not live and a span that
+   * is not one of its source's: past its end, reversed, or
+   * splitting a character.
+   */
+  text(treeId: number, span: { start: number; end: number }): string
+  /**
    * Whether the node at `index` of the live tree `treeId` is empty:
    * no child of it has width. Refuses a tree that is not live and an
    * index naming no node of it.
@@ -181,7 +189,101 @@ renderToFile(node: object, path: string, treeId?: number | undefined | null, opt
  * they belong to whoever still names them.
  */
 dispose(): void
+/**
+ * r" The address of the record of the node at `index` of the live
+ * r" tree `treeId`: the one a read wrote, else the one its read
+ * r" `depth` levels down (one when absent, `Infinity` for all)
+ * r" writes now. Null for a node with no record: a parsed leaf, or
+ * r" an `ERROR` node. Refuses as `read` does.
+ */
+readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+/**
+ * r" Materializes the node at `index` in the live tree `treeId`
+ * r" to `depth` (one when absent, `Infinity` for all), including
+ * r" children of records already present. Returns only the root
+ * r" address, or null for a leaf or `ERROR`; record words remain
+ * r" native until a separate `chunk` call requests a copy.
+ */
+hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+/**
+ * r" The hydrated typed nodes below `index` in stored field
+ * r" order, as JSON pairs `[coordinate, address | null]`. Nested
+ * r" content sharing a row is included; units and captured
+ * r" strings are omitted. Exports no node fields or words.
+ */
+recordCandidates(treeId: TreeId, index: NodeIndex): string
+/**
+ * r" The nodes at `indexes` of the live tree `treeId`, in order:
+ * r" each read as `read` reads it when `wire` is `object`, and,
+ * r" when it is `record`, each record's address as `readRecord`
+ * r" answers it, 0 for a node with no record, in one
+ * r" `Uint32Array`. Refuses as `read` does at the first index it
+ * r" refuses, and any other wire.
+ */
+readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+/**
+ * r" The record at `address` of the live tree `treeId` rendered, as
+ * r" `render` renders a node read from the tree: a render root
+ * r" whose `leading` and `trailing` edges have no neighbour, as
+ * r" the node crossing as its coordinate marks them, under
+ * r" `options` over the tree's layer over the engine's. Refuses a
+ * r" tree that is not live, an address naming no record of its
+ * r" arena, and a record whose render refuses.
+ */
+renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" Renders a parsed candidate without exporting its data or its
+ * r" outer trivia. A record address must belong to its row; a
+ * r" recordless node renders through its native coordinate.
+ */
+renderCandidate(treeId: number, index: number, address?: number | undefined | null, options?: object | undefined | null): string
+/**
+ * r" The coordinate a read of the live tree `treeId` names the node
+ * r" at `index` by, as `[kind, end]`: the kind the read stamps on
+ * r" it and the row after its subtree (`ParsedTree::row_coordinate`),
+ * r" the one derivation a record view's coordinate takes. Refuses a
+ * r" tree that is not live and an index past its last node.
+ */
+coordinate(treeId: TreeId, index: NodeIndex): Array<number>
+/**
+ * r" The words records fill in chunk `n` of the live tree
+ * r" `treeId`'s arena, copied into a buffer JavaScript owns: a
+ * r" later read that appends to the chunk leaves the copy as it
+ * r" was. Refuses a tree that is not live and a chunk its arena
+ * r" does not hold.
+ */
+chunk(treeId: TreeId, n: number): Uint32Array
 }
+
+/**
+ * r" The bits of a packed record address or string offset below its
+ * r" chunk (`arena::CHUNK_SHIFT`).
+ */
+export const ARENA_CHUNK_SHIFT: number
+
+/** r" Words before an embedded child's own record header. */
+export const CELL_INLINE_HEADER_WORDS: number
+
+/** r" The tag word of an absent cell (`arena::cell::tag`). */
+export const CELL_TAG_ABSENT: number
+
+/** r" The tag word of a built leaf's cell, and of a built captured string's. */
+export const CELL_TAG_BUILT_LEAF: number
+
+/** r" The tag word of a cell naming a child's record. */
+export const CELL_TAG_CHILD: number
+
+/** r" The tag word of a coordinate cell. */
+export const CELL_TAG_COORDINATE: number
+
+/** r" The tag word of an embedded bounded child's record. */
+export const CELL_TAG_INLINE: number
+
+/** r" The tag word of a parsed leaf's cell, and of a parsed captured string's. */
+export const CELL_TAG_PARSED_LEAF: number
+
+/** r" The tag word of a unit's cell. */
+export const CELL_TAG_UNIT: number
 
 /** A child's position under its parent as JavaScript holds it: a whole number. */
 export type ChildPosition =
@@ -215,6 +317,32 @@ export declare function liveTreeCount(): number
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex =
   number
+
+/**
+ * r" A side record's fields before a list's delimiters setting, each
+ * r" one's mask bit and its words (`arena::side::field`).
+ */
+export const SIDE_FIELD_AT: number
+
+export const SIDE_FIELD_DELIMITER: number
+
+export const SIDE_FIELD_EDGES: number
+
+export const SIDE_FIELD_SEPARATOR: number
+
+export const SIDE_FIELD_SIDES: number
+
+export const SIDE_FIELD_SPAN: number
+
+export const SIDE_WORDS_AT: number
+
+export const SIDE_WORDS_EDGES: number
+
+export const SIDE_WORDS_SEPARATOR: number
+
+export const SIDE_WORDS_SIDES: number
+
+export const SIDE_WORDS_SPAN: number
 
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId =

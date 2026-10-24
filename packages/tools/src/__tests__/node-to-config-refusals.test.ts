@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { nodeToConfig } from '../validate/common.ts';
+import { nodeToConfig, type SlotAccessorOf } from '../validate/common.ts';
 
 const slot = (propertyName: string) => ({ propertyName, unnamed: false, slotCount: 1, required: false, multiple: false, nonEmpty: false });
 const KINDS = ['owner', 'clause', 'word', 'pair'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
 const word = (text: string) => ({ $type: id('word'), $named: true, $text: text });
+const unread: SlotAccessorOf = () => {
+	throw new Error('a copy is read through its storage keys');
+};
 
 const opts = {
+	accessorOf: unread,
 	kindNameFromId,
 	tree: { source: 'x' } as never,
 	factoryMap: {

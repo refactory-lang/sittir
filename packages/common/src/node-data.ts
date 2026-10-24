@@ -1,8 +1,8 @@
 import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, TriviaEntry } from '@sittir/types';
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
-import { stampSource } from './source-stamp.ts';
+import { carrySourceStamp, stampSource } from './source-stamp.ts';
 import { Source } from './source.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -22,6 +22,16 @@ export function coordinateOf(node: object): NodeCoordinate | undefined {
 export function spanOf(node: object): ByteSpan | undefined {
 	const span = coordinateOf(node)?.$span;
 	return span === undefined ? undefined : { start: span.start, end: span.end };
+}
+
+/**
+ * A node's source text: its `$text` when it holds one, else the text its coordinate spans in `tree` (its own tree by default), read by the tree's native text call. `undefined` for a node with neither, a built or edited compound: rendered text is not source text.
+ */
+export function sourceTextOf(node: object, tree: TreeHandle | undefined = treeOf(node)): string | undefined {
+	const own = nodeText(node);
+	if (own !== undefined) return own;
+	const span = spanOf(node);
+	return span === undefined ? undefined : tree?.text?.(span);
 }
 
 /**
@@ -46,6 +56,17 @@ function entryData(value: unknown): unknown {
 
 function entriesData<S extends TriviaSides<unknown>>(sides: S): S {
 	return mapTriviaEntries(sides, (entries) => entries.map(entryData)) as S;
+}
+
+/**
+ * A leaf's text, from either form `nodeText` reads, for a value that must have one.
+ *
+ * @throws When the value holds no text.
+ */
+export function textOf(value: object): string {
+	const text = nodeText(value);
+	if (text === undefined) throw new Error('a leaf holds no text');
+	return text;
 }
 
 /**
@@ -102,6 +123,13 @@ export function isRead(node: object): boolean {
 export function carryRead<T>(from: object, to: T): T {
 	if (readObjects.has(from) && to !== null && typeof to === 'object') readObjects.add(to);
 	return to;
+}
+
+/** `holdReadTree` for one object a read of `from` produced: `to` holds `from`'s tree, provenance and read, and is returned. */
+export function carryReadTree<T extends object>(from: object, to: T): T {
+	carryTree(from, to);
+	carrySourceStamp(from, to);
+	return carryRead(from, to);
 }
 
 const rebuiltObjects = new WeakSet<object>();
@@ -541,7 +569,7 @@ const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
  * The edges of a render root: it renders with no neighbour, so both changed,
  * unless it is its tree's root, whose edges are the document's.
  */
-function rootEdges(node: object): ChangedEdges {
+export function rootEdges(node: object): ChangedEdges {
 	const source = placeOf(node);
 	return source !== undefined && decodeIndex(source.treeHandle) === 0 ? NO_EDGES : BOTH_EDGES;
 }
@@ -560,8 +588,18 @@ function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknow
 }
 
 /** Whether `child` is the content of the alias envelope `holder`, the same parser node: its coordinate carries the envelope's display id. */
-function isAliasContent(holder: Record<string, unknown>, child: unknown): boolean {
+function isAliasContent(holder: Record<string, unknown>, child: unknown): child is Record<string, unknown> {
 	return isRecord(child) && envelopeKindOf(child) === holder.$type;
+}
+
+/** The stored content that shares an envelope's parser row, regardless of its slot's name. */
+export function aliasContentOf(holder: object): Record<string, unknown> | undefined {
+	const data = holder as Record<string, unknown>;
+	for (const key of Object.keys(data)) {
+		const child = data[key];
+		if (isStorageKey(key) && isAliasContent(data, child)) return child;
+	}
+	return undefined;
 }
 
 /** The siblings beside the node a source identity names, while its tree lives. */
@@ -621,7 +659,8 @@ export interface PointSpanData {
  * A node's layout as the native node sends it (`$_layout`): the trivia that
  * crosses with it, its list slots' stored layout (`slots`, as a read gives
  * it), the separator its source spells before it as a list item where it is
- * not its slot's (`separator`), a snapshot node's span, the node a built node takes its missing sides
+ * not its slot's (`separator`), a snapshot node's span, a snapshot root's
+ * flanks as its read stamped them (`flanks`, opaque here), the node a built node takes its missing sides
  * and slots from (`sides`, a coordinate), and the edges whose neighbour
  * changed (`changed`), where its sides drop their layout runs. Absent when
  * the node has none of these.
@@ -632,9 +671,12 @@ export interface NodeDataLayout {
 	slots?: readonly unknown[];
 	separator?: number;
 	span?: PointSpanData;
+	flanks?: number;
 	sides?: Record<string, unknown>;
 	changed?: ChangedEdges;
 }
+
+const DECIDED_LAYOUT_KEYS: ReadonlySet<string> = new Set(['at', 'trivia', 'units', 'slots', 'separator', 'sides', 'changed']);
 
 function setLayout<K extends keyof NodeDataLayout>(out: Record<string, unknown>, key: K, value: NodeDataLayout[K]): void {
 	const layout = (out.$_layout ??= {}) as NodeDataLayout;
@@ -680,11 +722,13 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
 	}
 	const given = (value as { readonly $_layout?: NodeDataLayout }).$_layout;
+	for (const [key, held] of Object.entries(given ?? {})) {
+		if (!DECIDED_LAYOUT_KEYS.has(key)) ((out.$_layout ??= {}) as Record<string, unknown>)[key] = held;
+	}
 	const slots = fold ? given?.slots : slotsOf(value);
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
 	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
 	if (separator !== undefined) setLayout(out, 'separator', separator);
-	if (given?.span !== undefined) setLayout(out, 'span', given.span);
 	const trivia = fold ? triviaOf(value) : sided ? sidesOf(value) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);

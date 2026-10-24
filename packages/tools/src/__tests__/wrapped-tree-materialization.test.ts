@@ -9,11 +9,12 @@ import {
 	readNodeOf,
 	slotAccessorOf,
 	walkWrappedTree,
+	type AccessorThrowRecord,
 	type LoadedNodeModel,
 	type TypedNode
 } from '../validate/common.ts';
 
-const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} } } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
+const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} }, listDefaults: {} } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(type: number, text: string): TypedNode {
 	return { $type: type, $named: true, $text: text };
@@ -31,7 +32,17 @@ function asRecord(value: unknown): Record<string, unknown> {
 describe('wrapped tree materialization', () => {
 	it('keeps each node it copies a node with its provenance, the copy being made by string keys', () => {
 		const child = stampSource(leaf(21, 'child'), Source.Ts);
-		const root = stampSource({ $type: 1, $named: true, _items: child, items: () => child } satisfies TypedNode, Source.Ts);
+		const root = stampSource(
+			{
+				$type: 1,
+				$named: true,
+				_items: child,
+				items() {
+					return child;
+				}
+			} satisfies TypedNode,
+			Source.Ts
+		);
 		const materialized = materialize(root, accessorOf);
 		expect(sourceOf(materialized)).toBe(Source.Ts);
 		expect(sourceOf(asRecord(materialized)._items as object)).toBe(Source.Ts);
@@ -68,7 +79,7 @@ describe('wrapped tree materialization', () => {
 		expect(visited).toEqual([1, 11, 21]);
 	});
 
-	it('falls back to raw storage when an accessor throws during traversal', () => {
+	it('reports a throwing accessor and never falls back to raw storage', () => {
 		const rawFieldChild = leaf(10, 'raw-field');
 		const rawChildrenChild = leaf(20, 'raw-child');
 		const root = {
@@ -86,11 +97,21 @@ describe('wrapped tree materialization', () => {
 		} satisfies TypedNode;
 
 		const visited: number[] = [];
-		walkWrappedTree(root, accessorOf, (node) => {
-			visited.push(node.$type);
-		});
+		const thrown: AccessorThrowRecord[] = [];
+		walkWrappedTree(
+			root,
+			accessorOf,
+			(node) => {
+				visited.push(node.$type);
+			},
+			(rec) => thrown.push(rec)
+		);
 
-		expect(visited).toEqual([1, 10, 20]);
+		expect(visited).toEqual([1]);
+		expect(thrown.map(({ key, accessor }) => [key, accessor])).toEqual([
+			['_value', 'value'],
+			['_items', 'items']
+		]);
 	});
 
 	it('projects wrapped nodes into plain native-render data', () => {
