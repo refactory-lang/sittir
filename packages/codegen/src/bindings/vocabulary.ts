@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedMember, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { envelopeTargets, formsOf, kindVocabs, memberTargets, readsByKind } from './routes.ts';
+import { capturePaths, envelopeTargets, kindVocabs, memberTargets, readsByKind } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { runPinned } from './read.ts';
 
@@ -296,14 +296,14 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 	});
 	const reads = readsByKind(model, flagResolved(vocabulary, claims));
 	const vocabs = kindVocabs(model, reads);
-	const ownerPaths = (owner: string): string[] => [...new Set(formsOf(model, owner).flatMap((form) => (reads.get(form) ?? []).map((read) => read.vocab)))];
+	const pathsOf = capturePaths(model, reads);
 	return {
 		...facts,
 		claims,
 		templates: facts.templates.map((template) => ({ ...template, vocabs: template.vocabs.map(canonical) })),
 		members: facts.members.map((member) => {
 			if (!isNamedMember(member)) return member;
-			const name = canonicalCapture(vocabulary, ownerPaths(member.owner), member.name, member.owner);
+			const name = canonicalCapture(vocabulary, pathsOf(member), member.name, member.owner);
 			return name === member.name ? member : { ...member, name };
 		}),
 		containers: facts.containers.map((container) => {
