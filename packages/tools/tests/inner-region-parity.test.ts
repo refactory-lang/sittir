@@ -6,11 +6,11 @@
 // disagree is named with its reason, and must still disagree, so a fix
 // retires it.
 import { describe, expect, it } from 'vitest';
-import type { AnyUntypedNode, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, NodeJSONFacts, TriviaFacts } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { isCoordinate, isEmptyNode, storesNothingIn } from '@sittir/common/utils';
 import { languageByName } from '../src/languages.ts';
-import { loadCorpusEntries, loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
+import { loadCorpusEntries, loadLanguageForGrammar, loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
 
 const NATIVE_COUNTS_ANYWHERE =
 	'the tree counts a named child anywhere in the node, here a capture after the closing paren, where the inner gap holds nothing';
@@ -44,5 +44,14 @@ describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: inner-gap e
 		expect(checked).toBeGreaterThan(0);
 		expect([...disagreeing].filter((at) => !(at in known))).toEqual([]);
 		expect(Object.keys(known).filter((at) => !disagreeing.has(at)), 'named exceptions that now agree').toEqual([]);
+	});
+});
+
+describe.each(['python', 'regex', 'rust', 'scm', 'typescript'])('%s: the named units are the units the parser names', (grammar) => {
+	it('holds exactly the unit kind ids the parser marks named and visible', async () => {
+		const { lang } = await loadLanguageForGrammar(grammar);
+		const { hooks } = (await import(`@sittir/${grammar}/api`)) as { hooks: { trivia: TriviaFacts; json: NodeJSONFacts } };
+		const parserNamed = [...hooks.json.units].filter((id) => lang.nodeTypeIsNamed(id) && lang.nodeTypeIsVisible(id)).sort((a, b) => a - b);
+		expect([...hooks.trivia.namedUnits].sort((a, b) => a - b)).toEqual(parserNamed);
 	});
 });

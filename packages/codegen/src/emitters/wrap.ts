@@ -42,7 +42,7 @@ export function unitKindIds(nodeMap: NodeMap): number[] {
 }
 
 export function namedUnitKindIds(nodeMap: NodeMap): number[] {
-	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry?.anon !== true);
+	return unitKindIdsWhere(nodeMap, (node) => node.kindEntry?.anon !== true && node.kindEntry?.hidden !== true);
 }
 
 export function layoutMemberKindIds(nodeMap: NodeMap): number[] {
