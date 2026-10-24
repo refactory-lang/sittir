@@ -70,6 +70,25 @@ function checkRow(node: Record<string, unknown>, row: StructureRow, membership: 
 		const value = rejectBareText(node[storage], label, expected);
 		if (kinds !== undefined) rejectForeignKind(value, label, expected, kinds, membership);
 	}
+	for (const [storage, label] of row.booleans ?? []) {
+		requireScalar(node[storage], label, 'a boolean', (value) => typeof value === 'boolean');
+	}
+	for (const [storage, label, kinds] of row.kindIds ?? []) {
+		requireScalar(node[storage], label, `a kind id of ${kinds.join(' / ')}`, (value) => typeof value === 'number' && kinds.includes(value));
+	}
+	for (const [storage, label, texts] of row.texts ?? []) {
+		requireScalar(node[storage], label, `one of ${texts.map((text) => `'${text}'`).join(' / ')}`, (value) => typeof value === 'string' && texts.includes(value));
+	}
+}
+
+function requireScalar(value: unknown, label: string, expected: string, holds: (value: unknown) => boolean): void {
+	if (value !== undefined && value !== null && !holds(value)) throw new Error(`${label}: takes ${expected}, not ${describeValue(value)}`);
+}
+
+function describeValue(value: unknown): string {
+	if (typeof value === 'number') return `kind id ${value}`;
+	if (typeof value === 'string') return `the string '${value}'`;
+	return `a ${typeof value}`;
 }
 
 function rejectForeignKind(value: unknown, label: string, expected: string, kinds: readonly number[], membership: KindMembership): void {

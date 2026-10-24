@@ -7,6 +7,9 @@ const BLOCK = 1;
 const CALL = 2;
 const NAME = 3;
 const OTHER = 4;
+const LITERAL = 5;
+const SEMI = 6;
+const NEWLINE = 7;
 
 const membership: KindMembership = { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] };
 
@@ -16,6 +19,12 @@ const table: StructureTable = {
 		kind: 'call',
 		required: [['_callee', 'callee']],
 		nodeOnly: [['_callee', 'Call.callee', 'a built Name', [NAME]], ['_arguments', 'Call.arguments', 'a built Name', [NAME, BLOCK]]]
+	},
+	[LITERAL]: {
+		kind: 'literal',
+		booleans: [['_signed', 'Literal.signed']],
+		kindIds: [['_terminator', 'Literal.terminator', [SEMI, NEWLINE]]],
+		texts: [['_prefix', 'Literal.prefix', ['0x', '0X']]]
 	}
 };
 
@@ -52,6 +61,36 @@ describe('verifyStructure', () => {
 		expect(() => verify(built(CALL, { _callee: name(), _arguments: [name(), 1n] }))).toThrow(
 			'Call.arguments: a strict factory takes a built node, not a bigint; expected a built Name, or use .coerce'
 		);
+	});
+
+	it('refuses a value in a node-only slot that is not a node, a coordinate, a list or a kind id', () => {
+		expect(() => verify(built(CALL, { _callee: () => 1, _arguments: [] }))).toThrow(
+			'Call.callee: a strict factory takes a built node, not a function; expected a built Name, or use .coerce'
+		);
+		expect(() => verify(built(CALL, { _callee: name(), _arguments: [true] }))).toThrow(
+			'Call.arguments: a strict factory takes a built node, not a boolean; expected a built Name, or use .coerce'
+		);
+		expect(() => verify(built(CALL, { _callee: name(), _arguments: [NAME] }))).not.toThrow();
+	});
+
+	it('holds a kind-id slot to a kind id of its kinds, or nothing', () => {
+		expect(() => verify(built(LITERAL, { _terminator: SEMI }))).not.toThrow();
+		expect(() => verify(built(LITERAL))).not.toThrow();
+		expect(() => verify(built(LITERAL, { _terminator: () => SEMI }))).toThrow('Literal.terminator: takes a kind id of 6 / 7, not a function');
+		expect(() => verify(built(LITERAL, { _terminator: OTHER }))).toThrow('Literal.terminator: takes a kind id of 6 / 7, not kind id 4');
+		expect(() => verify(built(LITERAL, { _terminator: ';' }))).toThrow("Literal.terminator: takes a kind id of 6 / 7, not the string ';'");
+	});
+
+	it('holds a boolean slot to a boolean, or nothing', () => {
+		expect(() => verify(built(LITERAL, { _signed: true }))).not.toThrow();
+		expect(() => verify(built(LITERAL, { _signed: 'signed' }))).toThrow("Literal.signed: takes a boolean, not the string 'signed'");
+		expect(() => verify(built(LITERAL, { _signed: () => true }))).toThrow('Literal.signed: takes a boolean, not a function');
+	});
+
+	it('holds a text slot to one of its texts, or nothing', () => {
+		expect(() => verify(built(LITERAL, { _prefix: '0X' }))).not.toThrow();
+		expect(() => verify(built(LITERAL, { _prefix: '0b' }))).toThrow("Literal.prefix: takes one of '0x' / '0X', not the string '0b'");
+		expect(() => verify(built(LITERAL, { _prefix: () => '0x' }))).toThrow("Literal.prefix: takes one of '0x' / '0X', not a function");
 	});
 
 	it('checks the built nodes a node holds, at any depth', () => {

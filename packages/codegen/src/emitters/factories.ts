@@ -65,6 +65,7 @@ import {
 	isValidIdent,
 	valueStorageOf,
 	resolveFieldStorageInfo,
+	isTextEnum,
 	classifyFactoryShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
@@ -339,8 +340,19 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 
 function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	const kind = resolveFieldStorageInfo(f, nodeMap).kind;
-	if (kind === 'boolean') return 'a boolean';
-	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
+	if (kind === 'boolean' || kind === 'bitflag' || kind === 'kindEnum') return undefined;
+	return strictNodeExpectation(f, nodeMap) ?? (kind === 'mixedEnum' ? 'a kind id' : undefined);
+}
+
+function storedKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] {
+	const info = resolveFieldStorageInfo(f, nodeMap);
+	return info.enumKinds
+		.map((kind) => {
+			const id = info.enumKindsById.get(kind) ?? nodeMap.nodes.get(kind)?.kindId;
+			if (id === undefined) throw new Error(`${f.propertyName}: kind ${kind} stores no kind id`);
+			return id;
+		})
+		.sort((a, b) => a - b);
 }
 
 function slotNodeKindIds(f: AssembledNonterminal, nodeMap: NodeMap): number[] | undefined {
@@ -1647,10 +1659,16 @@ export function compoundStructureRow(
 				: ([f.storageKey, bareTextLabel(f, node.typeName), expected, kinds] as const)
 		];
 	});
+	const emitted = emittedSlots(node.slots, spreadFacts, registered);
+	const storageOf = (f: AssembledNonterminal) => resolveFieldStorageInfo(f, nodeMap);
+	const label = (f: AssembledNonterminal) => bareTextLabel(f, node.typeName);
+	const booleans = emitted.filter((f) => storageOf(f).kind === 'boolean').map((f) => [f.storageKey, label(f)] as const);
+	const kindIds = emitted.filter((f) => storageOf(f).kind === 'kindEnum').map((f) => [f.storageKey, label(f), storedKindIds(f, nodeMap)] as const);
+	const texts = emitted.filter((f) => isTextEnum(storageOf(f))).map((f) => [f.storageKey, label(f), storageOf(f).texts] as const);
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
 	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
-	return structureRow(node.kind, { required, nonEmpty, nodeOnly, config: configFirst ? configKeysOf(node) : [], lists });
+	return structureRow(node.kind, { required, nonEmpty, nodeOnly, booleans, kindIds, texts, config: configFirst ? configKeysOf(node) : [], lists });
 }
 
 export function structureRowOfKind(
@@ -1684,7 +1702,7 @@ export function listStructureRow(node: AssembledList): StructureRow | undefined 
 	});
 }
 
-function structureRow(kind: string, checks: { readonly [K in 'required' | 'nonEmpty' | 'nodeOnly' | 'config' | 'lists']?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
+function structureRow(kind: string, checks: { readonly [K in Exclude<keyof StructureRow, 'kind'>]?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
 	const present = Object.entries(checks).filter(([, entries]) => entries.length > 0);
 	return present.length === 0 ? undefined : { kind, ...Object.fromEntries(present) };
 }
