@@ -26,7 +26,7 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269,
-		280, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 334, 335, 336
+		280, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 335, 336, 337
 	]),
 	listKinds: new Set<number>([
 		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290
@@ -449,8 +449,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['value', 2, undefined, '_value']
 	],
 	289: [['items', 0, undefined, '_item']],
-	290: [['items', 0, undefined, '_item']],
-	291: [['withItems', 0, undefined, '_with_items']],
+	290: [['items', 0, undefined, '_items']],
+	291: [['items', 0, undefined, '_items']],
 	292: [['alternatives', 0, undefined, '_alternative']],
 	293: [['newline', 0, undefined, '_newline']],
 	294: [['elements', 0, undefined, '_elements']],
@@ -461,9 +461,9 @@ export const querySlots: QuerySlots = Object.freeze({
 		['primaryExpression', 1, undefined, '_primary_expression']
 	],
 	298: [['expression', 0, undefined, '_expression']],
-	334: [['content', 0, undefined, '_content']],
 	335: [['content', 0, undefined, '_content']],
-	336: [['content', 0, undefined, '_content']]
+	336: [['content', 0, undefined, '_content']],
+	337: [['content', 0, undefined, '_content']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({
@@ -1611,11 +1611,11 @@ export const structure: StructureTable = Object.freeze({
 		nonEmpty: [['_item', 'expression_statement_tuple.elements']],
 		lists: [['items', false, 0]]
 	},
-	290: { kind: 'with_clause_bare', nonEmpty: [['_item', 'with_clause_bare.elements']], lists: [['items', false, 0]] },
+	290: { kind: 'with_clause_bare', nonEmpty: [['_items', 'with_clause_bare.elements']], lists: [['items', false, 0]] },
 	291: {
 		kind: 'with_clause_paren',
-		required: [['_with_items', 'withItems']],
-		nodeOnly: [['_with_items', 'WithClauseParen.withItems', 'a built WithClauseWithItems']]
+		required: [['_items', 'items']],
+		nodeOnly: [['_items', 'WithClauseParen.items', 'a built WithClauseWithItems']]
 	},
 	292: {
 		kind: 'match_block_block',
@@ -1659,17 +1659,17 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'YieldFromClause.expression', 'a built Expression']]
 	},
-	334: {
+	335: {
 		kind: 'as_pattern_target',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'AsPatternTarget.content', 'a built Expression']]
 	},
-	335: {
+	336: {
 		kind: 'format_expression',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'FormatExpression.content', 'a built Interpolation']]
 	},
-	336: {
+	337: {
 		kind: 'names',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'Names.content', 'a built ImportList']]

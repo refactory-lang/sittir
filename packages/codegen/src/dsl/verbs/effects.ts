@@ -2,7 +2,7 @@ import type { LayerRecords } from '../layer-record.ts';
 import type { DisplayFamilies } from '../rule-transforms.ts';
 import { isPreference } from '../primitives/preference.ts';
 import { formatPreferencePath, parsePreferencePath } from '../primitives/preference-path.ts';
-import { fieldNames, isRecord, supertypesOf, transparentReach, type GrammarRecord } from '../rule-patterns.ts';
+import { claimReach, fieldNames, isRecord, supertypesOf, type GrammarRecord } from '../rule-patterns.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from '../wire/reparse-hosts.ts';
 
@@ -169,7 +169,7 @@ function segmentDestinations(
 	const stop = grammar === undefined ? new Set<string>() : supertypesOf(grammar);
 	const reach = new Map<string, ReadonlySet<string>>();
 	return (owner, segment) => {
-		const hosts = reach.get(owner) ?? transparentReach(rules, owner, stop);
+		const hosts = reach.get(owner) ?? claimReach(rules, owner, stop);
 		reach.set(owner, hosts);
 		return [...new Set(rewrites.filter((r) => hosts.has(r.owner) && r.from === segment).map((r) => r.to))];
 	};

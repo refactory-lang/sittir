@@ -4243,7 +4243,7 @@ describe('foreign_mod_item_body', () => {
 describe('match_arm_with_comma', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchArmWithComma({
-			pattern: stampBuilt({
+			match: stampBuilt({
 				$type: TSKindId.MatchPattern,
 				$text: 'test',
 				$named: true,
@@ -4256,7 +4256,7 @@ describe('match_arm_with_comma', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.matchArmWithComma({
-			pattern: stampBuilt({
+			match: stampBuilt({
 				$type: TSKindId.MatchPattern,
 				$text: 'test',
 				$named: true,
@@ -4272,7 +4272,7 @@ describe('match_arm_with_comma', () => {
 describe('match_arm_block_ending', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchArmBlockEnding({
-			pattern: stampBuilt({
+			match: stampBuilt({
 				$type: TSKindId.MatchPattern,
 				$text: 'test',
 				$named: true,
@@ -4290,7 +4290,7 @@ describe('match_arm_block_ending', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.matchArmBlockEnding({
-			pattern: stampBuilt({
+			match: stampBuilt({
 				$type: TSKindId.MatchPattern,
 				$text: 'test',
 				$named: true,

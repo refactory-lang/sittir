@@ -14,7 +14,7 @@ import { isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord }
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
-import { type BindingFacts, type MemberFact, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
+import { type BindingFacts, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
@@ -89,6 +89,37 @@ function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: strin
 
 function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
 	return (model.get(owner)?.slots ?? []).some((slot) => slot.kinds.length > 1 && slot.kinds.includes(kind));
+}
+
+interface SlotShape {
+	readonly list: boolean;
+	readonly holds: ReadonlySet<string>;
+}
+
+function slotShape(model: SlotModel, slot: ModelSlot): SlotShape {
+	const single = !slot.multiple && slot.kinds.length === 1 && slot.terminals.length === 0 ? model.get(slot.kinds[0]!) : undefined;
+	if (single?.modelType === 'list') return { list: true, holds: new Set(single.elementKinds) };
+	return { list: slot.multiple, holds: new Set([...slot.kinds, ...slot.terminals.map((text) => JSON.stringify(text))]) };
+}
+
+function formFieldRenames(model: SlotModel, owner: string, from: string, to: string): readonly FieldRename[] | string {
+	const forms = formsOf(model, owner).filter((form) => model.get(form)?.modelType !== 'supertype');
+	const slotsOf = (form: string): readonly ModelSlot[] => model.get(form)?.slots ?? [];
+	const claimed = forms.flatMap((form) => slotsOf(form).filter((slot) => slot.name === from).map((slot) => slotShape(model, slot)));
+	const [first] = claimed;
+	if (first === undefined) return 'field is not on the owner';
+	if (claimed.some((other) => other.list !== first.list)) return 'a form holds the member in another shape';
+	const held = new Set(claimed.flatMap((shape) => [...shape.holds]));
+	const renames: FieldRename[] = [];
+	for (const form of forms) {
+		const own = slotsOf(form).find((slot) => slot.name === from);
+		const holders = own !== undefined ? [own] : slotsOf(form).filter((slot) => [...slotShape(model, slot).holds].some((kind) => held.has(kind)));
+		if (holders.some((slot) => slotShape(model, slot).list !== first.list)) return 'a form holds the member in another shape';
+		if (holders.length > 1) return 'a form holds the member in several fields';
+		const [holder] = holders;
+		if (holder !== undefined && holder.name !== to) renames.push({ owner: form, from: holder.name, to });
+	}
+	return renames;
 }
 
 const targetKey = (r: FieldRequest): string =>
@@ -270,7 +301,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 
 	const checks = { ...base, rules } as unknown as GrammarRecord;
 	const realizedMembers: string[] = [];
-	const candidates: { row: string; request: FieldRequest }[] = [];
+	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.members.filter(isNamedMember);
 	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
@@ -299,6 +330,13 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		if (m.route === 'rename' && m.field !== null) {
 			if (m.kind !== null || m.after !== null) {
 				left('field shared by several members', row);
+				continue;
+			}
+			if (model.get(m.owner)?.modelType === 'supertype') {
+				const renames = formFieldRenames(model, m.owner, m.field, to);
+				if (typeof renames === 'string') left(renames, row);
+				else if (renames.length === 0) realizedMembers.push(row);
+				else for (const request of renames) candidates.push({ row, request, group: row });
 				continue;
 			}
 			if (to === m.field) {
@@ -377,37 +415,52 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const membersOfTarget = distinct(targetKey, fieldKey);
 	const targetsOfField = distinct(fieldKey, targetKey);
 	const refuse = (cause: string, row: string): void => left(implicitRows.has(row) ? `implicit route: ${cause}` : cause, row);
-	let accepted = candidates.filter(({ row, request }) => {
+	const refusedGroups = new Set<string>();
+	const refuseCandidate = (cause: string, { row, group }: (typeof candidates)[number]): void => {
+		if (group !== undefined) {
+			if (refusedGroups.has(group)) return;
+			refusedGroups.add(group);
+		}
+		refuse(cause, row);
+	};
+	const together = (candidate: (typeof candidates)[number]) => (c: (typeof candidates)[number]): boolean =>
+		c !== candidate && (candidate.group === undefined || c.group !== candidate.group);
+	let accepted = candidates.filter((candidate) => {
+		const { request } = candidate;
 		if (membersOfTarget.get(targetKey(request))!.size > 1) {
-			refuse('one child or token feeds several members', row);
+			refuseCandidate('one child or token feeds several members', candidate);
 			return false;
 		}
 		if (targetsOfField.get(fieldKey(request))!.size > 1) {
-			refuse('two fields route to one member', row);
+			refuseCandidate('two fields route to one member', candidate);
 			return false;
 		}
 		return true;
 	});
+	accepted = accepted.filter((c) => c.group === undefined || !refusedGroups.has(c.group));
 	const issues = new Map<(typeof candidates)[number], string>();
 	for (let changed = true; changed; ) {
 		changed = false;
 		const renameBatch = accepted.flatMap((c) => ('from' in c.request ? [c.request] : []));
 		const wrapBatch = accepted.flatMap((c) => ('from' in c.request ? [] : [c.request]));
 		for (const candidate of accepted.slice()) {
+			if (!accepted.includes(candidate)) continue;
 			const { request } = candidate;
 			const issue = 'from' in request ? fieldRenameIssue(checks, request, renameBatch) : fieldWrapIssue(checks, request, wrapBatch);
 			if (issue === undefined) continue;
 			issues.set(candidate, issue);
-			accepted = accepted.filter((c) => c !== candidate);
+			accepted = accepted.filter(together(candidate));
 			changed = true;
 		}
 	}
-	for (const [{ row }, issue] of issues) refuse(issue, row);
+	for (const [candidate, issue] of issues) refuseCandidate(issue, candidate);
 	const fieldRenames: FieldRename[] = [];
 	const fieldWraps: FieldWrap[] = [];
 	const applied = new Set<string>();
-	for (const { row, request } of accepted) {
-		(implicitRows.has(row) ? implicitMembers : realizedMembers).push(row);
+	const realizedGroups = new Set<string>();
+	for (const { row, request, group } of accepted) {
+		if (group === undefined || !realizedGroups.has(group)) (implicitRows.has(row) ? implicitMembers : realizedMembers).push(row);
+		if (group !== undefined) realizedGroups.add(group);
 		if (applied.has(targetKey(request))) continue;
 		applied.add(targetKey(request));
 		if ('from' in request) fieldRenames.push(request);

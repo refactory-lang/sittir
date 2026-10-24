@@ -575,10 +575,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameters', 3, undefined, '_parameters'],
 		['body', 4, undefined, '_body']
 	],
-	371: [['value', 0, undefined, '_value']],
-	372: [['value', 0, undefined, '_value']],
-	373: [['value', 0, undefined, '_value']],
-	374: [['value', 0, undefined, '_value']],
+	371: [['argument', 0, undefined, '_argument']],
+	372: [['argument', 0, undefined, '_argument']],
+	373: [['argument', 0, undefined, '_argument']],
+	374: [['argument', 0, undefined, '_argument']],
 	375: [['trait', 0, undefined, '_trait']],
 	376: [['trait', 0, undefined, '_trait']],
 	377: [
@@ -637,12 +637,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	397: [
 		['attributes', 0, undefined, '_attributes'],
-		['pattern', 1, undefined, '_pattern'],
+		['match', 1, undefined, '_match'],
 		['value', 2, undefined, '_value']
 	],
 	398: [
 		['attributes', 0, undefined, '_attributes'],
-		['pattern', 1, undefined, '_pattern'],
+		['match', 1, undefined, '_match'],
 		['value', 2, undefined, '_value']
 	],
 	400: [['doc', 0, undefined, '_doc']],
@@ -659,12 +659,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	412: [['delimTokens', 0, undefined, '_delim_tokens']],
 	413: [['delimTokens', 0, undefined, '_delim_tokens']],
 	414: [
-		['ref', 0, 'ref', '_ref'],
+		['byReference', 0, 'ref', '_by_reference'],
 		['mutable', 1, 'mut', '_mutable'],
 		['name', 2, undefined, '_name']
 	],
 	415: [
-		['ref', 0, 'ref', '_ref'],
+		['byReference', 0, 'ref', '_by_reference'],
 		['mutable', 1, 'mut', '_mutable'],
 		['name', 2, undefined, '_name'],
 		['pattern', 3, undefined, '_pattern']
@@ -2074,23 +2074,23 @@ export const structure: StructureTable = Object.freeze({
 	},
 	371: {
 		kind: 'reference_expression_raw_const',
-		required: [['_value', 'value']],
-		nodeOnly: [['_value', 'ReferenceExpressionRawConst.value', 'a built Expression']]
+		required: [['_argument', 'argument']],
+		nodeOnly: [['_argument', 'ReferenceExpressionRawConst.argument', 'a built Expression']]
 	},
 	372: {
 		kind: 'reference_expression_raw_mut',
-		required: [['_value', 'value']],
-		nodeOnly: [['_value', 'ReferenceExpressionRawMut.value', 'a built Expression']]
+		required: [['_argument', 'argument']],
+		nodeOnly: [['_argument', 'ReferenceExpressionRawMut.argument', 'a built Expression']]
 	},
 	373: {
 		kind: 'reference_expression_mut',
-		required: [['_value', 'value']],
-		nodeOnly: [['_value', 'ReferenceExpressionMut.value', 'a built Expression']]
+		required: [['_argument', 'argument']],
+		nodeOnly: [['_argument', 'ReferenceExpressionMut.argument', 'a built Expression']]
 	},
 	374: {
 		kind: 'reference_expression_bare',
-		required: [['_value', 'value']],
-		nodeOnly: [['_value', 'ReferenceExpressionBare.value', 'a built Expression']]
+		required: [['_argument', 'argument']],
+		nodeOnly: [['_argument', 'ReferenceExpressionBare.argument', 'a built Expression']]
 	},
 	375: {
 		kind: 'impl_item_positive_clause',
@@ -2271,33 +2271,33 @@ export const structure: StructureTable = Object.freeze({
 	397: {
 		kind: 'match_arm_with_comma',
 		required: [
-			['_pattern', 'pattern'],
+			['_match', 'match'],
 			['_value', 'value']
 		],
 		nodeOnly: [
 			['_attributes', 'MatchArmWithComma.attributes', 'a built AttributeItem / InnerAttributeItem'],
-			['_pattern', 'MatchArmWithComma.pattern', 'a built MatchPattern'],
+			['_match', 'MatchArmWithComma.match', 'a built MatchPattern'],
 			['_value', 'MatchArmWithComma.value', 'a built Expression']
 		],
-		config: ['attributes', 'pattern', 'value'],
+		config: ['attributes', 'match', 'value'],
 		lists: [['attributes', false, 'key']]
 	},
 	398: {
 		kind: 'match_arm_block_ending',
 		required: [
-			['_pattern', 'pattern'],
+			['_match', 'match'],
 			['_value', 'value']
 		],
 		nodeOnly: [
 			['_attributes', 'MatchArmBlockEnding.attributes', 'a built AttributeItem / InnerAttributeItem'],
-			['_pattern', 'MatchArmBlockEnding.pattern', 'a built MatchPattern'],
+			['_match', 'MatchArmBlockEnding.match', 'a built MatchPattern'],
 			[
 				'_value',
 				'MatchArmBlockEnding.value',
 				'a built UnsafeBlock / AsyncBlock / GenBlock / TryBlock / Block / IfExpression / MatchExpression / WhileExpression / LoopExpression / ForExpression / ConstBlock'
 			]
 		],
-		config: ['attributes', 'pattern', 'value'],
+		config: ['attributes', 'match', 'value'],
 		lists: [['attributes', false, 'key']]
 	},
 	400: {
@@ -2391,11 +2391,11 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'field_pattern_shorthand',
 		required: [['_name', 'name']],
 		nodeOnly: [
-			['_ref', 'FieldPatternShorthand.ref', 'a boolean'],
+			['_by_reference', 'FieldPatternShorthand.byReference', 'a boolean'],
 			['_mutable', 'FieldPatternShorthand.mutable', 'a boolean'],
 			['_name', 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier']
 		],
-		config: ['ref', 'mutable', 'name']
+		config: ['byReference', 'mutable', 'name']
 	},
 	415: {
 		kind: 'field_pattern_named',
@@ -2404,12 +2404,12 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'pattern']
 		],
 		nodeOnly: [
-			['_ref', 'FieldPatternNamed.ref', 'a boolean'],
+			['_by_reference', 'FieldPatternNamed.byReference', 'a boolean'],
 			['_mutable', 'FieldPatternNamed.mutable', 'a boolean'],
 			['_name', 'FieldPatternNamed.name', 'a built FieldIdentifier'],
 			['_pattern', 'FieldPatternNamed.pattern', 'a built Pattern']
 		],
-		config: ['ref', 'mutable', 'name', 'pattern']
+		config: ['byReference', 'mutable', 'name', 'pattern']
 	},
 	416: {
 		kind: 'macro_definition_paren',

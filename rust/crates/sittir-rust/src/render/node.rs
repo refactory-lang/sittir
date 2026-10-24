@@ -24560,9 +24560,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprNode {
 pub struct ReferenceExpressionRawConstNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_argument")]
+    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
+    pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
 impl ::sittir_core::view::KindOf for ReferenceExpressionRawConstNode {
@@ -24587,7 +24587,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.argument.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24609,9 +24609,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstNode {
 pub struct ReferenceExpressionRawMutNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_argument")]
+    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
+    pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
 impl ::sittir_core::view::KindOf for ReferenceExpressionRawMutNode {
@@ -24636,7 +24636,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.argument.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24658,9 +24658,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutNode {
 pub struct ReferenceExpressionMutNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_argument")]
+    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
+    pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
 impl ::sittir_core::view::KindOf for ReferenceExpressionMutNode {
@@ -24685,7 +24685,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.argument.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24707,9 +24707,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutNode {
 pub struct ReferenceExpressionBareNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_argument")]
+    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
+    pub argument: ::sittir_core::SlotValue<Box<ExpressionNode>>,
 }
 
 impl ::sittir_core::view::KindOf for ReferenceExpressionBareNode {
@@ -24734,7 +24734,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionBareNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.value.prepare(ctx)?;
+        self.argument.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -25907,9 +25907,9 @@ pub struct MatchArmWithCommaNode {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 4, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<MatchPatternNode>,
+    #[wire(key = "_match")]
+    #[slot(field = field::MATCH, word = 4, width = 5)]
+    pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 9, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
@@ -25943,7 +25943,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaNode {
         self.attributes_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
+        self.match_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
@@ -25969,9 +25969,9 @@ pub struct MatchArmBlockEndingNode {
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES, word = 2, width = 2, run = 5)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
-    #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 4, width = 5)]
-    pub pattern: ::sittir_core::SlotValue<MatchPatternNode>,
+    #[wire(key = "_match")]
+    #[slot(field = field::MATCH, word = 4, width = 5)]
+    pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 9, width = 5)]
     pub value: ::sittir_core::SlotValue<MatchArmBlockEndingValueNodeSlot>,
@@ -26005,7 +26005,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingNode {
         self.attributes_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
-        self.pattern.prepare(ctx)?;
+        self.match_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
@@ -26844,9 +26844,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceNode {
 pub struct FieldPatternShorthandNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_ref")]
-    #[slot(field = field::REF, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
-    pub ref_: bool,
+    #[wire(key = "_by_reference")]
+    #[slot(field = field::BY_REFERENCE, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
+    pub by_reference: bool,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
@@ -26877,7 +26877,7 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.ref_.prepare(ctx)?;
+        self.by_reference.prepare(ctx)?;
         self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
@@ -26901,9 +26901,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandNode {
 pub struct FieldPatternNamedNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_ref")]
-    #[slot(field = field::REF, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
-    pub ref_: bool,
+    #[wire(key = "_by_reference")]
+    #[slot(field = field::BY_REFERENCE, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
+    pub by_reference: bool,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
@@ -26937,7 +26937,7 @@ impl ::sittir_core::prepare::Prepare for FieldPatternNamedNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.ref_.prepare(ctx)?;
+        self.by_reference.prepare(ctx)?;
         self.mutable.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
@@ -37983,7 +37983,7 @@ fn render_closure_expression_expr(node: &ClosureExpressionExprNode, w: &mut dyn 
 }
 
 fn render_reference_expression_raw_const(node: &ReferenceExpressionRawConstNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let value = &node.value;
+    let argument = &node.argument;
     w.edge(::sittir_core::types::KindId(371), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_AMP_AFTER);
@@ -37993,13 +37993,13 @@ fn render_reference_expression_raw_const(node: &ReferenceExpressionRawConstNode,
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_CONST_KEYWORD_BEFORE);
     w.text("const")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_CONST_CONST_KEYWORD_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(371), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let value = &node.value;
+    let argument = &node.argument;
     w.edge(::sittir_core::types::KindId(372), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_AMP_AFTER);
@@ -38009,30 +38009,30 @@ fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutNode, w: 
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_WRITABLE_BEFORE);
     w.text("mut")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_RAW_MUT_WRITABLE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(372), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_reference_expression_mut(node: &ReferenceExpressionMutNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let value = &node.value;
+    let argument = &node.argument;
     w.edge(::sittir_core::types::KindId(373), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_AMP_AFTER);
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_EXCLUSIVE_BEFORE);
     w.text("mut")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_MUT_EXCLUSIVE_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(373), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_reference_expression_bare(node: &ReferenceExpressionBareNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let value = &node.value;
+    let argument = &node.argument;
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("&")?;
     w.site_at(options::SITE_REFERENCE_EXPRESSION_BARE_AMP_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_argument", ::sittir_core::types::ItemIndex(0), w, |w| argument.render(w))?;
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -38327,11 +38327,11 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaNode, w: &mut dyn ::sitti
         tail: Some(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
-    let pattern = &node.pattern;
+    let match_ = &node.match_;
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(397), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_EQ_GT_BEFORE);
     w.text("=>")?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_EQ_GT_AFTER);
@@ -38356,11 +38356,11 @@ fn render_match_arm_block_ending(node: &MatchArmBlockEndingNode, w: &mut dyn ::s
         tail: Some(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
-    let pattern = &node.pattern;
+    let match_ = &node.match_;
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(398), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_BEFORE);
     w.text("=>")?;
     w.site_at(options::SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_AFTER);
@@ -38638,13 +38638,13 @@ fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceNode, w: &mut dyn ::s
 }
 
 fn render_field_pattern_shorthand(node: &FieldPatternShorthandNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let by_reference = View::new(&node.by_reference, "ref");
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierNode::MutableSpecifier), "{}");
     let name = &node.name;
-    let ref_ = View::new(&node.ref_, "ref");
     w.edge(::sittir_core::types::KindId(414), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    if ref_.is_present() {
-        ref_.render(w)?;
-        w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_REF_AFTER);
+    if by_reference.is_present() {
+        by_reference.render(w)?;
+        w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_BY_REFERENCE_AFTER);
     }
     if mutable.is_present() {
         w.site_at(options::SITE_FIELD_PATTERN_SHORTHAND_MUTABLE_BEFORE);
@@ -38657,14 +38657,14 @@ fn render_field_pattern_shorthand(node: &FieldPatternShorthandNode, w: &mut dyn 
 }
 
 fn render_field_pattern_named(node: &FieldPatternNamedNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let by_reference = View::new(&node.by_reference, "ref");
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierNode::MutableSpecifier), "{}");
     let name = &node.name;
     let pattern = &node.pattern;
-    let ref_ = View::new(&node.ref_, "ref");
     w.edge(::sittir_core::types::KindId(415), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    if ref_.is_present() {
-        ref_.render(w)?;
-        w.site_at(options::SITE_FIELD_PATTERN_NAMED_REF_AFTER);
+    if by_reference.is_present() {
+        by_reference.render(w)?;
+        w.site_at(options::SITE_FIELD_PATTERN_NAMED_BY_REFERENCE_AFTER);
     }
     if mutable.is_present() {
         w.site_at(options::SITE_FIELD_PATTERN_NAMED_MUTABLE_BEFORE);

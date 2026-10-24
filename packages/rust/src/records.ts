@@ -374,10 +374,10 @@ export const records = {
 		parameters: { word: 3, width: 5 },
 		body: { word: 8, width: 5 }
 	},
-	ReferenceExpressionRawConstNode: { words: 7, value: { word: 2, width: 5 } },
-	ReferenceExpressionRawMutNode: { words: 7, value: { word: 2, width: 5 } },
-	ReferenceExpressionMutNode: { words: 7, value: { word: 2, width: 5 } },
-	ReferenceExpressionBareNode: { words: 7, value: { word: 2, width: 5 } },
+	ReferenceExpressionRawConstNode: { words: 7, argument: { word: 2, width: 5 } },
+	ReferenceExpressionRawMutNode: { words: 7, argument: { word: 2, width: 5 } },
+	ReferenceExpressionMutNode: { words: 7, argument: { word: 2, width: 5 } },
+	ReferenceExpressionBareNode: { words: 7, argument: { word: 2, width: 5 } },
 	ImplItemPositiveClauseNode: { words: 7, trait_: { word: 2, width: 5 } },
 	ImplItemNegativeClauseNode: { words: 7, trait_: { word: 2, width: 5 } },
 	ImplItemBodyNode: {
@@ -433,13 +433,13 @@ export const records = {
 	MatchArmWithCommaNode: {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
-		pattern: { word: 4, width: 5 },
+		match_: { word: 4, width: 5 },
 		value: { word: 9, width: 5 }
 	},
 	MatchArmBlockEndingNode: {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
-		pattern: { word: 4, width: 5 },
+		match_: { word: 4, width: 5 },
 		value: { word: 9, width: 5 }
 	},
 	LineCommentExtraSlashesNode: { words: 2 },
@@ -460,13 +460,13 @@ export const records = {
 	DelimTokenTreeBraceNode: { words: 4, delim_tokens: { word: 2, width: 2, run: 5 } },
 	FieldPatternShorthandNode: {
 		words: 8,
-		ref_: { word: 2, bit: 0 },
+		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
 		name: { word: 3, width: 5 }
 	},
 	FieldPatternNamedNode: {
 		words: 13,
-		ref_: { word: 2, bit: 0 },
+		by_reference: { word: 2, bit: 0 },
 		mutable: { word: 2, bit: 1 },
 		name: { word: 3, width: 5 },
 		pattern: { word: 8, width: 5 }

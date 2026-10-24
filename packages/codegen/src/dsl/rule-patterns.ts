@@ -701,6 +701,20 @@ export function transparentReach(rules: GrammarRecord, from: string, stop: Reado
 	return out;
 }
 
+function subtypeNames(rules: GrammarRecord, rule: unknown): string[] {
+	const core = unwrapPrec(rule);
+	if (!isRecord(core)) return [];
+	if (core.type === 'SYMBOL') return typeof core.name === 'string' && core.name in rules ? [core.name] : [];
+	return core.type === 'CHOICE' && Array.isArray(core.members) ? core.members.flatMap((member) => subtypeNames(rules, member)) : [];
+}
+
+export function claimReach(rules: GrammarRecord, owner: string, stop: ReadonlySet<string>): Set<string> {
+	const out = transparentReach(rules, owner, stop);
+	if (!stop.has(owner)) return out;
+	for (const subtype of subtypeNames(rules, rules[owner])) for (const name of claimReach(rules, subtype, stop)) out.add(name);
+	return out;
+}
+
 export const OPAQUE_RULES: ReadonlySet<unknown> = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN']);
 
 export function replaceSymbols(rule: unknown, replace: (name: string) => string): unknown {

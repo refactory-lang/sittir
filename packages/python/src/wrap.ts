@@ -5247,12 +5247,12 @@ export function wrapExpressionStatementTuple(
 
 export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.WithClauseBare.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._item);
+	const listedStored = storedElements(data._items);
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseBare as const,
 		items() {
-			return hydrateSlots<T.WithItem>(this, '_item', tree);
+			return hydrateSlots<T.WithItem>(this, '_items', tree);
 		},
 		$with: {},
 		length: listedStored.length,
@@ -5280,27 +5280,26 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle): T.
 
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): T.WithClauseParen.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._with_items, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._items, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.WithClauseParen as const,
-		withItems() {
-			return hydrateSlot<T.WithClauseWithItems>(this, '_with_items', tree);
+		items() {
+			return hydrateSlot<T.WithClauseWithItems>(this, '_items', tree);
 		},
 		$with: {
-			withItems: (...args: unknown[]) =>
+			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.WithClauseWithItems as const, optional: false, make: RAW.buildWithClauseWithItems },
-						(v: NonNullable<T.WithClauseParen['_with_items']>) =>
-							wrapWithClauseParen({ ...$edited(data), _with_items: v }, tree)
+						(v: NonNullable<T.WithClauseParen['_items']>) => wrapWithClauseParen({ ...$edited(data), _items: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

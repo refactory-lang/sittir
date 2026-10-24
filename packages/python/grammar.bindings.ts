@@ -125,7 +125,9 @@ export default grammar(
 			subscript: { "0": field("object") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 			type_parameter: { "1": field("types") },
-			typed_default_parameter: { "4": field("default") }
+			typed_default_parameter: { "4": field("default") },
+			with_clause_bare: { "0": field("items"), "1/0/1": field("items") },
+			with_clause_paren: { "1": field("items") }
 		}
 	})
 );

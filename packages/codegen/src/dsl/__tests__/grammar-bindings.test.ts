@@ -81,6 +81,28 @@ describe('boundFieldNameOf', () => {
 		expect(nameOf('other', 'pattern')).toBe('pattern');
 	});
 
+	it('maps a field renamed at the forms of a supertype through the supertype a claim names', () => {
+		const grammar = {
+			supertypes: ['field_pattern'],
+			rules: {
+				field_pattern: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'field_pattern_shorthand' }, { type: 'SYMBOL', name: 'field_pattern_named' }] },
+				field_pattern_shorthand: { type: 'FIELD', name: 'by_reference', content: { type: 'STRING', value: 'ref' } },
+				field_pattern_named: { type: 'FIELD', name: 'by_reference', content: { type: 'STRING', value: 'ref' } },
+				other: { type: 'SYMBOL', name: 'field_pattern' }
+			}
+		};
+		const nameOf = boundFieldNameOf(
+			[
+				{ owner: 'field_pattern_shorthand', from: 'ref:', to: 'by_reference:' },
+				{ owner: 'field_pattern_named', from: 'ref:', to: 'by_reference:' }
+			],
+			grammar
+		);
+		expect(nameOf('field_pattern', 'ref')).toBe('by_reference');
+		expect(nameOf('field_pattern_named', 'ref')).toBe('by_reference');
+		expect(nameOf('other', 'ref')).toBe('ref');
+	});
+
 	it('reads canonical field segments and scopes the rename to its owner', () => {
 		const nameOf = boundFieldNameOf([{ owner: 'binding', from: 'left:', to: 'name:' }]);
 		expect(nameOf('binding', 'left')).toBe('name');

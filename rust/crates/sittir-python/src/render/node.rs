@@ -19139,20 +19139,20 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_CLAUSE_BARE, item = item, words = 4)]
+#[node(kind = kind::WITH_CLAUSE_BARE, item = items, words = 4)]
 pub struct WithClauseBareNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemNode>>,
+    #[wire(key = "_items")]
+    #[slot(field = field::ITEMS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
+    pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemNode>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<KindId>,
+    #[wire(key = "_items_separator_space_before")]
+    pub items_separator_space_before: Option<KindId>,
+    #[wire(key = "_items_separator_space_after")]
+    pub items_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for WithClauseBareNode {
@@ -19176,11 +19176,11 @@ impl ::sittir_core::render::Render for WithClauseBareNode {
 impl ::sittir_core::prepare::Prepare for WithClauseBareNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
-        self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-        self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER).arm);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(290), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_BARE_ITEM), ctx));
-        self.item.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.items.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_items"));
+        self.items_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_BEFORE).arm);
+        self.items_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_AFTER).arm);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(290), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_BARE_ITEMS), ctx));
+        self.items.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -19202,9 +19202,9 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareNode {
 pub struct WithClauseParenNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_with_items")]
-    #[slot(field = field::WITH_ITEMS, word = 2, width = 5)]
-    pub with_items: ::sittir_core::SlotValue<WithClauseWithItemsNode>,
+    #[wire(key = "_items")]
+    #[slot(field = field::ITEMS, word = 2, width = 5)]
+    pub items: ::sittir_core::SlotValue<WithClauseWithItemsNode>,
 }
 
 impl ::sittir_core::view::KindOf for WithClauseParenNode {
@@ -19229,7 +19229,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.with_items.prepare(ctx)?;
+        self.items.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -20020,19 +20020,19 @@ pub struct NamesNode {
 
 impl ::sittir_core::view::KindOf for NamesNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(336)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(337)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for NamesNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(336) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(337) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for NamesNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(336)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_names(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(337)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_names(self, w))
     }
 }
 
@@ -20068,19 +20068,19 @@ pub struct AsPatternTargetNode {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(334)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(335)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(334) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(335) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(334)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(335)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
@@ -20116,19 +20116,19 @@ pub struct FormatExpressionNode {
 
 impl ::sittir_core::view::KindOf for FormatExpressionNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(335)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(336)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FormatExpressionNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(335) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(336) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FormatExpressionNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(335)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_expression(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(336)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_format_expression(self, w))
     }
 }
 
@@ -26722,29 +26722,29 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleNode, w: &mu
 }
 
 fn render_with_clause_bare(node: &WithClauseBareNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: &node.item,
+    let items = ListView {
+        items: &node.items,
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        before: node.items_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.items_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_items"),
     };
-    item.render(w)?;
+    items.render(w)?;
     Ok(())
 }
 
 fn render_with_clause_paren(node: &WithClauseParenNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let with_items = &node.with_items;
+    let items = &node.items;
     w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_with_items", ::sittir_core::types::ItemIndex(0), w, |w| with_items.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_items", ::sittir_core::types::ItemIndex(0), w, |w| items.render(w))?;
     w.site_at(options::SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(291), ::sittir_core::options::Side::After, node.layout.edges().after);
