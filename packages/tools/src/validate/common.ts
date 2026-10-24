@@ -20,6 +20,7 @@ import {
 	carryPlace,
 	carrySourceStamp,
 	holdTree,
+	slotSeparatorOf,
 	sideOf,
 	sidesOf,
 	nodeText,
@@ -524,6 +525,7 @@ interface ParsedNodeModel {
 			storage?: string;
 			registered?: boolean;
 			optionDefault?: number | string;
+			separator?: { readonly default?: number };
 			values?: ReadonlyArray<ParsedSlotValue>;
 		}>;
 		elementSeats?: readonly Seat[];
@@ -1383,7 +1385,7 @@ function factoryArgs(
 	const route = armRouteOf(config);
 	if (shape === 'config') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts);
-		const listOptions = separatedListFactoryOptions(referenceData);
+		const listOptions = separatedListFactoryOptions(referenceData, opts.factorySlots?.[kind], opts.omitOptionDefaults === true);
 		const options = {
 			...(listOptions?.separator !== undefined && !('separator' in base) ? { separator: listOptions.separator } : {}),
 			...(listOptions?.delimiter !== undefined && !('delimiter' in base) ? { delimiter: listOptions.delimiter } : {}),
@@ -1403,7 +1405,7 @@ function factoryArgs(
 	}
 	const { base, registered } = splitRegisteredSlots(kind, config, opts);
 	const elements = getChildFactoryArgs(kind, base, opts.factorySlots, opts.factoryFields);
-	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData) : registered;
+	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData, opts.factorySlots?.[kind], opts.omitOptionDefaults === true) : registered;
 	return options !== undefined ? [options, ...elements] : elements;
 }
 
@@ -1784,12 +1786,18 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 	);
 }
 
-export function separatedListFactoryOptions(data: unknown): { separator?: number; delimiter?: number } | undefined {
+export function separatedListFactoryOptions(
+	data: unknown,
+	slots?: Record<string, FactorySlotMeta>,
+	omitDefault = false
+): { separator?: number; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
+	const option = Object.values(slots ?? {}).find((meta) => meta.separator !== undefined)?.separator;
 	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
-	const separator = typeof rec['_separator'] === 'number' ? rec['_separator'] : undefined;
+	const stored = typeof rec['_separator'] === 'number' ? rec['_separator'] : slotSeparatorOf(rec);
+	const separator = option === undefined ? undefined : stored;
 	const options: { separator?: number; delimiter?: number } = {};
-	if (separator !== undefined) options.separator = separator;
+	if (separator !== undefined && !(omitDefault && separator === option?.default)) options.separator = separator;
 	if (delimiter !== undefined) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }
