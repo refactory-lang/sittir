@@ -109,3 +109,11 @@ For engine-api's planning: each kind below gets a builder, types, a wrap and a n
 1. **Literal-split coverage.** The rule covers 25 claims beyond the plan's five: rust's 17 primitive types and 8 more typescript predefined types. Should every fixed-text kind claim on a keyword leaf split, which empties rust's `primitive_type` and `boolean_literal`? Or should splits cover only the plan's five, with the rest staying read tests?
 2. **Typescript's `constructor`.** Splitting it adds 385 states (+4.98%) and 347 KB of `parser.c`, so that an object literal's `constructor` method reads as a method. Accept the cost? Or keep it a read test that gains the class-body context?
 3. **Supertype copies.** Reaching python's class-body method and typescript's class-body method copies a declared supertype, which adds a new supertype to node-types (`_statement_class_definition`, `_method_definition_class_body_member_method`). Accept these as hidden copies with no builders?
+
+## Rulings
+
+The user's, on 2026-10-24:
+
+1. **Splits cover the plan's five only:** typescript's `constructor` and `never`, python's `__init__`, rust's `true` and `false`. Rust's primitive types and typescript's other predefined types stay read tests on their kinds. `boolean_literal` still empties, since both its literals are among the five.
+2. **Typescript's `constructor` splits, as the plan rules,** at the measured cost: +385 states and +347 KB of `parser.c`. Its claim gains the class body as context, and the builder contexts' `Visibility` stopgap at every method's parameters goes away with it.
+3. **Supertype copies are hidden copies with no builders.** `_statement_class_definition` and `_method_definition_class_body_member_method` appear only in node-types' supertype list.
