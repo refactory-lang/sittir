@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, containerElementForms, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, envelopeTargets, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -422,12 +422,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
 					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
 			if (container.captures.length === 0) continue;
-			const targets = new Set(
-				containerElementForms(input.model, container).flatMap((form) => {
-					const direct = directVocab(input, form, [container.kind]);
-					return direct === undefined ? [] : [direct];
-				})
-			);
+			const targets = new Set(envelopeTargets(input.model, container, vocabOf(input.grammar)));
 			if (targets.size === 0) {
 				untargeted.push(`${input.grammar}: ${container.kind} (${container.captures.map((c) => c.name).join(', ')})`);
 				continue;

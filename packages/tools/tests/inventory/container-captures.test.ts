@@ -64,23 +64,37 @@ describe('container captures', () => {
 		expect(d.untargeted).toEqual([]);
 	});
 
-	it("derive a flag captured on the envelope by its synonym as they derive the canonical flag", async () => {
-		const flagged = new Map([['async', { optional: true, flag: true }]]);
-		const kinds = new Map([['declaration.b', { name: 'declaration.b', own: flagged, parent: undefined, refines: undefined }]]);
-		const vocabulary: Vocabulary = {
+	const flagged = new Map([['async', { optional: true, flag: true }]]);
+	const vocabularyOf = (extra: readonly (readonly [string, ReadonlyMap<string, { optional: boolean; flag: boolean }>])[] = []): Vocabulary => {
+		const kinds = new Map(
+			[['declaration.b', flagged] as const, ...extra].map(([name, own]) => [name, { name, own, parent: undefined, refines: undefined }])
+		);
+		return {
 			kinds,
 			flags: new Set(['async']),
 			synonyms: { levels: new Map(), flags: new Map([['async', ['concurrent']]]) },
 			members: (path) => kinds.get(path)?.own ?? new Map()
 		};
-		const membersOf = async (name: string) => {
-			const input = await grammar([...CLAIMS, `(marked (mark)* @marks "async" @${name} body: (_) @element)`].join('\n'));
-			const bindings = resolveFlags(canonicalFacts(input.bindings, vocabulary, input.model), vocabulary, input.model);
-			return derive([{ ...input, bindings }]).members.get('declaration.b');
-		};
-		const canonical = await membersOf('async');
+	};
+	const envelopeMembers = async (vocabulary: Vocabulary, claims: readonly string[], name: string) => {
+		const input = await grammar([...CLAIMS, ...claims, `(marked (mark)* @marks "async" @${name} body: (_) @element)`].join('\n'));
+		const bindings = resolveFlags(canonicalFacts(input.bindings, vocabulary, input.model), vocabulary, input.model);
+		return derive([{ ...input, bindings }]).members.get('declaration.b');
+	};
+
+	it('derive a flag captured on the envelope by its synonym as they derive the canonical flag', async () => {
+		const vocabulary = vocabularyOf();
+		const canonical = await envelopeMembers(vocabulary, [], 'async');
 		expect([...(canonical?.keys() ?? [])]).toContain('async');
-		expect(await membersOf('concurrent')).toEqual(canonical);
+		expect(await envelopeMembers(vocabulary, [], 'concurrent')).toEqual(canonical);
+	});
+
+	it("resolve an envelope's synonym against the path its element derives to, not another claim's data member", async () => {
+		const vocabulary = vocabularyOf([['declaration.alternate', new Map([['concurrent', { optional: true, flag: false }]])]]);
+		const placed = ['(marked body: (leaf_b) @declaration.alternate)'];
+		const canonical = await envelopeMembers(vocabulary, placed, 'async');
+		expect([...(canonical?.keys() ?? [])]).toContain('async');
+		expect(await envelopeMembers(vocabulary, placed, 'concurrent')).toEqual(canonical);
 	});
 
 	it('are reported, not spread, when the element slot names no kind directly', async () => {

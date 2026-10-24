@@ -183,14 +183,18 @@ function toldByRead(model: SlotModel, slot: ModelSlot, pinned: ReadonlySet<strin
 const slotHoldingText = (model: SlotModel, slots: readonly ModelSlot[], text: string): ModelSlot | undefined =>
 	slots.find((s) => s.terminals.includes(text) || s.kinds.some((kind) => textOfKind(model, kind) === text));
 
-function pinsOf(model: SlotModel, node: ModelNode | undefined, claim: ClaimFact, renames: SlotNames): Pin[] {
-	const slots = node?.slots ?? [];
+function pinnedLiterals(model: SlotModel, slots: readonly ModelSlot[], claim: ClaimFact): [string, string][] {
 	const literals: [string, string][] = Object.entries(claim.fieldLiterals);
 	for (const text of claim.tokens) {
 		const pinned = slotHoldingText(model, slots, text);
 		if (pinned && !literals.some(([field]) => field === pinned.name)) literals.push([pinned.name, text]);
 	}
-	return literals.map(([field, text]) => {
+	return literals;
+}
+
+function pinsOf(model: SlotModel, node: ModelNode | undefined, claim: ClaimFact, renames: SlotNames): Pin[] {
+	const slots = node?.slots ?? [];
+	return pinnedLiterals(model, slots, claim).map(([field, text]) => {
 		const slot = slotByField(slots, field);
 		return { member: memberNameOf(renames, slot?.name ?? field, slot?.propertyName ?? field), slot: slot?.name ?? field, text };
 	});
@@ -313,6 +317,9 @@ function childTestsOf(model: SlotModel, kind: string, fact: ChildFact, facts: re
 	const excludes = held.filter((k) => !matched.includes(k));
 	return excludes.length === 0 ? [] : [{ subject: child.subject, excludes }];
 }
+
+const claimChildTests = (model: SlotModel, kind: string, claim: ClaimFact): ChildTest[] =>
+	modelNode(model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(model, kind, child, claim.children));
 
 const inheritedClaims = (entry: ReadEntry, entries: readonly ReadEntry[]): ReadonlySet<number> =>
 	new Set(entries.filter((other) => entry.vocab === other.vocab || entry.vocab.startsWith(`${other.vocab}.`)).map((other) => other.index));
@@ -606,7 +613,7 @@ function spelledFlagRouteOf(member: Extract<MemberFact, { readonly route: 'renam
 
 const flagOf = (member: MemberFact): { readonly flag?: true } => (member.flag === true ? { flag: true } : {});
 
-function refinedParent(kind: string, entries: readonly ReadEntry[]): string | undefined {
+function refinedParent(kind: string, entries: readonly { readonly vocab: string }[]): string | undefined {
 	if (entries.length === 0) return undefined;
 	const parents = new Set(entries.map((e) => e.vocab.slice(0, Math.max(0, e.vocab.lastIndexOf('.')))));
 	const [parent] = parents;
@@ -692,8 +699,44 @@ export function claimReads(model: SlotModel, claims: readonly ClaimFact[]): (cla
 	};
 }
 
-export function containerElementForms(model: SlotModel, container: ContainerFact): string[] {
-	return (slotFor(model, modelNode(model, container.kind)?.slots ?? [], container.element)?.kinds ?? []).flatMap((kind) => formsOf(model, kind));
+export function kindVocabs(model: SlotModel, claims: readonly ClaimFact[]): ReadonlyMap<string, string> {
+	const readsOf = claimReads(model, claims);
+	const reads = new Map<string, { readonly vocab: string; readonly own: boolean; readonly top: boolean; readonly plain: boolean }[]>();
+	for (const claim of claims) {
+		const owner = claim.kind;
+		if (owner === null) continue;
+		for (const [form, { kind }] of readsOf(claim)) {
+			const plain =
+				claim.toplevel &&
+				claim.predicates.length === 0 &&
+				pinnedLiterals(model, modelNode(model, kind)?.slots ?? [], claim).length === 0 &&
+				claimChildTests(model, kind, claim).length === 0;
+			const read = { vocab: claim.vocab, own: owner === WILDCARD || form === owner, top: claim.toplevel, plain };
+			(reads.get(kind) ?? reads.set(kind, []).get(kind))?.push(read);
+		}
+	}
+	const vocabOf = new Map<string, string>();
+	for (const [kind, all] of reads) {
+		const top = all.filter((read) => read.top);
+		const own = top.filter((read) => read.own);
+		const vocab = own.find((read) => read.plain)?.vocab ?? top.find((read) => read.plain)?.vocab ?? refinedParent(kind, own.length > 0 ? own : top);
+		if (vocab !== undefined) vocabOf.set(kind, vocab);
+	}
+	return vocabOf;
+}
+
+export function envelopeTargets(model: SlotModel, container: ContainerFact, vocabOf: ReadonlyMap<string, string>): string[] {
+	const elements = slotFor(model, modelNode(model, container.kind)?.slots ?? [], container.element)?.kinds ?? [];
+	return [
+		...new Set(
+			elements.flatMap((kind) =>
+				formsOf(model, kind).flatMap((form) => {
+					const vocab = vocabOf.get(form);
+					return vocab === undefined ? [] : [vocab];
+				})
+			)
+		)
+	];
 }
 
 export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: string): boolean {
@@ -734,7 +777,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				claim,
 				index,
 				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
-				children: modelNode(input.model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(input.model, kind, child, claim.children)),
+				children: claimChildTests(input.model, kind, claim),
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab)),
 				members: [],
 				...(spelled ? { spelled: true as const } : {})
@@ -744,14 +787,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		}
 	});
 
-	const isPlain = (e: ReadEntry): boolean => e.claim.predicates.length === 0 && e.pins.length === 0 && e.children.length === 0;
-	const vocabOf = new Map<string, string>();
-	for (const [kind, entries] of readEntries) {
-		const top = entries.filter((e) => e.claim.toplevel);
-		const own = top.filter((e) => !inherited.has(e));
-		const vocab = own.find(isPlain)?.vocab ?? top.find(isPlain)?.vocab ?? refinedParent(kind, own.length > 0 ? own : top);
-		if (vocab !== undefined) vocabOf.set(kind, vocab);
-	}
+	const vocabOf = kindVocabs(input.model, input.bindings.claims);
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
 	for (const entries of readEntries.values())
 		entries.sort((a, b) => specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);

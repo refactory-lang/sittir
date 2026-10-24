@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedMember, type NamedMemberFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
-import { captureReaches, claimReads, containerElementForms } from './routes.ts';
+import { captureReaches, claimReads, envelopeTargets, kindVocabs } from './routes.ts';
 import { camel, snake } from './names.ts';
 import { runPinned } from './read.ts';
 
@@ -271,17 +271,22 @@ export function canonicalPaths(vocabulary: Vocabulary): (path: string) => string
 	};
 }
 
-const claimedPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((reaches: (kind: string) => boolean, among?: readonly number[]) => string[]) => {
+const memberPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((member: NamedMemberFact) => string[]) => {
 	const readsOf = claimReads(model, claims);
-	return (reaches, among) => [
-		...new Set(claims.filter((claim, index) => (among === undefined || among.includes(index)) && readsOf(claim).some(([, read]) => reaches(read.kind))).map((claim) => claim.vocab))
+	return (member) => [
+		...new Set(
+			claims
+				.filter((claim, index) => (member.claims === undefined || member.claims.includes(index)) && readsOf(claim).some(([, read]) => captureReaches(model, member, read.kind)))
+				.map((claim) => claim.vocab)
+		)
 	];
 };
 
-const memberPaths = (model: SlotModel, claims: readonly ClaimFact[]): ((member: NamedMemberFact) => string[]) => {
-	const pathsOf = claimedPaths(model, claims);
-	return (member) => pathsOf((kind) => captureReaches(model, member, kind), member.claims);
-};
+const flagResolved = (vocabulary: Vocabulary, claims: readonly ClaimFact[]): ClaimFact[] =>
+	claims.map((claim) => {
+		const segment = flagSegment(vocabulary, claim.vocab);
+		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
+	});
 
 function canonicalCapture(vocabulary: Vocabulary, paths: readonly string[], name: string, owner: string): string {
 	if (paths.some((path) => vocabulary.members(path).has(camel(name)))) return name;
@@ -296,9 +301,9 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const vocab = canonical(claim.vocab);
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
-	const resolved = claims.map((claim) => ({ ...claim, vocab: flagSegment(vocabulary, claim.vocab)?.parent ?? claim.vocab }));
-	const pathsOf = claimedPaths(model, resolved);
+	const resolved = flagResolved(vocabulary, claims);
 	const pathsOfMember = memberPaths(model, resolved);
+	const vocabs = kindVocabs(model, resolved);
 	return {
 		...facts,
 		claims,
@@ -309,8 +314,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 			return name === member.name ? member : { ...member, name };
 		}),
 		containers: facts.containers.map((container) => {
-			const forms = new Set(containerElementForms(model, container));
-			const paths = pathsOf((kind) => forms.has(kind));
+			const paths = envelopeTargets(model, container, vocabs);
 			return {
 				...container,
 				captures: container.captures.map((capture) => {
@@ -323,10 +327,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 }
 
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
-	const claims = facts.claims.map((claim) => {
-		const segment = flagSegment(vocabulary, claim.vocab);
-		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
-	});
+	const claims = flagResolved(vocabulary, facts.claims);
 	const flagsOf = (path: string): ReadonlySet<string> => new Set([...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])));
 	const pathsOf = memberPaths(model, claims);
 	return {
