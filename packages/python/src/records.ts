@@ -314,8 +314,8 @@ export const records = {
 		value: { word: 12, width: 5 }
 	},
 	ExpressionStatementTupleNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	WithClauseBareNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	WithClauseParenNode: { words: 8, with_items: { word: 2, width: 6, inline: 4 } },
+	WithClauseBareNode: { words: 4, items: { word: 2, width: 2, run: 5 } },
+	WithClauseParenNode: { words: 8, items: { word: 2, width: 6, inline: 4 } },
 	MatchBlockBlockNode: { words: 4, alternative: { word: 2, width: 2, run: 5 } },
 	MatchBlockEmptyNode: { words: 7, newline: { word: 2, width: 5 } },
 	SuiteInlineNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },

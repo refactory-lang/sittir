@@ -298,7 +298,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[338, '_simple_statements'],
+	[339, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -353,7 +353,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[337, '_simple_pattern'],
+	[338, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -503,10 +503,11 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[330, '_tuple_elements_repeat1'],
 	[331, 'comprehension_clauses_repeat1'],
 	[332, 'except_clause_exception_list_repeat1'],
-	[333, 'match_block_block_repeat1'],
-	[334, 'as_pattern_target'],
-	[335, 'format_expression'],
-	[336, 'names'],
+	[333, 'with_clause_bare_repeat1'],
+	[334, 'match_block_block_repeat1'],
+	[335, 'as_pattern_target'],
+	[336, 'format_expression'],
+	[337, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -641,7 +642,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[338, 'simple_statements'],
+	[339, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -696,7 +697,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[337, 'simple_pattern'],
+	[338, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -846,10 +847,11 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[330, '_tuple_elements_repeat1'],
 	[331, 'comprehension_clauses_repeat1'],
 	[332, 'except_clause_exception_list_repeat1'],
-	[333, 'match_block_block_repeat1'],
-	[334, 'as_pattern_target'],
-	[335, 'format_expression'],
-	[336, 'names'],
+	[333, 'with_clause_bare_repeat1'],
+	[334, 'match_block_block_repeat1'],
+	[335, 'as_pattern_target'],
+	[336, 'format_expression'],
+	[337, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1522,6 +1524,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComprehensionClausesRepeat1;
 		case 'except_clause_exception_list_repeat1':
 			return TSKindId.ExceptClauseExceptionListRepeat1;
+		case 'with_clause_bare_repeat1':
+			return TSKindId.WithClauseBareRepeat1;
 		case 'match_block_block_repeat1':
 			return TSKindId.MatchBlockBlockRepeat1;
 		case 'as_pattern_target':
@@ -5221,10 +5225,10 @@ export interface ExpressionStatementTuple {
 
 export interface WithClauseBare {
 	readonly $type: TSKindId.WithClauseBare;
-	readonly _item: NonEmptyArray<WithItem>;
+	readonly _items: NonEmptyArray<WithItem>;
 	readonly _delimiter?: Delimiter;
 	readonly __slotNames__?: {
-		readonly _item: 'items';
+		readonly _items: 'items';
 	};
 	readonly __slotHints__?: {
 		readonly items: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
@@ -5236,21 +5240,21 @@ export interface WithClauseBare {
 
 export interface WithClauseParen {
 	readonly $type: TSKindId.WithClauseParen;
-	readonly _with_items: WithClauseWithItems;
+	readonly _items: WithClauseWithItems;
 	readonly __slotNames__?: {
-		readonly _with_items: 'withItems';
+		readonly _items: 'items';
 	};
 	readonly __looseHints__?: {
-		readonly with_items: readonly WithItem[];
+		readonly items: readonly WithItem[];
 	};
 	readonly __slotHints__?: {
-		readonly withItems: SlotHint<T.WithClauseWithItems>;
+		readonly items: SlotHint<T.WithClauseWithItems>;
 		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly withItems: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly items: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly withItems: () => WithClauseWithItems;
+	readonly items: () => WithClauseWithItems;
 }
 
 export interface MatchBlockBlock {
@@ -7807,7 +7811,7 @@ export namespace ExpressionStatementTuple {
 export namespace WithClauseBare {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly item?: {
+			readonly items?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -10005,7 +10009,7 @@ export interface WithClauseBareNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	WithClauseBare.Bound,
-	'item',
+	'items',
 	TSKindId.WithClauseBare,
 	WithClauseBare.Parsed,
 	never
@@ -10019,7 +10023,7 @@ export interface WithClauseParenNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	WithClauseParen.Bound,
-	'with_items',
+	'items',
 	TSKindId.WithClauseParen,
 	WithClauseParen.Parsed,
 	never
@@ -13391,23 +13395,20 @@ export namespace Slice {
 	export type LooseConfig = LooseConfigFor<TSKindId.Slice>;
 	export type BuildArgs = [
 		config?:
-			| WithoutGroup<
-					Partial<ConfigOf<T.Slice>>,
-					OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, 'step' | '$type'>
-			  >
+			| WithoutGroup<Partial<ConfigOf<T.Slice>>, OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
 			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice>>>, 'step'> &
 					(
 						| { expression: T.SliceGroup.BuildArgs[0] }
-						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, 'step' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
 					))
 	];
 	export type LooseArgs = [
 		config?:
-			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, 'step' | '$type'>>
+			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
 			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> &
 					(
 						| { expression: T.SliceGroup.LooseArgs[0] }
-						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, 'step' | '$type'>>
+						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
 					))
 	];
 	export type Kind = TSKindId.Slice;

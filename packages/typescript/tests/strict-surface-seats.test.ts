@@ -40,3 +40,26 @@ describe('an authored field over a registered group', () => {
 		expect(refused).toBeDefined();
 	});
 });
+
+describe('a reserved word is checked at the slot it is placed in', () => {
+	const word = (text: string) => ts.build.identifier(text);
+
+	it('builds the leaf, which checks the loosest wordset its kind appears under', () => {
+		expect(word('for').$render()).toBe('for');
+	});
+
+	it('places it after a dot, where the property wordset admits it', () => {
+		const member = (property: string) =>
+			ts.build.memberExpression.strict({ object: word('x'), optionalChain: ts.kinds.Dot, property: word(property) });
+		expect(member('for').$render()).toBe('x.for');
+		expect(member('class').$render()).toBe('x.class');
+	});
+
+	it('refuses it in a slot under the global wordset', () => {
+		expect(() => ts.build.nestedIdentifier.strict({ object: word('a'), property: word('for') })).toThrow(
+			"NestedIdentifier.property: 'for' is a reserved word"
+		);
+		expect(() => ts.build.variableDeclaratorPlain.strict({ name: word('for') })).toThrow("'for' is a reserved word");
+		expect(() => ts.build.throwStatement.strict(word('for'))).toThrow("ThrowStatement.expression: 'for' is a reserved word");
+	});
+});

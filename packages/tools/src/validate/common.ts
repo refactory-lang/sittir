@@ -35,7 +35,6 @@ import {
 	metricsEnabled,
 	mapTriviaEntries,
 	projectInterior,
-	storedSlotReader,
 	isDataKey,
 	type TokenInterior
 } from '@sittir/common/utils';
@@ -863,7 +862,7 @@ export function slotValuesOf(
 ): [storageKey: string, value: unknown][] {
 	const { kind, accessors, delimiter } = accessorOf(node.$type);
 	const values = Object.entries(accessors).flatMap(([storageKey, accessor]): [string, unknown][] => {
-		const read = storedSlotReader(node, accessor);
+		const read = (node as Record<string, unknown>)[accessor];
 		if (typeof read !== 'function' || read.length !== 0) {
 			if (Object.hasOwn(node, storageKey)) throw new Error(`slotValuesOf: ${kind} stores ${storageKey}, but has no reader ${accessor}()`);
 			return [];
@@ -1135,6 +1134,7 @@ const SEAT_KIND = Symbol('seatKind');
 interface ArmRoute {
 	readonly mount: string;
 	readonly args: readonly unknown[] | undefined;
+	readonly seated?: true;
 }
 
 function armRouteOf(config: Record<string, unknown>): ArmRoute | undefined {
@@ -1252,11 +1252,11 @@ function projectArmSlot(
 ): void {
 	if (seat.mount === undefined) throw new Error(`ir surface: arm seat ${seat.kind} on ${parentKind} has no mount`);
 	const key = slot.key;
-	const setRoute = (mount: string, args: readonly unknown[] | undefined): void => {
+	const setRoute = (mount: string, args: readonly unknown[] | undefined, seated?: true): void => {
 		const existing = armRouteOf(out);
 		const composed = existing === undefined ? mount : `${existing.mount}.${mount}`;
 		Object.defineProperty(out, ARM_ROUTE, {
-			value: { mount: composed, args } satisfies ArmRoute,
+			value: { mount: composed, args, ...(seated === undefined ? {} : { seated }) } satisfies ArmRoute,
 			enumerable: false,
 			configurable: true
 		});
@@ -1280,8 +1280,9 @@ function projectArmSlot(
 	const parentShape = opts.factoryShapes?.[parentKind] ?? 'config';
 	if (parentShape === 'config' && childShape === 'config') {
 		if (seat.seated === true) out[key] = config;
+		else if (nested?.seated === true) out[key] = factoryArgs(seat.kind, childShape, config, child, inner);
 		else Object.assign(out, config);
-		return setRoute(mount, undefined);
+		return setRoute(mount, undefined, nested?.seated);
 	}
 	const args = factoryArgs(seat.kind, childShape, config, child, inner);
 	if (seat.seated === true && nested === undefined) {
@@ -1294,7 +1295,7 @@ function projectArmSlot(
 	} else {
 		out[key] = args;
 	}
-	setRoute(mount, args);
+	setRoute(mount, args, seat.seated);
 }
 
 function projectSeatedSlot(

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { STORED_SLOT_READERS, groupField, seatWith, storedSlotReader } from '../src/utils.ts';
+import { groupField, seatWith } from '../src/utils.ts';
 
 interface Group {
 	readonly $type: 7;
@@ -36,7 +36,6 @@ const parent = (inner: Group | undefined): Seated => {
 	const spec = {
 		slot: 'seat',
 		stored: '_seat',
-		kind: 7,
 		make: ((config: { left?: string; right?: string }) => (made.push(config), group(config.left ?? 'm', config.right))) as (
 			config: never
 		) => unknown,
@@ -58,8 +57,7 @@ const parent = (inner: Group | undefined): Seated => {
 			right: (...args: unknown[]) => seatWith(spec, 'right', args, setSeat, () => readGroup())
 		},
 		seatLeft: inner === undefined ? undefined : () => groupField(readGroup(), 'left'),
-		right: inner === undefined ? undefined : () => groupField(readGroup(), 'right'),
-		[STORED_SLOT_READERS]: { seat: readGroup }
+		right: inner === undefined ? undefined : () => groupField(readGroup(), 'right')
 	};
 	return node as unknown as Seated;
 };
@@ -108,11 +106,5 @@ describe('a group seat written in the literal', () => {
 			"$with.right cannot build the absent 'seat' group without its required seatLeft; set it first, or pass the whole group to $with.seat"
 		);
 		expect(made).toEqual([]);
-	});
-
-	it('keeps the group reader for the seat slot', () => {
-		const inner = group('a', 'b');
-		const node = parent(inner);
-		expect((storedSlotReader(node, 'seat') as () => Group).call(node)).toBe(inner);
 	});
 });

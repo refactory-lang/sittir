@@ -33,7 +33,6 @@ import {
 	defineListIndices,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	storedElements,
 	elementsWith,
 	rebuilt,
@@ -3014,7 +3013,6 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 						{
 							slot: 'useWildcardGroup',
 							stored: '_use_wildcard_group',
-							kind: TSKindId.UseWildcardGroup as const,
 							make: buildUseWildcardGroup,
 							keys: [{ name: 'path', rest: false }]
 						},
@@ -3028,7 +3026,6 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 		useWildcardGroup: () => hydrateStoredSlot(node, '_use_wildcard_group'),
 		path:
 			_use_wildcard_group === undefined ? undefined : () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
-		[STORED_SLOT_READERS]: { useWildcardGroup: readGroup_useWildcardGroup },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5285,7 +5282,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -5304,7 +5300,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 						{
 							slot: 'matchBlockArms',
 							stored: '_match_block_arms',
-							kind: TSKindId.MatchBlockArms as const,
 							make: buildMatchBlockArms,
 							keys: [
 								{ name: 'arms', rest: true },
@@ -5322,7 +5317,6 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 		arms: _match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
 		lastArm:
 			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
-		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5338,10 +5332,10 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 
 export function buildLastMatchArm<
 	AttributesSlot extends T.LastMatchArm.Config['attributes'],
-	PatternSlot extends T.LastMatchArm.Config['pattern'],
+	MatchSlot extends T.LastMatchArm.Config['match'],
 	ValueSlot extends T.LastMatchArm.Config['value']
 >(
-	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }>,
+	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>,
 	options?: T.LastMatchArm.Options
 ): T.LastMatchArm.Bound;
 export function buildLastMatchArm(
@@ -5350,18 +5344,18 @@ export function buildLastMatchArm(
 ): T.LastMatchArm.Bound {
 	currentHandle()?.admit(TSKindId.LastMatchArm, [config]);
 	const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
 		[[',', TSKindId.Comma] as const]
 	);
-	const readGroup_pattern = () => _pattern;
+	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'last_match_arm', {
 			attributes: _attributes,
-			pattern: _pattern,
+			match: _match,
 			value: _value,
 			trailingComma: _trailing_comma
 		});
@@ -5369,7 +5363,7 @@ export function buildLastMatchArm(
 		$type: TSKindId.LastMatchArm as const,
 		$named: true as const,
 		_attributes,
-		_pattern,
+		_match,
 		_value,
 		_trailing_comma,
 		$with: {
@@ -5377,6 +5371,8 @@ export function buildLastMatchArm(
 				rebuilt(node, handle, () =>
 					buildLastMatchArm({ ...config, attributes: restItems('attributes', values) }, options)
 				),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, match: value }, options)),
 			value: (value: Admit<NonNullable<T.LastMatchArm.Config>['value']>) =>
 				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value }, options)),
 			trailingComma: (spelling: TSKindId.Comma | null) =>
@@ -5385,9 +5381,8 @@ export function buildLastMatchArm(
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -5396,17 +5391,16 @@ export function buildLastMatchArm(
 						},
 						'pattern',
 						args,
-						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, pattern: value }, options),
-						() => readGroup_pattern.call(node)
+						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, match: value }, options),
+						() => readGroup_match.call(node)
 					)
 				),
 			condition: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -5415,17 +5409,17 @@ export function buildLastMatchArm(
 						},
 						'condition',
 						args,
-						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, pattern: value }, options),
-						() => readGroup_pattern.call(node)
+						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, match: value }, options),
+						() => readGroup_match.call(node)
 					)
 				)
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
+		match: () => hydrateStoredSlot(node, '_match'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		trailingComma: () => _trailing_comma,
-		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9276,18 +9270,18 @@ export function buildReferenceExpressionRawConst<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionRawConst.Bound;
 export function buildReferenceExpressionRawConst(value: Admit<T.Expression>): T.ReferenceExpressionRawConst.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionRawConst['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawConst['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_const', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_const', { argument: _argument });
 	const node = {
 		$type: TSKindId.ReferenceExpressionRawConst as const,
 		$named: true as const,
-		_value,
+		_argument,
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionRawConst(value))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9304,18 +9298,18 @@ export function buildReferenceExpressionRawMut<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionRawMut.Bound;
 export function buildReferenceExpressionRawMut(value: Admit<T.Expression>): T.ReferenceExpressionRawMut.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionRawMut['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_raw_mut', { argument: _argument });
 	const node = {
 		$type: TSKindId.ReferenceExpressionRawMut as const,
 		$named: true as const,
-		_value,
+		_argument,
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionRawMut(value))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9332,18 +9326,18 @@ export function buildReferenceExpressionMut<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionMut.Bound;
 export function buildReferenceExpressionMut(value: Admit<T.Expression>): T.ReferenceExpressionMut.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionMut['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_mut', { argument: _argument });
 	const node = {
 		$type: TSKindId.ReferenceExpressionMut as const,
 		$named: true as const,
-		_value,
+		_argument,
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionMut(value))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -9360,18 +9354,18 @@ export function buildReferenceExpressionBare<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.ReferenceExpressionBare.Bound;
 export function buildReferenceExpressionBare(value: Admit<T.Expression>): T.ReferenceExpressionBare.Bound {
-	const _value = kindIdStorage<NonNullable<T.ReferenceExpressionBare['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.ReferenceExpressionBare['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_expression_bare', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'reference_expression_bare', { argument: _argument });
 	const node = {
 		$type: TSKindId.ReferenceExpressionBare as const,
 		$named: true as const,
-		_value,
+		_argument,
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) =>
+			argument: (value: Admit<NonNullable<T.Expression>>) =>
 				rebuilt(node, handle, () => buildReferenceExpressionBare(value))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -10282,41 +10276,39 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 
 export function buildMatchArmWithComma<
 	AttributesSlot extends T.MatchArmWithComma.Config['attributes'],
-	PatternSlot extends T.MatchArmWithComma.Config['pattern'],
+	MatchSlot extends T.MatchArmWithComma.Config['match'],
 	ValueSlot extends T.MatchArmWithComma.Config['value']
 >(
-	config: RefusingConfig<
-		T.MatchArmWithComma.Config,
-		{ attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }
-	>
+	config: RefusingConfig<T.MatchArmWithComma.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>
 ): T.MatchArmWithComma.Bound;
 export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmWithComma, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
-	const readGroup_pattern = () => _pattern;
+	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, pattern: _pattern, value: _value });
+		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, match: _match, value: _value });
 	const node = {
 		$type: TSKindId.MatchArmWithComma as const,
 		$named: true as const,
 		_attributes,
-		_pattern,
+		_match,
 		_value,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, match: value })),
 			value: (value: Admit<NonNullable<T.MatchArmWithComma.Config>['value']>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, value: value })),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -10325,17 +10317,16 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 						},
 						'pattern',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma({ ...config, pattern: value }),
-						() => readGroup_pattern.call(node)
+						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma({ ...config, match: value }),
+						() => readGroup_match.call(node)
 					)
 				),
 			condition: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -10344,16 +10335,16 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 						},
 						'condition',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma({ ...config, pattern: value }),
-						() => readGroup_pattern.call(node)
+						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma({ ...config, match: value }),
+						() => readGroup_match.call(node)
 					)
 				)
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
+		match: () => hydrateStoredSlot(node, '_match'),
 		value: () => hydrateStoredSlot(node, '_value'),
-		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -10368,34 +10359,36 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 
 export function buildMatchArmBlockEnding<
 	AttributesSlot extends T.MatchArmBlockEnding.Config['attributes'],
-	PatternSlot extends T.MatchArmBlockEnding.Config['pattern'],
+	MatchSlot extends T.MatchArmBlockEnding.Config['match'],
 	ValueSlot extends T.MatchArmBlockEnding.Config['value']
 >(
 	config: RefusingConfig<
 		T.MatchArmBlockEnding.Config,
-		{ attributes: AttributesSlot; pattern: PatternSlot; value: ValueSlot }
+		{ attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }
 	>
 ): T.MatchArmBlockEnding.Bound;
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmBlockEnding, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
-	const _pattern = config.pattern;
+	const _match = config.match;
 	const _value = config.value;
-	const readGroup_pattern = () => _pattern;
+	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, pattern: _pattern, value: _value });
+		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, match: _match, value: _value });
 	const node = {
 		$type: TSKindId.MatchArmBlockEnding as const,
 		$named: true as const,
 		_attributes,
-		_pattern,
+		_match,
 		_value,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
 					buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) })
 				),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, match: value })),
 			value: (
 				value: Admit<
 					| T.UnsafeBlock
@@ -10415,9 +10408,8 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -10426,17 +10418,16 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 						},
 						'pattern',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding({ ...config, pattern: value }),
-						() => readGroup_pattern.call(node)
+						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding({ ...config, match: value }),
+						() => readGroup_match.call(node)
 					)
 				),
 			condition: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
-							slot: 'pattern',
-							stored: '_pattern',
-							kind: TSKindId.MatchPattern as const,
+							slot: 'match',
+							stored: '_match',
 							make: buildMatchPattern,
 							keys: [
 								{ name: 'pattern', rest: false, required: true },
@@ -10445,16 +10436,16 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 						},
 						'condition',
 						args,
-						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding({ ...config, pattern: value }),
-						() => readGroup_pattern.call(node)
+						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding({ ...config, match: value }),
+						() => readGroup_match.call(node)
 					)
 				)
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
+		match: () => hydrateStoredSlot(node, '_match'),
 		value: () => hydrateStoredSlot(node, '_value'),
-		pattern: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'pattern'),
-		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
-		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
+		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -10963,29 +10954,29 @@ export function buildFieldPatternShorthand<NameSlot extends T.FieldPatternShorth
 ): T.FieldPatternShorthand.Bound;
 export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Bound {
 	currentHandle()?.admit(TSKindId.FieldPatternShorthand, [config]);
-	const _ref = strictBooleanStorage(config.ref);
+	const _by_reference = strictBooleanStorage(config.byReference);
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(config.name, [
 		[[1], (v: unknown) => buildShorthandFieldIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_pattern_shorthand', { ref: _ref, mutable: _mutable, name: _name });
+		admitChildren(handle, 'field_pattern_shorthand', { byReference: _by_reference, mutable: _mutable, name: _name });
 	const node = {
 		$type: TSKindId.FieldPatternShorthand as const,
 		$named: true as const,
-		_ref,
+		_by_reference,
 		_mutable,
 		_name,
 		$with: {
-			ref: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['ref']>) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, ref: value })),
+			byReference: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['byReference']>) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, byReference: value })),
 			mutable: (value?: Admit<NonNullable<T.FieldPatternShorthand.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, mutable: value })),
 			name: (value: Admit<T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, name: value }))
 		},
-		ref: () => _ref,
+		byReference: () => _by_reference,
 		mutable: () => _mutable,
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
@@ -11008,7 +10999,7 @@ export function buildFieldPatternNamed<
 ): T.FieldPatternNamed.Bound;
 export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Bound {
 	currentHandle()?.admit(TSKindId.FieldPatternNamed, [config]);
-	const _ref = strictBooleanStorage(config.ref);
+	const _by_reference = strictBooleanStorage(config.byReference);
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(config.name, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
@@ -11016,17 +11007,22 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 	const _pattern = kindIdStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_pattern_named', { ref: _ref, mutable: _mutable, name: _name, pattern: _pattern });
+		admitChildren(handle, 'field_pattern_named', {
+			byReference: _by_reference,
+			mutable: _mutable,
+			name: _name,
+			pattern: _pattern
+		});
 	const node = {
 		$type: TSKindId.FieldPatternNamed as const,
 		$named: true as const,
-		_ref,
+		_by_reference,
 		_mutable,
 		_name,
 		_pattern,
 		$with: {
-			ref: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['ref']>) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, ref: value })),
+			byReference: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['byReference']>) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, byReference: value })),
 			mutable: (value?: Admit<NonNullable<T.FieldPatternNamed.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, mutable: value })),
 			name: (value: Admit<T.FieldIdentifier | T.FieldIdentifier.Types>) =>
@@ -11034,7 +11030,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 			pattern: (value: Admit<NonNullable<T.FieldPatternNamed.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, pattern: value }))
 		},
-		ref: () => _ref,
+		byReference: () => _by_reference,
 		mutable: () => _mutable,
 		name: () => hydrateStoredSlot(node, '_name'),
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
@@ -12242,7 +12238,6 @@ export function buildParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -12262,7 +12257,6 @@ export function buildParametersElementsReceiver(
 						{
 							slot: 'receiver',
 							stored: '_receiver',
-							kind: TSKindId.AttributedParameterReceiver as const,
 							make: buildAttributedParameterReceiver,
 							keys: [
 								{ name: 'attributeItem', rest: false },
@@ -12282,7 +12276,6 @@ export function buildParametersElementsReceiver(
 		attributeItem:
 			_receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
 		content: _receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
-		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

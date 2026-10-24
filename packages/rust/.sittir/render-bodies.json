@@ -2560,15 +2560,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "ref",
+					"test": "by_reference",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "ref"
+							"name": "by_reference"
 						},
 						{
 							"kind": "seam",
-							"field": "ref_after"
+							"field": "by_reference_after"
 						}
 					]
 				}
@@ -2630,15 +2630,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "ref",
+					"test": "by_reference",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "ref"
+							"name": "by_reference"
 						},
 						{
 							"kind": "seam",
-							"field": "ref_after"
+							"field": "by_reference_after"
 						}
 					]
 				}
@@ -3932,7 +3932,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "match"
 		},
 		{
 			"kind": "seam",
@@ -4608,7 +4608,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "match"
 		},
 		{
 			"kind": "seam",
@@ -4642,7 +4642,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "pattern"
+			"name": "match"
 		},
 		{
 			"kind": "seam",
@@ -5621,7 +5621,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "argument"
 		},
 		{
 			"kind": "seam",
@@ -5655,7 +5655,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "argument"
 		},
 		{
 			"kind": "seam",
@@ -5701,7 +5701,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "argument"
 		},
 		{
 			"kind": "seam",
@@ -5747,7 +5747,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "argument"
 		},
 		{
 			"kind": "seam",

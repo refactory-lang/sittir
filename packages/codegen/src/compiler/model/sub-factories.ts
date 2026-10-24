@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { EmitHaltedError, type GrammarDiagnostic } from '../../types/diagnostics.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -197,8 +198,24 @@ function derive(
 			}
 		}
 	}
+	for (const slot of node.slots) {
+		if (isMultiple(slot)) continue;
+		const group = forwardedGroupOf(slot, nodeMap);
+		if (group === undefined || !isCallableArm(group, isEmitted)) continue;
+		const residual = node.configSlots.filter((f) => f !== slot);
+		direct.push({ name: slot.propertyName, slot, residual, arm: { via: 'node', child: group, path: [], variantOf: node.kind }, depth: DIRECT, merges: false });
+	}
 	const nested = direct.flatMap((host) => nestedArmsOf(host, nodeMap, isEmitted, nextVisiting));
 	return settle(node, direct, nested, nodeMap, isEmitted, nextVisiting);
+}
+
+function forwardedGroupOf(slot: AssembledNonterminal, nodeMap: NodeMap): AssembledNode | undefined {
+	if (slot.values.length !== 1) return undefined;
+	const value = slot.values[0]!;
+	if (!isNodeRef(value) || value.variant !== undefined) return undefined;
+	const group = nodeMap.nodes.get(storageKindOfRef(value.node));
+	if (!isHoistedAt(value, group) || group === undefined || classifyFactoryShape(group, nodeMap) !== 'forwarded') return undefined;
+	return forwardsToSpreadTarget(group, nodeMap, true) ? undefined : group;
 }
 
 function settle(
@@ -303,6 +320,19 @@ export function prefixedKey(seat: string, field: string): string {
 	return `${seat}${field.charAt(0).toUpperCase()}${field.slice(1)}`;
 }
 
+function seatKeySpellsSeat(grammar: string, owner: string, group: string, seat: string): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'seat-key-spells-seat',
+		severity: 'error',
+		grammar,
+		ownerKind: owner,
+		slotName: seat,
+		message: `kind '${owner}': seats '${group}' in '${seat}', and the group has a field '${seat}', so a flattened key would spell the seat. Name the seat apart from its group's fields`,
+		canProceed: false
+	};
+}
+
 export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenedSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
@@ -322,8 +352,11 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		found.push(direct === undefined ? { slot, group, fields } : { slot, group, directKey: direct.propertyName, fields });
 	}
 	const seats = found.map(({ fields, ...seat }) => {
+		if (nodeMap.unbound !== true && fields.includes(seat.slot.propertyName)) {
+			throw new EmitHaltedError([seatKeySpellsSeat(nodeMap.name, node.kind, seat.group.kind, seat.slot.propertyName)]);
+		}
 		const taken = new Set([
-			...node.slots.filter((other) => other !== seat.slot).map((other) => other.propertyName),
+			...node.slots.map((other) => other.propertyName),
 			...found.filter((other) => other.slot !== seat.slot).flatMap((other) => other.fields)
 		]);
 		return { ...seat, keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.propertyName, field) : field, field })) };
@@ -332,7 +365,7 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 	for (const seat of seats) {
 		for (const { key, field } of seat.keys) {
 			const holder = claimed.get(key);
-			if (holder !== undefined || node.slots.some((slot) => slot !== seat.slot && slot.propertyName === key)) {
+			if (holder !== undefined || node.slots.some((slot) => slot.propertyName === key)) {
 				throw new Error(
 					`flattenSeatsOf: '${node.kind}' seats '${seat.group.kind}' in '${seat.slot.propertyName}', and the group's key '${field}' collides with ${holder === undefined ? 'another slot of the parent' : `a key of '${holder.group.kind}'`} even as '${key}'`
 				);

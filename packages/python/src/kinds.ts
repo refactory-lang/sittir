@@ -335,10 +335,11 @@ export enum TSKindId {
 	_TupleElementsRepeat1 = 330,
 	ComprehensionClausesRepeat1 = 331,
 	ExceptClauseExceptionListRepeat1 = 332,
-	MatchBlockBlockRepeat1 = 333,
-	AsPatternTarget = 334,
-	FormatExpression = 335,
-	Names = 336,
+	WithClauseBareRepeat1 = 333,
+	MatchBlockBlockRepeat1 = 334,
+	AsPatternTarget = 335,
+	FormatExpression = 336,
+	Names = 337,
 	Error = 65535
 }
 Object.freeze(TSKindId);

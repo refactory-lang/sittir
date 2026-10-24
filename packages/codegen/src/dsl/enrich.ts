@@ -83,6 +83,7 @@ import {
 	armsDifferOnlyByLiteralChoice,
 	selfReferentialFoldOf,
 	type SeparatedListBodyInfo,
+	isEnrichedField,
 	throughEnrichedField,
 	throughPrec,
 	type SymbolSource,
@@ -1182,8 +1183,8 @@ function distributeExclusiveFieldChoices(rule: Rule, rulesBag: Record<string, Ru
 function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
 	const { rulesBag } = ctx;
 	const preExistingFieldNames = syntacticWalker.fold(rule, new Set<string>(), (names, node) => {
-		const n = node as unknown as { type: string; name?: unknown; metadata?: { fieldSource?: string } };
-		if (isFieldType(n.type) && typeof n.name === 'string' && n.metadata?.fieldSource !== 'enriched') names.add(n.name);
+		const n = node as unknown as { type: string; name?: unknown };
+		if (isFieldType(n.type) && typeof n.name === 'string' && !isEnrichedField(node)) names.add(n.name);
 		return names;
 	});
 	const mintedBySymbol = new Map<string, string>();

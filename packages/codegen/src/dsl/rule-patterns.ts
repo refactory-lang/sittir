@@ -337,9 +337,13 @@ function flattenSeqMembers(members: unknown[]): unknown[] {
 	return out;
 }
 
+export function isEnrichedField(rule: unknown): boolean {
+	const r = rule as { type?: unknown; metadata?: { fieldSource?: string } } | null | undefined;
+	return typeof r?.type === 'string' && isFieldType(r.type) && r.metadata?.fieldSource === 'enriched';
+}
+
 export function throughEnrichedField(rule: unknown): unknown {
-	const r = rule as { type?: unknown; content?: unknown; metadata?: { fieldSource?: string } } | null | undefined;
-	return typeof r?.type === 'string' && isFieldType(r.type) && r.metadata?.fieldSource === 'enriched' ? r.content : rule;
+	return isEnrichedField(rule) ? (rule as { content?: unknown }).content : rule;
 }
 
 function seqHasTopLevelRepeat(members: unknown[]): boolean {
@@ -667,12 +671,17 @@ export function countSymbols(rule: unknown, sites: Map<string, number> = new Map
 	return sites;
 }
 
-export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
-	if (Array.isArray(rule)) for (const r of rule) fieldNames(r, out);
+export function fieldRules(rule: unknown, out: (GrammarRecord & { readonly name: string })[] = []): (GrammarRecord & { readonly name: string })[] {
+	if (Array.isArray(rule)) for (const r of rule) fieldRules(r, out);
 	else if (isRecord(rule)) {
-		if (rule.type === 'FIELD' && typeof rule.name === 'string') out.add(rule.name);
-		for (const value of Object.values(rule)) fieldNames(value, out);
+		if (rule.type === 'FIELD' && typeof rule.name === 'string') out.push(rule as GrammarRecord & { readonly name: string });
+		for (const value of Object.values(rule)) fieldRules(value, out);
 	}
+	return out;
+}
+
+export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	for (const field of fieldRules(rule)) out.add(field.name);
 	return out;
 }
 
@@ -699,6 +708,13 @@ export function transparentReach(rules: GrammarRecord, from: string, stop: Reado
 		}
 	}
 	return out;
+}
+
+export function subtypeNames(rules: GrammarRecord, rule: unknown): string[] {
+	const core = unwrapPrec(rule);
+	if (!isRecord(core)) return [];
+	if (core.type === 'SYMBOL') return typeof core.name === 'string' && core.name in rules ? [core.name] : [];
+	return core.type === 'CHOICE' && Array.isArray(core.members) ? core.members.flatMap((member) => subtypeNames(rules, member)) : [];
 }
 
 export const OPAQUE_RULES: ReadonlySet<unknown> = new Set(['FIELD', 'TOKEN', 'IMMEDIATE_TOKEN']);
@@ -1016,8 +1032,8 @@ export function separatedListElementName<P extends PhaseName>(rule: Rule<P>): st
 	const t = (rule as { type?: string }).type;
 	if (typeof t !== 'string') return null;
 	if (isFieldType(t)) {
-		const { name, content, metadata } = rule as { name?: unknown; content?: Rule<P>; metadata?: { fieldSource?: string } };
-		if (metadata?.fieldSource === 'enriched') return content ? separatedListElementName(content) : null;
+		const { name, content } = rule as { name?: unknown; content?: Rule<P> };
+		if (isEnrichedField(rule)) return content ? separatedListElementName(content) : null;
 		return typeof name === 'string' ? name : null;
 	}
 	if (isSymbolType(t)) {

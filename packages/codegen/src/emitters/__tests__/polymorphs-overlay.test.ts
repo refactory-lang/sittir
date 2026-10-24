@@ -266,7 +266,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
 		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');
 		expect(out).toContain('function clause$seated(...args: T.Clause.BuildArgs): ReturnType<typeof F.buildClause> {');
-		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
+		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '$type'>`;
 		const { buildArgs } = seatedRows({ nodeMap, generatedIdTables }, 'clause');
 		expect(buildArgs).toContain(`WithoutGroup<`);
 		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);
@@ -402,7 +402,7 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 				members: [
 					{
 						type: FIELD,
-						name: 'pattern',
+						name: 'match',
 						content: { type: SYMBOL, name: 'wrapper' },
 						annotations: { flattened: true }
 					},
@@ -419,17 +419,15 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 			}
 		});
 
-	it('passes a value that is already the wrapper through and builds anything else into it', () => {
+	it('builds the group from its own keys and passes the seat key, a hand-spelled wrapper, through to the parent', () => {
 		const { nodeMap } = wrapperGrammar();
 		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' };
 		stampIrSurface(nodeMap, generatedIdTables);
 		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toContain('const arm$flatten$pattern =');
-		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
-		expect(out).toContain('const own = _o(config)["pattern"];');
-		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
-		expect(out).toMatch(/return arm\$flatten\$pattern\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\)\(\.\.\.args\);/);
-		expect(out).toContain("import { TSKindId } from '../../types.js';");
+		expect(out).toMatch(/const arm\$flatten\$match = <[^\n]*>\(parent: PF, child: CF\) =>\n/);
+		expect(out).toContain('if (key === "pattern" || key === "condition") {');
+		expect(out).not.toContain('key === "match"');
+		expect(out).toMatch(/return arm\$flatten\$match\(F\.buildArm, F\.buildWrapper\)\(\.\.\.args\);/);
 	});
 });
 

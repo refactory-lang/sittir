@@ -87,10 +87,6 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	return lines;
 }
 
-export function spelledGroupSlots(plan: SeatPlan): ReadonlySet<string> {
-	return new Set(plan.groups.filter(({ hint }) => hint.keys.some((key) => key.name === hint.slot)).map(({ hint }) => hint.slot));
-}
-
 const readGroupName = (slot: string): string => `readGroup_${slot}`;
 
 export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): SetterEntry[] {
@@ -120,8 +116,7 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 			});
 		}
 	}
-	const replaced = new Set(keyed.map((entry) => entry.name));
-	return [...seated.filter((entry) => !replaced.has(entry.name)), ...keyed];
+	return [...seated, ...keyed];
 }
 
 export function groupSeatParts(
@@ -137,7 +132,6 @@ export function groupSeatParts(
 				`    ${key.name}: ${storedOf(hint.stored)} === undefined ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
 		)
 	);
-	members.push(`    [STORED_SLOT_READERS]: { ${plan.groups.map(({ hint }) => `${hint.slot}: ${readGroupName(hint.slot)}`).join(', ')} },`);
 	return { prelude, members };
 }
 

@@ -4,21 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadCorpusEntries, loadNativeEngine } from '../src/validate/common.ts';
 
-const GUARDED_ARM = "a match arm's whole guarded pattern and the pattern inside it share the key 'pattern'";
-
-const KNOWN: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-	rust: {
-		'Inner attributes': GUARDED_ARM,
-		'Tuple struct patterns': GUARDED_ARM,
-		'Reference patterns': GUARDED_ARM,
-		'Struct patterns': GUARDED_ARM,
-		'Ignored patterns': GUARDED_ARM,
-		'Match expressions': GUARDED_ARM,
-		'Captured patterns': GUARDED_ARM,
-		'Inline const or Const blocks as pattern': GUARDED_ARM,
-		'Pattern with turbofish': GUARDED_ARM
-	}
-};
+const KNOWN: Readonly<Record<string, Readonly<Record<string, string>>>> = {};
 
 function holdsError(value: unknown): boolean {
 	if (Array.isArray(value)) return value.some(holdsError);
