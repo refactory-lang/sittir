@@ -473,3 +473,371 @@ A layer's lists under its renames (`effects.ts::renameMapOf`), each key renamed 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal::constructor`
 
 Stores the refusal's code (a `VerbRefusalCode`, the key a caller switches on), its reason, and its details (empty when none are given), and passes the reason to `Error` as the message.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::AliasEffect::from`
+
+The name the alias is recorded from.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::AliasEffect::kind`
+
+The discriminant, `'alias'`.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::AliasEffect::to`
+
+The name the alias resolves to.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::admitted`
+
+The admits set the copy was narrowed to, or `undefined` when it is unnarrowed.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::context`
+
+The kind whose context the copy is minted in.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::copy`
+
+The name of the copy the verb minted.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::display`
+
+The name the copy's references show, or `undefined` when they show the copy's own name.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::kind`
+
+The discriminant, `'copy'`.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::origin`
+
+The `CopyOrigin` naming the verb that made the copy.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::part`
+
+The path within the source that the copy holds; `'.'` for the whole rule.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect::source`
+
+The rule the copy is taken from.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyOrigin::kind`
+
+The discriminant of the origin: `path`, `copy`, `narrow` or `lead`.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyOrigin::owner`
+
+The kind that owns the site the origin names.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::CopyOrigin::path`
+
+The path within the owner that the origin names (`path` and `narrow` origins).
+
+### `packages/codegen/src/dsl/verbs/effects.ts::EffectCtx::effects`
+
+The effects a layer pass collected, in the order they were applied.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::EffectCtx::rules`
+
+The grammar's rules the effects are applied to.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Lead::admits`
+
+The admits the lead's head must match, as a `LeadMatch` tree.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Lead::field`
+
+The field the head's admits are composed under.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Lead::item`
+
+The element kind of the list the lead heads.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Lead::list`
+
+The list kind the lead heads.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadEffect::group`
+
+The group kind the rest of the list is wrapped in.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadEffect::kind`
+
+The discriminant, `'lead'`.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadEffect::receiver`
+
+The kind that receives the composed form.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadEffect::restField`
+
+The field the rest of the list is written under.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadEffect::variants`
+
+Maps a kind to the variant name the head uses for it.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadMatch::as`
+
+The name the matched kind is bound as.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadMatch::kind`
+
+The kind an admit matches.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadMatch::within`
+
+The narrowing of the admit's enclosing kind, if any.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadWithin::admits`
+
+The nested admits under the enclosing kind.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadWithin::field`
+
+The field the enclosing kind is matched under, or `null` for any field.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::ProjectedGrammar`
+
+A grammar carrying the lead and binding provenance it was projected with.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Provenance::bindingEffects`
+
+The binding effects (segment, alias and lead) applied to the grammar.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Provenance::leadFrom`
+
+For each kind a lead produced, the kind it was led from.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Provenance::renamedFrom`
+
+For each kind a rename produced, the name it had before.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Provenance::splitFrom`
+
+For each kind a split produced, the kind it was split from.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect::from`
+
+The name renamed from.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect::kind`
+
+The discriminant, `'rename'`.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect::to`
+
+The name renamed to.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::SegmentEffect::from`
+
+The name segmented from.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::SegmentEffect::kind`
+
+The discriminant, `'segment'`.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::SegmentEffect::owner`
+
+The kind that owns the segment.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::SegmentEffect::to`
+
+The name segmented to.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::admitted`
+
+The admits set to narrow the copy to, when given.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::body`
+
+The rule body the copy is minted with.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::context`
+
+The kind whose context the copy is minted in.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::display`
+
+The name the copy's references show, when given.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::origin`
+
+The `CopyOrigin` of the request.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::part`
+
+The path within the source; `'.'` for the whole rule.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest::source`
+
+The rule the copy is taken from.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::EntryLabel::details`
+
+Extra fields the label carries for diagnostics.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::EntryLabel::name`
+
+The name the labelled entry takes.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::EntryLabel::ownerKind`
+
+The kind that owns the labelled entry.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::GroupMints::dedupe`
+
+Maps a group's key to the name it was first minted under, so a repeated group reuses that name.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::GroupMints::origins`
+
+The origin of each group rule minted so far.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::GroupMints::rules`
+
+The group rules minted so far, by name.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::MintLists::enlist`
+
+Records a list minted from a base kind under a name.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::MintLists::inline`
+
+The kinds minted for inline use.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::MintLists::supertypes`
+
+The supertype kinds minted.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::created`
+
+The names of the rules this verb minted.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::diagnostics`
+
+The diagnostics the verb has raised.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::effects`
+
+The effects the verb has recorded.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::grammar`
+
+The grammar the verb reads.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::groups`
+
+The group mints shared across the verb.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::lists`
+
+The list mints shared across the verb.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::name`
+
+The name of the verb being applied.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::reached`
+
+The narrowing origin of each rule reached through the verb.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::rules`
+
+The rules the verb reads and edits.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::supertypes`
+
+The supertype kinds of the grammar.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx::transparent`
+
+Tests whether a rule name is transparent to the verb's lookups.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbLog::diagnostics`
+
+The diagnostics a verb run raised.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbLog::effects`
+
+The effects a verb run recorded.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal::code`
+
+The `VerbRefusalCode` that names the refusal.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal::details`
+
+Extra fields that explain the refusal.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusal::reason`
+
+The message the refusal carries.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowEntry::admits`
+
+The admits the entry keeps or drops.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowEntry::direction`
+
+Whether the entry keeps the admits (`'keep'`) or drops them (`'except'`).
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowEntry::owner`
+
+The kind that owns the narrowed site.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowEntry::path`
+
+The path within the owner to the narrowed site.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite::context`
+
+The kind whose context the narrowing applies in.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite::origin`
+
+The `NarrowingOrigin` that made the narrowing.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite::positions`
+
+The `SitePositions` of the narrowed site.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite::reach`
+
+The rules the narrowing reaches.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite::ref`
+
+The node reference the narrowing site holds.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite::sites`
+
+The number of sites the narrowing reaches in each rule.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NO_POSITIONS::counts`
+
+The position counts of a site with no positions: empty.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NO_POSITIONS::holders`
+
+The position holders of a site with no positions: empty.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::SitePositions::counts`
+
+The number of positions per site.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::SitePositions::holders`
+
+The rules holding each site's positions.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::RenameEntry::from`
+
+The name renamed from.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::RenameEntry::to`
+
+The name renamed to.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::RenameScope::depth`
+
+The nesting depth of the rename scope.
+
+### `packages/codegen/src/dsl/verbs/rename.ts::RenameScope::factoryInline`
+
+The kinds the scope inlines into their factories.
