@@ -13,6 +13,8 @@ import type {
 	TriviaSetter,
 	Types
 } from '../src/index.ts';
+import type { HoldsSource, HoldsTree } from '../src/node-surface.ts';
+import type { IsExactly } from '../src/type-utils.ts';
 
 interface FakeNode {
 	readonly $type: 1;
@@ -20,7 +22,7 @@ interface FakeNode {
 interface EmptyFake extends FakeNode {
 	readonly empty: true;
 }
-interface ParsedFake extends FakeNode {
+interface ParsedFake extends FakeNode, HoldsSource, HoldsTree {
 	readonly parsed: true;
 }
 interface EmptyParsedFake extends ParsedFake {
@@ -131,9 +133,8 @@ declare const fakeNode: FakeNode;
 if (guardEngine.isEmptyNode(fakeNode)) fakeNode satisfies EmptyFake;
 
 // A parsed form assignable to the plain form leaves the plain node's narrowing to the plain empty form.
-type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
 if (guardEngine.isEmptyNode(fakeNode)) {
-	const plainOnly: Equals<typeof fakeNode, FakeNode & EmptyFake> = true;
+	const plainOnly: IsExactly<typeof fakeNode, FakeNode & EmptyFake> = true;
 	void plainOnly;
 }
 declare const parsedFake: ParsedFake;
@@ -144,6 +145,11 @@ declare const narrowedFake: ParsedFake & { readonly $type: 1 };
 if (guardEngine.isEmptyNode(narrowedFake)) {
 	const emptyParsed: true = narrowedFake.emptyParsed;
 	void emptyParsed;
+}
+declare const plainNarrowedFake: FakeNode & { readonly $type: 1 };
+if (guardEngine.isEmptyNode(plainNarrowedFake)) {
+	const plainEmpty: true = plainNarrowedFake.empty;
+	void plainEmpty;
 }
 
 declare const noEmptyForm: NoEmptyForm;

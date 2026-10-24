@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
-import type { Admit, Snapshot } from './node-surface.ts';
+import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
 import type { PortableRows, PortableSurface } from './portable.ts';
@@ -335,21 +335,29 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
 
 type ExactEmptyForm<Entries, N> = Entries extends { readonly node: infer Node; readonly empty: infer Empty }
-	? (<X>() => X extends N ? 1 : 2) extends <X>() => X extends Node ? 1 : 2
+	? IsExactly<N, Node> extends true
 		? Empty
+		: never
+	: never;
+
+type Representation<N> = N extends HoldsTree ? 'parsed' : N extends HoldsSource ? 'bound' : 'plain';
+
+type NarrowedEmptyForm<Entries, N> = Entries extends { readonly node: infer Node; readonly empty: infer Empty }
+	? [Representation<Node>] extends [Representation<N>]
+		? [Node] extends [N]
+			? Empty
+			: never
 		: never
 	: never;
 
 /**
  * The empty form a language's `empty` map pairs with exactly `N`; for an `N` the map does not name, such as a form
- * intersected with a narrowing, the empty forms of the entries whose node `N` narrows. Each member of a union `N` is
- * looked up on its own.
+ * intersected with a narrowing, the empty form of the entry of the same representation (plain, built or parsed) whose
+ * node `N` narrows. Each member of a union `N` is looked up on its own.
  */
 export type EmptyFormOf<Entries, N> = N extends unknown
 	? [ExactEmptyForm<Entries, N>] extends [never]
-		? Extract<Entries, { readonly node: N }> extends { readonly empty: infer Empty }
-			? Empty
-			: never
+		? NarrowedEmptyForm<Entries, N>
 		: ExactEmptyForm<Entries, N>
 	: never;
 

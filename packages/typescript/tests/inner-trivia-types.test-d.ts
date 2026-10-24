@@ -20,3 +20,12 @@ declare const parsedArgs: T.Arguments.Parsed;
 // @ts-expect-error an edited node is never typed as an empty form, so it has no inner position
 parsedArgs.$with.elements().$trivia.inner();
 parsedArgs.$with.elements().$trivia.leading();
+
+declare const plainNarrowed: T.StatementBlock & { readonly $type: T.StatementBlock['$type'] };
+if (engine.isEmptyNode(plainNarrowed)) plainNarrowed.$trivia.inner(engine.build.commentLine(' TODO')) satisfies T.EmptyStatementBlock;
+
+declare const boundNarrowed: T.StatementBlock.Bound & { readonly $type: T.StatementBlock['$type'] };
+if (engine.isEmptyNode(boundNarrowed)) boundNarrowed.$trivia.inner(engine.build.commentLine(' TODO')) satisfies T.EmptyStatementBlock;
+
+declare const parsedNarrowed: T.StatementBlock.Parsed & { readonly $type: T.StatementBlock['$type'] };
+if (engine.isEmptyNode(parsedNarrowed)) parsedNarrowed.$trivia.inner(engine.build.commentLine(' TODO')) satisfies T.EmptyStatementBlock.Parsed;
