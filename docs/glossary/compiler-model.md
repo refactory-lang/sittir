@@ -120,16 +120,6 @@ takes, shared by the loose resolver's kind tags.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::hasAnyChild`
-
-```text
-/**
- * Cheap existence predicate: does this rule's tree contain any symbol
- * reference (visible OR hidden)? Hidden symbols dispatch to concrete
- * subtypes at parse time, so they DO contribute children.
- */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
 The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
@@ -210,15 +200,6 @@ The fields-side walk over the simplified rule, as `computeSimplifiedRules` produ
  * function only ever sees post-Normalize separators, never the `link`-phase
  * `RepeatRule.separator` — which shares this same nested shape).
  * Returns undefined when the separator is absent, non-literal, or empty.
- */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::stampSeparatorOnValues`
-
-```text
-/**
- * Stamp separator onto array/nonEmptyArray multiplicity values.
- * Single-value slots are left unchanged — separator is meaningless for them.
  */
 ```
 
@@ -1413,23 +1394,6 @@ The regex source the kind's whole text must match: the pattern composed from the
 ```text
 /** An envelope whose sole slot is a separated list: the element values,
  *  the separator rule, and the leading/trailing delimiter facts. */
-```
-
-### `packages/codegen/src/compiler/model/node-map.ts::BranchSlotClass`
-
-```text
-/**
- * A slot-content entry that references a grammar node kind. After
- * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
- * before that pass (or for unresolvable dead-kind references) it holds
- * an `UnresolvedRef`.
- *
- * Per-value `separator` / `trailing` / `leading` replace the prior per-slot
- * `AssembledNonterminal.hasTrailing` / `hasLeading` flags. Only meaningful
- * when this value's `multiplicity` is `'array'` or `'nonEmptyArray'`.
- * Populated by the unified `deriveSlots` walk — undefined on values from
- * non-repeat positions.
- */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::RESERVED_ACCESSOR_NAMES`
@@ -4528,10 +4492,6 @@ Whether an `options:` declaration registered this slot as a spelling site: a slo
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound::configSlots`
 
 The slots a caller supplies, which is every slot except the ones registered as an option. The sole-slot classification reads this list, so a node with one real slot and one registered spelling takes that value directly.
-
-### `packages/codegen/src/compiler/model/site-preferences.ts::registerSpellingSite`
-
-Stamps the slot a declared spelling site names with its default arm and marks it registered. A spelling site has no kind ids, so it never joins the native option table.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::optionDefaultArm`
 
