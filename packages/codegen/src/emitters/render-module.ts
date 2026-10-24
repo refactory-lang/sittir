@@ -2515,6 +2515,17 @@ function renderTriviaNodeSupport(
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
+	const sided = extrasNodes.filter((node) => unitOf(node) === undefined && !continuationKinds.has(node.kind)).map(rustNodeVariantName);
+	if (sided.length > 0) {
+		for (const [name, ref, layout, trivia] of [
+			['sides', '&', 'as_deref', 'as_ref'],
+			['sides_mut', '&mut ', 'as_deref_mut', 'as_mut']
+		] as const) {
+			lines.push('', `    fn ${name}(${ref}self) -> Option<${ref}::sittir_core::trivia::NodeTrivia<Self>> {`, '        match self {');
+			for (const variant of sided) lines.push(`            TriviaNode::${variant}(t) => t.layout.${layout}()?.trivia.${trivia}(),`);
+			lines.push('            _ => None,', '        }', '    }');
+		}
+	}
 	if (depthVariants.length > 0) {
 		lines.push('', '    fn depth(&self) -> i32 {', '        match self {');
 		for (const { variant, delta } of depthVariants) lines.push(`            TriviaNode::${variant} => ${delta},`);
