@@ -135,15 +135,13 @@ describe('setter bodies', () => {
 	});
 
 	it('seatWith: writes through a present group, and builds an absent one from a lone field', () => {
-		const spec = { slot: 'seat', stored: '_seat', kind: 7, make: (config: never) => ({ $type: 7, ...(config as object) }), keys: [{ name: 'left', rest: false }, { name: 'right', rest: false, required: true }] };
+		const spec = { slot: 'seat', stored: '_seat', make: (config: never) => ({ $type: 7, ...(config as object) }), keys: [{ name: 'left', rest: false }, { name: 'right', rest: false, required: true }] };
 		const seat = vi.fn((value?: unknown) => ({ seated: value }));
 		const group = { $type: 7, $with: { left: (v: string) => ({ $type: 7, left: v }) } } as never;
 		expect(seatWith(spec, 'left', ['L'], seat, () => group)).toEqual({ seated: { $type: 7, left: 'L' } });
 		expect(() => seatWith(spec, 'left', ['L'], seat, () => undefined)).toThrow("without its required right");
 		expect(seatWith(spec, 'right', ['R'], seat, () => undefined)).toEqual({ seated: { $type: 7, right: 'R' } });
 		expect(seatWith(spec, 'right', [], seat, () => undefined)).toEqual({ seated: undefined });
-		const whole = { $type: 7 };
-		expect(seatWith({ ...spec, keys: [{ name: 'seat', rest: false }] }, 'seat', [whole], seat, () => undefined)).toEqual({ seated: whole });
 	});
 });
 

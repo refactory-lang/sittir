@@ -770,11 +770,9 @@ interface SeatShape {
 function flattenShape(
 	k: string,
 	keys: readonly FlattenKey[],
-	groupKeys: readonly string[],
 	m: string,
 	positional: boolean,
-	directKey: string | undefined,
-	wrapperSeat: boolean
+	directKey: string | undefined
 ): SeatShape {
 	if (positional) {
 		const typeFor = (p: string, c: string): string => `${p} | ${c}[0]`;
@@ -788,7 +786,6 @@ function flattenShape(
 		};
 	}
 	const keyTests = keys.map(({ key }) => `key === ${JSON.stringify(key)}`).join(' || ');
-	const ownKeyTests = groupKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
 	const renames = Object.fromEntries(keys.filter(({ key, field }) => key !== field).map(({ key, field }) => [field, key]));
 	const renamed = Object.keys(renames).length > 0;
 	const outerKey = (field: string): string => renames[field] ?? field;
@@ -802,24 +799,15 @@ function flattenShape(
 		? `(${JSON.stringify(Object.fromEntries(keys.map(({ key, field }) => [key, field])))} as Record<string, string>)[key]!`
 		: 'key';
 	const flattened = (p: string, c: string, config: string): string => {
-		const groupKeys = `OmitEach<NonNullable<${groupConfig(config)}>, '${k}' | '$type'>`;
+		const groupKeys = `OmitEach<NonNullable<${groupConfig(config)}>, '$type'>`;
 		return `WithoutGroup<${p}, ${groupKeys}> | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(`${c}[0]`)} | NoneOf<${groupKeys}>))`;
 	};
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {
 		method: [
-			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF${wrapperSeat ? ', wrapperId: number' : ''}) =>`,
+			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 			`	(config: unknown, ${OPTS}): ReturnType<PF> => {`,
 			`		if (config === undefined) return ${CALL_PO('config')};`,
-			...(wrapperSeat
-				? [
-						`		const own = _o(config)[${JSON.stringify(k)}];`,
-						`		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {`,
-						`			const spelled = '$type' in own ? (own as { $type?: unknown }).$type === wrapperId : !('kind' in own) && Object.keys(own).every((key) => ${ownKeyTests});`,
-						`			if (spelled) return ${CALL_PO('config')};`,
-						`		}`
-					]
-				: []),
 			`		const rest: Record<string, unknown> = {};`,
 			`		const inner: Record<string, unknown> = {};`,
 			`		let seated = false;`,
@@ -923,8 +911,6 @@ function seatEmission(
 ): SeatEmission {
 	const m = methodName(parentKey, kind === 'flatten' ? `flatten$${seat.slot.propertyName}` : seat.slot.propertyName);
 	const direct = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
-	const wrapperSeat = kind === 'flatten' && !direct && configKeysOf(seat.group).includes(seat.slot.propertyName);
-	const wrapperId = wrapperSeat ? kindDiscriminantExpr(seat.group.kind, nodeMap, wires.kindEntries) : undefined;
 	const childKey = wires.keyByKind.get(seat.group.kind);
 	const child: FlavorRefs =
 		childKey !== undefined && seatBearing(wires, seat.group.kind, parent.kind)
@@ -937,7 +923,7 @@ function seatEmission(
 		kind === 'tuple'
 			? tupleShape(seat.slot.propertyName, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.propertyName, flattenedKeysOf(seat), configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
+			? flattenShape(seat.slot.propertyName, flattenedKeysOf(seat), m, direct, seat.directKey)
 			: elementsShape(
 					seat.slot.propertyName,
 					configKeysOf(seat.group),
@@ -950,7 +936,7 @@ function seatEmission(
 				);
 	return {
 		method: s.method,
-		apply: (pe, c) => (wrapperId === undefined ? `${m}(${pe}, ${c})` : `${m}(${pe}, ${c}, ${wrapperId})`),
+		apply: (pe, c) => `${m}(${pe}, ${c})`,
 		...(s.typeFor === undefined ? {} : { typeFor: s.typeFor }),
 		groupTypeName: seat.group.typeName,
 		child,

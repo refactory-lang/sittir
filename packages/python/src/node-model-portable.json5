@@ -6928,11 +6928,11 @@
         {
           "name": "items",
           "route": "slot",
-          "slot": "item",
+          "slot": "items",
           "path": [
             {
               "owner": "with_clause_bare",
-              "slot": "item"
+              "slot": "items"
             }
           ]
         }
@@ -6960,11 +6960,11 @@
         {
           "name": "items",
           "route": "slot",
-          "slot": "with_items",
+          "slot": "items",
           "path": [
             {
               "owner": "with_clause_paren",
-              "slot": "with_items"
+              "slot": "items"
             }
           ]
         }

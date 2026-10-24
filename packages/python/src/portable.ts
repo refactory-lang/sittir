@@ -2938,7 +2938,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	179: { statements: { async: { types: [], kinds: [156, 161, 164] }, static: { kind: 164 } } },
 	247: { contents: { debug: { types: [], kinds: [249] } } },
 	281: { contents: { async: { types: [], kinds: [243] } } },
-	335: { content: { debug: { types: [], kinds: [249] } } }
+	336: { content: { debug: { types: [], kinds: [249] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

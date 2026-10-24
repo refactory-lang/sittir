@@ -24,22 +24,24 @@ describe('a group seat flattens its group fields onto the parent', () => {
 		expect(block.lastArm()?.$render()).toBe('_ => 2');
 	});
 
-	it('reads the same-name key as the inner pattern and the new key as the condition', () => {
+	it('reads the group keys as the inner pattern and the condition, and the seat as the whole match pattern', () => {
 		const block = matchBlockOf('fn f() { match x { a if a > 1 => 1 } }\n');
 		const arm = block.lastArm()!;
 		const inner = arm.pattern();
 		expect(typeof inner === 'number' ? inner : inner.$type).not.toBe(kinds.MatchPattern);
 		expect(String(rs.render(arm.pattern()))).toBe('a');
 		expect(String(rs.render(arm.condition()!))).toBe('a > 1');
+		expect(arm.match().$type).toBe(kinds.MatchPattern);
+		expect(arm.match().$render()).toBe('a if a > 1');
 	});
 
-	it('takes the inner pattern or the whole match pattern through $with.pattern', () => {
+	it('takes the inner pattern through $with.pattern and the whole match pattern through $with.match', () => {
 		const block = matchBlockOf('fn f() { match x { a if a > 1 => 1 } }\n');
 		const arm = block.lastArm()!;
 		expect(arm.$with.pattern(rs.build.identifier('b')).$render()).toBe('b if a > 1 => 1');
 		const whole = rs.build.matchPattern({ pattern: rs.build.identifier('c'), condition: rs.build.identifier('d') });
 		expect(whole.$type).toBe(kinds.MatchPattern);
-		expect(arm.$with.pattern(whole).$render()).toBe('c if d => 1');
+		expect(arm.$with.match(whole).$render()).toBe('c if d => 1');
 	});
 
 	it('clears the condition through $with.condition', () => {

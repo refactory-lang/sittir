@@ -8827,13 +8827,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "item",
+          "name": "items",
           "content": {
             "type": "SYMBOL",
             "name": "with_item"
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -8847,13 +8847,13 @@
               },
               {
                 "type": "FIELD",
-                "name": "item",
+                "name": "items",
                 "content": {
                   "type": "SYMBOL",
                   "name": "with_item"
                 },
                 "metadata": {
-                  "fieldSource": "enriched"
+                  "fieldSource": "override"
                 }
               }
             ]
@@ -8885,7 +8885,7 @@
         },
         {
           "type": "FIELD",
-          "name": "with_items",
+          "name": "items",
           "content": {
             "type": "SYMBOL",
             "name": "with_clause_with_items",
@@ -8894,7 +8894,7 @@
             }
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {

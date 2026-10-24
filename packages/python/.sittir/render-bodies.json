@@ -4310,7 +4310,7 @@
 	"with_clause_bare": [
 		{
 			"kind": "slot",
-			"name": "item"
+			"name": "items"
 		}
 	],
 	"with_clause_paren": [
@@ -4328,7 +4328,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "with_items"
+			"name": "items"
 		},
 		{
 			"kind": "seam",

@@ -340,13 +340,14 @@ pub const _TUPLE_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(329);
 pub const _TUPLE_ELEMENTS_REPEAT1: KindId = KindId(330);
 pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(331);
 pub const EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(332);
-pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(333);
-pub const _AS_PATTERN_TARGET: KindId = KindId(334);
-pub const _FORMAT_EXPRESSION: KindId = KindId(335);
-pub const _NAMES: KindId = KindId(336);
+pub const WITH_CLAUSE_BARE_REPEAT1: KindId = KindId(333);
+pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(334);
+pub const _AS_PATTERN_TARGET: KindId = KindId(335);
+pub const _FORMAT_EXPRESSION: KindId = KindId(336);
+pub const _NAMES: KindId = KindId(337);
 pub const ERROR: KindId = KindId(65535);
-pub const SIMPLE_STATEMENTS: KindId = KindId(338);
-pub const SIMPLE_PATTERN: KindId = KindId(337);
+pub const SIMPLE_STATEMENTS: KindId = KindId(339);
+pub const SIMPLE_PATTERN: KindId = KindId(338);
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
@@ -508,7 +509,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         127 => "module", // "module"
         128 => "_statement", // "_statement"
         129 => "_simple_statements", // "_simple_statements"
-        338 => "simple_statements", // "_simple_statements"
+        339 => "simple_statements", // "_simple_statements"
         130 => "import_statement", // "import_statement"
         131 => "import_prefix", // "import_prefix"
         132 => "relative_import", // "relative_import"
@@ -563,7 +564,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         181 => "dotted_name", // "dotted_name"
         182 => "case_pattern", // "case_pattern"
         183 => "_simple_pattern", // "_simple_pattern"
-        337 => "simple_pattern", // "_simple_pattern"
+        338 => "simple_pattern", // "_simple_pattern"
         184 => "case_as_pattern", // "_as_pattern"
         185 => "union_pattern", // "union_pattern"
         186 => "dict_pattern", // "dict_pattern"
@@ -713,10 +714,11 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         330 => "_tuple_elements_repeat1", // "_tuple_elements_repeat1"
         331 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
         332 => "except_clause_exception_list_repeat1", // "except_clause_exception_list_repeat1"
-        333 => "match_block_block_repeat1", // "match_block_block_repeat1"
-        334 => "as_pattern_target", // "_as_pattern_target"
-        335 => "format_expression", // "_format_expression"
-        336 => "names", // "_names"
+        333 => "with_clause_bare_repeat1", // "with_clause_bare_repeat1"
+        334 => "match_block_block_repeat1", // "match_block_block_repeat1"
+        335 => "as_pattern_target", // "_as_pattern_target"
+        336 => "format_expression", // "_format_expression"
+        337 => "names", // "_names"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }

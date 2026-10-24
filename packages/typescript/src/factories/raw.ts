@@ -33,7 +33,6 @@ import {
 	defineListIndices,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	storedElements,
 	rebuilt,
 	renderText,
@@ -1563,7 +1562,6 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 						{
 							slot: 'catchClauseGroup',
 							stored: '_catch_clause_group',
-							kind: TSKindId.CatchClauseGroup as const,
 							make: buildCatchClauseGroup,
 							keys: [
 								{ name: 'parameter', rest: false, required: true },
@@ -1582,7 +1580,6 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 						{
 							slot: 'catchClauseGroup',
 							stored: '_catch_clause_group',
-							kind: TSKindId.CatchClauseGroup as const,
 							make: buildCatchClauseGroup,
 							keys: [
 								{ name: 'parameter', rest: false, required: true },
@@ -1604,7 +1601,6 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
 		type:
 			_catch_clause_group === undefined ? undefined : () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
-		[STORED_SLOT_READERS]: { catchClauseGroup: readGroup_catchClauseGroup },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

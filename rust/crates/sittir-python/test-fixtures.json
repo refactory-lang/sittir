@@ -37446,7 +37446,7 @@
           "_async": true,
           "_with_clause": {
             "$type": 290,
-            "_item": [
+            "_items": [
               {
                 "$type": 163,
                 "_value": {
@@ -37456,7 +37456,7 @@
                     "$text": "a"
                   },
                   "_alias": {
-                    "$type": 334,
+                    "$type": 335,
                     "_content": {
                       "$type": 1,
                       "$text": "b"
@@ -37552,7 +37552,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nasync with a as b:\n    async for c in d:\n        [e async for f in g]\n",
-    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent)))))",
+    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent)))))",
     "wrappedText": "\nasync with a as b:\n    async for c in d:\n        [e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -37565,7 +37565,7 @@
       "_async": true,
       "_with_clause": {
         "$type": 290,
-        "_item": [
+        "_items": [
           {
             "$type": 163,
             "_value": {
@@ -37575,7 +37575,7 @@
                 "$text": "a"
               },
               "_alias": {
-                "$type": 334,
+                "$type": 335,
                 "_content": {
                   "$type": 1,
                   "$text": "b"
@@ -37668,7 +37668,7 @@
     "pattern": "with_statement",
     "edits": [],
     "expectedSourceOut": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n",
-    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent))))",
+    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent))))",
     "wrappedText": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -37678,7 +37678,7 @@
     "pattern": "with_clause_bare",
     "input": {
       "$type": 290,
-      "_item": [
+      "_items": [
         {
           "$type": 163,
           "_value": {
@@ -37688,7 +37688,7 @@
               "$text": "a"
             },
             "_alias": {
-              "$type": 334,
+              "$type": 335,
               "_content": {
                 "$type": 1,
                 "$text": "b"
@@ -37713,7 +37713,7 @@
     "pattern": "with_clause_bare",
     "edits": [],
     "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))",
+    "expectedReparseTree": "(with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))",
     "wrappedText": "with a as b:\n  c",
     "wrappedOffset": 5
   },
@@ -37730,7 +37730,7 @@
           "$text": "a"
         },
         "_alias": {
-          "$type": 334,
+          "$type": 335,
           "_content": {
             "$type": 1,
             "$text": "b"
@@ -37767,7 +37767,7 @@
         "$text": "a"
       },
       "_alias": {
-        "$type": 334,
+        "$type": 335,
         "_content": {
           "$type": 1,
           "$text": "b"
@@ -37797,7 +37797,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 334,
+      "$type": 335,
       "_content": {
         "$type": 1,
         "$text": "b"
@@ -60387,7 +60387,7 @@
                         "$type": 253,
                         "_elements": [
                           {
-                            "$type": 335,
+                            "$type": 336,
                             "_content": {
                               "$type": 249,
                               "_expression": {
@@ -60409,7 +60409,7 @@
                             "$text": "."
                           },
                           {
-                            "$type": 335,
+                            "$type": 336,
                             "_content": {
                               "$type": 249,
                               "_expression": {
@@ -60596,7 +60596,7 @@
                         "$type": 253,
                         "_elements": [
                           {
-                            "$type": 335,
+                            "$type": 336,
                             "_content": {
                               "$type": 249,
                               "_expression": {
@@ -60630,7 +60630,7 @@
                             "$text": "."
                           },
                           {
-                            "$type": 335,
+                            "$type": 336,
                             "_content": {
                               "$type": 249,
                               "_expression": {
@@ -60810,7 +60810,7 @@
                     "$type": 253,
                     "_elements": [
                       {
-                        "$type": 335,
+                        "$type": 336,
                         "_content": {
                           "$type": 249,
                           "_expression": {
@@ -60832,7 +60832,7 @@
                         "$text": "."
                       },
                       {
-                        "$type": 335,
+                        "$type": 336,
                         "_content": {
                           "$type": 249,
                           "_expression": {
@@ -61107,7 +61107,7 @@
                     "$type": 253,
                     "_elements": [
                       {
-                        "$type": 335,
+                        "$type": 336,
                         "_content": {
                           "$type": 249,
                           "_expression": {
@@ -61141,7 +61141,7 @@
                         "$text": "."
                       },
                       {
-                        "$type": 335,
+                        "$type": 336,
                         "_content": {
                           "$type": 249,
                           "_expression": {
@@ -61313,7 +61313,7 @@
                   "$type": 253,
                   "_elements": [
                     {
-                      "$type": 335,
+                      "$type": 336,
                       "_content": {
                         "$type": 249,
                         "_expression": {
@@ -61335,7 +61335,7 @@
                       "$text": "."
                     },
                     {
-                      "$type": 335,
+                      "$type": 336,
                       "_content": {
                         "$type": 249,
                         "_expression": {
@@ -61598,7 +61598,7 @@
                   "$type": 253,
                   "_elements": [
                     {
-                      "$type": 335,
+                      "$type": 336,
                       "_content": {
                         "$type": 249,
                         "_expression": {
@@ -61632,7 +61632,7 @@
                       "$text": "."
                     },
                     {
-                      "$type": 335,
+                      "$type": 336,
                       "_content": {
                         "$type": 249,
                         "_expression": {
@@ -61794,7 +61794,7 @@
               "$type": 253,
               "_elements": [
                 {
-                  "$type": 335,
+                  "$type": 336,
                   "_content": {
                     "$type": 249,
                     "_expression": {
@@ -61816,7 +61816,7 @@
                   "$text": "."
                 },
                 {
-                  "$type": 335,
+                  "$type": 336,
                   "_content": {
                     "$type": 249,
                     "_expression": {
@@ -62055,7 +62055,7 @@
               "$type": 253,
               "_elements": [
                 {
-                  "$type": 335,
+                  "$type": 336,
                   "_content": {
                     "$type": 249,
                     "_expression": {
@@ -62089,7 +62089,7 @@
                   "$text": "."
                 },
                 {
-                  "$type": 335,
+                  "$type": 336,
                   "_content": {
                     "$type": 249,
                     "_expression": {
@@ -62243,7 +62243,7 @@
             "$type": 253,
             "_elements": [
               {
-                "$type": 335,
+                "$type": 336,
                 "_content": {
                   "$type": 249,
                   "_expression": {
@@ -62265,7 +62265,7 @@
                 "$text": "."
               },
               {
-                "$type": 335,
+                "$type": 336,
                 "_content": {
                   "$type": 249,
                   "_expression": {
@@ -62492,7 +62492,7 @@
             "$type": 253,
             "_elements": [
               {
-                "$type": 335,
+                "$type": 336,
                 "_content": {
                   "$type": 249,
                   "_expression": {
@@ -62526,7 +62526,7 @@
                 "$text": "."
               },
               {
-                "$type": 335,
+                "$type": 336,
                 "_content": {
                   "$type": 249,
                   "_expression": {
@@ -62656,7 +62656,7 @@
         "$type": 253,
         "_elements": [
           {
-            "$type": 335,
+            "$type": 336,
             "_content": {
               "$type": 249,
               "_expression": {
@@ -62678,7 +62678,7 @@
             "$text": "."
           },
           {
-            "$type": 335,
+            "$type": 336,
             "_content": {
               "$type": 249,
               "_expression": {
@@ -62927,7 +62927,7 @@
         "$type": 253,
         "_elements": [
           {
-            "$type": 335,
+            "$type": 336,
             "_content": {
               "$type": 249,
               "_expression": {
@@ -62961,7 +62961,7 @@
             "$text": "."
           },
           {
-            "$type": 335,
+            "$type": 336,
             "_content": {
               "$type": 249,
               "_expression": {
@@ -63141,7 +63141,7 @@
       "$type": 253,
       "_elements": [
         {
-          "$type": 335,
+          "$type": 336,
           "_content": {
             "$type": 249,
             "_expression": {
@@ -63163,7 +63163,7 @@
           "$text": "."
         },
         {
-          "$type": 335,
+          "$type": 336,
           "_content": {
             "$type": 249,
             "_expression": {
@@ -63270,7 +63270,7 @@
       "$type": 253,
       "_elements": [
         {
-          "$type": 335,
+          "$type": 336,
           "_content": {
             "$type": 249,
             "_expression": {
@@ -63304,7 +63304,7 @@
           "$text": "."
         },
         {
-          "$type": 335,
+          "$type": 336,
           "_content": {
             "$type": 249,
             "_expression": {
@@ -63339,7 +63339,7 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 335,
+      "$type": 336,
       "_content": {
         "$type": 249,
         "_expression": {
@@ -63379,7 +63379,7 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 335,
+      "$type": 336,
       "_content": {
         "$type": 249,
         "_expression": {
@@ -63419,7 +63419,7 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 335,
+      "$type": 336,
       "_content": {
         "$type": 249,
         "_expression": {
@@ -63471,7 +63471,7 @@
     "grammar": "python",
     "pattern": "format_expression",
     "input": {
-      "$type": 335,
+      "$type": 336,
       "_content": {
         "$type": 249,
         "_expression": {
@@ -179948,7 +179948,7 @@
               {
                 "$type": 130,
                 "_names": {
-                  "$type": 336,
+                  "$type": 337,
                   "_content": {
                     "$type": 135,
                     "_name": [
@@ -179987,7 +179987,7 @@
               {
                 "$type": 130,
                 "_names": {
-                  "$type": 336,
+                  "$type": 337,
                   "_content": {
                     "$type": 135,
                     "_name": [
@@ -180028,7 +180028,7 @@
               {
                 "$type": 130,
                 "_names": {
-                  "$type": 336,
+                  "$type": 337,
                   "_content": {
                     "$type": 135,
                     "_name": [
@@ -180091,7 +180091,7 @@
           {
             "$type": 130,
             "_names": {
-              "$type": 336,
+              "$type": 337,
               "_content": {
                 "$type": 135,
                 "_name": [
@@ -180152,7 +180152,7 @@
           {
             "$type": 130,
             "_names": {
-              "$type": 336,
+              "$type": 337,
               "_content": {
                 "$type": 135,
                 "_name": [
@@ -180215,7 +180215,7 @@
           {
             "$type": 130,
             "_names": {
-              "$type": 336,
+              "$type": 337,
               "_content": {
                 "$type": 135,
                 "_name": [
@@ -180273,7 +180273,7 @@
         {
           "$type": 130,
           "_names": {
-            "$type": 336,
+            "$type": 337,
             "_content": {
               "$type": 135,
               "_name": [
@@ -180331,7 +180331,7 @@
         {
           "$type": 130,
           "_names": {
-            "$type": 336,
+            "$type": 337,
             "_content": {
               "$type": 135,
               "_name": [
@@ -180391,7 +180391,7 @@
         {
           "$type": 130,
           "_names": {
-            "$type": 336,
+            "$type": 337,
             "_content": {
               "$type": 135,
               "_name": [
@@ -180445,7 +180445,7 @@
     "input": {
       "$type": 130,
       "_names": {
-        "$type": 336,
+        "$type": 337,
         "_content": {
           "$type": 135,
           "_name": [
@@ -180497,7 +180497,7 @@
     "input": {
       "$type": 130,
       "_names": {
-        "$type": 336,
+        "$type": 337,
         "_content": {
           "$type": 135,
           "_name": [
@@ -180551,7 +180551,7 @@
     "input": {
       "$type": 130,
       "_names": {
-        "$type": 336,
+        "$type": 337,
         "_content": {
           "$type": 135,
           "_name": [
@@ -180600,7 +180600,7 @@
     "grammar": "python",
     "pattern": "names",
     "input": {
-      "$type": 336,
+      "$type": 337,
       "_content": {
         "$type": 135,
         "_name": [
@@ -180649,7 +180649,7 @@
     "grammar": "python",
     "pattern": "names",
     "input": {
-      "$type": 336,
+      "$type": 337,
       "_content": {
         "$type": 135,
         "_name": [
@@ -180700,7 +180700,7 @@
     "grammar": "python",
     "pattern": "names",
     "input": {
-      "$type": 336,
+      "$type": 337,
       "_content": {
         "$type": 135,
         "_name": [
@@ -202360,7 +202360,7 @@
           "_async": false,
           "_with_clause": {
             "$type": 290,
-            "_item": [
+            "_items": [
               {
                 "$type": 163,
                 "_value": {
@@ -202370,7 +202370,7 @@
                     "$text": "a"
                   },
                   "_alias": {
-                    "$type": 334,
+                    "$type": 335,
                     "_content": {
                       "$type": 1,
                       "$text": "b"
@@ -202411,7 +202411,7 @@
           "_async": false,
           "_with_clause": {
             "$type": 291,
-            "_with_items": {
+            "_items": {
               "$type": 262,
               "_item": [
                 {
@@ -202457,7 +202457,7 @@
                       }
                     },
                     "_alias": {
-                      "$type": 334,
+                      "$type": 335,
                       "_content": {
                         "$type": 1,
                         "$text": "d"
@@ -202508,7 +202508,7 @@
                       }
                     },
                     "_alias": {
-                      "$type": 334,
+                      "$type": 335,
                       "_content": {
                         "$type": 1,
                         "$text": "e"
@@ -202579,7 +202579,7 @@
           "_async": false,
           "_with_clause": {
             "$type": 290,
-            "_item": [
+            "_items": [
               {
                 "$type": 163,
                 "_value": {
@@ -202589,7 +202589,7 @@
                     "$text": "e"
                   },
                   "_alias": {
-                    "$type": 334,
+                    "$type": 335,
                     "_content": {
                       "$type": 1,
                       "$text": "f"
@@ -202606,7 +202606,7 @@
                     "$text": "g"
                   },
                   "_alias": {
-                    "$type": 334,
+                    "$type": 335,
                     "_content": {
                       "$type": 1,
                       "$text": "h"
@@ -202669,7 +202669,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nwith a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
-    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (with_statement with_clause: (with_clause_paren with_items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (with_statement with_clause: (with_clause_paren items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) statements: (with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
     "wrappedText": "\nwith a as b:\n  c\n\nwith (open('d') as d,\n      open('e') as e):\n  f\n\nwith e as f, g as h,:\n  i\n",
     "wrappedOffset": 0
   },
@@ -202682,7 +202682,7 @@
       "_async": false,
       "_with_clause": {
         "$type": 290,
-        "_item": [
+        "_items": [
           {
             "$type": 163,
             "_value": {
@@ -202692,7 +202692,7 @@
                 "$text": "a"
               },
               "_alias": {
-                "$type": 334,
+                "$type": 335,
                 "_content": {
                   "$type": 1,
                   "$text": "b"
@@ -202745,7 +202745,7 @@
     "pattern": "with_statement",
     "edits": [],
     "expectedSourceOut": "with a as b:\n  c\n",
-    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "with a as b:\n  c\n",
     "wrappedOffset": 0
   },
@@ -202758,7 +202758,7 @@
       "_async": false,
       "_with_clause": {
         "$type": 291,
-        "_with_items": {
+        "_items": {
           "$type": 262,
           "_item": [
             {
@@ -202804,7 +202804,7 @@
                   }
                 },
                 "_alias": {
-                  "$type": 334,
+                  "$type": 335,
                   "_content": {
                     "$type": 1,
                     "$text": "d"
@@ -202855,7 +202855,7 @@
                   }
                 },
                 "_alias": {
-                  "$type": 334,
+                  "$type": 335,
                   "_content": {
                     "$type": 1,
                     "$text": "e"
@@ -202931,7 +202931,7 @@
     "pattern": "with_statement",
     "edits": [],
     "expectedSourceOut": "with (open('d') as d,\n      open('e') as e):\n  f\n",
-    "expectedReparseTree": "(with_statement with_clause: (with_clause_paren with_items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(with_statement with_clause: (with_clause_paren items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "with (open('d') as d,\n      open('e') as e):\n  f\n",
     "wrappedOffset": 0
   },
@@ -202944,7 +202944,7 @@
       "_async": false,
       "_with_clause": {
         "$type": 290,
-        "_item": [
+        "_items": [
           {
             "$type": 163,
             "_value": {
@@ -202954,7 +202954,7 @@
                 "$text": "e"
               },
               "_alias": {
-                "$type": 334,
+                "$type": 335,
                 "_content": {
                   "$type": 1,
                   "$text": "f"
@@ -202971,7 +202971,7 @@
                 "$text": "g"
               },
               "_alias": {
-                "$type": 334,
+                "$type": 335,
                 "_content": {
                   "$type": 1,
                   "$text": "h"
@@ -203024,7 +203024,7 @@
     "pattern": "with_statement",
     "edits": [],
     "expectedSourceOut": "with e as f, g as h,:\n  i\n",
-    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "with e as f, g as h,:\n  i\n",
     "wrappedOffset": 0
   },
@@ -203034,7 +203034,7 @@
     "pattern": "with_clause_bare",
     "input": {
       "$type": 290,
-      "_item": [
+      "_items": [
         {
           "$type": 163,
           "_value": {
@@ -203044,7 +203044,7 @@
               "$text": "a"
             },
             "_alias": {
-              "$type": 334,
+              "$type": 335,
               "_content": {
                 "$type": 1,
                 "$text": "b"
@@ -203072,7 +203072,7 @@
     "pattern": "with_clause_bare",
     "edits": [],
     "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))",
+    "expectedReparseTree": "(with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))",
     "wrappedText": "with a as b:\n  c",
     "wrappedOffset": 5
   },
@@ -203082,7 +203082,7 @@
     "pattern": "with_clause_bare",
     "input": {
       "$type": 290,
-      "_item": [
+      "_items": [
         {
           "$type": 163,
           "_value": {
@@ -203092,7 +203092,7 @@
               "$text": "e"
             },
             "_alias": {
-              "$type": 334,
+              "$type": 335,
               "_content": {
                 "$type": 1,
                 "$text": "f"
@@ -203109,7 +203109,7 @@
               "$text": "g"
             },
             "_alias": {
-              "$type": 334,
+              "$type": 335,
               "_content": {
                 "$type": 1,
                 "$text": "h"
@@ -203137,7 +203137,7 @@
     "pattern": "with_clause_bare",
     "edits": [],
     "expectedSourceOut": "e as f, g as h,",
-    "expectedReparseTree": "(with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))",
+    "expectedReparseTree": "(with_clause_bare items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))) items: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))",
     "wrappedText": "with e as f, g as h,:\n  c",
     "wrappedOffset": 5
   },
@@ -203154,7 +203154,7 @@
           "$text": "a"
         },
         "_alias": {
-          "$type": 334,
+          "$type": 335,
           "_content": {
             "$type": 1,
             "$text": "b"
@@ -203230,7 +203230,7 @@
           }
         },
         "_alias": {
-          "$type": 334,
+          "$type": 335,
           "_content": {
             "$type": 1,
             "$text": "d"
@@ -203306,7 +203306,7 @@
           }
         },
         "_alias": {
-          "$type": 334,
+          "$type": 335,
           "_content": {
             "$type": 1,
             "$text": "e"
@@ -203348,7 +203348,7 @@
           "$text": "e"
         },
         "_alias": {
-          "$type": 334,
+          "$type": 335,
           "_content": {
             "$type": 1,
             "$text": "f"
@@ -203390,7 +203390,7 @@
           "$text": "g"
         },
         "_alias": {
-          "$type": 334,
+          "$type": 335,
           "_content": {
             "$type": 1,
             "$text": "h"
@@ -203430,7 +203430,7 @@
         "$text": "a"
       },
       "_alias": {
-        "$type": 334,
+        "$type": 335,
         "_content": {
           "$type": 1,
           "$text": "b"
@@ -203503,7 +203503,7 @@
         }
       },
       "_alias": {
-        "$type": 334,
+        "$type": 335,
         "_content": {
           "$type": 1,
           "$text": "d"
@@ -203576,7 +203576,7 @@
         }
       },
       "_alias": {
-        "$type": 334,
+        "$type": 335,
         "_content": {
           "$type": 1,
           "$text": "e"
@@ -203615,7 +203615,7 @@
         "$text": "e"
       },
       "_alias": {
-        "$type": 334,
+        "$type": 335,
         "_content": {
           "$type": 1,
           "$text": "f"
@@ -203654,7 +203654,7 @@
         "$text": "g"
       },
       "_alias": {
-        "$type": 334,
+        "$type": 335,
         "_content": {
           "$type": 1,
           "$text": "h"
@@ -203687,7 +203687,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 334,
+      "$type": 335,
       "_content": {
         "$type": 1,
         "$text": "b"
@@ -203719,7 +203719,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 334,
+      "$type": 335,
       "_content": {
         "$type": 1,
         "$text": "d"
@@ -203751,7 +203751,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 334,
+      "$type": 335,
       "_content": {
         "$type": 1,
         "$text": "e"
@@ -203783,7 +203783,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 334,
+      "$type": 335,
       "_content": {
         "$type": 1,
         "$text": "f"
@@ -203815,7 +203815,7 @@
     "grammar": "python",
     "pattern": "as_pattern_target",
     "input": {
-      "$type": 334,
+      "$type": 335,
       "_content": {
         "$type": 1,
         "$text": "h"
@@ -204466,7 +204466,7 @@
     "pattern": "with_clause_paren",
     "input": {
       "$type": 291,
-      "_with_items": {
+      "_items": {
         "$type": 262,
         "_item": [
           {
@@ -204512,7 +204512,7 @@
                 }
               },
               "_alias": {
-                "$type": 334,
+                "$type": 335,
                 "_content": {
                   "$type": 1,
                   "$text": "d"
@@ -204563,7 +204563,7 @@
                 }
               },
               "_alias": {
-                "$type": 334,
+                "$type": 335,
                 "_content": {
                   "$type": 1,
                   "$text": "e"
@@ -204614,7 +204614,7 @@
     "pattern": "with_clause_paren",
     "edits": [],
     "expectedSourceOut": "(open('d') as d,\n      open('e') as e)",
-    "expectedReparseTree": "(with_clause_paren with_items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier))))))",
+    "expectedReparseTree": "(with_clause_paren items: (with_clause_with_items item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier)))) item: (with_item value: (as_pattern expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))) alias: (as_pattern_target (identifier))))))",
     "wrappedText": "with (open('d') as d,\n      open('e') as e):\n  f",
     "wrappedOffset": 5
   },
@@ -204668,7 +204668,7 @@
               }
             },
             "_alias": {
-              "$type": 334,
+              "$type": 335,
               "_content": {
                 "$type": 1,
                 "$text": "d"
@@ -204719,7 +204719,7 @@
               }
             },
             "_alias": {
-              "$type": 334,
+              "$type": 335,
               "_content": {
                 "$type": 1,
                 "$text": "e"

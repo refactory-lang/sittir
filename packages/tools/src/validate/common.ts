@@ -36,7 +36,6 @@ import {
 	metricsEnabled,
 	mapTriviaEntries,
 	projectInterior,
-	storedSlotReader,
 	isDataKey,
 	type TokenInterior
 } from '@sittir/common/utils';
@@ -869,7 +868,7 @@ function resolveWrappedStorageValue(
 ): unknown {
 	const accessorName = slots.accessors[storageKey];
 	if (accessorName === undefined) return node[storageKey];
-	const accessor = storedSlotReader(node, accessorName);
+	const accessor = (node as Record<string, unknown>)[accessorName];
 	if (typeof accessor !== 'function' || accessor.length !== 0) {
 		throw new Error(`resolveWrappedStorageValue: ${slots.kind} stores ${storageKey}, but has no reader ${accessorName}()`);
 	}

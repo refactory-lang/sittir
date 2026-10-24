@@ -6559,7 +6559,7 @@
           "path": [
             {
               "owner": "field_pattern_named",
-              "slot": "ref"
+              "slot": "by_reference"
             }
           ],
           "flag": true
@@ -6609,7 +6609,7 @@
           "path": [
             {
               "owner": "field_pattern_shorthand",
-              "slot": "ref"
+              "slot": "by_reference"
             }
           ],
           "flag": true
@@ -10665,13 +10665,13 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "match",
           "path": [
             {
               "owner": "last_match_arm",
-              "slot": "pattern"
+              "slot": "match"
             }
           ]
         },
@@ -11363,13 +11363,13 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "match",
           "path": [
             {
               "owner": "match_arm_block_ending",
-              "slot": "pattern"
+              "slot": "match"
             }
           ]
         },
@@ -11410,13 +11410,13 @@
           ]
         },
         {
-          "name": "pattern",
+          "name": "match",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "match",
           "path": [
             {
               "owner": "match_arm_with_comma",
-              "slot": "pattern"
+              "slot": "match"
             }
           ]
         },
@@ -13546,11 +13546,11 @@
         {
           "name": "argument",
           "route": "slot",
-          "slot": "value",
+          "slot": "argument",
           "path": [
             {
               "owner": "reference_expression_bare",
-              "slot": "value"
+              "slot": "argument"
             }
           ]
         }
@@ -13578,11 +13578,11 @@
         {
           "name": "argument",
           "route": "slot",
-          "slot": "value",
+          "slot": "argument",
           "path": [
             {
               "owner": "reference_expression_mut",
-              "slot": "value"
+              "slot": "argument"
             }
           ]
         },
@@ -13618,11 +13618,11 @@
         {
           "name": "argument",
           "route": "slot",
-          "slot": "value",
+          "slot": "argument",
           "path": [
             {
               "owner": "reference_expression_raw_const",
-              "slot": "value"
+              "slot": "argument"
             }
           ]
         },
@@ -13659,11 +13659,11 @@
         {
           "name": "argument",
           "route": "slot",
-          "slot": "value",
+          "slot": "argument",
           "path": [
             {
               "owner": "reference_expression_raw_mut",
-              "slot": "value"
+              "slot": "argument"
             }
           ]
         },

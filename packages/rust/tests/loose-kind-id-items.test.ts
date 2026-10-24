@@ -17,7 +17,7 @@ describe('a kind id among a loose list slot’s items', () => {
 
 describe('a kind id given to a loose mixed scalar slot', () => {
 	const arm = (value: unknown) =>
-		b.matchArmWithComma({ pattern: b.matchPattern({ pattern: b.identifier('x') }), value: value as never }).$render();
+		b.matchArmWithComma({ match: b.matchPattern({ pattern: b.identifier('x') }), value: value as never }).$render();
 
 	it('keeps a kind id the slot stores', () => {
 		expect(arm(rs.kinds.Self)).toBe('x => self,');
