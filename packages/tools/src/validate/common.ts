@@ -20,6 +20,7 @@ import {
 	carryPlace,
 	carrySourceStamp,
 	holdTree,
+	slotSeparatorOf,
 	sideOf,
 	sidesOf,
 	nodeText,
@@ -1786,7 +1787,7 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 export function separatedListFactoryOptions(data: unknown): { separator?: number; delimiter?: number } | undefined {
 	const rec = (data ?? {}) as Record<string, unknown>;
 	const delimiter = typeof rec['_delimiter'] === 'number' ? rec['_delimiter'] : undefined;
-	const separator = typeof rec['_separator'] === 'number' ? rec['_separator'] : undefined;
+	const separator = typeof rec['_separator'] === 'number' ? rec['_separator'] : slotSeparatorOf(rec);
 	const options: { separator?: number; delimiter?: number } = {};
 	if (separator !== undefined) options.separator = separator;
 	if (delimiter !== undefined) options.delimiter = delimiter;
