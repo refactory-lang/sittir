@@ -7017,18 +7017,6 @@ Flattens an interned rule into its productions: a `CHOICE` contributes each memb
 
 A variable's productions as tree-sitter keeps them after `eof()`: a production with an end step anywhere but last is dropped, since it can never complete, and a trailing end step is removed (the production then needs end-of-input lookahead). It runs once per variable, on the whole rule, so an `EOF` that a later `SEQ` member follows is caught.
 
-### `packages/codegen/src/dsl/symbol-table.ts::alwaysEndingInput`
-
-The nonterminals every derivation of which ends the input: each of whose productions ends in an end step or in such a nonterminal. It is the greatest fixpoint, so a repetition of an input-ending item counts, while `choice('\n', eof())`, which can end without the input ending, does not.
-
-### `packages/codegen/src/dsl/symbol-table.ts::EofNotLast`
-
-A rule with a production the parser can never produce, because something follows the end of the input in it: `kind` is the authored rule holding the production. `ending` is the rule that always ends input and is followed, or none when an `eof()` itself is. `repetition` marks a repetition in `kind` whose item ends at `eof()`, so it can never repeat.
-
-### `packages/codegen/src/dsl/symbol-table.ts::eofNotLastSites`
-
-Every `EofNotLast` of a grammar's flattened productions, before `completedProductions` drops any: a step that is an end step, or a nonterminal in `alwaysEndingInput`, anywhere but last. A repeat helper is reported on its owner. A helper that ends input is explained by the authored rule its productions end in, or as a repetition ending at `eof()` when they end in the end step itself.
-
 ### `packages/codegen/src/dsl/symbol-table.ts::C_SYMBOL_CHARACTER_NAMES`
 
 The words tree-sitter spells punctuation with in a C symbol name.
@@ -7668,10 +7656,6 @@ Strips `PREC*` and optional wrappers down to the node that decides an arm's slot
 
 A `BLANK` is never a slot. Tree-sitter's DSL spells an optional as `CHOICE(x, BLANK)`, so a rule read at the DSL stage under tree-sitter's run carries blanks that sittir's own rule union does not name.
 
-### `packages/codegen/src/dsl/choice-arm-partition.ts::PREC_TYPES`
-
-The precedence wrapper types, which carry no slot topology.
-
 ### `packages/codegen/src/dsl/symbol-table.ts::generatedFieldIds`
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
@@ -7931,34 +7915,6 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::purgeSupersededEnumRules`
-
-```text
-/**
- * Remove pre-existing hidden enum rules that are superseded by the current
- * pass's canonical name for the same member set.
- *
- * For example: the base grammar synthesizes `_update_expression_operator` for
- * `["++","--"]`. The override pass assigns `_operator` as the canonical name
- * for the same member set (the wire-deposited `_operator` is already present).
- * The old `_update_expression_operator` is no longer needed and should be
- * removed so it doesn't pollute downstream emitters.
- *
- * Criteria for removal:
- * - Hidden rule (name starts with `_`).
- * - Is an EnumRule<'evaluate'>.
- * - Its sorted member set maps to a DIFFERENT canonical name in
- *   `memberKeyToCanonicalName` (i.e., this name is not the canonical one).
- *
- * We do NOT require the rule to be in the current pass's `evaluateSynthesized`
- * because it may have been synthesized in an earlier pass (base grammar) and
- * carried forward through the rules-merge path.
- *
- * @param rules - Mutable rules map; superseded entries are deleted in place.
- * @param memberKeyToCanonicalName - The current pass's canonical name map.
- */
-```
-
 ### `packages/codegen/src/dsl/evaluate.ts::collectFieldEnumOccurrences`
 
 ```text
@@ -8088,22 +8044,6 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  * @param first - The first occurrence (used for naming).
  * @param rules - Grammar rules map for existing-rule lookup.
  * @returns The candidate name and its priority level (1 = highest).
- */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::fieldNameMatchesGrammarRule`
-
-```text
-/**
- * Check whether a grammar rule named `fieldName` exists and resolves to the
- * same literal set as `members`. Used by `deriveCanonicalName` for priority-1
- * matching: if `field('mutable_specifier', ...)` and `rules['mutable_specifier']
- * = 'mut'`, the field name is itself the canonical name.
- *
- * @param fieldName - The field name to look up in `rules`.
- * @param members - The expected literal members for comparison.
- * @param rules - Full grammar rules map.
- * @returns `true` when `rules[fieldName]` resolves to the same member set.
  */
 ```
 
@@ -8545,16 +8485,10 @@ The context of one `grammarFn` call: the options, the base's rules and grammar, 
 /** The evaluated base grammar object, or null for fresh grammars. */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::EvaluateCtx::externals`
+### `packages/codegen/src/dsl/evaluate.ts::MetadataSinks::externals`
 
 ```text
 /** The externals metadata sink (same live array as sinks.externals): the grammar's `externals` rule list. */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::isExtension`
-
-```text
-/** True when extending a base grammar. */
 ```
 
 ### `packages/codegen/src/dsl/evaluate.ts::sinks`
@@ -8893,11 +8827,3 @@ True for an optional sequence of exactly two members: a string token, then an op
 ### `packages/codegen/src/dsl/enrich.ts::notedHiddenListRef`
 
 Promotes a reference to a hidden separated-list rule and records the rewrite as a `hidden-list-reference` shape under the parent kind, when the promotion changed the member.
-
-### `packages/codegen/src/dsl/layer.ts::get#1`
-
-The getter that `enrich` installs for each pending base key. Reading a base key before the layer pass completed it throws, naming the key. The runtime calls these in the order that was verified against tree-sitter, so a read out of order is a bug in the caller, not in the grammar.
-
-### `packages/codegen/src/dsl/layer.ts::get#2`
-
-The `rules` getter on the options that `wire` returns. Reading it before `externals` has run the layer pass throws, because the rule callbacks come from that pass. After the pass, it returns the rule callbacks of the pass output.
