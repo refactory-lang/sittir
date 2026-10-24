@@ -4,6 +4,7 @@ import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL 
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../../types/rule.ts';
 import type { RawGrammar } from '../../types.ts';
+import { EmitHaltedError } from '../../../types/diagnostics.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,
@@ -469,6 +470,57 @@ describe('flattenSeatsOf prefixes a group key that collides with the parent', ()
 		expect(seat.keys).toEqual([
 			{ key: `${seat.slot.propertyName}Left`, field: 'left' },
 			{ key: 'right', field: 'right' }
+		]);
+	});
+});
+
+describe('a group key that spells its own seat', () => {
+	const seatSpellingMap = (): NodeMapWithIdTables =>
+		buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'arm' }] },
+			arm: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'pattern', content: { type: SYMBOL, name: 'arm_pattern' } },
+					{ type: STRING, value: '=>' },
+					{ type: FIELD, name: 'value', content: { type: PATTERN, value: '[0-9]+' } }
+				]
+			},
+			arm_pattern: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'pattern', content: { type: PATTERN, value: '[a-z]+' } },
+					{
+						type: OPTIONAL,
+						content: { type: SEQ, members: [{ type: STRING, value: 'if' }, { type: FIELD, name: 'condition', content: { type: PATTERN, value: '[a-z]+' } }] }
+					}
+				],
+				annotations: { hoisted: true }
+			}
+		});
+
+	it('is prefixed after its seat in a node map of the layer below the grammar bindings, as for any other slot of the parent', () => {
+		const { nodeMap } = seatSpellingMap();
+		nodeMap.unbound = true;
+		const [seat] = flattenSeatsOf(nodeMap.nodes.get('arm')!, nodeMap) as [ReturnType<typeof flattenSeatsOf>[number]];
+		expect(seat.slot.propertyName).toBe('pattern');
+		expect(seat.keys).toEqual([
+			{ key: 'patternPattern', field: 'pattern' },
+			{ key: 'condition', field: 'condition' }
+		]);
+	});
+
+	it('is refused with a diagnostic in a node map that generates a surface', () => {
+		const { nodeMap } = seatSpellingMap();
+		let thrown: unknown;
+		try {
+			flattenSeatsOf(nodeMap.nodes.get('arm')!, nodeMap);
+		} catch (error) {
+			thrown = error;
+		}
+		expect(thrown).toBeInstanceOf(EmitHaltedError);
+		expect((thrown as EmitHaltedError).blocking).toEqual([
+			expect.objectContaining({ code: 'seat-key-spells-seat', ownerKind: 'arm', slotName: 'pattern', canProceed: false })
 		]);
 	});
 });

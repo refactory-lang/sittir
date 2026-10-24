@@ -6532,10 +6532,13 @@
         },
         {
           "type": "FIELD",
-          "name": "pattern",
+          "name": "match",
           "content": {
             "type": "SYMBOL",
             "name": "match_pattern"
+          },
+          "metadata": {
+            "fieldSource": "override"
           },
           "annotations": {
             "flattened": true
@@ -12189,7 +12192,7 @@
           },
           {
             "type": "FIELD",
-            "name": "value",
+            "name": "argument",
             "content": {
               "type": "SYMBOL",
               "name": "_expression"
@@ -12243,7 +12246,7 @@
           },
           {
             "type": "FIELD",
-            "name": "value",
+            "name": "argument",
             "content": {
               "type": "SYMBOL",
               "name": "_expression"
@@ -12281,7 +12284,7 @@
           },
           {
             "type": "FIELD",
-            "name": "value",
+            "name": "argument",
             "content": {
               "type": "SYMBOL",
               "name": "_expression"
@@ -12308,7 +12311,7 @@
           },
           {
             "type": "FIELD",
-            "name": "value",
+            "name": "argument",
             "content": {
               "type": "SYMBOL",
               "name": "_expression"
@@ -13320,10 +13323,13 @@
           },
           {
             "type": "FIELD",
-            "name": "pattern",
+            "name": "match",
             "content": {
               "type": "SYMBOL",
               "name": "match_pattern"
+            },
+            "metadata": {
+              "fieldSource": "override"
             },
             "annotations": {
               "flattened": true
@@ -13390,10 +13396,13 @@
           },
           {
             "type": "FIELD",
-            "name": "pattern",
+            "name": "match",
             "content": {
               "type": "SYMBOL",
               "name": "match_pattern"
+            },
+            "metadata": {
+              "fieldSource": "override"
             },
             "annotations": {
               "flattened": true
@@ -13888,13 +13897,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "ref",
+              "name": "by_reference",
               "content": {
                 "type": "SYMBOL",
                 "name": "_kw_ref"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -13950,13 +13959,13 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "ref",
+              "name": "by_reference",
               "content": {
                 "type": "SYMBOL",
                 "name": "_kw_ref"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {

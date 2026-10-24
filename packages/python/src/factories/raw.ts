@@ -34,7 +34,6 @@ import {
 	elementsWith,
 	seatWith,
 	groupField,
-	STORED_SLOT_READERS,
 	rebuilt,
 	renderText,
 	nodeJSON,
@@ -3467,13 +3466,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 			expression: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
-						{
-							slot: 'step',
-							stored: '_step',
-							kind: TSKindId.SliceGroup as const,
-							make: buildSliceGroup,
-							keys: [{ name: 'expression', rest: false }]
-						},
+						{ slot: 'step', stored: '_step', make: buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
 						'expression',
 						args,
 						(value?: Admit<T.SliceGroup>) => buildSlice({ ...config, step: value }),
@@ -3485,7 +3478,6 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 		stop: () => hydrateStoredSlot(node, '_stop'),
 		step: () => hydrateStoredSlot(node, '_step'),
 		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
-		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -7188,14 +7180,14 @@ function _buildWithClauseBare(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseBare.Bound {
 	currentHandle()?.admit(TSKindId.WithClauseBare, elements);
-	const _item = elements;
+	const _items = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
+	const listedStored = storedElements(_items);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseBare as const,
 		$named: true as const,
-		_item,
+		_items,
 		_delimiter,
 		$with: {
 			items: (...vs: NonEmptyArray<Admit<T.WithItem>>) =>
@@ -7203,7 +7195,7 @@ function _buildWithClauseBare(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => hydrateStoredSlots(node, '_item'),
+		items: () => hydrateStoredSlots(node, '_items'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
@@ -7253,16 +7245,16 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClauseParen.Bound {
-	const _with_items = hydrateStored(value);
-	const listView = ownerView(_with_items, '_item');
-	if (listView.stored === undefined) refuseReadStub('_with_items');
+	const _items = hydrateStored(value);
+	const listView = ownerView(_items, '_item');
+	if (listView.stored === undefined) refuseReadStub('_items');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithClauseParen as const,
 		$named: true as const,
-		_with_items,
+		_items,
 		$with: {
-			withItems: (...args: unknown[]) =>
+			items: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -7271,10 +7263,10 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 					)
 				)
 		},
-		withItems: () => hydrateStoredSlot(node, '_with_items'),
+		items: () => hydrateStoredSlot(node, '_items'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.withItems(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.items(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

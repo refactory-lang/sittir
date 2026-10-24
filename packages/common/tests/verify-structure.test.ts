@@ -1,26 +1,35 @@
 import { describe, expect, it } from 'vitest';
-import type { StructureTable } from '@sittir/types';
+import type { KindMembership, StructureTable } from '@sittir/types';
 import { checkInput, verifyStructure } from '../src/verify-structure.ts';
 import { stampBuilt } from '../src/source-stamp.ts';
 
 const BLOCK = 1;
 const CALL = 2;
 const NAME = 3;
+const OTHER = 4;
+
+const membership: KindMembership = { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] };
 
 const table: StructureTable = {
 	[BLOCK]: { kind: 'block', nonEmpty: [['_statements', 'block.statements']] },
 	[CALL]: {
 		kind: 'call',
 		required: [['_callee', 'callee']],
-		nodeOnly: [['_callee', 'Call.callee', 'a built Name'], ['_arguments', 'Call.arguments', 'a built Name']]
+		nodeOnly: [['_callee', 'Call.callee', 'a built Name', [NAME]], ['_arguments', 'Call.arguments', 'a built Name', [NAME, BLOCK]]]
 	}
 };
 
 const built = (type: number, slots: Record<string, unknown> = {}) => stampBuilt({ $type: type, $named: true as const, ...slots });
 const name = () => built(NAME, { _text: 'f' });
-const verify = (node: unknown, seen = new WeakSet<object>()) => verifyStructure(node, table, seen);
+const verify = (node: unknown, seen = new WeakSet<object>()) => verifyStructure(node, table, membership, seen);
 
 describe('verifyStructure', () => {
+	it('refuses a plain config and a node of another kind in a node-only slot', () => {
+		expect(() => verify(built(CALL, { _callee: { _text: 'f' } }))).toThrow('a strict factory takes a built node');
+		expect(() => verify(built(CALL, { _callee: built(OTHER) }))).toThrow('Call.callee: a strict factory takes a built Name, not a node of kind 4');
+		expect(() => verify(built(CALL, { _callee: name(), _arguments: [name(), built(OTHER)] }))).toThrow('Call.arguments');
+	});
+
 	it('accepts a node that satisfies its row, and a kind with no row', () => {
 		expect(() => verify(built(CALL, { _callee: name(), _arguments: [name()] }))).not.toThrow();
 		expect(() => verify(name())).not.toThrow();

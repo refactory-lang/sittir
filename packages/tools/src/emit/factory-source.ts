@@ -566,6 +566,7 @@ function placeDirectArg(kind: string, value: unknown, ctx: PrintContext): Placed
 	if (text === undefined) {
 		return { strict: value, loose: property === undefined ? value : loosenAt(kind, property, value, ctx) };
 	}
+	if (properties.length === 0 && ctx.textLeafKinds?.has(kind)) return { strict: text, loose: text };
 	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, text, ctx);
 	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
 	const storage = property === undefined ? undefined : ctx.slotStorage?.[kind]?.[property];

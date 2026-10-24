@@ -480,3 +480,130 @@ describe('a child that shares a union slot', () => {
 		expect(bindings.patches.get("call")).toEqual([[{ path: "0/0", edit: { field: "callee" } }]]);
 	});
 });
+
+describe('a claim on a supertype owner', () => {
+	const grammarOf = (armBlock: string): string => `export default grammar({
+	name: 'bindtest',
+	supertypes: $ => [$.arm, $.clause],
+	rules: {
+		source_file: $ => repeat(choice($.arm, $.clause)),
+		arm: $ => choice($.arm_comma, $.arm_block, $.arm_else),
+		arm_comma: $ => seq(field('pattern', $.identifier), '=>', $.identifier, ','),
+		arm_block: $ => ${armBlock},
+		arm_else: $ => seq('else', '=>', '{', '}'),
+		clause: $ => choice($.clause_bare, $.clause_paren),
+		clause_bare: $ => seq('with', $.item, repeat(seq(',', $.item))),
+		clause_paren: $ => seq('with', '(', field('items_list', $.clause_items), ')'),
+		clause_items: $ => seq($.item, repeat(seq(',', $.item))),
+		item: _ => /[A-Z]+/,
+		identifier: _ => /[a-z]+/
+	}
+});
+`;
+	let forms: RawGrammar;
+	let taken: RawGrammar;
+	let body: RawGrammar;
+
+	beforeAll(async () => {
+		const formsBase = join(dir, 'forms.mjs');
+		const takenBase = join(dir, 'taken.mjs');
+		const bodyBase = join(dir, 'body.mjs');
+		writeFileSync(formsBase, grammarOf("seq(field('pattern', $.identifier), '=>', '{', '}')"));
+		writeFileSync(takenBase, grammarOf("seq(field('pattern', $.identifier), '=>', field('match', $.identifier))"));
+		writeFileSync(bodyBase, grammarOf("seq('{', field('body', $.identifier), '}')"));
+		forms = await evaluateSittirGrammar(formsBase, 'bindtest');
+		taken = await evaluateSittirGrammar(takenBase, 'bindtest');
+		body = await evaluateSittirGrammar(bodyBase, 'bindtest');
+	}, 120_000);
+
+	const slot = (name: string, kinds: readonly string[], multiple = false) => ({ name, propertyName: name, required: true, multiple, storage: 'verbatim', kinds, terminals: [] });
+	const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
+		kind,
+		modelType: 'branch',
+		slots: [],
+		subtypes: [],
+		elementKinds: [],
+		enumMembers: [],
+		text: null,
+		pattern: null,
+		variantOf: null,
+		shownAs: [],
+		...extra
+	});
+	const modelOf = ({ bareMultiple = true, armBlockSlots = [slot('pattern', ['identifier'])] } = {}): SlotModel =>
+		new Map([
+			['arm', node('arm', { modelType: 'supertype', subtypes: ['arm_comma', 'arm_block', 'arm_else'] })],
+			['arm_comma', node('arm_comma', { variantOf: 'arm', slots: [slot('pattern', ['identifier'])] })],
+			['arm_block', node('arm_block', { variantOf: 'arm', slots: armBlockSlots })],
+			['arm_else', node('arm_else', { variantOf: 'arm' })],
+			['clause', node('clause', { modelType: 'supertype', subtypes: ['clause_bare', 'clause_paren'] })],
+			['clause_bare', node('clause_bare', { variantOf: 'clause', slots: [slot('item', ['item'], bareMultiple)] })],
+			['clause_paren', node('clause_paren', { variantOf: 'clause', slots: [slot('items_list', ['clause_items'])] })],
+			['clause_items', node('clause_items', { modelType: 'list', elementKinds: ['item'], slots: [slot('item', ['item'], true)] })]
+		]);
+	const rename = (owner: string, name: string, field: string) => ({ route: 'rename', owner, name, field, kind: null, after: null, anchor: null }) as const;
+	const factsOf = (...members: ReturnType<typeof rename>[]): BindingFacts => ({ ...FACTS, claims: [], members });
+	const routes = {
+		members: NO_MEMBERS,
+		vocabOf: new Map([
+			['arm', 'clause.arm'],
+			['clause', 'clause.resource']
+		])
+	};
+	const vocab = new Map([
+		['clause.arm', new Set(['match', 'pattern'])],
+		['clause.resource', new Set(['items'])]
+	]);
+	const derive = (base: RawGrammar, model: SlotModel, ...members: ReturnType<typeof rename>[]) =>
+		bind({ file: FILE, facts: factsOf(...members), base, vocabMembers: vocab, routes, model });
+
+	it("renames the field at each form that holds it, and leaves a form holding no such member alone", () => {
+		const { bindings, report } = derive(forms, modelOf(), rename('arm', 'match', 'pattern'));
+		expect(report.fieldRenames).toEqual([
+			{ owner: 'arm_comma', from: 'pattern', to: 'match' },
+			{ owner: 'arm_block', from: 'pattern', to: 'match' }
+		]);
+		expect([...bindings.patches.keys()]).toEqual(['arm_block', 'arm_comma']);
+		expect(report.realizedMembers).toEqual(['arm.match']);
+		expect(report.residue).toEqual([]);
+	});
+
+	it("renames a field of another name at a form that holds the member in the same shape: a list held directly or through a list kind", () => {
+		const { report } = derive(forms, modelOf(), rename('clause', 'items', 'items_list'));
+		expect(report.fieldRenames).toEqual([
+			{ owner: 'clause_bare', from: 'item', to: 'items' },
+			{ owner: 'clause_paren', from: 'items_list', to: 'items' }
+		]);
+		expect(report.realizedMembers).toEqual(['clause.items']);
+	});
+
+	it('refuses the row when a form holds the member\'s kinds only under a field the grammar names otherwise', () => {
+		const { bindings, report } = derive(body, modelOf({ armBlockSlots: [slot('body', ['identifier'])] }), rename('arm', 'match', 'pattern'));
+		expect(report.fieldRenames).toEqual([]);
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.residue).toEqual([{ cause: 'a form holds the member only under a field the grammar names otherwise', row: 'arm.match' }]);
+	});
+
+	it('refuses the rename at every form when one form holds the member in another shape', () => {
+		const { bindings, report } = derive(forms, modelOf({ bareMultiple: false }), rename('clause', 'items', 'items_list'));
+		expect(report.fieldRenames).toEqual([]);
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.residue).toEqual([{ cause: 'a form holds the member in another shape', row: 'clause.items' }]);
+	});
+
+	it("refuses the whole row once when one form's rename is refused", () => {
+		const model = modelOf({ armBlockSlots: [slot('pattern', ['identifier']), slot('match', ['identifier'])] });
+		const { bindings, report } = derive(taken, model, rename('arm', 'match', 'pattern'));
+		expect(report.fieldRenames).toEqual([]);
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.realizedMembers).toEqual([]);
+		expect(report.residue).toEqual([{ cause: 'member name is already a field of the owner', row: 'arm.match' }]);
+	});
+
+	it('realizes the member with no edit when every form already spells it', () => {
+		const { bindings, report } = derive(forms, modelOf(), rename('arm', 'pattern', 'pattern'));
+		expect(report.fieldRenames).toEqual([]);
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.realizedMembers).toEqual(['arm.pattern']);
+	});
+});

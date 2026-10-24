@@ -91,6 +91,7 @@ import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts'
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
+import { peelWrapper } from './canonical-rules.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
 import { isAllTextShape } from './assemble.ts';
@@ -937,7 +938,7 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 			return key === undefined || kept.get(key) === member;
 		});
 		if (members.length === rule.members.length) return rule;
-		return members.length === 1 ? members[0]! : { ...rule, members };
+		return members.length === 1 ? peelWrapper({ ...rule, members }) : { ...rule, members };
 	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		const relaxed = relaxedWord(rule);

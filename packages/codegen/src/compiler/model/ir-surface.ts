@@ -22,6 +22,7 @@ import { collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../e
 import { lowerCamelCase } from './casing.ts';
 import { supertypeMemberName } from '../../dsl/arm-names.ts';
 import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
+import { stampReservedWordsets } from './reserved-wordsets.ts';
 import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
 
 type KindEntries = ReturnType<typeof collectKindEntries>;
@@ -547,6 +548,7 @@ export interface IrSurface {
 
 export function stampIrSurface(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): void {
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
+	stampReservedWordsets(nodeMap, kindEntries);
 	const keyed = irKeyedNodes(nodeMap, kindEntries);
 	const bundles = keyed.filter((entry) => !hasOneSurface(entry.node));
 	const ownText = keyed.filter((entry) => hasOneSurface(entry.node));

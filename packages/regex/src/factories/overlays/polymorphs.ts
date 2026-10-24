@@ -1699,6 +1699,62 @@ export const pattern = Object.freeze({
 	};
 };
 
+const countQuantifierArm$countQuantifierGroup =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'countQuantifierGroup'> & { countQuantifierGroup: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { countQuantifierGroup: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, countQuantifierGroup: _c(child)(seated) } as never, options as never);
+	};
+const countQuantifierArm$countQuantifierGroup$strict = countQuantifierArm$countQuantifierGroup(
+	F.buildCountQuantifierArm,
+	F.buildCountQuantifierGroup
+);
+const countQuantifierArm$countQuantifierGroup$coerce = countQuantifierArm$countQuantifierGroup(
+	C.coerceToCountQuantifierArm,
+	C.coerceToCountQuantifierGroup
+);
+const countQuantifierArm: {
+	countQuantifierGroup: {
+		strict: <
+			const V extends OmitEach<ArgsOf<typeof F.buildCountQuantifierArm>[0], 'countQuantifierGroup'> & {
+				countQuantifierGroup: ArgsOf<typeof F.buildCountQuantifierGroup>[0];
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildCountQuantifierArm>[0], 'countQuantifierGroup'> & {
+						countQuantifierGroup: ArgsOf<typeof F.buildCountQuantifierGroup>[0];
+					}
+				>,
+			options?: OptionsArg<typeof F.buildCountQuantifierArm>
+		) => ReturnType<typeof F.buildCountQuantifierArm>;
+		coerce: <
+			const V extends OmitEach<ArgsOf<typeof C.coerceToCountQuantifierArm>[0], 'countQuantifierGroup'> & {
+				countQuantifierGroup: ArgsOf<typeof C.coerceToCountQuantifierGroup>[0];
+			}
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof C.coerceToCountQuantifierArm>[0], 'countQuantifierGroup'> & {
+						countQuantifierGroup: ArgsOf<typeof C.coerceToCountQuantifierGroup>[0];
+					}
+				>,
+			options?: OptionsArg<typeof C.coerceToCountQuantifierArm>
+		) => ReturnType<typeof C.coerceToCountQuantifierArm>;
+	};
+} = Object.freeze({
+	countQuantifierGroup: bundle(
+		countQuantifierArm$countQuantifierGroup$strict,
+		countQuantifierArm$countQuantifierGroup$coerce,
+		{ key: 'countQuantifierArm.countQuantifierGroup', max: 2 }
+	)
+});
+
 const countQuantifier$arm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -1712,9 +1768,30 @@ const countQuantifier$arm =
 	};
 const countQuantifier$arm$strict = countQuantifier$arm(F.buildCountQuantifier, F.buildCountQuantifierArm);
 const countQuantifier$arm$coerce = countQuantifier$arm(C.coerceToCountQuantifier, C.coerceToCountQuantifierArm);
+const countQuantifier$arm$countQuantifierGroup =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const countQuantifier$arm$countQuantifierGroup$strict = countQuantifier$arm$countQuantifierGroup(
+	F.buildCountQuantifier,
+	countQuantifierArm.countQuantifierGroup.strict
+);
+const countQuantifier$arm$countQuantifierGroup$coerce = countQuantifier$arm$countQuantifierGroup(
+	C.coerceToCountQuantifier,
+	countQuantifierArm.countQuantifierGroup.coerce
+);
 export const countQuantifier = Object.freeze({
 	...B.countQuantifier,
-	arm: bundle(countQuantifier$arm$strict, countQuantifier$arm$coerce, { key: 'countQuantifier.arm', max: 2 })
+	arm: {
+		...bundle(countQuantifier$arm$strict, countQuantifier$arm$coerce, { key: 'countQuantifier.arm', max: 2 }),
+		countQuantifierGroup: bundle(
+			countQuantifier$arm$countQuantifierGroup$strict,
+			countQuantifier$arm$countQuantifierGroup$coerce,
+			{ key: 'countQuantifier.arm.countQuantifierGroup', max: 2 }
+		)
+	}
 }) as unknown as typeof B.countQuantifier & {
 	arm: {
 		strict: <
@@ -1740,6 +1817,103 @@ export const countQuantifier = Object.freeze({
 				>,
 			options?: OptionsArg<typeof C.coerceToCountQuantifier>
 		) => ReturnType<typeof C.coerceToCountQuantifier>;
+		countQuantifierGroup: {
+			strict: <
+				const V extends OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> & {
+					content: ArgsOf<typeof countQuantifierArm.countQuantifierGroup.strict>;
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> & {
+							content: ArgsOf<typeof countQuantifierArm.countQuantifierGroup.strict>;
+						}
+					>,
+				options?: OptionsArg<typeof F.buildCountQuantifier>
+			) => ReturnType<typeof F.buildCountQuantifier>;
+			coerce: <
+				const V extends OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> & {
+					content: ArgsOf<typeof countQuantifierArm.countQuantifierGroup.coerce>;
+				}
+			>(
+				config: V &
+					RefuseUndeclared<
+						V,
+						OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> & {
+							content: ArgsOf<typeof countQuantifierArm.countQuantifierGroup.coerce>;
+						}
+					>,
+				options?: OptionsArg<typeof C.coerceToCountQuantifier>
+			) => ReturnType<typeof C.coerceToCountQuantifier>;
+		};
+	};
+};
+
+const unicodePropertyValueExpression$unicodePropertyValueExpressionGroup =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'unicodePropertyValueExpressionGroup'> & {
+			unicodePropertyValueExpressionGroup: ArgsOf<CF>[0];
+		},
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { unicodePropertyValueExpressionGroup: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)(
+			{ ...rest, unicodePropertyValueExpressionGroup: _c(child)(seated) } as never,
+			options as never
+		);
+	};
+const unicodePropertyValueExpression$unicodePropertyValueExpressionGroup$strict =
+	unicodePropertyValueExpression$unicodePropertyValueExpressionGroup(
+		F.buildUnicodePropertyValueExpression,
+		F.buildUnicodePropertyValueExpressionGroup
+	);
+const unicodePropertyValueExpression$unicodePropertyValueExpressionGroup$coerce =
+	unicodePropertyValueExpression$unicodePropertyValueExpressionGroup(
+		C.coerceToUnicodePropertyValueExpression,
+		C.coerceToUnicodePropertyValueExpressionGroup
+	);
+export const unicodePropertyValueExpression = Object.freeze({
+	...B.unicodePropertyValueExpression,
+	unicodePropertyValueExpressionGroup: bundle(
+		unicodePropertyValueExpression$unicodePropertyValueExpressionGroup$strict,
+		unicodePropertyValueExpression$unicodePropertyValueExpressionGroup$coerce,
+		{ key: 'unicodePropertyValueExpression.unicodePropertyValueExpressionGroup', max: 2 }
+	)
+}) as unknown as typeof B.unicodePropertyValueExpression & {
+	unicodePropertyValueExpressionGroup: {
+		strict: <
+			const V extends OmitEach<
+				ArgsOf<typeof F.buildUnicodePropertyValueExpression>[0],
+				'unicodePropertyValueExpressionGroup'
+			> & { unicodePropertyValueExpressionGroup: ArgsOf<typeof F.buildUnicodePropertyValueExpressionGroup>[0] }
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<ArgsOf<typeof F.buildUnicodePropertyValueExpression>[0], 'unicodePropertyValueExpressionGroup'> & {
+						unicodePropertyValueExpressionGroup: ArgsOf<typeof F.buildUnicodePropertyValueExpressionGroup>[0];
+					}
+				>,
+			options?: OptionsArg<typeof F.buildUnicodePropertyValueExpression>
+		) => ReturnType<typeof F.buildUnicodePropertyValueExpression>;
+		coerce: <
+			const V extends OmitEach<
+				ArgsOf<typeof C.coerceToUnicodePropertyValueExpression>[0],
+				'unicodePropertyValueExpressionGroup'
+			> & { unicodePropertyValueExpressionGroup: ArgsOf<typeof C.coerceToUnicodePropertyValueExpressionGroup>[0] }
+		>(
+			config: V &
+				RefuseUndeclared<
+					V,
+					OmitEach<
+						ArgsOf<typeof C.coerceToUnicodePropertyValueExpression>[0],
+						'unicodePropertyValueExpressionGroup'
+					> & { unicodePropertyValueExpressionGroup: ArgsOf<typeof C.coerceToUnicodePropertyValueExpressionGroup>[0] }
+				>,
+			options?: OptionsArg<typeof C.coerceToUnicodePropertyValueExpression>
+		) => ReturnType<typeof C.coerceToUnicodePropertyValueExpression>;
 	};
 };
 

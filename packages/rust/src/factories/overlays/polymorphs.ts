@@ -1083,22 +1083,10 @@ export const matchBlock = Object.freeze({
 	coerce: typeof matchBlock$seatedCoerce;
 };
 
-const lastMatchArm$flatten$pattern =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-		parent: PF,
-		child: CF,
-		wrapperId: number
-	) =>
+const lastMatchArm$flatten$match =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const own = _o(config)['pattern'];
-		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
-			const spelled =
-				'$type' in own
-					? (own as { $type?: unknown }).$type === wrapperId
-					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
-			if (spelled) return _fwd<ReturnType<PF>>(parent, config, options);
-		}
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		let seated = false;
@@ -1108,19 +1096,19 @@ const lastMatchArm$flatten$pattern =
 				seated = seated || value !== undefined;
 			} else rest[key] = value;
 		}
-		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
+		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, match: _c(child)(inner) } : rest, options);
 	};
 function lastMatchArm$seated<A extends T.LastMatchArm.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildLastMatchArm>;
 function lastMatchArm$seated(...args: T.LastMatchArm.BuildArgs): ReturnType<typeof F.buildLastMatchArm> {
-	return lastMatchArm$flatten$pattern(F.buildLastMatchArm, F.buildMatchPattern, TSKindId.MatchPattern)(...args);
+	return lastMatchArm$flatten$match(F.buildLastMatchArm, F.buildMatchPattern)(...args);
 }
 function lastMatchArm$seatedCoerce<const A extends T.LastMatchArm.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.LastMatchArm.LooseArgs>
 ): ReturnType<typeof C.coerceToLastMatchArm>;
 function lastMatchArm$seatedCoerce(...args: T.LastMatchArm.LooseArgs): ReturnType<typeof C.coerceToLastMatchArm> {
-	return lastMatchArm$flatten$pattern(C.coerceToLastMatchArm, C.coerceToMatchPattern, TSKindId.MatchPattern)(...args);
+	return lastMatchArm$flatten$match(C.coerceToLastMatchArm, C.coerceToMatchPattern)(...args);
 }
 export const lastMatchArm = Object.freeze({
 	...B.lastMatchArm,
@@ -1603,22 +1591,10 @@ export const implItemSemi = Object.freeze({
 	};
 };
 
-const matchArmWithComma$flatten$pattern =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-		parent: PF,
-		child: CF,
-		wrapperId: number
-	) =>
+const matchArmWithComma$flatten$match =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const own = _o(config)['pattern'];
-		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
-			const spelled =
-				'$type' in own
-					? (own as { $type?: unknown }).$type === wrapperId
-					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
-			if (spelled) return _fwd<ReturnType<PF>>(parent, config, options);
-		}
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		let seated = false;
@@ -1628,17 +1604,13 @@ const matchArmWithComma$flatten$pattern =
 				seated = seated || value !== undefined;
 			} else rest[key] = value;
 		}
-		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
+		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, match: _c(child)(inner) } : rest, options);
 	};
 function matchArmWithComma$seated<A extends T.MatchArmWithComma.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
 ): ReturnType<typeof F.buildMatchArmWithComma>;
 function matchArmWithComma$seated(...args: T.MatchArmWithComma.BuildArgs): ReturnType<typeof F.buildMatchArmWithComma> {
-	return matchArmWithComma$flatten$pattern(
-		F.buildMatchArmWithComma,
-		F.buildMatchPattern,
-		TSKindId.MatchPattern
-	)(...args);
+	return matchArmWithComma$flatten$match(F.buildMatchArmWithComma, F.buildMatchPattern)(...args);
 }
 function matchArmWithComma$seatedCoerce<const A extends T.MatchArmWithComma.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.MatchArmWithComma.LooseArgs>
@@ -1646,11 +1618,7 @@ function matchArmWithComma$seatedCoerce<const A extends T.MatchArmWithComma.Loos
 function matchArmWithComma$seatedCoerce(
 	...args: T.MatchArmWithComma.LooseArgs
 ): ReturnType<typeof C.coerceToMatchArmWithComma> {
-	return matchArmWithComma$flatten$pattern(
-		C.coerceToMatchArmWithComma,
-		C.coerceToMatchPattern,
-		TSKindId.MatchPattern
-	)(...args);
+	return matchArmWithComma$flatten$match(C.coerceToMatchArmWithComma, C.coerceToMatchPattern)(...args);
 }
 export const matchArmWithComma = Object.freeze({
 	...B.matchArmWithComma,
@@ -1660,22 +1628,10 @@ export const matchArmWithComma = Object.freeze({
 	coerce: typeof matchArmWithComma$seatedCoerce;
 };
 
-const matchArmBlockEnding$flatten$pattern =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-		parent: PF,
-		child: CF,
-		wrapperId: number
-	) =>
+const matchArmBlockEnding$flatten$match =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const own = _o(config)['pattern'];
-		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
-			const spelled =
-				'$type' in own
-					? (own as { $type?: unknown }).$type === wrapperId
-					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
-			if (spelled) return _fwd<ReturnType<PF>>(parent, config, options);
-		}
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		let seated = false;
@@ -1685,7 +1641,7 @@ const matchArmBlockEnding$flatten$pattern =
 				seated = seated || value !== undefined;
 			} else rest[key] = value;
 		}
-		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, pattern: _c(child)(inner) } : rest, options);
+		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, match: _c(child)(inner) } : rest, options);
 	};
 function matchArmBlockEnding$seated<A extends T.MatchArmBlockEnding.BuildArgs>(
 	...args: A & RefuseUndeclared<A>
@@ -1693,11 +1649,7 @@ function matchArmBlockEnding$seated<A extends T.MatchArmBlockEnding.BuildArgs>(
 function matchArmBlockEnding$seated(
 	...args: T.MatchArmBlockEnding.BuildArgs
 ): ReturnType<typeof F.buildMatchArmBlockEnding> {
-	return matchArmBlockEnding$flatten$pattern(
-		F.buildMatchArmBlockEnding,
-		F.buildMatchPattern,
-		TSKindId.MatchPattern
-	)(...args);
+	return matchArmBlockEnding$flatten$match(F.buildMatchArmBlockEnding, F.buildMatchPattern)(...args);
 }
 function matchArmBlockEnding$seatedCoerce<const A extends T.MatchArmBlockEnding.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.MatchArmBlockEnding.LooseArgs>
@@ -1705,11 +1657,7 @@ function matchArmBlockEnding$seatedCoerce<const A extends T.MatchArmBlockEnding.
 function matchArmBlockEnding$seatedCoerce(
 	...args: T.MatchArmBlockEnding.LooseArgs
 ): ReturnType<typeof C.coerceToMatchArmBlockEnding> {
-	return matchArmBlockEnding$flatten$pattern(
-		C.coerceToMatchArmBlockEnding,
-		C.coerceToMatchPattern,
-		TSKindId.MatchPattern
-	)(...args);
+	return matchArmBlockEnding$flatten$match(C.coerceToMatchArmBlockEnding, C.coerceToMatchPattern)(...args);
 }
 export const matchArmBlockEnding = Object.freeze({
 	...B.matchArmBlockEnding,

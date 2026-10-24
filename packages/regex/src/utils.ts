@@ -119,24 +119,26 @@ export const structure: StructureTable = Object.freeze({
 	51: {
 		kind: 'pattern',
 		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'Pattern.content', 'a built Alternation / Term']]
+		nodeOnly: [['_content', 'Pattern.content', 'a built Alternation / Term', [52, 53]]]
 	},
 	52: {
 		kind: 'alternation',
 		nonEmpty: [['_terms', 'alternation.children']],
-		nodeOnly: [['_terms', 'Alternation.terms', 'a built Term']],
+		nodeOnly: [['_terms', 'Alternation.terms', 'a built Term', [53]]],
 		lists: [['terms', true, 0]]
 	},
 	53: {
 		kind: 'term',
 		nonEmpty: [['_term_group', 'term.children']],
-		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup']],
+		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup', [77]]],
 		lists: [['termGroups', false, 0]]
 	},
 	55: {
 		kind: 'lookaround_assertion',
 		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'LookaroundAssertion.content', 'a built LookaheadAssertion / LookbehindAssertion']]
+		nodeOnly: [
+			['_content', 'LookaroundAssertion.content', 'a built LookaheadAssertion / LookbehindAssertion', [56, 57]]
+		]
 	},
 	56: {
 		kind: 'lookahead_assertion',
@@ -146,7 +148,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_content', 'LookaheadAssertion.content', 'a kind id'],
-			['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern']
+			['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51]]
 		],
 		config: ['content', 'pattern']
 	},
@@ -158,7 +160,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_content', 'LookbehindAssertion.content', 'a kind id'],
-			['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern']
+			['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51]]
 		],
 		config: ['content', 'pattern']
 	},
@@ -180,7 +182,7 @@ export const structure: StructureTable = Object.freeze({
 	59: {
 		kind: 'posix_character_class',
 		required: [['_posix_class_name', 'posixClassName']],
-		nodeOnly: [['_posix_class_name', 'PosixCharacterClass.posixClassName', 'buildPosixClassName(…)']]
+		nodeOnly: [['_posix_class_name', 'PosixCharacterClass.posixClassName', 'buildPosixClassName(…)', [60]]]
 	},
 	61: {
 		kind: 'class_range',
@@ -197,7 +199,7 @@ export const structure: StructureTable = Object.freeze({
 	62: {
 		kind: 'anonymous_capturing_group',
 		required: [['_pattern', 'pattern']],
-		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern']]
+		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51]]]
 	},
 	63: {
 		kind: 'named_capturing_group',
@@ -208,15 +210,15 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_content', 'NamedCapturingGroup.content', 'a kind id'],
-			['_group_name', 'NamedCapturingGroup.groupName', 'buildGroupName(…)'],
-			['_pattern', 'NamedCapturingGroup.pattern', 'a built Pattern']
+			['_group_name', 'NamedCapturingGroup.groupName', 'buildGroupName(…)', [38]],
+			['_pattern', 'NamedCapturingGroup.pattern', 'a built Pattern', [51]]
 		],
 		config: ['content', 'groupName', 'pattern']
 	},
 	64: {
 		kind: 'non_capturing_group',
 		required: [['_pattern', 'pattern']],
-		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern']]
+		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51]]]
 	},
 	67: { kind: 'zero_or_more', nodeOnly: [['_lazy', 'ZeroOrMore.lazy', 'a boolean']], config: ['lazy'] },
 	68: { kind: 'one_or_more', nodeOnly: [['_lazy', 'OneOrMore.lazy', 'a boolean']], config: ['lazy'] },
@@ -225,7 +227,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'count_quantifier',
 		required: [['_content', 'content']],
 		nodeOnly: [
-			['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)'],
+			['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)', [39, 79]],
 			['_lazy', 'CountQuantifier.lazy', 'a boolean']
 		],
 		config: ['content', 'lazy']
@@ -233,18 +235,23 @@ export const structure: StructureTable = Object.freeze({
 	71: {
 		kind: 'backreference_escape',
 		required: [['_group_name', 'groupName']],
-		nodeOnly: [['_group_name', 'BackreferenceEscape.groupName', 'buildGroupName(…)']]
+		nodeOnly: [['_group_name', 'BackreferenceEscape.groupName', 'buildGroupName(…)', [38]]]
 	},
 	72: {
 		kind: 'named_group_backreference',
 		required: [['_group_name', 'groupName']],
-		nodeOnly: [['_group_name', 'NamedGroupBackreference.groupName', 'buildGroupName(…)']]
+		nodeOnly: [['_group_name', 'NamedGroupBackreference.groupName', 'buildGroupName(…)', [38]]]
 	},
 	73: {
 		kind: 'character_class_escape',
 		required: [['_content', 'content']],
 		nodeOnly: [
-			['_content', 'CharacterClassEscape.content', 'buildCharacterClassEscapeText1(…) / buildUnicodeCharacterEscape(…)']
+			[
+				'_content',
+				'CharacterClassEscape.content',
+				'buildCharacterClassEscapeText1(…) / buildUnicodeCharacterEscape(…)',
+				[41, 74, 80]
+			]
 		]
 	},
 	75: {
@@ -254,9 +261,15 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_unicode_property_value_expression_group',
 				'UnicodePropertyValueExpression.unicodePropertyValueExpressionGroup',
-				'a built UnicodePropertyValueExpressionGroup'
+				'a built UnicodePropertyValueExpressionGroup',
+				[81]
 			],
-			['_unicode_property_value', 'UnicodePropertyValueExpression.unicodePropertyValue', 'buildUnicodePropertyValue(…)']
+			[
+				'_unicode_property_value',
+				'UnicodePropertyValueExpression.unicodePropertyValue',
+				'buildUnicodePropertyValue(…)',
+				[35]
+			]
 		],
 		config: ['unicodePropertyValueExpressionGroup', 'unicodePropertyValue']
 	},
@@ -269,20 +282,25 @@ export const structure: StructureTable = Object.freeze({
 				'TermGroup.content',
 				'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
 			],
-			['_quantifier', 'TermGroup.quantifier', 'a built ZeroOrMore / OneOrMore / Optional / CountQuantifier']
+			[
+				'_quantifier',
+				'TermGroup.quantifier',
+				'a built ZeroOrMore / OneOrMore / Optional / CountQuantifier',
+				[67, 68, 69, 70]
+			]
 		],
 		config: ['content', 'quantifier']
 	},
 	78: {
 		kind: 'count_quantifier_group',
-		nodeOnly: [['_decimal_digits', 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)']]
+		nodeOnly: [['_decimal_digits', 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)', [39]]]
 	},
 	79: {
 		kind: 'count_quantifier_arm',
 		required: [['_decimal_digits', 'decimalDigits']],
 		nodeOnly: [
-			['_decimal_digits', 'CountQuantifierArm.decimalDigits', 'buildDecimalDigits(…)'],
-			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup', 'a built CountQuantifierGroup']
+			['_decimal_digits', 'CountQuantifierArm.decimalDigits', 'buildDecimalDigits(…)', [39]],
+			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup', 'a built CountQuantifierGroup', [78]]
 		],
 		config: ['decimalDigits', 'countQuantifierGroup']
 	},
@@ -296,12 +314,14 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_character_class_escape_text2',
 				'CharacterClassEscapeArm.characterClassEscapeText2',
-				'buildCharacterClassEscapeText2(…)'
+				'buildCharacterClassEscapeText2(…)',
+				[42]
 			],
 			[
 				'_unicode_property_value_expression',
 				'CharacterClassEscapeArm.unicodePropertyValueExpression',
-				'a built UnicodePropertyValueExpression'
+				'a built UnicodePropertyValueExpression',
+				[75]
 			]
 		],
 		config: ['characterClassEscapeText2', 'unicodePropertyValueExpression']
@@ -313,7 +333,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_unicode_property_name',
 				'UnicodePropertyValueExpressionGroup.unicodePropertyName',
-				'a built UnicodePropertyName'
+				'a built UnicodePropertyName',
+				[90]
 			]
 		]
 	},
@@ -321,8 +342,8 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'inline_flags_group_enable',
 		required: [['_enabled', 'enabled']],
 		nodeOnly: [
-			['_enabled', 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)'],
-			['_pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern']
+			['_enabled', 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)', [66]],
+			['_pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern', [51]]
 		],
 		config: ['enabled', 'pattern']
 	},
@@ -333,9 +354,9 @@ export const structure: StructureTable = Object.freeze({
 			['_disabled', 'disabled']
 		],
 		nodeOnly: [
-			['_enabled', 'InlineFlagsGroupToggle.enabled', 'buildFlags(…)'],
-			['_disabled', 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)'],
-			['_pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern']
+			['_enabled', 'InlineFlagsGroupToggle.enabled', 'buildFlags(…)', [66]],
+			['_disabled', 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)', [66]],
+			['_pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern', [51]]
 		],
 		config: ['enabled', 'disabled', 'pattern']
 	},
@@ -343,8 +364,8 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'inline_flags_group_disable',
 		required: [['_disabled', 'disabled']],
 		nodeOnly: [
-			['_disabled', 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)'],
-			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern']
+			['_disabled', 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)', [66]],
+			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51]]
 		],
 		config: ['disabled', 'pattern']
 	},
@@ -352,7 +373,7 @@ export const structure: StructureTable = Object.freeze({
 	90: {
 		kind: 'unicode_property_name',
 		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'UnicodePropertyName.content', 'buildUnicodePropertyValue(…)']]
+		nodeOnly: [['_content', 'UnicodePropertyName.content', 'buildUnicodePropertyValue(…)', [35]]]
 	}
 });
 
