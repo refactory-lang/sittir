@@ -119,7 +119,7 @@
 (variable_declarator_definite "!" @definite)
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
-(required_parameter pattern: (this)) @declaration.parameter.receiver
+(required_parameter pattern: (this)) @declaration.parameter.this
 (required_parameter (accessibility_modifier "private")) @declaration.parameter.private
 (required_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
 (required_parameter (accessibility_modifier "public")) @declaration.parameter.public
@@ -243,7 +243,7 @@
 (export_specifier export_kind: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
-(constraint) @clause.bounds
+(constraint) @clause.constraint
 (constraint type: (_) @bounds)
 ((constraint ["extends" ":"] @dropped) (#set! reason "the owning grammar rule determines the bounds introducer"))
 (default_type) @clause.default
@@ -264,7 +264,7 @@
 (call_expression_member "?." @optionalChain) @expression.call
 (call_expression_call function: (member_expression) @function) @expression.call.member
 (call_expression_template_call) @expression.call.template
-(new_expression constructor: (_)? @function) @expression.call.construct
+(new_expression constructor: (_)? @function) @expression.call.new
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract
@@ -305,31 +305,31 @@
 (update_expression_postfix operator: "++") @expression.update.increment
 (update_expression_prefix operator: "--") @expression.update.decrement
 (update_expression_postfix operator: "--") @expression.update.decrement
-(augmented_assignment_expression) @expression.assignment.compound
-(augmented_assignment_expression operator: "+=") @expression.assignment.compound.add
-(augmented_assignment_expression operator: "-=") @expression.assignment.compound.subtract
-(augmented_assignment_expression operator: "*=") @expression.assignment.compound.multiply
-(augmented_assignment_expression operator: "/=") @expression.assignment.compound.divide
-(augmented_assignment_expression operator: "%=") @expression.assignment.compound.modulo
-(augmented_assignment_expression operator: "**=") @expression.assignment.compound.exponent
-(augmented_assignment_expression operator: "&=") @expression.assignment.compound.bitwise_and
-(augmented_assignment_expression operator: "|=") @expression.assignment.compound.bitwise_or
-(augmented_assignment_expression operator: "^=") @expression.assignment.compound.bitwise_xor
-(augmented_assignment_expression operator: "<<=") @expression.assignment.compound.shift_left
-(augmented_assignment_expression operator: ">>=") @expression.assignment.compound.shift_right
+(augmented_assignment_expression) @expression.assignment.augmented
+(augmented_assignment_expression operator: "+=") @expression.assignment.augmented.add
+(augmented_assignment_expression operator: "-=") @expression.assignment.augmented.subtract
+(augmented_assignment_expression operator: "*=") @expression.assignment.augmented.multiply
+(augmented_assignment_expression operator: "/=") @expression.assignment.augmented.divide
+(augmented_assignment_expression operator: "%=") @expression.assignment.augmented.modulo
+(augmented_assignment_expression operator: "**=") @expression.assignment.augmented.exponent
+(augmented_assignment_expression operator: "&=") @expression.assignment.augmented.bitwise_and
+(augmented_assignment_expression operator: "|=") @expression.assignment.augmented.bitwise_or
+(augmented_assignment_expression operator: "^=") @expression.assignment.augmented.bitwise_xor
+(augmented_assignment_expression operator: "<<=") @expression.assignment.augmented.shift_left
+(augmented_assignment_expression operator: ">>=") @expression.assignment.augmented.shift_right
 (augmented_assignment_expression operator: ">>>=") @expression.assignment.compound.shift_right_unsigned
-(augmented_assignment_expression operator: "&&=") @expression.assignment.compound.and
-(augmented_assignment_expression operator: "||=") @expression.assignment.compound.or
-(augmented_assignment_expression operator: "??=") @expression.assignment.compound.coalesce
+(augmented_assignment_expression operator: "&&=") @expression.assignment.augmented.and
+(augmented_assignment_expression operator: "||=") @expression.assignment.augmented.or
+(augmented_assignment_expression operator: "??=") @expression.assignment.augmented.coalesce
 (assignment_expression) @expression.assignment
 (assignment_expression using: _ @disposable)
-(ternary_expression) @expression.conditional
+(ternary_expression) @expression.ternary
 (member_expression) @expression.member
 (member_expression (optional_chain) @optionalChain)
 (member_expression property: (private_property_identifier) @property @privateName)
 (subscript_expression (optional_chain) @optionalChain)
 (subscript_expression) @expression.subscript
-(arrow_function) @expression.lambda
+(arrow_function) @expression.arrow
 (arrow_function (arrow_function_parameter parameter: (_) @parameters))
 (arrow_function (call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?)))
 (function_expression) @expression.function
@@ -342,7 +342,7 @@
 (parenthesized_expression (_) @expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
-(array) @expression.collection.list
+(array) @expression.collection.array
 (as_expression) @expression.cast.assertion
 (as_expression type_annotation: (_) @type)
 (satisfies_expression) @expression.cast.satisfies
@@ -365,7 +365,7 @@
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
 (pair_pattern key: (computed_property_name) @key @computed)
-(array_pattern) @pattern.list
+(array_pattern) @pattern.array
 (rest_pattern) @pattern.rest
 (rest_pattern (_) @pattern)
 (assignment_pattern) @pattern.assignment
@@ -404,13 +404,13 @@
 (index_type_query) @type.index_query
 (asserts) @type.predicate.asserts
 (existential_type) @type.existential
-(flow_maybe_type) @type.nullable
+(flow_maybe_type) @type.maybe
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
 (string_fragment) @literal.string.text
-(template_string) @literal.string.interpolated
+(template_string) @literal.string.template
 (regex) @literal.regex
 (number) @literal.number
 (literal_type_negative_number argument: (_) @value) @literal.number.negative
@@ -442,7 +442,7 @@
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label
-(this) @identifier.receiver
+(this) @identifier.this
 (super) @identifier.super
 
 
