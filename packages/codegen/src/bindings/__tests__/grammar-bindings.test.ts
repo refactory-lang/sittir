@@ -492,7 +492,7 @@ describe('a claim on a supertype owner', () => {
 		arm_block: $ => ${armBlock},
 		arm_else: $ => seq('else', '=>', '{', '}'),
 		clause: $ => choice($.clause_bare, $.clause_paren),
-		clause_bare: $ => seq('with', field('item', $.item), repeat(seq(',', field('item', $.item)))),
+		clause_bare: $ => seq('with', $.item, repeat(seq(',', $.item))),
 		clause_paren: $ => seq('with', '(', field('items_list', $.clause_items), ')'),
 		clause_items: $ => seq($.item, repeat(seq(',', $.item))),
 		item: _ => /[A-Z]+/,
@@ -502,14 +502,18 @@ describe('a claim on a supertype owner', () => {
 `;
 	let forms: RawGrammar;
 	let taken: RawGrammar;
+	let body: RawGrammar;
 
 	beforeAll(async () => {
 		const formsBase = join(dir, 'forms.mjs');
 		const takenBase = join(dir, 'taken.mjs');
+		const bodyBase = join(dir, 'body.mjs');
 		writeFileSync(formsBase, grammarOf("seq(field('pattern', $.identifier), '=>', '{', '}')"));
 		writeFileSync(takenBase, grammarOf("seq(field('pattern', $.identifier), '=>', field('match', $.identifier))"));
+		writeFileSync(bodyBase, grammarOf("seq('{', field('body', $.identifier), '}')"));
 		forms = await evaluateSittirGrammar(formsBase, 'bindtest');
 		taken = await evaluateSittirGrammar(takenBase, 'bindtest');
+		body = await evaluateSittirGrammar(bodyBase, 'bindtest');
 	}, 120_000);
 
 	const slot = (name: string, kinds: readonly string[], multiple = false) => ({ name, propertyName: name, required: true, multiple, storage: 'verbatim', kinds, terminals: [] });
@@ -571,6 +575,13 @@ describe('a claim on a supertype owner', () => {
 			{ owner: 'clause_paren', from: 'items_list', to: 'items' }
 		]);
 		expect(report.realizedMembers).toEqual(['clause.items']);
+	});
+
+	it('refuses the row when a form holds the member\'s kinds only under a field the grammar names otherwise', () => {
+		const { bindings, report } = derive(body, modelOf({ armBlockSlots: [slot('body', ['identifier'])] }), rename('arm', 'match', 'pattern'));
+		expect(report.fieldRenames).toEqual([]);
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.residue).toEqual([{ cause: 'a form holds the member only under a field the grammar names otherwise', row: 'arm.match' }]);
 	});
 
 	it('refuses the rename at every form when one form holds the member in another shape', () => {

@@ -10,7 +10,7 @@ import {
 	type Split
 } from '../dsl/bind.ts';
 import type { Lead } from '../dsl/verbs/effects.ts';
-import { isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
+import { fieldRules, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
@@ -102,7 +102,18 @@ function slotShape(model: SlotModel, slot: ModelSlot): SlotShape {
 	return { list: slot.multiple, holds: new Set([...slot.kinds, ...slot.terminals.map((text) => JSON.stringify(text))]) };
 }
 
-function formFieldRenames(model: SlotModel, owner: string, from: string, to: string): readonly FieldRename[] | string {
+function isMintedField(rules: GrammarRecord, form: string, field: string, stop: ReadonlySet<string>): boolean {
+	const fields = fieldHosts(rules, form, field, stop).flatMap((host) => fieldRules(rules[host]).filter((rule) => rule.name === field));
+	return fields.length > 0 && fields.every(isEnrichedField);
+}
+
+function formFieldRenames(
+	model: SlotModel,
+	owner: string,
+	from: string,
+	to: string,
+	minted: (form: string, field: string) => boolean
+): readonly FieldRename[] | string {
 	const forms = formsOf(model, owner).filter((form) => model.get(form)?.modelType !== 'supertype');
 	const slotsOf = (form: string): readonly ModelSlot[] => model.get(form)?.slots ?? [];
 	const claimed = forms.flatMap((form) => slotsOf(form).filter((slot) => slot.name === from).map((slot) => slotShape(model, slot)));
@@ -117,6 +128,7 @@ function formFieldRenames(model: SlotModel, owner: string, from: string, to: str
 		if (holders.some((slot) => slotShape(model, slot).list !== first.list)) return 'a form holds the member in another shape';
 		if (holders.length > 1) return 'a form holds the member in several fields';
 		const [holder] = holders;
+		if (holder !== undefined && own === undefined && !minted(form, holder.name)) return 'a form holds the member only under a field the grammar names otherwise';
 		if (holder !== undefined && holder.name !== to) renames.push({ owner: form, from: holder.name, to });
 	}
 	return renames;
@@ -300,6 +312,8 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	});
 
 	const checks = { ...base, rules } as unknown as GrammarRecord;
+	const layer = input.layerRules as unknown as GrammarRecord;
+	const stop = supertypesOf(checks);
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.members.filter(isNamedMember);
@@ -333,7 +347,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				continue;
 			}
 			if (model.get(m.owner)?.modelType === 'supertype') {
-				const renames = formFieldRenames(model, m.owner, m.field, to);
+				const renames = formFieldRenames(model, m.owner, m.field, to, (form, field) => isMintedField(layer, form, field, stop));
 				if (typeof renames === 'string') left(renames, row);
 				else if (renames.length === 0) realizedMembers.push(row);
 				else for (const request of renames) candidates.push({ row, request, group: row });

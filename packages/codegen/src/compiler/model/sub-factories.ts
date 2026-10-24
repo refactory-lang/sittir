@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { EmitHaltedError, type GrammarDiagnostic } from '../../types/diagnostics.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -303,6 +304,19 @@ export function prefixedKey(seat: string, field: string): string {
 	return `${seat}${field.charAt(0).toUpperCase()}${field.slice(1)}`;
 }
 
+function seatKeySpellsSeat(grammar: string, owner: string, group: string, seat: string): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'seat-key-spells-seat',
+		severity: 'error',
+		grammar,
+		ownerKind: owner,
+		slotName: seat,
+		message: `kind '${owner}': seats '${group}' in '${seat}', and the group has a field '${seat}', so a flattened key would spell the seat. Name the seat apart from its group's fields`,
+		canProceed: false
+	};
+}
+
 export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenedSeat[] {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
@@ -322,6 +336,9 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		found.push(direct === undefined ? { slot, group, fields } : { slot, group, directKey: direct.propertyName, fields });
 	}
 	const seats = found.map(({ fields, ...seat }) => {
+		if (nodeMap.unbound !== true && fields.includes(seat.slot.propertyName)) {
+			throw new EmitHaltedError([seatKeySpellsSeat(nodeMap.name, node.kind, seat.group.kind, seat.slot.propertyName)]);
+		}
 		const taken = new Set([
 			...node.slots.map((other) => other.propertyName),
 			...found.filter((other) => other.slot !== seat.slot).flatMap((other) => other.fields)
